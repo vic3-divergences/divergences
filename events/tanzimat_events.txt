@@ -1,0 +1,1165 @@
+﻿namespace = tanzimat_events
+
+# Tax Farming
+tanzimat_events.1 = {
+	type = country_event
+	placement = root
+	title = tanzimat_events.1.t
+	desc = tanzimat_events.1.d
+	flavor = tanzimat_events.1.f
+
+	event_image = {
+		video = "gfx/event_pictures/asia_politician_parliament_motion.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/asia/politician_parliament_motion"
+
+	icon = "gfx/interface/icons/event_icons/event_scales.dds"
+	
+	duration = 3
+
+	trigger = {
+		has_variable = sick_man_var
+		NOT = { 
+			has_variable = tanzimat_taxfarm 
+		}
+		AND = {
+			has_law = law_type:law_land_based_taxation
+			OR = {
+				is_enacting_law = law_type:law_per_capita_based_taxation
+				is_enacting_law = law_type:law_proportional_taxation
+				is_enacting_law = law_type:law_graduated_taxation
+				is_enacting_law = law_type:law_consumption_based_taxation
+			}
+		}
+	}
+	immediate = {
+		currently_enacting_law = {
+			save_scope_as = current_law_scope
+		}
+		ig:ig_landowners = { 
+			save_scope_as = governors 
+		}
+		set_variable = tanzimat_taxfarm
+	}
+	option = { # Abolish tax farming, but leave the governors in positions of power
+		name = tanzimat_events.1.a						
+        default_option = yes
+		add_modifier = {
+			name = new_system_old_faces
+			months = very_long_modifier_time
+		}
+		add_enactment_modifier = {
+			name = governors_pleased
+		}
+	}
+	option = { # Leave the system in place
+		name = tanzimat_events.1.b
+		ig:ig_landowners = {
+			add_modifier = {
+				name = retained_taxation_rights
+				months = long_modifier_time
+			}
+		}
+		add_enactment_modifier = {
+			name = governors_satisfied
+		}
+	}
+	option = { # Fully abolish the system
+		name = tanzimat_events.1.c 
+		add_modifier = {
+			name = iltizam_abolished
+			months = very_long_modifier_time
+		}
+		ig:ig_landowners = {
+			add_modifier = {
+				name = rescinded_taxation_rights
+				months = long_modifier_time
+			}
+		}
+	}
+}
+# Land Code Reform
+tanzimat_events.2 = {
+	type = country_event
+	placement = root
+	title = tanzimat_events.2.t
+	desc = tanzimat_events.2.d
+	flavor = tanzimat_events.2.f
+
+	event_image = {
+		video = "gfx/event_pictures/europenorthamerica_russian_serfs.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/russian_serfs"
+
+	icon = "gfx/interface/icons/event_icons/event_scales.dds"
+	
+	duration = 3
+
+	trigger = {
+		has_variable = sick_man_var
+		NOT = { 
+			has_variable = tanzimat_landcode 
+		}
+		has_law = law_type:law_traditionalism
+		OR = {
+			is_enacting_law = law_type:law_agrarianism
+			is_enacting_law = law_type:law_interventionism
+			is_enacting_law = law_type:law_laissez_faire
+			is_enacting_law = law_type:law_command_economy
+		}
+	}
+	immediate = {
+		ig:ig_landowners = { 
+			save_scope_as = governors
+		}
+		set_variable = tanzimat_landcode
+	}
+	option = { # hybrid land code
+		name = tanzimat_events.2.a						
+        default_option = yes
+		add_modifier = {
+			name = reformed_land_code
+			months = very_long_modifier_time
+		}
+		add_radicals = {
+			pop_type = peasants
+			value = medium_radicals
+		}
+		custom_tooltip = tanzimat.2.tt1
+		set_variable = reformed_landcode
+	}
+	option = { # traditional land ownership
+		name = tanzimat_events.2.b
+		ig:ig_landowners = {
+			add_modifier = {
+				name = traditional_land_system_retained
+				months = normal_modifier_time
+			}
+		}
+		ig:ig_rural_folk = {
+			add_modifier = {
+				name = traditional_land_system_retained
+				months = normal_modifier_time
+			}
+		}
+	}
+	option = { # modern, european land code
+		name = tanzimat_events.2.c
+		add_modifier = {
+			name = modern_land_code
+			months = very_long_modifier_time
+		}
+		add_radicals = {
+			pop_type = peasants
+			value = large_radicals
+		}
+		custom_tooltip = tanzimat.2.tt1
+		set_variable = reformed_landcode
+	}
+}
+# Islâhat Hatt-ı Hümâyûnu - equality under the law
+tanzimat_events.4 = {
+	type = country_event
+	placement = root
+	title = tanzimat_events.4.t
+	desc = tanzimat_events.4.d
+	flavor = tanzimat_events.4.f
+
+	event_image = {
+		video = "gfx/event_pictures/africa_leader_arguing.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/africa/leader_arguing"
+
+	icon = "gfx/interface/icons/event_icons/event_scales.dds"
+	
+	duration = 3
+
+	trigger = {
+		has_variable = sick_man_var
+		NOT = {	
+			has_variable = tanzimat_minority_rights	
+		}
+		any_scope_pop = { 
+			religion = rel:sunni 
+		}
+		any_scope_pop = { 
+			religion = { 
+				has_discrimination_trait = christian 
+			} 
+		}
+		has_law = law_type:law_hereditary_bureaucrats
+		OR = {
+			is_enacting_law = law_type:law_appointed_bureaucrats
+			is_enacting_law = law_type:law_elected_bureaucrats
+		}
+	}
+	immediate = {
+		set_variable = tanzimat_minority_rights
+	}
+	option = {
+		name = tanzimat_events.4.a						
+        default_option = yes
+		add_modifier = { 
+			name = equality_under_the_law
+			months = very_long_modifier_time
+		}
+		if = {
+			limit = {
+				any_scope_pop = { 
+					religion = rel:sunni 
+				}
+			}
+			add_radicals = {
+				religion = rel:sunni
+				value = large_radicals
+			}
+		}
+		if = {
+			limit = {
+				any_scope_pop = { 
+					religion = rel:orthodox 
+				}
+			}
+			add_loyalists = {
+				religion = rel:orthodox
+				value = large_radicals
+			}
+		}
+		if = {
+			limit = {
+				any_scope_pop = { 
+					religion = rel:oriental_orthodox 
+				}
+			}
+			add_loyalists = {
+				religion = rel:oriental_orthodox
+				value = large_radicals
+			}
+		}
+		if = {
+			limit = {
+				any_scope_pop = { 
+					religion = rel:catholic 
+				}
+			}
+			add_loyalists = {
+				religion = rel:catholic
+				value = large_radicals
+			}
+		}
+		if = {
+			limit = {
+				any_scope_pop = { 
+					religion = rel:protestant 
+				}
+			}
+			add_loyalists = {
+				religion = rel:protestant
+				value = large_radicals
+			}
+		}
+		if = {
+			limit = {
+				any_scope_pop = { 
+					religion = rel:jewish 
+				}
+			}
+			add_loyalists = {
+				religion = rel:jewish
+				value = large_radicals
+			}
+		}
+		custom_tooltip = tanzimat.4.tt1
+	}
+	option = {
+		name = tanzimat_events.4.b
+		add_modifier = { 
+			name = promises_of_reform_ott
+			months = very_long_modifier_time
+		}
+		if = {
+			limit = {
+				any_scope_pop = { 
+					religion = rel:sunni 
+				}
+			}
+			add_radicals = {
+				religion = rel:sunni
+				value = medium_radicals
+			}
+		}
+		if = {
+			limit = {
+				any_scope_pop = { 
+					religion = rel:orthodox 
+				}
+			}
+			add_loyalists = {
+				religion = rel:orthodox
+				value = medium_radicals
+			}
+		}
+		if = {
+			limit = {
+				any_scope_pop = { 
+					religion = rel:oriental_orthodox 
+				}
+			}
+			add_loyalists = {
+				religion = rel:oriental_orthodox
+				value = medium_radicals
+			}
+		}
+		if = {
+			limit = {
+				any_scope_pop = { 
+					religion = rel:catholic 
+				}
+			}
+			add_loyalists = {
+				religion = rel:catholic
+				value = medium_radicals
+			}
+		}
+		if = {
+			limit = {
+				any_scope_pop = { 
+					religion = rel:protestant 
+				}
+			}
+			add_loyalists = {
+				religion = rel:protestant
+				value = medium_radicals
+			}
+		}
+		if = {
+			limit = {
+				any_scope_pop = { 
+					religion = rel:jewish 
+				}
+			}
+			add_loyalists = {
+				religion = rel:jewish
+				value = medium_radicals
+			}
+		}
+		custom_tooltip = tanzimat.4.tt1
+	}
+	option = {
+		name = tanzimat_events.4.c
+		add_enactment_modifier = { 
+			name = establishment_favours_reform
+		}
+		if = {
+			limit = {
+				any_scope_pop = { 
+					religion = rel:sunni 
+				}
+			}
+			add_loyalists = {
+				religion = rel:sunni
+				value = large_radicals
+			}
+		}
+		if = {
+			limit = {
+				any_scope_pop = { 
+					religion = rel:orthodox 
+				}
+			}
+			add_radicals = {
+				religion = rel:orthodox
+				value = large_radicals
+			}
+		}
+		if = {
+			limit = {
+				any_scope_pop = { 
+					religion = rel:oriental_orthodox 
+				}
+			}
+			add_radicals = {
+				religion = rel:oriental_orthodox
+				value = large_radicals
+			}
+		}
+		if = {
+			limit = {
+				any_scope_pop = { 
+					religion = rel:catholic 
+				}
+			}
+			add_radicals = {
+				religion = rel:catholic
+				value = large_radicals
+			}
+		}
+		if = {
+			limit = {
+				any_scope_pop = { 
+					religion = rel:protestant 
+				}
+			}
+			add_radicals = {
+				religion = rel:protestant
+				value = large_radicals
+			}
+		}
+		if = {
+			limit = {
+				any_scope_pop = { 
+					religion = rel:jewish 
+				}
+			}
+			add_radicals = {
+				religion = rel:jewish
+				value = large_radicals
+			}
+		}
+	}
+}
+# Paranoia Event
+tanzimat_events.5 = {
+	type = country_event
+	placement = scope:paranoia_state_scope
+	title = tanzimat_events.5.t
+	desc = tanzimat_events.5.d
+	flavor = tanzimat_events.5.f
+
+	event_image = {
+		video = "gfx/event_pictures/middleeast_islam.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/islam"
+
+	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
+	
+	duration = 3
+
+	trigger = {
+		has_variable = sick_man_var
+		NOT = { 
+			has_variable = tanzimat_cooldown 
+		}
+		any_neighbouring_state = {
+			owner = { 
+				OR = { 
+					religion = rel:orthodox
+					religion = rel:catholic
+					religion = rel:protestant 
+				}
+				country_rank >= rank_value:major_power 
+			}
+		}
+		any_scope_state = {
+			is_incorporated = yes
+			any_scope_pop = {
+				religion = rel:sunni
+			}
+			any_scope_pop = {
+				OR = {
+					religion = rel:orthodox
+					religion = rel:catholic
+					religion = rel:oriental_orthodox
+					religion = rel:protestant
+				}
+			}
+		}
+	}
+	immediate = {
+		random_neighbouring_state = {
+			limit = {
+				owner = { 
+					OR = { 
+						religion = rel:orthodox
+						religion = rel:catholic
+						religion = rel:protestant 
+					}
+					country_rank >= rank_value:major_power 
+				}
+			}
+			owner = { save_scope_as = neighbor_country }
+		}
+		random_scope_state = {
+			limit = {
+				is_incorporated = yes
+				any_scope_pop = {
+					religion = rel:sunni
+				}
+				any_scope_pop = {
+					OR = {
+						religion = rel:orthodox
+						religion = rel:catholic
+						religion = rel:oriental_orthodox
+						religion = rel:protestant
+					}
+				}
+			}
+			save_scope_as = paranoia_state_scope
+			set_variable = {
+				name = paranoia_state_var
+				days = 360
+			}
+			random_scope_pop = {
+				limit = { 
+					OR = {
+						religion = rel:orthodox
+						religion = rel:catholic
+						religion = rel:oriental_orthodox
+						religion = rel:protestant
+					}
+				}
+				religion = {
+					save_scope_as = discriminated_religion_scope
+				}
+			}
+		}
+		set_variable = {
+			name = tanzimat_cooldown
+			months = short_modifier_time
+		}
+	}
+	option = {
+		name = tanzimat_events.5.a						
+        default_option = yes
+        scope:paranoia_state_scope = {
+			add_radicals = {
+				value = large_radicals
+				religion = scope:discriminated_religion_scope
+			}
+		}
+		custom_tooltip = tanzimat.5.tt1
+		hidden_effect = { 
+			random_list = {
+				75 = { 
+					trigger_event = { 
+						id = tanzimat_events.6 days = 60
+					}
+				}
+				25 = {
+				}
+			}
+		}
+	}
+	option = {
+		name = tanzimat_events.5.b
+		change_relations = {
+			country = scope:neighbor_country
+			value = -30
+		}
+		change_infamy = 5
+		scope:paranoia_state_scope = {
+			add_radicals = {
+				value = very_large_radicals
+				religion = scope:discriminated_religion_scope
+			}
+		}
+		custom_tooltip = tanzimat.5.tt2
+		hidden_effect = { 
+			random_list = {
+				5 = { 
+					trigger_event = {
+						id = tanzimat_events.6 days = 60
+					}
+				}
+				95 = { 
+				}
+			}
+		}
+	}
+}
+# Mob Event
+tanzimat_events.6 = {
+	type = country_event
+	placement = scope:mob_state_scope
+	title = tanzimat_events.6.t
+	desc = tanzimat_events.6.d
+	flavor = tanzimat_events.6.f
+
+	event_image = {
+		video = "gfx/event_pictures/unspecific_vandalized_storefront.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/vandalized_storefront"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+	
+	duration = 3
+
+	trigger = {
+		has_variable = sick_man_var
+		NOT = {
+			any_scope_state = {
+				has_variable = mob_state_var
+			}
+		}
+		any_scope_state = {
+			is_incorporated = yes
+			any_scope_pop = {
+				religion = rel:sunni
+			}
+			any_scope_pop = {
+				OR = {
+					religion = rel:orthodox
+					religion = rel:catholic
+					religion = rel:oriental_orthodox
+					religion = rel:protestant
+				}
+			}
+			has_variable = paranoia_state_var
+		}
+	}
+	immediate = {
+		random_scope_state = {
+			limit = {
+				is_incorporated = yes
+				any_scope_pop = {
+					religion = rel:sunni
+				}
+				any_scope_pop = {
+					OR = {
+						religion = rel:orthodox
+						religion = rel:catholic
+						religion = rel:oriental_orthodox
+						religion = rel:protestant
+					}
+				}
+				has_variable = paranoia_state_var
+			}
+			save_scope_as = mob_state_scope
+			set_variable = {
+				name = mob_state_var
+			}
+			rel:sunni = {
+				save_scope_as = mob_religion
+			}
+			random_scope_pop = {
+				limit = { 
+					OR = {
+						religion = rel:orthodox
+						religion = rel:catholic
+						religion = rel:oriental_orthodox
+						religion = rel:protestant
+					}
+				}
+				save_scope_as = mob_victim_pop_scope
+				culture = { save_scope_as = mob_victim_culture }
+			}
+		}
+		set_variable = {
+			name = tanzimat_cooldown
+			months = short_modifier_time
+		}
+	}
+	option = {
+		name = tanzimat_events.6.a						
+        default_option = yes
+		add_modifier = { 
+			name = mobilizing_the_militia
+			multiplier = money_amount_multiplier_very_small
+			months = short_modifier_time
+		}
+		scope:mob_state_scope = {
+			add_radicals = {
+				value = very_large_radicals
+				culture = scope:mob_victim_culture
+			}
+			add_radicals = {
+				value = large_radicals
+				religion = scope:mob_religion
+			}
+		}
+		custom_tooltip = tanzimat.6.tt1
+		hidden_effect = { 
+			random_list = {
+				50 = { 
+					trigger_event = {
+						id = tanzimat_events.7 days = 60
+					}
+				}
+				50 = { 
+					trigger_event = {
+						id = tanzimat_events.8 days = 60
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = tanzimat_events.6.b
+		add_modifier = { 
+			name = deploying_the_army
+			multiplier = money_amount_multiplier_very_small
+			months = short_modifier_time
+		}
+		scope:mob_state_scope = {
+			add_radicals = {
+				value = large_radicals
+				culture = scope:mob_victim_culture
+			}
+			add_radicals = {
+				value = large_radicals
+				religion = scope:mob_religion
+			}
+		}
+		custom_tooltip = tanzimat.6.tt2
+		hidden_effect = { 
+			random_list = {
+				20 = { 
+					trigger_event = {
+						id = tanzimat_events.7 days = 60
+					}
+				}
+				80 = { 
+					trigger_event = { 
+						id = tanzimat_events.8 days = 60
+					}
+				}
+			}
+		}
+	}
+	option = {
+		name = tanzimat_events.6.c
+		scope:mob_state_scope = {
+			add_radicals = {
+				value = very_large_radicals
+				culture = scope:mob_victim_culture
+			}
+			add_radicals = {
+				value = large_radicals
+				religion = scope:mob_religion
+			}
+		}
+		custom_tooltip = tanzimat.6.tt3
+		hidden_effect = { 
+			random_list = {
+				80 = { 
+					trigger_event = { 
+						id = tanzimat_events.7 days = 60
+					}
+				}
+				20 = { 
+					trigger_event = {
+						id = tanzimat_events.8 days = 60
+					}
+				}
+			}
+		}
+	}
+}
+# Massacre Event
+tanzimat_events.7 = {
+	type = country_event
+	placement = scope:massacre_state_scope
+	title = tanzimat_events.7.t
+	desc = tanzimat_events.7.d
+	flavor = tanzimat_events.7.f
+
+	event_image = {
+		video = "gfx/event_pictures/middleeast_police_breaking_door.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/police_breaking_door"
+
+	icon = "gfx/interface/icons/event_icons/event_skull.dds"
+	
+	duration = 3
+
+	trigger = {
+		has_variable = sick_man_var
+		any_scope_state = {
+			is_incorporated = yes
+			any_scope_pop = {
+				religion = rel:sunni
+			}
+			any_scope_pop = {
+				OR = {
+					religion = rel:orthodox
+					religion = rel:catholic
+					religion = rel:oriental_orthodox
+					religion = rel:protestant
+				}
+			}
+			has_variable = mob_state_var
+		}
+	}
+	immediate = {
+		random_scope_state = {
+			limit = {
+				is_incorporated = yes
+				any_scope_pop = {
+					religion = rel:sunni
+				}
+				any_scope_pop = {
+					OR = {
+						religion = rel:orthodox
+						religion = rel:catholic
+						religion = rel:oriental_orthodox
+						religion = rel:protestant
+					}
+				}
+				has_variable = mob_state_var
+			}
+			remove_variable = mob_state_var
+			save_scope_as = massacre_state_scope
+			rel:sunni = { save_scope_as = sunni_religion }
+			random_scope_pop = {
+				limit = { 
+					OR = {
+						religion = rel:orthodox
+						religion = rel:catholic
+						religion = rel:oriental_orthodox
+						religion = rel:protestant
+					}
+				}
+				religion = {
+					save_scope_as = massacre_victims
+				}
+			}
+		}
+		set_variable = {
+			name = tanzimat_cooldown
+			months = short_modifier_time
+		}
+	}
+	option = { # breaks up crowds by gunning down rioters
+		name = tanzimat_events.7.a			
+        default_option = yes
+		create_incident = {
+			country = root
+			value = 20
+		}
+		scope:massacre_state_scope = {
+			add_radicals = {
+				value = large_radicals
+				religion = rel:sunni
+			}
+			add_radicals = {
+				value = large_radicals
+				religion = scope:massacre_victims
+			}
+		}
+	}
+	option = { # let it peter out
+		name = tanzimat_events.7.b
+		scope:massacre_state_scope = {
+			add_radicals = {
+				value = very_large_radicals
+				religion = rel:sunni
+			}
+			add_radicals = {
+				value = medium_radicals
+				religion = scope:massacre_victims
+			}
+		}
+	}
+}
+# Order Restored Event
+tanzimat_events.8 = {
+	type = country_event
+	placement = scope:orderrestored_state_scope
+	title = tanzimat_events.8.t
+	desc = tanzimat_events.8.d
+	flavor = tanzimat_events.8.f
+
+	event_image = {
+		video = "gfx/event_pictures/middleeast_middleclass_cafe.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/middleclass_cafe"
+
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
+	
+	duration = 3
+
+	trigger = {
+		has_variable = sick_man_var
+		any_scope_state = {
+			is_incorporated = yes
+			any_scope_pop = {
+				religion = rel:sunni
+			}
+			any_scope_pop = {
+				OR = {
+					religion = rel:orthodox
+					religion = rel:catholic
+					religion = rel:oriental_orthodox
+					religion = rel:protestant
+				}
+			}
+			has_variable = mob_state_var
+		}
+	}
+	immediate = {
+		random_scope_state = {
+			limit = {
+				is_incorporated = yes
+				any_scope_pop = {
+					religion = rel:sunni
+				}
+				any_scope_pop = {
+					OR = {
+						religion = rel:orthodox
+						religion = rel:catholic
+						religion = rel:oriental_orthodox
+						religion = rel:protestant
+					}
+				}
+				has_variable = mob_state_var
+			}
+			remove_variable = mob_state_var
+			save_scope_as = orderrestored_state_scope
+			random_scope_pop = {
+				limit = { 
+					religion = rel:sunni 
+				}
+				culture = { save_scope_as = orderrestored_pop_scope }
+			}
+			random_scope_pop = {
+				limit = { 
+					OR = {
+						religion = rel:orthodox
+						religion = rel:catholic
+						religion = rel:oriental_orthodox
+						religion = rel:protestant
+					}
+				}
+				culture = { save_scope_as = orderrestored_victim_pop_scope }
+			}
+		}
+		set_variable = {
+			name = tanzimat_cooldown
+			months = short_modifier_time
+		}
+	}
+	option = { # situation is calming down
+		name = tanzimat_events.8.a
+        default_option = yes
+		add_loyalists = {
+			value = 0.10
+			culture = scope:orderrestored_victim_pop_scope
+		}
+		add_loyalists = {
+			value = 0.05
+			culture = scope:orderrestored_pop_scope
+		}
+	}
+}
+# Land registration resisted
+tanzimat_events.9 = {
+	type = country_event
+	placement = scope:peasant_state
+	title = tanzimat_events.9.t
+	desc = tanzimat_events.9.d
+	flavor = tanzimat_events.9.f
+
+	event_image = {
+		video = "gfx/event_pictures/europenorthamerica_russian_serfs.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/russian_serfs"
+
+	icon = "gfx/interface/icons/event_icons/event_protest.dds"
+	
+	duration = 3
+
+	trigger = {
+		has_variable = sick_man_var
+		has_variable = reformed_landcode
+		NOT = { 
+			has_variable = tanzimat_cooldown 
+		}
+		any_scope_state = {
+			is_incorporated = yes
+			any_scope_pop = {
+				is_pop_type = peasants 
+			}
+		}
+		any_scope_character = {
+			OR = {
+				has_role = general
+			}
+		}
+	}
+	immediate = {
+		random_scope_state = {
+			limit = {
+				is_incorporated = yes
+				any_scope_pop = {
+					is_pop_type = peasants 
+				}
+			}
+			random_scope_pop = {
+					limit = { 
+						is_pop_type = peasants 
+					}
+					save_scope_as = peasant_pop_scope
+				}
+			save_scope_as = peasant_state
+		}
+		set_variable = {
+			name = tanzimat_cooldown
+			months = short_modifier_time
+		}
+		random_scope_character = {
+			limit = {
+				has_role = general
+			}
+			save_scope_as = peasant_smashing_general
+		}
+	}
+
+	option = {
+		name = tanzimat_events.9.a						
+        default_option = yes
+		scope:peasant_state = {
+			add_modifier = {
+				name = peasant_unrest
+				months = normal_modifier_time
+				multiplier = 0.5
+			}
+			add_radicals = {
+				pop_type = peasants
+				value = medium_radicals
+			}
+		}
+		ig:ig_landowners = {
+			add_modifier = {
+				name = expanding_holdings
+				months = normal_modifier_time
+			}
+		}
+	}
+	option = {
+		name = tanzimat_events.9.b
+		scope:peasant_state = {
+			add_modifier = {
+				name = peasant_unrest
+				months = normal_modifier_time
+				multiplier = 0.25
+			}
+			add_radicals = {
+				pop_type = peasants
+				value = large_radicals
+			}
+		}
+	}
+	option = {
+		name = tanzimat_events.9.c					
+		scope:peasant_state = {
+			add_modifier = {
+				name = peasant_unrest
+				months = normal_modifier_time
+			}
+		}
+	}
+}
+# Drafting Dhimmis
+tanzimat_events.10 = {
+	type = country_event
+	placement = root
+	title = tanzimat_events.10.t
+	desc = tanzimat_events.10.d
+	flavor = tanzimat_events.10.f
+
+	event_image = {
+		video = "gfx/event_pictures/middleeast_battlefield_trenches.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/battlefield_trenches"
+
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	
+	duration = 3
+
+	trigger = {
+		has_technology_researched = mandatory_service
+		has_variable = sick_man_var
+		NOT = { 
+			has_variable = tanzimat_military_service 
+		}
+	}
+	immediate = {
+		set_variable = tanzimat_military_service
+	}
+	option = {
+		name = tanzimat_events.10.a						
+        default_option = yes
+		remove_modifier = cizye_tax
+		add_modifier = { 
+			name = draft_exemption_tax
+			months = very_long_modifier_time
+		}
+	}
+	option = {
+		name = tanzimat_events.10.b
+		remove_modifier = cizye_tax
+		if = {
+			limit = {
+				any_scope_pop = { 
+					religion = rel:orthodox 
+				}
+			}
+			add_radicals = {
+				religion = rel:orthodox
+				value = medium_radicals
+			}
+		}
+		if = {
+			limit = {
+				any_scope_pop = { 
+					religion = rel:oriental_orthodox 
+				}
+			}
+			add_radicals = {
+				religion = rel:oriental_orthodox
+				value = medium_radicals
+			}
+		}
+		if = {
+			limit = {
+				any_scope_pop = { 
+					religion = rel:catholic 
+				}
+			}
+			add_radicals = {
+				religion = rel:catholic
+				value = medium_radicals
+			}
+		}
+		if = {
+			limit = {
+				any_scope_pop = { 
+					religion = rel:protestant 
+				}
+			}
+			add_radicals = {
+				religion = rel:protestant
+				value = medium_radicals
+			}
+		}
+		if = {
+			limit = {
+				any_scope_pop = { 
+					religion = rel:jewish 
+				}
+			}
+			add_radicals = {
+				religion = rel:jewish
+				value = medium_radicals
+			}
+		}
+	}
+}
