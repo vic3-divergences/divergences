@@ -63,9 +63,9 @@ SCA = { #Scandinavia
 	# possible = { #DVG
 		# any_country = {
 			# OR = {
-				# country_has_primary_culture = cu:swedish
-				# country_has_primary_culture = cu:danish
-				# country_has_primary_culture = cu:norwegian
+				# country_has_primary_culture = cu:scandinavian
+				# country_has_primary_culture = cu:scandinavian
+				# country_has_primary_culture = cu:scandinavian
 			# }		
 			# has_technology_researched = pan-nationalism
 		# }
@@ -85,11 +85,22 @@ NGF = { #League of Berlin
 }
 
 SGF = { #Danubian Confederation
-	use_culture_states = yes
-
+	states = {
+		STATE_BAVARIA
+		STATE_TYROL
+		STATE_AUSTRIA
+		STATE_STYRIA
+		STATE_SLOVENIA
+		STATE_EAST_SWITZERLAND
+		STATE_WEST_SWITZERLAND
+		STATE_BADEN
+		STATE_WURTTEMBERG
+		STATE_FRANCONIA
+	}
 	required_states_fraction = 0.75
 
 	possible = {
+		country_has_primary_culture = cu:south_german
 		has_technology_researched = nationalism
 	}
 	
@@ -108,10 +119,71 @@ RHI = { #Rhineland
 	ai_will_do = { always = yes }
 }
 
+MUS = { #Rus/Muscovy
+	states = {
+		STATE_MOSCOW
+		STATE_BRYANSK
+		STATE_SMOLENSK
+		STATE_TVER
+		STATE_OKA
+	}
+
+	required_states_fraction = 0.60
+	
+	possible = {
+		has_technology_researched = nationalism
+		custom_tooltip = {
+			text = united_muscovy
+			AND = {
+				OR = {
+					NOT = { exists = c:RYA }
+					root = c:RYA
+					c:RYA = { 
+						is_subject_of = root 
+					}
+				}
+				OR = { 
+					NOT = { exists = c:MSO }
+					root = c:MSO
+					c:MSO = { 
+						is_subject_of = root 
+					}	
+				}
+				OR = { 
+					NOT = { exists = c:TVE }
+					root = c:TVE
+					c:TVE = { 
+						is_subject_of = root 
+					}	
+				}
+				OR = { 
+					NOT = { exists = c:NZH }
+					root = c:NZH
+					c:NZH = { 
+						is_subject_of = root 
+					}
+				}
+			}
+		}	
+	}
+	
+	ai_will_do = { always = yes }
+}
+
 RUS = { #Russia
 	use_culture_states = yes
 
-	required_states_fraction = 0.75
+	is_major_formation = yes
+
+	unification_play = dp_unify_russia
+	leadership_play = dp_leadership_russia
+
+	required_states_fraction = 0.65
+	
+	possible = {
+		has_technology_researched = nationalism
+		country_rank >= rank_value:major_power
+	}
 	
 	ai_will_do = { always = yes }
 }
@@ -136,12 +208,35 @@ PLC = { #Poland-Lithuania
 		STATE_VOLHYNIA
 		STATE_WEST_GALICIA
 		STATE_WEST_PRUSSIA
+		STATE_MINSK
 	}
 
 	required_states_fraction = 1
 
 	possible = {
-		has_technology_researched = pan-nationalism #Replace with something like a journel entry requirement
+		has_technology_researched = pan-nationalism 
+		
+		custom_tooltip = {
+			text = can_unite_plc_txt
+			has_variable = can_unite_plc
+		}
+	}
+	
+	ai_will_do = { always = yes }
+}
+
+UKR = { #Hetmanate
+	states = {
+		STATE_KIEV
+		STATE_KURSK
+		STATE_SLOBOZ
+		STATE_DANU
+	}
+
+	required_states_fraction = 0.75
+
+	possible = {
+		has_technology_researched = nationalism 
 	}
 	
 	ai_will_do = { always = yes }
@@ -271,8 +366,14 @@ HLR = { #Holy Roman Empire
 
 	possible = {
 		country_has_primary_culture = cu:czech
-		not = {
-			has_technology_researched = nationalism 
+		NOT = {
+			year >= 1848
+			has_global_variable = hre_fail
+		}
+		custom_tooltip = {
+			text = hre_variable_tt
+			has_global_variable = hre_success_1
+			has_global_variable = hre_success_2
 		}
 	}
 }
@@ -341,6 +442,22 @@ ITC = { #Italian Confederation
 	}
 	
 	required_states_fraction = 0.75	
+
+	ai_will_do = { always = yes }
+
+	possible = {
+		has_technology_researched = nationalism
+	}
+}
+
+SWZ = { #Switzerland Confederation
+	states = {
+		STATE_EAST_SWITZERLAND
+		STATE_WEST_SWITZERLAND
+		STATE_FRANCHE_COMTE
+	}
+	
+	required_states_fraction = 0.50	
 
 	ai_will_do = { always = yes }
 
