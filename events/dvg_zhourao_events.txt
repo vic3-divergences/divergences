@@ -165,9 +165,13 @@ dvg_zhourao.3 = {
 				name = dvg_yaluo_reform_variable_var
 				add = -2
 			}
+			set_variable = dvg_yaluo_renegtion
+		}
+		add_journal_entry = {
+			type = je_frontier_wars
 		}
 		ai_chance = {
-			base = 1
+			base = 0
 		}
 	}
 	# Pay part of tribute from the central treasury
@@ -190,7 +194,7 @@ dvg_zhourao.3 = {
 			base = 1
 		}
 	}
-	# Force the eastern hui to pay tribute
+	# Force the northern hui to pay tribute
 	option = {
 		name = dvg_zhourao.3.c
 		add_loyalists = {
@@ -215,23 +219,354 @@ dvg_zhourao.3 = {
 	}
 }
 
+# Scandinavian Proposals roughly 1854
+dvg_zhourao.4 = {
+	type = country_event
+	placement = ROOT
 
+	title = dvg_zhourao.4.t
+	desc = dvg_zhourao.4.d
+	flavor = dvg_zhourao.4.f
 
+	event_image = {
+		video = "gfx/event_pictures/southamerica_war_civilians.bk2"
+	}
 
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
 
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
 
+	duration = 3
 
+	trigger = {
+	}
+	
+	immediate = {
+	}
+	
+	# Refuse European Intervention
+	option = {
+		name = dvg_zhourao.4.a
+		custom_tooltip = {
+			text = dvg_yaluo_lower_by_two_tt
+			change_variable = {
+				name = dvg_yaluo_reform_variable_var
+				add = -2
+			}
+			set_global_variable = dvg_yaluo_closed_to_scandinavia
+		}
+		c:SCA = {
+			trigger_event = { id = dvg_oceania.43 days = 30 }
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+	# Allow them in our ports
+	option = {
+		name = dvg_zhourao.4.b
+		default_option = yes
+		add_treasury = -200000
+		custom_tooltip = {
+			text = dvg_yaluo_raise_by_one_tt
+			change_variable = {
+				name = dvg_yaluo_reform_variable_var
+				add = 1
+			}
+			set_global_variable = dvg_yaluo_partially_open_to_scandinavia
+		}
+		add_modifier = {
+			name = dvg_small_research_value
+			days = 600
+		}
+		c:SCA = {
+			trigger_event = { id = dvg_oceania.44 days = 30 }
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+	# Open to investment!
+	option = {
+		name = dvg_zhourao.4.c
+		custom_tooltip = {
+			text = dvg_yaluo_raise_by_two_tt
+			change_variable = {
+				name = dvg_yaluo_reform_variable_var
+				add = 2
+			}
+			set_global_variable = dvg_yaluo_open_to_scandinavia
+		}
+		add_modifier = {
+			name = dvg_research_value
+			days = 600
+		}
+		c:SCA = {
+			trigger_event = { id = dvg_oceania.42 days = 30 }
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
 
+# One Kongsi in Zhourao
+dvg_zhourao.5 = {
+	type = country_event
+	placement = ROOT
 
+	title = dvg_zhourao.5.t
+	desc = dvg_zhourao.5.d
+	flavor = dvg_zhourao.5.f
 
+	event_image = {
+		video = "gfx/event_pictures/southamerica_war_civilians.bk2"
+	}
 
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
 
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
 
+	duration = 3
 
+	trigger = {
+		exists = c:YLO
+		exists = c:MJN
+		OR = {
+			root = c:YLO
+			root = c:MJN
+		}
+		year >= 1854
+		dvg_yaluo_reform_variable_var >= 1
+	}
+	
+	immediate = {
+	}
+	
+	# The truce is almost over, we can fight, so can they
+	option = {
+		name = dvg_zhourao.5.a
+		custom_tooltip = {
+			text = dvg_one_kongsi_tt
+			set_global_variable = dvg_one_kongsi
+		}
+		add_journal_entry = {
+			type = je_one_kongsi
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
 
+# The Northern Hui Defect!
+dvg_zhourao.6 = {
+	type = country_event
+	placement = ROOT
 
+	title = dvg_zhourao.6.t
+	desc = dvg_zhourao.6.d
+	flavor = dvg_zhourao.6.f
 
+	event_image = {
+		video = "gfx/event_pictures/southamerica_war_civilians.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		dvg_yaluo_reform_variable_var >= 8
+		has_variable = dvg_one_kongsi
+	}
+	
+	immediate = {
+		s:STATE_XINXIANG.region_state:YLO = {
+			set_state_owner = c:MJN
+		}
+	}
+	
+	# Oh dear
+	option = {
+		name = dvg_zhourao.6.a
+		custom_tooltip = {
+			text = dvg_effects_of_reforms_tt
+			set_variable = dvg_among_kongsus
+			trigger_event = { id = dvg_zhourao.7 days = 90 }
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+# Militia Mobilize!
 dvg_zhourao.7 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_zhourao.7.t
+	desc = dvg_zhourao.7.d
+	flavor = dvg_zhourao.7.f
+
+	event_image = {
+		video = "gfx/event_pictures/southamerica_war_civilians.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+	}
+	
+	# For democracy!
+	option = {
+		name = dvg_zhourao.7.a
+		add_modifier = {
+			name = dvg_demoratic_miltias
+			days = 900
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+# Good tidings.
+dvg_zhourao.8 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_zhourao.8.t
+	desc = dvg_zhourao.8.d
+	flavor = dvg_zhourao.8.f
+
+	event_image = {
+		video = "gfx/event_pictures/southamerica_war_civilians.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+	}
+	
+	# Fair enough
+	option = {
+		name = dvg_zhourao.8.a
+		custom_tooltip = {
+			text = dvg_effects_of_reforms_positive_tt
+			set_variable = dvg_among_kongsus
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+# Yaluo petitions for annexation!
+dvg_zhourao.9 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_zhourao.9.t
+	desc = dvg_zhourao.9.d
+	flavor = dvg_zhourao.9.f
+
+	event_image = {
+		video = "gfx/event_pictures/southamerica_war_civilians.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+	}
+	
+	# Oh dear
+	option = {
+		name = dvg_zhourao.9.a
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+# Yaluo and Mianjin reunited!
+dvg_zhourao.10 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_zhourao.10.t
+	desc = dvg_zhourao.10.d
+	flavor = dvg_zhourao.10.f
+
+	event_image = {
+		video = "gfx/event_pictures/southamerica_war_civilians.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		dvg_yaluo_reform_variable_var = 0
+	}
+	
+	immediate = {
+	}
+	
+	# Fair enough, the two kongsi are one at last oncemore!
+	option = {
+		name = dvg_zhourao.10.a
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+dvg_zhourao.1001 = {
 	type = country_event
 	placement = ROOT
 
