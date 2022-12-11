@@ -1,0 +1,149 @@
+﻿je_golden_liberty = {
+    icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+    invalid = {
+        NOR = {
+            c:LIT = {
+                is_subject_of = c:POL
+            }
+        }
+    }
+
+    complete = {
+        OR = {
+            AND = {
+                ig:ig_landowners = {
+			        is_powerful = yes
+			        is_in_government = yes
+		        }
+		        has_insurrectionary_interest_groups = no
+                owns_entire_state_region = STATE_MAZOVIA
+                has_law = law_type:law_hereditary_bureaucrats
+                has_law = law_type:law_agrarianism
+                has_law = law_type:law_serfdom
+                has_law = law_type:law_oligarchy
+            }
+            AND = {
+                ig:ig_landowners = {
+			        is_powerful = no
+			        is_in_government = no
+		        }
+                has_insurrectionary_interest_groups = no
+                owns_entire_state_region = STATE_MAZOVIA
+                has_law = law_type:law_interventionism
+                has_law = law_type:law_wealth_voting
+                NOT = {
+                    has_law = law_type:law_hereditary_bureaucrats
+                    has_law = law_type:law_serfdom
+                }
+            }
+        }
+    }
+
+    on_complete = {
+        set_variable = can_unite_plc
+        if = {
+            limit = {
+                ig:ig_landowners = {
+			        is_powerful = yes
+			        is_in_government = yes
+		        }
+            }
+            trigger_event = {
+			    id = poland.2
+		    }
+        }
+        else = {
+            trigger_event = {
+			    id = poland.3
+		    }
+        }
+    }
+
+    weight = 100
+	should_be_pinned_by_default = yes
+}
+
+je_uniting_the_commonwealth = {
+    icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+    is_shown_when_inactive = {
+        exists = c:POL
+        c:POL = ROOT
+    }
+
+    possible = {
+        NOT = {
+            has_modifier = modifier_slave_to_liberty
+        }
+    }
+
+    complete = {
+        custom_tooltip = {
+            text = plc_united
+            c:PLC = ROOT
+        }
+    }
+
+    on_complete = {
+        trigger_event = {
+            id = poland.4
+        }
+    }
+
+    weight = 100
+	should_be_pinned_by_default = yes
+}
+
+je_eastern_resistance = {
+    icon = "gfx/interface/icons/event_icons/event_military.dds"
+    
+    is_shown_when_inactive = {
+        exists = c:PLC
+        c:PLC = root
+    }
+
+    possible = {
+        exists = c:PLC
+        c:PLC = root
+    }
+
+    complete = { 
+        NOT = { 
+            has_law = law_type:law_serfdom
+        }
+        cu:cossack = {
+            NOT = { culture_is_discriminated_in = ROOT }
+        }
+    }  
+
+    fail = {
+        c:PLC = {
+            is_diplomatic_play_initiator = yes
+        }
+        any_country = { 	
+            is_secessionist = yes
+            is_diplomatic_play_target = yes
+            OR = {
+                country_has_primary_culture = cu:cossack
+                country_has_primary_culture = cu:byelorussian 
+            }
+        }
+    }
+
+    on_fail = {
+        trigger_event = {
+            id = poland.5
+            days = 21
+        }
+    }
+
+    on_complete = {
+        trigger_event = {
+            id = poland.6
+        }
+    }
+
+    weight = 100
+	should_be_pinned_by_default = yes
+}
