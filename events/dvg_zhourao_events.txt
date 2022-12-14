@@ -24,9 +24,6 @@ dvg_zhourao.1 = {
 	}
 	
 	immediate = {
-		add_journal_entry = {
-			type = je_yaluo_reform
-		}
 		set_variable = {
 			name = dvg_yaluo_reform_variable_var
 			value = 6
@@ -34,6 +31,9 @@ dvg_zhourao.1 = {
 		set_variable = {
 			name = dvg_yaluo_reform_variable_var_2
 			value = 6
+		}
+		add_journal_entry = {
+			type = je_yaluo_reform
 		}
 	}
 	
@@ -105,7 +105,7 @@ dvg_zhourao.2 = {
 	option = {
 		name = dvg_zhourao.2.b
 		custom_tooltip = {
-			text = dvg_yaluo_raise_by_one_tt
+			text = dvg_yaluo_raise_by_one_tt_wealth
 			change_variable = {
 				name = dvg_yaluo_reform_variable_var
 				add = 1
@@ -113,6 +113,16 @@ dvg_zhourao.2 = {
 			change_variable = {
 				name = dvg_yaluo_reform_variable_var_2
 				add = 1
+			}
+			ig:ig_landowners = {
+				add_modifier = {
+					name = dvg_approval_buff
+					days = 730
+					is_decaying	= yes
+				}
+			}
+			call_election = {
+				months = 1
 			}
 			if = {
 				limit = {
@@ -130,7 +140,7 @@ dvg_zhourao.2 = {
 	option = {
 		name = dvg_zhourao.2.l
 		custom_tooltip = {
-			text = dvg_yaluo_raise_by_two_tt
+			text = dvg_yaluo_raise_by_two_tt_census
 			change_variable = {
 				name = dvg_yaluo_reform_variable_var
 				add = 2
@@ -138,6 +148,16 @@ dvg_zhourao.2 = {
 			change_variable = {
 				name = dvg_yaluo_reform_variable_var_2
 				add = 2
+			}
+			ig:ig_landowners = {
+				add_modifier = {
+					name = dvg_approval_buff
+					days = 730
+					is_decaying	= yes
+				}
+			}
+			call_election = {
+				months = 1
 			}
 			if = {
 				limit = {
@@ -321,7 +341,6 @@ dvg_zhourao.4 = {
 	option = {
 		name = dvg_zhourao.4.b
 		default_option = yes
-		add_treasury = -200000
 		custom_tooltip = {
 			text = dvg_yaluo_raise_by_one_tt
 			change_variable = {
@@ -407,6 +426,9 @@ dvg_zhourao.5 = {
 	}
 	
 	immediate = {
+		add_journal_entry = {
+			type = je_one_kongsi
+		}
 	}
 	
 	# The truce is almost over, we can fight, so can they
@@ -415,9 +437,6 @@ dvg_zhourao.5 = {
 		custom_tooltip = {
 			text = dvg_one_kongsi_tt
 			set_variable = dvg_one_kongsi
-		}
-		add_journal_entry = {
-			type = je_one_kongsi
 		}
 		ai_chance = {
 			base = 1
@@ -449,9 +468,16 @@ dvg_zhourao.6 = {
 		has_variable = dvg_yaluo_reform_variable_var_2
 		this = { var:dvg_yaluo_reform_variable_var_2 >= 8 }
 		has_variable = dvg_one_kongsi
+		NOT = {
+			has_variable = dvg_northern_hui
+		}
 	}
 	
 	immediate = {
+		set_variable = dvg_northern_hui
+		s:STATE_XINXIANG.region_state:YLO = {
+			set_state_owner = c:MJN
+		}
 	}
 	
 	# Oh dear
@@ -461,8 +487,12 @@ dvg_zhourao.6 = {
 			text = dvg_effects_of_reforms_tt
 			set_variable = dvg_among_kongsus
 			trigger_event = { id = dvg_zhourao.7 days = 90 }
-			s:STATE_XINXIANG.region_state:YLO = {
-				set_state_owner = c:MJN
+			s:STATE_XINXIANG = {
+				add_claim = c:YLO
+			}
+			change_relations = {
+				country = c:MJN
+				value = -50
 			}
 		}
 		ai_chance = {
@@ -744,7 +774,60 @@ dvg_zhourao.12 = {
 			}
 		}
 		ai_chance = {
-			base = 0
+			base = 1
+		}
+	}
+}
+
+ # Mianjin and Yaluo Event war
+dvg_zhourao.13 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_zhourao.13.t
+	desc = dvg_zhourao.13.d
+	flavor = dvg_zhourao.13.f
+
+	event_image = {
+		video = "gfx/event_pictures/asia_politician_parliament_motion.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+	}
+	
+	# War!
+	option = {
+		name = dvg_zhourao.12.a
+		custom_tooltip = {
+			text = dvg_this_will_war_with_mianjin_tt
+			create_diplomatic_play = {
+				name = dvg_second_kongsi_war_name
+			
+				target_country = c:MJN
+				
+				war = yes
+				
+				type = dp_annex_war
+				
+				add_war_goal = {
+					holder = c:MJN
+					type = annex_country
+					target_country = c:YLO
+				}
+			}
+		}
+		ai_chance = {
+			base = 1
 		}
 	}
 }
@@ -863,6 +946,9 @@ dvg_zhourao.501 = {
 				target_country = c:MJN
 			}
 		}
+		hidden_effect = {
+			set_variable = dvg_wiradjuri_war_variable
+		}
 
 		ai_chance = {
 			base = 1
@@ -972,6 +1058,9 @@ dvg_zhourao.701 = {
 				type = war_reparations
 				target_country = c:ZSA
 			}
+		}
+		hidden_effect = {
+			set_variable = dvg_southern_push_variable
 		}
 
 		ai_chance = {
