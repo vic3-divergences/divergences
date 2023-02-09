@@ -326,6 +326,12 @@ on_yearly_pulse_country = {
 		4 = 0
 		1 = wedding.1 # on average, monarchs should marry within 5 years of coming of age
 	}
+
+	#Slavery Abolition
+	random_events = {
+		4 = 0
+		1 = slavery_law_events.7
+	}
 }
 on_half_yearly_pulse_country = {
 	# random_events = {
@@ -612,18 +618,6 @@ on_new_ruler = {
 on_country_default = {
 	effect = {
 		add_modifier = country_default	
-		# if = {
-			# limit = {
-				# has_journal_entry = je_warlord_china
-				# NOT = { has_variable = china_warlord_explosion_default }
-			# }
-			# post_notification = warlord_china_explosion_point_add
-			# change_variable = {
-				# name = china_warlord_explosion
-				# add = 1
-			# }
-			# set_variable = china_warlord_explosion_default
-		# }
 	}
 }
 
@@ -1607,6 +1601,17 @@ on_revolution_start = {
 			# }
 			# set_variable = china_warlord_explosion_revolution
 		# }
+		if = {
+            limit = {
+                has_journal_entry = je_meiji_restoration
+                scope:target = {
+                    ig:ig_landowners = {
+                        is_in_government = yes
+                    }
+                }
+            }
+            set_variable = anti_shogunate_civil_war
+        }
 	}
 }
 
@@ -1626,6 +1631,18 @@ on_civil_war_won = {
 				has_global_variable = achievement_revo_needed
 			}
 			set_global_variable = achievement_revolutionary
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_meiji_restoration
+				has_variable = anti_shogunate_civil_war
+				has_variable = shogunate_var
+			}
+			change_variable = {
+				name = shogunate_var
+				add = 120
+			}
+			remove_variable = anti_shogunate_civil_war
 		}
 	}
 }
@@ -1783,16 +1800,10 @@ on_colony_created = {
 			if = {
 				limit = {
 					has_journal_entry = je_tutorial_colonize_state
-					je:je_tutorial_colonize_state = {
-						NOT = {
-							has_variable = tut_colony_target
-						}
-					}
 				}
-				je:je_tutorial_colonize_state = {
+				root = {
 					set_variable = {
 						name = tut_colony_target
-						value = root
 					}
 				}
 			}
@@ -2016,4 +2027,7 @@ on_character_recruitment = {
 # scope:general = invading general
 # scope:state = location state
 on_naval_invasion = {
+    effect = {
+        post_notification = naval_invasion_against_us
+    }
 }
