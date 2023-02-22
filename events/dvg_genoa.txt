@@ -240,22 +240,28 @@ genoa.6 = {
                 popup = yes
             }
         }
-		create_diplomatic_play = {
-			name = savoy_genoa_war
-			target_state = s:STATE_PIEDMONT.region_state:GEN
-			war = yes
-			type = dp_annex_war
-
-			add_war_goal = {
-				holder = c:GEN
-				type = conquer_state
-				state = s:STATE_PROVENCE.region_state:SAV
-				target_country = c:SAV
-			}
-			add_war_goal = {
-				holder = c:GEN
-				type = war_reparations
-				target_country = c:SAV
+		
+		custom_tooltip = {
+			text = dvg_this_will_lead_to_war_with_genoa
+			create_diplomatic_play = {
+				name = savoy_genoa_war
+			
+				target_country = c:GEN
+				
+				war = yes
+				
+				type = dp_annex_war
+				
+				add_war_goal = {
+					holder = c:GEN
+					type = war_reparations
+					target_country = c:SAV
+				}
+				add_war_goal = {
+					holder = c:GEN
+					type = conquer_state
+					target_state = s:STATE_PROVENCE.region_state:SAV
+				}
 			}
 		}
 		hidden_effect = {
@@ -394,6 +400,11 @@ genoa.9 = {
             }
             activate_law = law_type:law_national_militia
         }
+		add_modifier = { 
+			name = dvg_genoa_miltias
+			months = 60
+		}
+		
 		trigger_event = {
 			id = genoa.10
 			days = 60
@@ -442,13 +453,35 @@ genoa.10 = {
 			name = dvg_approval_buff
 			months = 60
 		}
+		add_modifier = { 
+			name = dvg_genoa_revolutionary_support
+			months = 120
+		}
 		add_treasury = 50000
 		ig:ig_intelligentsia = {
             add_ruling_interest_group = yes
         }
+		every_country = {
+			if = {
+				limit = {
+					NOT = { this = ROOT }
+					country_has_primary_culture = cu:north_italian
+				}
+
+				change_relations = { 
+					country = ROOT
+					value = -50 
+				}
+			}
+		}
+		change_relations = { 
+			country = c:TUS
+			value = 100 
+		}
 	}
 }
 
+#Republicans demand the Franchise
 genoa.11 = {
 	type = country_event
 	placement = root
@@ -605,7 +638,6 @@ genoa.12 = {
 						culture=cu:central_italian
 						ruler = yes
 						interest_group = ig_armed_forces
-						is_general = yes
 						traits = { expert_defensive_strategist persistent brave romantic}
 						birth_date = 1785.10.19
 					}
@@ -703,11 +735,11 @@ genoa.13 = {
             culture = cu:central_italian
         }
 		c:GEN = {
-			#trigger_event = {
-			#	id = genoa.9000 ############################################################################ FIX  ########################################## 
-			#	days = 7
-			#	popup = yes
-			#}
+			trigger_event = {
+				id = genoa.19 
+				days = 7
+				popup = yes
+			}
 		}
 	}
 }
@@ -740,7 +772,7 @@ genoa.14 = {
 		ai_chance = {
 			base = 66
 		}  
-		c:TUS = {
+		c:TUS = {	
             add_diplomatic_pact = {
                 country = c:COR
                 type = alliance
@@ -762,7 +794,7 @@ genoa.14 = {
 		}  
 		c:COR = {
 			trigger_event = {
-				id = genoa.16 
+				id = genoa.17 
 				days = 30
 				popup = yes
 			}
@@ -806,7 +838,7 @@ genoa.15 = {
 	}
 }
 
-# Genoa Republic, to Attack or Let Go
+# Genoa Republic, to Attack or Let Go (Eturia supports Corsica)
 genoa.16 = { 
 	type = country_event
 	placement = root
@@ -830,42 +862,278 @@ genoa.16 = {
 		
 	option = {
 		name = genoa.16.a
+		ai_chance = {
+			base = 33
+		}  
+
+		#WAR
+		custom_tooltip = {
+			text = dvg_this_will_lead_to_war_with_genoa_II
+			create_diplomatic_play = {
+				name = corsica_independence_war
+			
+				target_country = c:COR
+				
+				war = yes
+				
+				type = dp_annex_war
+				
+				add_war_goal = {
+					holder = c:COR
+					type = humiliation
+					target_country = c:GEN
+				}
+
+				add_war_goal = {
+					holder = c:TUS
+					type = war_reparations
+					target_country = c:GEN
+				}
+			}
+		}
+	}
+
+	option = {
+		name = genoa.16.b
+		default_option = yes
+		ai_chance = {
+			base = 67
+		} 
+		add_modifier = { 
+			name = dvg_genoa_losses_corsica 
+			months = 60
+		}   
+	}
+}
+
+#No Support from Etruria Corsica -> Genoa Response
+genoa.17 = { 
+	type = country_event
+	placement = root
+	title = genoa.17.t
+	desc = genoa.17.d
+	flavor = genoa.17.f
+
+	duration = 3
+
+	event_image = {
+		video = "gfx/event_pictures/unspecific_factory_closed.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/factory_closed"
+
+	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
+
+	trigger = {
+	}   
+		
+	option = {
+		name = genoa.17.a
+		default_option = yes
+
+		c:GEN = {
+			trigger_event = {
+				id = genoa.18 
+				days = 30
+				popup = yes
+			}
+		}
+	}
+}
+
+# Genoa Republic, to Attack or Let Go (Eturia does not supports Corsica)
+genoa.18 = { 
+	type = country_event
+	placement = root
+	title = genoa.18.t
+	desc = genoa.18.d
+	flavor = genoa.18.f
+
+	duration = 3
+
+	event_image = {
+		video = "gfx/event_pictures/unspecific_factory_closed.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/factory_closed"
+
+	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
+
+	trigger = {
+	}   
+		
+	option = {
+		name = genoa.18.a
 		default_option = yes
 		ai_chance = {
 			base = 33
 		}  
 
 		#WAR
-		create_diplomatic_play = {
-			name = corsica_independence_war
-			target_state = s:STATE_CORSICA.region_state:COR
-			war = yes
-			type = dp_annex_war
+		custom_tooltip = {
+			text = dvg_this_will_lead_to_war_with_genoa_II
+			create_diplomatic_play = {
+				name = corsica_independence_war
+			
+				target_country = c:COR
+				
+				war = yes
+				
+				type = dp_annex_war
+				
+				add_war_goal = {
+					holder = c:COR
+					type = humiliation
+					target_country = c:GEN
+				}
 
-			add_war_goal = {
-				holder = c:COR
-				type = dp_independence
-				state = s:STATE_CORSICA.region_state:COR
-				target_country = c:GEN
+				add_war_goal = {
+					holder = c:COR
+					type = war_reparations
+					target_country = c:GEN
+				}
 			}
 		}
 	}
 
 	option = {
-		name = genoa.16.a
-		default_option = yes
+		name = genoa.18.b
 		ai_chance = {
-			base = 67
-		}  
-		#Prestige hit
+			base = 33
+		} 
+		add_modifier = { 
+			name = dvg_genoa_losses_corsica 
+			months = 60
+		}   
 	}
 }
 
+# Genoa Republic, Corsican Revolt (Corsica goes alone)
+genoa.19 = { 
+	type = country_event
+	placement = root
+	title = genoa.19.t
+	desc = genoa.19.d
+	flavor = genoa.19.f
+
+	duration = 3
+
+	event_image = {
+		video = "gfx/event_pictures/unspecific_factory_closed.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/factory_closed"
+
+	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
+
+	trigger = {
+	}   
+		
+	option = {
+		name = genoa.19.a
+		default_option = yes
+		ai_chance = {
+			base = 33
+		}  
+
+		#WAR
+		custom_tooltip = {
+			text = dvg_this_will_lead_to_war_with_genoa_II
+			create_diplomatic_play = {
+				name = corsica_independence_war
+			
+				target_country = c:COR
+				
+				war = yes
+				
+				type = dp_annex_war
+				
+				add_war_goal = {
+					holder = c:COR
+					type = humiliation
+					target_country = c:GEN
+				}
+
+				add_war_goal = {
+					holder = c:COR
+					type = war_reparations
+					target_country = c:GEN
+				}
+			}
+		}
+	}
+
+	option = {
+		name = genoa.19.b
+		ai_chance = {
+			base = 33
+		} 
+		add_modifier = { 
+			name = dvg_genoa_losses_corsica 
+			months = 60
+		}   
+	}
+}
+
+#Corsica Annexation Event #Being Worked 
+genoa.20 = { 
+	type = country_event
+	placement = root
+	title = genoa.20.t
+	desc = genoa.20.d
+	flavor = genoa.20.f
+
+	duration = 3
+
+	event_image = {
+		video = "gfx/event_pictures/unspecific_factory_closed.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/factory_closed"
+
+	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
+
+	trigger = {
+		#Truce with GEN
+		#OR Genoa = has modifier dvg_genoa_losses_corsica / Maybe put a timed modifier on Eturia + Not at war with Genoa / event if Genoa lets go or loses a war
+	}   
+		
+	option = {
+		name = genoa.20.a
+		default_option = yes
+		ai_chance = {
+			base = 100
+		}  
+		annex = c:COR
+		on_created = {
+			create_character = {
+				first_name = "Mateo"					
+				last_name = "Falcone"
+				culture=cu:central_italian
+				is_general = yes
+				traits = { expert_defensive_strategist persistent brave romantic} #Might be too OP, decrease 
+				birth_date = 1785.10.19
+				interest_group = ig_armed_forces
+				ideology = ideology_traditionalist
+			}
+		}
+		play_as = c:TUS
+	}
+	
+}
+
+# Savoy Humiliated Event
+#Fix 20 + Mateo Falcone OP?
+#Flavor 15-9
+
+#Savoy Humiliation Event (Prestige, interest group lose support, and radicals)
 
 
-#Fix 13
-
-# Have Falcone become a general post war
+# Have Falcone become a general post war in Eturia
 
 
 #GENOA 4 DUKE PATH
@@ -915,3 +1183,4 @@ genoa.16 = {
          #       }
           #  }
         #}
+
