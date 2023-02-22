@@ -1,0 +1,515 @@
+namespace = dvg_lotharingia
+
+
+
+dvg_lotharingia.1 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_lotharingia.1.t
+	desc = dvg_lotharingia.1.d
+	flavor = dvg_lotharingia.1.f
+	
+	event_image = {
+		video = "gfx/event_pictures/middleeast_courtroom_upheaval.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	    year = 1836
+	}
+	
+	
+	# Vive!
+	option = {
+		name = dvg_lotharingia.1.a
+		default_option = yes
+		add_journal_entry = {
+			type = je_lotharian_house_of_cards
+		}
+		add_radicals = {
+			value = 0.4
+			culture = cu:lotharian
+		}
+		add_loyalists = {
+			value = 0.15
+			culture = cu:lotharian
+		}
+		interest_group_pol_str_mult = 0.2
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+reconquering_atlantia.1 = {
+	type = country_event
+	placement = ROOT
+
+	title = reconquering_atlantia.1.t
+	desc = reconquering_atlantia.1.d
+	flavor = reconquering_atlantia.1.f
+
+	duration = 3
+
+	event_image = {
+		video = "gfx/event_pictures/southamerica_aristocrats.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	trigger = {
+			NOT = {
+				c:LOT = {
+					owns_entire_state_region = STATE_COTE_DU_CAFE
+				}
+			}
+		}
+
+	immediate = {
+		if = {
+			limit = {
+				owns_entire_state_region = STATE_COTE_DU_CAFE
+			}
+			random_scope_state = {
+				limit = {
+					state_region = s:STATE_COTE_DU_CAFE
+				}
+				save_scope_as = atlantia_state
+			}
+		}
+	}
+	
+	option = {
+		name = reconquering_atlantia.1.a
+		default_option = yes
+		if = {
+			limit = {
+				country_has_primary_culture = cu:lotharian #DVG
+			}
+			scope:collasuyu_state = {
+				state_region = {
+					add_homeland = lotharian #DVG
+				}
+			}
+		}
+		
+		
+		scope:catlantia_state = {
+			add_modifier = {
+				name = atlantia_liberals
+				months = long_modifier_time
+			}
+		}
+	}
+}
+
+dvg_lotharingia.4 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_lotharingia.4.t
+	desc = dvg_lotharingia.4.d
+	flavor = dvg_lotharingia.4.f
+	
+	event_image = {
+		video = "gfx/event_pictures/europenorthamerica_sufferage.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	
+	# Liberte!
+	option = {
+		name = dvg_lotharingia.1.a
+		default_option = yes
+		country_prestige_mult = 0.07
+		
+		add_loyalists = {
+			value = 0.50
+		}
+		call_election = {
+				months = 1
+			}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+dvg_lotharingia.5 = { #Split Lotharingia up into warlord states
+	type = country_event
+	placement = root
+	duration = 3
+
+	title = dvg_lotharingia.5.t
+	desc = dvg_lotharingia.5.d
+	flavor = dvg_lotharingia.5.f
+
+	event_image = {
+		video = "gfx/event_pictures/southamerica_war_civilians.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/armored_train"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	trigger = {
+		exists = c:LOT
+		this = c:LOT
+		NOT = { has_global_variable = lotharingia_shatters }
+	}
+
+	immediate = {
+		set_global_variable = lotharingia_shatters
+		
+		set_variable = chinese_central_government
+		
+		s:STATE_TRANSFLEUVE = {
+			add_claim = BEO
+		}
+		s:STATE_LIBREVILLE = {
+			add_claim = ATL
+		}
+		
+		if = {
+			limit = { exists = s:STATE_BOURGOGNE_DU_SUD.region_state:LOT }
+			create_country = { #Odonia
+				tag = ODO
+				origin = this
+				state = s:STATE_BOURGOGNE_DU_SUD.region_state:LOT
+				state = s:STATE_TRANSFLEUVE.region_state:LOT
+
+				on_created = {
+					warlord_setup_effect = yes
+					set_variable = warlord_state
+				}
+			}
+			c:ODO = { save_scope_as = scope_ODO }
+			if = {
+				limit = { exists = s:STATE_WESTERN_HUBEI.region_state:LOT }
+				s:STATE_WESTERN_HUBEI.region_state:LOT = { set_state_owner = c:ODO }
+			}
+			if = {
+				limit = { exists = s:STATE_EASTERN_HUBEI.region_state:LOT }
+				s:STATE_EASTERN_HUBEI.region_state:LOT = { set_state_owner = c:ODO }
+			}
+		}
+
+		if = {
+			limit = { exists = s:STATE_NOUVELLE_ALSACE.region_state:LOT }
+			create_country = { #Nouvelle Alsace
+				tag = NEA
+				origin = this
+				state = s:STATE_NOUVELLE_ALSACE.region_state:LOT
+				state = s:STATE_LIBREVILLE.region_state:LOT
+
+				on_created = {
+					warlord_setup_effect = yes
+					set_variable = warlord_state
+				}
+			}
+			c:NEA = { save_scope_as = scope_NEA}
+		}
+
+		if = {
+			limit = { exists = s:STATE_COTE_DU_CAFE.region_state:LOT }
+			create_country = { #Atlantia
+				tag = ATL 
+				origin = this
+				state = s:STATE_COTE_DU_CAFE.region_state:LOT
+				state = s:STATE_GOUAS.region_state:LOT
+
+				on_created = {
+					warlord_setup_effect = yes
+					set_variable = warlord_state
+				}
+			}
+			c:ATL = { save_scope_as = scope_ATL }
+			
+			
+		}
+
+		if = {
+			limit = { exists = s:STATE_MARCHES_OUEST.region_state:LOT }
+			create_country = { #Taragui
+				tag = TGI
+				origin = this
+				state = s:STATE_CHACO_BOREAL.region_state:LOT
+				state = s:STATE_MARCHES_OUEST.region_state:LOT
+				state = s:STATE_GRAND_CHACO.region_state:LOT
+				state = s:STATE_EOFERWIC.region_state:LOT
+				state = s:STATE_NORTHUMBRIA.region_state:LOT
+
+				on_created = {
+					warlord_setup_effect = yes
+					set_variable = warlord_state
+				}
+			}
+			c:TGI = { save_scope_as = scope_TGI }
+		}
+
+		
+
+		every_subject_or_below = {
+			make_independent = yes
+		}
+
+		random_country = {
+			limit = {
+				has_variable = warlord_state
+				NOR = {
+					has_variable = var_warlord_two
+					has_variable = var_warlord_three
+					has_variable = var_warlord_four 
+				}
+			}
+			save_scope_as = scope_random_warlord_one
+			set_variable = var_warlord_one
+		}
+
+		random_country = {
+			limit = {
+				has_variable = warlord_state
+				NOR = {
+					has_variable = var_warlord_one
+					has_variable = var_warlord_three
+					has_variable = var_warlord_four
+				}
+			}
+			save_scope_as = scope_random_warlord_two
+			set_variable = var_warlord_two
+		}
+
+		random_country = {
+			limit = {
+				has_variable = warlord_state
+				NOR = {
+					has_variable = var_warlord_one
+					has_variable = var_warlord_two
+					has_variable = var_warlord_four
+				}
+			}
+			save_scope_as = scope_random_warlord_three
+			set_variable = var_warlord_three
+		}
+
+		random_country = {
+			limit = {
+				has_variable = warlord_state
+				NOR = {
+					has_variable = var_warlord_one
+					has_variable = var_warlord_two
+					has_variable = var_warlord_three
+				}
+			}
+			save_scope_as = scope_random_warlord_four
+			set_variable = var_warlord_four
+		}
+	}
+
+	option = {
+		name = dvg_lotharingia.5.ab
+		trigger = {
+			exists = scope:scope_random_warlord_one
+			is_player = yes
+		}
+		c:LOT = {
+		create_diplomatic_play = {
+			name = secession_of_nouvelle_alasce
+		
+			target_country = c:NEA
+			
+			
+			
+			type = dp_annex_war
+			
+			add_war_goal = {
+				holder = c:NEA
+				type = war_reparations
+				target_country = c:LOT
+			}
+		}
+		create_diplomatic_play = {
+			name = coup_of_odonia
+		
+			target_country = c:ODO
+			
+			
+			
+			type = dp_annex_war
+			
+			add_war_goal = {
+				holder = c:ODO
+				type = annex_country
+				target_country = c:LOT
+			}
+		}			
+	}
+		play_as = scope:scope_random_warlord_one
+	}
+
+	option = {
+		name = dvg_lotharingia.5.b
+		trigger = {
+			exists = scope:scope_random_warlord_two
+			is_player = yes
+		}
+		c:LOT = {
+		create_diplomatic_play = {
+			name = secession_of_nouvelle_alasce
+		
+			target_country = c:NEA
+			
+			
+			
+			type = dp_annex_war
+			
+			add_war_goal = {
+				holder = c:NEA
+				type = war_reparations
+				target_country = c:LOT
+			}
+		}
+		create_diplomatic_play = {
+			name = coup_of_odonia
+		
+			target_country = c:ODO
+			
+			war = yes
+			
+			type = dp_annex_war
+			
+			add_war_goal = {
+				holder = c:ODO
+				type = annex_country
+				target_country = c:LOT
+			}
+		}			
+	}
+		play_as = scope:scope_random_warlord_two
+	}
+
+	option = {
+		name = dvg_lotharingia.5.c
+		trigger = {
+			exists = scope:scope_random_warlord_three
+			is_player = yes
+		}
+		c:LOT = {
+		create_diplomatic_play = {
+			name = secession_of_nouvelle_alasce
+		
+			target_country = c:NEA
+			
+			
+			
+			type = dp_annex_war
+			
+			add_war_goal = {
+				holder = c:NEA
+				type = war_reparations
+				target_country = c:LOT
+			}
+		}
+		create_diplomatic_play = {
+			name = coup_of_odonia
+		
+			target_country = c:ODO
+			
+			war = yes
+			
+			type = dp_annex_war
+			
+			add_war_goal = {
+				holder = c:ODO
+				type = annex_country
+				target_country = c:LOT
+			}
+		}			
+	}
+		play_as = scope:scope_random_warlord_three
+	}
+
+	option = {
+		name = dvg_lotharingia.5.aa
+		trigger = {
+			exists = scope:scope_random_warlord_four
+			is_player = yes
+		}
+		c:LOT = {
+		
+		create_diplomatic_play = {
+			name = coup_of_odonia
+		
+			target_country = c:ODO
+			
+			
+			
+			type = dp_annex_war
+			
+			add_war_goal = {
+				holder = c:ODO
+				type = annex_country
+				target_country = c:LOT
+			}
+		}			
+	}
+		play_as = scope:scope_random_warlord_four
+	}
+
+	option = {
+		default_option = yes
+		name = dvg_lotharingia.5.a
+		c:LOT = {
+		create_diplomatic_play = {
+			name = secession_of_nouvelle_alasce
+		
+			target_country = c:NEA
+			
+			
+			
+			type = dp_annex_war
+			
+			add_war_goal = {
+				holder = c:NEA
+				type = war_reparations
+				target_country = c:LOT
+			}
+		}
+		create_diplomatic_play = {
+			name = coup_of_odonia
+		
+			target_country = c:ODO
+			
+			
+			
+			type = dp_annex_war
+			
+			add_war_goal = {
+				holder = c:ODO
+				type = annex_country
+				target_country = c:LOT
+			}
+		}			
+	}
+	}
+}
