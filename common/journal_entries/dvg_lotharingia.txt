@@ -1,0 +1,139 @@
+je_lotharian_house_of_cards = {
+	icon = "gfx/interface/icons/event_icons/event_scales.dds"
+
+	is_shown_when_inactive = {
+		exists = c:LOT
+		c:LOT = ROOT
+		NOT = { has_variable = meiji_restoration_complete }
+		has_law = law_type:law_autocracy
+	}
+
+	possible = {
+		ig:ig_armed_forces = {
+			is_in_government = yes
+		}
+	}
+
+	immediate = {
+		set_variable = {
+			name = shogunate_var
+			value = 0
+		}
+	}
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					ig:ig_armed_forces = {
+						is_powerful = yes
+						is_in_government = yes
+					}
+					
+					
+					owns_entire_state_region = STATE_LORRAINE_ATLANTIQUE
+				}
+				change_variable = {
+					name = shogunate_var
+					add = 1
+				}
+			}
+		}
+	}
+
+	complete = {
+		# If-else clause to avoid errors because of missing variable before JE activates
+		trigger_if = {
+			limit = { exists = var:shogunate_var }
+			scope:journal_entry = { is_goal_complete = yes }
+		}
+		trigger_else = {
+			custom_tooltip = je_lotharian_collapse
+		}
+		has_law = law_type:law_autocracy
+		
+		owns_entire_state_region = STATE_LORRAINE_ATLANTIQUE
+	}
+	
+	on_complete = {
+		set_variable = meiji_restoration_complete
+		trigger_event = {
+			id = dvg_lotharingia.5
+		}
+	}
+	
+	fail = {
+		ig:ig_armed_forces = {
+			is_powerful = no
+			is_in_government = no
+		}
+		root.average_sol >= 13
+		{
+		institution_investment_level = {
+			institution = institution_police
+			value <= 3
+		}
+		NOT = { has_law = law_type:law_autocracy
+				has_law = law_type:law_oligarchy
+				has_law = law_type:law_landed_voting
+
+		}
+	}
+	
+	on_fail = {
+		set_variable = meiji_restoration_complete
+		trigger_event = {
+			id = dvg_lotharingia.4
+		}
+	}
+
+	current_value = {
+		value = root.var:shogunate_var
+	}
+
+	goal_add_value = {
+		value = 120
+	}
+
+	progressbar = yes
+
+	weight = 10000
+	should_be_pinned_by_default = yes
+}
+
+je_reconquering_atlantia = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	is_shown_when_inactive = {
+		exists = c:ATL
+		any_neighbouring_state = {
+			owner = c:ATL
+		}
+		OR = {
+			any_neighbouring_state = {
+			owner = c:AMA
+		}
+		}
+	}
+
+	possible = {
+	
+		year = 1841
+		
+		NOT = {
+				c:LOT = {
+					owns_entire_state_region = STATE_COTE_DU_CAFE
+				}
+			}
+	}
+
+	complete = {
+		OR = {
+			#DVG
+			owns_entire_state_region = STATE_COTE_DU_CAFE
+		}
+	}
+
+	on_complete = {
+		trigger_event = { id = reconquering_atlantia.1 }
+	}
+}
