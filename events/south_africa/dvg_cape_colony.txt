@@ -92,11 +92,14 @@ dvg_cape_colony.3 = {
 	trigger = {
 	}
 
-	option = { 
+	option = {
 		name = dvg_cape_colony.3.a
         add_journal_entry = {
             type = je_cap_moderate
         }
+        set_variable = {
+			name = dvg_moderate_leader_var
+		}
 	}
 }
 
@@ -130,11 +133,15 @@ dvg_cape_colony.4 = {
         add_modifier = {
         	name = dvg_cap_militarist
         }
+        set_variable = {
+			name = dvg_militarist_leader_var
+		}
 		create_character = {
 			first_name = Regnault 
 			last_name = Courvoisier
-			culture = burgundian
+			culture = cu:burgundian
 			birth_date = 1794.4.26
+			ruler = yes
 			ig_leader = yes
 			is_general = yes
 			interest_group = ig_armed_forces
@@ -170,8 +177,8 @@ dvg_cape_colony.5 = {
 	trigger = {
 	}
 
-	option = { 
-		name = dvg_cape_colony.5.a
+	option = {
+		name = dvg_cape_colony.4.a
         ig:ig_armed_forces = {
 			add_ruling_interest_group = yes
 		}
@@ -181,10 +188,13 @@ dvg_cape_colony.5 = {
         add_modifier = {
         	name = dvg_cap_militarist
         }
-        create_character = {
+        set_variable = {
+			name = dvg_militarist_leader_var
+		}
+		create_character = {
 			first_name = Regnault 
 			last_name = Courvoisier
-			culture = burgundian
+			culture = cu:burgundian
 			birth_date = 1794.4.26
 			ruler = yes
 			ig_leader = yes
@@ -223,10 +233,13 @@ dvg_cape_colony.6 = {
 	}
 
 	option = { 
-		name = dvg_cape_colony.6.a
+		name = dvg_cape_colony.3.a
         add_journal_entry = {
             type = je_cap_moderate
         }
+        set_variable = {
+			name = dvg_moderate_leader_var
+		}
 	}
 }
 
@@ -250,22 +263,28 @@ dvg_cape_colony.7 = {
 	trigger = {
 	}
 
-	option = { #we don't have the resources 
+	option = { #we fail to hold the port
 	name = dvg_cape_colony.7.a
-		change_variable = {
-			name = geus_agitation_var
-			add = -10
-		}
+        trigger = {
+        	OR = {
+        		has_variable = geus_agitation_var
+         		this = { var:geus_agitation_var = 6 }
+        	}
+        }
 		c:LEW = {
 			trigger_event = { dvg_leeuwin.8 days = 90 }
 		}
 	}
-	option = { #crack down
+	option = { #our citizens remain loyal
 	name = dvg_cape_colony.7.b
-		change_variable = {
-			name = geus_agitation_var
-			add = 5
-		}
+        trigger = {
+        	OR = {
+        		has_variable = geus_agitation_var
+         		this = { var:geus_agitation_var = 6 }
+         		has_variable = geus_agitation_var
+         		this = { var:geus_agitation_var = 6 }
+        	}
+        }
 		c:LEW = {
 			trigger_event = { dvg_leeuwin.9 days = 90 }
 		}
@@ -295,6 +314,7 @@ dvg_cape_colony.100 = { #Geuzen militia caught crossing to Leeuwin
 
 	option = { #enforce hard border
 	name = dvg_cape_colony.100.a
+	default_option = yes
 		change_variable = {
 			name = geus_agitation_var
 			add = 5
@@ -328,29 +348,23 @@ dvg_cape_colony.101 = { #New Geuzen settlement
 	trigger = {
 	}
 
-	option = { #enforce hard border
+	option = { #let them go
 	name = dvg_cape_colony.101.a
-		change_variable = {
-			name = geus_agitation_var
-			add = 5
-		}
-	}
-	option = { #let them leave
-	name = dvg_cape_colony.101.b
 		change_variable = {
 			name = geus_agitation_var
 			add = -5
 		}
-		s:STATE_CAPE_COLONY = {
-			create_pop = {
-				culture = boer
-				size = -500
-			}
+	}
+	option = { #stop the convoy 
+	name = dvg_cape_colony.101.b
+		change_variable = {
+			name = geus_agitation_var
+			add = 5
 		}
-		s:STATE_NORTHERN_CAPE = {
-			create_pop = {
+		s:STATE_CAPE_COLONY = {
+			add_radicals = {
+				value = 2000
 				culture = boer
-				size = 500
 			}
 		}
 	}
@@ -387,6 +401,13 @@ dvg_cape_colony.102 = { #monument to the Viceroy
 		change_variable = {
 			name = geus_agitation_var
 			add = 5
+		}
+	}
+	option = { #Replace it with a statue of courvoisier
+	name = dvg_cape_colony.102.c
+		change_variable = {
+			name = geus_agitation_var
+			add = -5
 		}
 	}
 }
