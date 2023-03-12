@@ -797,6 +797,10 @@ genoa.14 = {
 		name = genoa.14.b
 		ai_chance = {
 			base = 34
+		}
+		change_relations = { 
+			country = c:COR
+			value = -100 
 		}  
 		c:COR = {
 			trigger_event = {
@@ -908,6 +912,15 @@ genoa.16 = {
 		add_modifier = { 
 			name = dvg_genoa_losses_corsica 
 			months = 60
+		}
+		hidden_effect = {
+			c:COR = {
+				trigger_event = {
+					id = genoa.20 
+					days = 30
+					popup = yes
+				}
+			}
 		}   
 	}
 }
@@ -1084,7 +1097,9 @@ genoa.19 = {
 	}
 }
 
-#Corsica Annexation Event #Being Worked ###################################################################################################################
+#Corsica Annexation Chain #Being Worked ###################################################################################################################
+
+#COR to have the player switch to Etruria -> Followed by an annexation event.
 genoa.20 = { 
 	type = country_event
 	placement = root
@@ -1103,9 +1118,55 @@ genoa.20 = {
 
 	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
 
+	trigger = { #bROKEN
+		AND = {
+			has_truce_with = c:GEN
+			c:COR = { #MAYBE ADD A MODIFIER /or Have a seperate event for the Genao peacefully let's go but dck
+				has_diplomatic_pact = { who = TUS type = alliance } 
+			}
+			#Alliance with c:TUS
+			#OR Genoa = has modifier dvg_genoa_losses_corsica / Maybe put a timed modifier on Eturia + Not at war with Genoa / event if Genoa lets go or loses a war
+		}
+	}   
+		
+	option = {
+		name = genoa.20.a
+		default_option = yes
+		ai_chance = {
+			base = 100
+		}  
+		play_as = c:TUS
+		hidden_effect = {
+			c:TUS = {
+				trigger_event = {
+					id = genoa.21 
+					days = 30
+					popup = yes
+				}
+			}
+		}  
+	}	
+}
+
+genoa.21 = { # TUS annex COR event
+	type = country_event
+	placement = root
+	title = genoa.21.t
+	desc = genoa.21.d
+	flavor = genoa.21.f
+
+	duration = 3
+
+	event_image = {
+		video = "gfx/event_pictures/unspecific_factory_closed.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/factory_closed"
+
+	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
+
 	trigger = {
-		#Truce with GEN
-		#OR Genoa = has modifier dvg_genoa_losses_corsica / Maybe put a timed modifier on Eturia + Not at war with Genoa / event if Genoa lets go or loses a war
 	}   
 		
 	option = {
@@ -1115,7 +1176,7 @@ genoa.20 = {
 			base = 100
 		}  
 		annex = c:COR
-		on_created = {
+		on_created = { #Not Working
 			create_character = {
 				first_name = "Mateo"					
 				last_name = "Falcone"
@@ -1127,11 +1188,10 @@ genoa.20 = {
 				ideology = ideology_traditionalist
 			}
 		}
-		play_as = c:TUS
 	}
-	
 }
 
+#Update images for event -> Bug fix -> 
 # Savoy Humiliated Event
 # Corsica revolt for Savoy if Genoa is lost (Triggers, Genoa does not exist, own Corisca...)
 
