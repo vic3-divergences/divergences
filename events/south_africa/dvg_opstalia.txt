@@ -29,6 +29,11 @@ dvg_opstalia.1 = {
         add_modifier = {
             name = dvg_grondraad
         }
+        c:root = {
+        	ruler = {
+        		save_scope_as = hendrik 
+        	}
+        }
 	}
 
 	option = {
@@ -71,6 +76,9 @@ dvg_opstalia.2 = {
         }
 		add_modifier = {
             name = dvg_grondraad
+        }
+        add_journal_entry = {
+        	type = je_return_of_hendrik
         }
         trigger_event = { id = dvg_opstalia.3 days = 90}
 	}
@@ -169,7 +177,10 @@ dvg_opstalia.4 = {
 			trigger_event = {id = dvg_leeuwin.2 days = 90}
 		}
 		s:STATE_TRANS_ORANJE.region_state:VRY = {
-			add_radicals = { value = 0.1 culture = boer }
+			add_radicals = { 
+				value = 0.1 
+				culture = cu:boer 
+			}
 		}
 		add_modifier = {
 			name = dvg_ignored_trans_oranje_settlers
@@ -210,7 +221,7 @@ dvg_opstalia.5 = {
 		name = dvg_opstalia.5.a
 		default_option = yes
 		s:STATE_TRANS_ORANJE = {
-			add_claim = OPS
+			add_claim = c:OPS
         }
         custom_tooltip = {
 			text = dvg_opstalia_take_trans_oranje_tt
@@ -306,8 +317,8 @@ dvg_opstalia.7 = {
 
 	trigger = {
 		c:OPS = {
-			owns_entire_state_region = STATE_NOORDLAND
-			owns_entire_state_region = STATE_BOTSWANA
+			owns_entire_state_region = s:STATE_NOORDLAND
+			owns_entire_state_region = s:STATE_BOTSWANA
 		} 
 	}
 
@@ -326,41 +337,8 @@ dvg_opstalia.7 = {
 			set_state_owner = c:VRY
         }
         create_diplomatic_pact = {
-        country = VRY
+        target_country = c:VRY
         type = puppet
-        }
-        ai_chance = {
-			base = 1
-		}
-    }
-}
-
-#hendrik returns
-dvg_opstalia.8 = {
-	type = country_event
-	placement = ROOT
-
-	title = dvg_opstalia.8.t
-	desc = dvg_opstalia.8.d
-	flavor = dvg_opstalia.8.f
-
-	event_image = {
-		video = "gfx/event_pictures/unspecific_military_parade.bk2"
-	}
-
-	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
-	on_opened_soundeffect = "event:/SFX/Events/unspecific/military_parade"
-	icon = "gfx/interface/icons/event_icons/event_map.dds"
-
-	duration = 1
-
-	trigger = {
-	}
-
-	option = {
-	name = dvg_opstalia.8.a
-		s:STATE_TRANS_ORANJE.region_state:VRY = {
-			set_state_owner = c:OPS
         }
         ai_chance = {
 			base = 1
@@ -401,6 +379,11 @@ dvg_opstalia.8 = {
 			war = no
 			type = dp_annex_war
 			add_war_goal = {
+				holder = c:OPS
+				type = annex_country
+				target_country = c:NFL
+			}
+			add_war_goal = {
 				holder = c:NFL
 				type = annex
 				target_country = c:OPS
@@ -408,7 +391,7 @@ dvg_opstalia.8 = {
 		}
     }
     option = { #pussy
-	name = dvg_opstalia.8.a
+	name = dvg_opstalia.8.b
 	}
 }
 
@@ -437,10 +420,7 @@ dvg_opstalia.8 = {
 	option = {
 	name = dvg_opstalia.9.a
 		c:OPS = {
-			random_scope_character = {
-				limit = {
-					name = hendrik_van_boetzelaer
-				}
+			scope:hendrik = {
 				kill_character = yes
 			}
 			set_ruling_interest_groups = {
@@ -486,7 +466,11 @@ dvg_opstalia.10 = {
 		}
 		remove_modifier = dvg_grondraad
         ai_chance = {
-			base = 1
+			base = 2
+		}
+		remove_diplomatic_pact ={
+			country = c:NFL
+			type = rivalry
 		}
     }
     option = {
@@ -549,7 +533,61 @@ dvg_opstalia.11 = {
 			is_decaying = yes
 		}
 		set_relations = {
-			target_country = NFL
+			target_country = c:NFL
+			value = 20
+		}
+        ai_chance = {
+			base = 1
+		}
+    }
+}
+
+#The matter of reurveld
+dvg_opstalia.12 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_opstalia.12.t
+	desc = dvg_opstalia.12.d
+	flavor = dvg_opstalia.12.f
+
+	event_image = {
+		video = "gfx/event_pictures/unspecific_military_parade.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/military_parade"
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	duration = 1
+
+	trigger = {
+	}
+
+    option = { #send them
+	name = dvg_opstalia.12.b
+	default_option = yes
+
+	    ai_chance = {
+			base = 1
+		}
+    }
+	option = { #leave them
+	name = dvg_opstalia.12.a
+        ai_chance = {
+			base = 1
+		}
+    }
+
+    option = { #back to where they came from 
+	name = dvg_opstalia.12.c
+		add_modifier = { 
+			name = dvg_grondraad_arrested
+			days = 3650
+			is_decaying = yes
+		}
+		set_relations = {
+			target_country = c:NFL
 			value = 20
 		}
         ai_chance = {

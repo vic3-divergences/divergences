@@ -197,7 +197,6 @@ dvg_cape_colony.5 = {
 			culture = cu:burgundian
 			birth_date = 1794.4.26
 			ruler = yes
-			ig_leader = yes
 			is_general = yes
 			interest_group = ig_armed_forces
 			ideology = ideology_jingoist_leader
@@ -267,26 +266,24 @@ dvg_cape_colony.7 = {
 	name = dvg_cape_colony.7.a
         trigger = {
         	OR = {
-        		has_variable = geus_agitation_var
-         		this = { var:geus_agitation_var = 6 }
+         		this = { var:geus_agitation_var > 120 }
+         		this = { var:geus_supression_var <= 120 }
         	}
         }
 		c:LEW = {
-			trigger_event = { dvg_leeuwin.8 days = 90 }
+			trigger_event = { id = dvg_leeuwin.8 days = 90 }
 		}
 	}
 	option = { #our citizens remain loyal
 	name = dvg_cape_colony.7.b
         trigger = {
         	OR = {
-        		has_variable = geus_agitation_var
-         		this = { var:geus_agitation_var = 6 }
-         		has_variable = geus_agitation_var
-         		this = { var:geus_agitation_var = 6 }
+         		this = { var:geus_agitation_var <= 120 }
+         		this = { var:geus_supression_var > 120 }
         	}
         }
 		c:LEW = {
-			trigger_event = { dvg_leeuwin.9 days = 90 }
+			trigger_event = { id = dvg_leeuwin.9 days = 90 }
 		}
 	}
 
@@ -315,16 +312,44 @@ dvg_cape_colony.100 = { #Geuzen militia caught crossing to Leeuwin
 	option = { #enforce hard border
 	name = dvg_cape_colony.100.a
 	default_option = yes
-		change_variable = {
+		if = {
+			limit = {
+				has_variable = dvg_moderate_leader_var
+			}
+			change_variable = {
 			name = geus_agitation_var
 			add = 5
+			}
+		}
+		if = {
+			limit = {
+				has_variable = dvg_militarist_leader_var
+			}
+			change_variable = {
+			name = geus_supression_var
+			add = 5
+			}
 		}
 	}
 	option = { #let them leave
 	name = dvg_cape_colony.100.b
-		change_variable = {
+		if = {
+			limit = {
+				has_variable = dvg_moderate_leader_var
+			}
+			change_variable = {
 			name = geus_agitation_var
 			add = -5
+			}
+		}
+		if = {
+			limit = {
+				has_variable = dvg_militarist_leader_var
+			}
+			change_variable = {
+			name = geus_supression_var
+			add = -5
+			}
 		}
 	}
 }
@@ -350,21 +375,49 @@ dvg_cape_colony.101 = { #New Geuzen settlement
 
 	option = { #let them go
 	name = dvg_cape_colony.101.a
-		change_variable = {
+		if = {
+			limit = {
+				has_variable = dvg_moderate_leader_var
+			}
+			change_variable = {
 			name = geus_agitation_var
 			add = -5
+			}
+		}
+		if = {
+			limit = {
+				has_variable = dvg_militarist_leader_var
+			}
+			change_variable = {
+			name = geus_supression_var
+			add = -5
+			}
 		}
 	}
 	option = { #stop the convoy 
 	name = dvg_cape_colony.101.b
-		change_variable = {
+		if = {
+			limit = {
+				has_variable = dvg_moderate_leader_var
+			}
+			change_variable = {
 			name = geus_agitation_var
 			add = 5
+			}
+		}
+		if = {
+			limit = {
+				has_variable = dvg_militarist_leader_var
+			}
+			change_variable = {
+			name = geus_supression_var
+			add = 5
+			}
 		}
 		s:STATE_CAPE_COLONY = {
 			add_radicals = {
-				value = 2000
-				culture = boer
+				value = 200
+				culture = cu:boer
 			}
 		}
 	}
@@ -391,23 +444,58 @@ dvg_cape_colony.102 = { #monument to the Viceroy
 
 	option = { #remove the statue
 	name = dvg_cape_colony.102.a
-		change_variable = {
+		if = {
+			limit = {
+				has_variable = dvg_moderate_leader_var
+			}
+			change_variable = {
 			name = geus_agitation_var
 			add = -5
+			}
+		}
+		if = {
+			limit = {
+				has_variable = dvg_militarist_leader_var
+			}
+			change_variable = {
+			name = geus_supression_var
+			add = -5
+			}
 		}
 	}
 	option = { #assign guards to the area
 	name = dvg_cape_colony.102.b
-		change_variable = {
+		if = {
+			limit = {
+				has_variable = dvg_moderate_leader_var
+			}
+			change_variable = {
 			name = geus_agitation_var
 			add = 5
+			}
+		}
+		if = {
+			limit = {
+				has_variable = dvg_militarist_leader_var
+			}
+			change_variable = {
+			name = geus_supression_var
+			add = 5
+			}
 		}
 	}
 	option = { #Replace it with a statue of courvoisier
 	name = dvg_cape_colony.102.c
+		trigger = {
+			has_variable = dvg_militarist_leader_var
+		}
 		change_variable = {
-			name = geus_agitation_var
-			add = -5
+			name = geus_supression_var
+			add = 5
+		}
+		add_radicals = {
+			value = 200
+			culture = cu:boer
 		}
 	}
 }
@@ -437,13 +525,29 @@ dvg_cape_colony.103 = { #divide and conquer
 			name = dvg_finding_snitches 
 			days = 180
 		}
+		add_radicals = {
+			value = 200
+			culture = cu:boer
+		}
 	}
 	option = { #this will stretch us too thin
 	name = dvg_cape_colony.103.b
-		c:CAP = {
+		if = {
+			limit = {
+				has_variable = dvg_moderate_leader_var
+			}
 			change_variable = {
-				name = geus_supression_var
-				add = -5
+			name = geus_agitation_var
+			add = 5
+			}
+		}
+		if = {
+			limit = {
+				has_variable = dvg_militarist_leader_var
+			}
+			change_variable = {
+			name = geus_supression_var
+			add = -5
 			}
 		}
 	}
@@ -474,12 +578,24 @@ dvg_cape_colony.104 = { #increase patrols
 			name = dvg_increased_patrols 
 			days = 180
 		}
+		if = {
+			limit = {
+				has_variable = dvg_militarist_leader_var
+			}
+		change_variable = {
+			name = geus_supression_var
+			add = 5
+		}
 	}
 	option = { #this will stretch us too thin
 	name = dvg_cape_colony.104.b
 		add_modifier = {
 			name = dvg_lacking_patrols 
 			days = 180
+		}
+		add_radicals = {
+			value = 200
+			culture = cu:boer
 		}
 	}
 }
@@ -532,7 +648,7 @@ dvg_cape_colony.111 = {
 
 	option = { 
 	name = dvg_cape_colony.110.a
-		remove_modifier = dvg_geus_resistance  
+		#remove_modifier = dvg_geus_resistance  
 	}
 }
 
@@ -584,6 +700,6 @@ dvg_cape_colony.112 = {
 
 	option = { 
 	name = dvg_cape_colony.110.a
-		remove_modifier = dvg_geus_resistance  
+		#remove_modifier = dvg_geus_resistance  
 	}
 }
