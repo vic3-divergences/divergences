@@ -1214,9 +1214,6 @@ ai_strategy_unify_italy = {
 						OR = {
 							country_has_primary_culture = cu:north_italian
 							country_has_primary_culture = cu:south_italian
-						}					
-						NOT = { is_unification_candidate = ITA }
-						NOT = { is_supporting_unification_candidate = { who = root country_formation = ITA } }
 							country_has_primary_culture = cu:central_italian #DVG
 							country_has_primary_culture = cu:sardinian #DVG
 							country_has_primary_culture = cu:venetian #DVG
@@ -1238,11 +1235,6 @@ ai_strategy_unify_italy = {
 		conquer = {				
 			if = {
 				limit = {
-					scope:target_country = {
-						OR = {
-							country_has_primary_culture = cu:north_italian
-							country_has_primary_culture = cu:south_italian
-						}					
 					scope:target_country = {				
 						is_unification_candidate = ITA
 					}
@@ -1644,5 +1636,195 @@ ai_strategy_unify_china = {
 			limit = { country_rank = rank_value:unrecognized_major_power }
 			add = 50
 		}		
+	}
+}
+
+
+ai_strategy_unify_batavia = {
+	icon = "gfx/interface/icons/ai_strategy_icons/unification.dds"
+	
+	type = diplomatic
+	
+	wanted_army_ratio = {
+		value = 15000
+	}
+	
+	wanted_navy_ratio = {
+		value = 10000
+	}
+	
+	undesirable_infamy_level = {
+		value = 25
+	}
+	
+	unacceptable_infamy_level = {
+		value = 50
+	}
+	
+	wargoal_maneuvers_fraction = {
+		value = 0.1
+	}		
+	
+	diplomatic_play_boldness = {
+		value = 75
+	}
+
+	obligation_value = {
+		value = 0
+	
+		if = {
+			limit = { 
+				scope:target_country = {			
+					country_has_primary_culture = cu:boer
+				}
+			}
+			add = 25
+		}
+	}	
+
+	recklessness = {
+		value = 0.5
+	}
+	
+	aggression = {
+		value = 0.25
+		
+		if = {
+			limit = { 
+				scope:target_country = {			
+					country_has_primary_culture = cu:boer
+				}
+			}
+			add = 2.75
+		}
+
+		# Less aggressive against countries we're just antagonistic against, rather than belligerent/domineering
+		if = {
+			limit = {
+				has_attitude = {
+					who = scope:target_country
+					attitude = antagonistic
+				}					
+			}
+			multiply = 0.25
+		}
+
+		# More aggressive against ideological enemies, a bit less aggressive against ideological allies
+		if = {
+			limit = {
+				"ai_ideological_opinion(scope:target_country)" < 0
+			}
+			
+			multiply = {
+				value = "ai_ideological_opinion(scope:target_country)"
+				multiply = -0.2
+				add = 1
+				max = 4.0
+			}				
+		}	
+		else = {
+			multiply = {
+				value = "ai_ideological_opinion(scope:target_country)"
+				multiply = -0.05
+				add = 1
+				min = 0.5
+			}			
+		}
+	}
+
+	building_group_weights = {
+		bg_army = 1.5
+	}
+	
+	wargoal_scores = {
+		conquer_state = {
+			if = {
+				limit = {
+					scope:target_state = {
+						state_region = {
+							country_has_primary_culture = cu:boer
+						}
+					}
+					can_reach_target_state = yes				
+				}
+				add = 100
+			}
+		}
+		return_state = {
+			if = {
+				limit = {
+					scope:target_state = {
+						state_region = {
+							country_has_primary_culture = cu:boer
+						}	
+					}
+					can_reach_target_state = yes
+				}
+				add = 100
+			}
+		}
+		unification_leadership = {
+			value = 1000
+		}	
+	}
+
+	secret_goal_scores = {
+		protect = {		
+			if = {
+				limit = {
+					scope:target_country = {
+						country_has_primary_culture = cu:boer
+						is_unification_candidate = BTV
+						OR = { 
+							is_supporting_unification_candidate = { who = root country_formation = BTV }
+							is_subject_of = root
+							has_diplomatic_pact = {
+								who = scope:target_country
+								type = customs_union
+							}							
+						}
+					}
+				}
+				add = 1000
+			}		
+		}		
+		dominate = {		
+			if = {
+				limit = {
+					scope:target_country = {
+						country_has_primary_culture = cu:boer			
+						NOT = { is_unification_candidate = BTV }
+						NOR = { 
+							is_supporting_unification_candidate = { who = root country_formation = BTV }
+							is_subject_of = root
+							has_diplomatic_pact = {
+								who = scope:target_country
+								type = customs_union
+							}
+						}
+					}
+				}
+				add = 1000
+			}		
+		}		
+		conquer = {		
+			if = {
+				limit = {
+					scope:target_country = {				
+						is_unification_candidate =BTV
+					}
+				}
+				add = 1000
+			}			
+		}
+	}	
+
+	possible = {
+		is_unification_candidate = BTV
+		NOT = { country_tier = empire }
+	}
+
+	weight = {
+		value = 1000
 	}
 }

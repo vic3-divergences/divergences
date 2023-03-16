@@ -104,6 +104,7 @@ dvg_opstalia.3 = {
 	duration = 6
 
 	trigger = {
+
 	}
 
 	option = {
@@ -328,6 +329,7 @@ dvg_opstalia.7 = {
 			base = 1
 		}
     }
+
     option = { #puppet them
 	name = dvg_opstalia.7.b
 		s:STATE_NOORDLAND.region_state:OPS = {
@@ -378,11 +380,11 @@ dvg_opstalia.8 = {
 			target_country = c:NFL
 			war = no
 			type = dp_annex_war
-			add_war_goal = {
-				holder = c:OPS
-				type = annex_country
-				target_country = c:NFL
-			}
+			#add_war_goal = {
+			#	holder = c:OPS
+			#	type = annex_country
+			#	target_country = c:NFL
+			#}
 			add_war_goal = {
 				holder = c:NFL
 				type = annex
@@ -396,7 +398,7 @@ dvg_opstalia.8 = {
 }
 
 #hendrik gets fucked
-#dvg_opstalia.9 = {
+dvg_opstalia.9 = {
 	type = country_event
 	placement = ROOT
 
@@ -417,17 +419,23 @@ dvg_opstalia.8 = {
 	trigger = {
 	}
 
+	immediate = {
+		set_variable = hendrik_lost
+	}
+
 	option = {
 	name = dvg_opstalia.9.a
-		c:OPS = {
+		hidden_effect = {
 			scope:hendrik = {
 				kill_character = yes
 			}
-			set_ruling_interest_groups = {
-				ig_armed_forces
-				ig_landowners
-			}
 		}
+		set_ruling_interest_groups = {
+			ig_armed_forces
+			ig_landowners
+		}
+		remove_modifier = dvg_grondraad
+		trigger_event = { id = dvg_opstalia.11 days = 30 }
         ai_chance = {
 			base = 1
 		}
@@ -454,6 +462,25 @@ dvg_opstalia.10 = {
 	duration = 1
 
 	trigger = {
+		on_monthly_pulse = {
+			AND = {
+				ruler = {
+					NOT = {
+						scope:hendrik
+					}
+				}
+				NOT = {
+					OR = {
+						has_variable = hendrik_lost
+						has_variable = hendrik_dead
+					}
+				}
+			}
+		}
+	}
+
+	immediate = {
+		set_variable = hendrik_dead
 	}
 
 	option = {
@@ -465,19 +492,19 @@ dvg_opstalia.10 = {
 			}
 		}
 		remove_modifier = dvg_grondraad
-        ai_chance = {
-			base = 2
-		}
 		remove_diplomatic_pact ={
 			country = c:NFL
 			type = rivalry
+		}
+        ai_chance = {
+			base = 3
 		}
     }
     option = {
 	name = dvg_opstalia.10.b
 		activate_law = law_type:law_landed_voting
 		call_election = {
-			days = 7
+			months = 1
 		}
         ai_chance = {
 			base = 1
@@ -522,7 +549,7 @@ dvg_opstalia.11 = {
 			is_decaying = yes
 		}
 	    ai_chance = {
-			base = 1
+			base = 2
 		}
     }
     option = { #back to where they came from 
@@ -537,7 +564,7 @@ dvg_opstalia.11 = {
 			value = 20
 		}
         ai_chance = {
-			base = 1
+			base = 4
 		}
     }
 }

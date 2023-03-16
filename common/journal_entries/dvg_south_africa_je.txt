@@ -25,28 +25,36 @@ je_return_of_hendrik = {
 	icon = "gfx/interface/icons/event_icons/event_military.dds"
 
 	complete = {
-		ROOT = {
+		root = {
 			army_size >= c:NFL.army_size
 		}
 	}
 
 	on_complete = {
-		trigger_event = { id = dvg_opstalia.8 days = 30}
+		custom_tooltip = {
+		text = dvg_ready_for_noordveld_war_tt
+			trigger_event = { id = dvg_opstalia.8 days = 30}
+		}
 	}
 
 	fail = {
-		c:OPS = {
-			has_truce_with = c:NFL
-		}
-		ruler = { 
-			NOT = {
-				first_name = Hendrik
-				last_name = van_Boetzelaer 
+		custom_tooltip = {
+		text = dvg_hendrik_fails_tt
+			OR = {
+				c:OPS = {
+					has_truce_with = c:NFL
+				}
+				ruler = { 
+					NOT = {
+						scope:hendrik
+					}
+				}
 			}
 		}
 	}
+
 	on_fail = {
-		#trigger_event = { id = dvg_opstalia.9 }
+		trigger_event = { id = dvg_opstalia.9 }
 	}
 }
 
@@ -138,11 +146,24 @@ je_cap_moderate = {
 		effect = {
 			change_variable = {
 				name = geus_agitation_var
-				add = -1
+				add = 1
 			}
 			if = {
 				limit = {
-					turmoil.culture:boer > 0.25
+					s:CAPE_COLONY = {
+						turmoil.cu:boer >= 0.5
+					}
+				}
+				change_variable = {
+					name = geus_agitation_var
+					add = -1
+				}
+			}
+			if = {
+				limit = {
+					s:CAPE_COLONY = {
+						turmoil.cu:boer >= 0.25
+					}
 				}
 				change_variable = {
 					name = geus_agitation_var
@@ -151,7 +172,9 @@ je_cap_moderate = {
 			}
 			if = {
 				limit = {
-					turmoil.culture:boer > 0.5
+					s:CAPE_COLONY = {
+						turmoil.cu:boer >= 0.5
+					} 
 				}
 				change_variable = {
 					name = geus_agitation_var
@@ -225,7 +248,7 @@ je_cap_militarist = {
 			}
 			if = {
 				limit = {
-					authority = <1
+					authority <= 1
 				}
 				change_variable = {
 					name = geus_supression_var
@@ -234,7 +257,7 @@ je_cap_militarist = {
 			}
 			if = { 
 				limit = {
-					authority = < 100
+					authority <= 100
 				}
 				change_variable = {
 					name = geus_supression_var
@@ -368,7 +391,6 @@ je_btv_autocracy = {
 	is_shown_when_inactive = {
 		OR = {
 			has_law = law_type:law_monarchy
-			has_law = law_type:law_theocracy
 		}
 		has_law = law_type:law_state_religion
 		has_law = law_type:law_autocracy
