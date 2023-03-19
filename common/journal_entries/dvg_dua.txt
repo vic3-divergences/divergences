@@ -1,0 +1,280 @@
+﻿# Anglois Path
+je_dual_integration = {
+	icon = "gfx/interface/icons/event_icons/event_skull.dds"
+
+	complete = {
+		scope:journal_entry = {
+			is_goal_complete = yes
+		}
+	}
+
+	on_complete = {
+		trigger_event = { id = dvg_dua.2 }
+	}
+
+	fail = {
+		custom_tooltip = {
+			text = dua_global_revolted_tooltip
+			has_variable = dua_global_revolted
+		}
+	}
+
+	#on_fail = {
+	#	trigger_event = { id = dvg_dua.3 }
+	#}
+	
+	on_timeout = {
+		set_variable = dua_timeout
+	}
+
+	on_monthly_pulse = {
+		random_events = {
+			30 = 0
+			20 = dvg_dua.110 # Patron
+			20 = dvg_dua.111 # Publication of "Histoire de la France depuis ses origines"
+			20 = dvg_dua.112 # Publication of "Saxon Poetry"
+			20 = dvg_dua.113 # The Great Travel of the Dauphin
+			20 = dvg_dua.114 # The 'Immortals'
+			20 = dvg_dua.120 # Radical IG
+			20 = dvg_dua.115 # Celebration of the German Revolution
+			30 = dvg_dua.118 # Springtime 1848
+			30 = dvg_dua.119 # Valois subversion
+			30 = dvg_dua.121 # Scottish subversion
+			20 = dvg_dua.122 # Anglois resilience 1855
+			20 = dvg_dua.123 # Anglois resilience 1860 
+			20 = dvg_dua.124 # Anglois resilience 1865
+			20 = dvg_dua.125 # Anglois resilience 1870
+			20 = dvg_dua.126 # Anglois failure 1855
+			20 = dvg_dua.127 # Anglois failure 1860
+		}
+	}
+
+	current_value = {
+		value = var:anglois_acc
+	}
+
+	goal_add_value = {
+		add = 8
+	}
+
+	progressbar = yes
+
+	timeout = 12775
+
+	weight = 10000
+	should_be_pinned_by_default = yes
+}
+
+# Bureaucractic Reform
+je_dua_bureaucracy = {
+	icon = "gfx/interface/icons/event_icons/event_scales.dds"
+
+	complete = {
+		NOR = { 
+			has_law = law_type:law_hereditary_bureaucrats 
+			has_law = law_type:law_land_based_taxation
+			has_law = law_type:law_consumption_based_taxation
+		}
+		bureaucracy >= 0 
+		approaching_bureaucracy_shortage = no
+	}
+
+	on_complete = {
+		remove_modifier = outmoded_bureaucracy
+	}
+
+	inheritable = no
+
+	weight = 5000
+}
+
+je_total_revolution = {
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	complete = {
+		custom_tooltip = {
+			text = anglois_accepted_tooltip
+			has_variable = anglois_accepted
+		}
+	}
+
+	on_complete = {
+		#trigger_event = {
+		#	id = dvg_dua.2
+		#}
+	}
+
+	fail = {
+		OR = {
+			custom_tooltip = {
+				text = dvg_dua_timeout
+				has_variable = dua_timeout
+			}
+			custom_tooltip = {
+				text = dvg_dua_control_lost
+				AND = {
+					NOT = { has_variable = occ_revolted }
+					NOT = { has_variable = eng_revolted }
+					OR = {
+						exists = c:OCC
+						exists = c:FRA
+						exists = c:ENG
+						exists = c:IRE
+					}
+					is_at_war = no
+				}
+			}
+		}
+	}
+
+	on_fail = {
+		set_variable = dua_global_revolted
+		trigger_event = {
+			id = dvg_dua.500
+		}
+	}
+
+	on_weekly_pulse = {
+		effect = {
+			set_variable = {
+				name = dua_total_revolution_revolt
+				value = 0
+			}
+			if = {
+				limit = {
+					root.var:occ_revolt <= 11
+				}
+				change_variable = {
+					name = dua_total_revolution_revolt
+					add = root.var:occ_revolt
+				}
+			} else = {
+				change_variable = {
+					name = dua_total_revolution_revolt
+					add = 11
+				}
+			}
+			if = {
+				limit = {
+					root.var:eng_revolt <= 11
+				}
+				change_variable = {
+					name = dua_total_revolution_revolt
+					add = root.var:eng_revolt
+				}
+			} else = {
+				change_variable = {
+					name = dua_total_revolution_revolt
+					add = 11
+				}
+			}
+		}
+	}
+
+	current_value = {
+		value = root.var:dua_total_revolution_revolt
+	}
+
+	goal_add_value = {
+		value = 22
+	}
+
+	progressbar = yes
+
+	weight = 10000
+	should_be_pinned_by_default = yes
+}
+
+je_midi_revolution = {
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	complete = {
+		OR = {
+			#root.var:eng_revolt >= 14
+			has_variable = dua_global_revolted
+			has_variable = anglois_accepted
+		}
+	}
+
+	on_complete = {
+	}
+
+	fail = {
+		OR = {
+			exists = c:OCC
+			scope:journal_entry = {
+				is_goal_complete = yes
+			}
+		}
+	}
+
+	on_fail = {
+		set_variable = occ_revolted
+		trigger_event = {
+			id = dvg_dua.510
+		}
+	}
+
+	on_monthly_pulse = {
+	}
+
+	invalid = {
+	}
+
+	current_value = {
+		value = root.var:occ_revolt
+	}
+
+	goal_add_value = {
+		value = 14
+	}
+
+	progressbar = yes
+
+	weight = 10000
+	should_be_pinned_by_default = yes
+}
+
+je_english_revolution = {
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	complete = {
+		OR = {
+			#root.var:occ_revolt >= 14
+			has_variable = dua_global_revolted
+			has_variable = anglois_accepted
+		}
+	}
+
+	on_complete = {
+	}
+
+	fail = {
+		OR = {
+			exists = c:ENG
+			scope:journal_entry = {
+				is_goal_complete = yes
+			}
+		}
+	}
+
+	on_fail = {
+		set_variable = eng_revolted
+		trigger_event = {
+			id = dvg_dua.520
+		}
+	}
+
+	current_value = {
+		value = root.var:eng_revolt
+	}
+
+	goal_add_value = {
+		value = 14
+	}
+
+	progressbar = yes
+
+	weight = 10000
+	should_be_pinned_by_default = yes
+}
