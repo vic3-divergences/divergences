@@ -2190,6 +2190,7 @@ dvg_dua.214 = { #Sorbonne
 
 	trigger = {
 		year >= 1842
+		is_at_war = no
 		NOT = { has_variable = sorbonne }
 	}
 
@@ -3096,7 +3097,6 @@ dvg_dua.520 = { #Glorious Revolution
 
 			create_diplomatic_play = {
 				target_country = c:ENG
-				war = no
 				type = dp_secession
 			}
 		}
@@ -3122,19 +3122,12 @@ dvg_dua.520 = { #Glorious Revolution
 		name = dvg_dua.520.a
 		default_option = yes
 
-		c:ENG = {
-			trigger_event = {
-				id = dvg_dua.521
-				days = 0
-				popup = yes
-			}
-		}
+		save_scope_as = initiator
 
-		c:BRG = {
-			change_relations = { 
-				country = c:ENG 
-				value = 100 
-			}
+		c:ENG = {
+			save_scope_as = target_country
+			trigger_event = { id = dvg_dua.521 days = 0 popup = yes }
+			trigger_event = { id = dvg_dua.524 days = 0 popup = yes }
 		}
 	}
 }
@@ -3327,6 +3320,129 @@ dvg_dua.523 = { #Glorious Revolution - DUA lose
 				name = anglois_acc
 				subtract = 5
 			}
+		}
+	}
+}
+
+dvg_dua.524 = { #Foreign support
+	type = country_event
+	placement = ROOT
+
+	title = dvg_dua.524.t
+	desc = dvg_dua.524.d
+	flavor = dvg_dua.524.f
+
+	event_image = {
+		video = "gfx/event_pictures/southamerica_aristocrats.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	immediate = {
+		random_diplomatic_play = {
+			limit = {
+				any_scope_play_involved = { this = scope:initiator }
+				any_scope_play_involved = { this = scope:target_country }
+				is_diplomatic_play_type = dp_secession
+            }
+			save_scope_as = war
+		}
+	}
+
+	option = {
+		name = dvg_dua.524.a
+		trigger = {
+			exists = c:SCA
+		}
+
+		c:SCA = {
+			change_relations = { 
+				country = c:ENG 
+				value = 200 
+			}
+			trigger_event = { id = dvg_diplomatic_events.1 days = 1 popup = yes }
+		}
+
+		ai_chance = {
+			base = 10
+			modifier = {
+				trigger = { c:SCA = { country_rank < rank_value:major_power } }
+				add = -1000
+			}
+			modifier = {
+				trigger = { c:SCA = { has_truce_with = c:DUA } }
+				add = -1000
+			}
+		}
+	}
+
+	option = {
+		name = dvg_dua.524.b
+		default_option = yes
+
+		trigger = {
+			exists = c:BRG
+		}
+
+		c:BRG = {
+			change_relations = { 
+				country = c:ENG 
+				value = 200 
+			}
+			trigger_event = { id = dvg_diplomatic_events.1 days = 1 popup = yes }
+		}
+
+		ai_chance = {
+			base = 60
+			modifier = {
+				trigger = { c:BRG = { country_rank < rank_value:major_power } }
+				add = -1000
+			}
+			modifier = {
+				trigger = { c:BRG = { has_truce_with = c:DUA } }
+				add = -1000
+			}
+		}
+	}
+
+	option = {
+		name = dvg_dua.524.c
+
+		trigger = {
+			exists = c:ARN
+		}
+
+		c:ARN = {
+			change_relations = { 
+				country = c:ENG
+				value = 200 
+			}
+			trigger_event = { id = dvg_diplomatic_events.1 days = 1 popup = yes }
+		}
+
+		ai_chance = {
+			base = 30
+			modifier = {
+				trigger = { c:ARN = { country_rank < rank_value:major_power } }
+				add = -1000
+			}
+			modifier = {
+				trigger = { c:ARN = { has_truce_with = c:DUA } }
+				add = -1000
+			}
+		}
+	}
+
+	option = {
+		name = dvg_dua.524.d
+
+		ai_chance = {
+			base = 1
 		}
 	}
 }
