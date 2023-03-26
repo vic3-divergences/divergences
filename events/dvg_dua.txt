@@ -2328,7 +2328,7 @@ dvg_dua.500 = { #Total Revolution
 			create_diplomatic_play = {
 				target_country = c:IRE
 				war = no
-				type = dp_secession
+				type = dp_rebellion
 			}
 		}
 
@@ -2411,7 +2411,7 @@ dvg_dua.500 = { #Total Revolution
 			create_diplomatic_play = {
 				target_country = c:ENG
 				war = no
-				type = dp_secession
+				type = dp_rebellion
 
 				add_war_goal = {
 					holder = c:ENG
@@ -2528,7 +2528,7 @@ dvg_dua.500 = { #Total Revolution
 			create_diplomatic_play = {
 				target_country = c:FRA
 				war = no
-				type = dp_secession
+				type = dp_rebellion
 
 				add_war_goal = {
 					holder = c:FRA
@@ -2755,7 +2755,7 @@ dvg_dua.510 = { #Midi Revolution
 			create_diplomatic_play = {
 				target_country = c:OCC
 				war = no
-				type = dp_secession
+				type = dp_rebellion
 			}
 		}
 		if = {
@@ -2983,6 +2983,7 @@ dvg_dua.514 = { #Midi Revolution - DUA lose
 	trigger = {
 		exists = c:DUA
 		this = c:DUA
+		has_journal_entry = je_dual_integration
 		has_variable = occ_revolted
 		NOT = { has_variable = occ_revolt_win }
 		OR = {
@@ -3105,7 +3106,7 @@ dvg_dua.520 = { #Glorious Revolution
 			
 			create_diplomatic_play = {
 				target_country = c:ENG
-				type = dp_secession
+				type = dp_rebellion
 
 				add_war_goal = {
 					holder = c:ENG
@@ -3278,11 +3279,35 @@ dvg_dua.522 = { #Glorious Revolution - DUA won
 		name = dvg_dua.522.a
 		default_option = yes
 
-		custom_tooltip = {
-			text = dvg_raise_anglois_acc
-			change_variable = {
-				name = anglois_acc
-				add = 1
+		add_loyalists = {
+			value = 0.1
+			culture = cu:british
+		}
+
+		if = {
+			limit = {
+				has_journal_entry = jedual_integration
+			}
+
+			custom_tooltip = {
+				text = dvg_raise_anglois_acc
+				change_variable = {
+					name = anglois_acc
+					add = 1
+				}
+			}
+		}
+
+		if = {
+			limit = {
+				exists = c:BEO
+			}
+
+			c:BEO = {
+				add_modifier = {
+					name = dvg_beornia_migration
+					months = long_modifier_time
+				}
 			}
 		}
 	}
@@ -3310,6 +3335,7 @@ dvg_dua.523 = { #Glorious Revolution - DUA lose
 	trigger = {
 		exists = c:DUA
 		this = c:DUA
+		has_journal_entry = je_dual_integration
 		has_variable = eng_revolted
 		NOT = { has_variable = eng_revolt_win }
 		OR = {
@@ -3368,7 +3394,10 @@ dvg_dua.524 = { #Foreign support
 		any_diplomatic_play = {
 			initiator = c:DUA
 			target = root
-			is_diplomatic_play_type = dp_secession
+			OR = {
+				is_diplomatic_play_type = dp_secession
+				is_diplomatic_play_type = dp_rebellion
+			}
 			is_war = no
 		}
 	}
@@ -3388,7 +3417,10 @@ dvg_dua.524 = { #Foreign support
 			limit = {
 				any_scope_play_involved = { this = scope:initiator }
 				any_scope_play_involved = { this = scope:target_country }
-				is_diplomatic_play_type = dp_secession
+				OR = {
+					is_diplomatic_play_type = dp_secession
+					is_diplomatic_play_type = dp_rebellion
+				}
             }
 			save_scope_as = war
 		}
