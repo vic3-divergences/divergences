@@ -713,11 +713,11 @@ ai_strategy_unify_ari = {
 	}
 		
 	undesirable_infamy_level = {
-		value = 25
+		value = 35
 	}
 	
 	unacceptable_infamy_level = {
-		value = 50
+		value = 75
 	}
 	
 	ideological_opinion_effect_mult = {
@@ -765,7 +765,7 @@ ai_strategy_unify_ari = {
 	
 	# Added to value from default strategy
 	aggression = {
-		value = 0.25
+		value = 0.5
 		
 		if = {
 			limit = { 
@@ -867,7 +867,23 @@ ai_strategy_unify_ari = {
 		}			
 	}
 	
-	secret_goal_scores = {			
+	secret_goal_scores = {
+		dominate = {		
+			if = {
+				limit = {
+					scope:target_country = {
+						country_has_primary_culture = cu:catalan
+						country_has_primary_culture = cu:north_italian
+						country_has_primary_culture = cu:south_italian
+						country_has_primary_culture = cu:central_italian #DVG
+						country_has_primary_culture = cu:sardinian #DVG
+						country_has_primary_culture = cu:venetian #DVG
+						country_has_primary_culture = cu:maltese
+					}
+				}
+				add = 1000
+			}			
+		}			
 		conquer = {				
 			if = {
 				limit = {
@@ -897,6 +913,430 @@ ai_strategy_unify_ari = {
 				c:ARN = ROOT
 			}
 		}
+	}
+
+	weight = {
+		value = 1500
+	}
+}
+
+ai_strategy_unify_north_germany = {
+	icon = "gfx/interface/icons/ai_strategy_icons/unification.dds"
+	
+	type = diplomatic
+	
+	wanted_army_ratio = {
+		value = 150000
+	}
+	
+	wanted_navy_ratio = {
+		value = 400000
+	}
+	
+	undesirable_infamy_level = {
+		value = 25
+	}
+	
+	unacceptable_infamy_level = {
+		value = 50
+	}
+	
+	ideological_opinion_effect_mult = {
+		value = 0.5
+	}
+	
+	wargoal_maneuvers_fraction = {
+		value = 0.1
+	}		
+	
+	diplomatic_play_neutrality = {
+		value = 0
+	}
+	
+	diplomatic_play_boldness = {
+		value = 75
+	}
+
+	obligation_value = {
+		value = 0
+	
+		if = {
+			limit = { 
+				scope:target_country = {			
+					OR = {
+						country_has_primary_culture = cu:north_german
+					}
+				}
+			}
+			add = 25
+		}
+	}	
+
+	recklessness = {
+		value = 0.5
+	}
+	
+	aggression = {
+		value = 0.25
+		
+		if = {
+			limit = { 
+				scope:target_country = {			
+					OR = {
+						country_has_primary_culture = cu:north_german
+					}
+				}
+			}
+			add = 2.75
+		}
+
+		# Less aggressive against countries we're just antagonistic against, rather than belligerent/domineering
+		if = {
+			limit = {
+				has_attitude = {
+					who = scope:target_country
+					attitude = antagonistic
+				}					
+			}
+			multiply = 0.25
+		}
+
+		# More aggressive against ideological enemies, a bit less aggressive against ideological allies
+		if = {
+			limit = {
+				"ai_ideological_opinion(scope:target_country)" < 0
+			}
+			
+			multiply = {
+				value = "ai_ideological_opinion(scope:target_country)"
+				multiply = -0.2
+				add = 1
+				max = 4.0
+			}				
+		}	
+		else = {
+			multiply = {
+				value = "ai_ideological_opinion(scope:target_country)"
+				multiply = -0.05
+				add = 1
+				min = 0.5
+			}			
+		}
+	}
+
+	building_group_weights = {
+		bg_army = 1.5
+	}
+	
+	wargoal_scores = {
+		conquer_state = {
+			if = {
+				limit = {
+					scope:target_state = {
+						state_region = {
+							OR = {
+								is_homeland = cu:north_german
+							}
+						}
+					}
+					can_reach_target_state = yes				
+				}
+				add = 100
+			}
+		}
+		return_state = {
+			if = {
+				limit = {
+					scope:target_state = {
+						state_region = {
+							OR = {
+								is_homeland = cu:north_german
+							}
+						}	
+					}
+					can_reach_target_state = yes
+				}
+				add = 100
+			}
+		}
+	}
+
+	secret_goal_scores = {
+		protect = {		
+			if = {
+				limit = {
+					scope:target_country = {
+						OR = {
+							country_has_primary_culture = cu:north_german
+						}
+						NOT = { is_unification_candidate = GER }
+						OR = { 
+							is_subject_of = root
+							has_diplomatic_pact = {
+								who = scope:target_country
+								type = customs_union
+							}							
+						}
+					}
+				}
+				add = 1000
+			}		
+		}		
+		dominate = {		
+			if = {
+				limit = {
+					scope:target_country = {
+						OR = {
+							country_has_primary_culture = cu:north_german
+						}					
+						NOT = { is_unification_candidate = GER }
+						NOR = { 
+							is_subject_of = root
+							has_diplomatic_pact = {
+								who = scope:target_country
+								type = customs_union
+							}
+						}
+					}
+				}
+				add = 1000
+			}		
+		}		
+		conquer = {		
+			if = {
+				limit = {
+					scope:target_country = {
+						OR = {
+							country_has_primary_culture = cu:north_german
+						}
+					}
+				}
+				add = 500
+			}			
+		}
+	}	
+
+	possible = {
+		is_subject = no
+		NOT = { exists = c:NGF }
+		OR = {
+			AND = {
+				country_has_primary_culture = cu:north_german
+				exists = c:BOH
+				ROOT = c:BOH
+			}
+			can_form_nation = NGF
+		}
+		country_rank >= rank_value:minor_power
+	}
+
+	weight = {
+		value = 1000
+	}
+}
+
+ai_strategy_unify_south_germany = {
+	icon = "gfx/interface/icons/ai_strategy_icons/unification.dds"
+	
+	type = diplomatic
+	
+	wanted_army_ratio = {
+		value = 150000
+	}
+	
+	wanted_navy_ratio = {
+		value = 400000
+	}
+	
+	undesirable_infamy_level = {
+		value = 25
+	}
+	
+	unacceptable_infamy_level = {
+		value = 50
+	}
+	
+	ideological_opinion_effect_mult = {
+		value = 0.5
+	}
+	
+	wargoal_maneuvers_fraction = {
+		value = 0.1
+	}		
+	
+	diplomatic_play_neutrality = {
+		value = 0
+	}
+	
+	diplomatic_play_boldness = {
+		value = 75
+	}
+
+	obligation_value = {
+		value = 0
+	
+		if = {
+			limit = { 
+				scope:target_country = {			
+					OR = {
+						country_has_primary_culture = cu:south_german
+					}
+				}
+			}
+			add = 25
+		}
+	}	
+
+	recklessness = {
+		value = 0.5
+	}
+	
+	aggression = {
+		value = 0.25
+		
+		if = {
+			limit = { 
+				scope:target_country = {			
+					OR = {
+						country_has_primary_culture = cu:south_german
+					}
+				}
+			}
+			add = 2.75
+		}
+
+		# Less aggressive against countries we're just antagonistic against, rather than belligerent/domineering
+		if = {
+			limit = {
+				has_attitude = {
+					who = scope:target_country
+					attitude = antagonistic
+				}					
+			}
+			multiply = 0.25
+		}
+
+		# More aggressive against ideological enemies, a bit less aggressive against ideological allies
+		if = {
+			limit = {
+				"ai_ideological_opinion(scope:target_country)" < 0
+			}
+			
+			multiply = {
+				value = "ai_ideological_opinion(scope:target_country)"
+				multiply = -0.2
+				add = 1
+				max = 4.0
+			}				
+		}	
+		else = {
+			multiply = {
+				value = "ai_ideological_opinion(scope:target_country)"
+				multiply = -0.05
+				add = 1
+				min = 0.5
+			}			
+		}
+	}
+
+	building_group_weights = {
+		bg_army = 1.5
+	}
+	
+	wargoal_scores = {
+		conquer_state = {
+			if = {
+				limit = {
+					scope:target_state = {
+						state_region = {
+							OR = {
+								is_homeland = cu:south_german
+							}
+						}
+					}
+					can_reach_target_state = yes				
+				}
+				add = 100
+			}
+		}
+		return_state = {
+			if = {
+				limit = {
+					scope:target_state = {
+						state_region = {
+							OR = {
+								is_homeland = cu:south_german
+							}
+						}	
+					}
+					can_reach_target_state = yes
+				}
+				add = 100
+			}
+		}
+	}
+
+	secret_goal_scores = {
+		protect = {		
+			if = {
+				limit = {
+					scope:target_country = {
+						OR = {
+							country_has_primary_culture = cu:south_german
+						}
+						NOT = { is_unification_candidate = GER }
+						OR = { 
+							is_subject_of = root
+							has_diplomatic_pact = {
+								who = scope:target_country
+								type = customs_union
+							}
+						}
+					}
+				}
+				add = 1000
+			}		
+		}		
+		dominate = {		
+			if = {
+				limit = {
+					scope:target_country = {
+						OR = {
+							country_has_primary_culture = cu:south_german
+						}					
+						NOT = { is_unification_candidate = GER }
+						NOR = { 
+							is_subject_of = root
+							has_diplomatic_pact = {
+								who = scope:target_country
+								type = customs_union
+							}
+						}
+					}
+				}
+				add = 1000
+			}		
+		}		
+		conquer = {		
+			if = {
+				limit = {
+					scope:target_country = {
+						OR = {
+							country_has_primary_culture = cu:south_german
+						}
+					}
+				}
+				add = 500
+			}			
+		}
+	}	
+
+	possible = {
+		is_subject = no
+		NOT = { exists = c:SGF }
+		can_form_nation = SGF
+		has_journal_entry = je_danubian_unification
+		country_rank >= rank_value:minor_power
 	}
 
 	weight = {
