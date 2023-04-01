@@ -840,8 +840,11 @@ dvg_dua.113 = { #The Great Travel of the Dauphin
 	duration = 3
 
 	trigger = {
-		# Todo: Check if their is a heir
 		year >= 1840
+		any_scope_character = {
+			is_heir = yes
+			age >= 18
+		}
 		NOT = { has_variable = travel_dauphin_var }
 	}
 
@@ -2425,6 +2428,17 @@ dvg_dua.500 = { #Total Revolution
 		if = {
 			limit = {
 				exists = c:IRE
+				NOT = {
+					any_diplomatic_play = {
+						initiator = c:DUA
+						target = c:IRE
+						OR = {
+							is_diplomatic_play_type = dp_secession
+							is_diplomatic_play_type = dp_rebellion
+						}
+						is_war = no
+					}
+				}
 			}
 
 			every_scope_state = {
@@ -2438,7 +2452,6 @@ dvg_dua.500 = { #Total Revolution
 				set_state_type = incorporated
 			}
 
-			
 			create_diplomatic_play = {
 				target_country = c:IRE
 				war = no
@@ -2479,6 +2492,17 @@ dvg_dua.500 = { #Total Revolution
 		if = {
 			limit = {
 				exists = c:ENG
+				NOT = {
+					any_diplomatic_play = {
+						initiator = c:DUA
+						target = c:ENG
+						OR = {
+							is_diplomatic_play_type = dp_secession
+							is_diplomatic_play_type = dp_rebellion
+						}
+						is_war = no
+					}
+				}
 			}
 
 			if = {
@@ -2513,7 +2537,6 @@ dvg_dua.500 = { #Total Revolution
 				}
 			}
 
-
 			s:STATE_HOME_COUNTIES = {
 				add_claim = c:ENG
 			}
@@ -2529,13 +2552,13 @@ dvg_dua.500 = { #Total Revolution
 
 				add_war_goal = {
 					holder = c:ENG
-					type = conquer_state
+					type = return_state
 					target_state = s:STATE_HOME_COUNTIES.region_state:DUA
 				}
 
 				add_war_goal = {
 					holder = c:ENG
-					type = conquer_state
+					type = return_state
 					target_state = s:STATE_WEST_COUNTRY.region_state:DUA
 				}
 
@@ -2577,6 +2600,17 @@ dvg_dua.500 = { #Total Revolution
 		if = {
 			limit = {
 				exists = c:FRA
+				NOT = {
+					any_diplomatic_play = {
+						initiator = c:DUA
+						target = c:FRA
+						OR = {
+							is_diplomatic_play_type = dp_secession
+							is_diplomatic_play_type = dp_rebellion
+						}
+						is_war = no
+					}
+				}
 			}
 
 			every_scope_state = {
@@ -2646,13 +2680,13 @@ dvg_dua.500 = { #Total Revolution
 
 				add_war_goal = {
 					holder = c:FRA
-					type = conquer_state
+					type = return_state
 					target_state = s:STATE_ILE_DE_FRANCE.region_state:DUA
 				}
 
 				add_war_goal = {
 					holder = c:FRA
-					type = conquer_state
+					type = return_state
 					target_state = s:STATE_NORMANDY.region_state:DUA
 				}
 
@@ -2705,6 +2739,12 @@ dvg_dua.505 = { # France freedom and occitan
 		this = c:FRA
 		NOT = { exists = c:OCC }
 		has_variable = dua_total_revolution_secession
+		NOT = {
+			any_diplomatic_play = {
+				initiator = c:DUA
+				target = c:FRA
+			}
+		}
 	}
 
 	immediate = {
@@ -3204,9 +3244,6 @@ dvg_dua.520 = { #Glorious Revolution
 				tag = ENG
 				origin = this
 				state = s:STATE_MIDLANDS.region_state:DUA
-				state = s:STATE_YORKSHIRE.region_state:DUA
-				state = s:STATE_LANCASHIRE.region_state:DUA
-				state = s:STATE_EAST_ANGLIA.region_state:DUA
 				on_created = {
 					add_modifier = {
 						name = dvg_revolutionary_militias
@@ -3220,14 +3257,6 @@ dvg_dua.520 = { #Glorious Revolution
 				}
 			}
 
-			s:STATE_HOME_COUNTIES = {
-				add_claim = c:ENG
-			}
-
-			s:STATE_WEST_COUNTRY = {
-				add_claim = c:ENG
-			}
-			
 			create_diplomatic_play = {
 				target_country = c:ENG
 				type = dp_rebellion
@@ -3245,6 +3274,54 @@ dvg_dua.520 = { #Glorious Revolution
 				}
 			}
 		}
+
+		if = {
+			limit = {
+				exists = c:ENG
+			}
+
+			if = {
+				limit = { exists = s:STATE_LANCASHIRE.region_state:DUA }
+				s:STATE_LANCASHIRE.region_state:DUA = { 
+					set_state_owner = c:ENG
+					set_state_type = incorporated
+				}
+			}
+
+			if = {
+				limit = { exists = s:STATE_YORKSHIRE.region_state:DUA }
+				s:STATE_YORKSHIRE.region_state:DUA = { 
+					set_state_owner = c:ENG
+					set_state_type = incorporated
+				}
+			}
+
+			if = {
+				limit = { exists = s:STATE_MIDLANDS.region_state:DUA }
+				s:STATE_MIDLANDS.region_state:DUA = { 
+					set_state_owner = c:ENG
+					set_state_type = incorporated
+				}
+			}
+
+			if = {
+				limit = { exists = s:STATE_EAST_ANGLIA.region_state:DUA }
+				s:STATE_EAST_ANGLIA.region_state:DUA = { 
+					set_state_owner = c:ENG 
+					set_state_type = incorporated
+				}
+			}
+
+			s:STATE_HOME_COUNTIES = {
+				add_claim = c:ENG
+			}
+
+			s:STATE_WEST_COUNTRY = {
+				add_claim = c:ENG
+			}
+			
+		}
+
 		if = {
 			limit = {
 				has_journal_entry = je_dual_integration
