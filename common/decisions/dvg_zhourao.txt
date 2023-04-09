@@ -30,15 +30,25 @@ dvg_pitjantjajara_colony = {
 	is_shown = {
 		has_game_rule = australia_railroaded
 		exists = c:PJT
-		root = {
-			has_state_in_state_region = STATE_COOMALONG
-			has_state_in_state_region = STATE_NOONGAR
-		}
-		NOT = {
-			exists = c:NNG
-			exists = c:YMT
-			root = c:PJT
-		}
+		OR = {
+			AND = {
+				root = {
+					has_state_in_state_region = STATE_COOMALONG
+					has_state_in_state_region = STATE_NOONGAR
+				}
+				NOT = {
+					exists = c:NNG
+					exists = c:YMT
+					root = c:PJT
+				}
+			}
+			AND = {
+				exists = c:NNG
+				root = {
+					has_state_in_state_region = STATE_NOONGAR
+				}
+			}
+		}	
 	}
 
     possible = {
@@ -57,12 +67,12 @@ dvg_pitjantjajara_colony = {
 dvg_yolngu_colony = {
 	is_shown = {
 		has_game_rule = australia_railroaded
-		exists = c:YLN
+		exists = c:GRJ
 		root = {
 			has_state_in_state_region = STATE_YOLNGU
 		}
 		NOT = {
-			root = c:YLN
+			root = c:GRJ
 		}
 	}
 
@@ -72,6 +82,61 @@ dvg_yolngu_colony = {
 
     when_taken = {
 		trigger_event = { id = dvg_oceania.5 popup = yes }
+    }
+
+	ai_chance = {
+		base = 100
+	}
+}
+
+dvg_darwin_seizure = {
+	is_shown = {
+		has_game_rule = australia_railroaded
+		exists = c:MKS
+		exists = c:DUA
+		root = c:DUA
+		c:MKS = {
+			has_state_in_state_region = STATE_YOLNGU
+		}
+		NOT = {
+			AND = {
+				exists = c:MKS
+				root = c:MKS
+			}
+			AND = {
+				exists = c:YLN
+				root = c:YLN
+			}
+			AND = {
+				exists = c:GRJ
+				root = c:GRJ
+			}
+			AND = {
+				exists = c:NGL
+				root = c:NGL
+			}
+			AND = {
+				exists = c:GWG
+				root = c:GWG
+			}
+			has_variable = dvg_seized_darwin
+		}
+	}
+
+    possible = {
+		OR = {
+			is_player = yes
+			year >= 1838
+		}
+	}
+
+    when_taken = {
+		c:MKS = {
+			trigger_event = { id = dvg_oceania.52 popup = yes }
+		}
+		hidden_effect = {
+			set_variable = dvg_seized_darwin
+		}
     }
 
 	ai_chance = {
@@ -92,7 +157,10 @@ dvg_nunga_colony = {
 	}
 
     possible = {
-		year >= 1855
+		OR = {
+			is_player = yes
+			year >= 1855
+		}
 	}
 
     when_taken = {
@@ -563,6 +631,112 @@ dvg_declare_war_on_mianjin = {
 			set_variable = dvg_second_kongsi_war_decision_variable
 		}
 		trigger_event = { id = dvg_zhourao.13 popup = yes }
+    }
+
+	ai_chance = {
+		base = 100
+	}
+}
+
+dvg_declare_war_on_the_marra = {
+	is_shown = {
+		exists = c:YLN
+		exists = c:GWG
+		root = c:YLN
+		NOT = {
+			has_variable = dvg_the_yolngu_war_hongshan_variable
+		}
+	}
+
+    possible = {
+		year >= 1836
+	}
+
+    when_taken = {
+		hidden_effect = {
+			set_variable = dvg_the_yolngu_war_hongshan_variable
+		}
+		c:GWG = {
+			trigger_event = { id = dvg_oceania.55 popup = yes }
+		}
+		custom_tooltip = {
+			text = dvg_will_lead_to_a_war_tt
+			create_diplomatic_play = {
+				name = dvg_hongshan_wars
+			
+				target_country = c:GWG
+				
+				war = yes
+				
+				type = dp_annex_war
+				
+				add_war_goal = {
+					holder = c:GWG
+					type = annex_country
+					target_country = c:YLN
+				}
+			}
+		}
+    }
+
+	ai_chance = {
+		base = 100
+	}
+}
+
+dvg_declare_war_on_the_wadjiginy = {
+	is_shown = {
+		exists = c:NGL
+		OR = {
+			AND = {
+				exists = c:GWG
+				root = c:GWG
+				NOT = {
+					exists = c:YLN
+				}
+			}
+			AND = {
+				exists = c:YLN
+				root = c:YLN
+				NOT = {
+					exists = c:GWG
+				}
+			}
+		}
+		NOT = {
+			has_variable = dvg_the_yolngu_war_two_hongshan_variable
+		}
+	}
+
+    possible = {
+		year >= 1837
+	}
+
+    when_taken = {
+		hidden_effect = {
+			set_variable = dvg_the_yolngu_war_two_hongshan_variable
+		}
+		c:NGL = {
+			trigger_event = { id = dvg_oceania.56 popup = yes }
+		}
+		custom_tooltip = {
+			text = dvg_will_lead_to_a_war_tt
+			create_diplomatic_play = {
+				name = dvg_hongshan_wars
+			
+				target_country = c:NGL
+				
+				war = yes
+				
+				type = dp_annex_war
+				
+				add_war_goal = {
+					holder = c:NGL
+					type = annex_country
+					target_country = c:ROOT
+				}
+			}
+		}
     }
 
 	ai_chance = {
