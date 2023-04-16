@@ -1,0 +1,281 @@
+﻿je_lotharian_house_of_cards = {
+	icon = "gfx/interface/icons/event_icons/event_scales.dds"
+
+	
+
+	possible = {
+		ig:ig_armed_forces = {
+			is_in_government = yes
+		}
+	}
+
+	immediate = {
+		set_variable = {
+			name = aigle_var
+			value = 0
+		}
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					ig:ig_armed_forces = {
+						is_powerful = yes
+						is_in_government = yes
+					}	
+				}
+				change_variable = {
+					name = aigle_var
+					add = 1
+				}
+			}
+		}
+	}
+
+	complete = {
+		# If-else clause to avoid errors because of missing variable before JE activates
+		trigger_if = {
+			limit = { exists = var:aigle_var }
+			scope:journal_entry = { is_goal_complete = yes }
+		}
+		
+		
+		has_law = law_type:law_autocracy
+		root.average_sol <= 12
+	}
+	
+	on_complete = {
+		set_variable = house_of_cards_complete
+		trigger_event = {
+			id = dvg_lotharingia.5
+		}
+	}
+	
+	fail = {
+		OR = {
+			ig:ig_armed_forces = {
+				is_powerful = no
+				is_in_government = no
+			}
+			NOT = { has_law = law_type:law_autocracy
+			        has_law = law_type:law_monarchy
+			}
+		}
+	}
+	
+	on_fail = {
+		set_variable = house_of_cards_complete
+		trigger_event = {
+			id = dvg_lotharingia.4
+		}
+	}
+	
+	timeout = 9125
+
+	on_timeout = {
+		trigger_event = {
+			 id = dvg_lotharingia.2
+		}
+	}
+
+	current_value = {
+		value = root.var:aigle_var
+	}
+
+	goal_add_value = {
+		value = 150
+	}
+
+	progressbar = yes
+
+	weight = 10000
+	should_be_pinned_by_default = yes
+}
+
+je_reconquering_atlantia = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	
+
+	possible = {
+	     year >= 1840
+		NOT = {
+			
+			
+			owns_entire_state_region = STATE_COTE_DU_CAFE
+		}
+	}
+
+	complete = {
+		OR = {
+			owns_entire_state_region = STATE_COTE_DU_CAFE
+		}
+	}
+
+	on_complete = {
+		change_variable = {
+			name = aigle_var
+			add = 10
+		}
+		trigger_event = { id = dvg_lotharingia.10 }
+	}
+	should_be_pinned_by_default = yes
+}
+
+je_reuniting_lotharingia = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	is_shown_when_inactive = {
+		exists = c:LOT
+        OR = {
+	        exists = c:NEA
+			exists = c:ODO
+			exists = c:TGI
+			exists = c:ATL
+			
+			is_at_war = no
+		}    
+		
+		
+	}
+
+	possible = {
+	
+	
+	
+	custom_tooltip = {	
+	 text = collapsed_lotharingia
+		OR = {
+			exists = c:NEA
+			exists = c:ODO
+			exists = c:TGI
+			exists = c:ATL
+		}
+		}
+		}
+	
+
+	complete = {
+		is_at_war = no
+		owns_entire_state_region = STATE_COTE_DU_CAFE
+		owns_entire_state_region = STATE_LORRAINE_ATLANTIQUE
+		owns_entire_state_region = STATE_LIBREVILLE
+		owns_entire_state_region = STATE_NOUVELLE_ALSACE
+		owns_entire_state_region = STATE_BRUXELLES_SUR_ODON
+		owns_entire_state_region = STATE_SERMOISE_SUR_ODON
+		owns_entire_state_region = STATE_CHACO_BOREAL
+		owns_entire_state_region = STATE_BOURGOGNE_DU_SUD
+		owns_entire_state_region = STATE_MARCHES_OUEST
+	}
+	
+	on_complete = {
+		trigger_event = { id = dvg_lotharingia.6 }
+	}
+
+	fail = {
+		OR = {
+			NOT = { has_law = law_type:law_autocracy
+				has_law = law_type:law_oligarchy
+				has_law = law_type:law_landed_voting
+
+		}
+		}
+	}
+
+	on_fail = {
+		trigger_event = { id = dvg_lotharingia.7 }
+	}
+
+	timeout = 4380
+
+	on_timeout = {
+		#trigger_event = {
+			# id = dvg_lotharingia.7
+		#}
+	}
+
+	weight = 10000
+	should_be_pinned_by_default = yes
+}
+
+je_odonia_unite = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	is_shown_when_inactive = {
+		exists = c:ODO
+        exists = c:LOT
+		has_state_in_state_region = STATE_BOURGOGNE_DU_SUD
+		has_state_in_state_region = STATE_TRANSFLEUVE
+		any_neighbouring_state = {
+			owner = c:LOT
+		}
+	}
+
+    possible = {
+		has_state_in_state_region = STATE_BOURGOGNE_DU_SUD
+		has_state_in_state_region = STATE_TRANSFLEUVE
+	}
+
+	complete = {
+		NOT = { exists = c:LOT }
+		is_at_war = no
+		owns_entire_state_region = STATE_LORRAINE_ATLANTIQUE
+		owns_entire_state_region = STATE_SERMOISE_SUR_ODON
+		owns_entire_state_region = STATE_BOURGOGNE_DU_SUD
+	}
+
+    on_complete = {
+		trigger_event = { id = dvg_lotharingia.8 popup = yes }
+		activate_law = law_type:law_landed_voting
+    }
+
+    timeout = 2380
+
+	on_timeout = {
+		#trigger_event = {
+			#id = dvg_lotharingia.7
+		#}
+	}
+
+	should_be_pinned_by_default = yes
+}
+
+je_guarani_unite = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	is_shown_when_inactive = {
+		exists = c:TGI
+		exists = c:LOT
+
+		any_neighbouring_state = {
+			owner = c:LOT
+		}
+		OR = {
+			any_neighbouring_state = {
+				owner = c:BEO
+			}
+		}
+	}
+
+    possible = {
+		has_state_in_state_region = STATE_MARCHES_OUEST
+		has_state_in_state_region = STATE_CHACO_BOREAL
+	}
+
+	complete = {
+		is_at_war = no
+		owns_entire_state_region = STATE_CHACO_BOREAL
+		owns_entire_state_region = STATE_MARCHES_OUEST
+		owns_entire_state_region = STATE_BRUXELLES_SUR_ODON
+		owns_entire_state_region = STATE_GRAND_CHACO
+		owns_entire_state_region = STATE_NORTHUMBRIA
+	}
+
+    on_complete = {
+		trigger_event = { id = dvg_lotharingia.9 popup = yes }
+		activate_law = law_type:law_landed_voting
+    }
+
+	should_be_pinned_by_default = yes
+}
