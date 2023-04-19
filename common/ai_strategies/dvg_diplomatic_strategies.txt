@@ -12,11 +12,11 @@
 	}
 		
 	undesirable_infamy_level = {
-		value = 25
+		value = 35
 	}
 	
 	unacceptable_infamy_level = {
-		value = 50
+		value = 75
 	}
 	
 	ideological_opinion_effect_mult = {
@@ -157,7 +157,7 @@
 						country_has_primary_culture = cu:russian
 					}
 				}
-				add = 300
+				add = 1000
 			}
 		}
 	}
@@ -170,6 +170,247 @@
 
 	weight = {
 		value = 1000	
+	}
+}
+
+ai_strategy_unify_russia = {
+	icon = "gfx/interface/icons/ai_strategy_icons/unification.dds"
+	
+	type = diplomatic
+	
+	wanted_army_ratio = {
+		value = 150000
+	}
+	
+	wanted_navy_ratio = {
+		value = 400000
+	}
+	
+	undesirable_infamy_level = {
+		value = 35
+	}
+	
+	unacceptable_infamy_level = {
+		value = 75
+	}
+	
+	ideological_opinion_effect_mult = {
+		value = 0.5
+	}
+	
+	wargoal_maneuvers_fraction = {
+		value = 0.1
+	}		
+	
+	diplomatic_play_neutrality = {
+		value = 0
+	}
+	
+	diplomatic_play_boldness = {
+		value = 75
+	}
+
+	obligation_value = {
+		value = 0
+	
+		if = {
+			limit = { 
+				scope:target_country = {			
+					OR = {
+						country_has_primary_culture = cu:russian
+						country_has_primary_culture = cu:north_russian
+					}
+				}
+			}
+			add = 25
+		}
+	}	
+
+	recklessness = {
+		value = 0.5
+
+		if = {
+			limit = {
+				has_technology_researched = pan-nationalism
+			}
+			add = 0.25
+		}
+	}
+	
+	aggression = {
+		value = 0.25
+		
+		if = {
+			limit = { 
+				scope:target_country = {			
+					OR = {
+						country_has_primary_culture = cu:russian
+						country_has_primary_culture = cu:north_russian
+					}
+				}
+			}
+			add = 2.75
+		}
+
+		if = {
+			limit = {
+				has_technology_researched = pan-nationalism
+				scope:target_country = {
+					is_unification_candidate = RUS
+				}
+			}
+			add = 50
+		}
+
+		# Less aggressive against countries we're just antagonistic against, rather than belligerent/domineering
+		if = {
+			limit = {
+				has_attitude = {
+					who = scope:target_country
+					attitude = antagonistic
+				}					
+			}
+			multiply = 0.25
+		}
+
+		# More aggressive against ideological enemies, a bit less aggressive against ideological allies
+		if = {
+			limit = {
+				"ai_ideological_opinion(scope:target_country)" < 0
+			}
+			
+			multiply = {
+				value = "ai_ideological_opinion(scope:target_country)"
+				multiply = -0.2
+				add = 1
+				max = 4.0
+			}				
+		}	
+		else = {
+			multiply = {
+				value = "ai_ideological_opinion(scope:target_country)"
+				multiply = -0.05
+				add = 1
+				min = 0.5
+			}			
+		}
+	}
+
+	building_group_weights = {
+		bg_army = 1.5
+	}
+	
+	wargoal_scores = {
+		conquer_state = {
+			if = {
+				limit = {
+					scope:target_state = {
+						state_region = {
+							OR = {
+								is_homeland = cu:russian
+								is_homeland = cu:north_russian
+							}
+						}
+					}
+					can_reach_target_state = yes				
+				}
+				add = 100
+			}
+		}
+		return_state = {
+			if = {
+				limit = {
+					scope:target_state = {
+						state_region = {
+							OR = {
+								is_homeland = cu:russian
+								is_homeland = cu:north_russian
+							}
+						}	
+					}
+					can_reach_target_state = yes
+				}
+				add = 100
+			}
+		}
+		unification_leadership = {
+			value = 1000
+		}	
+	}
+
+	secret_goal_scores = {
+		protect = {		
+			if = {
+				limit = {
+					scope:target_country = {
+						OR = {
+							country_has_primary_culture = cu:russian
+							country_has_primary_culture = cu:north_russian
+						}
+						NOT = { is_unification_candidate = RUS }
+						OR = { 
+							is_supporting_unification_candidate = { who = root country_formation = RUS }
+							is_subject_of = root
+							has_diplomatic_pact = {
+								who = scope:target_country
+								type = customs_union
+							}							
+						}
+					}
+				}
+				add = 1000
+			}		
+		}		
+		dominate = {		
+			if = {
+				limit = {
+					scope:target_country = {
+						OR = {
+							country_has_primary_culture = cu:russian
+							country_has_primary_culture = cu:north_russian
+						}					
+						NOT = { is_unification_candidate = RUS }
+						NOR = { 
+							is_supporting_unification_candidate = { who = root country_formation = RUS }
+							is_subject_of = root
+							has_diplomatic_pact = {
+								who = scope:target_country
+								type = customs_union
+							}
+						}
+					}
+				}
+				add = 1000
+			}		
+		}		
+		conquer = {		
+			if = {
+				limit = {
+					scope:target_country = {				
+						is_unification_candidate = RUS
+					}
+				}
+				add = 1000
+			}			
+		}
+	}	
+
+	wargoal_weights = {
+		conquer_state = 0.5
+		return_state = 1.0
+		unification_leadership = 2.5
+		unification = 1.5
+		liberate_subject = 0.5
+	}
+
+	possible = {
+		is_unification_candidate = RUS	
+		NOT = { country_tier = empire }
+		NOT = { has_journal_entry = je_nov_main } #NOV needs to complete its journal first
+	}
+
+	weight = {
+		value = 1500
 	}
 }
 
@@ -187,11 +428,11 @@ ai_strategy_unify_cossacks = {
 	}
 		
 	undesirable_infamy_level = {
-		value = 25
+		value = 35
 	}
 	
 	unacceptable_infamy_level = {
-		value = 50
+		value = 75
 	}
 	
 	ideological_opinion_effect_mult = {
@@ -316,7 +557,7 @@ ai_strategy_unify_cossacks = {
 						can_form_nation = CSK
 					}
 				}
-				add = 300
+				add = 1000
 			}				
 		}			
 	}	
@@ -360,11 +601,11 @@ ai_strategy_unify_tatarstan = {
 	}
 		
 	undesirable_infamy_level = {
-		value = 25
+		value = 35
 	}
 	
 	unacceptable_infamy_level = {
-		value = 50
+		value = 75
 	}
 	
 	ideological_opinion_effect_mult = {
@@ -489,7 +730,7 @@ ai_strategy_unify_tatarstan = {
 						can_form_nation = TAR
 					}
 				}
-				add = 300
+				add = 1000
 			}				
 		}			
 	}	
@@ -1334,8 +1575,10 @@ ai_strategy_unify_south_germany = {
 	possible = {
 		is_subject = no
 		NOT = { exists = c:SGF }
-		can_form_nation = SGF
-		has_journal_entry = je_danubian_unification
+		OR = {
+			can_form_nation = SGF
+			has_journal_entry = je_danubian_unification
+		}
 		country_rank >= rank_value:minor_power
 	}
 
