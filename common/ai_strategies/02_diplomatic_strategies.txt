@@ -116,7 +116,14 @@
 		if = {
 			limit = { country_rank < rank_value:major_power }
 			add = 10
-		}		
+		}
+
+		if = { # Dual monarch should focus on preserving balance and not conquest
+			limit = { 
+				has_journal_entry = je_dual_integration
+			}
+			add = 1000
+		}
 	}
 }
 
@@ -535,7 +542,17 @@ ai_strategy_armed_isolationism = {
 		if = {
 			limit = { country_rank = rank_value:major_power }
 			multiply = 0.5
-		}			
+		}
+
+		if = {
+			limit = { country_rank = rank_value:major_power }
+			multiply = 0.5
+		}
+
+		if = {
+			limit = { has_modifier = neutrality }
+			add = 100
+		}
 	}
 }
 
@@ -804,11 +821,11 @@ ai_strategy_unify_germany = {
 	}
 	
 	undesirable_infamy_level = {
-		value = 25
+		value = 35
 	}
 	
 	unacceptable_infamy_level = {
-		value = 50
+		value = 75
 	}
 	
 	ideological_opinion_effect_mult = {
@@ -846,6 +863,13 @@ ai_strategy_unify_germany = {
 
 	recklessness = {
 		value = 0.5
+
+		if = {
+            limit = {
+                has_technology_researched = pan-nationalism
+            }
+            add = 0.25
+        }
 	}
 	
 	aggression = {
@@ -857,12 +881,28 @@ ai_strategy_unify_germany = {
 					OR = {
 						country_has_primary_culture = cu:north_german
 						country_has_primary_culture = cu:south_german
-						country_has_primary_culture = cu:rheinish #DVG
+						country_has_primary_culture = cu:rheinish
+						country_has_primary_culture = cu:czech
 					}
 				}
 			}
 			add = 2.75
 		}
+
+		if = {
+            limit = {
+                has_technology_researched = pan-nationalism
+				scope:target_country = {			
+					OR = {
+						country_has_primary_culture = cu:north_german
+						country_has_primary_culture = cu:south_german
+						country_has_primary_culture = cu:rheinish
+						country_has_primary_culture = cu:czech
+					}
+				}
+            }
+            add = 5
+        }
 
 		# Less aggressive against countries we're just antagonistic against, rather than belligerent/domineering
 		if = {
@@ -992,14 +1032,25 @@ ai_strategy_unify_germany = {
 		conquer = {		
 			if = {
 				limit = {
-					scope:target_country = {				
-						is_unification_candidate =GER
+					scope:target_country = {
+						OR = {			
+							is_unification_candidate = GER
+							country_has_primary_culture = cu:czech
+						}
 					}
 				}
 				add = 1000
 			}			
 		}
 	}	
+
+	wargoal_weights = {
+		conquer_state = 0.5
+		return_state = 1.0
+		unification_leadership = 2.5
+		unification = 1.5
+		liberate_subject = 0.5
+	}
 
 	possible = {
 		is_unification_candidate = GER	
@@ -1247,6 +1298,7 @@ ai_strategy_unify_italy = {
 	possible = {
 		is_unification_candidate = ITA	
 		NOT = { country_tier = empire }
+
 	}
 
 	weight = {
@@ -1255,7 +1307,7 @@ ai_strategy_unify_italy = {
 		if = {
 			limit = { NOT = { country_has_primary_culture = cu:venetian } }
 			add = 1000
-		}	
+		}
 	}
 }
 
@@ -1501,6 +1553,13 @@ ai_strategy_unify_china = {
 		
 	recklessness = {
 		value = 0.5
+
+		if = {
+			limit = {
+				has_technology_researched = pan-nationalism
+			}
+			add = 0.25
+		}
 	}	
 	
 	aggression = {
@@ -1511,6 +1570,16 @@ ai_strategy_unify_china = {
 				scope:target_country = { can_form_nation = CHI }
 			}
 			add = 2.5
+		}
+
+		if = {
+			limit = {
+				has_technology_researched = pan-nationalism
+				scope:target_country = {
+					can_form_nation = CHI
+				}
+			}
+			add = 50
 		}
 
 		# Less aggressive against countries we're just antagonistic against, rather than belligerent/domineering
@@ -1581,7 +1650,7 @@ ai_strategy_unify_china = {
 					}
 					can_reach_target_state = yes
 				}
-				add = 100
+				add = 200
 			}
 		}		
 	}			
@@ -1594,9 +1663,16 @@ ai_strategy_unify_china = {
 						can_form_nation = CHI
 					}
 				}
-				add = 200
-			}		
-		}		
+				add = 150
+				
+				if = {
+					limit = {
+						can_reach_target_country = no
+					}	
+					add = 150
+				}
+			}
+		}	
 		dominate = {		
 			if = {
 				limit = {
@@ -1606,7 +1682,7 @@ ai_strategy_unify_china = {
 				}
 				add = 300
 			}			
-		}		
+		}
 		conquer = {				
 			if = {
 				limit = {
@@ -1614,7 +1690,7 @@ ai_strategy_unify_china = {
 						can_form_nation = CHI
 					}
 				}
-				add = 300
+				add = 500
 			}				
 		}			
 	}	
