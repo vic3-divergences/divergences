@@ -33,7 +33,7 @@ je_return_of_hendrik = {
 				}	
 			}
 			c:OPS = {
-				has_state_in_state_region = s:STATE_LOURENCO_MARQUES
+				has_state_in_state_region = STATE_LOURENCO_MARQUES
 			}
 			c:NFL = {
 				exists = no
@@ -52,7 +52,7 @@ je_return_of_hendrik = {
 				has_truce_with = c:NFL
 			}
 			c:NFL = {
-				has_state_in_state_region = s:STATE_LOURENCO_MARQUES
+				has_state_in_state_region = STATE_LOURENCO_MARQUES
 			}
 		}
 	} 
@@ -138,7 +138,7 @@ je_king_aloysius = {
 	}
 
 	current_value = {
-		value = root.var:autocracy_var
+		value = root.var:aloysius_legitimacy
 	}
 
 	goal_add_value = {
@@ -155,10 +155,9 @@ je_cap_moderate = {
 	icon = "gfx/interface/icons/event_icons/event_scales.dds"
 
 	immediate = {
-		set_variable = { 
-			name = geus_agitation_var  
-			value = 200	} 
-		}
+		set_variable = {
+			name = geus_agitation_var
+		} #need to add value after variable is created
 	}
 
 	on_monthly_pulse = {
@@ -169,8 +168,8 @@ je_cap_moderate = {
 			}
 			if = {
 				limit = {
-					s:CAPE_COLONY = {
-						turmoil.cu:boer >= 0.5
+					s:CAPE_COLONY.region_state:CAP = {
+						turmoil.cu:boer > 0.5
 					}
 				}
 				change_variable = {
@@ -180,8 +179,8 @@ je_cap_moderate = {
 			}
 			if = {
 				limit = {
-					s:CAPE_COLONY = {
-						turmoil.cu:boer >= 0.25
+					s:CAPE_COLONY.region_state:CAP = {
+						turmoil.cu:boer > 0.25
 					}
 				}
 				change_variable = {
@@ -201,40 +200,47 @@ je_cap_moderate = {
 	}
 
 	complete = {
-		scope:var:geus_agitation_var = {
-			value = 0
-		}
-	}
-
-	on_complete = {
-		trigger_event = {
-			id = dvg_cape_colony.110
-		}
-	}
-
-	fail = {
 		scope:journal_entry = {
 			is_goal_complete = yes
 		}
 	}
 
-	on_fail = {
+	on_complete = {
 		trigger_event = {
 			id = dvg_cape_colony.111
 		}
 	}
 
+	fail = {
+		AND = {
+			root.var:geus_agitation_var = {
+				value = -1
+			}
+			NOT = {
+				cu:boer = {
+					culture_is_discriminated_in	= c:CAP
+				}
+			}
+		}
+	}
+
+	on_fail = {
+		trigger_event = {
+			id = dvg_cape_colony.110
+		}
+	}
+
 	current_value = {
-		value = root.var:autocracy_var
+		value = root.var:geus_agitation_var
 	}
 
 	goal_add_value = {
-		add = 240
+		value = 240
 	}
 
 	progressbar = yes
 
-	weight = 100
+	weight = 10000
 	should_be_pinned_by_default = yes
 }
 
