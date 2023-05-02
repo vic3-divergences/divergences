@@ -21,6 +21,19 @@ dvg_england.1 = { # Start Reclaiming England
 	icon = "gfx/interface/icons/event_icons/event_map.dds"
 
     duration = 3
+	
+	immediate = { 
+	
+		every_country = {
+					limit = {
+					
+					state_region = s:STATE_YORKSHIRE 	
+					
+					}
+					
+				save_scope_as = yorkshire_owner
+				}
+				}
 
 	option = {
 		name = dvg_england.1.a
@@ -57,16 +70,7 @@ dvg_england.2 = {  #Beornians own Yorkshire
 
     duration = 3
 
-	immediate = { every_country = {
-					limit = {
-					
-					has_state_in_state_region = s:STATE_YOKSHIRE 	
-					
-					}
-					
-				scope_as = yorkshire_owner
-				}
-				}
+	
 	
 	option = {
 		name = dvg_england.2.a
@@ -74,6 +78,9 @@ dvg_england.2 = {  #Beornians own Yorkshire
 		s:STATE_YORKSHIRE.region_state:DUA = {
 			set_state_owner = c:BEO
 		}
+		
+		add_primary_culture = cu:british
+		
 		add_journal_entry = {
 			type = je_england_conquer
 		}
@@ -145,6 +152,14 @@ dvg_england.4 = {  #Take Yorkshire back from Beornia
 	icon = "gfx/interface/icons/event_icons/event_map.dds"
 
     duration = 3
+	
+	trigger = {
+		exists = c:BEO
+		root = {
+			has_state_in_state_region = STATE_LANCASHIRE
+		}
+		
+	}
 
 	option = {
 		name = dvg_england.4.a
@@ -337,7 +352,7 @@ dvg_england.9 = { #Agree to Summit
 		
 		change_relations = {
 				country = c:ENG
-				value = 40
+				value = 15
 		}
 		add_journal_entry = {
 			type = je_anglo_summit
@@ -346,7 +361,7 @@ dvg_england.9 = { #Agree to Summit
 				name = anglo_var
 				add = 1
 			}
-		c:ENG = { trigger_event = { id = dvg_england.17 popup = yes } }
+		c:ENG = { trigger_event = { id = dvg_england.17 days = 20 popup = yes } }
 		
 		ai_chance = {
 			base = 100
@@ -486,18 +501,37 @@ dvg_england.12 = {  #Beornian King of England?
 	option = {
 		name = dvg_england.12.a
 		
+		add_radicals = {
+			value = 0.45
+			
+		}
+		play_as = c:BEO
+		
 		c:BEO = {
 					annex = ROOT
 				}
+		c:BEO = { trigger_event = { id = dvg_england.14 popup = yes } }
 		
 		ai_chance = {
 			base = 15
+		modifier = {
+				trigger = {
+					country_rank <= rank_value:great_power
+				}
+				add = 15
+			}
+		modifier = {
+				trigger = {
+					c:BEO >= rank_value:major_power
+				}
+				add = 15
+			}
 		}
 	}
 	option = {
 		name = dvg_england.12.b
 		
-		c:BEO = { trigger_event = { id = dvg_england.15 popup = yes } }
+		c:BEO = { trigger_event = { id = dvg_england.13 popup = yes } }
 		
 		ai_chance = {
 			base = 85
@@ -525,7 +559,7 @@ dvg_england.13 = { #Refuse Beornian King
     duration = 3
 
 	option = {
-		name = dvg_england.11.a
+		name = dvg_england.13.a
 		
 		change_relations = {
 				country = c:ENG
@@ -563,7 +597,13 @@ dvg_england.14 = {  #England Unite
 	option = {
 		name = dvg_england.14.a
 		
+		add_loyalists = {
+			value = 0.15
+			
+		}
+		add_primary_culture = cu:british
 		
+		add_primary_culture = cu:beornian
 		
 		ai_chance = {
 			base = 100
@@ -687,7 +727,7 @@ dvg_england.17 = {  #Dealing with Frenchies
     flavor = dvg_england.17.f
 
     event_image = {
-		video = "gfx/event_pictures/europenorthamerica_gold_prospectors.bk2"
+		video = "gfx/event_pictures/unspecific_signed_contract.bk2"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
@@ -731,7 +771,7 @@ dvg_england.18 = {  #England disagrees about French
     flavor = dvg_england.18.f
 
     event_image = {
-		video = "gfx/event_pictures/europenorthamerica_gold_prospectors.bk2"
+		video = "gfx/event_pictures/europenorthamerica_london_center.bk2"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
@@ -752,6 +792,7 @@ dvg_england.18 = {  #England disagrees about French
 			value = 0.15
 			
 		}
+		c:ENG = { trigger_event = { id = dvg_england.20 popup = yes days = 30} }
 		
 		ai_chance = {
 			base = 50
@@ -768,6 +809,7 @@ dvg_england.18 = {  #England disagrees about French
 			value = 0.15
 			
 		}
+		set_global_variable = anglo_summit_fail
 		
 		ai_chance = {
 			base = 50
@@ -799,13 +841,213 @@ dvg_england.19 = {  #England agrees to purge French
 		
 		change_variable = {
 				name = anglo_var
-				add = 6
+				add = 3
 			}
+		change_relations = {
+				country = c:ENG
+				value = 15
+		}
 		
-		
+		c:ENG = { trigger_event = { id = dvg_england.20 popup = yes days = 30} }
 		ai_chance = {
 			base = 100
 		}
 	}
 	
+}
+
+dvg_england.20 = {  #Dealing with Catholics
+	type = country_event
+    placement = ROOT
+
+    title = dvg_england.20.t
+    desc = dvg_england.20.d
+    flavor = dvg_england.20.f
+
+    event_image = {
+		video = "gfx/event_pictures/southamerica_christianity.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/gold_prospectors"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+    duration = 3
+
+	option = {
+		name = dvg_england.20.a
+		
+		default_option = yes
+		
+		set_state_religion = rel:protestant
+		
+		convert_population = {
+				target = rel:protestant
+				value = 0.10
+			}
+		if = {
+			limit = {
+				any_scope_pop = { 
+					religion = rel:catholic
+				}
+			}
+			add_radicals = {
+				religion = rel:catholic
+				value = large_radicals
+			}
+		}
+		change_relations = {
+				country = c:PAP
+				value = -30
+		}
+		c:BEO = { trigger_event = { id = dvg_england.21 popup = yes } }
+		
+		ai_chance = {
+			base = 60
+		}
+	}
+	option = {
+		name = dvg_england.20.b
+		
+		
+		c:BEO = { trigger_event = { id = dvg_england.22 popup = yes } }
+		
+		ai_chance = {
+			base = 10
+		}
+		if = {
+			limit = {
+				any_scope_pop = { 
+					religion = rel:protestant
+				}
+			}
+			add_radicals = {
+				religion = rel:protestant
+				value = medium_radicals
+			}
+		}
+	}
+	option = {
+		name = dvg_england.20.c
+		
+		activate_law = law_type:law_total_separation
+		
+		c:BEO = { trigger_event = { id = dvg_england.23 popup = yes } }
+		
+		ai_chance = {
+			base = 30
+		}
+	}
+}
+
+dvg_england.21 = {  #England goes Protestant
+	type = country_event
+    placement = ROOT
+
+    title = dvg_england.21.t
+    desc = dvg_england.21.d
+    flavor = dvg_england.21.f
+
+    event_image = {
+		video = "gfx/event_pictures/europenorthamerica_gold_prospectors.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/gold_prospectors"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+    duration = 3
+
+	option = {
+		name = dvg_england.21.a
+		
+		change_relations = {
+				country = c:ENG
+				value = 30
+		}
+		change_variable = {
+				name = anglo_var
+				add = 5
+			}
+		
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+dvg_england.22 = {  #England rejects Protestant
+	type = country_event
+    placement = ROOT
+
+    title = dvg_england.22.t
+    desc = dvg_england.22.d
+    flavor = dvg_england.22.f
+
+    event_image = {
+		video = "gfx/event_pictures/europenorthamerica_gold_prospectors.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/gold_prospectors"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+    duration = 3
+
+	option = {
+		name = dvg_england.22.a
+		
+		change_relations = {
+				country = c:ENG
+				value = -30
+		}
+		change_variable = {
+				name = anglo_var
+				add = -5
+			}
+		
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+dvg_england.23 = {  #England goes secular
+	type = country_event
+    placement = ROOT
+
+    title = dvg_england.23.t
+    desc = dvg_england.23.d
+    flavor = dvg_england.23.f
+
+    event_image = {
+		video = "gfx/event_pictures/europenorthamerica_gold_prospectors.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/gold_prospectors"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+    duration = 3
+
+	option = {
+		name = dvg_england.22.a
+		
+		change_relations = {
+				country = c:ENG
+				value = -10
+		}
+		change_variable = {
+				name = anglo_var
+				add = -1
+			}
+		
+		ai_chance = {
+			base = 100
+		}
+	}
 }
