@@ -642,6 +642,59 @@ dp_unify_tatars = {
 	on_war_end = {}
 }
 
+dp_imperial_authority = {
+	war_goal = humiliation
+	
+	texture = "gfx/interface/icons/war_goals/annex_country.dds"
+	
+	possible = {
+		exists = c:BOH
+		ROOT = c:BOH
+		has_journal_entry = je_hre_external
+		country_rank = rank_value:great_power
+		NOT = { has_modifier = diplomatic_plays_blocked }
+		aggressive_diplomatic_plays_permitted = yes
+		scope:target_country = {
+			aggressive_diplomatic_plays_permitted = yes
+			NOT = {
+                country_has_primary_culture = cu:north_german
+				country_has_primary_culture = cu:south_german
+				country_has_primary_culture = cu:rheinish
+			}
+			any_subject_or_below = {
+				OR = {
+                	country_has_primary_culture = cu:north_german
+					country_has_primary_culture = cu:south_german
+					country_has_primary_culture = cu:rheinish
+				}
+			}
+		}
+	}
+	
+	on_weekly_pulse = {}
+	
+	on_war_begins = {}
+
+	on_war_end = {
+		save_scope_as = diplomatic_play_scope
+
+		if = {
+			limit = {
+				scope:initiator = {
+					has_diplomatic_pact = {
+						who = scope:target_country
+						type = humiliation
+					}
+				}
+			}
+	
+			scope:initiator = {
+				trigger_event = { id = dvg_imperial_authority.1 popup = yes }
+			}
+		}
+	}
+}
+
 dp_akh_warpath = {
 	war_goal = annex_country
 	mirror_war_goal = yes
