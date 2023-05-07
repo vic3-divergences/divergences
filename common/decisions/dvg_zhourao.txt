@@ -7,14 +7,12 @@
 		}
 		NOT = {
 			root = c:NNG
+			#has_journal_entry = je_noongar_colony
 		}
 	}
 
     possible = {
-		OR = {
-			is_player = yes
-			year >= 1845
-		}
+		year >= 1845
 	}
 
     when_taken = {
@@ -44,11 +42,37 @@ dvg_pitjantjajara_colony = {
 			}
 			AND = {
 				exists = c:NNG
-				root = {
-					has_state_in_state_region = STATE_NOONGAR
-				}
+				OR = {
+					AND = {
+						c:BEI = {
+							has_state_in_state_region = STATE_COOMALONG
+							is_subject_of = c:BRG
+						}
+						root = c:BRG
+					}
+					AND = {
+						root = {
+							has_state_in_state_region = STATE_COOMALONG
+						}
+						NOT = {
+							root = c:BEI
+							root = c:BRG
+						}
+					}
+					AND = {
+						root = {
+							has_state_in_state_region = STATE_COOMALONG
+						}
+						NOT = {
+							c:BEI = {
+								is_subject_of = c:BRG
+							}
+						}
+						root = c:BRG
+					}
+				}	
 			}
-		}	
+		}
 	}
 
     possible = {
@@ -82,6 +106,62 @@ dvg_yolngu_colony = {
 
     when_taken = {
 		trigger_event = { id = dvg_oceania.5 popup = yes }
+    }
+
+	ai_chance = {
+		base = 100
+	}
+}
+
+dvg_papua_west_colony = {
+	is_shown = {
+		has_game_rule = australia_railroaded
+		exists = c:PPU
+		root = {
+			has_state_in_state_region = STATE_WESTERN_NEW_GUINEA
+		}
+		NOT = {
+			root = c:PPU
+			owns_entire_state_region = STATE_WESTERN_NEW_GUINEA
+		}
+	}
+
+    possible = {
+		year >= 1880
+	}
+
+    when_taken = {
+		s:STATE_WESTERN_NEW_GUINEA.region_state:PPU = {
+			set_state_owner = ROOT
+		}
+    }
+
+	ai_chance = {
+		base = 100
+	}
+}
+
+dvg_papua_east_colony = {
+	is_shown = {
+		has_game_rule = australia_railroaded
+		exists = c:PPU
+		root = {
+			has_state_in_state_region = STATE_WENCHENG
+		}
+		NOT = {
+			root = c:PPU
+			owns_entire_state_region = STATE_EASTERN_NEW_GUINEA
+		}
+	}
+
+    possible = {
+		year >= 1880
+	}
+
+    when_taken = {
+		s:STATE_EASTERN_NEW_GUINEA.region_state:PPU = {
+			set_state_owner = ROOT
+		}
     }
 
 	ai_chance = {
@@ -134,10 +214,7 @@ dvg_nunga_colony = {
 	}
 
     possible = {
-		OR = {
-			is_player = yes
-			year >= 1855
-		}
+		year >= 1855
 	}
 
     when_taken = {
@@ -194,6 +271,143 @@ dvg_yamatji_colony = {
 
     when_taken = {
 		trigger_event = { id = dvg_oceania.7 popup = yes }
+    }
+
+	ai_chance = {
+		base = 100
+	}
+}
+
+dvg_wadjiginy_protectorate_annex = {
+	is_shown = {
+		exists = c:NGL
+		root = {
+			has_state_in_state_region = STATE_YOLNGU
+		}
+		c:NGL = {
+			is_subject_of = ROOT
+		}
+	}
+
+    possible = {
+		year >= 1851
+	}
+
+    when_taken = {
+		c:NGL = {
+			trigger_event = { id = dvg_oceania.501 popup = yes }
+		}
+    }
+
+	ai_chance = {
+		base = 100
+	}
+}
+
+dvg_attack_northern_hongshan = {
+	is_shown = {
+		OR = {
+			AND = {
+				exists = c:NGL
+				NOT = {
+					exists = c:YLN
+					exists = c:GWG
+					c:NGL = {
+						is_subject_of = ROOT
+					}
+				}
+			}
+			AND = {
+				exists = c:YLN
+				NOT = {
+					exists = c:NGL
+					exists = c:GWG
+				}
+			}
+			AND = {
+				exists = c:GWG
+				NOT = {
+					exists = c:YLN
+					exists = c:NGL
+				}
+			}
+		}
+		root = {
+			has_state_in_state_region = STATE_YOLNGU
+			is_at_war = no
+		}
+		exists = c:DUA
+		root = c:DUA
+	}
+
+    possible = {
+		year >= 1840
+	}
+
+    when_taken = {
+		custom_tooltip = {
+			text = dvg_will_lead_to_a_war_tt
+			if = {
+				limit = {
+					exists = c:NGL
+				}
+				create_diplomatic_play = {
+					name = dvg_hongshan_wars
+				
+					target_country = c:NGL
+					
+					war = no
+					
+					type = dp_annex_war
+					
+					add_war_goal = {
+						holder = c:NGL
+						type = conquer_state
+						target_state = s:STATE_YOLNGU.region_state:DUA
+					}
+				}
+			}
+			if = {
+				limit = {
+					exists = c:YLN
+				}
+				create_diplomatic_play = {
+					name = dvg_hongshan_wars
+				
+					target_country = c:YLN
+					
+					war = no
+					
+					type = dp_annex_war
+					
+					add_war_goal = {
+						holder = c:YLN
+						type = conquer_state
+						target_state = s:STATE_YOLNGU.region_state:DUA
+					}
+				}
+			}
+			if = {
+				limit = {
+					exists = c:GWG
+				}
+				create_diplomatic_play = {
+					name = dvg_hongshan_wars
+				
+					target_country = c:GWG
+					
+					war = no
+					
+					type = dp_annex_war
+					
+					add_war_goal = {
+						holder = c:GWG
+						type = conquer_state
+						target_state = s:STATE_YOLNGU.region_state:DUA
+					}
+				}
+			}
+		}
     }
 
 	ai_chance = {
@@ -706,19 +920,44 @@ dvg_declare_war_on_the_wadjiginy = {
 		}
 		custom_tooltip = {
 			text = dvg_will_lead_to_a_war_tt
-			create_diplomatic_play = {
-				name = dvg_hongshan_wars
-			
-				target_country = c:NGL
+			if = {
+				limit = {
+					exists = c:GWG
+				}
+				create_diplomatic_play = {
+					name = dvg_hongshan_wars
 				
-				war = yes
+					target_country = c:NGL
+					
+					war = yes
+					
+					type = dp_annex_war
+					
+					add_war_goal = {
+						holder = c:NGL
+						type = annex_country
+						target_country = c:GWG
+					}
+				}
+			}
+			if = {
+				limit = {
+					exists = c:YLN
+				}
+				create_diplomatic_play = {
+					name = dvg_hongshan_wars
 				
-				type = dp_annex_war
-				
-				add_war_goal = {
-					holder = c:NGL
-					type = annex_country
-					target_country = c:ROOT
+					target_country = c:NGL
+					
+					war = yes
+					
+					type = dp_annex_war
+					
+					add_war_goal = {
+						holder = c:NGL
+						type = annex_country
+						target_country = c:YLN
+					}
 				}
 			}
 		}
