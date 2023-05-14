@@ -101,7 +101,50 @@ dvg_yolngu_colony = {
 	}
 
     possible = {
-		year >= 1850
+		custom_tooltip = {
+			text = margere_colony_tt
+			OR = {
+				year >= 1850
+				AND = {
+					OR = {
+						AND = {
+							exists = c:YLN
+							root = c:YLN
+						}
+						AND = {
+							exists = c:NGL
+							root = c:NGL
+						}
+						AND = {
+							exists = c:GWG
+							root = c:GWG
+						}
+					}
+					exists = c:DUA
+					NOT = {
+						c:DUA = {
+							has_state_in_state_region = STATE_YOLNGU
+						}
+					}
+				}
+				AND = {
+					OR = {
+						AND = {
+							exists = c:YLN
+							root = c:YLN
+						}
+						AND = {
+							exists = c:NGL
+							root = c:NGL
+						}
+						AND = {
+							exists = c:GWG
+							root = c:GWG
+						}
+					}
+				}
+			}
+		}
 	}
 
     when_taken = {
@@ -336,6 +379,9 @@ dvg_attack_northern_hongshan = {
 			has_state_in_state_region = STATE_YOLNGU
 			is_at_war = no
 		}
+		NOT = {
+			has_variable = dvg_attacked_north
+		}
 		exists = c:DUA
 		root = c:DUA
 	}
@@ -347,6 +393,7 @@ dvg_attack_northern_hongshan = {
     when_taken = {
 		custom_tooltip = {
 			text = dvg_will_lead_to_a_war_tt
+			set_variable = dvg_attacked_north
 			if = {
 				limit = {
 					exists = c:NGL
@@ -989,6 +1036,7 @@ dvg_southern_attack_again = {
 		hidden_effect = {
 			set_variable = dvg_southern_attacked_again_variable
 		}
+		add_journal_entry = { type = je_one_kongsi_zsa }
 		trigger_event = { id = dvg_zhourao.708 popup = yes }
     }
 
@@ -1078,6 +1126,14 @@ dvg_press_west_zhourao = {
 			owns_entire_state_region = STATE_WENCHENG
 			#owns_entire_state_region = STATE_PARLEVAR
 		}
+		OR = {
+			NOT = {
+				has_journal_entry = je_zhr_press_west
+			}
+			NOT = {
+				has_journal_entry = je_zhr_reconsolidate_control
+			}
+		}
 	}
 
     possible = {
@@ -1092,7 +1148,21 @@ dvg_press_west_zhourao = {
 	}
 
     when_taken = {
-		add_journal_entry = { type = je_zhr_press_west }
+		if = {
+			limit = {
+				has_global_variable = dvg_zhr_begun_press_west
+			}
+			add_journal_entry = { type = je_zhr_reconsolidate_control }
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_global_variable = dvg_zhr_begun_press_west
+				}
+			}
+			add_journal_entry = { type = je_zhr_press_west }
+			add_global_variable = dvg_zhr_begun_press_west
+		}
     }
 
 	ai_chance = {
