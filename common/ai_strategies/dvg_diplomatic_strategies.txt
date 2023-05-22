@@ -467,12 +467,25 @@ ai_strategy_unify_cossacks = {
 	# Added to value from default strategy
 	recklessness = {
 		value = 0.5
+
+		if = {
+			limit = { has_journal_entry = je_cossack_ambition }
+			add = 0.5
+		}
 	}	
 	
 	# Added to value from default strategy
 	aggression = {
 		value = 0.5
 		
+		if = {
+			limit = {
+				scope:target_country = { can_form_nation = CSK }
+				has_journal_entry = je_cossack_ambition 
+			}
+			add = 10
+		}
+
 		if = {
 			limit = { 
 				scope:target_country = { can_form_nation = CSK }
@@ -543,7 +556,8 @@ ai_strategy_unify_cossacks = {
 								is_homeland = cu:cossack
 							}					
 						}						
-					}					
+					}
+					can_reach_target_state = yes		
 				}
 				add = 200
 			}
@@ -555,8 +569,8 @@ ai_strategy_unify_cossacks = {
 						country_has_primary_culture = cu:cossack
 					}
 				}
+				add = 1000
 			}
-			add = 1000
 		}
 	}		
 	
@@ -582,6 +596,11 @@ ai_strategy_unify_cossacks = {
 	weight = {
 		value = 0
 		
+
+		if = {
+			limit = { has_journal_entry = je_cossack_ambition }
+			add = 500
+		}
 
 		if = {
 			limit = { has_global_variable = move_CSK }
@@ -715,7 +734,11 @@ ai_strategy_unify_tatarstan = {
 					scope:target_state = {
 						state_region = {
 							OR = {
-								is_homeland = cu:tatar
+								is_homeland = cu:kirim
+								is_homeland = cu:kazani
+								is_homeland = cu:bashkir
+								is_homeland = cu:sibir
+								is_homeland = cu:xacitarxani
 							}					
 						}						
 					}
@@ -730,10 +753,15 @@ ai_strategy_unify_tatarstan = {
 					scope:target_state = {
 						state_region = {
 							OR = {
-								is_homeland = cu:tatar
+								is_homeland = cu:kirim
+								is_homeland = cu:kazani
+								is_homeland = cu:bashkir
+								is_homeland = cu:sibir
+								is_homeland = cu:xacitarxani
 							}					
 						}						
-					}					
+					}
+					can_reach_target_state = yes
 				}
 				add = 100
 			}
@@ -742,11 +770,18 @@ ai_strategy_unify_tatarstan = {
 			if = {
 				limit = {
 					scope:target_country = {
-						country_has_primary_culture = cu:cossack
+						OR = {
+							country_has_primary_culture = cu:kirim
+							country_has_primary_culture = cu:kazani
+							country_has_primary_culture = cu:bashkir
+							country_has_primary_culture = cu:sibir
+							country_has_primary_culture = cu:xacitarxani
+						}
 					}
+					can_reach_target_state = yes
 				}
+				add = 1000
 			}
-			add = 1000
 		}
 	}		
 	
@@ -755,17 +790,29 @@ ai_strategy_unify_tatarstan = {
 			if = {
 				limit = {
 					scope:target_country = {
-						can_form_nation = TAR
+						OR = {
+							can_form_nation = TAR
+							AND = {
+								exists = c:AKH
+								scope:target_country = c:AKH
+							}
+						}
 					}
 				}
 				add = 1000
 			}				
-		}			
+		}	
 	}	
 
 	possible = {
 		NOT = { exists = c:TAR }
 		can_form_nation = TAR
+		OR = {
+			has_technology_researched = nationalism
+			ruler = {
+				has_variable = is_murad_giray
+			}
+		}
 	}
 
 	weight = {
@@ -980,6 +1027,7 @@ ai_strategy_unify_arcadia = {
 	}	
 
 	possible = {
+		has_technology_researched = pan-nationalism
 		NOT = { exists = c:ARC }
 		can_form_nation = ARC
 		has_technology_researched = nationalism
