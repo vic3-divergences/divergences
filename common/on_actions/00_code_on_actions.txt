@@ -1628,6 +1628,41 @@ on_production_method_changed = {
 	}
 }
 
+# Root = owner Country of the Law
+# Executed when enactment of any law begins
+on_law_enactment_started = {
+	effect = {
+		if = {
+			limit = {
+				has_law = law_type:law_monarchy
+				OR = {
+					is_enacting_law = law_type:law_presidential_republic
+					is_enacting_law = law_type:law_parliamentary_republic
+					is_enacting_law = law_type:law_council_republic
+				}
+			}
+			set_variable = {
+				name = abolishing_monarchy_var
+				value = 0
+			}
+			add_journal_entry = { type =  je_abolish_monarchy }
+		}
+	}
+}
+
+# Root = owner Country of the Law
+# Executed when the end of a checkpoint is reached and the result is success
+on_law_checkpoint_success = {
+	effect = {
+		add_enactment_phase = 1
+		if = {
+			limit = {
+				enacting_any_law = yes
+			}
+			trigger_event = { id = law_notification.4 days = 0 }
+		}
+	}
+}
 
 # Root = owner Country of the Law
 # Executed when the end of a checkpoint is reached and the result is advance
