@@ -1,0 +1,88 @@
+﻿je_cossack_ambition = {
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	status_desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = je_cossack_ambition_await
+				trigger = {
+					has_modifier = neutrality
+				}
+			}
+			triggered_desc = {
+				desc = je_cossack_ambition_move
+				trigger = {
+					NOT = { has_modifier = neutrality }
+					has_variable = sternenko_move
+				}
+			}
+		}
+	}
+
+	is_shown_when_inactive = {
+        exists = c:KHK
+        THIS = c:KHK
+    }
+
+	possible = {
+        is_subject = no
+		custom_tooltip = {
+			text = has_sternenko_variable_tt
+			has_global_variable = sternenko_variable
+			ruler = {
+				has_variable = is_stepan_sternenko
+			}
+		}
+    }
+
+	complete = {
+		hidden_trigger = {
+			has_variable = je_unification_progress
+		}
+		calc_true_if = {
+			owns_entire_state_region = STATE_KIEV
+			owns_entire_state_region = STATE_KURSK
+			owns_entire_state_region = STATE_SLOBOZ
+			owns_entire_state_region = STATE_YEDISAN
+			owns_entire_state_region = STATE_DANU
+			amount >= 2
+		}
+		custom_tooltip = {
+			text = cossacks_killed_tt
+			NOT = { exists = c:ZAZ }
+			NOT = { exists = c:DON }
+			NOT = { exists = c:VOR }
+		}
+	}
+
+	on_monthly_pulse = {
+		events = {
+			dvg_cossack_ambition.2
+			dvg_cossack_ambition.4
+			dvg_cossack_ambition.5
+			dvg_cossack_ambition.6
+		}
+		effect = {
+			if = { 
+				limit = { NOT = { has_variable = je_unification_progress } } 
+				set_variable = je_unification_progress
+			}
+		}
+	}
+
+	on_complete = {
+		trigger_event = { id = dvg_cossack_ambition.3 }
+		remove_variable = je_unification_progress
+	}
+
+	invalid = {
+		NOT = {
+			ruler = {
+				has_variable = is_stepan_sternenko
+			}
+		}
+	}
+
+	should_be_pinned_by_default = yes
+	weight = 1000
+}
