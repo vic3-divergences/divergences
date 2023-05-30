@@ -108,6 +108,89 @@ je_equinoxean_tensions = {
 	progressbar = yes
 
 	weight = 10000
+	
+}
+
+je_equinoxea_insurgency = {
+	icon = "gfx/interface/icons/event_icons/event_scales.dds"
+
+	
+
+	possible = {
+		ig:ig_landowners = {
+			is_marginal = no
+		}
+	}
+
+	immediate = {
+		set_variable = {
+			name = equinoxea_var
+			value = 0
+		}
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				NOT = { has_law = law_type:law_slavery_banned
+			        
+			}
+				change_variable = {
+					name = equinoxea_var
+					add = 1
+				}
+			}
+		}
+	}
+
+	complete = {
+		# If-else clause to avoid errors because of missing variable before JE activates
+		
+		OR = {
+		
+		trigger_if = {
+			limit = { exists = var:equinoxea_var }
+			scope:journal_entry = { is_goal_complete = yes }
+		}
+		
+		
+		
+		
+	}
+	}
+	
+	
+	on_complete = {
+		set_variable = equinoxea_complete
+		trigger_event = { id = dvg_amazonie.13 }
+	}
+	
+	fail = {
+		OR = {
+			
+			 has_law = law_type:law_slavery_banned
+			 
+			
+		}
+	}
+	
+	 on_fail = {
+		set_variable = equinoxea_complete
+		trigger_event = { id = dvg_amazonie.12 }
+	}
+	
+
+	current_value = {
+		value = root.var:equinoxea_var
+	}
+
+	goal_add_value = {
+		value = 50
+	}
+
+	progressbar = yes
+
+	weight = 10000
 	should_be_pinned_by_default = yes
 }
 
@@ -129,19 +212,7 @@ je_antarctica_insurgency = {
 		}
 	}
 
-	on_monthly_pulse = {
-		effect = {
-			if = {
-				limit = {
-						
-				}
-				change_variable = {
-					name = antarctica_var
-					add = 1
-				}
-			}
-		}
-	}
+	
 
 	complete = {
 		# If-else clause to avoid errors because of missing variable before JE activates
@@ -158,6 +229,7 @@ je_antarctica_insurgency = {
 		has_law = law_type:law_slavery_banned
 		ig:ig_landowners = {
 				is_powerful = yes
+				ig_approval < 0
 			}
 			
 		}
@@ -176,7 +248,7 @@ je_antarctica_insurgency = {
 			ig:ig_landowners = {
 				is_powerful = no
 				
-				is_in_government = no
+				
 			}
 			 has_law = law_type:law_slavery_banned
 			 
