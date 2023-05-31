@@ -1,5 +1,129 @@
 ﻿
 
+
+je_tupia_fight = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	is_shown_when_inactive = {
+		exists = c:TUP
+		this = c:TUP
+
+		
+		
+	}
+
+    possible = {
+	
+	AND = {
+		exists = c:TUP
+		this = c:TUP
+		}
+	}
+
+	complete = {
+		is_at_war = no
+		NOT = { exists = c:EQX }
+		owns_entire_state_region = STATE_VAURA
+		owns_entire_state_region = STATE_CAPPADOCE
+	}
+
+    on_complete = {
+		trigger_event = { id = dvg_amazonie.9 popup = yes }
+		
+    }
+
+	should_be_pinned_by_default = yes
+}
+
+je_amazonie_annex = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	is_shown_when_inactive = {
+		
+		
+		  OR = {
+	        exists = c:EQX
+			root = c:EQX
+			is_at_war = no
+		}    
+
+		
+		
+	}
+
+     possible = {
+	OR = {
+			exists = c:AMA
+		}
+	
+	AND = {
+		any_neighbouring_state = {
+			owner = c:AMA
+		}
+		}
+	}
+
+	complete = {
+		is_at_war = no
+		NOT = { exists = c:AMA }
+		owns_entire_state_region = STATE_FRANCE_ANTARTIQUE
+		owns_entire_state_region = STATE_COTE_DU_SUCRE
+		owns_entire_state_region = STATE_MONTS_DIAMANTS
+		owns_entire_state_region = STATE_GOUAS
+	}
+
+    on_complete = {
+		trigger_event = { id = dvg_amazonie.19 popup = yes }
+		
+    }
+
+	should_be_pinned_by_default = yes
+}
+
+je_antarctica_annex = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	is_shown_when_inactive = {
+		
+		
+		  OR = {
+	        exists = c:ANT
+			exists = c:AMA
+			this = c:AMA
+			is_at_war = no
+		}    
+
+		
+		
+	}
+
+    possible = {
+	
+	
+	AND = {
+		exists = c:ANT
+		any_neighbouring_state = {
+			owner = c:ANT
+		}
+		}
+	}
+
+	complete = {
+		is_at_war = no
+		NOT = { exists = c:AMA }
+		owns_entire_state_region = STATE_FRANCE_ANTARTIQUE
+		owns_entire_state_region = STATE_COTE_DU_SUCRE
+		
+	}
+
+    on_complete = {
+		trigger_event = { id = dvg_amazonie.9 popup = yes }
+		
+    }
+
+	should_be_pinned_by_default = yes
+}
+
 je_equinoxea_annex = {
 	icon = "gfx/interface/icons/event_icons/event_military.dds"
 
@@ -192,6 +316,207 @@ je_equinoxea_insurgency = {
 
 	weight = 10000
 	should_be_pinned_by_default = yes
+}
+
+je_nouvelle_mali_main = {
+	icon = "gfx/interface/icons/event_icons/event_protest.dds"
+
+	is_shown_when_inactive = {
+		exists = c:CHI
+		THIS = c:CHI
+	}
+
+	possible = {
+		is_subject = no
+		any_scope_state = {
+			is_incorporated = yes
+			any_scope_pop = {
+				has_pop_religion = protestant
+			}
+			is_capital = no
+			state_region = { 
+				OR = {
+					is_homeland = cu:han 
+					is_homeland = cu:hakka 
+				}
+			}
+			turmoil > 0.15
+		}
+	}
+
+	immediate = {
+		random_scope_state = {
+			limit = {
+				is_incorporated = yes
+				any_scope_pop = {
+					has_pop_religion = protestant
+				}
+				is_capital = no
+				state_region = { 
+					OR = {
+						is_homeland = cu:han 
+						is_homeland = cu:hakka 
+					}
+				}
+				turmoil > 0.15
+			}
+			add_modifier = {
+				name = god_worshippers
+				months = short_modifier_time
+			}
+		}
+		trigger_event = {
+			id = heavenly.2
+		}
+	}
+
+	on_monthly_pulse = {
+		random_events = {
+			5 = 0
+			1 = heavenly.3
+		}
+	}
+
+	complete = {
+		NOT = {
+			any_scope_state = {
+				has_modifier = god_worshippers
+			}
+		}
+	}
+
+	fail = {
+		any_scope_state = {
+			has_modifier = god_worshippers
+			count >= 4
+		}
+		any_scope_state = {
+			has_modifier = god_worshippers
+			any_scope_pop = {
+				has_pop_religion = protestant
+				religion_accepted = no
+			}
+			turmoil >= 0.15
+		}
+	}
+
+	on_fail = {
+		trigger_event = {
+			id = heavenly.4
+		}
+	}
+
+	weight = 10000
+	should_be_pinned_by_default = yes
+}
+
+je_taiping = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	complete = {
+		custom_tooltip = {
+			text = taiping_destroyed
+			hidden_trigger = {
+				NOT = {
+					exists = c:NVM
+				}
+			}
+		}
+	}
+
+	immediate = {
+		c:NVM = {
+			save_scope_as = nvm_scope
+		}
+	}
+
+	on_complete = {
+		trigger_event = { id = dvg_nouvellemali.5 days = 0 }
+		hidden_effect = {
+			remove_modifier = taiping_taiping_rebellion
+		}
+	}
+
+	fail = {
+		exists = c:NVM
+		has_truce_with = c:NVM
+	}
+
+	on_fail = {
+		if = {
+			limit = { has_journal_entry = je_warlord_china }
+			post_notification = warlord_china_explosion_point_add
+			change_variable = {
+				name = china_warlord_explosion
+				add = 1
+			}
+		}
+		hidden_effect = {
+			remove_modifier = taiping_taiping_rebellion
+			c:NVM = {
+				remove_modifier = taiping_taiping_rebellion
+			}
+		}
+	}
+
+	weight = 1000
+	should_be_pinned_by_default = yes
+
+	transferable = no
+}
+
+je_taiping_revolution = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	complete = {
+		OR = {
+			custom_tooltip = {
+				text = china_destroyed
+				hidden_trigger = {
+					NOT = {
+						exists = c:CHI
+					}
+				}
+			}
+			AND = {
+				exists = c:CHI
+				has_truce_with = c:CHI		
+			}
+		}
+		
+	}
+
+	immediate = {
+		c:CHI = {
+			save_scope_as = china_scope
+		}
+	}
+
+	on_complete = {
+		trigger_event = { id = dvg_nouvellemali.6 days = 0 }
+		custom_tooltip = {
+			text = rebellion_effects_remove
+			remove_modifier = taiping_taiping_rebellion
+			every_interest_group = {
+				limit = {
+					has_modifier = taiping_taiping_revolution
+				}
+				remove_modifier = taiping_taiping_revolution
+			}
+		}
+		
+	}
+
+	fail = {
+		NOT = {
+			exists = c:NVM
+		}
+	}
+
+	weight = 1000
+	should_be_pinned_by_default = yes
+
+	transferable = no
 }
 
 je_antarctica_insurgency = {
