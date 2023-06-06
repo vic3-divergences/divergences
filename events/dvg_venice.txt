@@ -37,7 +37,7 @@ dvg_ven.1 = {
 }
 
 #Disaster Begins
-dvg_ven.2 = {
+dvg_ven.2 = { #calls for enfranchisement
 	type = country_event
 	placement = root
 	title = dvg_ven.2.t
@@ -56,19 +56,24 @@ dvg_ven.2 = {
 	icon = "gfx/interface/icons/event_icons/event_protest.dds"
 
 	trigger = {
-		has_journal_entry = je_springtime_of_the_peoples
+		any_interest_group = {
+			OR = {
+				is_powerful = yes
+				is_insurrectionary = yes
+			}
+			leader = { has_ideology = ideology:ideology_radical }
+		}
 		has_modifier = dvg_ven_patricians
-		scope:empty_agitator_slots >= 1
 	}
 
 	immediate = {
 		
 		set_variable = {
-			name = ven_populists_revolt 	#journal entry counter/ticker
+			name = ven_patricians_success_count_var 	#journal entry counter/ticker
 			value = 0
 		}
 		set_variable = {
-			name = ven_patricians_revolt 	#journal entry counter/ticker
+			name = ven_populists_success_count_var #journal entry counter/ticker
 			value = 0
 		}
 	}
@@ -80,17 +85,13 @@ dvg_ven.2 = {
 		#set_variable = french_path
 
 		add_journal_entry = {
-			type = je_ven_ease_demands
+			type = je_ven_patricians_success
 		}
 
 		add_journal_entry = {
-			type = je_ven_populists_revolt
+			type = je_ven_populists_success
 		}
 
-		add_journal_entry = {
-			type = je_ven_patricians_revolt
-		}
-		
 		add_loyalists = {
 			value = very_large_radicals
 			strata = rich
@@ -103,15 +104,17 @@ dvg_ven.2 = {
 			value = medium_radicals
 			strata = middle
 		}
-		owner = {
-			trigger_event = {
-				id = dvg_ven.101
-				days = 21
+		hidden = {
+			owner = {
+				trigger_event = {
+					id = dvg_ven.101
+					days = 45
+				}
 			}
 		}
 	}
 }
-#Patricians Win
+#Patricians Victory
 dvg_ven.3 = {
 	type = country_event
 	placement = root
@@ -130,7 +133,7 @@ dvg_ven.3 = {
 
 	icon = "gfx/interface/icons/event_icons/event_default.dds"
 	
-	trigger = { #triggered by JE
+	trigger = { #triggered by JE completian
 	}
 
 	immediate = {
@@ -140,23 +143,23 @@ dvg_ven.3 = {
 		name = dvg_ven.3.a
 		default_option = yes
 
-		set_variable = dvg_ven_patrician_victory_variable
+		set_variable = dvg_ven_patrician_victory_var
 
 		ig:ig_landowners = {
 			add_modifier = {
 				name = dvg_ven_patricians_victory_modifier
-				months = 24
+				months = normal_modifier_time
 			}
 		}
 		ig:ig_ig_petty_bourgeoisie = {
 			add_modifier = {
 				name = dvg_ven_patricians_victory_modifier
-				months = 24
+				months = normal_modifier_time
 			}
 		}
 	}
 }
-#Patricians Lose Control
+#Patricians Disolved
 dvg_ven.4 = {
 	type = country_event
 	placement = root
@@ -175,7 +178,7 @@ dvg_ven.4 = {
 
 	icon = "gfx/interface/icons/event_icons/event_default.dds"
 	
-	trigger = {
+	trigger = {	#triggered by JE completion
 	}
 
 	immediate = {
@@ -184,16 +187,20 @@ dvg_ven.4 = {
 	option = {
 		name = dvg_ven.4.a
 		default_option = yes
-		set_variable = dvg_ven_revolutionary_victory_variable
+		# set_variable = dvg_ven_revolutionary_victory_var
+		# add_modifier = {
+		# 	name = dvg_ven_popular_victory_modifier
+		# 	months = 36
+		# }
 		add_modifier = {
 			name = dvg_ven_popular_victory_modifier
-			months = 36
+			months = normal_modifier_time
 		}
 	}
 	
 
 }
-dvg_ven.101 = {
+dvg_ven.101 = { #Chose your character
 	type = country_event
 	placement = ROOT
 
@@ -205,11 +212,28 @@ dvg_ven.101 = {
 	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/capitalists_meeting"
 
 	icon = "gfx/interface/icons/event_icons/event_default.dds"
-	
+	trigger = {
+		#will happen. triggered by dvg_ven.2 disaster start
+	}
 	immediate = {
+		random_interest_group = {
+			limit = {
+				is_marginal = no
+				NOT = { leader = { has_ideology = ideology:ideology_radical } }
+				NOR = {
+					is_interest_group_type = ig_landowners
+					is_interest_group_type = ig_petty_bourgeoisie
+					is_interest_group_type = ig_armed_forces
+				}
+			}
+			save_scope_as = dvg_ven_radical_ig
+		}
 		create_character = {
+			first_name = Giancarlo
+			last_name = Iannarella
 			is_agitator = yes
-			age = 32
+			add_character_role = politician
+			age = 31
 			culture = cu:venetian
 			interest_group = ig_intelligentsia
 			ideology = ideology_positivist
@@ -218,24 +242,372 @@ dvg_ven.101 = {
 				erudite
 			}
 			on_created = {
-				set_variable = {
-					name = dvg_ven_positivist_leader
-				}				
+				set_variable = dvg_ven_positivist_leader_var
 			}
 		}
+		create_character = {
+			first_name = Felice
+			last_name = Russo
+			is_agitator = yes
+			add_character_role = politician
+			age = 37
+			culture = cu:venetian
+			interest_group = scope:dvg_ven_radical_ig
+			ideology = ideology_radical
+			traits = {
+			}
+			on_created = {
+				set_variable = dvg_ven_radical_leader_var			
+			}
+		}
+		random_scope_character = {
+			limit = {
+				has_variable = dvg_ven_positivist_leader_var
+			}
+			save_scope_as = dvg_ven_positivist_leader_scope
+		}
+		random_scope_character = {
+			limit = {
+				has_variable = dvg_ven_radical_leader_var
+			}
+			save_scope_as = dvg_ven_radical_leader_scope
+		}
+	}
+	option = {	#GARNER ACADEMIC SUPPORT we want the positivist, make the other an agitator
+		name = dvg_ven.101.a
+		default_option = yes
+		
+		scope:dvg_ven_positivist_leader_scope = {
+			set_as_interest_group_leader = yes
+		}
+		add_modifier = {
+			name = dvg_ven_enter_positivist_leader_var
+			months = normal_modifier_time
+		}
+		hidden = {
+			set_variable = dvg_ven_supported_positivist
+		}
+	}
+	option = {	#THEY HAVE A POINT...   we want the radical, make the other an agitator
+		name = dvg_ven.101.b
+		default_option = yes
+		scope:dvg_ven_radical_leader_scope = {
+			set_as_interest_group_leader = yes
+		}
+		hidden = {
+			set_variable = dvg_ven_supported_radicals
+		}
+	}
+	option = {	#EXILE THEM ALL
+		name = dvg_ven.101.c
+		ig:ig_petty_bourgeoisie = {
+			add_modifier = {
+				name = dvg_ven_patricians_event_no_outside_help
+				months = normal_modifier_time
+			}
+		}
+		ig:ig_landowners = {
+			add_modifier = {
+				name = dvg_ven_patricians_event_no_outside_help
+				months = normal_modifier_time
+			}
+		}
+		scope:dvg_ven_positivist_leader_scope = {
+			exile_character = yes
+		}
+		scope:dvg_ven_radical_leader_scope = {
+			exile_character = yes
+		}
+		
 	}
 }
-dvg_ven.102 = {
+dvg_ven.102 = { #rousing public address
+	type = country_event
+	placement = ROOT
+
+	event_image = {
+		video = "europenorthamerica_capitalists_meeting"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/capitalists_meeting"
+
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
+	immediate = {
+	}
+	option = {
+		name = dvg_ven.102.a
+		default_option = yes
+
+	}
+	option = {
+		name = dvg_ven.102.b
+		default_option = yes
+	}
 }
-dvg_ven.103 = {
+dvg_ven.103 = { #armed forces involvement 
+	type = country_event
+	placement = ROOT
+
+	event_image = {
+		video = "europenorthamerica_capitalists_meeting"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/capitalists_meeting"
+
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
+	trigger = { 
+
+	}
+	immediate = {
+	}
+	option = {
+		name = dvg_ven.103.a
+		default_option = yes
+	}
+	option = {
+		name = dvg_ven.103.b
+		default_option = yes
+	}
 }
-dvg_ven.104 = {
+dvg_ven.104 = { #shipyard sabotage
+	type = country_event
+	placement = ROOT
+
+	event_image = {
+		video = "europenorthamerica_capitalists_meeting"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/capitalists_meeting"
+
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
+	trigger = { }
+	immediate = {
+	}
+	option = {
+		name = dvg_ven.104.a
+		default_option = yes
+	}
+	option = {
+		name = dvg_ven.104.b
+		default_option = yes
+	}
 }
-dvg_ven.105 = {
+dvg_ven.105 = { #violence
+	type = country_event
+	placement = ROOT
+
+	event_image = {
+		video = "europenorthamerica_capitalists_meeting"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/capitalists_meeting"
+
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
+	trigger = { }
+	immediate = {
+	}
+	option = {
+		name = dvg_ven.105.a
+		default_option = yes
+	}
+	option = {
+		name = dvg_ven.105.b
+		default_option = yes
+	}
 }
-dvg_ven.106 = {
+dvg_ven.106 = { #nationalists goo up a Aragonese diplomat
+	type = country_event
+	placement = ROOT
+
+	event_image = {
+		video = "europenorthamerica_capitalists_meeting"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/capitalists_meeting"
+
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
+	trigger = { }
+	immediate = {
+	}
+	option = {
+		name = dvg_ven.106.a
+		default_option = yes
+	}
+	option = {
+		name = dvg_ven.106.b
+		default_option = yes
+	}
 }
-dvg_ven.107 = {
+dvg_ven.1061 = { #Aragonese response
+	type = country_event
+	placement = ROOT
+
+	event_image = {
+		video = "europenorthamerica_capitalists_meeting"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/capitalists_meeting"
+
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
+	trigger = { }
+	immediate = {
+	}
+	option = {
+		name = dvg_ven.1061.a
+		default_option = yes
+	}
+	option = {
+		name = dvg_ven.1061.b
+		default_option = yes
+	}
 }
-dvg_ven.108 = {
+dvg_ven.1062 = { #Aragonese response to diplomat
+	type = country_event
+	placement = ROOT
+
+	event_image = {
+		video = "europenorthamerica_capitalists_meeting"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/capitalists_meeting"
+
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
+	trigger = { }
+	immediate = {
+	}
+	option = {
+		name = dvg_ven.1062.a
+		default_option = yes
+	}
+	option = {
+		name = dvg_ven.1062.b
+		default_option = yes
+	}
+}
+dvg_ven.107 = { #Capitalists choose a side
+	type = country_event
+	placement = ROOT
+
+	event_image = {
+		video = "europenorthamerica_capitalists_meeting"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/capitalists_meeting"
+
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
+	trigger = { }
+	immediate = {
+	}
+	option = {
+		name = dvg_ven.107.a
+		default_option = yes
+	}
+	option = {
+		name = dvg_ven.107.b
+		default_option = yes
+	}
+}
+dvg_ven.108 = { #Greeks
+	type = country_event
+	placement = ROOT
+
+	event_image = {
+		video = "europenorthamerica_capitalists_meeting"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/capitalists_meeting"
+
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
+	trigger = { }
+	immediate = {
+	}
+	option = {
+		name = dvg_ven.108.a
+		default_option = yes
+	}
+	option = {
+		name = dvg_ven.108.b
+		default_option = yes
+	}
+}
+dvg_ven.109 = { #leverage the positivist
+	type = country_event
+	placement = ROOT
+
+	event_image = {
+		video = "europenorthamerica_capitalists_meeting"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/capitalists_meeting"
+
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
+	trigger = { }
+	immediate = {
+	}
+	option = {
+		name = dvg_ven.109.a
+		default_option = yes
+	}
+	option = {
+		name = dvg_ven.109.b
+		default_option = yes
+	}
+}
+dvg_ven.110 = { #involve the universities
+	type = country_event
+	placement = ROOT
+
+	event_image = {
+		video = "europenorthamerica_capitalists_meeting"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/capitalists_meeting"
+
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
+	trigger = { }
+	immediate = {
+	}
+	option = {
+		name = dvg_ven.110.a
+		default_option = yes
+	}
+	option = {
+		name = dvg_ven.110.b
+		default_option = yes
+	}
+}
+dvg_ven.111 = { #incorporate allies in the council
+	type = country_event
+	placement = ROOT
+
+	event_image = {
+		video = "europenorthamerica_capitalists_meeting"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/capitalists_meeting"
+
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
+	trigger = { }
+	immediate = {
+	}
+	option = {
+		name = dvg_ven.111.a
+		default_option = yes
+	}
+	option = {
+		name = dvg_ven.111.b
+		default_option = yes
+	}
 }
