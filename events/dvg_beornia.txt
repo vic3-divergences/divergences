@@ -74,9 +74,9 @@ dvg_beornia.1 = {
 		
 		trigger_event = { id = dvg_beornia.4 days =  500 }
 		
-		trigger_event = { id = dvg_beornia.11 days = 30 }
+		trigger_event = { id = dvg_beornia.11 days = 46 }
 		
-		trigger_event = { id = dvg_beornia.21 days = 365 }
+		trigger_event = { id = dvg_beornia.21 days = 465 }
 		
 		
 		
@@ -1766,15 +1766,16 @@ dvg_beornia.21 = {
 				name = cattle_barons_var
 				add = -1
 			}
-		add_modifier = {
-                    name = modifier_army_bolstered
-                    months = 36
-                }
+		
 		
 		add_radicals = {
 			value = 0.10
 			culture = cu:beornian
 		}
+		change_variable = {
+					name = new_mercia_var
+					add = 5
+				}
 		trigger_event = { id = dvg_beornia.16 days =  365 }
 		
 		
@@ -1787,11 +1788,16 @@ dvg_beornia.21 = {
 		default_option = yes
 		
 		activate_law = law_type:law_serfdom
+		activate_law = law_type:law_traditionalism
 		
 		change_variable = {
 				name = cattle_barons_var
 				add = -2
 			}
+		change_variable = {
+					name = new_mercia_var
+					add = 15
+				}
 		
 		
 		trigger_event = { id = dvg_beornia.16 days =  365 }
@@ -1827,6 +1833,138 @@ dvg_beornia.21 = {
 			base = 100
 		}
 	}
+}
+
+dvg_beornia.22 = {
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = "gfx/event_pictures/southamerica_war_civilians.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/signed_contract"
+
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	title = dvg_beornia.22.t
+	desc = dvg_beornia.22.d
+	flavor = dvg_beornia.22.f
+
+	duration = 1
+
+	trigger = {
+	}
+
+	immediate = {
+	
+		if = {
+			limit = { exists = s:STATE_COLLASUYU.region_state:BEO }
+			create_country = { #New Merccia
+				tag = NME
+				origin = this
+				state = s:STATE_COLLASUYU.region_state:BEO
+				state = s:STATE_NEAR_COLLASUYU.region_state:BEO
+				state = s:STATE_CATAMARCA.region_state:BEO
+				state = s:STATE_TILCARA.region_state:BEO
+				state = s:STATE_KUCHICHAY.region_state:BEO
+
+				on_created = {
+					warlord_setup_effect = yes
+					set_variable = warlord_state
+				}
+			}
+			c:NME = { save_scope_as = scope_NME
+			
+				
+				activate_law = law_parliamentary_republic
+				activate_law = law_homesteading
+				
+				ig:ig_landowners = { 
+   				 set_interest_group_name = ig_parish_pioneers
+			}
+			}
+			
+			random_scope_pop = {
+				limit = {
+					culture = cu:beornian
+					
+				exists = c:NME	
+				}
+				move_pop = s:STATE_NEAR_COLLASUYU.region_state:NME
+			}
+			
+		}
+		
+	}
+	option = {
+		name = dvg_beornia.22.a
+		default_option = yes
+	add_modifier = {
+                    name = dvg_modifier_industrialists_bolstered
+                    months = 120
+					is_decaying	= yes
+                }
+	change_variable = {
+				name = cattle_barons_var
+				add = -2
+			}
+	create_diplomatic_play = {
+			target_country = c:NME
+			war = no
+			type = dp_return_state
+			target_state = s:STATE_TRANSFLEUVE.region_state:ODO
+
+			add_war_goal = {
+				holder = c:NME
+				type = war_reparations
+				target_country = c:BEO
+			}
+			
+		}
+		ai_chance = 100
+	}
+	option = {
+		name = dvg_beornia.22.b
+		default_option = yes
+	change_variable = {
+				name = cattle_barons_var
+				add = 1
+			}
+	create_diplomatic_pact = {
+			country = c:NME
+			type = dominion
+		} 
+		ai_chance = 100
+	}
+	option = {
+		name = dvg_beornia.22.c
+	
+	random_scope_pop = {
+				limit = {
+					culture = cu:beornian
+					
+				exists = c:NME	
+				}
+				move_pop = s:STATE_NEAR_COLLASUYU.region_state:NME
+			}
+	create_diplomatic_play = {
+			target_country = c:NME
+			war = no
+			type = dp_annex_war
+			
+
+			add_war_goal = {
+				holder = c:NME
+				type = war_reparations
+				target_country = c:BEO
+			}
+			
+		}
+	play_as = c:NME
+		ai_chance = 100
+	}
+	
 }
 
 
