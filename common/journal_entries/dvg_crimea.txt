@@ -1,0 +1,155 @@
+﻿je_crimea_succession = {
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	is_shown_when_inactive = {
+		exists = c:CRI
+		ROOT = c:CRI
+		ruler = {
+			has_variable = is_old_selim_giray
+		}
+	}
+
+	complete = {
+		custom_tooltip = {
+			text = je_crimea_succession_complete_tt
+			ruler = {
+				NOT = { has_variable = is_old_selim_giray }
+			}
+		}
+	}
+
+	on_complete = {
+		if = {
+			limit = {
+				ruler = {
+					has_variable = is_murad_giray
+				}
+			}
+			trigger_event = { id = dvg_kipchak.3 }
+		}
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			random_list = {
+				9 = { }
+				3 = {
+					trigger_event = { id = dvg_kipchak.2 }
+				}
+			}
+			if = {
+				limit = {
+					has_variable = murad
+				}
+				random_list = {
+					2 = { }
+					1 = {
+						ruler = { kill_character = yes }
+					}
+				}
+			}
+			if = {
+				limit = {
+					year >= 1838
+				}
+				ruler = { kill_character = yes }
+			}
+		}
+	}
+
+	weight = 1000
+
+	should_be_pinned_by_default = yes
+}
+
+je_murad_education = {
+	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
+
+	complete = {
+		any_scope_building = {
+			is_building_type = building_university
+			occupancy > 0.9
+			level >= 5
+		}
+		scope:journal_entry = {
+			is_goal_complete = yes
+		}
+	}
+
+	on_complete = {
+		add_modifier = {
+			name = murad_education
+			months = normal_modifier_time
+		}
+	}
+
+	current_value = {
+		value = root.literacy_rate
+	}
+
+	goal_add_value = {
+		value = root.literacy_rate
+		add = 0.2
+	}
+
+	invalid = {
+		ruler = {
+			NOT = { has_variable = is_murad_giray }
+		}
+	}
+
+	transferable = no
+
+	weight = 5000
+
+	progressbar = yes
+}
+
+je_murad_army = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	complete = {
+		army_size >= 50
+		has_technology_researched = napoleonic_warfare
+		NOT = {
+			any_scope_building = {
+				is_building_type = building_barracks
+				OR = {
+					building_has_goods_shortage = yes
+					has_active_production_method = pm_irregular_infantry
+					has_active_production_method = pm_no_artillery
+					has_active_production_method = pm_cannon_artillery
+				}
+			}
+		}
+	}
+
+	on_complete = {
+		add_modifier = {
+			name = murad_army_reform
+			months = normal_modifier_time
+		}
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					is_ai = yes
+					has_law = law_type:law_feudal_armies
+				}
+				activate_law = law_type:law_peasant_levies
+			}
+		}
+	}
+
+	invalid = {
+		ruler = {
+			NOT = { has_variable = is_murad_giray }
+		}
+	}
+
+	transferable = no
+
+	weight = 5000
+}
