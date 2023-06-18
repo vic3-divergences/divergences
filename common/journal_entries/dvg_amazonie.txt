@@ -1,4 +1,89 @@
 ﻿
+je_amazonie_reconstruction = {
+	icon = "gfx/interface/icons/event_icons/event_scales.dds"
+
+	is_shown_when_inactive =
+	{
+	
+		
+	}
+
+	possible = {
+		
+		
+	}
+
+	immediate = {
+		set_variable = {
+			name = reconcile_var
+			value = 0
+		}
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					cu:afro_amerigan = {
+			NOT = { culture_is_discriminated_in = ROOT }
+		}
+					turmoil < 0.2	
+				}
+				change_variable = {
+					name = reconcile_var
+					add = 1
+				}
+			}
+		}
+	}
+
+	complete = {
+		# If-else clause to avoid errors because of missing variable before JE activates
+		trigger_if = {
+			limit = { exists = var:reconcile_var }
+			scope:journal_entry = { is_goal_complete = yes }
+		}
+		
+		NOT = { cu:afro_amerigan = { culture_is_discriminated_in = ROOT}		}
+		turmoil < 0.2	
+		has_law = law_type:law_slavery_banned
+	}
+	
+	on_complete = {
+		set_variable = reconcile_complete
+		trigger_event = {
+			id = dvg_amazonie.12
+		}
+	}
+	
+	fail = {
+		
+	}
+	
+	on_fail = {
+		
+	}
+	
+
+	on_timeout = {
+		
+	}
+
+	current_value = {
+		value = root.var:reconcile_var
+	}
+
+	goal_add_value = {
+		value = 120
+	}
+
+	progressbar = yes
+
+	weight = 10000
+	should_be_pinned_by_default = yes
+}
+
+
 je_atlantia_unite = {
 	icon = "gfx/interface/icons/invention_icons/pan_nationalism.dds"
 	
@@ -108,49 +193,6 @@ je_amazonie_annex = {
 	should_be_pinned_by_default = yes
 }
 
-je_antarctica_annex = {
-	icon = "gfx/interface/icons/event_icons/event_military.dds"
-
-	is_shown_when_inactive = {
-		
-		
-		  AND = {
-	        exists = c:ANT
-			exists = c:AMA
-			this = c:AMA
-			is_at_war = no
-		}    
-
-		
-		
-	}
-
-    possible = {
-	
-	
-	AND = {
-		exists = c:ANT
-		any_neighbouring_state = {
-			owner = c:ANT
-		}
-		}
-	}
-
-	complete = {
-		is_at_war = no
-		NOT = { exists = c:AMA }
-		owns_entire_state_region = STATE_FRANCE_ANTARTIQUE
-		owns_entire_state_region = STATE_COTE_DU_SUCRE
-		
-	}
-
-    on_complete = {
-		trigger_event = { id = dvg_amazonie.9 popup = yes }
-		
-    }
-
-	should_be_pinned_by_default = yes
-}
 
 je_equinoxea_annex = {
 	icon = "gfx/interface/icons/event_icons/event_military.dds"
@@ -378,16 +420,12 @@ je_antarctica_insurgency = {
 			scope:journal_entry = { is_goal_complete = yes }
 		}
 		
-		any_country = {
-					is_revolutionary = yes
-					country_definition = root.country_definition
-					ig:ig_landowners = {
-						OR = {
-						is_in_government = yes
+		ig:ig_landowners = {
+						AND = {
+						is_in_government = no
 						is_insurrectionary = yes
 						}
 					}
-				}
 		
 		AND = {
 		has_law = law_type:law_slavery_banned
