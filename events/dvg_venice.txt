@@ -55,30 +55,10 @@ dvg_ven.101 = { #nationalist and anti-caste thoughts have coalesced in calls for
 
 	icon = "gfx/interface/icons/event_icons/event_protest.dds"
 
-	trigger = {
-		any_interest_group = {
-			OR = {
-				is_powerful = yes
-				is_insurrectionary = yes
-			}
-			OR = {
-				leader = { has_ideology = ideology:ideology_radical }
-				leader = { has_ideology = ideology:ideology_reformer }
-			}
-		}
-		OR = {
-			has_technology_researched = nationalism
-			has_technology_researched = egalitarianism
-		}
-		has_modifier = dvg_ven_patricians
-		NOT = { has_journal_entry = je_ven_patricians_success }
-		NOT = { has_variable = dvg_ven_patricians_victory_var }
+	trigger = { #triggered by the JE
 	}
 
 	immediate = {
-		add_journal_entry = {
-			type = je_ven_patricians_success
-		}
 		set_variable = {
 			name = ven_patricians_success_count_var 	#journal entry counter/ticker
 			value = 8
@@ -101,13 +81,6 @@ dvg_ven.101 = { #nationalist and anti-caste thoughts have coalesced in calls for
 			value = medium_radicals
 			strata = middle
 		}
-		# hidden_effect = {
-		# 	trigger_event = {
-		# 		id = dvg_ven.104
-		# 		days = 21
-		# 		popup = yes
-		# 	}
-		# }
 	}
 }
 #Patricians Reformation
@@ -133,7 +106,6 @@ dvg_ven.102 = {
 	}
 
 	immediate = {
-
 	}
 	
 	option = { #Let them keep their power
@@ -252,17 +224,14 @@ dvg_ven.104 = { #Chose your character
 	}
 	immediate = {
 		set_variable = dvg_ven_chose_character
-		random_interest_group = {
+		random_scope_character = {
 			limit = {
-				is_marginal = no
-				NOT = { leader = { has_ideology = ideology:ideology_radical } }
-				NOR = {
-					is_interest_group_type = ig_landowners
-					is_interest_group_type = ig_petty_bourgeoisie
-					is_interest_group_type = ig_armed_forces
+				OR = {
+					has_ideology = ideology:ideology_radical 
+					has_ideology = ideology:ideology_reformer
 				}
 			}
-			save_scope_as = dvg_ven_radical_ig_scope
+			set_variable = dvg_ven_radical_leader_var
 		}
 		create_character = {
 			first_name = Giancarlo
@@ -276,30 +245,31 @@ dvg_ven.104 = { #Chose your character
 			ideology = ideology_positivist
 			traits = {
 				inspirational_orator
-				erudite
+				literary
+				ambitious
 			}
 			on_created = {
 				set_variable = dvg_ven_positivist_leader_var
 			}
 		}
-		create_character = {
-			first_name = Felice
-			last_name = Russo
-			is_agitator = yes
-			add_character_role = politician
-			female = no
-			age = 37
-			culture = cu:venetian
-			interest_group = scope:dvg_ven_radical_ig_scope
-			ideology = ideology_radical
-			traits = {
-				inspirational_orator
-				ambitious
-			}
-			on_created = {
-				set_variable = dvg_ven_radical_leader_var			
-			}
-		}
+		# create_character = { #sorry Felice :( but we already have a radical
+		# 	first_name = Felice
+		# 	last_name = Russo
+		# 	is_agitator = yes
+		# 	add_character_role = politician
+		# 	female = no
+		# 	age = 37
+		# 	culture = cu:venetian
+		# 	interest_group = scope:dvg_ven_radical_ig_scope
+		# 	ideology = ideology_radical
+		# 	traits = {
+		# 		inspirational_orator
+		# 		ambitious
+		# 	}
+		# 	on_created = {
+		# 		set_variable = dvg_ven_radical_leader_var			
+		# 	}
+		# }
 		random_scope_character = {
 			limit = {
 				has_variable = dvg_ven_positivist_leader_var
@@ -315,10 +285,27 @@ dvg_ven.104 = { #Chose your character
 	}
 	option = {	#GARNER ACADEMIC SUPPORT we want the positivist, make the other an agitator
 		name = dvg_ven.104.a
-		default_option = yes
 		
-		scope:dvg_ven_positivist_leader_scope = {
-			set_as_interest_group_leader = yes
+		if = {
+			limit = {
+				scope:dvg_ven_radical_leader_scope = {
+					interest_group = {
+						is_interest_group_type = ig_intelligentsia
+					}
+				}
+			}
+			scope:dvg_ven_radical_leader_scope = {
+				remove_character_role = politician
+				add_character_role = agitator
+			}
+			scope:dvg_ven_positivist_leader_scope = {
+				set_as_interest_group_leader = yes
+			}
+		}
+		else = {
+			scope:dvg_ven_positivist_leader_scope = {
+				set_as_interest_group_leader = yes
+			}
 		}
 		custom_tooltip = {
 			text = dvg_ven_positivists_support_tt
@@ -439,6 +426,16 @@ dvg_ven.105 = { #Competing speaches -
 		default_option = yes
 		scope:dvg_ven_radical_leader_scope = {
 			if = {
+				limit = {
+					NOR = {
+						has_trait = inspirational_orator
+						has_trait = demagogue
+						has_trait = firebrand
+					}
+				}
+				add_trait = inspirational_orator
+			}
+			else_if = {
 				limit = { 
 					has_trait = inspirational_orator	
 				}
@@ -1382,17 +1379,24 @@ dvg_ven.113 = { #Abolitionist
 
 	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
 	trigger = { 
-		has_law = law_type:law_slave_trade 
+		NOT = { has_law = law_type:law_slavery_banned } 
 	}
 	immediate = {
 		create_character = {
+			first_name = Federico
+			last_name = Dougatti
 			is_agitator = yes
+			culture = cu:afro_latino
+			religion = rel:protestant
 			female = no
-			age = 47
-			culture = cu:wolof
 			interest_group = ig_rural_folk
 			ideology = ideology_abolitionist
+			birth_date = 1817.2.14 # He was not entirely sure of his birthday or year, but remembered his mom called him "Little Valentine" so he settled for Valentine's Day
+			dna = dna_douglass
 			traits = {
+				firebrand
+				imposing
+				persistent
 			}
 			on_created = {
 				set_variable = dvg_ven_abolitionist_leader_var
@@ -1406,7 +1410,7 @@ dvg_ven.113 = { #Abolitionist
 		}
 	}
 	option = { #This is one area we will not compromise
-		name = dvg_ven.109.a
+		name = dvg_ven.113.a
 		default_option = yes
 		add_modifier = {
 			name = dvg_ven_plantation_owners_support
@@ -1433,7 +1437,7 @@ dvg_ven.113 = { #Abolitionist
 		}
 	}
 	option = { #he brings a unique perspective
-		name = dvg_ven.109.b
+		name = dvg_ven.113.b
 		default_option = yes
 		add_radicals = {
 			value = large_radicals
@@ -1567,7 +1571,7 @@ dvg_ven.115 = { #Military allies in the council
 	flavor = dvg_ven.115.f
 
 	duration = 3
-	cooldown = { years = 10 }
+	#cooldown = { years = 10 }
 
 	event_image = {
 		video = "southamerica_aristocrats"
@@ -1597,6 +1601,21 @@ dvg_ven.115 = { #Military allies in the council
 				}
 			}
 		}
+		any_scope_character = {
+			AND = {
+				NOT = {
+					has_ideology = ideology:ideology_positivist 
+					has_ideology = ideology:ideology_radical			
+				}
+				interest_group = {
+					is_interest_group_type = ig_armed_forces
+				}
+				OR = {
+					has_role = general
+					has_role = admiral
+				}
+			}
+		}
 	}
 	immediate = {
 		random_scope_character = {
@@ -1604,10 +1623,14 @@ dvg_ven.115 = { #Military allies in the council
 				NOR = {
 					has_ideology = ideology:ideology_positivist 
 					has_ideology = ideology:ideology_radical	
-					is_ruler = yes				
+					is_ruler = yes			
 				}
 				interest_group = {
 					is_interest_group_type = ig_armed_forces
+				}
+				OR = {
+					has_role = general
+					has_role = admiral
 				}
 			}
 			save_scope_as = dvg_ven_trusted_mil_leader_scope

@@ -8,6 +8,36 @@ je_ven_patricians_success = {
 		}
 	}
 
+	is_shown_when_inactive = {
+        exists = c:VEN
+        THIS = c:VEN
+    }
+
+	possible = {
+		any_interest_group = {
+			OR = {
+				is_powerful = yes
+				is_insurrectionary = yes
+			}
+			OR = {
+				leader = { has_ideology = ideology:ideology_radical }
+				leader = { has_ideology = ideology:ideology_reformer }
+			}
+		}
+		OR = {
+			has_technology_researched = nationalism
+			has_technology_researched = egalitarianism
+		}
+		has_modifier = dvg_ven_patricians
+		custom_tooltip = {
+			text = dvg_ven_has_not_completed_je
+			NOR = { 
+				has_variable = dvg_ven_patricians_victory_var 
+				has_variable = dvg_ven_radicals_victory_var
+			}
+		}
+    }
+
 	on_complete = {
 		trigger_event = {
 			id = dvg_ven.102
@@ -17,13 +47,17 @@ je_ven_patricians_success = {
 	}
 
 	immediate = {
-		#trigger_event = { id = dvg_ven.101 } 
+		trigger_event = {
+			id = dvg_ven.101
+			days = 1 #it needs this one day, otherwise the immediate = {} in the event doesn't work
+			popup = yes
+		}
 	}
 
 	fail = {
 		custom_tooltip = {
 			text = dvg_ven_radicals_fail_tt
-			root.var:ven_patricians_success_count_var <= 0
+			root.var:ven_patricians_success_count_var < 0 #has to be less than 0 because game checks it too fast and the event needs a day
 		}
 	}
 	on_fail = {
