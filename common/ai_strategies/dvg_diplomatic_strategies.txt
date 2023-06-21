@@ -2144,3 +2144,220 @@ ai_strategy_unify_persia = {
 		}		
 	}
 }
+ai_strategy_defend_india = {
+	icon = "gfx/interface/icons/ai_strategy_icons/armed_isolationism.dds"
+	
+	type = diplomatic
+		
+	undesirable_infamy_level = {
+		value = 35
+	}
+	
+	unacceptable_infamy_level = {
+		value = 75
+	}
+	
+	ideological_opinion_effect_mult = {
+		value = 0.5
+	}
+	
+	wargoal_maneuvers_fraction = {
+		value = 0.1
+	}		
+	
+	diplomatic_play_neutrality = {
+		value = 0
+	}
+	
+	diplomatic_play_boldness = {
+		value = 75
+	}
+
+	# Added to value from default strategy
+	obligation_value = {
+		value = 0
+	
+		if = {
+			limit = { 
+				scope:target_country = {			
+					any_primary_culture = { has_discrimination_trait = south_asian_heritage }
+				}
+			}
+			add = 25
+		}
+	}	
+
+	# Added to value from default strategy
+	recklessness = {
+		value = 0.5
+
+		if = {
+			limit = {
+				has_technology_researched = pan-nationalism
+			}
+			add = 0.25
+		}
+	}
+	
+	# Added to value from default strategy
+	aggression = {
+		value = 0.25
+		
+		if = {
+			limit = { 
+				scope:target_country = {			
+					any_primary_culture = { NOT = {has_discrimination_trait = south_asian_heritage} }
+				}
+			}
+			add = 2.75
+		}
+
+		if = {
+			limit = { 
+				has_technology_researched = pan-nationalism
+				scope:target_country = {			
+					any_primary_culture = { NOT = {has_discrimination_trait = south_asian_heritage} }
+				}
+			}
+			add = 5
+		}
+
+		# Less aggressive against countries we're just antagonistic against, rather than belligerent/domineering
+		if = {
+			limit = {
+				has_attitude = {
+					who = scope:target_country
+					attitude = antagonistic
+				}					
+			}
+			multiply = 0.25
+		}
+
+		# More aggressive against ideological enemies, a bit less aggressive against ideological allies
+		if = {
+			limit = {
+				"ai_ideological_opinion(scope:target_country)" < 0
+			}
+			
+			multiply = {
+				value = "ai_ideological_opinion(scope:target_country)"
+				multiply = -0.2
+				add = 1
+				max = 4.0
+			}				
+		}	
+		else = {
+			multiply = {
+				value = "ai_ideological_opinion(scope:target_country)"
+				multiply = -0.05
+				add = 1
+				min = 0.5
+			}			
+		}
+	}
+
+	building_group_weights = {
+		bg_army = 1.5
+	}
+
+	protect = {
+		if = {
+			limit = {
+				scope:target_country = {
+					any_primary_culture = { has_discrimination_trait = south_asian_heritage } 
+				}
+			}
+			add = 200
+		}
+	}
+	
+	befriend = {
+		if = {
+			limit = {
+				scope:target_country = {
+					any_primary_culture = { has_discrimination_trait = south_asian_heritage } 
+				}
+			}
+			add = 200
+		}
+	}
+	antagonize = {
+		if = {
+			limit = {
+				scope:target_country = {			
+					any_primary_culture = { NOT = {has_discrimination_trait = south_asian_heritage} }
+				}
+			}
+			add = 200
+		}
+	}
+	
+	wargoal_scores = {
+		conquer_state = {
+			if = {
+				limit = {
+					scope:target_country = {			
+						any_primary_culture = { NOT = {has_discrimination_trait = south_asian_heritage} }
+					}
+					scope:target_state = {
+						state_region = {
+							OR = {
+								region = sr:region_north_india
+								region = sr:region_south_india
+							}
+						}
+					}
+					can_reach_target_state = yes				
+				}
+				add = 100
+			}
+		}
+		return_state = {
+			if = {
+				limit = {
+					scope:target_country = {			
+						any_primary_culture = { NOT = {has_discrimination_trait = south_asian_heritage} }
+					}
+					scope:target_state = {
+						state_region = {
+							OR = {
+								region = sr:region_north_india
+								region = sr:region_south_india
+							}
+						}
+					}
+					can_reach_target_state = yes
+				}
+				add = 100
+			}
+		}
+		independence = {
+			if = {
+				limit = {
+					scope:target_country = {			
+						any_primary_culture = { NOT = {has_discrimination_trait = south_asian_heritage} }
+					}
+				}
+				add = 100
+			}
+		}		
+	}
+	
+
+	possible = {
+		# NOT = { exists = c:HND }
+		# can_form_nation = HND
+		OR = {
+			has_journal_entry = je_dvg_india_struggle
+			country = c:MUG
+		}
+		# global_variable_list_size = {
+		# 	name = india_struggle_var
+		# 	target >= 300
+		# }
+	}
+
+	weight = {
+		value = 1000
+	}
+}
