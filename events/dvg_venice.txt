@@ -23,7 +23,7 @@ dvg_ven.1 = {
 	}
 
 	immediate = {
-		cu:greek = {
+		cu:greek = { #for loclization
 			save_scope_as = greek_culture
 		}
 	}
@@ -118,7 +118,7 @@ dvg_ven.102 = {
 		name = dvg_ven.102.a
 
 
-		set_variable = dvg_ven_patrician_victory_var
+		set_variable = dvg_ven_patricians_victory_var
 
 		ig:ig_landowners = {
 			add_modifier = {
@@ -177,7 +177,7 @@ dvg_ven.102 = {
 		option = { #We must keep a tighter leashe in the future
 			name = dvg_ven.1021.a
 
-			set_variable = dvg_ven_patrician_victory_var
+			set_variable = dvg_ven_patricians_victory_var
 
 			ig:ig_landowners = {
 				add_modifier = {
@@ -621,7 +621,7 @@ dvg_ven.106 = { #movement gets rowdy
 		scope:dvg_ven_supporting_movement = {
 			add_modifier = {
 				name = dvg_ven_movement_supressed_modifier
-				months = normal_modifier_time
+				months = short_modifier_time
 			}
 		}
 		add_radicals = {
@@ -646,7 +646,7 @@ dvg_ven.106 = { #movement gets rowdy
 		scope:dvg_ven_supporting_movement = {
 			add_modifier = {
 				name = dvg_ven_movement_support_modifier
-				months = normal_modifier_time
+				months = short_modifier_time
 			}
 		}
 		if = {
@@ -676,7 +676,7 @@ dvg_ven.107 = { #shipyard sabotage
 	flavor = dvg_ven.107.f
 
 	duration = 3
-	cooldown = { months = 3 }
+	cooldown = { months = 4 }
 	event_image = {
 		video = "unspecific_gears_pistons"
 	}
@@ -739,7 +739,7 @@ dvg_ven.1071 = { #factory sabotage
 	flavor = dvg_ven.1071.f
 
 	duration = 3
-	cooldown = { months = 3 }
+	cooldown = { months = 4 }
 	event_image = {
 		video = "unspecific_gears_pistons"
 	}
@@ -1197,7 +1197,7 @@ dvg_ven.110 = { #Class relations - Pleb saves a patrician
 	flavor = dvg_ven.110.f
 
 	duration = 3
-	cooldown = { months = 4 }
+	cooldown = { months = 6 }
 	event_image = {
 		video = "unspecific_naval_battle"
 	}
@@ -1275,6 +1275,11 @@ dvg_ven.111 = { #Capitalists choose a side
 				NOT = {	
 					ig:ig_industrialists = {
 						leader = { has_ideology = ideology:ideology_positivist }
+					}
+				}
+				NOT = {	#can't kick out the radical from their own turf
+					ig:ig_industrialists = {
+						leader = { has_variable = dvg_ven_radical_leader_var }
 					}
 				}
 			}
@@ -1666,6 +1671,11 @@ dvg_ven.115 = { #Military allies in the council
 						leader = { has_ideology = ideology:ideology_positivist }
 					}
 				}
+				NOT = {	
+					ig:ig_armed_forces = {
+						leader = { has_variable = dvg_ven_radical_leader_var }
+					}
+				}
 			}
 			AND	= {
 				has_variable = dvg_ven_supported_radicals
@@ -1679,8 +1689,8 @@ dvg_ven.115 = { #Military allies in the council
 		any_scope_character = {
 			AND = {
 				NOT = {
-					has_ideology = ideology:ideology_positivist 
-					has_ideology = ideology:ideology_radical			
+					has_ideology = ideology:ideology_positivist
+					has_ideology = ideology:ideology_radical
 				}
 				interest_group = {
 					is_interest_group_type = ig_armed_forces
@@ -1703,10 +1713,10 @@ dvg_ven.115 = { #Military allies in the council
 				interest_group = {
 					is_interest_group_type = ig_armed_forces
 				}
-				OR = {
-					has_role = general
-					has_role = admiral
-				}
+				# OR = { ##...we make it a little easier for the player
+				# 	has_role = general
+				# 	has_role = admiral
+				# }
 			}
 			save_scope_as = dvg_ven_trusted_mil_leader_scope
 		}
@@ -1923,6 +1933,65 @@ dvg_ven.118 = { # +2: Radical factions suffer infighting
 				name = ven_patricians_success_count_var
 				add = 2
 			}
+		}
+	}
+}
+dvg_ven.119 = { #The Iannarelli Institute Keeps Us Positivist
+	type = country_event
+	placement = ROOT
+	title = dvg_ven.119.t
+	desc = dvg_ven.119.d
+	flavor = dvg_ven.119.f
+
+	duration = 3
+	cooldown = { years = 7 }
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
+	trigger = { #don't trigger unless positivists won
+		AND = {
+			has_variable = dvg_ven_patricians_victory_var
+			has_variable = dvg_ven_supported_positivist
+			ig:ig_intelligentsia = {
+				is_marginal = no
+				is_insurrectionary = no
+				leader = {
+					NOT = { has_ideology = ideology_positivist }
+				}
+			}
+		}
+	}
+	immediate = { }
+	option = {	#Give him a leadership position
+		name = dvg_ven.119.a
+		default_option = yes
+
+		custom_tooltip = {
+			text = dvg_ven_put_in_power_positivist_tt #dvg_ven_put_in_power_radical_tt
+			create_character = {
+				ig_leader = yes
+				add_character_role = politician
+				age = 31
+				culture = cu:venetian
+				interest_group = ig_intelligentsia
+				ideology = ideology_positivist
+				traits = { 
+				}
+			}
+		}
+	}
+	option = {	#They will do what is right in the end
+		name = dvg_ven.119.b
+		default_option = yes
+		add_modifier = {
+			name = dvg_ven_authority_up
+			months = normal_modifier_time
 		}
 	}
 }
