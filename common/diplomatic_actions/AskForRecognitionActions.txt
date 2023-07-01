@@ -1,0 +1,53 @@
+﻿get_recognized = {
+	requires_approval = yes
+	can_use_obligations = yes
+    should_notify_third_parties = yes
+	show_effect_in_tooltip = yes
+	potential = {
+		is_country_type = unrecognized
+		scope:target_country = {
+			country_rank >= rank_value:great_power
+		}
+	}
+    possible = {
+        is_at_war = no
+		scope:target_country = {
+			has_diplomatic_pact = {
+				who = root
+				type = alliance
+			}
+		}
+		is_country_type = unrecognized
+		NOT = { has_war_with = scope:target_country }
+        custom_tooltip = {
+			text = DIPLO_ACTION_RELATIONS_FRIENDLY
+			scope:target_country.relations:root >= relations_threshold:friendly
+        }
+		has_technology_researched = multilateral_alliances
+		scope:target_country = {
+			has_technology_researched = multilateral_alliances
+		}
+	}
+    accept_effect = {
+        set_country_type = recognized
+    }
+    ai = {
+        will_propose = {
+            always = no
+        }
+        accept_score = {
+            value = 0
+            if = {
+                limit = {
+                    scope:actor = {
+                        is_ai = no
+                    }
+                }
+                add = {
+                    desc = "DIPLOMATIC_ACCEPTANCE_BASE"
+                    value = 100
+                }
+            }
+        }
+    }
+}
