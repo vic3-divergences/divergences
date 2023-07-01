@@ -1,0 +1,735 @@
+@improved_building_grid_panel_width = 540
+
+types building_item_types
+{
+	type improved_building_grid_header_building_item = flowcontainer {
+		direction = vertical
+		widget = {
+			size = { @improved_building_grid_panel_width 40 }
+			button = {
+				parentanchor = top
+				using = default_button
+				size = { @improved_building_grid_panel_width 40 }
+				alpha = "[TransparentIfFalse(Building.IsActive)]"
+				onclick = "[InformationPanelBar.OpenBuildingDetailsPanel(Building.AccessSelf)]"
+			
+
+				flowcontainer = {
+					position = { 15 0 }
+					parentanchor = vcenter
+					spacing = 10
+				
+					textbox = {
+						block "text" {
+							text = ""
+						}
+						autoresize = yes
+						align = left|nobaseline
+						default_format = "#title"
+						parentanchor = vcenter
+					}
+				
+					textbox = {		
+						tooltip = "[Building.GetEmploymentTooltip]"
+						align = left|nobaseline
+						autoresize = yes
+						text = "[Building.GetExpansionLevelDesc]"
+						using = fontsize_xl
+						parentanchor = vcenter
+					}
+				}
+		
+				textbox = {
+					visible = "[And(And(Building.IsSelfFunded, Building.IsActive), Not(Building.IsSubsistenceBuilding))]"
+					raw_text = "#v @money![Building.GetAverageAnnualEarningsPerEmployeeFormatted|1+]#!"
+					autoresize = yes
+					align = right|nobaseline
+					parentanchor = right|vcenter
+					position = { -15 0 }
+			
+					tooltip = "TOOLTIP_BUILDING_PRODUCTIVITY"
+					tooltipwidget = {
+						GraphTooltip_Productivity = {}
+					}
+				}
+
+				flowcontainer = {
+					visible = "[And(And(Building.IsSelfFunded, Building.IsActive), Building.IsSubsistenceBuilding)]"
+					datacontext = "[Building.AccessPopsList]"
+					datacontext = "[Building]"
+					datamodel = "[PopList.AccessPopList]"
+					position = { -15 0 }
+					parentanchor = right|vcenter
+
+					item = {
+						textbox = {
+							tooltip = "ANNUAL_WAGE_TOOLTIP"
+							visible = "[Not(Building.IsRoleFullyReplacedByAnotherPopType(PopListItem.GetPopType))]"
+							raw_text = "@money![PopListItem.GetAverageAnnualWage|v1]"
+							autoresize = yes
+							align = right|nobaseline
+						}
+					}
+				}
+			}
+		}
+		widget = {
+			size = { @improved_building_grid_panel_width 60 }
+			flowcontainer = {
+				parentanchor = left|vcenter
+				direction = horizontal
+				margin_top = 5
+				margin_left = 20
+				container = {
+					alpha = "[TransparentIfFalse(Building.IsActive)]"
+					button = {
+						onclick = "[InformationPanelBar.OpenBuildingDetailsPanel(Building.AccessSelf)]"
+						size = { 50 50 }
+					}
+					icon = {
+						texture = "[Building.GetTexture]"
+						size = { 50 50 }
+					}
+				}
+
+				flowcontainer = {
+					direction = vertical
+					flowcontainer = {
+						direction = horizontal
+						widget = {
+							parentanchor = vcenter|left
+							visible = "[Building.IsActive]"
+							size = { 24 24 }
+							icon = {
+								using = rotate_glow_blue
+								size = { 130% 130% }
+								visible = "[And(Building.GetBuildingType.CanBeSubsidized,Building.IsSubsidized)]"
+								alwaystransparent = yes
+								parentanchor = center
+								using = default_fade_in_out
+							}
+							button_icon_round_action = {
+								size = { 100% 100% }
+								visible = "[And(Building.GetBuildingType.CanBeSubsidized,Building.IsSubsidized)]"
+								enabled = "[IsValid( Building.ToggleSubsidies )]"
+								onclick = "[Execute( Building.ToggleSubsidies )]" 
+								tooltip = SUBSIDIZED_YES
+								
+								blockoverride "icon" {
+									texture = "gfx/interface/production_methods/subsidized.dds"
+								}
+								blockoverride "icon_size" {
+									size = { 80% 80% }
+								}
+							}
+							
+							button_icon_round_action = {
+								size = { 100% 100% }							
+								visible = "[And(Building.GetBuildingType.CanBeSubsidized,Not(Building.IsSubsidized))]"
+								enabled = "[IsValid( Building.ToggleSubsidies )]"
+								onclick = "[Execute( Building.ToggleSubsidies )]" 
+								tooltip = SUBSIDIZED_NO
+								
+								blockoverride "icon" {
+									texture = "gfx/interface/production_methods/subsidized_not.dds"
+								}
+								blockoverride "icon_size" {
+									size = { 80% 80% }
+								}
+							}
+						}
+						widget = {
+							visible = "[And(Not(Building.IsGovernmentFunded), Not(Building.IsSubsidized))]"
+							size = { 100 23 }
+							widget = {
+								parentanchor = vcenter|left
+								visible = "[Building.IsActive]"
+								textbox = {
+									raw_text = "@money![Building.GetTaxationRevenue|+=d]#!"
+									align = left|nobaseline
+									autoresize = yes
+									widgetanchor = vcenter|left
+									margin_bottom = 2
+								}
+							}
+							tooltip = "[Building.GetTaxationRevenueTooltip]"
+						}
+						widget = {
+							visible = "[Building.IsGovernmentFunded]"
+							size = { 100 23 }
+							widget = {
+								parentanchor = vcenter|left
+								visible = "[Building.IsActive]"
+								textbox = {
+									raw_text = "@money![Subtract_CFixedPoint(Building.GetTaxationRevenue, Building.GetGovernmentExpenses)|+=d]#!"
+									align = left|nobaseline
+									autoresize = yes
+									widgetanchor = vcenter|left
+									margin_bottom = 2
+								}
+							}
+							tooltip = "[Building.GetGovernmentExpensesDesc]"
+						}
+						widget = {
+							visible = "[Building.IsSubsidized]"
+							size = { 100 23 }
+							widget = {
+								parentanchor = vcenter|left
+								visible = "[Building.IsActive]"
+								textbox = {
+									raw_text = "@money![Subtract_CFixedPoint(Building.GetTaxationRevenue, Building.GetSubsidies)|+=d]#!"
+									align = left|nobaseline
+									autoresize = yes
+									widgetanchor = vcenter|left
+									margin_bottom = 2
+								}
+							}
+							tooltip = "SUBSIDIZED_YES_HEADER"
+						}
+					}
+					widget = {
+						size = { 135 30 }
+						widget = {
+							parentanchor = top|hcenter
+							visible = "[Building.IsActive]"
+							position = { 0 4 }
+							size = { 126 20 }
+							alpha = "[TransparentIfFalse(Building.IsActive)]"
+							default_progressbar_horizontal = {
+								tooltip = "TOOLTIP_BUILDING_EMPLOYMENT"
+								size = { 100% 100% }
+
+								blockoverride "values" {
+									value = "[FixedPointToFloat(Building.GetEmploymentPercentage)]"
+									min = 0
+									max = 1
+								}
+							}
+
+							container ={
+								visible = "[Not(LessThan_CFixedPoint(Building.GetEmploymentPercentage, GetDefine('NGUI', 'BUILDING_CONSIDERED_FULLY_EMPLOYED')))]"
+								parentanchor = vcenter|hcenter
+								textbox = {
+									text = "[Building.GetNoOfEmployed|1*]"
+									margin_bottom = 5
+									margin_top = 5
+									align = center|nobaseline
+									autoresize = yes
+									tooltip = "TOOLTIP_BUILDING_EMPLOYMENT"
+								}
+							}
+							flowcontainer = {
+								parentanchor = vcenter|hcenter
+								visible = "[LessThan_CFixedPoint(Building.GetEmploymentPercentage, GetDefine('NGUI', 'BUILDING_CONSIDERED_FULLY_EMPLOYED'))]"
+								textbox = {
+									text = "[Building.GetNoOfEmployed|1*]"
+									margin_bottom = 5
+									margin_top = 5
+									align = hcenter|nobaseline
+									autoresize = yes
+									parentanchor = vcenter
+									widgetanchor = vcenter
+									tooltip = "TOOLTIP_BUILDING_EMPLOYMENT"
+								}
+							
+								textbox = {
+									raw_text = " / [Building.GetEmployeeCap|1*]"
+									align = hcenter|nobaseline
+									autoresize = yes
+									parentanchor = vcenter
+									widgetanchor = vcenter
+									tooltip = "TOOLTIP_BUILDING_EMPLOYMENT"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	type improved_building_grid_building_item = widget {
+
+		highlight_tutorial_ui = {
+			visible = "[Building.IsBeingTutorialHighlighted]"
+		}
+		onmousehierarchyenter = "[AccessHighlightManager.HighlightBuilding(Building.Self)]"
+		onmousehierarchyleave = "[AccessHighlightManager.RemoveHighlight]"
+		alwaystransparent = no
+
+		size = { 135 225 }
+		button  = {
+			onclick = "[InformationPanelBar.OpenBuildingDetailsPanel(Building.AccessSelf)]"
+			onrightclick = "[RightClickMenuManager.ShowForBuilding(Building.AccessSelf)]"
+			tooltipwidget = {
+				FancyTooltip_Building = {}
+			}
+			using = tooltip_es
+
+			flowcontainer = {
+				direction = vertical
+				resizeparent = yes
+
+				background = {
+					using = entry_bg_simple
+				}
+
+				button = {
+					using = default_button
+					enabled = "[Building.IsValid]"
+					onclick = "[InformationPanelBar.OpenBuildingDetailsPanel(Building.AccessSelf)]"
+					onrightclick = "[RightClickMenuManager.ShowForBuilding(Building.AccessSelf)]"
+
+					textbox = {
+						resizeparent = yes
+						text = "[Building.GetNameNoFormatting]"
+						autoresize = yes
+						minimumsize = { 135 35 }
+						maximumsize = { 135 35 }
+						align = hcenter|nobaseline
+						parentanchor = hcenter
+						margin = { 13 5 }
+						elide = right
+						using = fontsize_small
+					}			
+				}
+
+				widget = {
+					size = { 135 135 }
+					
+					building_item_button = {
+						icon = {
+							visible = "[Building.IsBeingTutorialHighlighted]"
+							using = highlighted_square_selection
+						}
+					}
+
+					### DOWNSIZE
+					button_icon_minus_action = {
+						size = { 29 29 }
+						parentanchor = bottom
+						position = { 5 -5 }
+						tooltip = "[Building.GetDownsizeTooltip]"
+						onclick = "[Execute( Building.Downsize )]"
+						enabled = "[IsValid( Building.Downsize )]"
+						visible = "[And( And( Building.IsValid, Building.IsDownsizeable ), Not( ShouldAskConfirmation( Building.Downsize ) ) )]"
+						using = tooltip_below
+					}
+
+					### DOWNSIZE WITH CONFIRMATION
+					button_icon_minus_action = {
+						size = { 29 29 }
+						parentanchor = bottom
+						position = { 5 -5 }
+						tooltip = "[Building.GetDownsizeTooltip]"
+						onclick = "[PopupManager.AskConfirmation( Building.Downsize )]"
+						enabled = "[IsValid( Building.Downsize )]"
+						visible = "[And( And( Building.IsValid, Building.IsDownsizeable ), ShouldAskConfirmation( Building.Downsize ) )]"
+						using = tooltip_below
+					}
+
+					### CANCEL CONSTRUCTION
+					button_icon_minus_action = {
+						size = { 29 29 }
+						parentanchor = bottom
+						position = { 5 -5 }
+						tooltip = "[Building.GetCancelConstructionTooltip]"
+						visible = "[IsValid( Building.CancelConstruction )]"
+						onclick = "[Execute( Building.CancelConstruction )]"
+						using = tooltip_below
+					}
+					
+					### EXPAND BUTTON
+					
+					# ToggleAutoExpandButton
+					# ToggleSubsidiesButton
+					flowcontainer = {
+						direction = vertical
+						parentanchor = bottom|right
+						widgetanchor = bottom|right
+						widget = {
+							visible = "[Building.IsActive]"
+							size = { 29 29 }
+							icon = {
+								using = rotate_glow_blue
+								size = { 130% 130% }
+								visible = "[And(Building.GetBuildingType.CanBeSubsidized,Building.IsSubsidized)]"
+								alwaystransparent = yes
+								parentanchor = center
+								using = default_fade_in_out
+							}
+							button_icon_round_action = {
+								size = { 100% 100% }
+								visible = "[And(Building.GetBuildingType.CanBeSubsidized,Building.IsSubsidized)]"
+								enabled = "[IsValid( Building.ToggleSubsidies )]"
+								onclick = "[Execute( Building.ToggleSubsidies )]" 
+								tooltip = SUBSIDIZED_YES
+								
+								blockoverride "icon" {
+									texture = "gfx/interface/production_methods/subsidized.dds"
+								}
+								blockoverride "icon_size" {
+									size = { 80% 80% }
+								}
+							}
+							
+							button_icon_round_action = {
+								size = { 100% 100% }							
+								visible = "[And(Building.GetBuildingType.CanBeSubsidized,Not(Building.IsSubsidized))]"
+								enabled = "[IsValid( Building.ToggleSubsidies )]"
+								onclick = "[Execute( Building.ToggleSubsidies )]" 
+								tooltip = SUBSIDIZED_NO
+								
+								blockoverride "icon" {
+									texture = "gfx/interface/production_methods/subsidized_not.dds"
+								}
+								blockoverride "icon_size" {
+									size = { 80% 80% }
+								}
+							}
+						}
+						building_auto_expand = {
+							visible = "[And(Building.IsActive, IsPotential( Building.ToggleAutoExpand ))]"
+							size = { 29 29 }
+						}
+
+						widget = {
+							visible = "[Not(IsPotential( Building.ToggleAutoExpand ))]"
+							size = { 29 29 }
+						}
+						
+						block "expand_button_placement" {
+							position = { -5 -5 }
+						}
+						
+						button_icon_plus_action = {
+							visible = "[Or( And( Not( Building.IsValid ), IsValid( Building.QueueConstruction ) ), Not(Building.HasReachedLevelCap) )]"
+							tooltip = "[Building.GetQueueConstructionTooltip]"
+							size = { 29 29 }
+							onclick = "[Execute( Building.QueueConstruction )]"
+							enabled = "[IsValid( Building.QueueConstruction )]"
+						}
+
+						widget = {
+							visible = "[Not(Or( And( Not( Building.IsValid ), IsValid( Building.QueueConstruction ) ), Not(Building.HasReachedLevelCap) ))]"
+							size = { 29 29 }
+						}
+					}
+
+					### WAGES / GOVERNMENT BUILDING
+					container = {
+						position = { -5 4 }
+						parentanchor = top|right
+
+						container = {
+							visible = "[Not(Building.IsSubsidized)]"
+
+							textbox = {
+								visible = "[And(Building.IsSelfFunded, Building.IsActive)]"
+								raw_text = "#v @money![Building.GetAverageAnnualEarningsPerEmployeeFormatted|1+]#!"
+								align = right|nobaseline
+								autoresize = yes
+								minimumsize = { 23 27 }
+								margin_right = 6
+								
+								using = tooltip_above
+								tooltip = "TOOLTIP_BUILDING_PRODUCTIVITY"
+								tooltipwidget = {
+									GraphTooltip_Productivity = {}
+								}
+
+								background = {
+									using = dark_area
+								}
+							}
+
+							icon = {
+								texture = "gfx/interface/icons/generic_icons/government_building_icon.dds"
+								alwaystransparent = no
+								size = { 23 23 }
+								visible = "[And(Building.IsGovernmentFunded, Building.IsActive)]"
+								tooltip = "TOOLTIP_BUILDINGS_BUDGET"
+								using = tooltip_above
+							}
+						}
+
+						icon = {
+							texture = "gfx/interface/production_methods/subsidized.dds"
+							alwaystransparent = no
+							size = { 23 23 }
+							visible = "[Building.IsSubsidized]"
+							tooltip = "SUBSIDIZED_YES_HEADER"
+							using = tooltip_above
+						}
+					}
+
+					container = {
+						visible = "[LessThan_CFixedPoint(Building.GetEmploymentPercentage, GetDefine('NGUI', 'BUILDING_CONSIDERED_FULLY_EMPLOYED'))]"
+						position = { 5 31 }
+						parentanchor = left
+						
+						### EMPLOYMENT WARNING
+						icon = {
+							visible = "[And(And(Not(Building.IsSubsistenceBuilding), Building.HasFailedHires), Building.IsActive)]"
+							size = { 30 30 }
+							texture = "gfx/interface/icons/generic_icons/employment_not_full.dds"
+							tooltip = "NOT_FULLY_EMPLOYED"
+						}
+
+						icon = {
+							visible = "[And(And(Not(Building.IsSubsistenceBuilding), Not(Building.HasFailedHires)), Building.IsActive)]"
+							size = { 30 30 }
+							texture = "gfx/interface/icons/generic_icons/employment_not_full_hiring.dds"
+							tooltip = "TOOLTIP_BUILDING_HIRING"
+						}		
+					}
+
+					### LEVEL
+					container = {
+						position = { 5 4 }
+						parentanchor = top|left
+
+						tooltip = "[Building.GetEmploymentTooltip]"
+						using = tooltip_above
+
+						background = {
+							using = dark_area
+						}
+						
+						textbox = {
+							minimumsize = { -1 27 }
+							autoresize = yes
+							margin_right = 6
+							margin_left = 6
+							align = left|nobaseline
+							text = "[Building.GetExpansionLevelDesc]"
+						}
+					}
+
+					### CASH PROGRESSBAR
+					flowcontainer = {
+						position = { 0 -10 }
+						parentanchor = bottom|hcenter
+						direction = vertical
+						spacing = 7
+
+						### BUILDING PROGRESS
+						default_progressbar_horizontal = {
+							size = { 60 12 }
+							visible = "[Building.HasConstructionQueued]"
+							tooltip = "BUILDING_PROGRESS_TOOLTIP"
+							blockoverride "values" {
+								value = "[Building.GetConstructionProgressPercentage]"
+								min = 0
+								max = 1
+							}
+							alpha = 1
+							alwaystransparent = no
+
+							textbox = {
+								raw_text = "#bold [Building.GetConstructionRemainingWeeksDesc]#!"
+								size = { 53 20 }
+								align = center|nobaseline
+								elide = right
+								fontsize_min = 12
+								parentanchor = vcenter
+								position = { 4 0 }
+							}
+						}
+
+						widget = {
+							size = { 60 12 }
+							alpha = "[TransparentIfFalse(Building.IsActive)]"
+							visible = "[And(GreaterThan_CFixedPoint(Building.GetMaxCashReserves, '(CFixedPoint)0'), Building.IsActive)]"
+							using = cash_reserves_tooltip_with_graph
+
+							gold_progressbar_horizontal = {
+								size = { 100% 100% }
+								alpha = "[TransparentIfFalse(Building.IsActive)]"
+								visible = "[And(GreaterThan_CFixedPoint(Building.GetMaxCashReserves, '(CFixedPoint)0'), Building.IsActive)]"
+
+								blockoverride "glow_size" {
+									size = { 40 100% }
+								}
+
+								blockoverride "values" {
+									min = 0
+									max = "[FixedPointToFloat(Building.GetMaxCashReserves)]"
+									value = "[FixedPointToFloat(Building.GetCurrentCashReserves)]"
+								}
+							}
+
+							changed_value_decreased_progressbar_horizontal = {
+								size = { 100% 100% }
+								visible = "[GreaterThan_CFixedPoint(GetPrevTrendValue(Building.GetCashReservesTrend), GetTrendValue(Building.GetCashReservesTrend))]"
+
+								blockoverride "second_progressbar" {}
+
+								blockoverride "values" {
+									min = 0
+									max = "[FixedPointToFloat(Building.GetMaxCashReserves)]"
+									value = "[FixedPointToFloat(Building.GetCurrentCashReserves)]"
+								}
+								blockoverride "glow_size" {
+									size = { 40 100% }
+								}
+								blockoverride "arrow_texture_density" {
+									texture_density = 13 #use to match height of progressbar
+								}
+							}
+
+							changed_value_increased_progressbar_horizontal = {
+								size = { 100% 100% }
+								visible = "[GreaterThan_CFixedPoint(GetTrendValue(Building.GetCashReservesTrend), GetPrevTrendValue(Building.GetCashReservesTrend))]"
+
+								blockoverride "second_progressbar" {}
+
+								blockoverride "values" {
+									min = 0
+									max = "[FixedPointToFloat(Building.GetMaxCashReserves)]"
+									value = "[FixedPointToFloat(Building.GetCurrentCashReserves)]"
+								}
+								blockoverride "glow_size" {
+									size = { 40 100% }
+								}
+								blockoverride "arrow_texture_density" {
+									texture_density = 13 #use to match height of progressbar
+								}
+							}
+
+							progressbar_highlight = {
+								visible = "[GreaterThanOrEqualTo_CFixedPoint(Building.GetCurrentCashReserves, Building.GetMaxCashReserves)]"
+							}
+						}
+					}
+
+					container = {
+						visible = "[Building.HasAnyInputShortage]"
+						position = { 3 -37 }
+						parentanchor = bottom
+
+						### INPUT WARNING
+						icon = {
+							size = { 34 34 }
+							texture = "gfx/interface/icons/generic_icons/goods_shortage.dds"
+							tooltip = "GOODS_OUTPUT_PENALTY_TOOLTIP"
+						}
+					}
+				}
+				
+				# Yearly Income
+				# Employee
+				widget = {
+					size = { 135 20 }
+					widget = {
+						visible = "[And(Not(Building.IsGovernmentFunded), Not(Building.IsSubsidized))]"
+						size = { 135 20 }
+						parentanchor = vcenter|right
+						widget = {
+							parentanchor = vcenter|hcenter
+							visible = "[Building.IsActive]"
+							textbox = {
+								raw_text = "@money![Building.GetTaxationRevenue|+=d]#!"
+								align = hcenter|nobaseline
+								autoresize = yes
+								parentanchor = vcenter|hcenter
+								margin_bottom = 2
+							}
+						}
+						tooltip = "[Building.GetTaxationRevenueTooltip]"
+					}
+					widget = {
+						visible = "[Building.IsGovernmentFunded]"
+						size = { 135 20 }
+						parentanchor = vcenter|right
+						widget = {
+							parentanchor = vcenter|hcenter
+							visible = "[Building.IsActive]"
+							textbox = {
+								raw_text = "@money![Subtract_CFixedPoint(Building.GetTaxationRevenue, Building.GetGovernmentExpenses)|+=d]#!"
+								align = hcenter|nobaseline
+								autoresize = yes
+								parentanchor = vcenter|hcenter
+								margin_bottom = 2
+							}
+						}
+						tooltip = "[Building.GetGovernmentExpensesDesc]"
+					}
+					widget = {
+						visible = "[Building.IsSubsidized]"
+						size = { 135 20 }
+						parentanchor = vcenter|right
+						widget = {
+							parentanchor = vcenter|hcenter
+							visible = "[Building.IsActive]"
+							textbox = {
+								raw_text = "@money![Subtract_CFixedPoint(Building.GetTaxationRevenue, Building.GetSubsidies)|+=d]#!"
+								align = hcenter|nobaseline
+								autoresize = yes
+								parentanchor = vcenter|hcenter
+								margin_bottom = 2
+							}
+						}
+						tooltip = "SUBSIDIZED_YES_HEADER"
+					}
+				}
+				widget = {
+					size = { 135 30 }
+					widget = {
+						parentanchor = top|hcenter
+						visible = "[Building.IsActive]"
+						position = { 0 4 }
+						size = { 126 20 }
+						alpha = "[TransparentIfFalse(Building.IsActive)]"
+						default_progressbar_horizontal = {
+							tooltip = "TOOLTIP_BUILDING_EMPLOYMENT"
+							size = { 100% 100% }
+
+							blockoverride "values" {
+								value = "[FixedPointToFloat(Building.GetEmploymentPercentage)]"
+								min = 0
+								max = 1
+							}
+						}
+
+						container ={
+							visible = "[Not(LessThan_CFixedPoint(Building.GetEmploymentPercentage, GetDefine('NGUI', 'BUILDING_CONSIDERED_FULLY_EMPLOYED')))]"
+							parentanchor = vcenter|hcenter
+							textbox = {
+								text = "[Building.GetNoOfEmployed|1*]"
+								margin_bottom = 5
+								margin_top = 5
+								align = center|nobaseline
+								autoresize = yes
+								tooltip = "TOOLTIP_BUILDING_EMPLOYMENT"
+							}
+						}
+						flowcontainer = {
+							parentanchor = vcenter|hcenter
+							visible = "[LessThan_CFixedPoint(Building.GetEmploymentPercentage, GetDefine('NGUI', 'BUILDING_CONSIDERED_FULLY_EMPLOYED'))]"
+							textbox = {
+								text = "[Building.GetNoOfEmployed|1*]"
+								margin_bottom = 5
+								margin_top = 5
+								align = hcenter|nobaseline
+								autoresize = yes
+								parentanchor = vcenter
+								widgetanchor = vcenter
+								tooltip = "TOOLTIP_BUILDING_EMPLOYMENT"
+							}
+							
+							textbox = {
+								raw_text = " / [Building.GetEmployeeCap|1*]"
+								align = hcenter|nobaseline
+								autoresize = yes
+								parentanchor = vcenter
+								widgetanchor = vcenter
+								tooltip = "TOOLTIP_BUILDING_EMPLOYMENT"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
