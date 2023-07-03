@@ -1,0 +1,347 @@
+﻿ig_armed_forces = {
+	color = hsv{ 0.09 0.29 0.39 }
+	texture = "gfx/interface/icons/ig_icons/armed_forces.dds"
+	layer = "revolution_dynamic_armed_forces"
+	index = 0
+
+	ideologies = {
+		ideology_jingoist
+		ideology_loyalist
+		ideology_patriotic
+		ideology_cultural_chauvinism
+	}
+
+	enable = {
+		always = yes
+	}
+
+	traits = {
+		ig_trait_patriotic_fervor
+		ig_trait_veteran_consultation
+		ig_trait_materiel_waste
+	}
+
+	on_enable = {}
+	on_disable = {}
+	on_character_ig_membership = {}
+
+	pop_potential = {
+		OR = {
+			is_pop_type = soldiers
+			is_pop_type = officers
+			is_pop_type = aristocrats
+			pop_is_discriminated = no
+		}
+	}
+
+	pop_weight = {
+		value = 0
+		
+		add = {
+			desc = "POP_NOT_DISCRIMINATED"
+			if = {
+				limit = { 
+					pop_is_discriminated = no
+				}
+				value = 10
+			}
+		}
+		add = {
+			desc = "IG_HAS_RIVAL"
+			if = {
+				limit = {
+					owner = {
+						any_rival_country = {
+							count = 0
+						}
+					}
+				}
+				value = 0
+			}
+			else_if = {
+				limit = {
+					owner = {
+						any_rival_country = {
+							count = 1
+						}
+					}
+				}
+				value = 15
+			}
+			else_if ={
+				limit = {
+					owner = {
+						any_rival_country = {
+							count = 2
+						}
+					}
+				}
+				value = 25
+			}
+			else_if ={
+				limit = {
+					owner = {
+						any_rival_country = {
+							count = 3
+						}
+					}
+				}
+				value = 30
+			}
+			else_if ={
+				limit = {
+					owner = {
+						any_rival_country = {
+							count >= 4
+						}
+					}
+				}
+				value = 32
+			}
+		}
+		add = {
+			desc = "IG_EMPLOYED_MIC"
+			if = {
+				limit = {
+					OR = {
+						pop_employment_building = building_war_machine_industry
+						pop_employment_building = building_arms_industry
+						pop_employment_building = building_munition_plants
+						AND = {
+							pop_employment_building = building_shipyards
+							workplace = {
+								OR = {
+									has_active_production_method = pm_military_shipbuilding_wooden
+									has_active_production_method = pm_military_shipbuilding_wooden_2
+									has_active_production_method = pm_military_shipbuilding_steam
+									has_active_production_method = pm_military_shipbuilding_steam_2
+								}
+							}
+						}
+					}
+				}
+				value = 100
+			}
+		}
+		
+		add = {
+			desc = "POP_SOLDIERS"
+			if = {
+				limit = { 
+					is_pop_type = soldiers
+				}
+				value = 100
+			}
+		}
+		
+		add = {
+			desc = "POP_ARISTOCRATS"
+			if = {
+				limit = { 
+					is_pop_type = aristocrats
+				}
+				value = 100
+			}
+		}		
+	
+		add = {
+			desc = "POP_OFFICERS"
+			if = {
+				limit = { 
+					is_pop_type = officers
+				}
+				value = 200
+			}
+		}
+		add = {
+			desc = "law_national_guard"
+			if = {
+				limit = {
+					owner = {
+						has_law = law_type:law_national_guard
+					}
+				}
+				value = 10
+			}
+		}
+					
+		multiply = {
+			desc = "LEADER_POPULARITY"
+			scope:interest_group = {
+				leader = {
+					value = popularity
+					multiply = 0.005
+					add = 1
+					min = 0.75
+				}
+			}
+		}
+		
+		if = {
+			limit = {
+				scope:interest_group = {
+					is_in_government = yes
+				}
+			}
+			multiply = {
+				desc = "IN_GOVERNMENT_ATTRACTION"
+				value = 1
+				add = scope:interest_group.modifier:interest_group_in_government_attraction_mult
+				min = 0
+			}
+		}
+	}
+
+	monarch_weight = {
+		value = 1
+		# Monarch is not likely to adopt a marginal IG
+		if = {
+			limit = {
+				is_marginal = yes
+			}
+			multiply = {
+				value = 0.1
+			}
+		}
+		# Monarch is more likely to adopt a Powerful IG
+		if = {
+			limit = {
+				is_powerful = yes
+			}
+			multiply = {
+				value = 2
+			}
+		}
+		# Monarch more likely to be Armed Forces under an autocratic or oligarchic regime
+		if = {
+			limit = {
+				owner = {
+					OR = {
+						has_law = law_type:law_oligarchy
+						has_law = law_type:law_autocracy
+						has_law = law_type:law_single_party_state
+					}
+				}
+			}
+			multiply = {
+				value = 2
+			}
+		}
+		# Monarch is less likely to be Armed forces in a democratic monarchy
+		if = {
+			limit = {
+				owner = {
+					OR = {
+						has_law = law_type:law_universal_suffrage
+						has_law = law_type:law_census_voting
+					}
+				}
+			}
+			multiply = {
+				value = 0.5
+			}
+		}
+		# Less likely without Professional Army or Mass Conscription
+		if = {
+			limit = {
+				owner = {
+					NOR = {
+						has_law = law_type:law_professional_army
+						has_law = law_type:law_mass_conscription
+					}
+				}
+			}
+			multiply = {
+				value = 0.5
+			}
+		}
+	}
+
+	agitator_weight = {
+		# Agitators more likely to come from populist IG's rather than elitist
+		value = 0.5
+		# Agitators will never be part of a marginalized IG
+		if = {
+			limit = {
+				owner.ig:ig_armed_forces = {
+					is_marginal = yes
+				}
+			}
+			multiply = {
+				value = 0
+			}
+		}
+	}
+
+	commander_weight = {
+		value = 5.0
+	}
+
+	noble_chance = {
+		value = 0.5
+	}
+
+	female_commander_chance = {
+		value = 0.0
+	}
+
+	female_politician_chance = {
+		value = 0.0
+	}
+
+	female_agitator_chance = {
+		value = 0.01
+		
+		if = {
+			limit = {
+				owner = {
+					has_law = law_type:law_women_own_property
+				}
+
+			}
+			add = {
+				value = 0.01
+			}
+		}	
+		
+		if = {
+			limit = {
+				owner = {
+					has_law = law_type:law_women_in_the_workplace
+				}
+
+			}
+			add = {
+				value = 0.01
+			}
+		}
+
+		if = {
+			limit = {
+				owner = {
+					has_law = law_type:law_womens_suffrage
+				}
+
+			}
+			add = {
+				value = 0.01
+			}
+		}		
+	}
+
+	# The chance that a commander belonging to this IG takes over leadership when it changes
+	# scope:character is the most popular commander in the IG
+	commander_leader_chance = {
+		value = 0.75
+		if = {
+			limit = {
+				exists = scope:character
+			}
+			multiply = {
+				value = 1
+				add = scope:character.popularity
+				min = 0
+			}
+		}
+	}
+}
