@@ -1,0 +1,70 @@
+﻿fi_list_state_item = {
+        every_state = {
+		limit = {
+			has_variable = $ID$_$BUILDING$_number
+		}
+		if = {
+			limit = { NOT = { has_variable = fi_state_item_number } }
+			set_variable = {
+				name = fi_state_item_number
+				value = 0
+			}
+		}
+		change_variable = {
+			name = fi_state_item_number
+			add = var:$ID$_$BUILDING$_number
+		}
+		if = {
+			limit = { NOT = { has_variable = fi_state_item_queued } }
+			set_variable = {
+				name = fi_state_item_queued
+				value = 0
+			}
+		}
+		if = {
+			limit = { has_variable = $ID$_$BUILDING$_queued }
+			change_variable = {
+				name = fi_state_item_queued
+				add = var:$ID$_$BUILDING$_queued
+			}
+		}
+		if = {
+			limit = { NOT = { has_variable = fi_state_profit_calculater } }
+			set_variable = {
+				name = fi_state_profit_calculater
+				value = 0
+			}
+		}
+		if = {
+			limit = { NOT = { has_variable = state_profit_building_number } }
+			set_variable = {
+				name = state_profit_building_number
+				value = 0
+			}
+		}
+		every_scope_building = {
+			limit = {
+				is_building_type = $BUILDING$
+			}
+			set_local_variable = {
+				name = profit_calc_store
+				value = weekly_profit
+			}
+			change_local_variable = {
+				name = profit_calc_store
+				divide = level
+			}
+			state = {
+				change_variable = {
+					name = state_profit_building_number
+					add = 1
+				}
+				change_variable = {
+					name = fi_state_profit_calculater
+					add = local_var:profit_calc_store
+				}
+			}
+			remove_local_variable = profit_calc_store
+		}
+	}
+}

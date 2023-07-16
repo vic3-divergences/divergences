@@ -1,0 +1,432 @@
+﻿start_foreign_construction = {	
+	if = {
+		limit = {
+			NOT = { has_variable = $INVESTOR$_$BUILDING$_queued}
+		}
+		set_variable = {
+			name = $INVESTOR$_$BUILDING$_queued
+			value = 0
+		}
+		scope:investor_country = {
+			if = {
+				limit = {
+					NOT = { has_variable = number_of_foreign_construction }
+				}
+				set_variable = {
+					name = number_of_foreign_construction
+					value = 0
+				}
+			}
+			change_variable = {
+				name = number_of_foreign_construction
+				add = 1
+			}
+		}
+	}
+	if = {
+		limit = {
+			NOT = { has_variable = $INVESTOR$_$BUILDING$_order }
+		}
+		set_variable = {
+			name = $INVESTOR$_$BUILDING$_order
+			value = scope:investor_country.var:number_of_foreign_construction
+		}
+	}
+	change_variable = {
+		name = $INVESTOR$_$BUILDING$_queued
+		add = 1
+	}
+}
+
+cancel_foreign_construction = {
+	if = {
+		limit = {
+			has_variable = $INVESTOR$_$BUILDING$_number
+		}
+		change_variable = {
+			name = $INVESTOR$_$BUILDING$_number
+			subtract = 1
+		}
+		if = {
+			limit = {
+				var:$INVESTOR$_$BUILDING$_number <=0
+			}
+			remove_variable = $INVESTOR$_$BUILDING$_number
+		}
+		scope:investor_country = {
+			change_variable = {
+				name = total_invested_building
+				subtract = 1
+			}
+			if = {
+				limit = {
+					var:total_invested_building <=0
+				}
+				remove_variable = total_invested_building
+			}
+		}
+	}
+}
+cancel_queued_construction = {
+        remove_variable = number_of_foreign_construction
+        every_state = {
+                limit= {
+                        has_variable = $ID$_$BUILDING$_order
+                }
+                remove_variable = $ID$_$BUILDING$_order
+        }
+        every_state = {
+                limit= {
+                        has_variable = $ID$_$BUILDING$_queued
+                }
+                remove_variable = $ID$_$BUILDING$_queued
+        }
+}
+
+execute_foreign_construction = {
+	if = {
+		limit = {
+			has_variable = fi_cost_medium
+			$BUILDING$_cost_value = construction_cost_medium
+		}
+		random_state = {
+	                limit = {
+	                        has_variable = $ID$_$BUILDING$_order 
+	                        var:$ID$_$BUILDING$_order <= 1
+	                }
+	                create_building_effect = {BUILDING_TYPE = $BUILDING$}
+	                change_variable = {
+	                        name = $ID$_$BUILDING$_queued
+	                        subtract = 1
+	                }
+	                if = {
+	                        limit = {
+	                                NOT = { has_variable = $ID$_$BUILDING$_number }
+	                        }
+	                        set_variable = {
+	                                name = $ID$_$BUILDING$_number
+	                                value = 0
+	                        }
+	                }
+	                change_variable = {
+	                        name = $ID$_$BUILDING$_number
+	                        add = 1
+	                }
+	                root = {
+	                	add_to_variable_list = { name = invested_states target = prev }
+	                        if = {
+	                                limit = {
+	                                        NOT = { has_variable = total_invested_building }
+	                                }
+	                                set_variable = {
+	                                        name = total_invested_building
+	                                        value = 0
+	                                }
+	                        }
+	                        change_variable = {
+	                                name = total_invested_building
+	                                add = 1
+	                        }
+	                        remove_variable = not_finished_construction
+	                }
+	                if = {
+	                        limit = {
+	                                var:$ID$_$BUILDING$_queued <=0
+	                        }
+	                        remove_variable = $ID$_$BUILDING$_order
+	                        remove_variable = $ID$_$BUILDING$_queued
+	                        root = {
+	                                change_variable = {
+	                                        name = number_of_foreign_construction
+	                                        subtract = 1
+	                                }
+	                        }
+	                }
+	                else = {
+	                        root = { set_variable = stop_ordering_construction }
+	                }
+	        }
+	}
+	else_if = {
+		limit = {
+			has_variable = fi_cost_low
+			$BUILDING$_cost_value = construction_cost_low
+		}
+		random_state = {
+	                limit = {
+	                        has_variable = $ID$_$BUILDING$_order 
+	                        var:$ID$_$BUILDING$_order <= 1
+	                }
+	                create_building_effect = {BUILDING_TYPE = $BUILDING$}
+	                change_variable = {
+	                        name = $ID$_$BUILDING$_queued
+	                        subtract = 1
+	                }
+	                if = {
+	                        limit = {
+	                                NOT = { has_variable = $ID$_$BUILDING$_number }
+	                        }
+	                        set_variable = {
+	                                name = $ID$_$BUILDING$_number
+	                                value = 0
+	                        }
+	                }
+	                change_variable = {
+	                        name = $ID$_$BUILDING$_number
+	                        add = 1
+	                }
+	                root = {
+	                	add_to_variable_list = { name = invested_states target = prev }
+	                        if = {
+	                                limit = {
+	                                        NOT = { has_variable = total_invested_building }
+	                                }
+	                                set_variable = {
+	                                        name = total_invested_building
+	                                        value = 0
+	                                }
+	                        }
+	                        change_variable = {
+	                                name = total_invested_building
+	                                add = 1
+	                        }
+	                        remove_variable = not_finished_construction
+	                }
+	                if = {
+	                        limit = {
+	                                var:$ID$_$BUILDING$_queued <=0
+	                        }
+	                        remove_variable = $ID$_$BUILDING$_order
+	                        remove_variable = $ID$_$BUILDING$_queued
+	                        root = {
+	                                change_variable = {
+	                                        name = number_of_foreign_construction
+	                                        subtract = 1
+	                                }
+	                        }
+	                }
+	                else = {
+	                        root = { set_variable = stop_ordering_construction }
+	                }
+	        }
+	}
+	else_if = {
+		limit = {
+			has_variable = fi_cost_high
+			$BUILDING$_cost_value = construction_cost_high
+		}
+		random_state = {
+	                limit = {
+	                        has_variable = $ID$_$BUILDING$_order 
+	                        var:$ID$_$BUILDING$_order <= 1
+	                }
+	                create_building_effect = {BUILDING_TYPE = $BUILDING$}
+	                change_variable = {
+	                        name = $ID$_$BUILDING$_queued
+	                        subtract = 1
+	                }
+	                if = {
+	                        limit = {
+	                                NOT = { has_variable = $ID$_$BUILDING$_number }
+	                        }
+	                        set_variable = {
+	                                name = $ID$_$BUILDING$_number
+	                                value = 0
+	                        }
+	                }
+	                change_variable = {
+	                        name = $ID$_$BUILDING$_number
+	                        add = 1
+	                }
+	                root = {
+	                	add_to_variable_list = { name = invested_states target = prev }
+	                        if = {
+	                                limit = {
+	                                        NOT = { has_variable = total_invested_building }
+	                                }
+	                                set_variable = {
+	                                        name = total_invested_building
+	                                        value = 0
+	                                }
+	                        }
+	                        change_variable = {
+	                                name = total_invested_building
+	                                add = 1
+	                        }
+	                        remove_variable = not_finished_construction
+	                }
+	                if = {
+	                        limit = {
+	                                var:$ID$_$BUILDING$_queued <=0
+	                        }
+	                        remove_variable = $ID$_$BUILDING$_order
+	                        remove_variable = $ID$_$BUILDING$_queued
+	                        root = {
+	                                change_variable = {
+	                                        name = number_of_foreign_construction
+	                                        subtract = 1
+	                                }
+	                        }
+	                }
+	                else = {
+	                        root = { set_variable = stop_ordering_construction }
+	                }
+	        }
+	}
+	else_if = {
+		limit = {
+			has_variable = fi_cost_very_high
+			$BUILDING$_cost_value = construction_cost_very_high
+		}
+		random_state = {
+	                limit = {
+	                        has_variable = $ID$_$BUILDING$_order 
+	                        var:$ID$_$BUILDING$_order <= 1
+	                }
+	                create_building_effect = {BUILDING_TYPE = $BUILDING$}
+	                change_variable = {
+	                        name = $ID$_$BUILDING$_queued
+	                        subtract = 1
+	                }
+	                if = {
+	                        limit = {
+	                                NOT = { has_variable = $ID$_$BUILDING$_number }
+	                        }
+	                        set_variable = {
+	                                name = $ID$_$BUILDING$_number
+	                                value = 0
+	                        }
+	                }
+	                change_variable = {
+	                        name = $ID$_$BUILDING$_number
+	                        add = 1
+	                }
+	                root = {
+	                	add_to_variable_list = { name = invested_states target = prev }
+	                        if = {
+	                                limit = {
+	                                        NOT = { has_variable = total_invested_building }
+	                                }
+	                                set_variable = {
+	                                        name = total_invested_building
+	                                        value = 0
+	                                }
+	                        }
+	                        change_variable = {
+	                                name = total_invested_building
+	                                add = 1
+	                        }
+	                        remove_variable = not_finished_construction
+	                }
+	                if = {
+	                        limit = {
+	                                var:$ID$_$BUILDING$_queued <=0
+	                        }
+	                        remove_variable = $ID$_$BUILDING$_order
+	                        remove_variable = $ID$_$BUILDING$_queued
+	                        root = {
+	                                change_variable = {
+	                                        name = number_of_foreign_construction
+	                                        subtract = 1
+	                                }
+	                        }
+	                }
+	                else = {
+	                        root = { set_variable = stop_ordering_construction }
+	                }
+	        }
+	}
+               
+}
+
+order_foreign_construction = {
+	if = {
+		limit = {
+			has_variable = fi_cost_medium
+			$BUILDING$_cost_value = construction_cost_medium
+		}
+	        every_state = {
+	                limit = {
+	                        has_variable = $ID$_$BUILDING$_order 
+	                }
+
+	                change_variable = {
+	                        name = $ID$_$BUILDING$_order
+	                        subtract = 1
+	                }
+	        }
+	}
+	else_if = {
+		limit = {
+			has_variable = fi_cost_low
+			$BUILDING$_cost_value = construction_cost_low
+		}
+	        every_state = {
+	                limit = {
+	                        has_variable = $ID$_$BUILDING$_order 
+	                }
+
+	                change_variable = {
+	                        name = $ID$_$BUILDING$_order
+	                        subtract = 1
+	                }
+	        }
+	}
+	else_if = {
+		limit = {
+			has_variable = fi_cost_high
+			$BUILDING$_cost_value = construction_cost_high
+		}
+	        every_state = {
+	                limit = {
+	                        has_variable = $ID$_$BUILDING$_order 
+	                }
+
+	                change_variable = {
+	                        name = $ID$_$BUILDING$_order
+	                        subtract = 1
+	                }
+	        }
+	}
+	else_if = {
+		limit = {
+			has_variable = fi_cost_very_high
+			$BUILDING$_cost_value = construction_cost_very_high
+		}
+	        every_state = {
+	                limit = {
+	                        has_variable = $ID$_$BUILDING$_order 
+	                }
+
+	                change_variable = {
+	                        name = $ID$_$BUILDING$_order
+	                        subtract = 1
+	                }
+	        }
+	}
+}
+
+fi_calculate_building_cost = {
+	if = {
+		limit = {
+			has_variable = $ID$_$BUILDING$_queued
+		}
+		change_local_variable = {
+			name = building_number_store
+			add = var:$ID$_$BUILDING$_queued
+		}
+		set_local_variable = {
+			name = building_calc_store
+			value = $BUILDING$_cost_value
+		}
+		change_local_variable = {
+			name = building_calc_store
+			multiply = var:$ID$_$BUILDING$_queued
+		}
+		change_local_variable = {
+			name = building_cost_store
+			add = local_var:building_calc_store
+		}
+		remove_local_variable = building_calc_store
+	}
+}

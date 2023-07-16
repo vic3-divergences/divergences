@@ -1,0 +1,52 @@
+﻿fi_mine_exclusive_effect = {
+        every_scope_building = {
+                limit = {
+                        is_building_type = $BUILDING$
+                        OR = {
+                                NOT = { state = { has_variable = $ID$_$BUILDING$_number } }
+                                level > state.var:$ID$_$BUILDING$_number
+                        }
+                }
+                set_local_variable = {
+                        name = more_calc_store
+                        value = level
+                }
+                state = {
+                        if = {
+                                limit = {
+                                         has_variable = $ID$_$BUILDING$_number 
+                                }
+                                change_local_variable = {
+                                        name = more_calc_store
+                                        subtract = var:$ID$_$BUILDING$_number
+                                }
+                        }
+                        else ={
+                                set_variable = {
+                                        name = $ID$_$BUILDING$_number
+                                        value = 0
+                                }
+                        }
+                }
+                
+                state = {
+                        change_variable = {
+                                name = $ID$_$BUILDING$_number
+                                add = local_var:more_calc_store
+                        }
+                        owner = { save_scope_as = remove_target }
+                        fi_remove_all_exclusive = yes
+                }
+                random_country = {
+                        limit = {
+                                has_variable = fi_identification
+                                var:fi_identification = $ID$
+                        }
+                        change_variable = {
+                                name = total_invested_building
+                                add = local_var:more_calc_store
+                        }
+                }
+                remove_local_variable = more_calc_store
+        }
+}
