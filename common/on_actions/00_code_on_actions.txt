@@ -540,6 +540,28 @@ on_monthly_pulse_character = {
 			remove_trait = trait_child
 			add_random_trait = personality
 		}
+		if = {
+			limit = {
+				is_mobilized = yes
+			}
+			set_variable = {
+				name = num_months_mobilized
+				value = {
+					add = {
+						if = {
+							limit = {
+								exists = var:num_months_mobilized
+							}
+							add = var:num_months_mobilized
+						}
+						else = { # for safety
+							add = 0
+						}
+					}
+					add = 1
+				}
+			}
+		}
 	}
 }
 on_yearly_pulse_character = {
@@ -755,11 +777,121 @@ on_spreading_technology = {
 	}
 }
 
-# Fires for all countries with an interest marker in the play's region
-# Root = Country who owns the interest marker
-# scope:diplomatic_play = The diplomatic play that has been started
+# Fires when a diplomatic play is started
+# root = The diplomatic play that has been started
+# scope:initiator = Initiator of the play
+# scope:target = Target of the play
 on_diplomatic_play_started = {
-	events = {
+	effect = {
+		if = {
+			limit = { is_diplomatic_play_type = dp_unify_germany }
+			every_country = {
+				limit = {
+					is_supporting_unification_candidate = { who = scope:initiator country_formation = GER }
+				}
+				
+				scope:initiator = { annex = prev }
+			}
+		}
+		
+		if = {
+			limit = { is_diplomatic_play_type = dp_unify_italy }
+			every_country = {
+				limit = {
+					is_supporting_unification_candidate = { who = scope:initiator country_formation = ITA }
+				}
+				
+				scope:initiator = { annex = prev }
+			}
+		}
+
+		if = {
+			limit = { is_diplomatic_play_type = dp_unify_scandinavia }
+			every_country = {
+				limit = {
+					is_supporting_unification_candidate = { who = scope:initiator country_formation = SCA }
+				}
+				
+				scope:initiator = { annex = prev }
+			}
+		}
+
+		if = {
+			limit = { is_diplomatic_play_type = dp_unify_the_empire }
+			every_country = {
+				limit = {
+					is_supporting_unification_candidate = { who = scope:initiator country_formation = HLR }
+				}
+				
+				scope:initiator = { annex = prev }
+			}
+		}
+
+		if = {
+			limit = { is_diplomatic_play_type = dp_unify_dutch }
+			every_country = {
+				limit = {
+					is_supporting_unification_candidate = { who = scope:initiator country_formation = NET }
+				}
+				
+				scope:initiator = { annex = prev }
+			}
+		}
+
+		if = {
+			limit = { is_diplomatic_play_type = dp_unify_aryanam }
+			every_country = {
+				limit = {
+					is_supporting_unification_candidate = { who = scope:initiator country_formation = ARY }
+				}
+				
+				scope:initiator = { annex = prev }
+			}
+		}	
+	
+		if = {
+			limit = { is_diplomatic_play_type = dp_unify_gran_colombia }
+			every_country = {
+				limit = {
+					is_supporting_unification_candidate = { who = scope:initiator country_formation = GCO }
+				}
+				
+				scope:initiator = { annex = prev }
+			}
+		}
+
+		if = {
+			limit = { is_diplomatic_play_type = dp_unify_russia }
+			every_country = {
+				limit = {
+					is_supporting_unification_candidate = { who = scope:initiator country_formation = RUS }
+				}
+				
+				scope:initiator = { annex = prev }
+			}
+		}
+
+		if = {
+			limit = { is_diplomatic_play_type = dp_unify_panarab }
+			every_country = {
+				limit = {
+					is_supporting_unification_candidate = { who = scope:initiator country_formation = AR2 }
+				}
+				
+				scope:initiator = { annex = prev }
+			}
+		}
+
+		if = {
+			limit = { is_diplomatic_play_type = dp_unify_britain }
+			every_country = {
+				limit = {
+					is_supporting_unification_candidate = { who = scope:initiator country_formation = GBR }
+				}
+				
+				scope:initiator = { annex = prev }
+			}
+		}
 	}
 }
 
@@ -1484,6 +1616,23 @@ on_enemy_capitulated_notification = {
 on_ally_capitulated_notification = {
 	effect = {
 		post_notification = ally_capitulated
+	}
+}
+
+# Root = Character
+on_mobilized_general = {
+	effect = {
+		set_variable = {
+			name = num_months_mobilized
+			value = 0
+		}
+	}
+}
+
+# Root = Character
+on_demobilized_general = {
+	effect = {
+		remove_variable = num_months_mobilized
 	}
 }
 
@@ -2290,12 +2439,6 @@ on_civil_war_won = {
 				set_variable = {
 					name = supporting_orleanist_var
 				}
-
-				## Support has just changed, so reset the divided monarchist JE's monarchist progress
-				set_variable = {
-					name = french_monarchist_progress_var
-					value = 0
-				}
 			}
 			### 
 
@@ -2341,6 +2484,13 @@ on_civil_war_won = {
 			if = {
 				limit = {
 					NOT = { has_journal_entry = je_divided_monarchists }
+					has_dlc_feature = voice_of_the_people_content
+				}
+				if = {
+					limit = {
+						has_variable = fra_divided_monarchists_freeze
+					}
+					remove_variable = fra_divided_monarchists_freeze
 				}
 				add_journal_entry = {
 					type = je_divided_monarchists
@@ -2351,6 +2501,7 @@ on_civil_war_won = {
 				limit = {
 					has_variable = orleanist_restoration_var
 					NOT = { has_journal_entry = je_cement_the_rightful_dynasty }
+					has_dlc_feature = voice_of_the_people_content
 				}
 				add_journal_entry = {
 					type = je_cement_the_rightful_dynasty
@@ -2395,12 +2546,6 @@ on_civil_war_won = {
 				}
 				set_variable = {
 					name = supporting_bonapartist_var
-				}
-
-				## Support has just changed, so reset the divided monarchist JE's monarchist progress
-				set_variable = {
-					name = french_monarchist_progress_var
-					value = 0
 				}
 			}
 			### 
@@ -2447,6 +2592,13 @@ on_civil_war_won = {
 			if = {
 				limit = {
 					NOT = { has_journal_entry = je_divided_monarchists }
+					has_dlc_feature = voice_of_the_people_content
+				}
+				if = {
+					limit = {
+						has_variable = fra_divided_monarchists_freeze
+					}
+					remove_variable = fra_divided_monarchists_freeze
 				}
 				add_journal_entry = {
 					type = je_divided_monarchists
@@ -2457,6 +2609,7 @@ on_civil_war_won = {
 				limit = {
 					has_variable = bonapartist_restoration_var
 					NOT = { has_journal_entry = je_cement_the_rightful_dynasty }
+					has_dlc_feature = voice_of_the_people_content
 				}
 				add_journal_entry = {
 					type = je_cement_the_rightful_dynasty
@@ -2501,12 +2654,6 @@ on_civil_war_won = {
 				}
 				set_variable = {
 					name = supporting_legitimist_var
-				}
-
-				## Support has just changed, so reset the divided monarchist JE's monarchist progress
-				set_variable = {
-					name = french_monarchist_progress_var
-					value = 0
 				}
 			}
 			### 
@@ -2553,6 +2700,13 @@ on_civil_war_won = {
 			if = {
 				limit = {
 					NOT = { has_journal_entry = je_divided_monarchists }
+					has_dlc_feature = voice_of_the_people_content
+				}
+				if = {
+					limit = {
+						has_variable = fra_divided_monarchists_freeze
+					}
+					remove_variable = fra_divided_monarchists_freeze
 				}
 				add_journal_entry = {
 					type = je_divided_monarchists
@@ -2563,6 +2717,7 @@ on_civil_war_won = {
 				limit = {
 					has_variable = legitimist_restoration_var
 					NOT = { has_journal_entry = je_cement_the_rightful_dynasty }
+					has_dlc_feature = voice_of_the_people_content
 				}
 				add_journal_entry = {
 					type = je_cement_the_rightful_dynasty
@@ -2695,68 +2850,6 @@ on_ig_resigned_government = {
 				set_variable = resigned_from_gov_coup
 			}
 		}
-		
-		if = {
-			limit = {
-				owner = {
-					c:FRA ?= this
-					has_law = law_type:law_monarchy
-					NOT = { has_journal_entry = je_cement_the_rightful_dynasty }
-					OR = {
-						AND = {
-							ruler = {
-								has_variable = legitimist_leader
-							}
-							NOT = {
-								any_interest_group = {
-									leader = {
-										OR = {
-											has_ideology = ideology:ideology_orleanist
-											has_ideology = ideology:ideology_bonapartist
-										}
-									}
-								}
-							}
-						}
-						AND = {
-							ruler = {
-								has_variable = orleanist_leader
-							}
-							NOT = {
-								any_interest_group = {
-									leader = {
-										OR = {
-											has_ideology = ideology:ideology_legitimist
-											has_ideology = ideology:ideology_bonapartist
-										}
-									}
-								}
-							}
-						}
-						AND = {
-							ruler = {
-								has_variable = bonapartist_leader
-							}
-							NOT = {
-								any_interest_group = {
-									leader = {
-										OR = {
-											has_ideology = ideology:ideology_orleanist
-											has_ideology = ideology:ideology_legitimist
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-			owner = {
-				add_journal_entry = {
-					type = je_cement_the_rightful_dynasty
-				}
-			}
-		}
 	}
 }
 
@@ -2771,6 +2864,15 @@ on_new_culture_obsession = {
 on_rank_changed = {
 	effect = {
 		post_notification = rank_changed_notification
+	}
+}
+
+# Root = Country (that owns a state in the state region)
+# scope:actor = Claimant country
+# scope:region = State Region
+on_claim_added = {
+	effect = {
+		post_notification = claim_added_notification
 	}
 }
 
