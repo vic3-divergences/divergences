@@ -1,0 +1,141 @@
+﻿je_danubian_unification = {
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	is_shown_when_inactive = {
+		country_has_primary_culture = cu:south_german
+	}
+
+	possible = {
+		OR = {
+			custom_tooltip = {
+				text = dvg_is_bav_or_aus_tt
+				OR = {
+					AND = {
+						exists = c:BAV
+						this = c:BAV
+					}
+					AND = {
+						exists = c:AUS
+						this = c:AUS
+					}
+				}
+			}
+			country_rank >= rank_value:major_power
+		}
+		has_technology_researched = nationalism
+		is_subject = no
+	}
+
+	complete = {
+		hidden_trigger = {
+			has_variable = je_unification_progress
+		}
+		custom_tooltip = {
+			text = je_danubian_unification_trigger_desc
+			OR = {
+				NOT = { exists = c:BAV }
+				AND = {
+					exists = c:BAV
+					this = c:BAV
+				}
+			}
+			OR = {
+				NOT = { exists = c:AUS }
+				AND = {
+					exists = c:AUS
+					this = c:AUS
+				}
+			}
+		}
+	}
+
+	on_monthly_pulse = {
+		events = {
+			dvg_danubian_unification.10 # Brothers war
+		}
+		effect = {
+			if = { 
+				limit = { NOT = { has_variable = je_unification_progress } } 
+				set_variable = je_unification_progress
+			}
+		}
+	}
+
+	on_complete = {
+		trigger_event = { id = german_unification.1 } # South German Confederation
+		remove_variable = je_unification_progress
+	}
+
+	status_desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = je_south_german_status
+				trigger = {
+					always = yes
+				}
+			}
+		}
+	}
+
+	weight = 100
+}
+
+je_swiss_unification = {
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	is_shown_when_inactive = {
+		exists = c:SWI
+		this = c:SWI
+	}
+
+	possible = {
+		has_technology_researched = nationalism
+		is_subject = no
+	}
+
+	complete = {
+		hidden_trigger = {
+			has_variable = je_unification_progress
+		}
+		calc_true_if = {
+			amount >= 2
+			owns_entire_state_region = STATE_WEST_SWITZERLAND
+			owns_entire_state_region = STATE_EAST_SWITZERLAND
+		}
+		custom_tooltip = {
+			text = dvg_swiss_minors_annexed_tt
+			NOT = { exists = c:BAE }
+			NOT = { exists = c:FIO }
+			NOT = { exists = c:GRB }
+		}
+	}
+
+	on_monthly_pulse = {
+		events = {
+			dvg_danubian_unification.100
+		}
+		effect = {
+			if = { 
+				limit = { NOT = { has_variable = je_unification_progress } } 
+				set_variable = je_unification_progress
+			}
+		}
+	}
+
+	on_complete = {
+		remove_variable = je_unification_progress
+	}
+
+	status_desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = je_swiss_status
+				trigger = {
+					always = yes
+				}
+			}
+		}
+	}
+
+	weight = 100
+}
