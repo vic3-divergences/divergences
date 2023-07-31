@@ -112,56 +112,101 @@ je_sea_to_sea_armenia = {
 }
 
 je_soyurghal = {
-	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	icon = "gfx/interface/icons/invention_icons/mandatory_service.dds"
 
-	is_shown_when_inactive = {
+	
+
+	possible = {
 		
 	}
 
-	possible = {
-	
+	immediate = {
+		set_variable = {
+			name = dehqan_var
+			value = 0
+		}
 	}
+
 	
+
 	complete = {
-	OR = {
-		AND = {
-			has_law = law_type:law_autocracy
+		# If-else clause to avoid errors because of missing variable before JE activates
+		trigger_if = {
+			limit = { exists = var:dehqan_var }
+			
+			
+		  OR = {
+			scope:journal_entry = { is_goal_complete = yes }
 			ig:ig_landowners = {
-						is_powerful = no
-						is_in_government = no
-					}	
-		}	
-		AND = {
-			NOT = { has_law = law_type:law_traditionalism }
-			has_law = law_type:law_appointed_bureaucrats
-			has_law = law_type:law_professional_army
-			has_technology_researched = currency_standards
-		}	
-	}
-	
+				is_insurrectionary = yes
+			}
+			}
+		}
+		
+		
+		
 	}
 	
 	on_complete = {
+		set_variable = timurtash_complete
 		trigger_event = {
 			id = dvg_persia.17
 		}
 	}
-
+	
 	fail = {
-	
-	
-	
+		OR = {
+			ig:ig_landowners = {
+				is_powerful = no
+				is_in_government = no
+			}
+			NOT = { 
+			        has_law = law_type:law_monarchy
+			}
+			
+			
+		}
 	}
-
+	
 	on_fail = {
-		
+		set_variable = timurtash_complete
+		trigger_event = {
+			id = dvg_timurtash.10
+		}
 	}
+	invalid = {
+		ig:ig_landowners = {
+				is_insurrectionary = yes
+			}
+	}
+	
+	
 
 	
 
-	on_timeout = {
-		
+	current_value = {
+		value = root.var:dehqan_var
 	}
+
+	goal_add_value = {
+		value = 6
+	}
+
+	progressbar = yes
+	
+	
+	
+	
+	timeout = 7125
+	
+	on_timeout = {
+		trigger_event = {
+			
+			id = dvg_timurtash.12
+
+		}
+		}
+	
 
 	weight = 10000
 	should_be_pinned_by_default = yes
