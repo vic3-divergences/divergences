@@ -19,6 +19,15 @@ dvg_aotearoa.1 = { #Aotearoa being approached by Scandi
 	
 	duration = 3
 	
+	immediate = {
+		s:STATE_MOTU_TIMU = {
+			random_scope_state = {
+				limit = { owner = scope:aotearoa_approacher }
+				save_scope_as = motu_timu_state
+			}
+		}
+	}	
+	
 	option = { #Yes
 		c:SCA = {
 			trigger_event = { id = dvg_aotearoa.3 days = 20 }
@@ -26,7 +35,19 @@ dvg_aotearoa.1 = { #Aotearoa being approached by Scandi
 		name = dvg_aotearoa.1.a
 		default_option = yes
 		ai_chance = {
-			base = 4
+			base = 5
+		}
+		hidden_effect = {
+			IF = {
+				limit = {
+					c:AOT = {
+						is_subject_of = c:MJN
+						}
+					}
+				c:MJN = { 
+					trigger_event = { id = dvg_aotearoa.13 days = 7 }
+				}
+			}
 		}
 	}
 	
@@ -36,7 +57,7 @@ dvg_aotearoa.1 = { #Aotearoa being approached by Scandi
 		}
 		name = dvg_aotearoa.1.b
 		ai_chance = {
-			base = 6
+			base = 5
 		}
 	}
 }
@@ -58,6 +79,15 @@ dvg_aotearoa.2 = { #Aotearoa being approached by someone else
 	
 	duration = 3
 	
+	immediate = {
+		s:STATE_MOTU_TIMU = {
+			random_scope_state = {
+				limit = { owner = scope:aotearoa_approacher }
+				save_scope_as = motu_timu_state
+			}
+		}
+	}	
+	
 	option = { #Yes
 		scope:aotearoa_approacher = {
 			trigger_event = { id = dvg_aotearoa.4 days = 14 }
@@ -65,7 +95,19 @@ dvg_aotearoa.2 = { #Aotearoa being approached by someone else
 		name = dvg_aotearoa.2.a
 		default_option = yes
 		ai_chance = {
-			base = 6
+			base = 5
+		}
+		hidden_effect = {
+			IF = {
+				limit = {
+					c:AOT = {
+						is_subject_of = c:MJN
+						}
+					}
+				c:MJN = { 
+					trigger_event = { id = dvg_aotearoa.14 days = 7 }
+				}
+			}
 		}
 	}
 	
@@ -75,7 +117,7 @@ dvg_aotearoa.2 = { #Aotearoa being approached by someone else
 		}
 		name = dvg_aotearoa.2.b
 		ai_chance = {
-			base = 4
+			base = 5
 		}
 	}
 }
@@ -299,15 +341,6 @@ dvg_aotearoa.8 = { #Responding to Scandi
 	
 	duration = 2
 
-	immediate = {
-		s:STATE_MOTU_TIMU = {
-			random_scope_state = {
-				limit = { owner = scope:aotearoa_approacher }
-				save_scope_as = motu_timu_state
-			}
-		}
-	}
-
 	option = { #Back down
 		c:SCA = {
 			trigger_event = { id = dvg_aotearoa.11 days = 14 }
@@ -351,15 +384,6 @@ dvg_aotearoa.9 = { #Responding to someone else
 	icon = "gfx/interface/icons/event_icons/event_fire.dds"
 	
 	duration = 2
-	
-	immediate = {
-		s:STATE_MOTU_TIMU = {
-			random_scope_state = {
-				limit = { owner = scope:aotearoa_approacher }
-				save_scope_as = motu_timu_state
-			}
-		}
-	}
 	
 	option = { #Back down
 		scope:aotearoa_approacher = {
@@ -406,21 +430,50 @@ dvg_aotearoa.10 = { #War with Scandi
 	duration = 2
 	
 	option = {
-		create_diplomatic_play = {
-			name = dvg_aotearoa_offer_war
+		IF = {
+			limit = { 
+				has_global_variable = mianjin_pledges_to_protect_aotearoa_if_war
+			}
+			create_diplomatic_play = {
+				name = dvg_aotearoa_offer_war
 		
-			target_country = c:AOT
+				target_country = c:AOT
 			
-			war = no
+				war = no
 			
-			type = dp_make_puppet
+				type = dp_make_puppet
 			
-			add_war_goal = {
-				holder = c:AOT
-				type = conquer_state
-				target_state = scope:motu_timu_state
+				add_war_goal = {
+					holder = c:AOT
+					type = conquer_state
+					target_state = scope:motu_timu_state
+				}
+				
+				add_war_goal = {
+					holder = c:MJN
+					type = humiliation
+					target_country = c:SCA
+				}
 			}
 		}
+		ELSE = {
+			create_diplomatic_play = {
+				name = dvg_aotearoa_offer_war
+		
+				target_country = c:AOT
+			
+				war = no
+			
+				type = dp_make_puppet
+			
+				add_war_goal = {
+					holder = c:AOT
+					type = conquer_state
+					target_state = scope:motu_timu_state
+				}
+			}
+		}
+	name = dvg_aotearoa.10.a
 	}
 }
 
@@ -450,6 +503,17 @@ dvg_aotearoa.11 = { #Submit to Scandi
 				type = puppet
 			}
 		}
+		IF = {
+			limit = {
+				has_global_variable = mianjin_pledges_to_protect_aotearoa_if_war
+				}
+			hidden_effect = {
+				c:MJN = {
+					trigger_event = { id = dvg_aotearoa.18 days = 7 }
+				}
+			}
+		}
+	name = dvg_aotearoa.11.a
 	}
 }
 
@@ -473,21 +537,50 @@ dvg_aotearoa.12 = { #War with someone else
 	duration = 2
 	
 	option = {
-		create_diplomatic_play = {
-			name = dvg_aotearoa_offer_war
+		IF = {
+			limit = { 
+				has_global_variable = mianjin_pledges_to_protect_aotearoa_if_war
+			}
+			create_diplomatic_play = {
+				name = dvg_aotearoa_offer_war
 		
-			target_country = c:AOT
+				target_country = c:AOT
 			
-			war = no
+				war = no
 			
-			type = dp_make_puppet
+				type = dp_make_puppet
 			
-			add_war_goal = {
-				holder = c:AOT
-				type = conquer_state
-				target_state = scope:motu_timu_state
+				add_war_goal = {
+					holder = c:AOT
+					type = conquer_state
+					target_state = scope:motu_timu_state
+				}
+				
+				add_war_goal = {
+					holder = c:MJN
+					type = humiliation
+					target_country = scope:aotearoa_approacher
+				}
 			}
 		}
+		ELSE = {
+			create_diplomatic_play = {
+				name = dvg_aotearoa_offer_war
+		
+				target_country = c:AOT
+			
+				war = no
+			
+				type = dp_make_puppet
+			
+				add_war_goal = {
+					holder = c:AOT
+					type = conquer_state
+					target_state = scope:motu_timu_state
+				}
+			}
+		}
+	name = dvg_aotearoa.12.a
 	}
 }
 
@@ -517,5 +610,573 @@ dvg_aotearoa.13 = { #Submit to someone else
 				type = puppet
 			}
 		}
+		IF = {
+			limit = {
+				has_global_variable = mianjin_pledges_to_protect_aotearoa_if_war
+				}
+			hidden_effect = {
+				c:MJN = {
+					trigger_event = { id = dvg_aotearoa.19 days = 7 }
+				}
+			}
+		}
+	name = dvg_aotearoa.13.a
+	}
+}
+
+dvg_aotearoa.14 = { #Mianjin talks to Scandi
+
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_aotearoa.14.t
+	desc = dvg_aotearoa.14.d
+	flavor = dvg_aotearoa.14.f
+
+	event_image = {
+		video = "unspecific_politicians_arguing"
+	}
+	
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/political_extremism"
+
+	icon = "gfx/interface/icons/event_icons/event_protest.dds"
+	
+	duration = 2
+	
+	option = { #We will protect our tributary!
+		set_global_variable = {
+			name = mianjin_pledges_to_protect_aotearoa_if_war
+		}
+		custom_tooltip = {
+			text =  dvg_could_lead_to_war_with_scandi
+		}
+	name = dvg_aotearoa.14.a
+		ai_chance = {
+			base = 5
+		}
+		default_option = yes
+	}
+	
+	option = { #Back off, we don't wanna stir the pot
+		add_modifier = {
+			name = dvg_aotearoa_coloniser_fail
+			is_decaying = yes
+			months = 61
+		}
+		remove_diplomatic_pact = {
+			country = c:AOT
+			type = tributary
+		}	
+	name = dvg_aotearoa.14.b
+		ai_chance = {
+			base = 5
+		}
+	}
+}
+
+
+dvg_aotearoa.15 = { #Mianjin talks to someone else
+
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_aotearoa.15.t
+	desc = dvg_aotearoa.15.d
+	flavor = dvg_aotearoa.15.f
+
+	event_image = {
+		video = "unspecific_politicians_arguing"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/political_extremism"
+
+	icon = "gfx/interface/icons/event_icons/event_protest.dds"
+	
+	duration = 2
+	
+	option = { #We will protect our tributary!
+		set_global_variable = {
+			name = mianjin_pledges_to_protect_aotearoa_if_war
+		}	
+		custom_tooltip = {
+			text =  dvg_could_lead_to_war_with_someone_else_aot
+		}
+	name = dvg_aotearoa.15.a
+		ai_chance = {
+			base = 5
+		}
+		default_option = yes
+	}
+	
+	option = { #Back off, we don't wanna stir the pot
+		add_modifier = {
+			name = dvg_aotearoa_coloniser_fail
+			months = 61
+			is_decaying = yes
+		}
+		remove_diplomatic_pact = {
+			country = c:AOT
+			type = tributary
+		}		
+	name = dvg_aotearoa.15.b
+		ai_chance = {
+			base = 5
+		}
+	}
+}
+
+dvg_aotearoa.16 = { #Scandi and someone else when Mianjin wants to fight
+
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_aotearoa.16.t
+	desc = dvg_aotearoa.16.d
+	flavor = dvg_aotearoa.16.f
+	
+	event_image = {
+		video = "europenorthamerica_before_the_battle"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+	
+	duration = 2
+	
+	option = {
+		name = dvg_aotearoa.16.a
+	}
+}
+
+dvg_aotearoa.17 = { #Mianjin do be a bit of a coward
+
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_aotearoa.17.t
+	desc = dvg_aotearoa.17.d
+	flavor = dvg_aotearoa.17.f
+	
+	event_image = {
+		video = "unspecific_military_parade"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	duration = 2
+	
+	option = {
+		name = dvg_aotearoa.17.a
+	}
+}
+
+dvg_aotearoa.18 = { #Aotearoa has submitted and now Mianjin is PISSED at Scandi (still cowardly tho lmoa)
+
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_aotearoa.18.t
+	desc = dvg_aotearoa.18.d
+	flavor = dvg_aotearoa.18.f
+	
+	event_image = {
+		video = "europenorthamerica_before_the_battle"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+	
+	duration = 2
+	
+	option = {
+		name = dvg_aotearoa.18.a
+		c:SCA = {
+			trigger_event = { id = dvg_aotearoa.20 days = 7 }
+		}
+		ai_chance = {
+			base = 3
+		}
+		default_option = yes
+	}
+	
+	option = { #fail
+		name = dvg_aotearoa.18.b
+		add_modifier = {
+			name = dvg_aotearoa_coloniser_fail
+			months = 61
+			is_decaying = yes
+		}
+		ai_chance = {
+			base = 7
+		}
+	}
+}
+
+dvg_aotearoa.19 = { #Aotearoa has submitted and now Mianjin is PISSED at someone else (doesn't stand up as hard as Yaluo would tho fr fr)
+
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_aotearoa.19.t
+	desc = dvg_aotearoa.19.d
+	flavor = dvg_aotearoa.19.f
+	
+	event_image = {
+		video = "europenorthamerica_before_the_battle"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+	
+	duration = 2
+	
+	option = {
+		name = dvg_aotearoa.19.a
+		scope:aotearoa_approacher = {
+			trigger_event = { id = dvg_aotearoa.21 days = 7 }
+		}
+		ai_chance = {
+			base = 3
+		}
+		default_option = yes
+	}
+	
+	option = { #fail
+		name = dvg_aotearoa.19.b
+		add_modifier = {
+			name = dvg_aotearoa_coloniser_fail
+			months = 61
+			is_decaying = yes
+		}
+		ai_chance = {
+			base = 7
+		}
+	}
+}
+
+dvg_aotearoa.20 = { #Scandibro decides on whether or not to give up Aotearoa to Mianjin again
+
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_aotearoa.20.t
+	desc = dvg_aotearoa.20.d
+	flavor = dvg_aotearoa.20.f
+	
+	event_image = {
+		video = "europenorthamerica_before_the_battle"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+	
+	duration = 2
+	
+	option = { #Fight Mianjin
+		c:MJN = {
+			trigger_event = { id = dvg_aotearoa.22 days = 7 }
+		}
+		name = dvg_aotearoa.20.a
+		default_option = yes
+		ai_chance = {
+			base = 8
+		}
+	}
+	
+	option = { #Don't fight Mianjin
+		c:MJN = {
+			trigger_event = { id = dvg_aotearoa.24 days = 7 }
+		}
+		name = dvg_aotearoa.20.b
+		ai_chance = {
+			base = 2
+		}
+	}
+}
+
+dvg_aotearoa.21 = { #Someone else decides on whether or not to give up Aotearoa to Mianjin again
+
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_aotearoa.21.t
+	desc = dvg_aotearoa.21.d
+	flavor = dvg_aotearoa.21.f
+	
+	event_image = {
+		video = "europenorthamerica_before_the_battle"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+	
+	duration = 2
+	
+	option = { #Fight Mianjin
+		c:MJN = {
+			trigger_event = { id = dvg_aotearoa.23 days = 7 }
+		}
+		name = dvg_aotearoa.21.a
+		default_option = yes
+		ai_chance = {
+			base = 8
+		}
+	}
+	
+	option = { #Don't fight Mianjin
+		c:MJN = {
+			trigger_event = { id = dvg_aotearoa.25 days = 7 }
+		}
+		name = dvg_aotearoa.21.b
+		ai_chance = {
+			base = 2
+		}
+	}
+}
+
+dvg_aotearoa.22 = { 
+
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_aotearoa.22.t
+	desc = dvg_aotearoa.22.d
+	flavor = dvg_aotearoa.22.f
+	
+	event_image = {
+		video = "europenorthamerica_before_the_battle"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+	
+	duration = 2
+	
+	option = {
+	name = dvg_aotearoa.22.a
+	ai_chance = {
+		base = 1
+		}
+		create_diplomatic_play = {
+			name = dvg_aotearoa_reclamation_war
+		
+			target_country = c:SCA
+			
+			war = no
+			
+			type = dp_transfer_subject
+			target_country = c:AOT
+			
+			add_war_goal = {
+				holder = c:SCA
+				type = humiliation
+				target_country = c:MJN
+			}
+		}	
+	}
+	
+	option = { #back down at the last moment
+		name = dvg_aotearoa.22.b
+		add_modifier = {
+			name = dvg_aotearoa_coloniser_fail
+			months = 61	
+			is_decaying = yes			
+		}
+		default_option = yes
+		ai_chance = {
+			base = 99
+		}
+	}
+}
+
+dvg_aotearoa.23 = { 
+
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_aotearoa.23.t
+	desc = dvg_aotearoa.23.d
+	flavor = dvg_aotearoa.23.f
+	
+	event_image = {
+		video = "unspecific_military_parade"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+	
+	duration = 2
+	
+	option = { 
+	name = dvg_aotearoa.23.a
+		ai_chance = {
+			base = 1
+		}
+		create_diplomatic_play = {
+			name = dvg_aotearoa_reclamation_war
+		
+			target_country = scope:aotearoa_approacher
+			
+			war = no
+			
+			type = dp_transfer_subject
+			target_country = c:AOT
+			
+			add_war_goal = {
+				holder = scope:aotearoa_approacher
+				type = humiliation
+				target_country = c:MJN
+			}
+		}	
+	}
+	
+	option = { #back down at the last moment
+		name = dvg_aotearoa.23.b
+		add_modifier = {
+			name = dvg_aotearoa_coloniser_fail
+			months = 61	
+			is_decaying = yes			
+		}
+		default_option = yes
+		ai_chance = {
+			base = 99
+		}
+	}
+}
+
+dvg_aotearoa.24 = { #Mianjin gets Aotearoa back from Scandi
+
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_aotearoa.24.t
+	desc = dvg_aotearoa.24.d
+	flavor = dvg_aotearoa.24.f
+	
+	event_image = {
+		video = "unspecific_military_parade"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+	
+	duration = 2
+	
+	option = {
+		IF = {
+			limit = {
+				c:SCA = {
+					has_diplomatic_pact = {
+						who = c:AOT
+						type = puppet
+						}
+					}
+				}
+			c:SCA = {
+				remove_diplomatic_pact = {
+					country = c:AOT
+					type = puppet
+				}
+			c:MJN = {
+				create_diplomatic_pact = {
+					country = c:AOT
+					type = tributary
+					}
+				}
+			}
+		}
+		IF = {
+			limit = {
+				c:SCA = {
+					has_diplomatic_pact = {
+						who = c:AOT
+						type = protectorate
+						}
+					}
+				}
+			c:SCA = {
+				remove_diplomatic_pact = {
+					country = c:AOT
+					type = protectorate
+				}
+			c:MJN = {
+				create_diplomatic_pact = {
+					country = c:AOT
+					type = tributary
+					}
+				}
+			}
+		}
+		name = dvg_aotearoa.24.a
+	}
+}
+
+dvg_aotearoa.25 = { #Mianjin gets Aotearoa back from someone else
+
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_aotearoa.25.t
+	desc = dvg_aotearoa.25.d
+	flavor = dvg_aotearoa.25.f
+	
+	event_image = {
+		video = "europenorthamerica_before_the_battle"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+	
+	duration = 2	
+	
+	option = {
+		IF = {
+			limit = {
+				scope:aotearoa_approacher = {
+					has_diplomatic_pact = {
+						who = c:AOT
+						type = puppet
+						}
+					}
+				}
+			scope:aotearoa_approacher = {
+				remove_diplomatic_pact = {
+					country = c:AOT
+					type = puppet
+				}
+			c:MJN = {
+				create_diplomatic_pact = {
+					country = c:AOT
+					type = tributary
+					}
+				}
+			}
+		}
+		IF = {
+			limit = {
+				scope:aotearoa_approacher = {
+					has_diplomatic_pact = {
+						who = c:AOT
+						type = protectorate
+						}
+					}
+				}
+			scope:aotearoa_approacher = {
+				remove_diplomatic_pact = {
+					country = c:AOT
+					type = protectorate
+				}
+			c:MJN = {
+				create_diplomatic_pact = {
+					country = c:AOT
+					type = tributary
+					}
+				}
+			}
+		}
+		name = dvg_aotearoa.25.a
 	}
 }
