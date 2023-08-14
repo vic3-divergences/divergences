@@ -1,0 +1,151 @@
+﻿namespace = dvg_cossacks
+
+# start event
+dvg_cossacks.1 = {
+	type = country_event
+	placement = root
+	title = dvg_cossacks.1.t
+	desc = dvg_cossacks.1.d
+	flavor = dvg_cossacks.1.f
+
+	duration = 3
+
+	event_image = {
+		video = "gfx/event_pictures/europenorthamerica_russian_serfs.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/russian_serfs"
+
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
+
+	immediate = {
+		c:ZAZ = {
+			save_scope_as = zaz_scope
+		}
+		c:KHK = {
+			save_scope_as = khk_scope
+		}
+		c:RYA = {
+			save_scope_as = rya_scope
+		}
+		c:VOR = {
+			save_scope_as = vor_scope
+		}
+		c:POL = {
+			save_scope_as = polish_scope
+		}
+		c:AKH = {
+			save_scope_as = akh_scope
+		}
+		c:DON = {
+			save_scope_as = don_scope
+		}
+		c:CRI = {
+			save_scope_as = cri_scope
+		}
+		c:ASK = {
+			save_scope_as = ask_scope
+		}
+	}
+
+	option = {
+		name = dvg_cossacks.1.a
+		default_option = yes
+
+		show_as_tooltip = {
+			add_modifier = {
+				name = neutrality
+				months = -1
+			}
+			add_modifier = {
+				name = cossack_lifestyle
+				months = -1
+			}
+		}
+
+		every_country = {
+			limit = {
+				any_primary_culture = {
+					NOT = { has_discrimination_trait = east_slavic }
+				}
+			}
+			change_relations = {
+				country = ROOT
+				value = -100
+			}
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+dvg_cossacks.2 = {
+	type = country_event
+	placement = ROOT
+
+	event_image = {
+		video = "europenorthamerica_capitalists_meeting"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/capitalists_meeting"
+
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
+
+	title = dvg_cossacks.2.t
+	desc = dvg_cossacks.2.d
+	flavor = dvg_cossacks.2.f
+
+	duration = 3
+
+	trigger = {
+		country_has_primary_culture = cu:cossack
+		has_modifier = neutrality
+		OR = {
+			has_global_variable = move_CSK
+			year >= 1845
+		}
+	}
+
+	immediate = {
+		remove_modifier = neutrality
+		set_global_variable = cossack_neutrality_ended
+	}
+
+	option = {
+		name = dvg_cossacks.2.a
+		default_option = yes
+	}
+}
+
+dvg_cossacks.3 = {
+    type = country_event
+    hidden = yes
+
+    trigger = {
+		is_ai = yes
+        exists = c:AKH
+		exists = c:ASK
+		is_at_war = no
+		NOT = { has_truce_with = c:ASK }
+		NOT = {
+			any_diplomatic_play = {
+				OR = {
+					initiator = ROOT
+					target = ROOT
+				}
+			}
+		}
+    }
+
+	immediate = {
+		create_diplomatic_play = {
+			target_country = c:ASK
+			war = no
+			type = dp_akh_warpath
+		}
+	}
+}
