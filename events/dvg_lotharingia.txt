@@ -21,7 +21,7 @@ dvg_lotharingia.1 = {
 	duration = 1
 
 	trigger = {
-	    year = 1836
+	    
 	}
 	
 	
@@ -1353,6 +1353,197 @@ dvg_lotharingia.11 = {
 		
 		ai_chance = {
 			base = 55
+		}
+	}
+}
+dvg_lotharingia.12 = { #A statue made of the king
+	type = country_event
+	placement = scope:statue_state
+
+	title = dvg_lotharingia.12.t
+	desc = dvg_lotharingia.12.d
+	flavor = dvg_lotharingia.12.f
+
+	duration = 3
+
+	gui_window = event_window_2char
+
+	left_icon = scope:statue_ruler
+
+	right_icon = scope:de_aigle_scope
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/misc/1Character_Banner"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	trigger = {
+		
+		any_scope_state = {
+			is_incorporated = yes
+			has_building = building_urban_center
+			
+		}
+		
+	}
+
+	immediate = {
+
+		ruler = {
+			save_scope_as = de_aigle_scope
+		}
+
+		c:BEO = {	save_scope_as = scope_BEO}
+		
+		c:BEO = {ruler = {
+			save_scope_as = statue_ruler
+		}
+		}
+		random_scope_state = {
+			limit = {
+				is_incorporated = yes
+				has_building = building_urban_center
+				is_capital = yes
+			}
+			save_scope_as = statue_state
+		}
+		set_variable = {
+			name = ruler_statue_cooldown
+			months = very_long_modifier_time #20 years
+		}
+	}
+
+	option = { #Do it
+		name = dvg_lotharingia.12.a
+		add_modifier = {
+			name = modifier_statue_of_ruler #prestige
+			months = normal_modifier_time
+		}
+		change_variable = {
+				name = aigle_var
+				add = 10
+			}
+		add_loyalists = {
+			value = 0.15
+			culture = cu:beornian
+		}
+		change_relations = {
+				country = c:BEO
+				value = 10
+			}
+		scope:statue_state = {
+			set_variable = {
+				name = ruler_statue_var
+				months = normal_modifier_time
+			}
+			add_radicals_in_state = {
+  				value = small_radicals
+  			}
+  			set_variable = {
+  				name = fireworks_variable 
+  				value = yes
+  				days = 5
+  			}
+		}
+		
+	}
+
+	
+}
+
+
+dvg_lotharingia.13 = { #Statue torn down
+	type = country_event
+	placement = scope:statue_state
+
+	title = dvg_lotharingia.13.t
+	desc = dvg_lotharingia.13.d
+	flavor = dvg_lotharingia.13.f
+
+	duration = 3
+
+	event_image = {
+		video = "europenorthamerica_political_extremism"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_protest.dds"
+
+	trigger = {
+		NAND = {
+			has_law = law_type:law_autocracy
+			has_law = law_type:law_monarchy
+		}
+		any_scope_state = {
+			has_variable = ruler_statue_var
+		}
+	}
+
+	immediate = {
+		random_scope_state = {
+			limit = {
+				has_variable = ruler_statue_var
+			}
+			save_scope_as = statue_state
+		}
+	}
+
+	option = { #Do it
+		name = dvg_lotharingia.13.a
+		scope:statue_state = {
+			remove_variable = ruler_statue_var
+		}
+		random_interest_group = {
+			limit = {
+				law_stance = {
+					law = law_type:law_autocracy
+					value < neutral
+				}
+			}
+			add_modifier = {
+				name = modifier_ig_approve_statue_removal
+				months = normal_modifier_time
+			}
+		}
+	}
+
+	option = { #No
+		default_option = yes
+		name = dvg_lotharingia.13.b
+		random_interest_group = {
+			limit = {
+				law_stance = {
+					law = law_type:law_autocracy
+					value > neutral
+				}
+			}
+			add_modifier = {
+				name = modifier_ig_approve_no_statue_removal
+				months = normal_modifier_time
+			}
+		}
+	}
+	
+	option = { #we should just relocate it
+		name = dvg_lotharingia.13.c
+		trigger = {
+			
+		}
+		scope:statue_state = {
+			remove_variable = ruler_statue_var
+			add_loyalists_in_state = {
+				value = small_radicals
+			}
+		}
+		capital = {
+			set_variable = {
+				name = ruler_statue_var
+				months = normal_modifier_time
+			}
+			add_radicals_in_state = {
+				value = small_radicals
+			}
 		}
 	}
 }
