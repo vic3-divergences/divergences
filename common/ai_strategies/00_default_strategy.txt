@@ -74,21 +74,36 @@ ai_strategy_default = {
     diplomatic_play_boldness = {
         value = 50 
 
-        if = { #Taiping should never surrender against China.
-            limit = {
-                exists = c:TPG
-                THIS = c:TPG
-                is_diplomatic_play_initiator = yes
-            }
-            add = 1000
-        }
+		if = { # Isolationist Japan should tend to back down against market opening plays
+			limit = {
+				exists = c:JAP
+				THIS = c:JAP
+				has_law = law_type:law_isolationism 
+				NOT = { has_variable = japan_forced_to_open_market }
+				scope:diplomatic_play = { 
+					has_play_goal = open_market
+				}
+			}
+			add = -75
+		}
+		
+		if = { #Taiping should never surrender against China.
+			limit = {
+				exists = c:TPG
+				THIS = c:TPG
+				exists = c:CHI
+				is_diplomatic_play_enemy_of = c:CHI
+			}
+			add = 1000
+		}
 
 		# Never surrender example
         if = {
             limit = {
                 exists = c:IUS
                 THIS = c:IUS
-                is_diplomatic_play_initiator = yes
+				exists = c:RUS
+				is_diplomatic_play_enemy_of = c:RUS
             }
             add = 1000
         }
@@ -1290,45 +1305,80 @@ ai_strategy_default = {
 			limit = {
 				country_rank >= rank_value:great_power
 				exists = c:CHI
-				any_country = {
-					NOT = { THIS = ROOT }
-					country_is_in_europe = yes
-					any_scope_state = {
-						OR = {
-							region = sr:region_north_china
-							region = sr:region_south_china
-							region = sr:region_manchuria
+				OR = {
+					sr:region_north_china = {
+						any_scope_state = {
+							is_treaty_port = yes
+							owner = {
+								NOT = { this = root }
+								country_is_in_europe = yes
+							}
 						}
-						is_treaty_port = yes
+					}
+					sr:region_south_china = {
+						any_scope_state = {
+							is_treaty_port = yes
+							owner = {
+								NOT = { this = root }
+								country_is_in_europe = yes
+							}
+						}
+					}
+					sr:region_manchuria = {
+						any_scope_state = {
+							is_treaty_port = yes
+							owner = {
+								NOT = { this = root }
+								country_is_in_europe = yes
+							}
+						}
 					}
 				}
-				scope:target_country = {
-					c:CHI ?= this
+				scope:target_state = {
+					OR = {
+						region = sr:region_north_china
+						region = sr:region_south_china
+						region = sr:region_manchuria
+					}
 				}
 			}
-			add = 10
+			add = 25
 		}
 		else_if = {
 			limit = {
 				country_rank >= rank_value:great_power
 				exists = c:CHI
-				any_country = {
-					NOT = { THIS = ROOT }
-					country_rank >= rank_value:great_power
-					any_scope_state = {
-						OR = {
-							region = sr:region_north_china
-							region = sr:region_south_china
-							region = sr:region_manchuria
+				OR = {
+					sr:region_north_china = {
+						any_scope_state = {
+							is_treaty_port = yes
+							owner = {
+								NOT = { THIS = ROOT }
+								country_rank >= rank_value:great_power
+							}
 						}
-						is_treaty_port = yes
+					}
+					sr:region_south_china = {
+						any_scope_state = {
+							is_treaty_port = yes
+							owner = {
+								NOT = { THIS = ROOT }
+								country_rank >= rank_value:great_power
+							}
+						}
+					}
+					sr:region_manchuria = {
+						any_scope_state = {
+							is_treaty_port = yes
+							owner = {
+								NOT = { THIS = ROOT }
+								country_rank >= rank_value:great_power
+							}
+						}
 					}
 				}
-				scope:target_country = {
-					c:CHI ?= this
-				}
 			}
-			add = 25
+			add = 75
 		}
 
 		# One Kongsi war will happen
@@ -2877,24 +2927,14 @@ ai_strategy_default = {
 	strategic_region_scores = {
 		region_japan = {	
 			if = {
-				limit = { # Great Powers should try to open Japan
-					exists = c:JAP
-					c:JAP = { has_law = law_type:law_isolationism }
-					has_technology_researched = civilizing_mission	
-					country_rank = rank_value:great_power
-					navy_size >= 50
-				}
-				add = 1000
-			}
-			if = {
 				limit = {
 					exists = c:JAP
 					c:JAP = { has_law = law_type:law_isolationism }
 					NOT = { country_rank = rank_value:great_power }
 				}
 				add = -50
-			}			
-		}				
+			}				
+		}			
 		region_nile_basin = {
 			if = {
 				limit = {
