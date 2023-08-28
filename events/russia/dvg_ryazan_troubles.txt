@@ -1,0 +1,419 @@
+﻿namespace = dvg_ryazan_troubles
+
+dvg_ryazan_troubles.1 = {
+	type = country_event
+	placement = ROOT
+
+	event_image = {
+		video = "europenorthamerica_capitalists_meeting"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/capitalists_meeting"
+
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
+
+	title = dvg_ryazan_troubles.1.t
+	desc = dvg_ryazan_troubles.1.d
+	flavor = dvg_ryazan_troubles.1.f
+
+	duration = 3
+
+	trigger = {
+		year >= 1838
+		ruler = {
+			has_variable = is_michael_repnin
+		}
+		NOT = { has_variable = duma_problems }
+	}
+
+	immediate = {
+		set_variable = duma_problems
+	}
+
+	option = {
+		name = dvg_ryazan_troubles.1.a
+		default_option = yes
+
+		add_journal_entry = {
+			type = je_ryazan_troubles
+		}
+	}
+}
+
+dvg_ryazan_troubles.2 = {
+	type = country_event
+	placement = ROOT
+
+	event_image = {
+		video = "gfx/event_pictures/europenorthamerica_before_the_battle.bk2"
+	}
+	
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/before_the_battle"
+
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	title = dvg_ryazan_troubles.2.t
+	desc = dvg_ryazan_troubles.2.d
+	flavor = dvg_ryazan_troubles.2.f
+
+	duration = 3
+
+	trigger = {
+		year >= 1839
+		ruler = {
+			has_variable = is_michael_repnin
+		}
+		NOT = { has_variable = michael_coup }
+
+		has_diplomatic_pact = {
+			who = c:VOR
+			type = puppet
+			is_initiator = yes
+		}
+	}
+
+	immediate = {
+		set_variable = michael_coup
+	
+		c:VOR = {
+			save_scope_as = don_host_scope
+		}
+	}
+
+	option = {
+		name = dvg_ryazan_troubles.2.a
+		default_option = yes
+
+		set_global_variable = rya_troubles_prince_wins
+		set_variable = {
+			name = rya_troubles_prince_wins_cooldown
+			months = 24
+		}
+
+		remove_modifier = powerful_boyars
+		ig:ig_landowners = {
+			add_modifier = {
+				name = dvg_displeased_ig
+				months = normal_modifier_time
+			}
+		}
+
+		if = {
+			limit = {
+				NOT = { has_law = law_type:law_autocracy }
+			}
+			activate_law = law_type:law_autocracy
+		}
+		if = {
+			limit = {
+				NOT = { has_law = law_type:law_outlawed_dissent }
+			}
+			activate_law = law_type:law_outlawed_dissent
+		}
+		if = {
+			limit = {
+				NOT = { has_law = law_type:law_appointed_bureaucrats }
+			}
+			activate_law = law_type:law_appointed_bureaucrats
+		}
+
+		trigger_event = {
+			id = dvg_ryazan_troubles.3
+			days = 10
+			popup = yes
+		}
+
+		ai_chance = {
+			base = 80
+		}
+	}
+
+	option = {
+		name = dvg_ryazan_troubles.2.b
+
+		trigger_event = {
+			id = dvg_ryazan_troubles.4
+			days = 10
+			popup = yes
+		}
+
+		ai_chance = {
+			base = 20
+		}
+	}
+}
+
+dvg_ryazan_troubles.3 = {
+	type = country_event
+	placement = ROOT
+
+	event_image = {
+		video = "europenorthamerica_capitalists_meeting"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/capitalists_meeting"
+
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
+
+	title = dvg_ryazan_troubles.3.t
+	desc = dvg_ryazan_troubles.3.d
+	flavor = dvg_ryazan_troubles.3.f
+
+	duration = 3
+
+	immediate = {
+		c:VOR = {
+			save_scope_as = vor_scope
+		}
+	}
+
+	option = {
+		name = dvg_ryazan_troubles.3.a
+		default_option = yes
+
+		set_variable = duma_problems_resolved
+
+		remove_diplomatic_pact = {
+			country = c:VOR
+			type = puppet
+		}
+
+		create_diplomatic_pact = {
+			country = c:VOR
+			type = defensive_pact
+		}
+
+		change_relations = {
+			country = c:VOR
+			value = 100
+		}
+	}
+}
+
+dvg_ryazan_troubles.4 = {
+	type = country_event
+	placement = ROOT
+
+	event_image = {
+		video = "europenorthamerica_capitalists_meeting"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/capitalists_meeting"
+
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
+
+	title = dvg_ryazan_troubles.4.t
+	desc = dvg_ryazan_troubles.4.d
+	flavor = dvg_ryazan_troubles.4.f
+
+	duration = 3
+
+	immediate = {
+		c:VOR = {
+			save_scope_as = vor_scope
+		}
+		ruler = {
+			save_scope_as = michael_repnin_scope
+			kill_character = yes
+		}
+
+		create_character = {
+			first_name = Pyotr
+			last_name = Repnin
+			ruler = yes
+			interest_group = ig_landowners
+			female = no
+			age = 13
+			ideology = ideology_traditionalist
+			traits = {
+				cautious
+				reserved
+			}
+			on_created = {
+				set_variable = {
+					name = is_pyotr_repnin
+				}
+			}
+		}
+		ruler = {
+			save_scope_as = pyotr_repnin_scope
+			kill_character = yes
+		}
+	}
+
+	option = {
+		name = dvg_ryazan_troubles.4.a
+
+		set_variable = duma_problems_resolved
+
+		show_as_tooltip = {
+			create_character = {
+				first_name = Pyotr
+				last_name = Repnin
+				ruler = yes
+				interest_group = ig_landowners
+				female = no
+				age = 13
+				ideology = ideology_traditionalist
+				traits = {
+					cautious
+					reserved
+				}
+				on_created = {
+					set_variable = {
+						name = is_pyotr_repnin
+					}
+				}
+			}
+		}
+
+		remove_diplomatic_pact = {
+			country = c:VOR
+			type = puppet
+		}
+
+		change_relations = {
+			country = c:VOR
+			value = -100
+		}
+
+		ai_chance = {
+			base = 10
+		}
+	}
+
+	option = {
+		name = dvg_ryazan_troubles.4.a
+		default_option = yes
+
+		set_variable = duma_problems_resolved
+
+		show_as_tooltip = {
+			create_character = {
+				first_name = Pyotr
+				last_name = Repnin
+				ruler = yes
+				interest_group = ig_landowners
+				female = no
+				age = 13
+				ideology = ideology_traditionalist
+				traits = {
+					cautious
+					reserved
+				}
+				on_created = {
+					set_variable = {
+						name = is_pyotr_repnin
+					}
+				}
+			}
+		}
+
+		remove_diplomatic_pact = {
+			country = c:VOR
+			type = puppet
+		}
+		set_global_variable = move_CSK
+
+		create_diplomatic_play = {
+			target_country = c:VOR
+			type = dp_annex_war
+		}
+
+		ai_chance = {
+			base = 90
+		}
+	}
+}
+
+dvg_ryazan_troubles.5 = {
+	type = country_event
+	placement = ROOT
+
+	event_image = {
+		video = "gfx/event_pictures/europenorthamerica_before_the_battle.bk2"
+	}
+	
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/before_the_battle"
+
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	title = dvg_ryazan_troubles.5.t
+	desc = dvg_ryazan_troubles.5.d
+	flavor = dvg_ryazan_troubles.5.f
+
+	duration = 1
+
+	trigger = {
+		NOT = { has_variable = kazan_threat }
+		NOT = { has_variable = kazan_threat_cooldown }
+		ruler = {
+			has_variable = is_michael_repnin
+		}
+		c:IUS = {
+			owns_entire_state_region = STATE_TARTARIA
+		}
+	}
+
+	immediate = {
+		set_variable = {
+			name = kazan_threat_cooldown
+			months = 12
+		}
+
+		c:IUS = {
+			save_scope_as = kazan_scope
+		}
+	}
+
+	option = {
+		name = dvg_ryazan_troubles.5.a
+		default_option = yes
+
+		create_diplomatic_play = {
+			target_state = s:STATE_TARTARIA.region_state:IUS
+			war = no
+			type = dp_conquer_state
+
+			add_war_goal = {
+				holder = c:IUS
+				type = war_reparations
+				target_country = c:RYA
+			}
+		}
+
+		set_variable = kazan_threat
+
+		ai_chance = {
+			base = 80
+		}
+	}
+
+	option = {
+		name = dvg_ryazan_troubles.5.b
+
+		ai_chance = {
+			base = 0
+		}
+	}
+
+	option = {
+		name = dvg_ryazan_troubles.5.c
+
+		set_variable = kazan_threat_backdown
+
+		add_modifier = {
+			name = rya_kazan_backdown
+			months = normal_modifier_time
+		}
+
+		ai_chance = {
+			base = 20
+		}
+	}
+}
