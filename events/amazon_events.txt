@@ -1,0 +1,412 @@
+﻿namespace = amazon
+
+# The Devil's Railroad
+amazon.1 = {
+	type = country_event
+	placement = scope:amazon_state
+	
+	title = amazon.1.t
+	desc = amazon.1.d
+	flavor = amazon.1.f
+
+	cooldown = { months = short_modifier_time }
+	
+	event_image = {
+		video = "gfx/event_pictures/unspecific_trains.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/trains"
+
+	icon = "gfx/interface/icons/event_icons/event_skull.dds"
+	
+	duration = 3
+	
+	trigger = {
+		any_scope_state = {
+			OR = {
+				has_state_trait = state_trait_malaria
+				has_state_trait = state_trait_amazon_rainforest
+			}
+			any_scope_building = {
+				is_building_type = building_railway
+				is_under_construction = yes
+			}
+			NOR = {
+				has_modifier = devils_railroad_modifier
+				has_modifier = slowed_railway_construction
+				has_modifier = cautious_railway_construction
+			}
+			any_scope_pop = {
+				is_pop_type = laborers
+				pop_employment_building = building_construction_sector
+			}
+		}
+	}
+
+	immediate = {
+		random_scope_state = {
+			limit = {
+				OR = {
+					has_state_trait = state_trait_malaria
+					has_state_trait = state_trait_amazon_rainforest
+				}
+				any_scope_building = {
+					is_building_type = building_railway
+					is_under_construction = yes
+				}
+			}
+			save_scope_as = amazon_state
+			random_scope_building = {
+				limit = {
+					is_building_type = building_railway
+					is_under_construction = yes
+				}
+				save_scope_as = devils_railroad
+			}
+			random_scope_pop = {
+				limit = {
+					is_pop_type = laborers
+					pop_employment_building = building_construction_sector
+				}
+				save_scope_as = amazon_laborers
+			}
+		}
+	}
+
+	option = {
+		name = amazon.1.a
+		default_option = yes
+		# greatly increase laborer mortality for construction camps
+		scope:amazon_state = {
+			add_modifier = {
+				name = devils_railroad_modifier
+				months = normal_modifier_time
+			}
+		}
+	}
+	option = {
+		name = amazon.1.b
+		# greatly increase construction time
+		scope:amazon_state = {
+			add_modifier = {
+				name = slowed_railway_construction
+				months = normal_modifier_time
+			}
+		}
+	}
+	option = {
+		# slightly increase laborer mortality and increase construction time
+		name = amazon.1.c
+		highlighted_option = yes
+		trigger = {
+			OR = {
+				has_law = law_type:law_regulatory_bodies
+				has_law = law_type:law_worker_protections
+			}
+		}
+		scope:amazon_state = {
+			add_modifier = {
+				name = cautious_railway_construction
+				months = normal_modifier_time
+			}
+		}
+	}
+}
+
+# Mistreatment of laborers on rubber plantations
+amazon.2 = {
+	type = country_event
+	placement = scope:amazon_state
+	
+	title = amazon.2.t
+	desc = amazon.2.d
+	flavor = amazon.2.f
+	
+	event_image = {
+		video = "gfx/event_pictures/southamerica_slave_chains.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/slaves_breaking_their_chains"
+
+	icon = "gfx/interface/icons/event_icons/event_skull.dds"
+	
+	duration = 3
+	
+	trigger = {
+		any_scope_state = {
+			OR = {
+				has_state_trait = state_trait_malaria
+				has_state_trait = state_trait_amazon_rainforest
+			}
+			any_scope_building = {
+				is_building_type = building_rubber_plantation
+			}
+			NOR = {
+				has_modifier = rubber_mistreatment
+				has_modifier = rubber_slowdown
+				has_modifier = rubber_protections
+			}
+			any_scope_pop = {
+				OR = {
+					AND = {
+						is_pop_type = laborers
+						pop_is_discriminated = yes
+					}
+					is_pop_type = slaves
+				}
+				pop_employment_building = building_rubber_plantation
+			}
+		}
+	}
+
+	immediate = {
+		random_scope_state = {
+			limit = {
+				OR = {
+					has_state_trait = state_trait_malaria
+					has_state_trait = state_trait_amazon_rainforest
+				}
+				any_scope_building = {
+					is_building_type = building_rubber_plantation
+				}
+				NOR = {
+					has_modifier = rubber_mistreatment
+					has_modifier = rubber_slowdown
+					has_modifier = rubber_protections
+				}
+				any_scope_pop = {
+					OR = {
+						AND = {
+							is_pop_type = laborers
+							pop_is_discriminated = yes
+						}
+						is_pop_type = slaves
+					}
+					pop_employment_building = building_rubber_plantation
+				}
+			}
+			save_scope_as = amazon_state
+			random_scope_building = {
+				limit = {
+					is_building_type = building_rubber_plantation
+				}
+				save_scope_as = rubber_plantation_scope
+			}
+			random_scope_pop = {
+				limit = {
+					OR = {
+						AND = {
+							is_pop_type = laborers
+							pop_is_discriminated = yes
+						}
+						is_pop_type = slaves
+					}
+					pop_employment_building = building_rubber_plantation
+				}
+				save_scope_as = rubber_laborers
+			}
+		}
+	}
+
+	option = {
+		name = amazon.2.a
+		default_option = yes
+		# greatly increase laborer mortality for rubber plantations
+		scope:amazon_state = {
+			add_modifier = {
+				name = rubber_mistreatment
+				months = normal_modifier_time
+			}
+		}
+	}
+	option = {
+		name = amazon.2.b
+		# greatly reduce throughput of rubber plantations
+		scope:amazon_state = {
+			add_modifier = {
+				name = rubber_slowdown
+				months = normal_modifier_time
+			}
+		}
+	}
+	option = {
+		name = amazon.2.c
+		highlighted_option = yes
+		trigger = {
+			OR = {
+				has_law = law_type:law_regulatory_bodies
+				has_law = law_type:law_worker_protections
+			}
+		}
+		# slightly reduce throughput of rubber plantations
+		scope:amazon_state = {
+			add_modifier = {
+				name = rubber_protections
+				months = normal_modifier_time
+			}
+		}
+	}
+}
+
+# Completion event
+amazon.3 = {
+	type = country_event
+	placement = scope:amazon_state
+	
+	title = amazon.3.t
+	desc = amazon.3.d
+	flavor = amazon.3.f
+	
+	event_image = {
+		video = "gfx/event_pictures/southamerica_aristocrats.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+	
+	trigger = {
+		# triggered by JE completion
+	}
+
+	immediate = {
+		random_scope_state = {
+			limit = {
+				state_region = s:STATE_AMAZONIE_PROFONDE #DVG
+			}
+			save_scope_as = amazon_state
+		}
+	}
+
+	option = {
+		name = amazon.3.a
+		trigger = {
+			NOT = {
+				scope:amazon_state = {
+					any_scope_building = {
+						is_building_type = building_arts_academy
+						level >= 2
+					}
+				}
+			}
+		}
+		scope:amazon_state = {
+			create_building = {
+				building = building_arts_academy
+				level = 2
+			}
+			add_modifier = {
+				name = amazon_theatre
+				months = long_modifier_time
+			}
+		}
+	}
+	option = {
+		name = amazon.3.b
+		default_option = yes
+		scope:amazon_state = {
+			add_modifier = {
+				name = amazon_migration
+				months = long_modifier_time
+			}
+		}
+	}
+}
+
+# The Most Dangerous Game
+amazon.4 = {
+	type = country_event
+	placement = scope:dangerous_game_state
+	
+	title = amazon.4.t
+	desc = amazon.4.d
+	flavor = amazon.4.f
+
+	event_image = {
+		video = "gfx/event_pictures/africa_construction_colony.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/africa/construction_colony"
+
+	icon = "gfx/interface/icons/event_icons/event_skull.dds"
+	
+	duration = 3
+	
+	trigger = {
+		NOT = { has_variable = most_dangerous_game }
+		has_technology_researched = malaria_prevention
+	}
+
+	immediate = {
+		set_variable = most_dangerous_game
+		random_state = {
+			limit = {
+				state_region = s:STATE_WEST_INDIES
+			}
+			save_scope_as = dangerous_game_state
+		}
+		random_scope_character = {
+			limit = {
+				is_ruler = no
+				has_role = politician
+				interest_group = {
+					is_marginal = no
+				}
+			}
+			save_scope_as = hunted_character
+		}
+		random_country = {
+			limit = {
+				country_rank >= rank_value:major_power
+				has_law = law_type:law_monarchy
+				is_player = no
+			}
+			save_scope_as = hunter_country
+			ig:ig_landowners = {
+				leader = {
+					save_scope_as = hunter_character
+				}
+			}
+		}
+		# nice to have: determine odds based on traits
+		random_list = {
+			1 = {
+				set_variable = hunter_victory
+			}
+			1 = {
+				set_variable = hunted_victory
+			}
+		}
+	}
+
+	option = {
+		name = amazon.4.a
+		trigger = {
+			has_variable = hunter_victory
+		}
+		default_option = yes
+		scope:hunted_character = {
+			kill_character = yes
+		}
+		change_relations = {
+			country = scope:hunter_country
+			value = -10
+		}
+	}
+	option = {
+		name = amazon.4.b
+		trigger = {
+			has_variable = hunted_victory
+		}
+		default_option = yes
+		scope:hunter_character = {
+			kill_character = yes
+		}
+	}
+}

@@ -1,0 +1,204 @@
+﻿je_rus_green_prince_nzh = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	status_desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = rus_green_prince_step_1
+				trigger = {
+					NOT = { has_variable = gay_green_prince }
+				}
+			}
+			triggered_desc = {
+				desc = rus_green_prince_step_2
+				trigger = {
+					has_variable = gay_green_prince
+				}
+			}
+		}
+	}
+
+	complete = {
+		OR = {
+			custom_tooltip = {
+				text = green_prince_heir
+				any_scope_character = {
+					is_heir = yes
+				}
+			}
+		}
+	}	
+	
+	on_complete = {
+		add_journal_entry = {
+			type = je_rus_green_prince_resolve
+		}
+	}
+	
+	invalid = {
+		OR = {
+			NOT = {
+				exists = c:NZH
+			}
+			custom_tooltip = {
+				text = green_prince_died
+				ruler = {
+					NOT = { has_variable = is_green_prince }
+				}
+			}
+			year >= 1843
+		}
+	}     
+
+	weight = 10
+	should_be_pinned_by_default = yes
+}
+
+je_rus_green_prince = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	status_desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = rus_green_prince_step_1
+				trigger = {
+					exists = c:NZH
+					c:NZH = {
+						NOT = { has_variable = gay_green_prince }
+					}
+				}
+			}
+			triggered_desc = {
+				desc = rus_green_prince_step_2
+				trigger = {
+					exists = c:NZH
+					c:NZH = {
+						has_variable = gay_green_prince
+					}
+				}
+			}
+		}
+	}
+
+	complete = {
+		exists = c:NZH
+		c:NZH = {
+			custom_tooltip = {
+				text = green_prince_heir
+				any_scope_character = {
+					is_heir = yes
+				}
+			}
+		}
+	}	
+	
+	on_complete = {
+		add_journal_entry = {
+			type = je_rus_green_prince_resolve
+		}
+	}
+
+	invalid = {
+		OR = {
+			NOT = {
+				exists = c:NZH
+			}
+			c:NZH = {
+				custom_tooltip = {
+					text = green_prince_died
+					ruler = {
+						NOT = { has_variable = is_green_prince }
+					}
+				}
+			}
+			year >= 1843
+		}
+	}     
+
+	weight = 10
+	should_be_pinned_by_default = yes
+}
+
+je_rus_green_prince_resolve = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	status_desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = rus_green_prince_resolve_step_3
+				trigger = {
+					exists = c:NZH
+					c:NZH = {
+						has_variable = nzh_crisis_three
+					}
+				}
+			}
+			triggered_desc = {
+				desc = rus_green_prince_resolve_step_1
+				trigger = {
+					exists = c:NZH
+					c:NZH = {
+						NOT = { has_variable = nzh_crisis_two }
+					}
+				}
+			}
+			triggered_desc = {
+				desc = rus_green_prince_resolve_step_2
+				trigger = {
+					exists = c:NZH
+					c:NZH = {
+						has_variable = nzh_crisis_two
+					}
+				}
+			}
+			triggered_desc = {
+				desc = rus_green_prince_resolve_step_end
+				trigger = {
+					NOT = { exists = c:NZH }
+				}
+			}
+		}
+	}
+
+	# note that if you change this, also update the decision
+	complete = {
+		custom_tooltip = {
+			text = green_prince_resolved
+			OR = {
+				AND = {
+					exists = c:MSO
+					root = c:MSO
+					NOT = { exists = c:TVE }
+					NOT = { exists = c:NZH }
+				}
+				AND = {
+					exists = c:TVE
+					root = c:TVE
+					NOT = { exists = c:MSO }
+					NOT = { exists = c:NZH }
+				}
+			}
+		}
+	}
+	
+	on_complete = {
+		set_variable = green_prince_resolved
+	}
+
+	invalid = {
+		OR = {
+			NOT = {
+				exists = c:NZH
+			}
+			NOT = {
+				exists = c:TVE
+			}
+			NOT = {
+				exists = c:MSO
+			}
+		}
+	}     
+
+	weight = 10
+	should_be_pinned_by_default = yes
+}
