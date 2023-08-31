@@ -1,0 +1,511 @@
+﻿dua_set_dual_integration_variables = {
+	set_variable = { name = anglois_progress value = 10 }
+	set_variable = { name = anglois_progress_from_characters value = 0 }
+	set_variable = { name = anglois_progress_from_igs value = 0 }
+	set_variable = { name = anglois_progress_from_military value = 0 }
+	set_variable = { name = anglois_progress_from_university value = 0 }
+	set_variable = { name = anglois_progress_from_factories value = 0 }
+	set_variable = { name = anglois_progress_from_legitimacy value = 0 }
+	set_variable = { name = anglois_progress_from_effects value = 0 }
+	set_variable = { name = anglois_progress_next value = 0 }
+
+	set_variable = { name = ig_weight value = 0 }
+}
+
+dua_set_french_integration_variables = {
+	set_variable = { name = french_progress value = 10 }
+	set_variable = { name = french_progress_from_characters value = 0 }
+	set_variable = { name = french_progress_from_igs value = 0 }
+	set_variable = { name = french_progress_from_farms value = 0 }
+	set_variable = { name = french_progress_from_university value = 0 }
+	set_variable = { name = french_progress_from_factories value = 0 }
+	set_variable = { name = french_progress_from_legitimacy value = 0 }
+	set_variable = { name = french_progress_from_english_resistence value = 0 }
+	set_variable = { name = french_progress_from_effects value = 0 }
+	set_variable = { name = french_progress_next value = 0 }
+
+	set_variable = { name = ig_weight value = 0 }
+}
+
+dua_set_english_integration_variables = {
+	set_variable = { name = english_progress value = 10 }
+	set_variable = { name = english_progress_from_characters value = 0 }
+	set_variable = { name = english_progress_from_igs value = 0 }
+	set_variable = { name = english_progress_from_university value = 0 }
+	set_variable = { name = english_progress_from_mining value = 0 }
+	set_variable = { name = english_progress_from_factories value = 0 }
+	set_variable = { name = english_progress_from_legitimacy value = 0 }
+	set_variable = { name = english_progress_from_french_resistence value = 0 }
+	set_variable = { name = english_progress_from_effects value = 0 }
+	set_variable = { name = english_progress_next value = 0 }
+
+	set_variable = { name = ig_weight value = 0 }
+}
+
+dua_weekly_pulse_anglois_progress = {
+	set_variable = { name = anglois_progress_from_characters value = 0 } #All of these variables are ephemeral and should never be manually set to anything.
+	set_variable = { name = anglois_progress_from_igs value = 0 }
+	set_variable = { name = anglois_progress_from_military value = 0 }
+	set_variable = { name = anglois_progress_from_university value = 0 }
+	set_variable = { name = anglois_progress_from_factories value = 0 }
+	set_variable = { name = anglois_progress_from_laws value = 0 }
+	set_variable = { name = anglois_progress_from_legitimacy value = root.government_legitimacy } #Government legitimacy is a single constant, and so this variable is set immediately rather than needing a calculation.
+	set_variable = { name = anglois_progress_next value = 0 }
+	#From Characters
+	every_scope_character = {
+		limit = {
+			has_ideology = ideology:ideology_anglois
+		}
+		ROOT = {
+			change_variable = { name = anglois_progress_from_characters add = prev.popularity } #for_each loop. For each character of ideology_anglois, add that character's popularity to anglois_progress_from_characters.
+		}
+	}
+	change_variable = { name = anglois_progress_from_characters divide = 100 } #Character popularities are -100/100, rather than our desired -1/1, so divide by 100.
+	# From Interest Groups
+	every_interest_group = {
+		limit = {
+			leader = {
+				has_ideology = ideology:ideology_anglois
+			}
+		}
+		ROOT = {														#for_each loop. For each interest group of ideology_anglois, perform the following steps in sequence.
+			set_variable = { name = ig_weight value = prev.ig_clout } 	#1. Set ig_weight as equal to the interest group's clout.
+		}
+		if = {
+			limit = {
+				is_in_government = yes
+			}
+			ROOT = {
+				change_variable = { name = ig_weight multiply = 3 }		#2. If that IG is in government, multiply ig_weight by a given value.
+			}
+		}
+		ROOT = {
+			change_variable = { name = anglois_progress_from_igs add = var:ig_weight }	#3. Add ig_weight to the central anglois_progress_from_igs variable. This will run until there are no more Anglois IGs.
+		}
+	}
+	# From Buildings
+	every_scope_building = { 
+		limit = {
+			is_building_group = bg_military # Derives from barracks and naval bases.
+			occupancy >= 0.5
+		}
+		ROOT = {
+			change_variable = { name = anglois_progress_from_military add = prev.level }
+		}
+	}
+	change_variable = { name = anglois_progress_from_military divide = 1000 }
+	
+	every_scope_building = { 
+		limit = {
+			is_building_group = bg_technology # Derives from Universities
+			occupancy >= 0.5
+		}
+		ROOT = {
+			change_variable = { name = anglois_progress_from_university add = prev.level }
+		}
+	}
+	change_variable = { name = anglois_progress_from_university divide = 1000 }
+
+	every_scope_building = {
+		limit = {
+			is_building_group = bg_manufacturing
+			weekly_profit > 0
+			state = {
+				state_region = {
+					is_homeland = cu:anglois
+				}
+			}
+		}
+		ROOT = {
+			change_variable = { name = anglois_progress_from_factories add = prev.level }
+		}
+	}
+	change_variable = { name = anglois_progress_from_factories divide = 1000 }
+
+	if = {
+		limit = {
+			has_law = law_type:law_national_supremacy
+		}
+		change_variable = { name = anglois_progress_from_laws add = 0.25 }
+	}
+	else = {
+		change_variable = { name = anglois_progress_from_laws add = -0.5 }
+	}
+
+	# From Legitimacy
+	change_variable = { name = anglois_progress_from_legitimacy divide = 100 } #Legitimacy divided by 100, to make it minimum 0 and maximum 1.
+	change_variable = { name = anglois_progress_from_legitimacy subtract = 0.5 } #Legitimacy subtracted by 0.5, to make it minimum -0.5 and maximum 0.5. Balanced scale of negative to absolute value.
+
+	#Final Compilation
+	change_variable = { name = anglois_progress_next add = var:anglois_progress_from_characters } #All sub-variables are added to anglois_progress_next here. At this point, all of the component variables are calculated properly, and converted to a decimal scale.
+	change_variable = { name = anglois_progress_next add = var:anglois_progress_from_igs }
+	change_variable = { name = anglois_progress_next add = var:anglois_progress_from_military }
+	change_variable = { name = anglois_progress_next add = var:anglois_progress_from_university }
+	change_variable = { name = anglois_progress_next add = var:anglois_progress_from_factories }
+	change_variable = { name = anglois_progress_next add = var:anglois_progress_from_laws }
+	change_variable = { name = anglois_progress_next add = var:anglois_progress_from_legitimacy }
+	change_variable = { name = anglois_progress_next add = var:anglois_progress_from_effects }
+}
+
+dua_weekly_pulse_french_progress = {
+	set_variable = { name = french_progress_from_characters value = 0 }
+	set_variable = { name = french_progress_from_igs value = 0 }
+	set_variable = { name = french_progress_from_farms value = 0 }
+	set_variable = { name = french_progress_from_factories value = 0 }
+	set_variable = { name = french_progress_from_university value = 0 }
+	set_variable = { name = french_progress_from_english_resistence value = 0 }
+	set_variable = { name = french_progress_from_legitimacy value = root.government_legitimacy }
+
+	set_variable = { name = french_progress_next value = 0 }
+	#From Characters
+	every_scope_character = {
+		limit = {
+			has_ideology = ideology:ideology_french
+		}
+		ROOT = {
+			change_variable = { name = french_progress_from_characters add = prev.popularity }
+		}
+	}
+	change_variable = { name = french_progress_from_characters divide = 100 }
+	# From Interest Groups
+	every_interest_group = {
+		limit = {
+			leader = {
+				has_ideology = ideology:ideology_french
+			}
+		}
+		ROOT = {
+			set_variable = { name = ig_weight value = prev.ig_clout }
+		}
+		if = {
+			limit = {
+				is_in_government = yes
+			}
+			ROOT = {
+				change_variable = { name = ig_weight multiply = 3 }
+			}
+		}
+		ROOT = {
+			change_variable = { name = french_progress_from_igs add = var:ig_weight }
+		}
+	}
+	# From Buildings
+	every_scope_building = {
+		limit = {
+			is_building_group = bg_agriculture
+			NOT = {
+				is_building_group = bg_subsistence_agriculture
+			}
+			weekly_profit > 0
+			state = {
+				state_region = {
+					is_homeland = cu:french
+				}
+			}
+		}
+		ROOT = {
+			change_variable = { name = french_progress_from_farms add = prev.level }
+		}
+	}
+	change_variable = { name = french_progress_from_farms divide = 100 }
+
+	every_scope_building = { 
+		limit = {
+			is_building_group = bg_technology # Derives from Universities
+			occupancy >= 0.5
+		}
+		ROOT = {
+			change_variable = { name = french_progress_from_university add = prev.level }
+		}
+	}
+	change_variable = { name = french_progress_from_university divide = 1000 }
+
+	every_scope_building = {
+		limit = {
+			is_building_group = bg_manufacturing
+			weekly_profit > 0
+			state = {
+				state_region = {
+					OR = {
+						is_homeland = cu:french
+						is_homeland = cu:anglois
+					}
+					NOT = { is_homeland = cu:british }
+				}
+			}
+		}
+		ROOT = {
+			change_variable = { name = french_progress_from_factories add = prev.level }
+		}
+	}
+	change_variable = { name = french_progress_from_factories divide = 1000 }
+
+	# From Legitimacy
+	change_variable = { name = french_progress_from_legitimacy divide = 100 }
+	change_variable = { name = french_progress_from_legitimacy subtract = 0.5 }
+	if = {
+		limit = {
+			NOT = {
+				ruler = {
+					has_ideology = ideology:ideology_french
+				}
+			}
+		}
+		change_variable = { name = french_progress_from_legitimacy multiply = -0.25 }
+	}
+
+	if = {
+		limit = {
+			coa_controls_part_of_england = yes
+		}
+		change_variable = { name = french_progress_from_english_resistence subtract = 0.5 }
+	}
+
+	#Final Compilation
+	change_variable = { name = french_progress_next add = var:french_progress_from_characters }
+	change_variable = { name = french_progress_next add = var:french_progress_from_igs }
+	change_variable = { name = french_progress_next add = var:french_progress_from_farms }
+	change_variable = { name = french_progress_next add = var:french_progress_from_legitimacy }
+	change_variable = { name = french_progress_next add = var:french_progress_from_english_resistence }
+	change_variable = { name = french_progress_next add = var:french_progress_from_effects }
+}
+
+dua_weekly_pulse_english_progress = {
+	set_variable = { name = english_progress_from_characters value = 0 }
+	set_variable = { name = english_progress_from_igs value = 0 }
+	set_variable = { name = english_progress_from_factories value = 0 }
+	set_variable = { name = english_progress_from_university value = 0 }
+	set_variable = { name = english_progress_from_mining value = 0 }
+	set_variable = { name = english_progress_from_french_resistence value = 0 }
+	set_variable = { name = english_progress_from_legitimacy value = root.government_legitimacy }
+	set_variable = { name = english_progress_next value = 0 }
+	#From Characters
+	every_scope_character = {
+		limit = {
+			has_ideology = ideology:ideology_english
+		}
+		ROOT = {
+			change_variable = { name = english_progress_from_characters add = prev.popularity }
+		}
+	}
+	change_variable = { name = english_progress_from_characters divide = 100 }
+	# From Interest Groups
+	every_interest_group = {
+		limit = {
+			leader = {
+				has_ideology = ideology:ideology_english
+			}
+		}
+		ROOT = {
+			set_variable = { name = ig_weight value = prev.ig_clout }
+		}
+		if = {
+			limit = {
+				is_in_government = yes
+			}
+			ROOT = {
+				change_variable = { name = ig_weight multiply = 3 }
+			}
+		}
+		ROOT = {
+			change_variable = { name = english_progress_from_igs add = var:ig_weight }
+		}
+	}
+	# From Buildings
+	every_scope_building = {
+		limit = {
+			is_building_group = bg_manufacturing
+			weekly_profit > 0
+			state = {
+				state_region = {
+					OR = {
+						is_homeland = cu:british
+						is_homeland = cu:anglois
+					}
+					NOT = { is_homeland = cu:french }
+				}
+			}
+		}
+		ROOT = {
+			change_variable = { name = english_progress_from_factories add = prev.level }
+		}
+	}
+	change_variable = { name = english_progress_from_factories divide = 100 }
+
+	every_scope_building = { 
+		limit = {
+			is_building_group = bg_technology # Derives from Universities
+			occupancy >= 0.5
+		}
+		ROOT = {
+			change_variable = { name = english_progress_from_university add = prev.level }
+		}
+	}
+	change_variable = { name = english_progress_from_university divide = 1000 }
+
+	every_scope_building = {
+		limit = {
+			is_building_group = bg_mining
+			weekly_profit > 0
+			state = {
+				state_region = {
+					is_homeland = cu:british
+				}
+			}
+		}
+		ROOT = {
+			change_variable = { name = english_progress_from_mining add = prev.level }
+		}
+	}
+	change_variable = { name = english_progress_from_mining divide = 100 }
+
+	# From Legitimacy
+	change_variable = { name = english_progress_from_legitimacy divide = 100 }
+	change_variable = { name = english_progress_from_legitimacy subtract = 0.5 }
+	if = {
+		limit = {
+			NOT = {
+				ruler = {
+					has_ideology = ideology:ideology_english
+				}
+			}
+		}
+		change_variable = { name = english_progress_from_legitimacy multiply = -0.25 }
+	}
+
+	if = {
+		limit = {
+			coa_controls_part_of_france = yes
+		}
+		change_variable = { name = english_progress_from_french_resistence subtract = 0.5 }
+	}
+
+	#Final Compilation
+	change_variable = { name = english_progress_next add = var:english_progress_from_characters }
+	change_variable = { name = english_progress_next add = var:english_progress_from_igs }
+	change_variable = { name = english_progress_next add = var:english_progress_from_factories }
+	change_variable = { name = english_progress_next add = var:english_progress_from_university }
+	change_variable = { name = english_progress_next add = var:english_progress_from_mining }
+	change_variable = { name = english_progress_next add = var:english_progress_from_legitimacy }
+	change_variable = { name = english_progress_next add = var:english_progress_from_french_resistence }
+	change_variable = { name = english_progress_next add = var:english_progress_from_effects }
+}
+
+dua_clear_dual_integration_variables = {
+	remove_variable = anglois_progress_from_characters 
+	remove_variable = anglois_progress_from_igs 
+	remove_variable = anglois_progress_from_military 
+	remove_variable = anglois_progress_from_legitimacy 
+	remove_variable = anglois_progress_from_effects 
+	remove_variable = anglois_progress_next 
+	remove_variable = anglois_progress 
+	remove_variable = ig_weight 
+}
+
+dua_clear_french_integration_variables = {
+	remove_variable = french_progress_from_characters 
+	remove_variable = french_progress_from_igs 
+	remove_variable = french_progress_from_farms 
+	remove_variable = french_progress_from_university 
+	remove_variable = french_progress_from_factories 
+	remove_variable = french_progress_from_legitimacy
+	remove_variable = french_progress_from_english_resistence 
+	remove_variable = french_progress_from_effects 
+	remove_variable = french_progress_next 
+	remove_variable = french_progress 
+	remove_variable = ig_weight 
+}
+
+dua_clear_english_integration_variables = {
+	remove_variable = english_progress_from_characters 
+	remove_variable = english_progress_from_igs 
+	remove_variable = english_progress_from_mining
+	remove_variable = english_progress_from_university 
+	remove_variable = english_progress_from_factories 
+	remove_variable = english_progress_from_legitimacy
+	remove_variable = english_progress_from_french_resistence 
+	remove_variable = english_progress_from_effects 
+	remove_variable = english_progress_next 
+	remove_variable = english_progress 
+	remove_variable = ig_weight 
+}
+
+dua_freeze_integration_progress = {
+	set_variable = dua_integration_freeze
+	set_variable = { name = anglois_progress_next value = 0 }
+	set_variable = { name = french_progress_next value = 0 }
+	set_variable = { name = english_progress_next value = 0 }
+}
+
+dua_set_total_revolution_revolt_variables = {
+	set_variable = { name = dua_total_revolution_revolt value = 0 }
+	set_variable = { name = dua_total_revolution_revolt_from_french_turmoil value = 0 }
+	set_variable = { name = dua_total_revolution_revolt_from_occitan_turmoil value = 0 }
+	set_variable = { name = dua_total_revolution_revolt_from_english_turmoil value = 0 }
+	set_variable = { name = dua_total_revolution_revolt_from_legitimacy value = 0 }
+	set_variable = { name = dua_total_revolution_revolt_from_effects value = 0 }
+	set_variable = { name = dua_total_revolution_revolt_next value = 0 }
+}
+
+dua_weekly_pulse_total_revolution_revolt = {
+	set_variable = { name = dua_total_revolution_revolt_from_english_turmoil value = 0 }
+	set_variable = { name = dua_total_revolution_revolt_from_legitimacy value = root.government_legitimacy }
+	set_variable = { name = dua_total_revolution_revolt_next value = 0 }
+
+	every_scope_state = {
+		limit = {
+			owner = ROOT
+			state_region = {
+				OR = {
+					is_homeland = cu:french
+				}
+			}
+		}
+		ROOT = {
+			change_variable = { name = dua_total_revolution_revolt_from_french_turmoil add = prev.turmoil }
+		}
+	}
+	change_variable = { name = dua_total_revolution_revolt_from_french_turmoil divide = 10 }
+
+	every_scope_state = {
+		limit = {
+			owner = ROOT
+			state_region = {
+				OR = {
+					is_homeland = cu:occitan
+				}
+			}
+		}
+		ROOT = {
+			change_variable = { name = dua_total_revolution_revolt_from_occitan_turmoil add = prev.turmoil }
+		}
+	}
+	change_variable = { name = dua_total_revolution_revolt_from_occitan_turmoil divide = 10 }
+
+	every_scope_state = {
+		limit = {
+			owner = ROOT
+			state_region = {
+				OR = {
+					is_homeland = cu:british
+				}
+			}
+		}
+		ROOT = {
+			change_variable = { name = dua_total_revolution_revolt_from_english_turmoil add = prev.turmoil }
+		}
+	}
+	change_variable = { name = dua_total_revolution_revolt_from_english_turmoil divide = 10 }
+
+	# From Legitimacy
+	change_variable = { name = dua_total_revolution_revolt_from_legitimacy divide = 200 } #Legitimacy divided by 200, to make it minimum 0 and maximum 0.5.
+	change_variable = { name = dua_total_revolution_revolt_from_legitimacy subtract = 0.25 } #Legitimacy subtracted by 0.5, to make it minimum -0.25 and maximum 0.25. Balanced scale of negative to absolute value.
+	change_variable = { name = dua_total_revolution_revolt_from_legitimacy multiply = -1 } # Good Legitimacy will decrease revolt
+
+	#Final Compilation
+	change_variable = { name = dua_total_revolution_revolt_next add = var:dua_total_revolution_revolt_from_french_turmoil }
+	change_variable = { name = dua_total_revolution_revolt_next add = var:dua_total_revolution_revolt_from_occitan_turmoil }
+	change_variable = { name = dua_total_revolution_revolt_next add = var:dua_total_revolution_revolt_from_english_turmoil }
+	change_variable = { name = dua_total_revolution_revolt_next add = var:dua_total_revolution_revolt_from_legitimacy }
+	change_variable = { name = dua_total_revolution_revolt_next add = var:dua_total_revolution_revolt_from_effects }
+}
