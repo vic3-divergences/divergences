@@ -1,16 +1,23 @@
-﻿# Anglois Path
-je_dual_integration = {
+﻿je_dual_integration = {
 	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	immediate = {
+		set_variable = { name = je_anglois_integration_progress value = 0 }
+		dua_set_dual_integration_variables = yes
+	}
 
 	complete = {
 		scope:journal_entry = {
 			is_goal_complete = yes
 		}
+		has_law = law_type:law_national_supremacy
 	}
 
 	on_complete = {
 		trigger_event = { id = dvg_dua.2 }
 	}
+
+	scripted_button = dua_integration_anglois_button
 
 	fail = {
 		custom_tooltip = {
@@ -28,40 +35,87 @@ je_dual_integration = {
 				}
 			}
 		}
+		capital = {
+			turmoil >= 0.5
+		}
+		NOT = {
+			has_law = law_type:law_monarchy
+		}
 	}
 	
-	on_timeout = {
-		set_global_variable = dua_timeout
+	on_fail = {
+		#trigger_event = { id = french_pretenders.6 popup = yes }
+		if = {
+			limit = {
+				has_variable = dua_integration_freeze
+			}
+			remove_variable = dua_integration_freeze
+		}
+		dua_clear_dual_integration_variables = yes #It should not be possible for this JE to somehow be deleted without these variables being cleared.
 	}
 
-	on_monthly_pulse = {
-		random_events = {
-			30 = 0
-			20 = dvg_dua.110 # Patron
-			20 = dvg_dua.111 # Publication of "Histoire de la France depuis ses origines"
-			20 = dvg_dua.112 # Publication of "Saxon Poetry"
-			20 = dvg_dua.113 # The Great Travel of the Dauphin
-			20 = dvg_dua.114 # The 'Immortals'
-			20 = dvg_dua.120 # Radical IG
-			20 = dvg_dua.115 # Celebration of the German Revolution
-			30 = dvg_dua.118 # Springtime 1848
-			30 = dvg_dua.119 # Valois subversion
-			30 = dvg_dua.121 # Scottish subversion
-			50 = dvg_dua.122 # Anglois resilience 1855
-			50 = dvg_dua.123 # Anglois resilience 1860 
-			50 = dvg_dua.124 # Anglois resilience 1865
-			50 = dvg_dua.125 # Anglois resilience 1870
-			30 = dvg_dua.126 # Anglois failure 1855
-			30 = dvg_dua.127 # Anglois failure 1860
+	on_timeout = {
+		set_global_variable = dua_timeout
+		if = {
+			limit = {
+				has_variable = dua_integration_freeze
+			}
+			remove_variable = dua_integration_freeze
+		}
+		dua_clear_dual_integration_variables = yes #It should not be possible for this JE to somehow be deleted without these variables being cleared.
+	}
+
+	modifiers_while_active = {
+		dvg_fragile_country
+	}
+
+	on_weekly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					NOT = {
+						has_variable = dua_integration_freeze
+					}
+				}
+				dua_weekly_pulse_anglois_progress = yes
+			}
+			set_variable = { name = je_anglois_integration_progress value = var:anglois_progress }
 		}
 	}
 
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					NOT = {
+						has_variable = dua_integration_freeze
+					}
+				}
+				change_variable = { name = anglois_progress add = var:anglois_progress_next }
+			}
+		}
+		random_events = {
+			100 = 0
+			25 = dvg_dua.110 # Patron
+			25 = dvg_dua.111 # Publication of "Histoire de la France depuis ses origines"
+			25 = dvg_dua.112 # Publication of "Saxon Poetry"
+			25 = dvg_dua.113 # The Great Travel of the Dauphin
+			25 = dvg_dua.114 # The 'Immortals'
+			25 = dvg_dua.120 # Radical IG
+			25 = dvg_dua.115 # Celebration of the German Revolution
+			50 = dvg_dua.118 # Springtime 1848
+			50 = dvg_dua.119 # Valois subversion
+			50 = dvg_dua.121 # Scottish subversion
+			25 = dvg_dua.129
+		}
+	}
+	
 	current_value = {
-		value = root.var:anglois_acc
+		value = root.var:je_anglois_integration_progress
 	}
 
 	goal_add_value = {
-		add = 8
+		add = 1300
 	}
 
 	progressbar = yes
@@ -75,44 +129,9 @@ je_dual_integration = {
 je_french_integration = {
 	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
 
-	status_desc = {
-		first_valid = {
-			triggered_desc = {
-				desc = eng_revolt_tension_high
-				trigger = {
-					any_scope_state = {
-						is_incorporated = yes
-						is_capital = no
-						state_region = { 
-							OR = {
-								is_homeland = cu:french
-								is_homeland = cu:occitan
-							}
-						}
-						turmoil > 0.5
-					}
-				}
-			}
-			triggered_desc = {
-				desc = eng_revolt_tension_med
-				trigger = {
-					any_scope_state = {
-						is_incorporated = yes
-						is_capital = no
-						state_region = { 
-							OR = {
-								is_homeland = cu:french
-								is_homeland = cu:occitan
-							}
-						}
-						turmoil > 0.25
-					}
-				}
-			}
-			triggered_desc = {
-				desc = eng_revolt_tension_low
-			}
-		}
+	immediate = {
+		set_variable = { name = je_french_integration_progress value = 0 }
+		dua_set_french_integration_variables = yes
 	}
 
 	complete = {
@@ -125,73 +144,70 @@ je_french_integration = {
 		trigger_event = { id = dvg_dua.4 }
 	}
 
-	fail = {
+	scripted_button = dua_integration_french_button
 
+	fail = {
+		capital = {
+			turmoil >= 0.5
+		}
 	}
 
-	#on_fail = {
-	#	trigger_event = { id = dvg_dua.3 }
-	#}
-	
-	#on_timeout = {
-	#	set_global_variable = dua_timeout
-	#}
-
-	on_monthly_pulse = {
-		random_events = {
-			30 = 0
-			20 = dvg_dua.211 #St Louis Speech
-			20 = dvg_dua.212 #The great travel
-			20 = dvg_dua.213 #Sons of Harold
-			20 = dvg_dua.214 #Sorbonne
+	on_fail = {
+		if = {
+			limit = {
+				has_variable = dua_integration_freeze
+			}
+			remove_variable = dua_integration_freeze
 		}
+		dua_clear_french_integration_variables = yes #It should not be possible for this JE to somehow be deleted without these variables being cleared.
+	}
+
+	modifiers_while_active = {
+		dvg_fragile_country
+	}
+
+	on_weekly_pulse = {
 		effect = {
 			if = {
 				limit = {
 					NOT = {
-						cu:french = {
-							culture_secession_progress = {
-								target = ROOT
-								value > 0.5
-							}
-						}
-						cu:occitan = {
-							culture_secession_progress = {
-								target = ROOT
-								value > 0.5
-							}
-						}
-						cu:british = {
-							culture_secession_progress = {
-								target = ROOT
-								value > 0.5
-							}
-						}
+						has_variable = dua_integration_freeze
 					}
 				}
-				change_variable = {
-					name = french_acc
-					add = 0.08
-				}
+				dua_weekly_pulse_french_progress = yes
 			}
+			set_variable = { name = je_french_integration_progress value = var:french_progress }
+		}
+	}
+
+	on_monthly_pulse = {
+		effect = {
 			if = {
 				limit = {
-					coa_controls_part_of_england = no
+					NOT = {
+						has_variable = dua_integration_freeze
+					}
 				}
-				change_variable = {
-					name = french_acc
-					add = 0.1
-				}
+				change_variable = { name = french_progress add = var:french_progress_next }
 			}
+		}
+		random_events = {
+			100 = 0
+			25 = dvg_dua.110 # Patron
+			25 = dvg_dua.211 #St Louis Speech
+			25 = dvg_dua.212 #The great travel
+			25 = dvg_dua.213 #Sons of Harold
+			25 = dvg_dua.214 #Sorbonne
+			25 = dvg_dua.129
 		}
 	}
 
 	current_value = {
-		value = root.var:french_acc
+		value = root.var:je_french_integration_progress
 	}
 
 	goal_add_value = {
-		add = 20
+		add = 1000
 	}
 
 	progressbar = yes
@@ -205,42 +221,9 @@ je_french_integration = {
 je_english_integration = {
 	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
 
-	status_desc = {
-		first_valid = {
-			triggered_desc = {
-				desc = occ_revolt_tension_high
-				trigger = {
-					any_scope_state = {
-						is_incorporated = yes
-						is_capital = no
-						state_region = { 
-							OR = {
-								is_homeland = cu:british
-							}
-						}
-						turmoil > 0.50
-					}
-				}
-			}
-			triggered_desc = {
-				desc = occ_revolt_tension_med
-				trigger = {
-					any_scope_state = {
-						is_incorporated = yes
-						is_capital = no
-						state_region = { 
-							OR = {
-								is_homeland = cu:british
-							}
-						}
-						turmoil > 0.25
-					}
-				}
-			}
-			triggered_desc = {
-				desc = occ_revolt_tension_low
-			}
-		}
+	immediate = {
+		set_variable = { name = je_english_integration_progress value = 0 }
+		dua_set_english_integration_variables = yes
 	}
 
 	complete = {
@@ -253,71 +236,68 @@ je_english_integration = {
 		trigger_event = { id = dvg_dua.6 }
 	}
 
-	fail = {
+	scripted_button = dua_integration_english_button
 
+	fail = {
+		capital = {
+			turmoil >= 0.5
+		}
 	}
 
-	#on_fail = {
-	#	trigger_event = { id = dvg_dua.3 }
-	#}
-	
-	#on_timeout = {
-	#	set_global_variable = dua_timeout
-	#}
-
-	on_monthly_pulse = {
-		random_events = {
-			30 = 0
-			20 = dvg_dua.311 #The great travel
-			20 = dvg_dua.312 #Sons of St-Louis
+	on_fail = {
+		if = {
+			limit = {
+				has_variable = dua_integration_freeze
+			}
+			remove_variable = dua_integration_freeze
 		}
+		dua_clear_english_integration_variables = yes #It should not be possible for this JE to somehow be deleted without these variables being cleared.
+	}
+
+	modifiers_while_active = {
+		dvg_fragile_country
+	}
+
+	on_weekly_pulse = {
 		effect = {
 			if = {
 				limit = {
 					NOT = {
-						cu:french = {
-							culture_secession_progress = {
-								target = ROOT
-								value > 0.5
-							}
-						}
-						cu:occitan = {
-							culture_secession_progress = {
-								target = ROOT
-								value > 0.5
-							}
-						}
-						cu:british = {
-							culture_secession_progress = {
-								target = ROOT
-								value > 0.5
-							}
-						}
+						has_variable = dua_integration_freeze
 					}
 				}
-				change_variable = {
-					name = english_acc
-					add = 0.08
-				}
+				dua_weekly_pulse_english_progress = yes
 			}
+			set_variable = { name = je_english_integration_progress value = var:english_progress }
+		}
+	}
+
+	on_monthly_pulse = {
+		effect = {
 			if = {
 				limit = {
-					coa_controls_part_of_france = no
+					NOT = {
+						has_variable = dua_integration_freeze
+					}
 				}
-				change_variable = {
-					name = english_acc
-					add = 0.1
-				}
+				change_variable = { name = english_progress add = var:english_progress_next }
 			}
+		}
+		random_events = {
+			100 = 0
+			25 = dvg_dua.110 # Patron
+			25 = dvg_dua.311 #The great travel
+			25 = dvg_dua.312 #Sons of St-Louis
+			25 = dvg_dua.129
 		}
 	}
 
 	current_value = {
-		value = root.var:english_acc
+		value = root.var:je_english_integration_progress
 	}
 
 	goal_add_value = {
-		add = 20
+		add = 1000
 	}
 
 	progressbar = yes
@@ -354,6 +334,12 @@ je_dua_bureaucracy = {
 je_total_revolution = {
 	icon = "gfx/interface/icons/event_icons/event_skull.dds"
 
+	immediate = {
+		dua_set_total_revolution_revolt_variables = yes
+	}
+
+	scripted_button = dua_total_revolution_button
+	
 	complete = {
 		custom_tooltip = {
 			text = anglois_accepted_tooltip
@@ -389,9 +375,11 @@ je_total_revolution = {
 					has_revolution = no
 				}
 			}
-			custom_tooltip = {
-				text = dvg_dua_total_revolt_reached
-				root.var:dua_total_revolution_revolt >= 22
+			scope:journal_entry = {
+				is_goal_complete = yes
+			}
+			NOT = {
+				has_law = law_type:law_monarchy
 			}
 		}
 	}
@@ -405,38 +393,13 @@ je_total_revolution = {
 
 	on_weekly_pulse = {
 		effect = {
-			set_variable = {
-				name = dua_total_revolution_revolt
-				value = 0
-			}
-			if = {
-				limit = {
-					root.var:occ_revolt <= 11
-				}
-				change_variable = {
-					name = dua_total_revolution_revolt
-					add = root.var:occ_revolt
-				}
-			} else = {
-				change_variable = {
-					name = dua_total_revolution_revolt
-					add = 11
-				}
-			}
-			if = {
-				limit = {
-					root.var:eng_revolt <= 11
-				}
-				change_variable = {
-					name = dua_total_revolution_revolt
-					add = root.var:eng_revolt
-				}
-			} else = {
-				change_variable = {
-					name = dua_total_revolution_revolt
-					add = 11
-				}
-			}
+			dua_weekly_pulse_total_revolution_revolt = yes
+		}
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			change_variable = { name = dua_total_revolution_revolt add = var:dua_total_revolution_revolt_next }
 		}
 	}
 
@@ -445,248 +408,12 @@ je_total_revolution = {
 	}
 
 	goal_add_value = {
-		value = 22
+		value = 100
 	}
 
 	progressbar = yes
 
-	weight = 10000
-	should_be_pinned_by_default = yes
-}
-
-je_midi_revolution = {
-	icon = "gfx/interface/icons/event_icons/event_skull.dds"
-
-	complete = {
-		custom_tooltip = {
-			text = dvg_complete_midi_revolution_tt
-			OR = {
-				has_global_variable = dua_global_revolted
-				has_global_variable = anglois_accepted
-				has_global_variable = english_accepted
-			}
-		}
-	}
-
-	on_complete = {
-	}
-
-	fail = {
-		OR = {
-			exists = c:OCC
-		}
-	}
-
-	on_fail = {
-	}
-
-	on_monthly_pulse = {
-		effect = {
-			if = {
-				limit = {
-					has_journal_entry = je_english_integration
-					root.var:occ_revolt < 14
-				}
-				change_variable = {
-					name = occ_revolt
-					add = 0.18
-				}
-			}
-			if = {
-				limit = {
-					NOT = {
-						any_scope_state = {
-							is_incorporated = yes
-							is_capital = no
-							state_region = { 
-								OR = {
-									is_homeland = cu:french 
-									is_homeland = cu:occitan 
-								}
-							}
-							turmoil > 0.75
-						}
-					}
-				}
-				if = {
-					limit = {
-						has_journal_entry = je_english_integration
-						NOT = { has_variable = eng_revolted }
-						NOT = { has_global_variable = dua_global_revolted}
-						root.var:eng_revolt >= 3
-					}
-		
-					add_radicals = {
-						value = 0.01
-						culture = cu:french
-					}
-			
-					add_radicals = {
-						value = 0.01
-						culture = cu:occitan
-					}
-				}
-				if = {
-					limit = {
-						has_journal_entry = je_english_integration
-						NOT = { has_variable = occ_revolted }
-						NOT = { has_global_variable = dua_global_revolted}
-						root.var:occ_revolt >= 6
-					}
-		
-					add_radicals = {
-						value = 0.01
-						culture = cu:french
-					}
-			
-					add_radicals = {
-						value = 0.01
-						culture = cu:occitan
-					}
-				}
-				if = {
-					limit = {
-						NOT = { has_variable = occ_revolted }
-						NOT = { has_global_variable = dua_global_revolted}
-						root.var:occ_revolt >= 11
-					}
-		
-					add_radicals = {
-						value = 0.01
-						culture = cu:french
-					}
-			
-					add_radicals = {
-						value = 0.01
-						culture = cu:occitan
-					}
-				}
-			}
-		}
-	}
-
-	invalid = {
-	}
-
-	current_value = {
-		value = root.var:occ_revolt
-	}
-
-	goal_add_value = {
-		value = 14
-	}
-
-	progressbar = yes
-
-	weight = 10000
-	should_be_pinned_by_default = yes
-}
-
-je_english_revolution = {
-	icon = "gfx/interface/icons/event_icons/event_skull.dds"
-	
-	complete = {
-		custom_tooltip = {
-			text = dvg_complete_english_revolution_tt
-			OR = {
-				has_global_variable = dua_global_revolted
-				has_global_variable = anglois_accepted
-				has_global_variable = french_accepted
-			}
-		}
-	}
-
-	on_complete = {
-	}
-
-	fail = {
-		OR = {
-			exists = c:ENG
-		}
-	}
-
-	on_fail = {
-	}
-
-	on_monthly_pulse = {
-		effect = {
-			if = {
-				limit = {
-					has_journal_entry = je_french_integration
-					root.var:eng_revolt < 14
-				}
-				change_variable = {
-					name = eng_revolt
-					add = 0.18
-				}
-			}
-			if = {
-				limit = {
-					NOT = {
-						any_scope_state = {
-							is_incorporated = yes
-							is_capital = no
-							state_region = { 
-								OR = {
-									is_homeland = cu:british
-								}
-							}
-							turmoil > 0.75
-						}
-					}
-				}
-				
-				if = {
-					limit = {
-						has_journal_entry = je_french_integration
-						NOT = { has_variable = eng_revolted }
-						NOT = { has_global_variable = dua_global_revolted}
-						root.var:eng_revolt >= 3
-					}
-
-					add_radicals = {
-						value = 0.01
-						culture = cu:british
-					}
-				}
-				if = {
-					limit = {
-						has_journal_entry = je_french_integration
-						NOT = { has_variable = eng_revolted }
-						NOT = { has_global_variable = dua_global_revolted}
-						root.var:eng_revolt >= 6
-					}
-
-					add_radicals = {
-						value = 0.01
-						culture = cu:british
-					}
-				}
-				if = {
-					limit = {
-						NOT = { has_variable = eng_revolted }
-						NOT = { has_global_variable = dua_global_revolted}
-						root.var:eng_revolt >= 11
-					}
-
-					add_radicals = {
-						value = 0.01
-						culture = cu:british
-					}
-				}
-			}
-		}
-	}
-
-	current_value = {
-		value = root.var:eng_revolt
-	}
-
-	goal_add_value = {
-		value = 14
-	}
-
-	progressbar = yes
+	timeout = 8030
 
 	weight = 10000
 	should_be_pinned_by_default = yes
