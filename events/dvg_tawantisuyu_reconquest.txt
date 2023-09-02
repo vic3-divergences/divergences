@@ -354,3 +354,93 @@ dvg_tawantisuyu_reconquest.7 = {
 		name = dvg_tawantisuyu_reconquest.7.a
 	}
 }
+
+dvg_tawantisuyu_reconquest.8 = {
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = "europenorthamerica_before_the_battle"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	title = dvg_tawantisuyu_reconquest.8.t
+	desc = dvg_tawantisuyu_reconquest.8.d
+	flavor = dvg_tawantisuyu_reconquest.8.f
+
+	duration = 3
+
+	trigger = {
+		NOT = {
+			has_variable = sapa_inka_injured
+		}
+		exists = c:TWT
+		exists = c:WLM
+		ROOT = c:WLM
+		any_diplomatic_play = {
+			initiator_is = c:TWT
+			target_is = c:WLM
+		}
+		c:TWT = {
+			is_player = no
+			any_scope_character = {
+				has_variable = is_sapa_inka
+			}
+		}
+	}
+
+	immediate = {
+		c:TWT = {
+			random_scope_character = {
+				limit = {
+					has_variable = is_sapa_inka
+				}
+				save_scope_as = sapa_inka_scope
+			}
+		}
+		set_variable = {
+			name = sapa_inka_injured
+		}
+	}
+
+	option = {
+		name = dvg_tawantisuyu_reconquest.8.a
+		default_option = yes
+		every_diplomatic_play = {
+			limit = {
+				initiator_is = c:WLM
+				target_is = c:TWT
+			}
+			end_play = yes
+		}
+		hidden_effect = {
+			c:WLM = { save_scope_as = wallmapu_scope }
+			c:TWT = { save_scope_as = tawantisuyu_scope }
+			every_country = {
+				limit = {
+					NOT = { this = c:WLM }
+					NOT = { this = c:TWT }
+					OR = {
+						has_diplomatic_relevance = c:WLM
+						has_diplomatic_relevance = c:TWT
+					}			
+				}
+				post_notification = sapa_inka_notification
+			}		
+		}			
+		ai_chance = {
+			base = 5
+		}		
+	}
+	option = {
+		name = dvg_tawantisuyu_reconquest.8.b	
+		add_loyalists = {
+						value = 0.2
+					}
+		ai_chance = {
+			base = 95
+		}		
+	}	
+}
