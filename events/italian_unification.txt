@@ -10,13 +10,12 @@ italian_unification.1 = {
 	flavor = italian_unification.1.f
 
 	event_image = {
-		video = "gfx/event_pictures/unspecific_signed_contract.bk2"
+		video = "votp_garibaldi"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
-	on_opened_soundeffect = "event:/SFX/Events/unspecific/signed_contract"
 
-	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
 
 	duration = 3
 
@@ -42,6 +41,7 @@ italian_unification.1 = {
 	option = {
 		name = german_unification.1.b
 		give_claims_on_italy = yes
+
 		# ruler IG attraction
 		scope:ruler_ig_scope = {
 			add_modifier = {
@@ -62,33 +62,67 @@ italian_unification.2 = {
 	flavor = italian_unification.2.f
 
 	event_image = {
-		video = "gfx/event_pictures/unspecific_signed_contract.bk2"
+		video = "unspecific_signed_contract"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
-	on_opened_soundeffect = "event:/SFX/Events/unspecific/signed_contract"
 
-	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
 
 	duration = 1
 
 	trigger = {
+		OR = {
+			NOT = { has_journal_entry = je_italian_confederation }
+			has_global_variable = ITC_council_succes
+			has_global_variable = ITC_council_failed
+		}
 		any_neighbouring_state = {
 			owner = {
-				OR = {
-					country_has_primary_culture = cu:north_italian
+				trigger_if = {
+					limit = {
+						has_technology_researched = pan-nationalism
+					}
+					OR = {
+						country_has_primary_culture = cu:north_italian
+						country_has_primary_culture = cu:south_italian
+						country_has_primary_culture = cu:central_italian #DVG
+						country_has_primary_culture = cu:sardinian #DVG
+						country_has_primary_culture = cu:venetian #DVG
+					}
+				}
+				trigger_else_if = {
+					limit = {
+						ROOT = {
+							OR = {
+								country_has_primary_culture = cu:north_italian
+								country_has_primary_culture = cu:central_italian
+							}
+						}
+					}
+					OR = {
+						country_has_primary_culture = cu:north_italian
+						country_has_primary_culture = cu:central_italian
+					}
+				}
+				trigger_else_if = {
+					limit = {
+						ROOT = {
+							country_has_primary_culture = cu:south_italian
+						}
+					}
 					country_has_primary_culture = cu:south_italian
-					country_has_primary_culture = cu:central_italian #DVG
-					country_has_primary_culture = cu:sardinian #DVG
-					country_has_primary_culture = cu:venetian #DVG
 				}
 				OR = {
 					is_subject = no
 					is_subject_of = ROOT
 				}
-				has_diplomatic_pact = {
-					who = ROOT
-					type = customs_union
+				OR = {
+					ROOT = { has_journal_entry = je_italian_confederation }
+					has_diplomatic_pact = {
+						who = ROOT
+						type = customs_union
+					}
 				}
 				country_rank <= rank_value:minor_power
 				relations:root >= relations_threshold:amicable
@@ -102,20 +136,50 @@ italian_unification.2 = {
 		random_neighbouring_state = {
 			limit = {
 				owner = {
-					OR = {
-						country_has_primary_culture = cu:north_italian
+					trigger_if = {
+						limit = {
+							has_technology_researched = pan-nationalism
+						}
+						OR = {
+							country_has_primary_culture = cu:north_italian
+							country_has_primary_culture = cu:south_italian
+							country_has_primary_culture = cu:central_italian #DVG
+							country_has_primary_culture = cu:sardinian #DVG
+							country_has_primary_culture = cu:venetian #DVG
+						}
+					}
+					trigger_else_if = {
+						limit = {
+							ROOT = {
+								OR = {
+									country_has_primary_culture = cu:north_italian
+									country_has_primary_culture = cu:central_italian
+								}
+							}
+						}
+						OR = {
+							country_has_primary_culture = cu:north_italian
+							country_has_primary_culture = cu:central_italian
+						}
+					}
+					trigger_else_if = {
+						limit = {
+							ROOT = {
+								country_has_primary_culture = cu:south_italian
+							}
+						}
 						country_has_primary_culture = cu:south_italian
-						country_has_primary_culture = cu:central_italian #DVG
-						country_has_primary_culture = cu:sardinian #DVG
-						country_has_primary_culture = cu:venetian #DVG
 					}
 					OR = {
 						is_subject = no
 						is_subject_of = ROOT
 					}
-					has_diplomatic_pact = {
-						who = ROOT
-						type = customs_union
+					OR = {
+						ROOT = { has_journal_entry = je_italian_confederation }
+						has_diplomatic_pact = {
+							who = ROOT
+							type = customs_union
+						}
 					}
 					country_rank <= rank_value:minor_power
 					relations:root >= relations_threshold:amicable
@@ -155,85 +219,6 @@ italian_unification.2 = {
 		}
 		ai_chance = {
 			base = 0
-		}
-	}
-}
-
-# Garibaldi
-italian_unification.3 = {
-	type = country_event
-	placement = ROOT
-
-	title = italian_unification.3.t
-	desc = italian_unification.3.d
-	flavor = italian_unification.3.f
-
-	event_image = {
-		video = "gfx/event_pictures/europenorthamerica_before_the_battle.bk2"
-	}
-
-	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
-	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/before_the_battle"
-
-	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
-
-	duration = 3
-
-	trigger = {
-		NOT = { has_global_variable = garibaldi_variable }
-		NOT = { has_variable = garibaldi_var }
-		game_date < 1882.1.1
-	}
-
-	immediate = {
-		set_global_variable = garibaldi_variable
-		set_variable = garibaldi_var
-	}
-
-	option = {
-		name = italian_unification.3.a
-		default_option = yes
-		create_character = {
-			first_name = Giuseppe
-			last_name = Garibaldi
-			is_general = yes
-			interest_group = ig_armed_forces
-			female = no
-			birth_date = 1807.7.4
-			dna = dna_giuseppe_garibaldi
-			ideology = ideology_republican_leader
-			traits = {
-				resupply_commander
-				surveyor
-				expert_artillery_commander
-			}
-			on_created = {
-				add_modifier = {
-					name = garibaldi_popularity
-				}
-			}
-		}
-	}
-	option = {
-		name = italian_unification.3.b
-		create_character = {
-			first_name = Giuseppe
-			last_name = Garibaldi
-			ig_leader = yes
-			interest_group = ig_armed_forces
-			female = no
-			birth_date = 1807.7.4
-			dna = dna_giuseppe_garibaldi
-			ideology = ideology_republican_leader
-			traits = {
-				meticulous
-				cautious
-			}
-			on_created = {
-				add_modifier = {
-					name = garibaldi_popularity
-				}
-			}
 		}
 	}
 }

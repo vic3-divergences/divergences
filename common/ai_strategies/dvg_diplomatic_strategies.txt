@@ -2,15 +2,7 @@
 	icon = "gfx/interface/icons/ai_strategy_icons/unification.dds"
 	
 	type = diplomatic
-	
-	wanted_army_ratio = {
-		value = 150000
-	}
-	
-	wanted_navy_ratio = {
-		value = 400000
-	}
-		
+
 	undesirable_infamy_level = {
 		value = 35
 	}
@@ -164,6 +156,7 @@
 
 	possible = {
 		NOT = { exists = c:MUS }
+		NOT = { exists = c:RUS }
 		is_subject = no
 		country_has_primary_culture = cu:russian
 	}
@@ -177,14 +170,6 @@ ai_strategy_unify_russia = {
 	icon = "gfx/interface/icons/ai_strategy_icons/unification.dds"
 	
 	type = diplomatic
-	
-	wanted_army_ratio = {
-		value = 150000
-	}
-	
-	wanted_navy_ratio = {
-		value = 400000
-	}
 	
 	undesirable_infamy_level = {
 		value = 35
@@ -404,7 +389,7 @@ ai_strategy_unify_russia = {
 	}
 
 	possible = {
-		is_unification_candidate = RUS	
+		is_unification_candidate = RUS
 		NOT = { country_tier = empire }
 		NOT = { has_journal_entry = je_nov_main } #NOV needs to complete its journal first
 	}
@@ -418,17 +403,9 @@ ai_strategy_unify_cossacks = {
 	icon = "gfx/interface/icons/ai_strategy_icons/unification.dds"
 	
 	type = diplomatic
-	
-	wanted_army_ratio = {
-		value = 150000
-	}
-	
-	wanted_navy_ratio = {
-		value = 400000
-	}
 		
 	undesirable_infamy_level = {
-		value = 35
+		value = 50
 	}
 	
 	unacceptable_infamy_level = {
@@ -466,12 +443,25 @@ ai_strategy_unify_cossacks = {
 	# Added to value from default strategy
 	recklessness = {
 		value = 0.5
+
+		if = {
+			limit = { has_journal_entry = je_cossack_ambition }
+			add = 0.5
+		}
 	}	
 	
 	# Added to value from default strategy
 	aggression = {
 		value = 0.5
 		
+		if = {
+			limit = {
+				scope:target_country = { can_form_nation = CSK }
+				has_journal_entry = je_cossack_ambition 
+			}
+			add = 10
+		}
+
 		if = {
 			limit = { 
 				scope:target_country = { can_form_nation = CSK }
@@ -542,11 +532,22 @@ ai_strategy_unify_cossacks = {
 								is_homeland = cu:cossack
 							}					
 						}						
-					}					
+					}
+					can_reach_target_state = yes		
 				}
-				add = 100
+				add = 200
 			}
-		}	
+		}
+		annex_country = {
+			if = {
+				limit = {
+					scope:target_country = {
+						country_has_primary_culture = cu:cossack
+					}
+				}
+				add = 1000
+			}
+		}
 	}		
 	
 	secret_goal_scores = {	
@@ -564,16 +565,28 @@ ai_strategy_unify_cossacks = {
 
 	possible = {
 		NOT = { exists = c:CSK }
+		NOT = { has_modifier = neutrality }
 		can_form_nation = CSK
 	}
 
 	weight = {
-		value = 500
+		value = 0
 		
+
+		if = {
+			limit = { has_journal_entry = je_cossack_ambition }
+			add = 500
+		}
+
+		if = {
+			limit = { has_global_variable = move_CSK }
+			add = 500
+		}
+
 		if = {
 			limit = { NOT = { is_country_type = unrecognized } }
 			add = 100
-		}		
+		}
 		
 		if = {
 			limit = { country_rank = rank_value:unrecognized_regional_power }
@@ -591,14 +604,6 @@ ai_strategy_unify_tatarstan = {
 	icon = "gfx/interface/icons/ai_strategy_icons/unification.dds"
 	
 	type = diplomatic
-	
-	wanted_army_ratio = {
-		value = 150000
-	}
-	
-	wanted_navy_ratio = {
-		value = 400000
-	}
 		
 	undesirable_infamy_level = {
 		value = 35
@@ -639,17 +644,35 @@ ai_strategy_unify_tatarstan = {
 	# Added to value from default strategy
 	recklessness = {
 		value = 0.5
+
+		if = {
+			limit = { 
+				ruler = {
+					has_variable = is_murad_giray
+				}
+			}
+			add = 0.5
+		}
 	}	
 	
 	# Added to value from default strategy
 	aggression = {
 		value = 0.5
 		
-		if = {
+		if = { 
 			limit = { 
 				scope:target_country = { can_form_nation = TAR }
 			}
 			add = 2.75
+		}
+
+		if = {
+			limit = { 
+				ruler = {
+					has_variable = is_murad_giray
+				}
+			}
+			add = 5
 		}
 
 		# Less aggressive against countries we're just antagonistic against, rather than belligerent/domineering
@@ -697,7 +720,6 @@ ai_strategy_unify_tatarstan = {
 					scope:target_state = {
 						state_region = {
 							OR = {
-								is_homeland = cu:kipchak
 								is_homeland = cu:kirim
 								is_homeland = cu:kazani
 								is_homeland = cu:bashkir
@@ -717,7 +739,6 @@ ai_strategy_unify_tatarstan = {
 					scope:target_state = {
 						state_region = {
 							OR = {
-								is_homeland = cu:kipchak
 								is_homeland = cu:kirim
 								is_homeland = cu:kazani
 								is_homeland = cu:bashkir
@@ -725,11 +746,29 @@ ai_strategy_unify_tatarstan = {
 								is_homeland = cu:xacitarxani
 							}					
 						}						
-					}					
+					}
+					can_reach_target_state = yes
 				}
 				add = 100
 			}
-		}		
+		}
+		annex_country = {
+			if = {
+				limit = {
+					scope:target_country = {
+						OR = {
+							country_has_primary_culture = cu:kirim
+							country_has_primary_culture = cu:kazani
+							country_has_primary_culture = cu:bashkir
+							country_has_primary_culture = cu:sibir
+							country_has_primary_culture = cu:xacitarxani
+						}
+					}
+					can_reach_target_state = yes
+				}
+				add = 1000
+			}
+		}
 	}		
 	
 	secret_goal_scores = {	
@@ -737,17 +776,43 @@ ai_strategy_unify_tatarstan = {
 			if = {
 				limit = {
 					scope:target_country = {
-						can_form_nation = TAR
+						OR = {
+							can_form_nation = TAR
+							AND = {
+								exists = c:AKH
+								scope:target_country = c:AKH
+							}
+						}
 					}
 				}
-				add = 1000
-			}				
-		}			
+				add = 500
+			}
+			if = {
+				limit = {
+					can_reach_target_country = yes
+					scope:target_country = { 
+						any_scope_state = {
+							OR = {
+								state_region = s:STATE_ASTRAKHAN
+								state_region = s:STATE_URALSK
+							}
+						}	
+					}
+				}
+				add = 500
+			}			
+		}	
 	}	
 
 	possible = {
 		NOT = { exists = c:TAR }
 		can_form_nation = TAR
+		OR = {
+			has_technology_researched = nationalism
+			ruler = {
+				has_variable = is_murad_giray
+			}
+		}
 	}
 
 	weight = {
@@ -774,21 +839,13 @@ ai_strategy_unify_arcadia = {
 	icon = "gfx/interface/icons/ai_strategy_icons/unification.dds"
 	
 	type = diplomatic
-	
-	wanted_army_ratio = {
-		value = 150000
-	}
-	
-	wanted_navy_ratio = {
-		value = 400000
-	}
 		
 	undesirable_infamy_level = {
-		value = 25
+		value = 35
 	}
 	
 	unacceptable_infamy_level = {
-		value = 50
+		value = 75
 	}
 	
 	ideological_opinion_effect_mult = {
@@ -828,6 +885,13 @@ ai_strategy_unify_arcadia = {
 	# Added to value from default strategy
 	recklessness = {
 		value = 0.5
+
+		if = {
+			limit = {
+				has_technology_researched = pan-nationalism
+			}
+			add = 0.25
+		}
 	}
 	
 	# Added to value from default strategy
@@ -845,6 +909,20 @@ ai_strategy_unify_arcadia = {
 				}
 			}
 			add = 2.75
+		}
+
+		if = {
+			limit = { 
+				has_technology_researched = pan-nationalism
+				scope:target_country = {			
+					OR = {
+						country_has_primary_culture = cu:belgian
+						country_has_primary_culture = cu:plantagenian
+						country_has_primary_culture = cu:vinlander
+					}
+				}
+			}
+			add = 5
 		}
 
 		# Less aggressive against countries we're just antagonistic against, rather than belligerent/domineering
@@ -941,8 +1019,10 @@ ai_strategy_unify_arcadia = {
 	}	
 
 	possible = {
+		has_technology_researched = pan-nationalism
 		NOT = { exists = c:ARC }
 		can_form_nation = ARC
+		has_technology_researched = nationalism
 	}
 
 	weight = {
@@ -954,14 +1034,6 @@ ai_strategy_unify_ari = {
 	icon = "gfx/interface/icons/ai_strategy_icons/unification.dds"
 	
 	type = diplomatic
-	
-	wanted_army_ratio = {
-		value = 150000
-	}
-	
-	wanted_navy_ratio = {
-		value = 400000
-	}
 		
 	undesirable_infamy_level = {
 		value = 35
@@ -1012,6 +1084,13 @@ ai_strategy_unify_ari = {
 	# Added to value from default strategy
 	recklessness = {
 		value = 0.5
+
+		if = {
+			limit = {
+				has_technology_researched = pan-nationalism
+			}
+			add = 0.25
+		}
 	}
 	
 	# Added to value from default strategy
@@ -1022,17 +1101,44 @@ ai_strategy_unify_ari = {
 			limit = { 
 				scope:target_country = {			
 					OR = {
-						country_has_primary_culture = cu:catalan
-						country_has_primary_culture = cu:north_italian
-						country_has_primary_culture = cu:central_italian
-						country_has_primary_culture = cu:south_italian
-						country_has_primary_culture = cu:sardinian #DVG
-						country_has_primary_culture = cu:venetian #DVG
-						country_has_primary_culture = cu:maltese
+						country_has_primary_culture = cu:venetian
 					}
 				}
 			}
 			add = 2.75
+		}
+
+		if = {
+			limit = { 
+				scope:target_country = {			
+					OR = {
+						country_has_primary_culture = cu:catalan
+						country_has_primary_culture = cu:north_italian
+						country_has_primary_culture = cu:central_italian
+						country_has_primary_culture = cu:south_italian
+						country_has_primary_culture = cu:sardinian
+						country_has_primary_culture = cu:maltese
+					}
+				}
+			}
+			add = 5
+		}
+
+		if = {
+			limit = {
+				has_technology_researched = pan-nationalism
+				scope:target_country = {			
+					OR = {
+						country_has_primary_culture = cu:catalan
+						country_has_primary_culture = cu:north_italian
+						country_has_primary_culture = cu:central_italian
+						country_has_primary_culture = cu:south_italian
+						country_has_primary_culture = cu:sardinian
+						country_has_primary_culture = cu:maltese
+					}
+				}
+			}
+			add = 5
 		}
 
 		# Less aggressive against countries we're just antagonistic against, rather than belligerent/domineering
@@ -1077,6 +1183,7 @@ ai_strategy_unify_ari = {
 		conquer_state = {
 			if = {
 				limit = {
+					is_adjacent = scope:target_country
 					scope:target_state = {
 						state_region = {
 							OR = {
@@ -1085,8 +1192,8 @@ ai_strategy_unify_ari = {
 								is_homeland = cu:central_italian
 								is_homeland = cu:south_italian
 								is_homeland = cu:maltese
-								is_homeland = cu:sardinian #DVG
-								is_homeland = cu:venetian #DVG
+								is_homeland = cu:sardinian
+								is_homeland = cu:venetian
 							}
 						}					
 					}	
@@ -1106,8 +1213,8 @@ ai_strategy_unify_ari = {
 								is_homeland = cu:central_italian
 								is_homeland = cu:south_italian
 								is_homeland = cu:maltese
-								is_homeland = cu:sardinian #DVG
-								is_homeland = cu:venetian #DVG
+								is_homeland = cu:sardinian
+								is_homeland = cu:venetian
 							}
 						}					
 					}
@@ -1119,17 +1226,51 @@ ai_strategy_unify_ari = {
 	}
 	
 	secret_goal_scores = {
+		protect = {		
+			if = {
+				limit = {
+					scope:target_country = {
+						OR = {
+							country_has_primary_culture = cu:catalan
+							country_has_primary_culture = cu:north_italian
+							country_has_primary_culture = cu:south_italian
+							country_has_primary_culture = cu:central_italian
+							country_has_primary_culture = cu:sardinian
+							country_has_primary_culture = cu:venetian
+							country_has_primary_culture = cu:maltese
+						}
+						OR = { 
+							is_subject_of = root
+							has_diplomatic_pact = {
+								who = scope:target_country
+								type = customs_union
+							}							
+						}
+					}
+				}
+				add = 1000
+			}		
+		}
 		dominate = {		
 			if = {
 				limit = {
 					scope:target_country = {
-						country_has_primary_culture = cu:catalan
-						country_has_primary_culture = cu:north_italian
-						country_has_primary_culture = cu:south_italian
-						country_has_primary_culture = cu:central_italian #DVG
-						country_has_primary_culture = cu:sardinian #DVG
-						country_has_primary_culture = cu:venetian #DVG
-						country_has_primary_culture = cu:maltese
+						OR = {
+							country_has_primary_culture = cu:catalan
+							country_has_primary_culture = cu:north_italian
+							country_has_primary_culture = cu:south_italian
+							country_has_primary_culture = cu:central_italian
+							country_has_primary_culture = cu:sardinian
+							country_has_primary_culture = cu:venetian
+							country_has_primary_culture = cu:maltese
+						}
+						NOR = {
+							is_subject_of = root
+							has_diplomatic_pact = {
+								who = scope:target_country
+								type = customs_union
+							}					
+						}	
 					}
 				}
 				add = 1000
@@ -1143,9 +1284,9 @@ ai_strategy_unify_ari = {
 							country_has_primary_culture = cu:catalan
 							country_has_primary_culture = cu:north_italian
 							country_has_primary_culture = cu:south_italian
-							country_has_primary_culture = cu:central_italian #DVG
-							country_has_primary_culture = cu:sardinian #DVG
-							country_has_primary_culture = cu:venetian #DVG
+							country_has_primary_culture = cu:central_italian
+							country_has_primary_culture = cu:sardinian
+							country_has_primary_culture = cu:venetian
 							country_has_primary_culture = cu:maltese
 						}
 					}
@@ -1156,6 +1297,7 @@ ai_strategy_unify_ari = {
 	}	
 
 	possible = {
+		has_technology_researched = nationalism
 		NOT = { exists = c:ARI }
 		OR = {
 			can_form_nation = ARI
@@ -1175,14 +1317,6 @@ ai_strategy_unify_north_germany = {
 	icon = "gfx/interface/icons/ai_strategy_icons/unification.dds"
 	
 	type = diplomatic
-	
-	wanted_army_ratio = {
-		value = 150000
-	}
-	
-	wanted_navy_ratio = {
-		value = 400000
-	}
 	
 	undesirable_infamy_level = {
 		value = 25
@@ -1319,6 +1453,7 @@ ai_strategy_unify_north_germany = {
 					scope:target_country = {
 						OR = {
 							country_has_primary_culture = cu:north_german
+							country_has_primary_culture = cu:south_german
 						}
 						NOT = { is_unification_candidate = GER }
 						OR = { 
@@ -1339,6 +1474,7 @@ ai_strategy_unify_north_germany = {
 					scope:target_country = {
 						OR = {
 							country_has_primary_culture = cu:north_german
+							country_has_primary_culture = cu:south_german
 						}					
 						NOT = { is_unification_candidate = GER }
 						NOR = { 
@@ -1391,14 +1527,6 @@ ai_strategy_unify_south_germany = {
 	
 	type = diplomatic
 	
-	wanted_army_ratio = {
-		value = 150000
-	}
-	
-	wanted_navy_ratio = {
-		value = 400000
-	}
-	
 	undesirable_infamy_level = {
 		value = 25
 	}
@@ -1430,6 +1558,7 @@ ai_strategy_unify_south_germany = {
 			limit = { 
 				scope:target_country = {			
 					OR = {
+						country_has_primary_culture = cu:north_german
 						country_has_primary_culture = cu:south_german
 					}
 				}
@@ -1449,6 +1578,7 @@ ai_strategy_unify_south_germany = {
 			limit = { 
 				scope:target_country = {			
 					OR = {
+						country_has_primary_culture = cu:north_german
 						country_has_primary_culture = cu:south_german
 					}
 				}
@@ -1533,6 +1663,7 @@ ai_strategy_unify_south_germany = {
 				limit = {
 					scope:target_country = {
 						OR = {
+							country_has_primary_culture = cu:north_german
 							country_has_primary_culture = cu:south_german
 						}
 						NOT = { is_unification_candidate = GER }
@@ -1553,6 +1684,7 @@ ai_strategy_unify_south_germany = {
 				limit = {
 					scope:target_country = {
 						OR = {
+							country_has_primary_culture = cu:north_german
 							country_has_primary_culture = cu:south_german
 						}					
 						NOT = { is_unification_candidate = GER }
@@ -1590,6 +1722,746 @@ ai_strategy_unify_south_germany = {
 			has_journal_entry = je_danubian_unification
 		}
 		country_rank >= rank_value:minor_power
+	}
+
+	weight = {
+		value = 1000
+	}
+}
+
+ai_strategy_unify_britain = {
+	icon = "gfx/interface/icons/ai_strategy_icons/unification.dds"
+	
+	type = diplomatic
+	
+	undesirable_infamy_level = {
+		value = 25
+	}
+	
+	unacceptable_infamy_level = {
+		value = 50
+	}
+	
+	ideological_opinion_effect_mult = {
+		value = 0.5
+	}
+	
+	wargoal_maneuvers_fraction = {
+		value = 0.1
+	}		
+	
+	diplomatic_play_neutrality = {
+		value = 0
+	}
+	
+	diplomatic_play_boldness = {
+		value = 75
+	}
+
+	obligation_value = {
+		value = 0
+	
+		if = {
+			limit = { 
+				scope:target_country = {			
+					OR = {
+						country_has_primary_culture = cu:british
+						country_has_primary_culture = cu:scottish
+						country_has_primary_culture = cu:welsh
+						country_has_primary_culture = cu:irish
+					}
+				}
+			}
+			add = 25
+		}
+	}	
+
+	recklessness = {
+		value = 0.5
+
+		if = {
+			limit = {
+				has_technology_researched = pan-nationalism
+			}
+			add = 0.25
+		}
+	}
+	
+	aggression = {
+		value = 0.25
+		
+		if = {
+			limit = {
+				has_technology_researched = pan-nationalism
+			}
+			add = 0.25
+		}
+		
+		if = {
+			limit = { 
+				scope:target_country = {			
+					OR = {
+						country_has_primary_culture = cu:british
+						country_has_primary_culture = cu:scottish
+						country_has_primary_culture = cu:welsh
+						country_has_primary_culture = cu:irish
+						country_has_primary_culture = cu:anglois
+					}
+				}
+			}
+			add = 2.75
+		}
+
+		# Less aggressive against countries we're just antagonistic against, rather than belligerent/domineering
+		if = {
+			limit = {
+				has_attitude = {
+					who = scope:target_country
+					attitude = antagonistic
+				}					
+			}
+			multiply = 0.25
+		}
+
+		# More aggressive against ideological enemies, a bit less aggressive against ideological allies
+		if = {
+			limit = {
+				"ai_ideological_opinion(scope:target_country)" < 0
+			}
+			
+			multiply = {
+				value = "ai_ideological_opinion(scope:target_country)"
+				multiply = -0.2
+				add = 1
+				max = 4.0
+			}				
+		}	
+		else = {
+			multiply = {
+				value = "ai_ideological_opinion(scope:target_country)"
+				multiply = -0.05
+				add = 1
+				min = 0.5
+			}			
+		}
+	}
+
+	building_group_weights = {
+		bg_army = 1.5
+	}
+	
+	wargoal_scores = {
+		conquer_state = {
+			if = {
+				limit = {
+					scope:target_state = {
+						state_region = {
+							OR = {
+								is_homeland = cu:british
+								is_homeland = cu:scottish
+								is_homeland = cu:welsh
+								is_homeland = cu:irish
+							}
+						}
+					}
+					can_reach_target_state = yes				
+				}
+				add = 100
+			}
+		}
+		return_state = {
+			if = {
+				limit = {
+					scope:target_state = {
+						state_region = {
+							OR = {
+								is_homeland = cu:british
+								is_homeland = cu:scottish
+								is_homeland = cu:welsh
+								is_homeland = cu:irish
+							}
+						}	
+					}
+					can_reach_target_state = yes
+				}
+				add = 100
+			}
+		}
+		unification_leadership = {
+			value = 1000
+		}	
+	}
+
+	secret_goal_scores = {
+		protect = {		
+			if = {
+				limit = {
+					scope:target_country = {
+						OR = {
+							country_has_primary_culture = cu:british
+							country_has_primary_culture = cu:scottish
+							country_has_primary_culture = cu:welsh
+							country_has_primary_culture = cu:irish
+							country_has_primary_culture = cu:anglois
+						}
+						NOT = { is_unification_candidate = GBR }
+						OR = { 
+							is_supporting_unification_candidate = { who = root country_formation = GBR }
+							is_subject_of = root
+							has_diplomatic_pact = {
+								who = scope:target_country
+								type = customs_union
+							}							
+						}
+					}
+				}
+				add = 1000
+			}		
+		}		
+		dominate = {		
+			if = {
+				limit = {
+					scope:target_country = {
+						OR = {
+							country_has_primary_culture = cu:british
+							country_has_primary_culture = cu:scottish
+							country_has_primary_culture = cu:welsh
+							country_has_primary_culture = cu:irish
+							country_has_primary_culture = cu:anglois
+						}					
+						NOT = { is_unification_candidate = GBR }
+						NOR = { 
+							is_supporting_unification_candidate = { who = root country_formation = GBR }
+							is_subject_of = root
+							has_diplomatic_pact = {
+								who = scope:target_country
+								type = customs_union
+							}
+						}
+					}
+				}
+				add = 1000
+			}		
+		}		
+		conquer = {		
+			if = {
+				limit = {
+					scope:target_country = {				
+						is_unification_candidate = GBR
+					}
+				}
+				add = 1000
+			}
+			if = {
+				limit = {
+					country_has_primary_culture = cu:anglois
+					scope:target_country = {
+						any_scope_state = {
+							state_region = {
+								OR = {
+									is_homeland = cu:british
+									is_homeland = cu:welsh
+									is_homeland = cu:irish
+								}
+							}
+						}
+					}
+				}
+				add = 1000
+			}
+		}
+	}	
+
+	possible = {
+		is_unification_candidate = GBR	
+		NOT = { country_tier = empire }
+	}
+
+	weight = {
+		value = 1500
+	}
+}
+
+ai_strategy_unify_persia = {
+	icon = "gfx/interface/icons/ai_strategy_icons/unification.dds"
+	
+	type = diplomatic
+	
+	undesirable_infamy_level = {
+		value = 50
+	}
+	
+	unacceptable_infamy_level = {
+		value = 100
+	}
+	
+	ideological_opinion_effect_mult = 0.5
+	
+	wargoal_maneuvers_fraction = {
+		value = 0.1
+	}		
+		
+	diplomatic_play_neutrality = {
+		value = 0
+	}
+	
+	diplomatic_play_boldness = {
+		value = 50
+	}
+		
+	obligation_value = {
+		value = 0
+	
+		if = {
+			limit = { 
+				scope:target_country = { can_form_nation = PER }
+			}
+			add = 25
+		}
+	}			
+		
+	recklessness = {
+		value = 0.5
+	}	
+	
+	aggression = {
+		value = 0.5
+		
+		if = {
+			limit = { 
+				scope:target_country = { 
+					can_form_nation = PER
+				}
+			}
+			add = 2.5
+		}
+		
+		if = {
+			limit = { 
+				scope:target_country = {
+					OR = {
+						country_has_primary_culture = cu:turkmen
+						country_has_primary_culture = cu:azerbaijani
+						country_has_primary_culture = cu:persian
+					}
+				}
+			}
+			add = 2.5
+		}
+
+		# Less aggressive against countries we're just antagonistic against, rather than belligerent/domineering
+		if = {
+			limit = {
+				has_attitude = {
+					who = scope:target_country
+					attitude = antagonistic
+				}					
+			}
+			multiply = 0.25
+		}
+		
+		# More aggressive against ideological enemies, a bit less aggressive against ideological allies
+		if = {
+			limit = {
+				"ai_ideological_opinion(scope:target_country)" < 0
+			}
+			
+			multiply = {
+				value = "ai_ideological_opinion(scope:target_country)"
+				multiply = -0.2
+				add = 1
+				max = 4.0
+			}				
+		}	
+		else = {
+			multiply = {
+				value = "ai_ideological_opinion(scope:target_country)"
+				multiply = -0.05
+				add = 1
+				min = 0.5
+			}			
+		}
+	}
+
+	building_group_weights = {
+		bg_army = 1.5
+	}
+	
+	wargoal_scores = {
+		conquer_state = {
+			if = {
+				limit = {
+					scope:target_state = {
+						state_region = {
+							OR = {
+								is_homeland = cu:persian
+							}					
+						}						
+					}
+					can_reach_target_state = yes
+				}
+				add = 100
+			}
+		}
+		return_state = {
+			if = {
+				limit = {
+					scope:target_state = {
+						state_region = {
+							OR = {
+								is_homeland = cu:persian
+							}					
+						}						
+					}
+					can_reach_target_state = yes				
+				}
+				add = 100
+			}
+		}		
+		annex_country = {
+			if = {
+				limit = {
+					scope:target_country = {
+						can_form_nation = PER
+					}
+				}
+			}
+			add = 1000
+		}
+	}		
+	
+	secret_goal_scores = {	
+		dominate = {		
+			if = {
+				limit = {
+					scope:target_country = {
+						can_form_nation = PER
+					}
+				}
+				add = 300
+			}			
+		}
+		conquer = {				
+			if = {
+				limit = {
+					scope:target_country = {
+						can_form_nation = PER
+					}
+				}
+				add = 300
+			}				
+		}			
+	}	
+
+	possible = {
+		NOT = { exists = c:PER }
+		can_form_nation = PER
+	}
+
+	weight = {
+		value = 500
+		
+		if = {
+			limit = { NOT = { is_country_type = unrecognized } }
+			add = 100
+		}		
+		
+		if = {
+			limit = { country_rank = rank_value:unrecognized_regional_power }
+			add = 25
+		}
+
+		if = {
+			limit = { country_rank = rank_value:unrecognized_major_power }
+			add = 50
+		}		
+	}
+}
+
+ai_strategy_unify_north_italy = {
+	icon = "gfx/interface/icons/ai_strategy_icons/unification.dds"
+	
+	type = diplomatic
+		
+	undesirable_infamy_level = {
+		value = 25
+	}
+	
+	unacceptable_infamy_level = {
+		value = 50
+	}
+	
+	ideological_opinion_effect_mult = {
+		value = 0.5
+	}
+	
+	wargoal_maneuvers_fraction = {
+		value = 0.1
+	}		
+	
+	diplomatic_play_neutrality = {
+		value = 0
+	}
+	
+	diplomatic_play_boldness = {
+		value = 75
+	}
+	
+	obligation_value = {
+		value = 0
+	
+		if = {
+			limit = { 
+				scope:target_country = {
+					OR = {
+						country_has_primary_culture = cu:north_italian
+						country_has_primary_culture = cu:central_italian
+					}				
+				}
+			}
+			add = 25
+		}
+	}		
+	
+	recklessness = {
+		value = 0.5
+
+		if = {
+			limit = {
+				exists = c:LOM
+				THIS = c:LOM
+				has_global_variable = peoples_springtime_happening
+				scope:target_country = {
+					exists = c:TUS
+					THIS = c:TUS
+				}
+			}
+
+			add = 0.5
+		}
+
+		if = {
+			limit = { 
+				scope:target_country = {
+					OR = {
+						country_has_primary_culture = cu:north_italian
+						country_has_primary_culture = cu:central_italian
+					}				
+				}
+				has_global_variable = peoples_springtime_happening
+			}
+			add = 0.5
+		}
+	}	
+	
+	aggression = {
+		value = 0.25
+		
+		if = {
+			limit = { 
+				scope:target_country = {
+					OR = {
+						country_has_primary_culture = cu:north_italian
+						country_has_primary_culture = cu:central_italian
+					}				
+				}
+			}
+			add = 2.75
+		}
+
+		if = {
+			limit = { 
+				scope:target_country = {
+					OR = {
+						country_has_primary_culture = cu:north_italian
+						country_has_primary_culture = cu:central_italian
+					}				
+				}
+				has_global_variable = peoples_springtime_happening
+			}
+			add = 5
+		}
+
+		if = {
+			limit = {
+				exists = c:LOM
+				THIS = c:LOM
+				has_global_variable = peoples_springtime_happening
+				scope:target_country = {
+					exists = c:TUS
+					THIS = c:TUS
+				}
+			}
+
+			add = 100
+		}
+
+		if = {
+			limit = {
+				scope:target_country = {
+					exists = c:SAV
+					THIS = c:SAV
+				}
+			}
+
+			add = 50
+		}
+
+		# Less aggressive against countries we're just antagonistic against, rather than belligerent/domineering
+		if = {
+			limit = {
+				has_attitude = {
+					who = scope:target_country
+					attitude = antagonistic
+				}					
+			}
+			multiply = 0.25
+		}
+		
+		# More aggressive against ideological enemies, a bit less aggressive against ideological allies
+		if = {
+			limit = {
+				"ai_ideological_opinion(scope:target_country)" < 0
+			}
+			
+			multiply = {
+				value = "ai_ideological_opinion(scope:target_country)"
+				multiply = -0.2
+				add = 1
+				max = 4.0
+			}				
+		}	
+		else = {
+			multiply = {
+				value = "ai_ideological_opinion(scope:target_country)"
+				multiply = -0.05
+				add = 1
+				min = 0.5
+			}			
+		}
+	}
+
+	building_group_weights = {
+		bg_army = 1.5
+	}
+	
+	wargoal_scores = {
+		conquer_state = {
+			if = {
+				limit = {
+					scope:target_state = {
+						state_region = {
+							OR = {
+								is_homeland = cu:north_italian
+								is_homeland = cu:central_italian
+							}
+						}
+						owner = {
+							NOR = { 
+								is_subject_of = root
+								has_diplomatic_pact = {
+									who = scope:target_country
+									type = customs_union
+								}							
+							}						
+						}				
+					}	
+					can_reach_target_state = yes
+				}
+				add = 100
+			}
+		}
+		return_state = {
+			if = {
+				limit = {
+					scope:target_state = {
+						state_region = {
+							OR = {
+								is_homeland = cu:north_italian
+								is_homeland = cu:central_italian
+							}
+						}					
+					}
+					can_reach_target_state = yes
+				}
+				add = 100
+			}
+		}
+	}	
+	
+	secret_goal_scores = {
+		protect = {		
+			if = {
+				limit = {
+					scope:target_country = {
+						OR = {
+							country_has_primary_culture = cu:north_italian
+							country_has_primary_culture = cu:central_italian
+						}
+						NOT = { has_journal_entry = je_italian_confederation }
+						OR = { 
+							is_subject_of = root
+							has_diplomatic_pact = {
+								who = scope:target_country
+								type = customs_union
+							}							
+						}
+					}
+				}
+				add = 1000
+			}		
+		}		
+		dominate = {		
+			if = {
+				limit = {
+					scope:target_country = {
+						OR = {
+							country_has_primary_culture = cu:north_italian
+							country_has_primary_culture = cu:central_italian
+						}
+						NOR = { 
+							has_journal_entry = je_italian_confederation
+							is_subject_of = root
+							has_diplomatic_pact = {
+								who = scope:target_country
+								type = customs_union
+							}							
+						}	
+					}
+				}
+				add = 500
+			}		
+		}		
+		conquer = {				
+			if = {
+				limit = {
+					scope:target_country = {			
+						OR = {
+							has_journal_entry = je_italian_confederation
+							AND = {
+								exists = c:ARN
+								THIS = c:ARN
+							}
+						}
+					}
+				}
+				add = 1000
+			}
+			if = {
+				limit = {
+					scope:target_country = {
+						exists = c:SAV
+						THIS = c:SAV
+					}
+				}
+				add = 1500
+			}
+		}	
+	}	
+
+	possible = {
+		has_journal_entry = je_italian_confederation
+		NOT = { country_tier = empire }
 	}
 
 	weight = {

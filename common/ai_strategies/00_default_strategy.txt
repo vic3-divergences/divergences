@@ -55,7 +55,18 @@ ai_strategy_default = {
     # Added to base neutrality in diplomatic plays    
     # Using this value in other strategies will function additively
     diplomatic_play_neutrality = {
-        value = 50 
+        value = 50
+
+		if = {
+			limit = { has_modifier = neutrality }
+			add = 1000
+		}
+        value = 50
+
+		if = {
+			limit = { has_modifier = neutrality }
+			add = 1000
+		}
     }
 	
     # Added to base boldness in diplomatic plays    
@@ -63,21 +74,36 @@ ai_strategy_default = {
     diplomatic_play_boldness = {
         value = 50 
 
-        if = { #Taiping should never surrender against China.
-            limit = {
-                exists = c:TPG
-                THIS = c:TPG
-                is_diplomatic_play_initiator = yes
-            }
-            add = 1000
-        }
+		if = { # Isolationist Japan should tend to back down against market opening plays
+			limit = {
+				exists = c:JAP
+				THIS = c:JAP
+				has_law = law_type:law_isolationism 
+				NOT = { has_variable = japan_forced_to_open_market }
+				scope:diplomatic_play = { 
+					has_play_goal = open_market
+				}
+			}
+			add = -75
+		}
+		
+		if = { #Taiping should never surrender against China.
+			limit = {
+				exists = c:TPG
+				THIS = c:TPG
+				exists = c:CHI
+				is_diplomatic_play_enemy_of = c:CHI
+			}
+			add = 1000
+		}
 
 		# Never surrender example
         if = {
             limit = {
                 exists = c:IUS
                 THIS = c:IUS
-                is_diplomatic_play_initiator = yes
+				exists = c:RUS
+				is_diplomatic_play_enemy_of = c:RUS
             }
             add = 1000
         }
@@ -96,18 +122,6 @@ ai_strategy_default = {
             add = -0.1
         }    
     }
-    
-    # How many barracks relative to incorporated population should the AI have
-    # Using a different value in a strategy will override this value
-    wanted_army_ratio = {
-        value = 200000 # 1 barrack per 200k incorporated population
-    }
-    
-    # How many naval bases relative to incorporated coastal population should the AI have
-    # Using a different value in a strategy will override this value
-    wanted_navy_ratio = {
-        value = 400000 # 1 naval base per 400k coastal incorporated population
-    }    
     
     # Chance each update that the AI is willing to start changing a law (1 = 1%)
     # Using this value in other strategies will function additively
@@ -570,7 +584,10 @@ ai_strategy_default = {
 		if = {
 			limit = {
 				# Todo: Should maybe be a journal in the future?
-				country_has_primary_culture = cu:anglois
+				OR = {
+					country_has_primary_culture = cu:anglois
+					country_has_primary_culture = cu:british
+				}
 				year >= 1860
 				scope:target_country = {
 					any_scope_state = {
@@ -580,7 +597,6 @@ ai_strategy_default = {
 							state_region = s:STATE_ASSAM
 							state_region = s:STATE_BIHAR
 							state_region = s:STATE_AWADH
-							state_region = s:STATE_DELHI
 						}
 					}
 				}
@@ -597,6 +613,7 @@ ai_strategy_default = {
 				scope:target_country = {
 					any_scope_state = {
 						OR = {
+							state_region = s:STATE_GUJARAT
 							state_region = s:STATE_SINDH
 							state_region = s:STATE_RAJPUTANA
 							state_region = s:STATE_PUNJAB
@@ -605,6 +622,47 @@ ai_strategy_default = {
 				}
 			}
 			add = 5
+		}
+
+		#Burgundian East Indies expansion
+		if = {
+			limit = {
+				country_has_primary_culture = cu:burgundian
+				year >= 1860
+				scope:target_country = {
+					any_scope_state = {
+						OR = {
+							state_region = s:STATE_EAST_BORNEO
+							state_region = s:STATE_WEST_BORNEO
+							state_region = s:STATE_CELEBES
+							state_region = s:STATE_SOUTH_SUMATRA
+							state_region = s:STATE_NORTH_SUMATRA
+							state_region = s:STATE_ACEH
+						}
+					}
+				}
+			}
+			add = 10
+		}
+
+		#Scandinavian East Indies expansion
+		if = {
+			limit = {
+				country_has_primary_culture = cu:scandinavian
+				year >= 1860
+				scope:target_country = {
+					any_scope_state = {
+						OR = {
+							state_region = s:STATE_NORTH_BORNEO
+							state_region = s:STATE_EAST_BORNEO
+							state_region = s:STATE_VISAYAS
+							state_region = s:STATE_LUZON
+							state_region = s:STATE_MALAYA
+						}
+					}
+				}
+			}
+			add = 10
 		}
 
 		#Tiwantisuyu should at least try to get their empire back
@@ -691,6 +749,50 @@ ai_strategy_default = {
 			}
 			add = 1
 		}
+		#Tawantinsuyu will be more aggressive in conquering Beornia
+		if = {
+			limit = {
+				has_journal_entry = je_beornia_conquer
+				scope:target_country = {
+					any_scope_state = {
+						OR = {
+							state_region = s:STATE_EOFERWIC
+							state_region = s:STATE_NORTHUMBRIA
+							state_region = s:STATE_WESSEX
+							state_region = s:STATE_LANDS_END
+							state_region = s:STATE_AVALON
+							state_region = s:STATE_NEW_CORNWALL
+							state_region = s:STATE_NEW_LONDON
+							state_region = s:STATE_GODWINSON
+						
+						}
+					}
+				}
+			}
+			add = 1
+		}
+		#Beornia will be more aggressive in conquering England once they get that journal entry
+		
+		if = {
+			limit = {
+				has_journal_entry = je_england_conquer
+				scope:target_country = {
+					any_scope_state = {
+						OR = {
+						state_region = s:STATE_HOME_COUNTIES
+						state_region = s:STATE_LANCASHIRE
+						state_region = s:STATE_YORKSHIRE
+						state_region = s:STATE_MIDLANDS
+						state_region = s:STATE_EAST_ANGLIA
+						state_region = s:STATE_WEST_COUNTRY
+						
+						}
+					}
+				}
+			}
+			add = 1
+		}
+		
 		# Lotharingia and Odonia will try to reunite Lotharian homelands until JEs are complete or failed
 		
 		if = {
@@ -722,6 +824,47 @@ ai_strategy_default = {
 						state_region = s:STATE_SERMOISE_SUR_ODON
 						state_region = s:STATE_BRUXELLES_SUR_ODON
 						state_region = s:STATE_TRANSFLEUVE
+					}
+				}
+			}
+			add = 1
+		}
+		#HBE will be more aggressive towards Euro-Ameriga and TWT
+		if = { 
+			limit = { 
+				has_journal_entry = je_ameriga_conquer
+				scope:target_country = {
+					any_scope_state = {
+						state_region = s:STATE_COTE_DU_CAFE
+						state_region = s:STATE_LIBREVILLE
+						state_region = s:STATE_BOURGOGNE_DU_SUD
+						state_region = s:STATE_NOUVELLE_ALSACE
+						state_region = s:STATE_MARCHES_OUEST
+						state_region = s:STATE_CHACO_BOREAL
+						state_region = s:STATE_GRAND_CHACO
+						state_region = s:STATE_LORRAINE_ATLANTIQUE
+						state_region = s:STATE_SERMOISE_SUR_ODON
+						state_region = s:STATE_BRUXELLES_SUR_ODON
+						state_region = s:STATE_TRANSFLEUVE
+						state_region = s:STATE_TILCARA
+						state_region = s:STATE_ATACAMA
+						state_region = s:STATE_CHARCAS
+						state_region = s:STATE_TIWANAKU
+						state_region = s:STATE_COLLASUYU
+						state_region = s:STATE_NEAR_COLLASUYU
+						state_region = s:STATE_KUCHICHAY
+						state_region = s:STATE_CATAMARCA
+						state_region = s:STATE_GOUAS
+						state_region = s:STATE_VAURA
+						state_region = s:STATE_MONTS_DIAMANTS
+						state_region = s:STATE_COTE_DU_SUCRE
+						state_region = s:STATE_FRANCE_ANTARTIQUE
+						state_region = s:STATE_CAPPADOCE
+						state_region = s:STATE_PROCHE_AMAZONIE
+						state_region = s:STATE_AMAZONIE_INFERIEURE
+						state_region = s:STATE_AMAZONIE_PROFONDE
+						state_region = s:STATE_PARA
+						state_region = s:STATE_GUAYANA
 					}
 				}
 			}
@@ -769,6 +912,65 @@ ai_strategy_default = {
 			}
 			add = 1
 		}
+		if = {  #Amazonie annex Equinoxea
+			limit = {
+				has_journal_entry = je_equinoxea_annex
+				scope:target_country = {
+					any_scope_state = {
+						state_region = s:STATE_VAURA
+						state_region = s:STATE_CAPPADOCE
+						state_region = s:STATE_AMAZONIE_INFERIEURE
+						state_region = s:STATE_PROCHE_AMAZONIE
+						state_region = s:STATE_AMAZONIE_PROFONDE
+					}
+				}
+			}
+			add = 1
+		}
+		if = {  #Tupi fight
+			limit = {
+				has_journal_entry = je_tupia_fight
+				scope:target_country = {
+					any_scope_state = {
+						state_region = s:STATE_VAURA
+						state_region = s:STATE_CAPPADOCE
+						state_region = s:STATE_AMAZONIE_INFERIEURE
+						state_region = s:STATE_PROCHE_AMAZONIE
+						state_region = s:STATE_AMAZONIE_PROFONDE
+					}
+				}
+			}
+			add = 1
+		}
+		if = {  #EQX attack AMA
+			limit = {
+				has_journal_entry = je_amazonie_annex
+				scope:target_country = {
+					any_scope_state = {
+						state_region = s:STATE_MONTS_DIAMANTS
+						state_region = s:STATE_GOUAS
+						state_region = s:STATE_FRANCE_ANTARTIQUE
+						state_region = s:STATE_COTE_DU_SUCRE
+						state_region = s:STATE_COTE_DU_CAFE
+					}
+				}
+			}
+			add = 1
+		}
+		if = {  #Atlantians unite
+			limit = {
+				has_journal_entry = je_amazonie_annex
+				scope:target_country = {
+					any_scope_state = {
+						state_region = s:STATE_GOUAS
+						state_region = s:STATE_LIBREVILLE
+						state_region = s:STATE_NOUVELLE_ALSACE
+						state_region = s:STATE_COTE_DU_CAFE
+					}
+				}
+			}
+			add = 1
+		}
 		
 		if = {
 			limit = {
@@ -791,6 +993,7 @@ ai_strategy_default = {
 				scope:target_country = {
 					any_scope_state = {
 						OR = {
+							state_region = s:STATE_SLOBOZ
 							state_region = s:STATE_DANU
 							state_region = s:STATE_ROSTOV
 							state_region = s:STATE_KURSK
@@ -815,6 +1018,97 @@ ai_strategy_default = {
 			}
 			add = 5
 		}	
+		if = {
+				limit = {
+					has_journal_entry = je_galdan_khan
+					scope:target_country = {
+						any_scope_state = {
+							OR = {
+								state_region = s:STATE_BEIJING
+								state_region = s:STATE_NINGXIA
+								state_region = s:STATE_GANSU
+								state_region = s:STATE_QINGHAI
+								state_region = s:STATE_SHANXI
+								state_region = s:STATE_XIAN
+							}
+						}
+					}
+				}
+				add = 35
+			}
+
+		if = {
+			limit = {
+				has_journal_entry = je_tar_east_expansion
+				scope:target_country = {
+					any_scope_state = {
+						OR = {
+							state_region = s:STATE_BASHKORTOSTAN
+							state_region = s:STATE_TOBOLSK
+							state_region = s:STATE_TOMSK
+						}
+					}
+				}
+			}
+			add = 5
+		}
+
+		if = {
+			limit = {
+				has_journal_entry = je_tar_east_expansion
+				owns_entire_state_region = STATE_BASHKORTOSTAN
+				scope:target_country = {
+					any_scope_state = {
+						OR = {
+							state_region = s:STATE_URAL
+							state_region = s:STATE_PERM
+						}
+					}
+				}
+			}
+			add = 5
+		}
+
+		if = {
+			limit = {
+				has_journal_entry = je_tar_central_asia_expansion
+				scope:target_country = {
+					any_scope_state = {
+						OR = {
+							state_region = s:STATE_URALSK
+							state_region = s:STATE_UZBEKIA
+							state_region = s:STATE_SEMIRECHE
+							state_region = s:STATE_JETISY
+							state_region = s:STATE_AKMOLINSK
+						}
+					}
+				}
+			}
+			add = 5
+		}	
+
+		if = {
+			limit = {
+				has_journal_entry = je_cossack_south_expansion
+				scope:target_country = {
+					any_scope_state = {
+						OR = {
+							state_region = s:STATE_CRIMEA
+							state_region = s:STATE_YEDISAN
+							state_region = s:STATE_QOBAN
+							state_region = s:STATE_ROSTOV
+							state_region = s:STATE_ASTRAKHAN
+							state_region = s:STATE_DAGESTAN
+							state_region = s:STATE_KUBAN
+							state_region = s:STATE_IDEL
+							state_region = s:STATE_BASHKORTOSTAN
+							state_region = s:STATE_URALSK
+						}
+					}
+				}
+			}
+			add = 5
+		}	
 
 		if = {
 			limit = {
@@ -831,7 +1125,7 @@ ai_strategy_default = {
 					}
 				}
 			}
-			add = 1
+			add = 5
 		}	
 
 		# # Ethiopian Thunderdome
@@ -844,6 +1138,23 @@ ai_strategy_default = {
 			# }
 			# add = 0.5
 		# }
+
+		# Persian Thunderdome
+		if = {
+			limit = {
+				OR = {
+					country_has_primary_culture = cu:turkmen
+					country_has_primary_culture = cu:persian
+				}
+				scope:target_country = {
+					OR = {
+						country_has_primary_culture = cu:turkmen
+						country_has_primary_culture = cu:persian
+					}
+				}
+			}
+			add = 1
+		}
 
 		#Italian Nightmare
 		if = {
@@ -886,6 +1197,55 @@ ai_strategy_default = {
 				has_journal_entry = je_saxon_destiny
 				scope:target_country = {
 					has_journal_entry = je_saxon_destiny
+				}
+			}
+			add = 5
+		}
+
+		if = {
+			limit = {
+				has_journal_entry = je_reconquer_england
+				scope:target_country = {
+					any_scope_state = {
+						state_region = s:STATE_HOME_COUNTIES
+						state_region = s:STATE_LANCASHIRE
+						state_region = s:STATE_YORKSHIRE
+						state_region = s:STATE_MIDLANDS
+						state_region = s:STATE_EAST_ANGLIA
+						state_region = s:STATE_WEST_COUNTRY
+					}
+				}
+			}
+			add = 5
+		}
+
+		if = {
+			limit = {
+				has_journal_entry = je_conquer_wales
+				scope:target_country = {
+					any_scope_state = {
+						OR = {
+							state_region = s:STATE_WALES
+						}
+					}
+				}
+			}
+			add = 5
+		}
+
+		if = {
+			limit = {
+				has_journal_entry = je_fra_annex_occ
+				scope:target_country = {
+					any_scope_state = {
+						OR = {
+							state_region = s:STATE_LANGUEDOC
+							state_region = s:STATE_RHONE
+							state_region = s:STATE_ARMAGNAC
+							state_region = s:STATE_AUVERGNE
+							state_region = s:STATE_AQUITAINE
+						}
+					}
 				}
 			}
 			add = 5
@@ -941,6 +1301,86 @@ ai_strategy_default = {
 			add = 100
 		}
 		
+		if = { #Carving up China
+			limit = {
+				country_rank >= rank_value:great_power
+				exists = c:CHI
+				OR = {
+					sr:region_north_china = {
+						any_scope_state = {
+							is_treaty_port = yes
+							owner = {
+								NOT = { this = root }
+								country_is_in_europe = yes
+							}
+						}
+					}
+					sr:region_south_china = {
+						any_scope_state = {
+							is_treaty_port = yes
+							owner = {
+								NOT = { this = root }
+								country_is_in_europe = yes
+							}
+						}
+					}
+					sr:region_manchuria = {
+						any_scope_state = {
+							is_treaty_port = yes
+							owner = {
+								NOT = { this = root }
+								country_is_in_europe = yes
+							}
+						}
+					}
+				}
+				scope:target_state = {
+					OR = {
+						region = sr:region_north_china
+						region = sr:region_south_china
+						region = sr:region_manchuria
+					}
+				}
+			}
+			add = 25
+		}
+		else_if = {
+			limit = {
+				country_rank >= rank_value:great_power
+				exists = c:CHI
+				OR = {
+					sr:region_north_china = {
+						any_scope_state = {
+							is_treaty_port = yes
+							owner = {
+								NOT = { THIS = ROOT }
+								country_rank >= rank_value:great_power
+							}
+						}
+					}
+					sr:region_south_china = {
+						any_scope_state = {
+							is_treaty_port = yes
+							owner = {
+								NOT = { THIS = ROOT }
+								country_rank >= rank_value:great_power
+							}
+						}
+					}
+					sr:region_manchuria = {
+						any_scope_state = {
+							is_treaty_port = yes
+							owner = {
+								NOT = { THIS = ROOT }
+								country_rank >= rank_value:great_power
+							}
+						}
+					}
+				}
+			}
+			add = 75
+		}
+
 		# One Kongsi war will happen
 		if = {
 			limit = {
@@ -1180,14 +1620,95 @@ ai_strategy_default = {
 			}
 			add = 100
 		}
+		if = {
+			limit = {
+				has_journal_entry = je_beornia_conquer
+				scope:target_country = {
+					any_scope_state = {
+						OR = {
+							state_region = s:STATE_EOFERWIC
+							state_region = s:STATE_NORTHUMBRIA
+							state_region = s:STATE_WESSEX
+							state_region = s:STATE_LANDS_END
+							state_region = s:STATE_AVALON
+							state_region = s:STATE_NEW_CORNWALL
+							state_region = s:STATE_NEW_LONDON
+							state_region = s:STATE_GODWINSON
+						
+						}
+					}
+				}
+			}
+			add = 100
+		}
+		#HBE will be more aggressive towards Euro-Ameriga and TWT
+		if = { 
+			limit = { 
+				has_journal_entry = je_ameriga_conquer
+				scope:target_country = {
+					any_scope_state = {
+						state_region = s:STATE_COTE_DU_CAFE
+						state_region = s:STATE_LIBREVILLE
+						state_region = s:STATE_BOURGOGNE_DU_SUD
+						state_region = s:STATE_NOUVELLE_ALSACE
+						state_region = s:STATE_MARCHES_OUEST
+						state_region = s:STATE_CHACO_BOREAL
+						state_region = s:STATE_GRAND_CHACO
+						state_region = s:STATE_LORRAINE_ATLANTIQUE
+						state_region = s:STATE_SERMOISE_SUR_ODON
+						state_region = s:STATE_BRUXELLES_SUR_ODON
+						state_region = s:STATE_TRANSFLEUVE
+						state_region = s:STATE_TILCARA
+						state_region = s:STATE_ATACAMA
+						state_region = s:STATE_CHARCAS
+						state_region = s:STATE_TIWANAKU
+						state_region = s:STATE_COLLASUYU
+						state_region = s:STATE_NEAR_COLLASUYU
+						state_region = s:STATE_KUCHICHAY
+						state_region = s:STATE_CATAMARCA
+						state_region = s:STATE_GOUAS
+						state_region = s:STATE_VAURA
+						state_region = s:STATE_MONTS_DIAMANTS
+						state_region = s:STATE_COTE_DU_SUCRE
+						state_region = s:STATE_FRANCE_ANTARTIQUE
+						state_region = s:STATE_CAPPADOCE
+						state_region = s:STATE_PROCHE_AMAZONIE
+						state_region = s:STATE_AMAZONIE_INFERIEURE
+						state_region = s:STATE_AMAZONIE_PROFONDE
+						state_region = s:STATE_PARA
+						state_region = s:STATE_GUAYANA
+					}
+				}
+			}
+			add = 100
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_england_conquer
+				scope:target_country = {
+					any_scope_state = {
+						OR = {
+						state_region = s:STATE_HOME_COUNTIES
+						state_region = s:STATE_LANCASHIRE
+						state_region = s:STATE_YORKSHIRE
+						state_region = s:STATE_MIDLANDS
+						state_region = s:STATE_EAST_ANGLIA
+						state_region = s:STATE_WEST_COUNTRY
+						
+						}
+					}
+				}
+			}
+			add = 100
+		}
+
 		# Lotharingia and Odonia will try to reunite Lotharian homelands until JEs are complete or failed
 		if = {
 			limit = {
 				has_journal_entry = je_reconquering_atlantia
 				scope:target_country = {
 					any_scope_state = {
-						state_region = s:STATE_COTE_DU_CAFE
-						
+						state_region = s:STATE_COTE_DU_CAFE	
 					}
 				}
 			}
@@ -1253,6 +1774,65 @@ ai_strategy_default = {
 						state_region = s:STATE_GRAND_CHACO
 						state_region = s:STATE_SERMOISE_SUR_ODON
 						state_region = s:STATE_BRUXELLES_SUR_ODON
+					}
+				}
+			}
+			add = 100
+		}
+		if = {  #Amazonie annex Equinoxea
+			limit = {
+				has_journal_entry = je_equinoxea_annex
+				scope:target_country = {
+					any_scope_state = {
+						state_region = s:STATE_VAURA
+						state_region = s:STATE_CAPPADOCE
+						state_region = s:STATE_AMAZONIE_INFERIEURE
+						state_region = s:STATE_PROCHE_AMAZONIE
+						state_region = s:STATE_AMAZONIE_PROFONDE
+					}
+				}
+			}
+			add = 100
+		}
+		if = {  #Tupi fight
+			limit = {
+				has_journal_entry = je_tupia_fight
+				scope:target_country = {
+					any_scope_state = {
+						state_region = s:STATE_VAURA
+						state_region = s:STATE_CAPPADOCE
+						state_region = s:STATE_AMAZONIE_INFERIEURE
+						state_region = s:STATE_PROCHE_AMAZONIE
+						state_region = s:STATE_AMAZONIE_PROFONDE
+					}
+				}
+			}
+			add = 100
+		}
+		if = {  #EQX attack AMA
+			limit = {
+				has_journal_entry = je_amazonie_annex
+				scope:target_country = {
+					any_scope_state = {
+						state_region = s:STATE_MONTS_DIAMANTS
+						state_region = s:STATE_GOUAS
+						state_region = s:STATE_FRANCE_ANTARTIQUE
+						state_region = s:STATE_COTE_DU_SUCRE
+						state_region = s:STATE_COTE_DU_CAFE
+					}
+				}
+			}
+			add = 100
+		}
+		if = {  #Atlantians unite
+			limit = {
+				has_journal_entry = je_amazonie_annex
+				scope:target_country = {
+					any_scope_state = {
+						state_region = s:STATE_GOUAS
+						state_region = s:STATE_LIBREVILLE
+						state_region = s:STATE_NOUVELLE_ALSACE
+						state_region = s:STATE_COTE_DU_CAFE
 					}
 				}
 			}
@@ -1325,7 +1905,10 @@ ai_strategy_default = {
 		#DM wants an empire again india aggressively
 		if = {
 			limit = {
-				country_has_primary_culture = cu:anglois
+				OR = {
+					country_has_primary_culture = cu:anglois
+					country_has_primary_culture = cu:british
+				}
 				year >= 1860
 				scope:target_country = {
 					any_scope_state = {
@@ -1335,7 +1918,6 @@ ai_strategy_default = {
 							state_region = s:STATE_ASSAM
 							state_region = s:STATE_BIHAR
 							state_region = s:STATE_AWADH
-							state_region = s:STATE_DELHI
 						}
 					}
 				}
@@ -1351,9 +1933,51 @@ ai_strategy_default = {
 				scope:target_country = {
 					any_scope_state = {
 						OR = {
+							state_region = s:STATE_GUJARAT
 							state_region = s:STATE_SINDH
 							state_region = s:STATE_RAJPUTANA
 							state_region = s:STATE_PUNJAB
+						}
+					}
+				}
+			}
+			add = 100
+		}
+
+		#Burgundian East Indies
+		if = {
+			limit = {
+				country_has_primary_culture = cu:burgundian
+				year >= 1860
+				scope:target_country = {
+					any_scope_state = {
+						OR = {
+							state_region = s:STATE_EAST_BORNEO
+							state_region = s:STATE_WEST_BORNEO
+							state_region = s:STATE_CELEBES
+							state_region = s:STATE_SOUTH_SUMATRA
+							state_region = s:STATE_NORTH_SUMATRA
+							state_region = s:STATE_ACEH
+						}
+					}
+				}
+			}
+			add = 100
+		}
+
+		#Scandinavian East Indies
+		if = {
+			limit = {
+				country_has_primary_culture = cu:burgundian
+				year >= 1860
+				scope:target_country = {
+					any_scope_state = {
+						OR = {
+							state_region = s:STATE_NORTH_BORNEO
+							state_region = s:STATE_EAST_BORNEO
+							state_region = s:STATE_VISAYAS
+							state_region = s:STATE_LUZON
+							state_region = s:STATE_MALAYA
 						}
 					}
 				}
@@ -1415,6 +2039,23 @@ ai_strategy_default = {
 			# add = 25
 		# }
 
+		# Persian Thunderdome
+		if = {
+			limit = {
+				OR = {
+					country_has_primary_culture = cu:turkmen
+					country_has_primary_culture = cu:persian
+				}
+				scope:target_country = {
+					OR = {
+						country_has_primary_culture = cu:turkmen
+						country_has_primary_culture = cu:persian
+					}
+				}
+			}
+			add = 25
+		}
+
 		# # Warlord China Thunderdome
 		# if = {
 			# limit = {
@@ -1467,6 +2108,7 @@ ai_strategy_default = {
 			limit = {
 				country_has_primary_culture = cu:russian
 				has_law = law_type:law_national_supremacy
+				owns_entire_state_region = STATE_ASTRAKHAN
 				scope:target_country = {
 					any_scope_state = {
 						OR = {
@@ -1476,7 +2118,7 @@ ai_strategy_default = {
 					}
 				}
 			}
-			add = 25
+			add = 15
 		}
 
 		#if = { #Russian Far East
@@ -1493,25 +2135,240 @@ ai_strategy_default = {
 		#			}
 		#		}
 		#	}
-		#	add = 25
+		#	add = 10
 		#}
 
-		#if = { #Russian Central Asia
-		#	limit = {
-		#		scope:target_country = {
-		#			any_scope_state = {
-		#				OR = {
-		#					state_region = s:STATE_UZBEKIA
-		#					state_region = s:STATE_KIRGHIZIA
-		#					state_region = s:STATE_KHIVA
-		#					state_region = s:STATE_TURKMENIA
-		#					state_region = s:STATE_TAJIKISTAN
-		#				}
-		#			}
-		#		}
-		#	}
-		#	add = 25
-		#}
+		if = { #Russian Central Asia
+			limit = {
+				owns_entire_state_region = STATE_URAL
+				owns_entire_state_region = STATE_BASHKORTOSTAN
+				scope:target_country = {
+					any_scope_state = {
+						OR = {
+							state_region = s:STATE_URALSK
+							state_region = s:STATE_AKMOLINSK
+							state_region = s:STATE_UZBEKIA
+							state_region = s:STATE_SEMIRECHE
+						}
+					}
+				}
+				can_reach_target_country = yes
+			}
+			add = 25
+		}
+
+		if = { #Russian Central Asia
+			limit = {
+				owns_entire_state_region = STATE_UPPER_YENISEYSK
+				scope:target_country = {
+					any_scope_state = {
+						OR = {
+							state_region = s:STATE_IRKUTSK
+							state_region = s:STATE_TOMSK
+							state_region = s:STATE_TUVA
+						}
+					}
+				}
+				can_reach_target_country = yes
+			}
+			add = 25
+		}
+
+		if = { #Aragon Africa
+			limit = {
+				owns_entire_state_region = STATE_ALGIERS
+				owns_entire_state_region = STATE_TLEMCEN
+				scope:target_country = {
+					any_scope_state = {
+						OR = {
+							state_region = s:STATE_CONSTANTINE
+							state_region = s:STATE_SAHARA
+						}
+					}
+				}
+				can_reach_target_country = yes
+			}
+			add = 25
+		}
+
+		if = { #Ottomans Kurdish
+			limit = {
+				country_has_primary_culture = cu:turkish
+				owns_entire_state_region = STATE_TRABZON
+				owns_entire_state_region = STATE_ANKARA
+				scope:target_country = {
+					any_scope_state = {
+						OR = {
+							state_region = s:STATE_ERZURUM
+							state_region = s:STATE_DIYARBAKIR
+							state_region = s:STATE_MOSUL
+						}
+					}
+				}
+				can_reach_target_country = yes
+			}
+			add = 25
+		}
+
+		if = {
+			limit = {
+				has_journal_entry = je_mus_southern_expansion
+				scope:target_country = {
+					any_scope_state = {
+						OR = {
+							state_region = s:STATE_SLOBOZ
+							state_region = s:STATE_DANU
+							state_region = s:STATE_ROSTOV
+							state_region = s:STATE_KURSK
+						}
+					}
+				}
+				can_reach_target_country = yes
+			}
+			add = 100
+		}	
+
+		if = {
+			limit = {
+				has_journal_entry = je_rus_kazan_expansion
+				scope:target_country = {
+					any_scope_state = {
+						OR = {
+							state_region = s:STATE_TARTARIA
+							state_region = s:STATE_IDEL
+						}
+					}
+				}
+				can_reach_target_country = yes
+			}
+			add = 100
+		}
+
+		if = {
+			limit = {
+				has_journal_entry = je_galdan_khan
+				scope:target_country = {
+					any_scope_state = {
+						OR = {
+							state_region = s:STATE_BEIJING
+							state_region = s:STATE_NINGXIA
+							state_region = s:STATE_GANSU
+							state_region = s:STATE_QINGHAI
+							state_region = s:STATE_SHANXI
+							state_region = s:STATE_XIAN
+						}
+					}
+				}
+			}
+			add = 100
+		}
+
+		if = {
+			limit = {
+				has_journal_entry = je_tar_east_expansion
+				scope:target_country = {
+					exists = c:BAK
+					THIS = c:BAK
+				}
+				can_reach_target_country = yes
+			}
+			add = 1000
+		}
+
+		if = {
+			limit = {
+				has_journal_entry = je_tar_east_expansion
+				scope:target_country = {
+					any_scope_state = {
+						OR = {
+							state_region = s:STATE_BASHKORTOSTAN
+							state_region = s:STATE_TOBOLSK
+							state_region = s:STATE_TOMSK
+						}
+					}
+				}
+				can_reach_target_country = yes
+			}
+			add = 100
+		}
+
+		if = {
+			limit = {
+				has_journal_entry = je_tar_east_expansion
+				owns_entire_state_region = STATE_BASHKORTOSTAN
+				scope:target_country = {
+					any_scope_state = {
+						OR = {
+							state_region = s:STATE_URAL
+							state_region = s:STATE_PERM
+						}
+					}
+				}
+				can_reach_target_country = yes
+			}
+			add = 100
+		}	
+
+		if = {
+			limit = {
+				has_journal_entry = je_tar_central_asia_expansion
+				scope:target_country = {
+					any_scope_state = {
+						OR = {
+							state_region = s:STATE_URALSK
+							state_region = s:STATE_UZBEKIA
+							state_region = s:STATE_SEMIRECHE
+							state_region = s:STATE_JETISY
+							state_region = s:STATE_AKMOLINSK
+						}
+					}
+				}
+				can_reach_target_country = yes
+			}
+			add = 100
+		}	
+
+		if = {
+			limit = {
+				has_journal_entry = je_cossack_south_expansion
+				scope:target_country = {
+					any_scope_state = {
+						OR = {
+							state_region = s:STATE_CRIMEA
+							state_region = s:STATE_YEDISAN
+							state_region = s:STATE_QOBAN
+							state_region = s:STATE_ROSTOV
+							state_region = s:STATE_ASTRAKHAN
+							state_region = s:STATE_DAGESTAN
+							state_region = s:STATE_KUBAN
+							state_region = s:STATE_IDEL
+							state_region = s:STATE_BASHKORTOSTAN
+							state_region = s:STATE_URALSK
+						}
+					}
+				}
+				can_reach_target_country = yes
+			}
+			add = 100
+		}
+
+		if = {
+			limit = {
+				has_journal_entry = je_restore_order_korea
+				scope:target_country = {
+					any_scope_state = {
+						OR = {
+							state_region = s:STATE_BUSAN
+							state_region = s:STATE_YANGHO
+							state_region = s:STATE_SEOUL
+							state_region = s:STATE_PYONGYANG
+							state_region = s:STATE_SARIWON
+						}
+					}
+				}
+			}
+			add = 50
+		}
 
 		if = {
 			limit = {
@@ -1521,6 +2378,79 @@ ai_strategy_default = {
 				}
 			}
 			add = 25
+		}
+		#Beornia more aggressive in conquering England
+		if = {
+			limit = {
+				has_journal_entry = je_england_conquer
+				scope:target_country = {
+					any_scope_state = {
+						OR = {
+						state_region = s:STATE_HOME_COUNTIES
+						state_region = s:STATE_LANCASHIRE
+						state_region = s:STATE_YORKSHIRE
+						state_region = s:STATE_MIDLANDS
+						state_region = s:STATE_EAST_ANGLIA
+						state_region = s:STATE_WEST_COUNTRY
+						
+						}
+					}
+				}
+			}
+			add = 25
+		}
+
+		if = {
+			limit = {
+				has_journal_entry = je_reconquer_england
+				scope:target_country = {
+					any_scope_state = {
+						OR = {
+							state_region = s:STATE_HOME_COUNTIES
+							state_region = s:STATE_LANCASHIRE
+							state_region = s:STATE_YORKSHIRE
+							state_region = s:STATE_MIDLANDS
+							state_region = s:STATE_EAST_ANGLIA
+							state_region = s:STATE_WEST_COUNTRY
+						}
+					}
+				}
+				can_reach_target_country = yes
+			}
+			add = 100
+		}
+
+		if = {
+			limit = {
+				has_journal_entry = je_conquer_wales
+				scope:target_country = {
+					any_scope_state = {
+						OR = {
+							state_region = s:STATE_WALES
+						}
+					}
+				}
+				can_reach_target_country = yes
+			}
+			add = 100
+		}
+
+		if = {
+			limit = {
+				has_journal_entry = je_fra_annex_occ
+				scope:target_country = {
+					any_scope_state = {
+						OR = {
+							state_region = s:STATE_LANGUEDOC
+							state_region = s:STATE_RHONE
+							state_region = s:STATE_ARMAGNAC
+							state_region = s:STATE_AUVERGNE
+							state_region = s:STATE_AQUITAINE
+						}
+					}
+				}
+			}
+			add = 100
 		}
 
 		# Aggression against radical leftists
@@ -1651,6 +2581,174 @@ ai_strategy_default = {
         max = 100
 	}
 
+		# How many levels of barracks should the AI have
+	# Using this value in other strategies will function additively
+	wanted_army_size = {
+		value = 0
+		
+		# To increase base army size for small countries, capped at 1 million population
+		add = {
+			value = cached_ai_incorporated_population
+			divide = 100000 # 1 level of barracks per 100k incorporated population	
+			
+			max = 10
+		}			
+	
+		add = {
+			value = cached_ai_incorporated_population
+			divide = 250000 # 1 level of barracks per 250k incorporated population	
+		}		
+		
+		add = {
+			value = cached_ai_unincorporated_population
+			divide = 1000000 # 1 level of barracks per 1 million unincorporated population	
+		}
+		
+		max = 250 # No more than 250 from population
+
+		add = {
+			value = gdp
+			divide = 500000 # 1 level of barracks per 500k gdp
+		}				
+		
+		# More advanced standing armies are expensive and should be smaller relative to population
+		if = {
+			limit = { has_technology_researched = line_infantry }
+			multiply = 0.9
+		}
+
+		if = {
+			limit = { has_technology_researched = general_staff }
+			multiply = 0.9
+		}
+
+		if = {
+			limit = { has_technology_researched = trench_works }
+			multiply = 0.9
+		}
+
+		if = {
+			limit = { has_technology_researched = nco_training }
+			multiply = 0.9
+		}
+		
+		if = {
+			limit = { has_technology_researched = mobile_armor }
+			multiply = 0.9
+		}	
+
+		# Factor in strategies
+		if = {
+			limit = { 
+				OR = {
+					has_strategy = ai_strategy_territorial_expansion 
+					has_strategy = ai_strategy_unify_germany
+					has_strategy = ai_strategy_unify_italy
+					has_strategy = ai_strategy_unify_ethiopia
+					has_strategy = ai_strategy_unify_china
+					has_strategy = ai_strategy_unify_central_russia
+					has_strategy = ai_strategy_unify_russia
+					has_strategy = ai_strategy_unify_cossacks
+					has_strategy = ai_strategy_unify_tatarstan
+					has_strategy = ai_strategy_unify_arcadia
+					has_strategy = ai_strategy_unify_ari
+					has_strategy = ai_strategy_unify_north_germany
+					has_strategy = ai_strategy_unify_south_germany
+					has_strategy = ai_strategy_unify_britain
+					has_strategy = ai_strategy_unify_persia
+				}
+			}
+			multiply = 1.25
+		}		
+
+		max = 500
+		min = 1
+	}
+	
+	# How many levels of naval base should the AI have
+	# Using this value in other strategies will function additively
+	wanted_navy_size = {
+		value = 0
+	
+		# 1 level of naval base per 350k coastal incorporated population							
+		add = {
+			value = cached_ai_incorporated_coastal_population
+			divide = 350000 
+		}
+
+		# 1 level of naval base per 1 million coastal unincorporated population					
+		add = {
+			value = cached_ai_unincorporated_coastal_population
+			divide = 1000000 
+		}
+
+		# 1 level of naval base per 1 million population in direct overseas subjects	
+		add = {
+			value = cached_ai_overseas_subject_population
+			divide = 1000000 
+		}	
+
+		max = 250 # No more than 250 from population		
+
+		# 1 level of naval base per 1 million gdp, multiplied by relative incorporated coastal population to total incorporated population
+		add = {
+			value = gdp
+			divide = cached_ai_incorporated_population
+			multiply = cached_ai_incorporated_coastal_population
+			divide = 1000000 
+		}			
+		
+		# More advanced navies are expensive and should be smaller relative to population
+		if = {
+			limit = { has_technology_researched = ironclad_tech }
+			multiply = 0.8
+		}
+
+		if = {
+			limit = { has_technology_researched = dreadnought }
+			multiply = 0.8
+		}
+
+		if = {
+			limit = { has_technology_researched = battleship_tech }
+			multiply = 0.8
+		}
+
+		# Factor in strategies
+		if = {
+			limit = { 
+				OR = {
+					has_strategy = ai_strategy_colonial_expansion 
+					has_strategy = ai_strategy_economic_imperialism
+				}
+			}
+			multiply = 1.25
+		}
+
+		if = {
+			limit = { has_strategy = ai_strategy_armed_isolationism }
+			multiply = 0.75
+		}
+		
+		if = {
+			limit = { country_rank < rank_value:major_power }
+			multiply = 0.75
+		}						
+		
+		if = {
+			limit = { is_country_type = unrecognized }
+			multiply = 0.5
+		}	
+		
+		if = {
+			limit = { has_strategy = ai_strategy_maintain_mandate_of_heaven }
+			multiply = 0.25
+		}		
+
+		max = 500
+		min = 0		
+	}		
+	
     # Add a multiplier to the score AI assigns to particular building groups (default 1)
     # Using this value in other strategies will result in several multiplications
     building_group_weights = {}
@@ -1829,24 +2927,14 @@ ai_strategy_default = {
 	strategic_region_scores = {
 		region_japan = {	
 			if = {
-				limit = { # Great Powers should try to open Japan
-					exists = c:JAP
-					c:JAP = { has_law = law_type:law_isolationism }
-					has_technology_researched = civilizing_mission	
-					country_rank = rank_value:great_power
-					navy_size >= 50
-				}
-				add = 1000
-			}
-			if = {
 				limit = {
 					exists = c:JAP
 					c:JAP = { has_law = law_type:law_isolationism }
 					NOT = { country_rank = rank_value:great_power }
 				}
 				add = -50
-			}			
-		}				
+			}				
+		}			
 		region_nile_basin = {
 			if = {
 				limit = {
@@ -1993,6 +3081,84 @@ ai_strategy_default = {
 				add = 50
 			}
 		}
+		region_caucasus = {
+			if = {
+				limit = {
+					country_has_primary_culture = cu:cossack
+				}
+				add = 100
+			}
+			if = {
+				limit = {
+					OR = {
+						has_journal_entry = je_mus_southern_expansion
+						has_journal_entry = je_cossack_south_expansion
+					}
+				}
+				add = 100
+			}	
+		}
+		region_dnieper = {
+			if = {
+				limit = {
+					country_has_primary_culture = cu:cossack
+				}
+				add = 100
+			}
+			if = {
+				limit = {
+					country_has_primary_culture = cu:kirim
+					country_has_primary_culture = cu:kazani
+					country_has_primary_culture = cu:bashkir
+					country_has_primary_culture = cu:sibir
+					country_has_primary_culture = cu:xacitarxani
+				}
+				add = 100
+			}
+		}
+		region_russia = {
+			if = {
+				limit = {
+					country_has_primary_culture = cu:cossack
+				}
+				add = 50
+			}	
+		}
+		region_central_asia = {
+			if = {
+				limit = {
+					has_journal_entry = je_rus_kazan_expansion
+				}
+				add = 1000
+			}
+			if = {
+				limit = {
+					country_has_primary_culture = cu:kirim
+					country_has_primary_culture = cu:kazani
+					country_has_primary_culture = cu:bashkir
+					country_has_primary_culture = cu:sibir
+					country_has_primary_culture = cu:xacitarxani
+				}
+				add = 100
+			}
+			if = {
+				limit = {
+					OR = {
+						has_journal_entry = je_tar_east_expansion
+						has_journal_entry = je_tar_central_asia_expansion
+					}
+				}
+				add = 1000
+			}
+		}
+		region_west_siberia = {
+			if = {
+				limit = {
+					has_journal_entry = je_tar_east_expansion
+				}
+				add = 1000
+			}
+		}
 		region_england = {
 			if = {
 				limit = {
@@ -2070,15 +3236,6 @@ ai_strategy_default = {
 							is_treaty_port = yes
 						}
 					}
-				}
-				add = 50
-			}
-		}
-		region_new_england = {
-			if = {
-				limit = {
-					country_is_in_north_america = yes
-					country_rank >= rank_value:great_power
 				}
 				add = 50
 			}
@@ -2380,6 +3537,16 @@ ai_strategy_default = {
 
 			if = {
 				limit = {
+					scope:target_country = {
+						is_revolutionary = yes
+						scope:target_country.civil_war_origin_country = root
+					}
+				}
+				multiply = 0.10
+			}
+
+			if = {
+				limit = {
 					lenient_ai_behavior_trigger = yes
 				}
 				multiply = 1.5
@@ -2581,6 +3748,16 @@ ai_strategy_default = {
 				add = 100			
 			}
 			
+			if = {
+				limit = {
+					scope:target_country = {
+						is_revolutionary = yes
+						scope:target_country.civil_war_origin_country = root
+					}
+				}
+				add = 500
+			}
+
 			multiply = {
 				value = "ai_ideological_opinion(scope:target_country)"
 				multiply = -0.05
@@ -2805,6 +3982,15 @@ ai_strategy_default = {
 
 			if = {
 				limit = {
+					has_journal_entry = je_sick_man_iraq
+					exists = c:KU1
+					scope:target_country = c:KU1
+				}
+				add = 100
+			}
+
+			if = {
+				limit = {
 					has_journal_entry = je_sick_man_albania
 					exists = c:ALB
 					scope:target_country = c:ALB
@@ -2914,7 +4100,54 @@ ai_strategy_default = {
 				# }
 				# add = 200
 			# }
+
+			if = {
+				limit = {
+					OR = {
+						country_has_primary_culture = cu:turkmen
+						country_has_primary_culture = cu:persian
+					}
+					is_adjacent = scope:target_country
+					scope:target_country = {
+						any_scope_state = {
+							OR = {
+								state_region = s:STATE_KHUZESTAN
+								state_region = s:STATE_LURISTAN
+								state_region = s:STATE_FARS
+								state_region = s:STATE_LARISTAN
+								state_region = s:STATE_SISTAN
+								state_region = s:STATE_IRAKAJEMI
+								state_region = s:STATE_KHORASAN
+								state_region = s:STATE_ISFAHAN
+								state_region = s:STATE_MAZANDARAN
+								state_region = s:STATE_TABRIZ
+							}
+						}
+					}
+				}
+				add = 200
+			}
 			
+			if = { # Wants to conquer nations that have their homelands
+				limit = {
+					OR = {
+						country_has_primary_culture = cu:kirim
+						country_has_primary_culture = cu:kazani
+						country_has_primary_culture = cu:xacitarxani
+						country_has_primary_culture = cu:bashkir
+						country_has_primary_culture = cu:sibir
+						country_has_primary_culture = cu:cossack
+					}
+					can_reach_target_country = yes
+					scope:target_country = {
+						any_scope_state = {
+							is_homeland_of_country_cultures = ROOT
+						}
+					}
+				}
+				add = 200
+			}
+
 			# if = {
 				# limit = {
 					# has_journal_entry = je_manifest_destiny_mexico
@@ -2938,6 +4171,7 @@ ai_strategy_default = {
 				limit = {
 					country_has_primary_culture = cu:russian
 					has_law = law_type:law_national_supremacy
+					owns_entire_state_region = STATE_ASTRAKHAN
 					scope:target_country = {
 						any_scope_state = {
 							OR = {
@@ -2973,11 +4207,94 @@ ai_strategy_default = {
 								this = c:DZU
 							}
 						}
+						AND = {	
+							exists = c:KAZ
+							scope:target_country = {
+								this = c:KAZ
+							}
+						}
+						AND = {	
+							exists = c:MGL
+							scope:target_country = {
+								this = c:MGL
+							}
+						}
+						AND = {	
+							exists = c:SBR
+							scope:target_country = {
+								this = c:SBR
+							}
+						}
 					}
 				}
-				add = 50
+				add = 1000
 			}
 
+			if = {
+				limit = {
+					country_has_primary_culture = cu:turkish
+					OR = {
+						AND = {
+							exists = c:KU1
+							scope:target_country = c:KU1
+						}
+						AND = {
+							exists = c:KU2
+							scope:target_country = c:KU2
+						}
+						AND = {
+							exists = c:KU3
+							scope:target_country = c:KU3
+						}
+						AND = {
+							exists = c:KU4
+							scope:target_country = c:KU4
+						}
+					}
+					can_reach_target_country = yes
+				}
+			 	add = 1000
+			}
+
+			if = {
+				limit = {
+					country_has_primary_culture = cu:catalan
+					has_technology_researched = nationalism
+					OR = {
+						AND = {	
+							exists = c:ALD
+							scope:target_country = {
+								this = c:ALD
+							}
+						}
+						AND = {	
+							exists = c:TUN
+							scope:target_country = {
+								this = c:TUN
+							}
+						}
+					}
+					can_reach_target_country = yes
+				}
+				add = 1000
+			}
+
+			if = {
+				limit = {
+					exists = c:TAR
+					THIS = c:TAR
+					has_law = law_type:law_national_supremacy
+					scope:target_country = {
+						any_scope_state = {
+							OR = {
+								state_region = s:STATE_KUBAN
+								state_region = s:STATE_DAGESTAN
+							}
+						}
+					}
+				}
+				add = 1000
+			}
 
 			if = {
 				limit = {
@@ -3002,6 +4319,68 @@ ai_strategy_default = {
 				}
 				add = 1000
 			}
+			if = {
+				limit = {
+					has_journal_entry = je_beornia_conquer
+					scope:target_country = {
+						any_scope_state = {
+							OR = {
+								state_region = s:STATE_EOFERWIC
+								state_region = s:STATE_NORTHUMBRIA
+								state_region = s:STATE_WESSEX
+								state_region = s:STATE_LANDS_END
+								state_region = s:STATE_AVALON
+								state_region = s:STATE_NEW_CORNWALL
+								state_region = s:STATE_NEW_LONDON
+								state_region = s:STATE_GODWINSON
+							
+							}
+						}
+					}
+				}
+				add = 1000
+			}
+			#HBE will be more aggressive towards Euro-Ameriga and TWT
+		if = { 
+			limit = { 
+				has_journal_entry = je_ameriga_conquer
+				scope:target_country = {
+					any_scope_state = {
+						state_region = s:STATE_COTE_DU_CAFE
+						state_region = s:STATE_LIBREVILLE
+						state_region = s:STATE_BOURGOGNE_DU_SUD
+						state_region = s:STATE_NOUVELLE_ALSACE
+						state_region = s:STATE_MARCHES_OUEST
+						state_region = s:STATE_CHACO_BOREAL
+						state_region = s:STATE_GRAND_CHACO
+						state_region = s:STATE_LORRAINE_ATLANTIQUE
+						state_region = s:STATE_SERMOISE_SUR_ODON
+						state_region = s:STATE_BRUXELLES_SUR_ODON
+						state_region = s:STATE_TRANSFLEUVE
+						state_region = s:STATE_TILCARA
+						state_region = s:STATE_ATACAMA
+						state_region = s:STATE_CHARCAS
+						state_region = s:STATE_TIWANAKU
+						state_region = s:STATE_COLLASUYU
+						state_region = s:STATE_NEAR_COLLASUYU
+						state_region = s:STATE_KUCHICHAY
+						state_region = s:STATE_CATAMARCA
+						state_region = s:STATE_GOUAS
+						state_region = s:STATE_VAURA
+						state_region = s:STATE_MONTS_DIAMANTS
+						state_region = s:STATE_COTE_DU_SUCRE
+						state_region = s:STATE_FRANCE_ANTARTIQUE
+						state_region = s:STATE_CAPPADOCE
+						state_region = s:STATE_PROCHE_AMAZONIE
+						state_region = s:STATE_AMAZONIE_INFERIEURE
+						state_region = s:STATE_AMAZONIE_PROFONDE
+						state_region = s:STATE_PARA
+						state_region = s:STATE_GUAYANA
+					}
+				}
+			}
+			add = 1000
+		}
 			
 			if = {
 				limit = {
@@ -3061,27 +4440,104 @@ ai_strategy_default = {
 				add = 1000
 			}
 			
-		if = {
+			if = {
+				limit = {
+					has_journal_entry = je_guarani_unite
+					scope:target_country = {
+						any_scope_state = {
+							state_region = s:STATE_EOFERWIC
+							state_region = s:STATE_NORTHUMBRIA
+							state_region = s:STATE_WESSEX
+							state_region = s:STATE_TRANSFLEUVE
+							state_region = s:STATE_MARCHES_OUEST
+							state_region = s:STATE_CHACO_BOREAL
+							state_region = s:STATE_GRAND_CHACO
+							state_region = s:STATE_SERMOISE_SUR_ODON
+							state_region = s:STATE_BRUXELLES_SUR_ODON
+						}
+					}
+				}
+				add = 1000
+			}
+			if = {
+				limit = {
+					has_journal_entry = je_england_conquer
+					scope:target_country = {
+						any_scope_state = {
+							OR = {
+							state_region = s:STATE_HOME_COUNTIES
+							state_region = s:STATE_LANCASHIRE
+							state_region = s:STATE_YORKSHIRE
+							state_region = s:STATE_MIDLANDS
+							state_region = s:STATE_EAST_ANGLIA
+							state_region = s:STATE_WEST_COUNTRY
+							
+							}
+						}
+					}
+				}
+			add = 1000
+			}
+			if = {  #Amazonie annex Equinoxea
 			limit = {
-				has_journal_entry = je_guarani_unite
+				has_journal_entry = je_equinoxea_annex
 				scope:target_country = {
 					any_scope_state = {
-						state_region = s:STATE_EOFERWIC
-						state_region = s:STATE_NORTHUMBRIA
-						state_region = s:STATE_WESSEX
-						state_region = s:STATE_TRANSFLEUVE
-						state_region = s:STATE_MARCHES_OUEST
-						state_region = s:STATE_CHACO_BOREAL
-						state_region = s:STATE_GRAND_CHACO
-						state_region = s:STATE_SERMOISE_SUR_ODON
-						state_region = s:STATE_BRUXELLES_SUR_ODON
+						state_region = s:STATE_VAURA
+						state_region = s:STATE_CAPPADOCE
+						state_region = s:STATE_AMAZONIE_INFERIEURE
+						state_region = s:STATE_PROCHE_AMAZONIE
+						state_region = s:STATE_AMAZONIE_PROFONDE
+					}
+				}
+			}
+			add = 1000
+		}
+		if = {  #Tupi fight
+			limit = {
+				has_journal_entry = je_tupia_fight
+				scope:target_country = {
+					any_scope_state = {
+						state_region = s:STATE_VAURA
+						state_region = s:STATE_CAPPADOCE
+						state_region = s:STATE_AMAZONIE_INFERIEURE
+						state_region = s:STATE_PROCHE_AMAZONIE
+						state_region = s:STATE_AMAZONIE_PROFONDE
+					}
+				}
+			}
+			add = 1000
+		}
+		if = {  #EQX attack AMA
+			limit = {
+				has_journal_entry = je_amazonie_annex
+				scope:target_country = {
+					any_scope_state = {
+						state_region = s:STATE_MONTS_DIAMANTS
+						state_region = s:STATE_GOUAS
+						state_region = s:STATE_FRANCE_ANTARTIQUE
+						state_region = s:STATE_COTE_DU_SUCRE
+						state_region = s:STATE_COTE_DU_CAFE
+					}
+				}
+			}
+			add = 1000
+		}
+		if = {  #Atlantians unite
+			limit = {
+				has_journal_entry = je_amazonie_annex
+				scope:target_country = {
+					any_scope_state = {
+						state_region = s:STATE_GOUAS
+						state_region = s:STATE_LIBREVILLE
+						state_region = s:STATE_NOUVELLE_ALSACE
+						state_region = s:STATE_COTE_DU_CAFE
 					}
 				}
 			}
 			add = 1000
 		}
 			
-
 			if = {
 				limit = {
 					has_journal_entry = je_smo_reconquest
@@ -3103,6 +4559,7 @@ ai_strategy_default = {
 					scope:target_country = {
 						any_scope_state = {
 							OR = {
+								state_region = s:STATE_SLOBOZ
 								state_region = s:STATE_DANU
 								state_region = s:STATE_ROSTOV
 								state_region = s:STATE_KURSK
@@ -3113,7 +4570,19 @@ ai_strategy_default = {
 				add = 1000
 			}
 			
-			
+			if = {
+				limit = {
+					has_journal_entry = je_akh_warpath
+					scope:target_country = {
+						any_scope_state = {
+							OR = {
+								state_region = s:STATE_ASTRAKHAN
+							}
+						}
+					}
+				}
+				add = 1000
+			}
 
 			if = {
 				limit = {
@@ -3140,6 +4609,101 @@ ai_strategy_default = {
 							}
 						}
 					}
+				}
+				add = 1000
+			}
+			if = {
+				limit = {
+					has_journal_entry = je_galdan_khan
+					scope:target_country = {
+						any_scope_state = {
+							OR = {
+								state_region = s:STATE_BEIJING
+								state_region = s:STATE_NINGXIA
+								state_region = s:STATE_GANSU
+								state_region = s:STATE_QINGHAI
+								state_region = s:STATE_SHANXI
+								state_region = s:STATE_XIAN
+							}
+						}
+					}
+				}
+				add = 1000
+			}
+
+			if = {
+				limit = {
+					has_journal_entry = je_tar_east_expansion
+					scope:target_country = {
+						any_scope_state = {
+							OR = {
+								state_region = s:STATE_BASHKORTOSTAN
+								state_region = s:STATE_TOBOLSK
+								state_region = s:STATE_TOMSK
+							}
+						}
+					}
+					can_reach_target_country = yes
+				}
+				add = 1000
+			}
+
+			if = {
+				limit = {
+					has_journal_entry = je_tar_east_expansion
+					owns_entire_state_region = STATE_BASHKORTOSTAN
+					scope:target_country = {
+						any_scope_state = {
+							OR = {
+								state_region = s:STATE_URAL
+								state_region = s:STATE_PERM
+							}
+						}
+					}
+					can_reach_target_country = yes
+				}
+				add = 1000
+			}	
+
+			if = {
+				limit = {
+					has_journal_entry = je_tar_central_asia_expansion
+					scope:target_country = {
+						any_scope_state = {
+							OR = {
+								state_region = s:STATE_URALSK
+								state_region = s:STATE_UZBEKIA
+								state_region = s:STATE_SEMIRECHE
+								state_region = s:STATE_JETISY
+								state_region = s:STATE_AKMOLINSK
+							}
+						}
+					}
+					can_reach_target_country = yes
+				}
+				add = 1000
+			}
+
+			if = {
+				limit = {
+					has_journal_entry = je_cossack_south_expansion
+					scope:target_country = {
+						any_scope_state = {
+							OR = {
+								state_region = s:STATE_CRIMEA
+								state_region = s:STATE_YEDISAN
+								state_region = s:STATE_QOBAN
+								state_region = s:STATE_ROSTOV
+								state_region = s:STATE_ASTRAKHAN
+								state_region = s:STATE_DAGESTAN
+								state_region = s:STATE_KUBAN
+								state_region = s:STATE_IDEL
+								state_region = s:STATE_BASHKORTOSTAN
+								state_region = s:STATE_URALSK
+							}
+						}
+					}
+					can_reach_target_country = yes
 				}
 				add = 1000
 			}
@@ -3337,7 +4901,10 @@ ai_strategy_default = {
 
 			if = {
 				limit = {
-					country_has_primary_culture = cu:anglois
+					OR = {
+						country_has_primary_culture = cu:anglois
+						country_has_primary_culture = cu:british
+					}
 					year >= 1860
 					scope:target_country = {
 						any_scope_state = {
@@ -3347,7 +4914,6 @@ ai_strategy_default = {
 								state_region = s:STATE_ASSAM
 								state_region = s:STATE_BIHAR
 								state_region = s:STATE_AWADH
-								state_region = s:STATE_DELHI
 							}
 						}
 					}
@@ -3362,9 +4928,49 @@ ai_strategy_default = {
 					scope:target_country = {
 						any_scope_state = {
 							OR = {
-							state_region = s:STATE_SINDH
-							state_region = s:STATE_RAJPUTANA
-							state_region = s:STATE_PUNJAB
+								state_region = s:STATE_GUJARAT
+								state_region = s:STATE_SINDH
+								state_region = s:STATE_RAJPUTANA
+								state_region = s:STATE_PUNJAB
+							}
+						}
+					}
+				}
+				add = 500
+			}
+
+			if = {
+				limit = {
+					country_has_primary_culture = cu:burgundian
+					year >= 1860
+					scope:target_country = {
+						any_scope_state = {
+							OR = {
+								state_region = s:STATE_EAST_BORNEO
+								state_region = s:STATE_WEST_BORNEO
+								state_region = s:STATE_CELEBES
+								state_region = s:STATE_SOUTH_SUMATRA
+								state_region = s:STATE_NORTH_SUMATRA
+								state_region = s:STATE_ACEH
+							}
+						}
+					}
+				}
+				add = 500
+			}
+
+			if = {
+				limit = {
+					country_has_primary_culture = cu:burgundian
+					year >= 1860
+					scope:target_country = {
+						any_scope_state = {
+							OR = {
+								state_region = s:STATE_NORTH_BORNEO
+								state_region = s:STATE_EAST_BORNEO
+								state_region = s:STATE_VISAYAS
+								state_region = s:STATE_LUZON
+								state_region = s:STATE_MALAYA
 							}
 						}
 					}
@@ -3377,6 +4983,76 @@ ai_strategy_default = {
 					has_journal_entry = je_saxon_destiny
 					scope:target_country = {
 						has_journal_entry = je_saxon_destiny
+					}
+				}
+				add = 1000
+			}
+			if = {
+			limit = {
+				has_journal_entry = je_england_conquer
+				scope:target_country = {
+					any_scope_state = {
+						OR = {
+						state_region = s:STATE_HOME_COUNTIES
+						state_region = s:STATE_LANCASHIRE
+						state_region = s:STATE_YORKSHIRE
+						state_region = s:STATE_MIDLANDS
+						state_region = s:STATE_EAST_ANGLIA
+						state_region = s:STATE_WEST_COUNTRY
+						
+						}
+					}
+				}
+			}
+			add = 1000
+		}
+			if = {
+				limit = {
+					has_journal_entry = je_reconquer_england
+					scope:target_country = {
+						any_scope_state = {
+							OR = {
+								state_region = s:STATE_HOME_COUNTIES
+								state_region = s:STATE_LANCASHIRE
+								state_region = s:STATE_YORKSHIRE
+								state_region = s:STATE_MIDLANDS
+								state_region = s:STATE_EAST_ANGLIA
+								state_region = s:STATE_WEST_COUNTRY
+							}
+						}
+					}
+				}
+				add = 1000
+			}
+
+			if = {
+				limit = {
+					has_journal_entry = je_conquer_wales
+					scope:target_country = {
+						any_scope_state = {
+							OR = {
+								state_region = s:STATE_WALES
+							}
+						}
+					}
+					can_reach_target_state = yes
+				}
+				add = 1000
+			}
+
+			if = {
+				limit = {
+					has_journal_entry = je_fra_annex_occ
+					scope:target_country = {
+						any_scope_state = {
+							OR = {
+								state_region = s:STATE_LANGUEDOC
+								state_region = s:STATE_RHONE
+								state_region = s:STATE_ARMAGNAC
+								state_region = s:STATE_AUVERGNE
+								state_region = s:STATE_AQUITAINE
+							}
+						}
 					}
 				}
 				add = 1000
@@ -3668,11 +5344,58 @@ ai_strategy_default = {
 								this = c:DZU
 							}
 						}
+						AND = {	
+							exists = c:KAZ
+							scope:target_country = {
+								this = c:KAZ
+							}
+						}
+						AND = {	
+							exists = c:MGL
+							scope:target_country = {
+								this = c:MGL
+							}
+						}
+						AND = {	
+							exists = c:SBR
+							scope:target_country = {
+								this = c:SBR
+							}
+						}
 					}
 				}
 				add = 100
 			}
 			
+			if = {
+				limit = {
+					exists = c:TAR
+					THIS = c:TAR
+					has_law = law_type:law_national_supremacy
+					OR = {
+						AND = {	
+							exists = c:BAK
+							scope:target_country = {
+								this = c:BAK
+							}
+						}
+						AND = {	
+							exists = c:AKH
+							scope:target_country = {
+								this = c:AKH
+							}
+						}
+						AND = {	
+							exists = c:CIR
+							scope:target_country = {
+								this = c:CIR
+							}
+						}
+					}
+				}
+				add = 100
+			}
+
 			if = {
 				limit = {
 					lenient_ai_behavior_trigger = yes
@@ -3973,20 +5696,52 @@ ai_strategy_default = {
 			#	add = 50
 			#}
 
-			#if = { #Russian Central Asia
-			#	limit = {
-			#		scope:target_state = {
-			#			OR = {
-			#				state_region = s:STATE_UZBEKIA
-			#				state_region = s:STATE_KIRGHIZIA
-			#				state_region = s:STATE_KHIVA
-			#				state_region = s:STATE_TURKMENIA
-			#				state_region = s:STATE_TAJIKISTAN
-			#			}
-			#		}
-			#	}
-			#	add = 50
-			#}
+			if = { #Russian Central Asia
+				limit = {
+					owns_entire_state_region = STATE_URAL
+					owns_entire_state_region = STATE_BASHKORTOSTAN
+					scope:target_state = {
+						OR = {
+							state_region = s:STATE_URALSK
+							state_region = s:STATE_AKMOLINSK
+							state_region = s:STATE_UZBEKIA
+							state_region = s:STATE_SEMIRECHE
+						}
+					}
+					can_reach_target_state = yes
+				}
+				add = 50
+			}
+
+			if = { #Russian Central Asia
+				limit = {
+					owns_entire_state_region = STATE_UPPER_YENISEYSK
+					scope:target_state = {
+						OR = {
+							state_region = s:STATE_IRKUTSK
+							state_region = s:STATE_TOMSK
+							state_region = s:STATE_TUVA
+						}
+					}
+					can_reach_target_state = yes
+				}
+				add = 50
+			}
+
+			if = { #Aragon Africa
+				limit = {
+					owns_entire_state_region = STATE_ALGIERS
+					owns_entire_state_region = STATE_TLEMCEN
+					scope:target_state = {
+						OR = {
+							state_region = s:STATE_CONSTANTINE
+							state_region = s:STATE_SAHARA
+						}
+					}
+					can_reach_target_country = yes
+				}
+				add = 25
+			}
 
 			if = {
 				limit = {
@@ -4011,11 +5766,76 @@ ai_strategy_default = {
 								this = c:DZU
 							}
 						}
+						AND = {	
+							exists = c:KAZ
+							scope:target_country = {
+								this = c:KAZ
+							}
+						}
+						AND = {	
+							exists = c:MGL
+							scope:target_country = {
+								this = c:MGL
+							}
+						}
+						AND = {	
+							exists = c:SBR
+							scope:target_state.owner = {
+								this = c:SBR
+							}
+						}
 					}
+					can_reach_target_state = yes
 				}
 				add = 50
 			}
 			
+			if = {
+				limit = {
+					exists = c:TAR
+					THIS = c:TAR
+					has_law = law_type:law_national_supremacy
+					OR = {
+						AND = {	
+							exists = c:BAK
+							scope:target_country = {
+								this = c:BAK
+							}
+						}
+						AND = {	
+							exists = c:AKH
+							scope:target_country = {
+								this = c:AKH
+							}
+						}
+						AND = {	
+							exists = c:CIR
+							scope:target_country = {
+								this = c:CIR
+							}
+						}
+					}
+				}
+				add = 100
+			}
+
+			if = { #Ottomans Kurdish
+				limit = {
+					country_has_primary_culture = cu:turkish
+					owns_entire_state_region = STATE_TRABZON
+					owns_entire_state_region = STATE_ANKARA
+					scope:target_state = {
+						OR = {
+							state_region = s:STATE_ERZURUM
+							state_region = s:STATE_DIYARBAKIR
+							state_region = s:STATE_MOSUL
+						}
+					}
+					can_reach_target_state = yes
+				}
+				add = 50
+			}
+
 			if = {
 				limit = {
 					has_journal_entry = je_seizing_collasuyu
@@ -4034,7 +5854,7 @@ ai_strategy_default = {
 					has_journal_entry = je_the_cone
 					scope:target_state = {
 						OR = {
-							state_region = s:LANDS_END
+							state_region = s:STATE_LANDS_END
 						}
 					}
 				}
@@ -4059,11 +5879,13 @@ ai_strategy_default = {
 					has_journal_entry = je_mus_southern_expansion
 					scope:target_state = {
 						OR = {
+							state_region = s:STATE_SLOBOZ
 							state_region = s:STATE_DANU
 							state_region = s:STATE_ROSTOV
 							state_region = s:STATE_KURSK
 						}
 					}
+					can_reach_target_state = yes
 				}
 				add = 50
 			}
@@ -4077,6 +5899,76 @@ ai_strategy_default = {
 							state_region = s:STATE_IDEL
 						}
 					}
+					can_reach_target_state = yes
+				}
+				add = 50
+			}
+
+			if = {
+				limit = {
+					has_journal_entry = je_tar_east_expansion
+					scope:target_state = {
+						OR = {
+							state_region = s:STATE_BASHKORTOSTAN
+							state_region = s:STATE_TOBOLSK
+							state_region = s:STATE_TOMSK
+						}
+					}
+					can_reach_target_state = yes
+				}
+				add = 50
+			}
+
+			if = {
+				limit = {
+					has_journal_entry = je_tar_east_expansion
+					owns_entire_state_region = STATE_BASHKORTOSTAN
+					scope:target_state = {
+						OR = {
+							state_region = s:STATE_URAL
+							state_region = s:STATE_PERM
+						}
+					}
+					can_reach_target_state = yes
+				}
+				add = 50
+			}	
+
+			if = {
+				limit = {
+					has_journal_entry = je_tar_central_asia_expansion
+					scope:target_state = {
+						OR = {
+							state_region = s:STATE_URALSK
+							state_region = s:STATE_UZBEKIA
+							state_region = s:STATE_SEMIRECHE
+							state_region = s:STATE_JETISY
+							state_region = s:STATE_AKMOLINSK
+						}
+					}
+					can_reach_target_state = yes
+				}
+				add = 50
+			}
+
+			if = {
+				limit = {
+					has_journal_entry = je_cossack_south_expansion
+					scope:target_state = {
+						OR = {
+							state_region = s:STATE_CRIMEA
+							state_region = s:STATE_YEDISAN
+							state_region = s:STATE_QOBAN
+							state_region = s:STATE_ROSTOV
+							state_region = s:STATE_ASTRAKHAN
+							state_region = s:STATE_DAGESTAN
+							state_region = s:STATE_KUBAN
+							state_region = s:STATE_IDEL
+							state_region = s:STATE_BASHKORTOSTAN
+							state_region = s:STATE_URALSK
+						}
+					}
+					can_reach_target_state = yes
 				}
 				add = 50
 			}
@@ -4093,6 +5985,7 @@ ai_strategy_default = {
 							state_region = s:STATE_SARIWON
 						}
 					}
+					can_reach_target_state = yes
 				}
 				add = 50
 			}
@@ -4166,7 +6059,10 @@ ai_strategy_default = {
 
 			if = { #Anglois India
 				limit = {
-					country_has_primary_culture = cu:anglois
+					OR = {
+						country_has_primary_culture = cu:anglois
+						country_has_primary_culture = cu:british
+					}
 					year >= 1860
 					scope:target_state = {
 						OR = {
@@ -4175,7 +6071,6 @@ ai_strategy_default = {
 							state_region = s:STATE_ASSAM
 							state_region = s:STATE_BIHAR
 							state_region = s:STATE_AWADH
-							state_region = s:STATE_DELHI
 						}
 					}
 					can_reach_target_state = yes
@@ -4189,9 +6084,47 @@ ai_strategy_default = {
 					year >= 1860
 					scope:target_state = {
 						OR = {
+							state_region = s:STATE_GUJARAT
 							state_region = s:STATE_SINDH
 							state_region = s:STATE_RAJPUTANA
 							state_region = s:STATE_PUNJAB
+						}
+					}
+					can_reach_target_state = yes
+				}
+				add = 50
+			}
+
+			if = { #Burgundian East Indies
+				limit = {
+					country_has_primary_culture = cu:burgundian
+					year >= 1860
+					scope:target_state = {
+						OR = {
+							state_region = s:STATE_EAST_BORNEO
+							state_region = s:STATE_WEST_BORNEO
+							state_region = s:STATE_CELEBES
+							state_region = s:STATE_SOUTH_SUMATRA
+							state_region = s:STATE_NORTH_SUMATRA
+							state_region = s:STATE_ACEH
+						}
+					}
+					can_reach_target_state = yes
+				}
+				add = 50
+			}
+
+			if = { #Scandinavian East Indies
+				limit = {
+					country_has_primary_culture = cu:burgundian
+					year >= 1860
+					scope:target_state = {
+						OR = {
+							state_region = s:STATE_NORTH_BORNEO
+							state_region = s:STATE_EAST_BORNEO
+							state_region = s:STATE_VISAYAS
+							state_region = s:STATE_LUZON
+							state_region = s:STATE_MALAYA
 						}
 					}
 					can_reach_target_state = yes
@@ -4210,6 +6143,54 @@ ai_strategy_default = {
 							state_region = s:STATE_SAXONY
 							state_region = s:STATE_THURINGIA
 							state_region = s:STATE_HANNOVER
+						}
+					}
+					can_reach_target_state = yes
+				}
+				add = 50
+			}
+
+			if = {
+				limit = {
+					has_journal_entry = je_reconquer_england
+					scope:target_state = {
+						OR = {
+							state_region = s:STATE_HOME_COUNTIES
+							state_region = s:STATE_LANCASHIRE
+							state_region = s:STATE_YORKSHIRE
+							state_region = s:STATE_MIDLANDS
+							state_region = s:STATE_EAST_ANGLIA
+							state_region = s:STATE_WEST_COUNTRY
+						}
+					}
+					can_reach_target_state = yes
+				}
+				add = 50
+			}
+
+			if = {
+				limit = {
+					has_journal_entry = je_conquer_wales
+					scope:target_state = {
+						OR = {
+							state_region = s:STATE_WALES
+						}
+					}
+					can_reach_target_state = yes
+				}
+				add = 50
+			}
+
+			if = {
+				limit = {
+					has_journal_entry = je_fra_annex_occ
+					scope:target_state = {
+						OR = {
+							state_region = s:STATE_LANGUEDOC
+							state_region = s:STATE_RHONE
+							state_region = s:STATE_ARMAGNAC
+							state_region = s:STATE_AUVERGNE
+							state_region = s:STATE_AQUITAINE
 						}
 					}
 					can_reach_target_state = yes
@@ -4312,6 +6293,8 @@ ai_strategy_default = {
 					}
 					NOR = { # These cultures do not get decreased interests
 						country_has_primary_culture = cu:anglois
+						country_has_primary_culture = cu:british
+						country_has_primary_culture = cu:french
 						country_has_primary_culture = cu:burgundian
 						country_has_primary_culture = cu:spanish
 						country_has_primary_culture = cu:scandinavian
@@ -4458,7 +6441,14 @@ ai_strategy_default = {
 					scope:target_state = { is_homeland_of_country_cultures = scope:target_country }
 				}
 				multiply = 0.0
-			}		
+			}
+
+			if = { # Fixes some edge cases when we gave to much claims
+				limit = {
+					can_reach_target_state = no
+				}
+				multiply = 0.0
+			}
 			
 			min = 0
 			max = 200	
@@ -4486,26 +6476,32 @@ ai_strategy_default = {
 
 			if = {
 				limit = {
-					scope:target_country = {
-						has_diplomatic_pact = {
-							who = root
-							type = embargo
-						}	
-					}
-				}
-				add = 25
-			}
-
-			if = {
-				limit = {
-					"num_mutual_trade_route_levels_with_country(root)" >= 10
 					OR = {
-						has_strategy = ai_strategy_economic_imperialism
+						scope:target_country = {
+							has_diplomatic_pact = {
+								who = root
+								type = embargo
+							}
+						}	
 						AND = {
-							NOT = { is_country_type = unrecognized }
-							scope:target_country = { is_country_type = unrecognized }
+							has_strategy = ai_strategy_economic_imperialism
+							"num_mutual_trade_route_levels_with_country(root)" >= 10
+							OR = {
+								has_attitude = {
+									who = scope:target_country
+									attitude = belligerent
+								}
+								has_attitude = {
+									who = scope:target_country
+									attitude = domineering
+								}	
+								has_attitude = {
+									who = scope:target_country
+									attitude = antagonistic
+								}								
+							}							
 						}
-					}
+					}				
 				}
 
 				add = {
@@ -4514,14 +6510,14 @@ ai_strategy_default = {
 					add = {
 						value = scope:target_state.state_population
 						divide = 200000
-						max = 10						
+						max = 10
 					}
 					
 					add = {
 						value = scope:target_state.gdp
 						divide = 200000
-						max = 10						
-					}				
+						max = 10
+					}
 				
 					if = {
 						limit = {
@@ -4530,8 +6526,17 @@ ai_strategy_default = {
 								level > 0
 							}						
 						}
-						
 						add = 5
+					}
+					
+					if = {
+						limit = {
+							OR = {
+								is_country_type = unrecognized
+								scope:target_country = { NOT = { is_country_type = unrecognized } }
+							}						
+						}
+						multiply = 0.5
 					}
 						
 					if = {
@@ -4541,8 +6546,8 @@ ai_strategy_default = {
 						multiply = 1.25
 					}					
 				}										
-			}		
-						
+			}
+			
 			if = {
 				limit = {
 					has_journal_entry = je_opium_wars
@@ -4610,6 +6615,52 @@ ai_strategy_default = {
 			max = 100			
 		}
 
+		transfer_subject = {
+			if = {
+				limit = {
+					OR = {
+						has_secret_goal = {
+							who = scope:target_country
+							secret_goal = protect
+						}
+						has_secret_goal = {
+							who = scope:target_country
+							secret_goal = dominate
+						}						
+					}
+				}
+			
+				add = {
+					value = 50
+				
+					add = {
+						value = scope:target_country.gdp
+						divide = 200000
+						max = 50						
+					}
+
+					if = {
+						limit = {
+							has_strategic_adjacency = scope:target_country
+						}
+						multiply = 1.25
+					}						
+				}			
+			}				
+		
+			#if = {
+			#	limit = { 
+			#		wants_to_solve_schleswig_holstein = yes
+			#		scope:target_country = { this = c:HOL }
+			#		can_reach_target_country = yes
+			#	}
+			#	add = 100
+			#}			
+			
+			min = 0
+			max = 100			
+		}	
+
 		make_puppet = {
 			if = {
 				limit = {
@@ -4657,6 +6708,32 @@ ai_strategy_default = {
 
 			if = {
 				limit = {
+					country_has_primary_culture = cu:turkish
+					OR = {
+						AND = {
+							exists = c:KU1
+							scope:target_country = c:KU1
+						}
+						AND = {
+							exists = c:KU2
+							scope:target_country = c:KU2
+						}
+						AND = {
+							exists = c:KU3
+							scope:target_country = c:KU3
+						}
+						AND = {
+							exists = c:KU4
+							scope:target_country = c:KU4
+						}
+					}
+					can_reach_target_country = yes
+				}
+			 	add = 100
+			}
+
+			if = {
+				limit = {
 					country_has_primary_culture = cu:russian
 					has_law = law_type:law_national_supremacy
 					OR = {
@@ -4676,6 +6753,53 @@ ai_strategy_default = {
 							exists = c:DZU
 							scope:target_country = {
 								this = c:DZU
+							}
+						}
+						AND = {	
+							exists = c:KAZ
+							scope:target_country = {
+								this = c:KAZ
+							}
+						}
+						AND = {	
+							exists = c:MGL
+							scope:target_country = {
+								this = c:MGL
+							}
+						}
+						AND = {	
+							exists = c:SBR
+							scope:target_country = {
+								this = c:SBR
+							}
+						}
+					}
+				}
+				add = 100
+			}
+
+			if = {
+				limit = {
+					exists = c:TAR
+					THIS = c:TAR
+					has_law = law_type:law_national_supremacy
+					OR = {
+						AND = {	
+							exists = c:BAK
+							scope:target_country = {
+								this = c:BAK
+							}
+						}
+						AND = {	
+							exists = c:AKH
+							scope:target_country = {
+								this = c:AKH
+							}
+						}
+						AND = {	
+							exists = c:CIR
+							scope:target_country = {
+								this = c:CIR
 							}
 						}
 					}
@@ -4916,6 +7040,32 @@ ai_strategy_default = {
 
 			if = {
 				limit = {
+					country_has_primary_culture = cu:turkish
+					OR = {
+						AND = {
+							exists = c:KU1
+							scope:target_country = c:KU1
+						}
+						AND = {
+							exists = c:KU2
+							scope:target_country = c:KU2
+						}
+						AND = {
+							exists = c:KU3
+							scope:target_country = c:KU3
+						}
+						AND = {
+							exists = c:KU4
+							scope:target_country = c:KU4
+						}
+					}
+					can_reach_target_country = yes
+				}
+			 	add = 100
+			}
+
+			if = {
+				limit = {
 					AND = {
 						has_radical_leftist_government = no			
 						scope:target_country = {
@@ -4996,6 +7146,32 @@ ai_strategy_default = {
 				# add = 100
 			# }	
 
+			if = {
+				limit = {
+					country_has_primary_culture = cu:turkish
+					OR = {
+						AND = {
+							exists = c:KU1
+							scope:target_country = c:KU1
+						}
+						AND = {
+							exists = c:KU2
+							scope:target_country = c:KU2
+						}
+						AND = {
+							exists = c:KU3
+							scope:target_country = c:KU3
+						}
+						AND = {
+							exists = c:KU4
+							scope:target_country = c:KU4
+						}
+					}
+					can_reach_target_country = yes
+				}
+			 	add = 100
+			}
+			
 			if = {
 				limit = {
 					AND = {
@@ -5307,6 +7483,86 @@ ai_strategy_default = {
 							exists = c:DZU
 							scope:target_country = c:DZU
 						}
+						AND = {	
+							exists = c:KAZ
+							scope:target_country = {
+								this = c:KAZ
+							}
+						}
+						AND = {	
+							exists = c:MGL
+							scope:target_country = {
+								this = c:MGL
+							}
+						}
+						AND = {	
+							exists = c:SBR
+							scope:target_country = c:SBR
+						}
+					}
+				}
+				add = 100
+			}
+
+			if = {
+				limit = {
+					exists = c:TAR
+					THIS = c:TAR
+					has_law = law_type:law_national_supremacy
+					OR = {
+						AND = {	
+							exists = c:BAK
+							scope:target_country = {
+								this = c:BAK
+							}
+						}
+						AND = {	
+							exists = c:AKH
+							scope:target_country = {
+								this = c:AKH
+							}
+						}
+						AND = {	
+							exists = c:CIR
+							scope:target_country = {
+								this = c:CIR
+							}
+						}
+					}
+				}
+				add = 100
+			}
+
+			if = {
+				limit = {
+					OR = {
+						country_has_primary_culture = cu:persian
+						country_has_primary_culture = cu:turkmen
+					}
+					scope:target_country = {
+						OR = {
+							country_has_primary_culture = cu:persian
+							country_has_primary_culture = cu:turkmen
+						}
+					}
+					can_reach_target_country = yes
+				}
+				add = 300
+			}
+
+			if = {
+				limit = {
+					year >= 1858
+					country_has_primary_culture = cu:burgundian
+					OR = {
+						AND = {	
+							exists = c:PLM
+							scope:target_country = c:PLM
+						}
+						AND = {	
+							exists = c:CEL
+							scope:target_country = c:CEL
+						}
 					}
 				}
 				add = 100
@@ -5465,6 +7721,22 @@ ai_strategy_default = {
 
 		independence = {
 			value = 100
+
+			if = {
+				limit = { # Burgundian East Indies should never seek independence
+					exists = c:BEI
+					this = c:BEI
+				}
+				multiply = 0.0
+			}
+
+			if = {
+				limit = { # Scandinavian East Indies should never seek independence
+					exists = c:CHR
+					this = c:CHR
+				}
+				multiply = 0.0
+			}
 		}	
 
 		secession = {

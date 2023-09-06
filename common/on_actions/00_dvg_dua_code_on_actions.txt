@@ -1,0 +1,255 @@
+﻿# Root = Country
+on_monthly_pulse_country = {
+	events = {
+		dvg_dua.116 #Springtime
+		dvg_dua.117 #Springtime ended
+		dvg_dua.505 #French freedom and occitan
+		dvg_dua.513 #Midi Revolution - DUA WON 
+		dvg_dua.514 #Midi Revolution - DUA LOST
+		dvg_dua.522 #Glorious Revolution - DUA WON 
+		dvg_dua.523 #Glorious Revolution - DUA LOST
+		dvg_dua.524 #Foreign support England
+		dvg_dua.525 #Anglois is dead
+		dvg_dua.527 #Anglois become France
+		dvg_dua.528 #Anglois become Britannie
+	}
+	effect = {
+	}
+}
+
+# Root = Country
+# scope:target = Uprising country
+on_revolution_end = {
+	effect = {
+		if = {
+			limit = { 
+				ROOT = { 
+					has_variable = anglois_path
+					has_journal_entry = je_dual_integration
+				}
+			}
+			scope:target = {
+				set_variable = anglois_path
+				set_variable = supporting_anglois_var
+
+				add_journal_entry = {
+					type = je_dual_integration
+				}
+		
+				add_journal_entry = {
+					type = je_total_revolution
+				}
+
+				add_journal_entry = {
+					type = je_dua_bureaucracy
+				}
+
+				add_radicals = {
+					value = 0.2
+					culture = cu:french
+				}
+			
+				add_radicals = {
+					value = 0.2
+					culture = cu:occitan
+				}
+			
+				add_radicals = {
+					value = 0.2
+					culture = cu:british
+				}
+			}
+		}
+		if = {
+			limit = { 
+				ROOT = { 
+					has_variable = french_path
+					has_journal_entry = je_french_integration
+				}
+			}
+			scope:target = {
+				set_variable = french_path
+				set_variable = supporting_french_var
+
+				add_journal_entry = {
+					type = je_french_integration
+				}
+		
+				add_journal_entry = {
+					type = je_dua_bureaucracy
+				}
+		
+				add_radicals = {
+					value = 0.2
+					culture = cu:british
+				}
+			}
+		}
+		if = {
+			limit = { 
+				ROOT = { 
+					has_variable = english_path
+					has_journal_entry = je_english_integration
+				}
+			}
+			scope:target = {
+				set_variable = english_path
+				set_variable = supporting_english_var
+
+				add_journal_entry = {
+					type = je_english_integration
+				}
+		
+				add_journal_entry = {
+					type = je_dua_bureaucracy
+				}
+
+				add_radicals = {
+					value = 0.2
+					culture = cu:french
+				}
+			
+				add_radicals = {
+					value = 0.2
+					culture = cu:occitan
+				}
+			}
+		}
+		if = {
+			limit = { 
+				ROOT = {
+					OR = {
+						has_variable = anglois_path
+						has_variable = french_path
+						has_variable = english_path
+					}
+				}
+			}
+			scope:target = {
+				set_variable = {
+					name = anglois_progress
+					value = ROOT.var:anglois_progress
+				}
+				set_variable = {
+					name = french_progress
+					value = ROOT.var:french_progress
+				}
+				set_variable = {
+					name = english_progress
+					value = ROOT.var:english_progress
+				}
+				set_variable = {
+					name = dua_total_revolution_revolt
+					value = ROOT.var:dua_total_revolution_revolt
+				}
+				set_variable = {
+					name = occ_revolt
+					value = ROOT.var:occ_revolt
+				}
+				set_variable = {
+					name = eng_revolt
+					value = ROOT.var:eng_revolt
+				}
+			}
+		}
+		if = {
+			limit = {
+				ROOT = {
+					has_journal_entry = je_dua_bureaucracy
+				}
+			}
+			scope:target = {
+				add_modifier = {
+					name = outmoded_bureaucracy
+					months = -1
+				}
+				add_journal_entry = {
+					type = je_dua_bureaucracy
+				}
+			}
+		}
+	}
+}
+
+# Root = Country
+# scope:target = Uprising country
+on_secession_start = {
+	effect = {
+		if = {
+			limit = {
+				OR = {
+					has_journal_entry = je_english_integration
+					has_journal_entry = je_dual_integration
+				}
+				exists = c:OCC
+				scope:target = c:OCC
+				NOT = { has_global_variable = occ_revolted }
+			}
+			set_global_variable = occ_revolted
+			if = {
+				limit = {
+					has_journal_entry = je_dual_integration
+				}
+				scope:target = {
+					set_global_variable = dual_integration_secession
+				}
+			}
+			else_if = {
+				limit = {
+					has_journal_entry = je_english_integration
+				}
+				scope:target = {
+					set_global_variable = english_integration_secession
+				}
+			}
+			trigger_event = {
+				id = dvg_dua.510
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					has_journal_entry = je_french_integration
+					has_journal_entry = je_dual_integration
+				}
+				exists = c:ENG
+				scope:target = c:ENG
+				NOT = { has_global_variable = eng_revolted }
+			}
+			set_global_variable = eng_revolted
+			if = {
+				limit = {
+					has_journal_entry = je_dual_integration
+				}
+				scope:target = {
+					set_global_variable = dual_integration_secession
+				}
+			}
+			else_if = {
+				limit = {
+					has_journal_entry = je_french_integration
+				}
+				scope:target = {
+					set_global_variable = french_integration_secession
+				}
+			}
+			trigger_event = {
+				id = dvg_dua.520
+			}
+		}
+		if = {
+			limit = {
+				exists = c:FRA
+				scope:target = c:FRA
+				NOT = { has_global_variable = anglois_accepted }
+				coa_controls_part_of_france = no
+			}
+
+			play_as = c:FRA
+
+			scope:target = {
+				annex = c:FRA
+			}
+		}
+	}
+}
