@@ -1,0 +1,209 @@
+je_dvg_jeanism = {
+	icon = "gfx/interface/icons/event_icons/bicorne_hat.dds"
+
+	immediate = {
+		set_variable = {
+			name = dvg_jeanism_progress_var
+			value = 0
+		}
+		brg_set_dvg_jeanism_variables = yes
+		random_law = {
+			limit = { type = law_type:law_monarchy }
+			save_scope_as = monarchy_scope
+		}
+	}
+
+	complete = {
+		custom_tooltip = {
+			text = je_divided_monarchists_02_tt
+			has_variable = one_true_french_dynasty
+		}
+	}
+
+	on_complete = {
+		custom_tooltip = {
+			text = je_divided_monarchists_03_tt
+		}
+	}
+
+	fail = {
+		custom_tooltip = {
+			text = je_divided_monarchists_01_fail_tt
+			has_variable = monarchy_stamped_out_var
+		}
+	}
+
+	on_fail = {
+	}
+
+	scripted_button = burgundian_jeanist_button
+	scripted_button = burgundian_parliamentarian_button
+
+	status_desc = {
+		first_valid = {
+			triggered_desc = { # Chosen dynasty is cementing its rule
+				desc = status_dvg_jeanist_cementing
+				trigger = {
+					has_variable = bonapartist_restoration_var
+				}
+			}
+			triggered_desc = { # Supporting Orleans in government
+				desc = status_dvg_parliamentarian_cementing
+				trigger = {
+					has_variable = supporting_orleanist_var
+				}
+			}
+			triggered_desc = { # Bar not moving, either no supported or not in government
+				desc = status_dvg_brg_no_progress
+				trigger = {
+					always = yes
+				}
+			}
+		}
+	}
+
+	on_weekly_pulse = {
+		events = {
+			french_pretenders.5
+		}
+		effect = {
+			if = {
+				limit = {
+					NOT = {
+						has_variable = fra_divided_monarchists_freeze #This variable stops iteration, and is granted by reaching 360 with one dynasty. It's reset when this JE is completed, or when je_cement_the_rightful_dynasty fails.
+					}
+				}
+				brg_weekly_pulse_jeanist_progress = yes #Calculates how much the Legitimists will get next month. Updates weekly, but is not added until the monthly.
+				brg_weekly_pulse_parliamentarian_progress = yes  #Calculates how much the Orleanists will get next month. Updates weekly, but is not added until the monthly.
+			}
+			brg_define_leading_faction = yes 	#The progress bar in this JE is always equivalent to the progress of the dynasty that's currently doing best. This scripted effect determines which dynasty that is, and sets fra_leading_dynasty_progress to be equal to that dynasty's progress variable.
+		}
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					has_law = law_type:law_monarchy
+					scope:journal_entry = {
+						is_goal_complete = yes
+					}
+					# safety check
+					OR = {
+						AND = {
+							has_variable = supporting_orleanist_var
+							ruler = { NOT = { has_variable = orleanist_leader } }
+						}
+						AND = {
+							has_variable = supporting_bonapartist_var
+							ruler = { NOT = { has_variable = bonapartist_leader } }
+						}
+						AND = {
+							has_variable = supporting_legitimist_var
+							ruler = { NOT = { has_variable = legitimist_leader } }
+						}
+					}
+					NOR = {
+						ruler = {
+							has_modifier = the_restorer_modifier
+						}
+						any_interest_group = {
+							OR = {
+								has_modifier = orleanist_restoration_modifier
+								has_modifier = legitimist_restoration_modifier
+								has_modifier = bonapartist_restoration_modifier
+							}
+						}
+					}
+					NOT = {
+						has_variable = pretender_enthroned_cooldown
+					}
+				}
+				trigger_event = { id = french_pretenders.1 popup = yes}
+			}
+			if = {
+				limit = {
+					scope:journal_entry = {
+						is_goal_complete = no
+					}
+					has_variable = french_monarchist_progress_var
+					OR = {
+						AND = {
+							trigger_if = {
+								limit = {
+									is_player = yes
+								}
+								has_variable = supporting_orleanist_var
+							}
+							any_interest_group = {
+								leader = { has_ideology = ideology:ideology_orleanist }
+								is_in_government = yes
+							}
+							NOT = {
+								has_variable = orleanist_restoration_var
+							}
+						}
+						AND = {
+							trigger_if = {
+								limit = {
+									is_player = yes
+								}
+								has_variable = supporting_legitimist_var
+							}
+							any_interest_group = {
+								leader = { has_ideology = ideology:ideology_legitimist }
+								is_in_government = yes
+							}
+							NOT = {
+								has_variable = legitimist_restoration_var
+							}
+						}
+						AND = {
+							trigger_if = {
+								limit = {
+									is_player = yes
+								}
+								has_variable = supporting_bonapartist_var
+							}
+							any_interest_group = {
+								leader = { has_ideology = ideology:ideology_bonapartist }
+								is_in_government = yes
+							}
+							NOT = {
+								has_variable = bonapartist_restoration_var
+							}
+						}
+					}
+				}
+				change_variable = {
+					name = french_monarchist_progress_var
+					add = 1
+				}
+			}
+		}
+		random_events = {
+			50 = 0
+			10 = french_pretenders_pulse.2
+			10 = french_pretenders_pulse.3
+		}
+	}
+	on_yearly_pulse = {
+		random_events = {
+		}
+	}
+
+	current_value = {
+		value = root.var:french_monarchist_progress_var
+	}
+
+	goal_add_value = {
+		value = 60
+	}
+
+	progressbar = yes
+
+	weight = 100
+
+	should_be_pinned_by_default = yes
+}
+
