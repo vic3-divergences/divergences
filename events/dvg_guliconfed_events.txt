@@ -896,7 +896,12 @@ dvg_guliconfed.204 = { #Mandarin making Buddhism EXTRA appealing
 		convert_population = {
 			target = rel:mahayana
 			value = 0.08
-		}	
+		}
+		change_variable = {
+			name = dvg_guli_religion_moderate_var
+			add = 1
+		}
+	name = dvg_guliconfed.204.a
 	}
 	
 	option = { #Support the spread of Buddhism amongst Mandarin speakers
@@ -909,6 +914,11 @@ dvg_guliconfed.204 = { #Mandarin making Buddhism EXTRA appealing
 			cu:aborigine
 			religion:mahayana
 		}
+		change_variable = {
+			name = dvg_guli_religion_full_mahayana_var
+			add = 1
+		}
+	name = dvg_guliconfed.204.b
 	}
 	
 	option = { #Recommend that they join the preservationist movement instead
@@ -921,17 +931,115 @@ dvg_guliconfed.204 = { #Mandarin making Buddhism EXTRA appealing
 			cu:aborigine
 			religion:mahayana
 		}
+		change_variable = {
+			name = dvg_guli_religion_full_dreamtime_var
+			add = 1
+		}
 		ig:ig_landowners = {
 			add_modifier = {
 				name = dvg_guli_religion_preservation_encouraged
 				months = short_modifier_time
 			}
 		}	
+	name = dvg_guliconfed.204.c
 	}
 }
+
+dvg_guliconfed.205 = { #Fight between monk and preservationist
+	type = country_event
+	placement = ROOT
+
+	title = dvg_guliconfed.205.t
+	desc = dvg_guliconfed.205.d
+	flavor = dvg_guliconfed.205.f
+	
+	duration = 2
+	
+	event_image = {
+		video = "gfx/event_pictures/asia_politician_parliament_motion.bk2"
+	}
+	
+	trigger = {
+		NOT = {
+			has_variable = has_variable = dvg_guli_religion_banned_fighting_in_yushan
+		}
+	}
+	
+	immediate = {
+		ig:ig_devout = {
+			leader = { 
+				save_scope_as = criminal_monk
+			}
+		}
+	}
+	
+	option = { #Arrest the monk!
+		change_variable = {
+			name = dvg_guli_religion_full_dreamtime_var
+			add = 1
+		}
+		IF = {
+			limit = {
+				scope:criminal_monk = {
+					NOT = {
+						is_ruler = no
+						is_busy = no
+						is_historical = no					
+					}
+					OR = {
+						has_trait = reckless
+						has_trait = ambitious
+						has_trait = wrathful
+						has_trait = cruel
+						has_trait = imposing
+					}
+				}
+			}
+			kill_character = yes
+			ig:ig_devout = {
+				add_modifier = {
+					name = dvg_guli_religion_prominent_monk_arrested
+					months = normal_modifier_time
+				}
+			}
+		}
+		add_radicals = {
+			value = 0.02
+			cu:aborigine
+			religion:mahayana
+		}
+	name = dvg_guliconfed.205.a
+	}
+	
+	option = { #Ban fights in the capital
+		set_variable = {
+			name = dvg_guli_religion_banned_fighting_in_yushan
+		}
+		change_variable = {
+			name = dvg_guli_religion_moderate_var
+			add = 1
+		}
+	name = dvg_guliconfed.205.b
+	}
+	
+	option = { #Arrest the preservationist!
+		change_variable = {
+			name = dvg_guli_religion_full_mahayana_var
+			add = 1
+		}
+		add_radicals = {
+			value = 0.02
+			cu:aborigine
+			religion:animist
+		}
+	name = dvg_guliconfed.205.c
+	}
+}
+
+
+
 #Reminder for later:
 #If the Yushan Agency modifier is there, fire an event about them spreading that
-#Fight in Yushan between a Preservationist and a Buddhist Monk
 #Syncretism spreads - moderate event
 #If the Mandarin choice was taken, have an event about that where Buddhism spreads quickly - convert animist pops
 #If the local language choice was taken, have an event about the documentation of its people's dreamtime beliefs
