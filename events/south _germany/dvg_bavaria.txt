@@ -402,9 +402,6 @@ dvg_bavaria.10 = {
 	desc = dvg_bavaria.10.d
 	flavor = dvg_bavaria.10.f
 
-
-	### TODO: Make this trigger by NUR/BOH
-
 	option = {
 		name = dvg_bavaria.10.a
 		default_option = yes
@@ -597,6 +594,12 @@ dvg_bavaria.16 = {
 	title = dvg_bavaria.16.t
 	desc = dvg_bavaria.16.d
 	flavor = dvg_bavaria.16.f
+
+	immediate = {
+		hidden_effect = {
+			c:BAV = { trigger_event = { id = dvg_bavaria.20 days = 100 }}
+		}
+	}
 
 	### Bavaria gets it
 	option = {
@@ -975,6 +978,12 @@ dvg_bavaria.25 = {
 	desc = dvg_bavaria.25.d
 	flavor = dvg_bavaria.25.f
 	
+	immediate = {
+		hidden_effect = {
+			trigger_event = { id = dvg_bavaria.30 days = 44 }
+		}
+	}
+
 	option = {
 		name = dvg_bavaria.25.a
 		default_option = yes
@@ -1074,6 +1083,8 @@ dvg_bavaria.28 = {
 		default_option = yes
 
 		### TODO: Add law changes
+
+		set_global_variable = dvg_bav_people_republic
 	}
 
 
@@ -1124,23 +1135,21 @@ dvg_bavaria.30 = {
 
 		### Bavaria to liberal for Austria
 		if = {
-			limit = { this = c:BAV }
+			limit = { this = c:BAV has_global_variable = dvg_bav_people_republic }
 
-			### TODO: Add liberal trigger
+			
 			trigger_event = { id = dvg_bavaria.31 days = 5 }
 		}
-
-		### Bavaria acceptable to Austria
-		if = {
-			limit = { this = c:BAV }
-
-			### TODO: Add conservative trigger
+		else = {
 			trigger_event = { id = dvg_bavaria.32 days = 5 }
 		}
 
 		if = {
 			limit = { this = c:AUS }
-			### TODO: Reduce Opionion with WUR
+			change_relations = {
+				country = c:BAV
+				value = 50
+			}
 		}
 
 		
@@ -1191,7 +1200,7 @@ dvg_bavaria.32 = {
 		name = dvg_bavaria.32.a
 		default_option = yes
 
-		
+		c:AUS = { trigger_event = { id = dvg_bavaria.34 days = 72 }}
 	}
 
 
@@ -1245,15 +1254,22 @@ dvg_bavaria.34 = {
 	### Run away
 	option = {
 		name = dvg_bavaria.34.a
-		default_option = yes
 
-		trigger_event = { id = dvg_bavaria.36 days = 5 }
+		trigger_event = { id = dvg_bavaria.35 days = 5 }
+
+		ai_chance = {
+			base = 10
+		}
 	}
 
 	### Accept
 	option = {
 		name = dvg_bavaria.34.b
 		default_option = yes
+
+		ai_chance = {
+			base = 90
+		}
 
 		trigger_event = { id = dvg_bavaria.36 days = 5 }
 	}
@@ -1279,7 +1295,10 @@ dvg_bavaria.35 = {
 		name = dvg_bavaria.35.a
 		default_option = yes
 
-		
+		hidden_effect = {
+			c:BAV = { trigger_event = { id = dvg_bavaria.40 days = 8 }}
+			c:AUS = { trigger_event = { id = dvg_bavaria.40 days = 8 }}
+		}
 	}
 
 }
@@ -1302,7 +1321,7 @@ dvg_bavaria.36 = {
 		name = dvg_bavaria.36.a
 		default_option = yes
 
-		
+		trigger_event = { id = dvg_bavaria.50 days = 20 }
 	}
 
 }
@@ -1345,8 +1364,10 @@ dvg_bavaria.40 = {
 		trigger = {
 			this = c:AUS
 		}
-
-		### TODO: Tooltip saying this will result in a war
+		
+		set_global_variable = dvg_brothers_war
+		trigger_event = { id = dvg_bavaria.42 days = 5 }
+		custom_tooltip = DVG_WILL_LEAD_TO_WAR_TOOLTIP
 		
 	}
 
@@ -1401,6 +1422,8 @@ dvg_bavaria.42 = {
 	desc = dvg_bavaria.42.d
 	flavor = dvg_bavaria.42.f
 	
+	
+
 	option = {
 		name = dvg_bavaria.42.a
 		default_option = yes
@@ -1423,7 +1446,10 @@ dvg_bavaria.43 = {
 	desc = dvg_bavaria.43.d
 	flavor = dvg_bavaria.43.f
 	
-	### TODO: Add trigger
+	trigger = {
+		c:BAV = { is_direct_subject_of = c:AUS }
+		has_global_variable = dvg_brothers_war
+	}
 
 	option = {
 		name = dvg_bavaria.43.a
@@ -1470,7 +1496,10 @@ dvg_bavaria.45 = {
 	desc = dvg_bavaria.45.d
 	flavor = dvg_bavaria.45.f
 	
-	### TODO: Add trigger
+	trigger = {
+		c:AUS = { is_direct_subject_of = c:BAV }
+		has_global_variable = dvg_brothers_war
+	}
 
 	option = {
 		name = dvg_bavaria.45.a
@@ -1517,6 +1546,11 @@ dvg_bavaria.47 = {
 	title = dvg_bavaria.47.t
 	desc = dvg_bavaria.47.d
 	flavor = dvg_bavaria.47.f
+
+	trigger = {
+		c:BAV = { has_truce_with = c:AUS }
+		has_global_variable = dvg_brothers_war
+	}
 
 	option = {
 		name = dvg_bavaria.47.a
@@ -1578,8 +1612,13 @@ dvg_bavaria.50 = {
 		default_option = yes
 
 		### TODO: Add Prestige modifier
-		### TODO: Change Capital to Salzburg
-		change_tag = SGF
+		#change_tag = SGF
+
+		set_global_variable = dvg_third_council
+
+		c:AUS = {
+			trigger_event = dvg_bavaria.51
+		}
 		
 	}
 }
@@ -1602,6 +1641,17 @@ dvg_bavaria.51 = {
 		name = dvg_bavaria.51.a
 		default_option = yes
 		
+
+		if = {
+			limit = {
+				NOT ={
+					has_global_variable = dvg_sgf_CRN_later
+					c:CRN = { is_subject_of = c:AUS }
+				}
+			}
+
+			c:BAV = { trigger_event = { id = dvg_bavaria.57 days = 20 }}
+		}
 	}
 }
 
@@ -1620,7 +1670,14 @@ dvg_bavaria.52 = {
 	desc = dvg_bavaria.52.d
 	flavor = dvg_bavaria.52.f
 
-	### TODO:  Trigger with FLag from Austria File
+	trigger = {
+		this = c:BAV
+		has_global_variable = dvg_third_council
+		OR = {
+			has_global_variable = dvg_sgf_CRN_later
+			c:CRN = { is_subject_of = c:AUS }
+		}
+	}
 
 	option = {
 		name = dvg_bavaria.52.a
@@ -1652,44 +1709,11 @@ dvg_bavaria.53 = {
 	option = {
 		name = dvg_bavaria.53.a
 		default_option = yes
-		
-		### TODO: 75% for dvg_bavaria.54
-		### TODO: 25% for dvg_bavaria.55
-	}
 
-	option = {
-		name = dvg_bavaria.53.b
-		default_option = yes
-
-		c:BAV = {
-			trigger_event = dvg_bavaria.56
+		random_list ={
+			75 = { c:BAV = { trigger_event = { id = dvg_bavaria.56 popup = yes } }}
+			25 = { trigger_event = { id = dvg_bavaria.54 popup = yes } }
 		}
-		
-	}
-}
-
-### The Carinthian Problem
-dvg_bavaria.53 = {
-
-	event_image = { video = "unspecific_military_parade" }
-	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
-	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
-
-	placement = ROOT
-	type = country_event
-	
-	title = dvg_bavaria.53.t
-	desc = dvg_bavaria.53.d
-	flavor = dvg_bavaria.53.f
-
-	
-
-	option = {
-		name = dvg_bavaria.53.a
-		default_option = yes
-		
-		### TODO: 75% for dvg_bavaria.56
-		### TODO: 25% for dvg_bavaria.54
 	}
 
 	option = {
@@ -1723,7 +1747,9 @@ dvg_bavaria.54 = {
 		name = dvg_bavaria.54.a
 		default_option = yes
 		
-		
+		c:BAV = {
+			trigger_event = dvg_bavaria.55
+		}
 	}
 
 }
@@ -1779,7 +1805,9 @@ dvg_bavaria.56 = {
 		name = dvg_bavaria.56.a
 		default_option = yes
 		
-		### TODO: Set flag for CRN puppet
+		set_global_variable = dvg_promised_crn_puppet
+
+		trigger_event = { id = dvg_bavaria.57 days = 50 }
 	}
 
 }
@@ -1801,9 +1829,8 @@ dvg_bavaria.57 = {
 	### Vienna
 	option = {
 		name = dvg_bavaria.57.a
-		default_option = yes
 		
-		
+		trigger_event = { id = dvg_bavaria.58 days = 20 }
 	}
 
 	### Munich
@@ -1811,7 +1838,7 @@ dvg_bavaria.57 = {
 		name = dvg_bavaria.57.b
 		default_option = yes
 		
-		
+		trigger_event = { id = dvg_bavaria.60 days = 20 }
 	}
 
 }
@@ -1860,11 +1887,11 @@ dvg_bavaria.59 = {
 		
 		hidden_effect = {
 			annex = c:AUS
-			annex = c:AGR
+			c:AGR = { trigger_event = dvg_bavaria.62 }
+			c:TYR = { trigger_event = dvg_bavaria.62 }
 			c:WUR = { trigger_event = dvg_bavaria.62 }
 			c:ULM = { trigger_event = dvg_bavaria.62 }
 			c:BAD = { trigger_event = dvg_bavaria.62 }
-			c:TYR = { trigger_event = dvg_bavaria.62 }
 			### TODO: Add missing integrations
 		}
 		change_tag = SGF
@@ -1912,14 +1939,18 @@ dvg_bavaria.61 = {
 	option = {
 		name = dvg_bavaria.61.a
 		default_option = yes
-		
+
+		### TODO: Add missing integrations
 		hidden_effect = {
 			annex = c:AUS
+			c:AGR = { trigger_event = dvg_bavaria.62 }
+			c:TYR = { trigger_event = dvg_bavaria.62 }
 			c:WUR = { trigger_event = dvg_bavaria.62 }
 			c:ULM = { trigger_event = dvg_bavaria.62 }
 			c:BAD = { trigger_event = dvg_bavaria.62 }
-			### TODO: Add missing integrations
 		}
+			
+
 		change_tag = SGF
 	}
 }
@@ -1945,14 +1976,17 @@ dvg_bavaria.62 = {
 		default_option = yes
 		
 		hidden_effect = {
-			c:BAV = { annex = this }
+			c:SGF = { annex = ROOT }
+		}
+
+		ai_chance = {
+			base = 100
 		}
 		
 	}
 
 	option = {
 		name = dvg_bavaria.62.b
-		default_option = yes
 		
 	}
 }
