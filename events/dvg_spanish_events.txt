@@ -469,7 +469,7 @@ dvg_spain.10 = {
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
 	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
 
-	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+	icon = "gfx/interface/icons/event_icons/event_morocco_independence.dds"
 
 	duration = 3
 
@@ -531,6 +531,11 @@ dvg_spain.10 = {
 	#We have to accept this for now
 	option = {
 		name = dvg_spain.10.b
+		trigger = {
+			NOT = { 
+				has_variable = dvg_let_morocco_go
+			}
+		}
 		c:MOR = {
 			trigger_event = { id = dvg_morocco.6 }
 		}
@@ -541,6 +546,7 @@ dvg_spain.10 = {
 					type = puppet
 				}
 			}
+			set_variable = dvg_let_morocco_go
 		}
 		ai_chance = {
 			base = 0.01
@@ -1233,7 +1239,7 @@ dvg_spain.20 = {
 				}
 				save_scope_as = dvg_granada
 			}
-				random_scope_state = {
+			random_scope_state = {
 				limit = {
 					state_region = s:STATE_ASTURIAS
 				}
@@ -1769,6 +1775,270 @@ dvg_spain.25 = {
 				}
 				activate_law = law_type:law_monarchy
 			}
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+# Castilexit
+dvg_spain.26 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.26.t
+	desc = dvg_spain.26.d
+	flavor = dvg_spain.26.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		exists = c:SPA
+		root = c:SPA
+		exists = c:CAS
+		is_at_war = no
+		is_player = no
+	}
+	
+	immediate = {
+		set_global_variable = dvg_spain_collapse
+		if = {
+			limit = {
+				NOT = { exists = c:MOR }
+			}
+			create_country = {
+				tag = MOR
+				origin = this
+				state = s:STATE_FEZ.region_state:SPA
+				state = s:STATE_MARRAKECH.region_state:SPA
+				state = s:STATE_INNER_MOROCCO.region_state:SPA
+			}
+		}
+		if = {
+			limit = {
+				NOT = { has_law = law_type:law_presidential_republic }
+			}
+			activate_law = law_type:law_presidential_republic
+		}
+		create_country = {
+			tag = ANL
+			origin = this
+			state = s:STATE_ANDALUSIA.region_state:SPA
+			state = s:STATE_BADAJOZ.region_state:SPA
+			state = s:STATE_GRANADA.region_state:SPA
+			state = s:STATE_ANDALUSIA.region_state:CAS
+			state = s:STATE_BADAJOZ.region_state:CAS
+			state = s:STATE_AL_RIF.region_state:SPA
+		}
+		create_country = {
+			tag = TOL
+			origin = this
+			state = s:STATE_TOLEDO.region_state:CAS
+			state = s:STATE_CARTAGENA.region_state:CAS
+			state = s:STATE_GRANADA.region_state:CAS
+			state = s:STATE_TOLEDO.region_state:SPA
+			state = s:STATE_CARTAGENA.region_state:SPA
+		}
+		create_country = {
+			tag = GLI
+			origin = this
+			state = s:STATE_GALICIA.region_state:SPA
+		}
+		s:STATE_TOLEDO = { 
+			remove_homeland = portuguese
+		}
+		s:STATE_CASTILE = { 
+			remove_homeland = portuguese
+		}
+		s:STATE_ASTURIAS = {
+			remove_homeland = portuguese
+		}
+		s:STATE_CARTAGENA = {
+			remove_homeland = portuguese
+		}
+		s:STATE_GRANADA = {
+			remove_homeland = portuguese
+		}
+		s:STATE_ESTREMADURA = {
+			remove_homeland = portuguese
+		}
+		s:STATE_GALICIA = {
+			remove_homeland = portuguese
+		}
+		s:STATE_ALENTEJO = {
+			remove_homeland = portuguese
+		}
+		s:STATE_BEIRA = {
+			remove_homeland = portuguese
+		}
+		s:STATE_CARTAGENA = {
+			remove_homeland = portuguese
+		}
+		s:STATE_GRANADA = {
+			remove_homeland = portuguese
+		}
+		s:STATE_AL_RIF = {
+			remove_homeland = portuguese
+		}
+		s:STATE_CANARY_ISLANDS = {
+			remove_homeland = portuguese
+		}
+		s:STATE_MADEIRA = {
+			remove_homeland = portuguese
+		}
+		s:STATE_AZORES = {
+			remove_homeland = portuguese
+		}
+		every_scope_pop = {
+			limit = {
+				has_pop_culture = portuguese
+			}
+			change_pop_culture = { 
+				target = cu:galician
+				value = 0.75
+			}
+		}
+		every_scope_pop = {
+			limit = {
+				NOT = {
+					OR = {
+						has_pop_culture = galician
+						has_pop_culture = portuguese
+					}
+				}
+			}
+			add_radicals = { 
+				value = 0.60
+			}
+		}
+		if = {
+			limit = {
+				NOT = { exists = c:NAV }
+			}
+			create_country = {
+				tag = NAV
+				origin = this
+				state = s:STATE_NAVARRA.region_state:SPA
+				state = s:STATE_NAVARRA.region_state:CAS
+			}
+		}
+		if = {
+			limit = {
+				exists = c:NAV
+			}
+			s:STATE_NAVARRA.region_state:SPA = {
+				set_state_owner = c:NAV
+			}
+			s:STATE_NAVARRA.region_state:CAS = {
+				set_state_owner = c:NAV
+			}
+		}
+		c:CAS = {
+			save_scope_as = dvg_castile_scope
+		}
+		c:CAS = {
+			create_diplomatic_pact = {
+				country = c:TOL
+				type = dominion
+			}
+		}
+		c:TOL = {
+			create_diplomatic_play = {
+				target_country = scope:dvg_castile_scope
+				war = yes
+				type = dp_independence
+				
+				add_war_goal = {
+					holder = c:CAS
+					type = annex_country
+					target_country = c:TOL
+				}
+			}
+		}
+		remove_diplomatic_pact = {
+			country = c:CUB
+			type = puppet
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_a_new_empire_in_an_old_world
+			}
+			remove_journal_entry = je_a_new_empire_in_an_old_world
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_spanish_africa
+			}
+			remove_journal_entry = je_spanish_africa
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_reconquer_new_spain
+			}
+			remove_journal_entry = je_reconquer_new_spain
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_rebuild_spain
+			}
+			remove_journal_entry = je_rebuild_spain
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_spanish_india
+			}
+			remove_journal_entry = je_spanish_india
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_integrate_castille
+			}
+			remove_journal_entry = je_integrate_castille
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_integrate_portugal
+			}
+			remove_journal_entry = je_integrate_portugal
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_army_reform_spain
+			}
+			remove_journal_entry = je_army_reform_spain
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_castillian_tensions
+			}
+			remove_journal_entry = je_castillian_tensions
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_keep_castillian_tensions_low
+			}
+			remove_journal_entry = je_keep_castillian_tensions_low
+		}
+	}
+	
+	# we oofed
+	option = {
+		name = dvg_spain.26.a
+		default_option = yes
+		custom_tooltip = dvg_spain_is_no_more
+		change_tag = POR
+		s:STATE_GALICIA = {
+			add_claim = c:POR
 		}
 		ai_chance = {
 			base = 1
