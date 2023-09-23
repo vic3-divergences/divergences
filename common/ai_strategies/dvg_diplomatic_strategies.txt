@@ -644,17 +644,35 @@ ai_strategy_unify_tatarstan = {
 	# Added to value from default strategy
 	recklessness = {
 		value = 0.5
+
+		if = {
+			limit = { 
+				ruler = {
+					has_variable = is_murad_giray
+				}
+			}
+			add = 0.5
+		}
 	}	
 	
 	# Added to value from default strategy
 	aggression = {
 		value = 0.5
 		
-		if = {
+		if = { 
 			limit = { 
 				scope:target_country = { can_form_nation = TAR }
 			}
 			add = 2.75
+		}
+
+		if = {
+			limit = { 
+				ruler = {
+					has_variable = is_murad_giray
+				}
+			}
+			add = 5
 		}
 
 		# Less aggressive against countries we're just antagonistic against, rather than belligerent/domineering
@@ -767,8 +785,22 @@ ai_strategy_unify_tatarstan = {
 						}
 					}
 				}
-				add = 1000
-			}				
+				add = 500
+			}
+			if = {
+				limit = {
+					can_reach_target_country = yes
+					scope:target_country = { 
+						any_scope_state = {
+							OR = {
+								state_region = s:STATE_ASTRAKHAN
+								state_region = s:STATE_URALSK
+							}
+						}	
+					}
+				}
+				add = 500
+			}			
 		}	
 	}	
 
@@ -1265,6 +1297,7 @@ ai_strategy_unify_ari = {
 	}	
 
 	possible = {
+		has_technology_researched = nationalism
 		NOT = { exists = c:ARI }
 		OR = {
 			can_form_nation = ARI
@@ -2142,5 +2175,296 @@ ai_strategy_unify_persia = {
 			limit = { country_rank = rank_value:unrecognized_major_power }
 			add = 50
 		}		
+	}
+}
+
+ai_strategy_unify_north_italy = {
+	icon = "gfx/interface/icons/ai_strategy_icons/unification.dds"
+	
+	type = diplomatic
+		
+	undesirable_infamy_level = {
+		value = 25
+	}
+	
+	unacceptable_infamy_level = {
+		value = 50
+	}
+	
+	ideological_opinion_effect_mult = {
+		value = 0.5
+	}
+	
+	wargoal_maneuvers_fraction = {
+		value = 0.1
+	}		
+	
+	diplomatic_play_neutrality = {
+		value = 0
+	}
+	
+	diplomatic_play_boldness = {
+		value = 75
+	}
+	
+	obligation_value = {
+		value = 0
+	
+		if = {
+			limit = { 
+				scope:target_country = {
+					OR = {
+						country_has_primary_culture = cu:north_italian
+						country_has_primary_culture = cu:central_italian
+					}				
+				}
+			}
+			add = 25
+		}
+	}		
+	
+	recklessness = {
+		value = 0.5
+
+		if = {
+			limit = {
+				exists = c:LOM
+				THIS = c:LOM
+				has_global_variable = peoples_springtime_happening
+				scope:target_country = {
+					exists = c:TUS
+					THIS = c:TUS
+				}
+			}
+
+			add = 0.5
+		}
+
+		if = {
+			limit = { 
+				scope:target_country = {
+					OR = {
+						country_has_primary_culture = cu:north_italian
+						country_has_primary_culture = cu:central_italian
+					}				
+				}
+				has_global_variable = peoples_springtime_happening
+			}
+			add = 0.5
+		}
+	}	
+	
+	aggression = {
+		value = 0.25
+		
+		if = {
+			limit = { 
+				scope:target_country = {
+					OR = {
+						country_has_primary_culture = cu:north_italian
+						country_has_primary_culture = cu:central_italian
+					}				
+				}
+			}
+			add = 2.75
+		}
+
+		if = {
+			limit = { 
+				scope:target_country = {
+					OR = {
+						country_has_primary_culture = cu:north_italian
+						country_has_primary_culture = cu:central_italian
+					}				
+				}
+				has_global_variable = peoples_springtime_happening
+			}
+			add = 5
+		}
+
+		if = {
+			limit = {
+				exists = c:LOM
+				THIS = c:LOM
+				has_global_variable = peoples_springtime_happening
+				scope:target_country = {
+					exists = c:TUS
+					THIS = c:TUS
+				}
+			}
+
+			add = 100
+		}
+
+		if = {
+			limit = {
+				scope:target_country = {
+					exists = c:SAV
+					THIS = c:SAV
+				}
+			}
+
+			add = 50
+		}
+
+		# Less aggressive against countries we're just antagonistic against, rather than belligerent/domineering
+		if = {
+			limit = {
+				has_attitude = {
+					who = scope:target_country
+					attitude = antagonistic
+				}					
+			}
+			multiply = 0.25
+		}
+		
+		# More aggressive against ideological enemies, a bit less aggressive against ideological allies
+		if = {
+			limit = {
+				"ai_ideological_opinion(scope:target_country)" < 0
+			}
+			
+			multiply = {
+				value = "ai_ideological_opinion(scope:target_country)"
+				multiply = -0.2
+				add = 1
+				max = 4.0
+			}				
+		}	
+		else = {
+			multiply = {
+				value = "ai_ideological_opinion(scope:target_country)"
+				multiply = -0.05
+				add = 1
+				min = 0.5
+			}			
+		}
+	}
+
+	building_group_weights = {
+		bg_army = 1.5
+	}
+	
+	wargoal_scores = {
+		conquer_state = {
+			if = {
+				limit = {
+					scope:target_state = {
+						state_region = {
+							OR = {
+								is_homeland = cu:north_italian
+								is_homeland = cu:central_italian
+							}
+						}
+						owner = {
+							NOR = { 
+								is_subject_of = root
+								has_diplomatic_pact = {
+									who = scope:target_country
+									type = customs_union
+								}							
+							}						
+						}				
+					}	
+					can_reach_target_state = yes
+				}
+				add = 100
+			}
+		}
+		return_state = {
+			if = {
+				limit = {
+					scope:target_state = {
+						state_region = {
+							OR = {
+								is_homeland = cu:north_italian
+								is_homeland = cu:central_italian
+							}
+						}					
+					}
+					can_reach_target_state = yes
+				}
+				add = 100
+			}
+		}
+	}	
+	
+	secret_goal_scores = {
+		protect = {		
+			if = {
+				limit = {
+					scope:target_country = {
+						OR = {
+							country_has_primary_culture = cu:north_italian
+							country_has_primary_culture = cu:central_italian
+						}
+						NOT = { has_journal_entry = je_italian_confederation }
+						OR = { 
+							is_subject_of = root
+							has_diplomatic_pact = {
+								who = scope:target_country
+								type = customs_union
+							}							
+						}
+					}
+				}
+				add = 1000
+			}		
+		}		
+		dominate = {		
+			if = {
+				limit = {
+					scope:target_country = {
+						OR = {
+							country_has_primary_culture = cu:north_italian
+							country_has_primary_culture = cu:central_italian
+						}
+						NOR = { 
+							has_journal_entry = je_italian_confederation
+							is_subject_of = root
+							has_diplomatic_pact = {
+								who = scope:target_country
+								type = customs_union
+							}							
+						}	
+					}
+				}
+				add = 500
+			}		
+		}		
+		conquer = {				
+			if = {
+				limit = {
+					scope:target_country = {			
+						OR = {
+							has_journal_entry = je_italian_confederation
+							AND = {
+								exists = c:ARN
+								THIS = c:ARN
+							}
+						}
+					}
+				}
+				add = 1000
+			}
+			if = {
+				limit = {
+					scope:target_country = {
+						exists = c:SAV
+						THIS = c:SAV
+					}
+				}
+				add = 1500
+			}
+		}	
+	}	
+
+	possible = {
+		has_journal_entry = je_italian_confederation
+		NOT = { country_tier = empire }
+	}
+
+	weight = {
+		value = 1000
 	}
 }
