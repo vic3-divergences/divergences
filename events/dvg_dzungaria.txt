@@ -1,0 +1,756 @@
+﻿ namespace = dvg_dzungaria
+
+dvg_dzungaria.1 = {  #Dzungar intro
+	type = country_event
+	placement = ROOT
+
+	title = dvg_dzungaria.1.t
+	desc = dvg_dzungaria.1.d
+	flavor = dvg_dzungaria.1.f
+	
+	event_image = {
+		video = "middleeast_courtroom_upheaval"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+	    
+	}
+	
+	
+	
+	option = {
+		name = dvg_dzungaria.1.a
+		default_option = yes
+		add_journal_entry = {
+			type = je_galdan_khan
+		}
+		
+	}
+}
+
+# #Collapse of Dzungaria
+
+dvg_dzungaria.2 = { #Split Dzungaria up into warlord states
+	type = country_event
+	placement = root
+	duration = 3
+
+	title = dvg_dzungaria.2.t
+	desc = dvg_dzungaria.2.d
+	flavor = dvg_dzungaria.2.f
+
+	event_image = {
+		video = "gfx/event_pictures/asia_sepoy_mutiny.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	trigger = {
+		exists = c:DZU
+		this = c:DZU
+		NOT = { has_global_variable = dzungaria_shatters }
+	}
+
+	immediate = {
+		set_global_variable = dzungaria_shatters
+
+		remove_global_variable = atlantia_indepdendent
+		
+		set_variable = chinese_central_government
+		
+		
+				s:STATE_URGA = {
+					add_claim = c:DZU
+				}
+		s:STATE_ULIASTAI = {
+					add_claim = c:DZU
+				}
+		s:STATE_SEMIRECHE = {
+					add_claim = c:DZU
+				}
+		s:STATE_AKMOLINSK = {
+					add_claim = c:DZU
+				}
+		s:STATE_UZBEKIA = {
+					add_claim = c:DZU
+				}	
+
+		s:STATE_KIRGHIZIA = {
+					add_claim = c:DZU
+				}
+		
+		if = {
+			limit = { exists = s:STATE_SEMIRECHE.region_state:DZU }
+			create_country = { #Kazakhstan
+				tag = KAZ
+				origin = this
+				state = s:STATE_SEMIRECHE.region_state:DZU
+				state = s:STATE_AKMOLINSK.region_state:DZU
+				state = s:STATE_URALSK.region_state:DZU
+
+				on_created = {
+					warlord_setup_effect = yes
+					set_variable = warlord_state
+				}
+			}
+			c:KAZ = { save_scope_as = scope_KAZ }
+			if = {
+				limit = { exists = s:STATE_SEMIRECHE.region_state:DZU }
+				s:STATE_SEMIRECHE.region_state:DZU = { set_state_owner = c:KAZ }
+			}
+			if = {
+				limit = { exists = s:STATE_AKMOLINSK.region_state:DZU }
+				s:STATE_AKMOLINSK.region_state:DZU = { set_state_owner = c:KAZ }
+			}
+		}
+
+		if = {
+			limit = { exists = s:STATE_ULIASTAI.region_state:DZU }
+			create_country = { #Mongolia
+				tag = MGL
+				origin = this
+				state = s:STATE_HINGGAN.region_state:DZU
+				state = s:STATE_URGA.region_state:DZU
+				state = s:STATE_TRANS_BAIKAL.region_state:DZU
+				state = s:STATE_IRKUTSK.region_state:DZU
+
+				on_created = {
+					warlord_setup_effect = yes
+					
+				}
+			}
+			c:MGL = { save_scope_as = scope_MGL}
+		}
+
+		if = {
+			limit = { exists = s:STATE_UZBEKIA.region_state:DZU }
+			create_country = { #Uzbekistan
+				tag = UZB 
+				origin = this
+				state = s:STATE_UZBEKIA.region_state:DZU
+
+				on_created = {
+					warlord_setup_effect = yes
+					set_variable = warlord_state
+				}
+			}
+			c:UZB = { save_scope_as = scope_UZB }
+		}
+
+		if = {
+			limit = { exists = s:STATE_KIRGHIZIA.region_state:DZU }
+			create_country = { #Kokand
+				tag = KOK
+				origin = this
+				state = s:STATE_KIRGHIZIA.region_state:DZU
+				state = s:STATE_TAJIKISTAN.region_state:DZU
+
+				on_created = {
+					warlord_setup_effect = yes
+					set_variable = warlord_state
+				}
+			}
+			c:KOK = { save_scope_as = scope_KOK }
+		}
+		if = {
+			limit = { exists = s:STATE_TIANSHAN.region_state:DZU }
+			create_country = { #Kokand
+				tag = XIN
+				origin = this
+				state = s:STATE_TIANSHAN.region_state:DZU
+
+				on_created = {
+					warlord_setup_effect = yes
+					set_variable = warlord_state
+				}
+			}
+			c:XIN = { save_scope_as = scope_XIN }
+		}
+
+		
+
+		every_subject_or_below = {
+			limit = {
+				is_subject_of = ROOT
+				OR = {
+					is_subject_type = subject_type_vassal
+					is_subject_type = subject_type_protectorate
+					is_subject_type = subject_type_dominion
+					is_subject_type = subject_type_puppet
+				}
+			}
+			
+			make_independent = yes
+		}
+
+		c:KAZ = {
+		 if = {
+			limit = {
+				has_variable = warlord_state
+				NOR = {
+					has_variable = var_warlord_two
+					has_variable = var_warlord_three
+					has_variable = var_warlord_four 
+				}
+			}
+			}
+			save_scope_as = scope_random_warlord_one
+			set_variable = var_warlord_one
+		}
+
+		c:MGL = {
+		if = {
+			limit = {
+				has_variable = warlord_state
+				NOR = {
+					has_variable = var_warlord_one
+					has_variable = var_warlord_three
+					has_variable = var_warlord_four
+				}
+			}
+			}
+			save_scope_as = scope_random_warlord_two
+			set_variable = var_warlord_two
+		}
+
+		c:UZB = {
+		if = {
+			limit = {
+				has_variable = warlord_state
+				NOR = {
+					has_variable = var_warlord_one
+					has_variable = var_warlord_two
+					has_variable = var_warlord_four
+				}
+			}
+			}
+			save_scope_as = scope_random_warlord_three
+			set_variable = var_warlord_three
+		}
+
+		c:KOK = {
+		if = {
+			limit = {
+				has_variable = warlord_state
+				NOR = {
+					has_variable = var_warlord_one
+					has_variable = var_warlord_two
+					has_variable = var_warlord_three
+				}
+			}
+			}
+			save_scope_as = scope_random_warlord_four
+			set_variable = var_warlord_four
+		}
+	}
+
+	option = {
+		name = dvg_dzungaria.2.ab
+		trigger = {
+			exists = scope:scope_random_warlord_one
+			is_player = yes
+		}
+		c:DZU = {
+		create_diplomatic_play = {
+			
+		
+			target_country = c:KOK
+			
+			war = yes
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:KOK
+				type = war_reparations
+				
+				target_country = c:DZU
+			}
+		}
+		create_diplomatic_play = {
+			
+		
+			target_country = c:XIN
+			
+			war = no
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:XIN
+				type = conquer_state
+				target_state = s:STATE_DZUNGARIA.region_state:DZU
+				target_country = c:DZU
+			}
+			add_war_goal = {
+				holder = c:XIN
+				type = conquer_state
+				target_state = s:STATE_JETISY.region_state:DZU
+				target_country = c:DZU
+			}
+		}
+		create_diplomatic_play = {
+			
+		
+			target_country = c:KAZ
+			
+			war = yes
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:KAZ
+				type = war_reparations
+				target_country = c:DZU
+			}
+		}
+		create_diplomatic_play = {
+		
+		
+			target_country = c:MGL
+			
+			war = yes
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:MGL
+				type = annex_country
+				target_country = c:DZU
+			}
+		}			
+	}
+		play_as = scope:scope_random_warlord_one
+	}
+
+	option = {
+		name = dvg_dzungaria.2.b
+		trigger = {
+			exists = scope:scope_random_warlord_two
+			is_player = yes
+		}
+		c:DZU = {
+		create_diplomatic_play = {
+			
+		
+			target_country = c:KOK
+			
+			war = no
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:KOK
+				type = war_reparations
+				target_country = c:DZU
+			}
+		}
+		create_diplomatic_play = {
+			
+		
+			target_country = c:XIN
+			
+			war = no
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:XIN
+				type = conquer_state
+				target_state = s:STATE_DZUNGARIA.region_state:DZU
+				target_country = c:DZU
+			}
+			add_war_goal = {
+				holder = c:XIN
+				type = conquer_state
+				target_state = s:STATE_JETISY.region_state:DZU
+				target_country = c:DZU
+			}
+		}
+		create_diplomatic_play = {
+			
+			target_country = c:KAZ
+			
+			war = no
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:KAZ
+				type = war_reparations
+				target_country = c:DZU
+			}
+		}
+		create_diplomatic_play = {
+			name = coup_of_odonia
+		
+			target_country = c:MGL
+			
+			war = yes
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:MGL
+				type = annex_country
+				target_country = c:DZU
+			}
+		}			
+	}
+		play_as = scope:scope_random_warlord_two
+	}
+
+	option = {
+		name = dvg_dzungaria.2.c
+		trigger = {
+			exists = scope:scope_random_warlord_three
+			is_player = yes
+		}
+		c:DZU = {
+		create_diplomatic_play = {
+			
+		
+			target_country = c:KOK
+			
+			war = no
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:KOK
+				type = war_reparations
+				target_country = c:DZU
+			}
+		}
+		create_diplomatic_play = {
+			
+		
+			target_country = c:XIN
+			
+			war = no
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:XIN
+				type = conquer_state
+				target_state = s:STATE_DZUNGARIA.region_state:DZU
+				target_country = c:DZU
+			}
+			add_war_goal = {
+				holder = c:XIN
+				type = conquer_state
+				target_state = s:STATE_JETISY.region_state:DZU
+				target_country = c:DZU
+			}
+		}
+		create_diplomatic_play = {
+			
+		
+			target_country = c:KAZ
+			
+			war = no
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:KAZ
+				type = war_reparations
+				target_country = c:DZU
+			}
+		}
+		create_diplomatic_play = {
+			
+		
+			target_country = c:MGL
+			
+			war = yes
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:MGL
+				type = annex_country
+				target_country = c:DZU
+			}
+		}			
+	}
+		play_as = scope:scope_random_warlord_three
+	}
+
+	option = {
+		name = dvg_dzungaria.2.aa
+		trigger = {
+			exists = scope:scope_random_warlord_four
+			is_player = yes
+		}
+		c:DZU = {
+		
+		create_diplomatic_play = {
+			
+		
+			target_country = c:MGL
+			
+			war = yes
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:MGL
+				type = annex_country
+				target_country = c:DZU
+			}
+		}
+		create_diplomatic_play = {
+			
+		
+			target_country = c:XIN
+			
+			war = no
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:XIN
+				type = conquer_state
+				target_state = s:STATE_DZUNGARIA.region_state:DZU
+				target_country = c:DZU
+			}
+			add_war_goal = {
+				holder = c:XIN
+				type = conquer_state
+				target_state = s:STATE_JETISY.region_state:DZU
+				target_country = c:DZU
+			}
+		}
+	   create_diplomatic_play = {
+			
+		
+			target_country = c:KAZ
+			
+			war = yes
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:KAZ
+				type = war_reparations
+				target_country = c:DZU
+			}
+		}
+	   create_diplomatic_play = {
+			name = guarani_independence
+		
+			target_country = c:KOK
+			
+			war = no
+			
+			type =dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:KOK
+				type = war_reparations
+				target_country = c:DZU
+			}
+		}
+	}
+		play_as = scope:scope_random_warlord_four
+	}
+
+	option = {
+		
+		name = dvg_dzungaria.2.a
+		default_option = yes
+		c:DZU = {
+		create_diplomatic_play = {
+			
+		
+			target_country = c:KOK
+			
+			war = no
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:KOK
+				type = war_reparations
+				target_country = c:DZU
+			}
+		}
+		create_diplomatic_play = {
+			
+		
+			target_country = c:XIN
+			
+			war = no
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:XIN
+				type = conquer_state
+				target_state = s:STATE_DZUNGARIA.region_state:DZU
+				target_country = c:DZU
+			}
+			add_war_goal = {
+				holder = c:XIN
+				type = conquer_state
+				target_state = s:STATE_JETISY.region_state:DZU
+				target_country = c:DZU
+			}
+		}
+		create_diplomatic_play = {
+			
+		
+			target_country = c:KAZ
+			
+			war = no
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:KAZ
+				type = war_reparations
+				target_country = c:DZU
+			}
+		}
+		create_diplomatic_play = {
+			
+		
+			target_country = c:MGL
+			
+			war = no
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:MGL
+				type = annex_country
+				target_country = c:DZU
+			}
+		}			
+	 }
+	}
+	option = {
+		
+		name = dvg_dzungaria.2.ac
+
+		c:DZU = {
+		create_diplomatic_play = {
+			
+		
+			target_country = c:KOK
+			
+			war = no
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:KOK
+				type = war_reparations
+				target_country = c:DZU
+			}
+		}
+		create_diplomatic_play = {
+			
+		
+			target_country = c:XIN
+			
+			war = no
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:XIN
+				type = conquer_state
+				target_state = s:STATE_DZUNGARIA.region_state:DZU
+				target_country = c:DZU
+			}
+			add_war_goal = {
+				holder = c:XIN
+				type = conquer_state
+				target_state = s:STATE_JETISY.region_state:DZU
+				target_country = c:DZU
+			}
+		}
+		create_diplomatic_play = {
+			
+		
+			target_country = c:KAZ
+			
+			war = no
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:KAZ
+				type = war_reparations
+				target_country = c:DZU
+			}
+		}
+		create_diplomatic_play = {
+			
+		
+			target_country = c:MGL
+			
+			war = no
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:MGL
+				type = annex_country
+				target_country = c:DZU
+			}
+		}
+			
+	}
+	play_as = c:XIN	
+	}
+}
+
+
+dvg_dzungaria.3 = {  #Dzungar Holds on 
+	type = country_event
+	placement = ROOT
+
+	title = dvg_dzungaria.3.t
+	desc = dvg_dzungaria.3.d
+	flavor = dvg_dzungaria.3.f
+	
+	event_image = {
+		video = "middleeast_courtroom_upheaval"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+	    
+	}
+	
+	
+	
+	option = {
+		name = dvg_dzungaria.3.a
+		default_option = yes
+		add_loyalists = {
+			value = 0.15
+		}
+		
+	}
+}

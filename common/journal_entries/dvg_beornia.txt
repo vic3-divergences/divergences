@@ -1,0 +1,598 @@
+﻿je_new_mercia_independent = {
+	icon = "gfx/interface/icons/invention_icons/mechanized_farming.dds"
+
+	is_shown_when_inactive = {	
+	exists = c:BEO
+	this = c:BEO
+	}
+
+	possible = {
+		has_global_variable = new_mercia
+		owns_entire_state_region = STATE_NEAR_COLLASUYU
+		NOT = { exists = c:NME  }
+	}
+
+	immediate = {
+		set_variable = {
+			name = new_mercia_var
+			value = 0
+		}
+	}
+
+	
+
+	complete = {
+		# If-else clause to avoid errors because of missing variable before JE activates
+		ig:ig_rural_folk = {
+				ig_approval < 0
+				is_in_government = no
+			}
+		trigger_if = {
+			limit = { exists = var:new_mercia_var }
+			
+			
+		  OR = {
+			scope:journal_entry = { is_goal_complete = yes }
+			
+			}
+		}
+		
+		
+		
+	}
+	
+	on_complete = {
+		
+		set_variable = new_mercia_complete
+		trigger_event = {
+			id = dvg_beornia.22
+		}
+	}
+	
+	
+	invalid = {
+		exists = c:NME
+	}
+	on_invalid = {
+		
+	}
+	
+
+	
+
+	current_value = {
+		value = root.var:new_mercia_var
+	}
+
+	goal_add_value = {
+		value = 50
+	}
+
+	progressbar = yes
+	
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					ig:ig_rural_folk = {
+				ig_approval < 0
+			}
+				}
+				
+				change_variable = {
+					name = new_mercia_var
+					add = 1
+				}
+				set_variable = new_mercia_subject
+			}
+			
+			
+			
+		}
+	}
+	
+	
+	
+	
+
+	weight = 10000
+	should_be_pinned_by_default = yes
+}
+
+je_ameriga_conquer = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	is_shown_when_inactive = {	
+		
+	}
+
+    possible = {
+	}
+
+	complete = {
+		is_diplomatic_play_committed_participant = no
+		any_scope_state = {
+		
+		count >= 8
+				
+			AND = {	
+				region = sr:region_brazil
+				
+				
+				
+				owner = ROOT
+
+			}
+			}
+		any_scope_state = {
+		
+		count >= 6
+				
+			AND = {	
+				region = sr:region_la_plata
+				
+				
+				owner = ROOT
+
+			}
+			}
+		any_scope_state = {
+		
+			count >= 5
+				
+			AND = {	
+				region = sr:region_gran_colombia
+				
+				
+				owner = ROOT
+	
+			}
+			}
+		any_scope_state = {
+		
+			count >= 7
+				
+			AND = {	
+				region = sr:region_andes
+				
+				
+				owner = ROOT
+	
+			}
+			}
+		
+			}
+    on_complete = {
+		trigger_event = { id = dvg_hbe.6 popup = yes }
+		
+    }
+	fail = {
+		
+		
+		
+		OR = {
+			NOT = { 
+			        has_law = law_type:law_autocracy
+			}
+			
+			NOT = { 
+			        has_law = law_type:law_monarchy
+			}
+			
+			}
+		}
+	on_fail = {
+	
+		
+		
+		trigger_event = {
+			id = dvg_hbe.7
+		}
+	}
+	should_be_pinned_by_default = yes
+
+}
+
+je_world_conquer = {
+	icon = "gfx/interface/icons/invention_icons/civilizing_mission.dds"
+
+	is_shown_when_inactive = {	
+		
+	}
+
+    possible = {
+	}
+
+	complete = {
+		
+			total_population_including_subjects_share >= 0.33
+		
+		gdp > {
+			value = global_gdp
+			multiply = 0.25
+		}
+		global_country_ranking = 1
+		
+		
+		
+			}
+    on_complete = {
+		trigger_event = { id = dvg_hbe.2 popup = yes }
+		
+    }
+	fail = {
+		
+		
+		
+		OR = {
+			NOT = { 
+			        has_law = law_type:law_autocracy
+			}
+			
+			NOT = { 
+			        has_law = law_type:law_monarchy
+			}
+			
+			}
+		}
+	on_fail = {
+	
+		
+		
+		trigger_event = {
+			id = dvg_hbe.7
+		}
+	}
+	should_be_pinned_by_default = yes
+
+}
+
+je_anglo_summit = {
+	icon = "gfx/interface/icons/invention_icons/pan_nationalism.dds"
+
+	
+
+	possible = {
+		
+	}
+
+	immediate = {
+		set_variable = {
+			name = anglo_var
+			value = 3
+		}
+	}
+
+	
+
+	complete = {
+		# If-else clause to avoid errors because of missing variable before JE activates
+		OR = {
+		c:ENG = {
+						relations:root >= relations_threshold:amicable
+					}
+		trigger_if = {
+			limit = { exists = var:anglo_var }
+			scope:journal_entry = { is_goal_complete = yes }
+		}
+		
+		
+		}
+	}
+	
+	on_complete = {
+
+		trigger_event = {
+			id = dvg_england.11
+		}
+	}
+	
+	fail = {
+		OR = {
+			c:ENG = {
+						relations:root <= relations_threshold:poor
+					}
+			has_global_variable = anglo_summit_fail
+			
+			NOT = { 
+			        has_law = law_type:law_monarchy
+			}
+			
+			
+		}
+	}
+	
+	on_fail = {
+	
+		trigger_event = {
+			
+			id = dvg_england.10
+
+		}
+	
+		
+		}
+	
+	
+
+	
+
+	current_value = {
+		value = root.var:anglo_var
+	}
+
+	goal_add_value = {
+		value = 7
+	}
+
+	progressbar = yes
+	
+	on_weekly_pulse = {
+		effect = {
+			
+			
+			
+			
+		}
+	}
+	
+	timeout = 180
+	
+	on_timeout = {
+		trigger_event = {
+			
+			id = dvg_england.10
+
+		}
+		}
+	
+
+	weight = 10000
+	should_be_pinned_by_default = yes
+}
+
+je_cattle_barons_wrath = {
+	icon = "gfx/interface/icons/invention_icons/realism.dds"
+
+	
+
+	possible = {
+		
+	}
+
+	immediate = {
+		set_variable = {
+			name = cattle_barons_var
+			value = 0
+		}
+	}
+
+	
+
+	complete = {
+		# If-else clause to avoid errors because of missing variable before JE activates
+		trigger_if = {
+			limit = { exists = var:cattle_barons_var }
+			
+			
+		  OR = {
+			scope:journal_entry = { is_goal_complete = yes }
+			
+			}
+		}
+		
+		
+		
+	}
+	
+	on_complete = {
+		set_variable = beornia_complete
+		trigger_event = {
+			id = dvg_beornia.9
+		}
+	}
+	
+	fail = {
+		OR = {
+			ig:ig_landowners = {
+				is_powerful = no
+				is_in_government = no
+			}
+			NOT = { 
+			        has_law = law_type:law_monarchy
+			}
+			
+			
+		}
+	}
+	
+	on_fail = {
+		set_variable = beornia_complete
+		trigger_event = {
+			id = dvg_beornia.10
+		}
+	}
+	invalid = {
+		ig:ig_landowners = {
+				is_insurrectionary = yes
+			}
+	}
+	on_invalid = {
+		set_variable = beornia_complete
+		trigger_event = {
+			id = dvg_beornia.20
+		}
+	}
+	
+
+	
+
+	current_value = {
+		value = root.var:cattle_barons_var
+	}
+
+	goal_add_value = {
+		value = 7
+	}
+
+	progressbar = yes
+	
+	on_weekly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					NOT = { has_variable = cattle_barons_var_subject }
+					is_subject = yes
+				}
+				post_notification = warlord_china_explosion_point_add
+				change_variable = {
+					name = cattle_barons_var
+					add = 1
+				}
+				set_variable = cattle_barons_var_subject
+			}
+			if = {
+				limit = {
+					NOT = { has_variable = cattle_barons_var_loans }
+					taking_loans = yes
+				}
+				post_notification = warlord_china_explosion_point_add
+				change_variable = {
+					name = cattle_barons_var
+					add = 1
+				}
+				set_variable = cattle_barons_var_loans
+			}
+			
+			
+		}
+	}
+	
+	timeout = 7125
+	
+	on_timeout = {
+		trigger_event = {
+			
+			id = dvg_beornia.12
+
+		}
+		}
+	
+
+	weight = 10000
+	should_be_pinned_by_default = yes
+}
+
+je_beornia_conquer = {
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	is_shown_when_inactive = {	
+		
+	}
+
+    possible = {
+	}
+
+	complete = {
+	
+	 owns_entire_state_region = STATE_AVALON
+	 owns_entire_state_region = STATE_GODWINSON
+	 owns_entire_state_region = STATE_EOFERWIC
+	 owns_entire_state_region = STATE_WESSEX
+	 owns_entire_state_region = STATE_NORTHUMBRIA
+	 owns_entire_state_region = STATE_NEW_LONDON
+	 
+	 NOT = { exists = c:BEO }
+	 
+	 any_state = {
+		
+		region = sr:region_la_plata
+				
+			NOT = {	
+				
+				
+				
+				owner = c:BEO
+
+			}
+			}
+		
+			}
+    on_complete = {
+		trigger_event = { id = dvg_hbe.3 popup = yes  }
+		hidden_effect = {
+		trigger_event = { id = dvg_hbe.4 days = 1200  }
+		}
+		
+    }
+	fail = {
+		
+		NOT = { 
+			        has_law = law_type:law_monarchy
+			}
+		
+	
+		}
+	on_fail = {
+	
+		
+		
+		
+	}
+	should_be_pinned_by_default = yes
+
+}
+
+je_england_conquer = {
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	is_shown_when_inactive = {
+	
+		exists = c:BEO
+		c:BEO = ROOT
+	}
+
+    possible = {
+			
+			has_law = law_type:law_monarchy
+			
+			has_state_in_state_region = STATE_YORKSHIRE
+	}
+
+	complete = {
+	
+	 owns_entire_state_region = STATE_HOME_COUNTIES
+	 owns_entire_state_region = STATE_YORKSHIRE
+	 owns_entire_state_region = STATE_LANCASHIRE
+	 owns_entire_state_region = STATE_MIDLANDS
+	 owns_entire_state_region = STATE_EAST_ANGLIA
+	 owns_entire_state_region = STATE_WEST_COUNTRY
+	 
+	
+	 
+	 
+		
+			}
+    on_complete = {
+		
+		change_tag = ENG
+		trigger_event = { id = dvg_england.14 popup = yes
+			
+		} 
+		
+    }
+	fail = {
+		
+		
+		
+	
+		}
+	on_fail = {
+	
+		
+		
+		
+	}
+	should_be_pinned_by_default = yes
+
+}

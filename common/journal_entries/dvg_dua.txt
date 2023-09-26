@@ -1,0 +1,420 @@
+﻿je_dual_integration = {
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	immediate = {
+		set_variable = { name = je_anglois_integration_progress value = 0 }
+		dua_set_dual_integration_variables = yes
+	}
+
+	complete = {
+		scope:journal_entry = {
+			is_goal_complete = yes
+		}
+		has_law = law_type:law_national_supremacy
+	}
+
+	on_complete = {
+		trigger_event = { id = dvg_dua.2 }
+	}
+
+	scripted_button = dua_integration_anglois_button
+
+	fail = {
+		custom_tooltip = {
+			text = dua_global_revolted_tooltip
+			OR = {
+				has_global_variable = dua_global_revolted
+				AND = {
+					is_diplomatic_play_committed_participant = no
+					is_at_war = no
+					has_revolution = no
+					OR = {
+						exists = c:ENG
+						exists = c:FRA
+					}
+				}
+			}
+		}
+		capital = {
+			turmoil >= 0.5
+		}
+		NOT = {
+			has_law = law_type:law_monarchy
+		}
+	}
+	
+	on_fail = {
+		#trigger_event = { id = french_pretenders.6 popup = yes }
+		if = {
+			limit = {
+				has_variable = dua_integration_freeze
+			}
+			remove_variable = dua_integration_freeze
+		}
+		dua_clear_dual_integration_variables = yes #It should not be possible for this JE to somehow be deleted without these variables being cleared.
+	}
+
+	on_timeout = {
+		set_global_variable = dua_timeout
+		if = {
+			limit = {
+				has_variable = dua_integration_freeze
+			}
+			remove_variable = dua_integration_freeze
+		}
+		dua_clear_dual_integration_variables = yes #It should not be possible for this JE to somehow be deleted without these variables being cleared.
+	}
+
+	modifiers_while_active = {
+		dvg_fragile_country
+	}
+
+	on_weekly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					NOT = {
+						has_variable = dua_integration_freeze
+					}
+				}
+				dua_weekly_pulse_anglois_progress = yes
+			}
+			set_variable = { name = je_anglois_integration_progress value = var:anglois_progress }
+		}
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					NOT = {
+						has_variable = dua_integration_freeze
+					}
+				}
+				change_variable = { name = anglois_progress add = var:anglois_progress_next }
+			}
+		}
+		random_events = {
+			100 = 0
+			25 = dvg_dua.110 # Patron
+			25 = dvg_dua.111 # Publication of "Histoire de la France depuis ses origines"
+			25 = dvg_dua.112 # Publication of "Saxon Poetry"
+			25 = dvg_dua.113 # The Great Travel of the Dauphin
+			25 = dvg_dua.114 # The 'Immortals'
+			25 = dvg_dua.120 # Radical IG
+			25 = dvg_dua.115 # Celebration of the German Revolution
+			50 = dvg_dua.118 # Springtime 1848
+			50 = dvg_dua.119 # Valois subversion
+			50 = dvg_dua.121 # Scottish subversion
+			25 = dvg_dua.129
+		}
+	}
+	
+	current_value = {
+		value = root.var:je_anglois_integration_progress
+	}
+
+	goal_add_value = {
+		add = 1300
+	}
+
+	progressbar = yes
+
+	timeout = 12775
+
+	weight = 10000
+	should_be_pinned_by_default = yes
+}
+
+je_french_integration = {
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	immediate = {
+		set_variable = { name = je_french_integration_progress value = 0 }
+		dua_set_french_integration_variables = yes
+	}
+
+	complete = {
+		scope:journal_entry = {
+			is_goal_complete = yes
+		}
+	}
+
+	on_complete = {
+		trigger_event = { id = dvg_dua.4 }
+	}
+
+	scripted_button = dua_integration_french_button
+
+	fail = {
+		capital = {
+			turmoil >= 0.5
+		}
+	}
+
+	on_fail = {
+		if = {
+			limit = {
+				has_variable = dua_integration_freeze
+			}
+			remove_variable = dua_integration_freeze
+		}
+		dua_clear_french_integration_variables = yes #It should not be possible for this JE to somehow be deleted without these variables being cleared.
+	}
+
+	modifiers_while_active = {
+		dvg_fragile_country
+	}
+
+	on_weekly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					NOT = {
+						has_variable = dua_integration_freeze
+					}
+				}
+				dua_weekly_pulse_french_progress = yes
+			}
+			set_variable = { name = je_french_integration_progress value = var:french_progress }
+		}
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					NOT = {
+						has_variable = dua_integration_freeze
+					}
+				}
+				change_variable = { name = french_progress add = var:french_progress_next }
+			}
+		}
+		random_events = {
+			100 = 0
+			25 = dvg_dua.110 # Patron
+			25 = dvg_dua.211 #St Louis Speech
+			25 = dvg_dua.212 #The great travel
+			25 = dvg_dua.213 #Sons of Harold
+			25 = dvg_dua.214 #Sorbonne
+			25 = dvg_dua.129
+		}
+	}
+
+	current_value = {
+		value = root.var:je_french_integration_progress
+	}
+
+	goal_add_value = {
+		add = 1000
+	}
+
+	progressbar = yes
+
+	#timeout = 12775
+
+	weight = 10000
+	should_be_pinned_by_default = yes
+}
+
+je_english_integration = {
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	immediate = {
+		set_variable = { name = je_english_integration_progress value = 0 }
+		dua_set_english_integration_variables = yes
+	}
+
+	complete = {
+		scope:journal_entry = {
+			is_goal_complete = yes
+		}
+	}
+
+	on_complete = {
+		trigger_event = { id = dvg_dua.6 }
+	}
+
+	scripted_button = dua_integration_english_button
+
+	fail = {
+		capital = {
+			turmoil >= 0.5
+		}
+	}
+
+	on_fail = {
+		if = {
+			limit = {
+				has_variable = dua_integration_freeze
+			}
+			remove_variable = dua_integration_freeze
+		}
+		dua_clear_english_integration_variables = yes #It should not be possible for this JE to somehow be deleted without these variables being cleared.
+	}
+
+	modifiers_while_active = {
+		dvg_fragile_country
+	}
+
+	on_weekly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					NOT = {
+						has_variable = dua_integration_freeze
+					}
+				}
+				dua_weekly_pulse_english_progress = yes
+			}
+			set_variable = { name = je_english_integration_progress value = var:english_progress }
+		}
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					NOT = {
+						has_variable = dua_integration_freeze
+					}
+				}
+				change_variable = { name = english_progress add = var:english_progress_next }
+			}
+		}
+		random_events = {
+			100 = 0
+			25 = dvg_dua.110 # Patron
+			25 = dvg_dua.311 #The great travel
+			25 = dvg_dua.312 #Sons of St-Louis
+			25 = dvg_dua.129
+		}
+	}
+
+	current_value = {
+		value = root.var:je_english_integration_progress
+	}
+
+	goal_add_value = {
+		add = 1000
+	}
+
+	progressbar = yes
+
+	#timeout = 12775
+
+	weight = 10000
+	should_be_pinned_by_default = yes
+}
+
+# Bureaucractic Reform
+je_dua_bureaucracy = {
+	icon = "gfx/interface/icons/event_icons/event_scales.dds"
+
+	complete = {
+		NOR = { 
+			has_law = law_type:law_hereditary_bureaucrats 
+			has_law = law_type:law_land_based_taxation
+			has_law = law_type:law_consumption_based_taxation
+		}
+		bureaucracy >= 0 
+		approaching_bureaucracy_shortage = no
+	}
+
+	on_complete = {
+		remove_modifier = outmoded_bureaucracy
+	}
+
+	transferable = no
+
+	weight = 5000
+}
+
+je_total_revolution = {
+	icon = "gfx/interface/icons/event_icons/event_skull.dds"
+
+	immediate = {
+		dua_set_total_revolution_revolt_variables = yes
+	}
+
+	scripted_button = dua_total_revolution_button
+	
+	complete = {
+		custom_tooltip = {
+			text = anglois_accepted_tooltip
+			has_global_variable = anglois_accepted
+		}
+	}
+
+	on_complete = {
+		#trigger_event = {
+		#	id = dvg_dua.2
+		#}
+	}
+
+	fail = {
+		OR = {
+			custom_tooltip = {
+				text = dvg_dua_timeout
+				has_variable = dua_timeout
+			}
+			custom_tooltip = {
+				text = dvg_dua_control_lost
+				AND = {
+					NOT = { has_variable = occ_revolted }
+					NOT = { has_variable = eng_revolted }
+					OR = {
+						exists = c:OCC
+						exists = c:FRA
+						exists = c:ENG
+						exists = c:IRE
+					}
+					is_diplomatic_play_committed_participant = no
+					is_at_war = no
+					has_revolution = no
+				}
+			}
+			scope:journal_entry = {
+				is_goal_complete = yes
+			}
+			NOT = {
+				has_law = law_type:law_monarchy
+			}
+		}
+	}
+
+	on_fail = {
+		set_global_variable = dua_global_revolted
+		trigger_event = {
+			id = dvg_dua.500
+		}
+	}
+
+	on_weekly_pulse = {
+		effect = {
+			dua_weekly_pulse_total_revolution_revolt = yes
+		}
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			change_variable = { name = dua_total_revolution_revolt add = var:dua_total_revolution_revolt_next }
+		}
+	}
+
+	current_value = {
+		value = root.var:dua_total_revolution_revolt
+	}
+
+	goal_add_value = {
+		value = 100
+	}
+
+	progressbar = yes
+
+	timeout = 8030
+
+	weight = 10000
+	should_be_pinned_by_default = yes
+}

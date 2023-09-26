@@ -1,0 +1,1157 @@
+namespace = dvg_atlantia
+
+
+dvg_atlantia.10 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_atlantia.10.t
+	desc = dvg_atlantia.10.d
+	flavor = dvg_atlantia.10.f
+	
+	event_image = {
+		video = "gfx/event_pictures/europenorthamerica_gold_prospectors.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	    
+	}
+	
+	option = {
+		name = dvg_atlantia.10.a
+		default_option = yes
+		
+		s:STATE_COTE_DU_CAFE = {
+			add_claim = c:LOT
+		}
+		s:STATE_COTE_DU_CAFE = {
+			add_claim = c:AMA
+		}
+	}
+}	
+
+# Referendum!
+dvg_atlantia.1 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_atlantia.1.t
+	desc = dvg_atlantia.1.d
+	flavor = {
+        first_valid = {
+            triggered_desc = {
+                trigger = {
+                    exists = c:AMA
+                }
+                desc = dvg_atlantia.1.f
+            }
+            triggered_desc = {
+                trigger = {
+                  NOT = { exists = c:AMA}
+                }
+                desc = dvg_atlantia.1.f2
+            }
+        }
+    }
+	
+	event_image = {
+		video = "gfx/event_pictures/southamerica_election.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	immediate = {
+		
+		c:LOT = { save_scope_as = lot_scope }
+		
+		if = {
+		limit = {
+		
+			exists = c:AMA
+			}
+		c:AMA = { save_scope_as = ama_scope }
+			 }
+		
+		
+			 
+		
+	}
+	
+	
+	# Liberte!
+	option = {
+		name = dvg_atlantia.1.a
+		default_option = yes
+		trigger = {
+	exists = c:AMA
+	}
+		add_radicals = {
+			value = 0.5
+			culture = cu:lotharian
+		}
+		add_radicals = {
+			value = 0.5
+			culture = cu:afro_frankish
+		}
+		add_loyalists = {
+			value = 0.5
+			culture = cu:amazonien
+		}
+		
+		play_as = c:AMA
+		
+		add_radicals = {
+			value = 0.55
+			culture = cu:atlantian
+		}
+		c:AMA = {
+			set_variable = tex_annexation
+			trigger_event = { id = dvg_atlantia.2 }
+			show_as_tooltip = {
+				c:AMA = {
+					annex = ROOT
+				}
+			}
+		}
+		
+		ai_chance = {
+			base = 20
+			
+			modifier = {
+			        
+				trigger = {
+					"relations(scope:ama_scope)" >= relations_threshold:cordial
+				}
+				add = 10
+			}
+			
+			modifier = {
+				trigger = {
+					"relations(scope:ama_scope)" >= relations_threshold:amicable
+				}
+				add = 30
+			}				
+
+			modifier = {
+				trigger = {
+					"relations(scope:ama_scope)" >= relations_threshold:friendly
+				}
+				add = 50
+			}
+		}
+	}
+	option = {
+		name = dvg_atlantia.1.b
+		
+		add_loyalists = {
+			value = 0.5
+			culture = cu:lotharian
+		}
+		add_radicals = {
+			value = 0.5
+			culture = cu:amazonien
+		}
+		add_radicals = {
+			value = 0.75
+			culture = cu:atlantian
+		}
+		
+		play_as = c:LOT
+		
+		c:LOT = {
+		    
+			set_variable = tex_annexation
+			trigger_event = { id = dvg_atlantia.3 }
+			
+			show_as_tooltip = {
+				c:LOT = {
+					annex = ROOT
+				}
+			}
+		}
+		if = {
+		limit = {
+		
+			exists = c:AMA
+			}
+		c:AMA = { trigger_event = { id = dvg_atlantia.13 popup = yes } }
+		}
+		ai_chance = {
+			base = 25
+			modifier = {
+				trigger = {
+					"relations(scope:lot_scope)" >= relations_threshold:cordial
+				}
+				add = 10
+			}
+			
+			modifier = {
+				trigger = {
+					"relations(scope:lot_scope)" >= relations_threshold:amicable
+				}
+				add = 30
+			}				
+
+			modifier = {
+				trigger = {
+					"relations(scope:lot_scope)" >= relations_threshold:friendly
+				}
+				add = 50
+			}
+		}
+		
+	}
+	
+	option = {
+		name = dvg_atlantia.1.c
+
+		
+		
+		
+		add_radicals = {
+			value = 0.3
+			culture = cu:lotharian
+		}
+		add_radicals = {
+			value = 0.3
+			culture = cu:amazonien
+		}
+		add_loyalists = {
+			value = 0.55
+			culture = cu:atlantian
+		}
+
+		
+		c:SPA = {
+			remove_diplomatic_pact = {
+				country = c:ATL
+				type = puppet
+			}
+		}
+		
+		c:ATL = {
+			change_relations = {
+				country = c:LOT
+				value = -50
+			}
+			
+			change_relations = {
+				country = c:AMA
+				value = -20
+			}
+			
+		}
+		c:LOT = {
+		       
+			add_journal_entry = 
+			{ type = je_reconquering_atlantia }
+			
+		}
+		c:LOT = { trigger_event = { id = dvg_atlantia.12 popup = yes } }
+		
+
+		ai_chance = {
+			base = 65
+		}
+	}
+}
+
+#For Amazonie
+
+dvg_atlantia.2 = {
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = "gfx/event_pictures/unspecific_world_fair.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "texan_war_of_independence.1"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	title = dvg_atlantia.2.t
+	desc = dvg_atlantia.2.d
+	flavor = dvg_atlantia.2.f
+
+	duration = 3
+
+	trigger = {
+	}
+
+	immediate = {
+		c:ATL = {
+			
+			
+		}
+	}
+
+	option = {
+		name = dvg_atlantia.2.a
+		default_option = yes
+		trigger = {
+			has_variable = tex_annexation
+		}
+		
+		s:STATE_COTE_DU_CAFE = {
+			add_claim = c:LOT
+		}
+		annex = c:ATL
+		change_relations = {
+				country = c:LOT
+				value = -50
+		}
+		add_modifier = {
+			name = dvg_atlantia_support
+			days = 1825
+			
+		}
+		ai_chance = {
+			base = 99
+		}
+		c:LOT = { trigger_event = { id = dvg_atlantia.4 popup = yes } }
+	}
+	option = {
+		name = dvg_atlantia.2.b
+		default_option = yes
+	        remove_variable = tex_annexation
+		
+		
+		change_relations = {
+				country = c:LOT
+				value = 30
+		}
+		set_global_variable = {
+				name = atlantia_independent
+				value = 0
+			}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#For Lotharingia
+
+dvg_atlantia.3 = {
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = "unspecific_military_parade"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "texan_war_of_independence.1"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	title = dvg_atlantia.3.t
+	desc = dvg_atlantia.3.d
+	flavor = dvg_atlantia.3.f
+
+	duration = 3
+
+	trigger = {
+	}
+
+	option = {
+		name = dvg_atlantia.3.a
+		default_option = yes
+		trigger = {
+			has_variable = tex_annexation
+		}
+		s:STATE_COTE_DU_CAFE = {
+			add_claim = c:AMA
+		}
+		add_modifier = {
+			name = dvg_atlantia_support
+			days = 1825
+		}
+		
+		annex = c:ATL
+		if = {
+		limit = {
+		
+			exists = c:AMA
+			}
+		change_relations = {
+			country = c:AMA
+			value = -25
+		}
+		}
+
+		ai_chance = {
+			base = 99
+		}
+	}
+
+	option = {
+		name = dvg_atlantia.3.b
+		remove_variable = tex_annexation 
+		if = {
+		limit = {
+		
+			exists = c:AMA
+			}
+		change_relations = {
+			country = c:AMA
+			value = 25
+		}
+		}
+		ig:ig_armed_forces = {
+			add_modifier = {
+				name = modifier_army_dissaproves
+				days = 1825
+			}
+		}
+		set_global_variable = {
+			name = atlantia_independent
+			value = 0
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+dvg_atlantia.4 = {
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = "gfx/event_pictures/unspecific_politicians_arguing.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/event:/SFX/Events/europenorthamerica/before_the_battle"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	title = dvg_atlantia.4.t
+	desc = dvg_atlantia.4.d
+	flavor = dvg_atlantia.4.f
+
+	duration = 2
+
+	trigger = {
+	}
+
+	immediate = {
+		
+	}
+
+	option = {
+		name = dvg_atlantia.4.a
+		default_option = yes
+		
+		add_journal_entry = {
+			type = je_reconquering_atlantia
+		}
+		
+		c:LOT = {
+			create_diplomatic_play = {
+				name = reconquering_atlantia.1.t
+			
+				target_state = s:STATE_COTE_DU_CAFE.region_state:AMA
+				
+				war = no
+				
+				type = dp_return_state
+				
+				add_war_goal = {
+					holder = c:AMA
+					type = war_reparations
+					target_country = c:LOT
+				}
+				
+				add_war_goal = {
+					holder = c:AMA
+					type = humiliation
+					target_country = c:LOT
+				}
+			}
+		}
+		
+		add_loyalists = {
+			value = 0.25
+			culture = cu:lotharian
+		}
+		change_variable = {
+				name = aigle_var
+				add = 5
+			}
+		add_radicals = {
+			value = 0.25
+			culture = cu:atlantian
+		}
+		change_relations = {
+				country = c:AMA
+				value = -25
+			}
+		ai_chance = {
+			base = 80
+		}
+	}
+	
+	option = {
+		name = dvg_atlantia.4.b
+		default_option = yes
+		change_relations = {
+				country = c:AMA
+				value = 60
+		}
+		change_variable = {
+				name = aigle_var
+				add = -5
+		}
+		ig:ig_armed_forces = {
+			add_modifier = {
+				name = modifier_army_dissaproves
+				days = 1825
+			}
+		}
+		ai_chance = {
+			base = 20
+		}
+	}
+}
+
+dvg_atlantia.5 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_atlantia.5.t
+	desc = dvg_atlantia.5.d
+	flavor = dvg_atlantia.5.f
+	
+	event_image = {
+		video = "europenorthamerica_capitalists_meeting"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	
+	# Liberte!
+	option = {
+		name = dvg_atlantia.5.a
+		default_option = yes
+		
+		change_relations = {
+				country = c:ATL
+				value = 50
+			}
+		
+		c:NEA = {
+		set_owes_obligation_to = {
+			country = c:ATL
+			setting = yes
+		}
+		
+		
+		
+		add_modifier = {
+			name = dvg_atlantia_support
+			days = 1825
+			is_decaying	= yes
+		}
+		
+		activate_law = law_type:law_national_guard
+		}
+		c:ATL = {
+		create_diplomatic_pact = {
+			country = c:NEA
+			type = protectorate
+		}
+		add_modifier = {
+			name = dvg_atlantia_giving_support
+			days = 1825
+			is_decaying	= yes
+		}
+		}
+		set_global_variable = {
+				name = atlantia_independent
+				value = 0
+			}
+		set_global_variable = nouvellsatian_support
+		ai_chance = {
+			base = 40
+		}
+		c:LOT = { trigger_event = dvg_atlantia.9 
+				
+		
+		}
+		s:STATE_COTE_DU_CAFE = {
+			add_claim = c:LOT
+		}
+		ai_chance = {
+			base = 80
+		}
+	}
+	
+	option = {
+		name = dvg_atlantia.5.b
+		
+		add_loyalists = {
+			value = 0.50
+		}
+		change_relations = {
+				country = c:ATL
+				value = -15
+			}
+		c:ATL = { trigger_event = dvg_atlantia.6 
+				
+		
+		}
+		set_global_variable = nouvellsatian_support
+	
+	ai_chance = {
+			base = 20
+		}
+       }
+}
+
+dvg_atlantia.6 = {
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = "gfx/event_pictures/unspecific_politicians_arguing.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "texan_war_of_independence.1"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	title = dvg_atlantia.6.t
+	desc = dvg_atlantia.6.d
+	flavor = dvg_atlantia.6.f
+
+	duration = 1
+
+	trigger = {
+	}
+
+	immediate = {
+		c:ATL = {
+			
+			
+		}
+	}
+
+	option = {
+		name = dvg_atlantia.6.a
+		default_option = yes
+		
+		change_relations = {
+				country = c:NEA
+				value = -15
+			}
+	}
+	
+	
+}
+
+dvg_atlantia.7 = {
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = "gfx/event_pictures/southamerica_election.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "texan_war_of_independence.1"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	title = dvg_atlantia.7.t
+	desc = dvg_atlantia.7.d
+	flavor = dvg_atlantia.7.f
+
+	duration = 1
+
+	trigger = {
+	}
+
+	immediate = {
+		c:ATL = {
+			
+			
+		}
+	}
+
+	option = {
+		name = dvg_atlantia.7.a
+		default_option = yes
+		create_diplomatic_pact = {
+			country = c:NEA
+			type = puppet
+		}
+		
+		
+	}
+	
+	
+}
+
+dvg_atlantia.8 = {
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = "gfx/event_pictures/southamerica_election.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "texan_war_of_independence.1"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	title = dvg_atlantia.8.t
+	desc = dvg_atlantia.8.d
+	flavor = dvg_atlantia.8.f
+
+	duration = 1
+
+	trigger = {
+	}
+
+	immediate = {
+		
+	}
+
+	option = {
+		name = dvg_atlantia.8.a
+		default_option = yes
+		create_diplomatic_pact = {
+			country = c:ATL
+			type = puppet
+		}
+		
+		
+	}
+	
+	
+}
+
+dvg_atlantia.9 = {
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = "gfx/event_pictures/unspecific_politicians_arguing.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/event:/SFX/Events/europenorthamerica/before_the_battle"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	title = dvg_atlantia.9.t
+	desc = dvg_atlantia.9.d
+	flavor = dvg_atlantia.9.f
+
+	duration = 2
+
+	trigger = {
+		
+		
+		
+	}
+
+	immediate = {
+		c:AMA = {
+			add_modifier = {
+			name = dvg_demoratic_miltias
+			days = 1825
+			is_decaying	= yes
+		}
+			
+		}
+		
+	}
+
+	option = {
+		name = dvg_atlantia.9.a
+		default_option = yes
+		
+		c:LOT = {
+		 create_diplomatic_play = {
+			 name = reconquering_atlantia.1.t
+		
+			target_state = s:STATE_COTE_DU_CAFE.region_state:ATL
+			
+			war = no
+			
+			 type = dp_annex_war
+			
+			 add_war_goal = {
+				 holder = c:ATL
+				 type = war_reparations
+				 target_country = c:LOT
+			 }
+			
+			 add_war_goal = {
+				 holder = c:ATL
+				 type = humiliation
+				 target_country = c:LOT
+			 }
+		 }
+	 }
+		
+		add_loyalists = {
+			value = 0.25
+			culture = cu:lotharian
+		}
+		change_variable = {
+				name = aigle_var
+				add = 5
+			}
+		add_radicals = {
+			value = 0.25
+			culture = cu:atlantian
+		}
+		change_relations = {
+				country = c:ATL
+				value = -50
+			}
+		ai_chance = {
+			base = 50
+		}
+	}
+	option = {
+		name = dvg_atlantia.9.b
+		default_option = yes
+		change_relations = {
+				country = c:AMA
+				value = 20
+			}
+		change_relations = {
+				country = c:ATL
+				value = 20
+			}
+		
+		ig:ig_armed_forces = {
+			add_modifier = {
+			name = modifier_army_dissaproves
+			days = 1825
+		}
+		
+			
+	}
+	
+	ai_chance = {
+			base = 50
+		}
+	
+}
+}
+
+dvg_atlantia.11 = {
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = "gfx/event_pictures/southamerica_election.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "texan_war_of_independence.1"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	title = dvg_atlantia.11.t
+	desc = dvg_atlantia.11.d
+	flavor = dvg_atlantia.11.f
+
+	duration = 1
+
+	trigger = {
+	}
+
+	immediate = {
+		
+	}
+
+	option = {
+		name = dvg_atlantia.11.a
+		default_option = yes	
+	}
+	
+	
+}
+
+dvg_atlantia.12 = {
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = "gfx/event_pictures/southamerica_election.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "texan_war_of_independence.1"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	title = dvg_atlantia.12.t
+	desc = dvg_atlantia.12.d
+	flavor = dvg_atlantia.12.f
+
+	duration = 1
+
+	trigger = {
+	}
+
+	immediate = {
+		
+	}
+
+	option = {
+		name = dvg_atlantia.12.a
+		default_option = yes	
+	}
+	
+	
+}
+
+dvg_atlantia.13 = {
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = "gfx/event_pictures/southamerica_election.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "texan_war_of_independence.1"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	title = dvg_atlantia.13.t
+	desc = dvg_atlantia.13.d
+	flavor = dvg_atlantia.13.f
+
+	duration = 1
+
+	trigger = {
+	}
+
+	immediate = {
+		
+	}
+
+	option = {
+		name = dvg_atlantia.13.a
+		default_option = yes
+		c:AMA = {
+		 create_diplomatic_play = {
+			 name = reconquering_atlantia.1.t
+			target_state = s:STATE_COTE_DU_CAFE.region_state:LOT
+			
+			war = no
+			
+			 type = dp_return_state
+			
+			 add_war_goal = {
+				 holder = c:LOT
+				 type = war_reparations
+				 target_country = c:AMA
+			 }
+			
+			 add_war_goal = {
+				 holder = c:LOT
+				 type = humiliation
+				 target_country = c:AMA
+			 }
+		 }
+	 }
+	 ai_chance = {
+			base = 30
+		}
+		
+		
+	}
+	option = {
+		name = dvg_atlantia.13.b
+		ig:ig_armed_forces = {
+			add_modifier = {
+			name = modifier_army_dissaproves
+			days = 1825
+		}
+		
+		
+		
+	}
+	ai_chance = {
+			base = 70
+		}
+   }
+	
+	
+}
+
+dvg_atlantia.14 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_atlantia.14.t
+	desc = dvg_atlantia.14.d
+	flavor = dvg_atlantia.14.f
+	
+	event_image = {
+		video = "gfx/event_pictures/southamerica_slaves_night.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	    
+	}
+	immediate = {
+	
+	}
+	
+	option = {
+		name = dvg_atlantia.14.a
+		default_option = yes
+	change_relations = {
+				country = c:AMA
+				value = -15
+		}
+	create_character = {
+			first_name = Frederic
+			last_name = Delgres
+			historical = yes
+			culture = cu:afro_amerigan
+			is_agitator = yes 
+			religion = rel:catholic
+			female = no
+			interest_group = ig_intelligentsia
+			ideology = ideology_abolitionist
+			birth_date = 1817.2.14 # He was not entirely sure of his birthday or year, but remembered his mom called him "Little Valentine" so he settled for Valentine's Day
+			dna = dna_douglass
+			traits = {
+				firebrand
+				imposing
+				persistent
+			}
+			
+		}	
+	ai_chance = {
+			base = 50
+		}
+	}
+	option = {
+		name = dvg_atlantia.14.b
+	trigger = {
+	exists = c:LOT
+	exists = c:ATL
+	this = c:ATL
+	}
+	c:LOT = {
+			trigger_event = { id = dvg_atlantia.14 days = 20 }
+		}	
+		
+		
+	ai_chance = {
+			base = 25
+		}
+	}
+	option = {
+		name = dvg_atlantia.14.c
+	trigger = {
+	
+	}
+	random_country  = {
+			limit = {
+				country_rank >= rank_value:minor_power
+				is_player = no
+			}
+			trigger_event = { id = dvg_atlantia.14 days = 20 }
+		}	
+		
+		
+	ai_chance = {
+			base = 20
+		}
+	}
+	option = {
+		name = dvg_atlantia.14.e
+	trigger = {
+	
+	}	
+	c:AMA = {
+			change_relations = { 
+				country = ROOT
+				value = 15
+			}
+	
+	}
+	ai_chance = {
+			base = 5
+		}
+}
+
+}
+
+dvg_atlantia.15 = {
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = "gfx/event_pictures/southamerica_election.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "texan_war_of_independence.1"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	title = dvg_atlantia.15.t
+	desc = dvg_atlantia.15.d
+	flavor = dvg_atlantia.15.f
+
+	duration = 1
+
+	trigger = {
+	}
+
+	immediate = {
+		
+	}
+
+	option = {
+		name = dvg_atlantia.15.a
+		default_option = yes
+		create_diplomatic_pact = {
+			country = c:GOU
+			type = puppet
+		}
+		
+		
+	}
+	
+	
+}

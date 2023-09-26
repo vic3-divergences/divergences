@@ -49,11 +49,11 @@ religious_party = {
 				}
 			}
 			# triggered_desc = {
-				# desc = party_christian_peoples_party
-				# trigger = {
-					# exists = c:BEL
-					# THIS = c:BEL
-				# }
+			# 	desc = party_christian_peoples_party
+			# 	trigger = {
+			# 		exists = c:BEL
+			# 		THIS = c:BEL
+			# 	}
 			# }
 			triggered_desc = {
 				desc = party_clerical_party
@@ -69,15 +69,15 @@ religious_party = {
 					THIS = c:RUS
 				}
 			}
-			# triggered_desc = {
-				# desc = party_know_nothing_party
-				# trigger = {
-					# OR = {
-						# country_has_primary_culture = cu:yankee
-						# country_has_primary_culture = cu:dixie
-					# }
-				# }
-			# }
+			triggered_desc = {
+				desc = party_know_nothing_party
+				trigger = {
+					OR = {
+						country_has_primary_culture = cu:yankee
+						country_has_primary_culture = cu:dixie
+					}
+				}
+			}
 			triggered_desc = {
 				desc = party_zentrum
 				trigger = {
@@ -89,6 +89,12 @@ religious_party = {
 						}
 						country_has_state_religion = rel:catholic
 					}
+				}
+			}
+			triggered_desc = {
+				desc = party_tuanjiedang
+				trigger = {
+					country_has_primary_culture = cu:zhourao
 				}
 			}
 			triggered_desc = {
@@ -107,6 +113,7 @@ religious_party = {
 				desc = party_moderate_venstre
 				trigger = {
 					country_has_primary_culture = cu:scandinavian
+					country_has_primary_culture = cu:norwegian
 				}
 			}
 			triggered_desc = {
@@ -182,10 +189,20 @@ religious_party = {
 		owner = {
 			country_has_voting_franchise = yes
 		}
+		OR = {
+	     	NOT = {
+	         	owner = {
+	         		has_variable = only_valid_party
+	         	}
+	        }
+	        owner.var:only_valid_party = {
+	        	is_party_type = religious_party
+	        }
+	    }
 	}
-	    
-    # Root - IG considering joining
-    # scope:number - the number of IGs that would join this party before the root IG
+	
+	# Root - IG considering joining
+	# scope:number - the number of IGs that would join this party before the root IG
 	join_weight = {
 		value = {
 			value = -5
@@ -257,8 +274,8 @@ religious_party = {
 				}
 				leader = {
 					OR = {
-						has_ideology = ideology_traditionalist
-						has_ideology = ideology_theocrat
+						has_ideology = ideology:ideology_traditionalist
+						has_ideology = ideology:ideology_theocrat
 					}
 				}
 			}
@@ -270,9 +287,9 @@ religious_party = {
 		if = { # antireligious characters and IG's will never join
 			limit = {
 				OR = {
-					has_ideology = ideology_anti_clerical
+					has_ideology = ideology:ideology_anti_clerical
 					leader = {
-						has_ideology = ideology_atheist
+						has_ideology = ideology:ideology_atheist
 					}
 				}
 			}
@@ -283,7 +300,7 @@ religious_party = {
 		}
 		if = { # patriarchs more likely to join conservatives with women's suffrage
 			limit = {
-				has_ideology = ideology_patriarchal
+				has_ideology = ideology:ideology_patriarchal
 				owner = {
 					has_law = law_type:law_womens_suffrage
 				}
@@ -294,52 +311,176 @@ religious_party = {
 			}
 		}
 		if = {
-            limit = {
-                is_interest_group_type = ig_devout
-                is_powerful = yes
-            }
-            multiply = {
-                value = 2
-                desc = "from_archetype_party"
-            }
-        }
-        if = {
-            limit = {
-                scope:number = 1
-                is_powerful = no
-                is_marginal = no
-            }
-            multiply = {
-                value = 2
-                desc = "from_influential_supporting_member"
-            }
-        }
-        else_if = {
-            limit = {
-                scope:number = 2
-            }
-            multiply = {
-                value = 0.5
-                desc = "from_two_prior_members"
-            }
-        }
-        else_if = {
-            limit = {
-                scope:number = 3
-            }
-            multiply = {
-                value = 0.25
-                desc = "from_three_prior_members"
-            }
-        }
-        else_if = {
-            limit = {
-                scope:number > 3
-            }
-            multiply = {
-                value = 0.1
-                desc = "from_more_than_three_prior_members"
-            }
-        }
+			limit = {
+				is_interest_group_type = ig_devout
+				is_powerful = yes
+			}
+			multiply = {
+				value = 2
+				desc = "from_archetype_party"
+			}
+		}
+		if = {
+			limit = {
+				scope:number = 1
+				is_powerful = no
+				is_marginal = no
+			}
+			multiply = {
+				value = 2
+				desc = "from_influential_supporting_member"
+			}
+		}
+		else_if = {
+			limit = {
+				scope:number = 2
+			}
+			multiply = {
+				value = 0.5
+				desc = "from_two_prior_members"
+			}
+		}
+		else_if = {
+			limit = {
+				scope:number = 3
+			}
+			multiply = {
+				value = 0.25
+				desc = "from_three_prior_members"
+			}
+		}
+		else_if = {
+			limit = {
+				scope:number > 3
+			}
+			multiply = {
+				value = 0.1
+				desc = "from_more_than_three_prior_members"
+			}
+		}
+		if = { # anti-orleanist
+			limit = {
+				leader = {
+					OR = {
+						has_ideology = ideology:ideology_bonapartist
+						has_ideology = ideology:ideology_legitimist
+					}
+				}
+				owner = {
+					any_interest_group = {
+						has_party = yes
+						party = {
+							is_party_type = religious_party
+						}
+						is_powerful = yes
+						leader = {
+							has_ideology = ideology:ideology_orleanist
+						}
+					}
+				}
+			}
+			add = {
+				value = -5
+				desc = "from_french_monarchist_rival"
+			}
+		}
+		if = { # anti-legitimist
+			limit = {
+				leader = {
+					OR = {
+						has_ideology = ideology:ideology_bonapartist
+						has_ideology = ideology:ideology_orleanist
+					}
+				}
+				owner = {
+					any_interest_group = {
+						has_party = yes
+						party = {
+							is_party_type = religious_party
+						}
+						is_powerful = yes
+						leader = {
+							has_ideology = ideology:ideology_legitimist
+						}
+					}
+				}
+			}
+			add = {
+				value = -5
+				desc = "from_french_monarchist_rival"
+			}
+		}
+		if = { # anti-bonapartist
+			limit = {
+				leader = {
+					OR = {
+						has_ideology = ideology:ideology_legitimist
+						has_ideology = ideology:ideology_orleanist
+					}
+				}
+				owner = {
+					any_interest_group = {
+						has_party = yes
+						party = {
+							is_party_type = religious_party
+						}
+						is_powerful = yes
+						leader = {
+							has_ideology = ideology:ideology_bonapartist
+						}
+					}
+				}
+			}
+			add = {
+				value = -5
+				desc = "from_french_monarchist_rival"
+			}
+		}
+		if = {
+			limit = {
+				owner = {
+	         		has_variable = only_valid_party
+	         	}
+	         	NOT = {
+			        owner.var:only_valid_party = {
+			        	is_party_type = religious_party
+			        }
+			    }
+			}
+			multiply = {
+				value = 0
+			}
+		}
+		if = {
+			limit = {
+				owner = {
+	         		has_variable = only_valid_party
+	         	}
+				owner.var:only_valid_party = {
+		        	is_party_type = religious_party
+		        }
+	         	owner.ruler = {
+					this.interest_group = prev
+				}
+			}
+			add = {
+				value = 1000
+				desc = "from_only_legal_party"
+			}
+		}
+		else_if = {
+			limit = {
+				owner = {
+	         		has_variable = only_valid_party
+	         	}
+	         	 owner.var:only_valid_party = {
+		        	is_party_type = religious_party
+		        }
+			}
+			add = {
+				value = 3
+				desc = "from_only_legal_party"
+			}
+		}
 	}
 }

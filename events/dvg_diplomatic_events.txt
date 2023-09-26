@@ -1,0 +1,196 @@
+﻿namespace = dvg_diplomatic_events
+
+
+dvg_diplomatic_events.1 = {
+	type = country_event
+
+	event_image = {
+		video = "middleeast_courtroom_upheaval"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
+
+	title = dvg_diplomatic_events.1.t
+	desc = dvg_diplomatic_events.1.d
+	flavor = dvg_diplomatic_events.1.f
+
+	duration = 1
+
+	#save scopes in parent event(s) triggering this event
+	#save_scope_as = war; the diplomatic play
+	#save_scope_as = initiator; is the country starting the war
+	#save_scope_as = target_country; is the one asking for help
+	option = {
+		name = dvg_diplomatic_events.1.a
+		default_option = yes
+
+		scope:target_country = {
+			change_relations = { 
+				country = ROOT
+				value = 200 
+			}
+		}
+
+		scope:war = {
+			add_target_backers = { ROOT }
+		}
+
+		scope:target_country = {
+			set_variable = {
+				name = foreign_support_war_cooldown
+				months = foreign_support_war_cooldown_months
+			}
+		}
+
+		ai_chance = {
+			base = 90		
+			
+			modifier = {
+				trigger = {
+					"relations(scope:target_country)" >= relations_threshold:cordial
+				}
+				add = 10
+			}
+			
+			modifier = {
+				trigger = {
+					"relations(scope:target_country)" >= relations_threshold:amicable
+				}
+				add = 50
+			}				
+
+			modifier = {
+				trigger = {
+					"relations(scope:target_country)" >= relations_threshold:friendly
+				}
+				add = 100
+			}	
+
+			modifier = {
+				trigger = {
+					has_diplomatic_pact = {
+						type = rivalry
+						who = scope:initiator
+					}
+				}
+				add = 200
+			}	
+
+			modifier = {
+				trigger = {
+					scope:target_country = { is_subject_of = root }
+				}
+				add = 100
+			}
+			
+			modifier = {
+				trigger = {
+					has_diplomatic_pact = {
+						type = alliance
+						who = scope:target_country
+					}
+				}
+				add = 200
+			}
+			
+			modifier = {
+				trigger = {
+					has_diplomatic_pact = {
+						type = defensive_pact
+						who = scope:target_country
+					}
+				}
+				add = 200
+			}
+			
+			modifier = {
+				trigger = {
+					has_diplomatic_pact = {
+						type = customs_union
+						who = scope:target_country
+					}
+				}
+				add = 100
+			}									
+		}
+	}
+
+	option = {
+		name = dvg_diplomatic_events.1.b
+
+		ai_chance = {
+			base = 0
+			
+			modifier = {
+				trigger = {
+					"relations(scope:initiator)" >= relations_threshold:cordial
+				}
+				add = 10
+			}
+			
+			modifier = {
+				trigger = {
+					"relations(scope:initiator)" >= relations_threshold:amicable
+				}
+				add = 50
+			}				
+
+			modifier = {
+				trigger = {
+					"relations(scope:initiator)" >= relations_threshold:friendly
+				}
+				add = 100
+			}				
+
+			modifier = {
+				trigger = {
+					has_diplomatic_pact = {
+						type = rivalry
+						who = scope:target_country
+					}
+				}
+				add = 100
+			}
+
+			modifier = {
+				trigger = {
+					scope:initiator = { is_subject_of = root }
+				}
+				add = 100
+			}
+			
+			modifier = {
+				trigger = {
+					has_diplomatic_pact = {
+						type = alliance
+						who = scope:initiator
+					}
+				}
+				add = 200
+			}
+			
+			modifier = {
+				trigger = {
+					has_diplomatic_pact = {
+						type = defensive_pact
+						who = scope:initiator
+					}
+				}
+				add = 200
+			}
+			
+			modifier = {
+				trigger = {
+					has_diplomatic_pact = {
+						type = customs_union
+						who = scope:initiator
+					}
+				}
+				add = 100
+			}				
+		}	
+	}
+}

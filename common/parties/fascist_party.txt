@@ -66,25 +66,25 @@
 				}
 			}
 			# triggered_desc = {
-				# desc = party_rexist_party
-				# trigger = {
-					# exists = c:BEL
-					# THIS = c:BEL
-				# }
+			# 	desc = party_rexist_party
+			# 	trigger = {
+			# 		exists = c:BEL
+			# 		THIS = c:BEL
+			# 	}
 			# }
 			# triggered_desc = {
-				# desc = party_volksdeutsche_bewegung
-				# trigger = {
-					# exists = c:LUX
-					# THIS = c:LUX
-				# }
+			# 	desc = party_volksdeutsche_bewegung
+			# 	trigger = {
+			# 		exists = c:LUX
+			# 		THIS = c:LUX
+			# 	}
 			# }
 			# triggered_desc = {
-				# desc = party_national_socialist_movement
-				# trigger = {
-					# exists = c:CHL
-					# THIS = c:CHL
-				# }
+			# 	desc = party_national_socialist_movement
+			# 	trigger = {
+			# 		exists = c:CHL
+			# 		THIS = c:CHL
+			# 	}
 			# }
 			triggered_desc = {
 				desc = party_ratnik_party
@@ -108,6 +108,12 @@
 				}
 			}
 			triggered_desc = {
+				desc = party_zhourao_renmindang
+				trigger = {
+					country_has_primary_culture = cu:zhourao
+				}
+			}
+			triggered_desc = {
 				desc = party_all_russian_fascist_party
 				trigger = {
 					exists = c:RUS
@@ -115,25 +121,25 @@
 				}
 			}
 			# triggered_desc = {
-				# desc = party_argentine_patriotic_league
-				# trigger = {
-					# exists = c:ARG
-					# THIS = c:ARG
-				# }
+			# 	desc = party_argentine_patriotic_league
+			# 	trigger = {
+			# 		exists = c:ARG
+			# 		THIS = c:ARG
+			# 	}
 			# }
 			# triggered_desc = {
-				# desc = party_silver_legion
-				# trigger = {
-					# exists = c:USA
-					# THIS = c:USA
-				# }
+			# 	desc = party_silver_legion
+			# 	trigger = {
+			# 		exists = c:USA
+			# 		THIS = c:USA
+			# 	}
 			# }
 			# triggered_desc = {
-				# desc = party_freedom_party
-				# trigger = {
-					# exists = c:CSA
-					# THIS = c:CSA
-				# }
+			# 	desc = party_freedom_party
+			# 	trigger = {
+			# 		exists = c:CSA
+			# 		THIS = c:CSA
+			# 	}
 			# }
 			triggered_desc = {
 				desc = party_national_union_of_greece
@@ -158,24 +164,24 @@
 					country_has_primary_culture = cu:portuguese
 				}
 			}
-			# triggered_desc = {
-				# desc = party_national_social_christian_party
-				# trigger = {
-					# country_has_primary_culture = cu:anglo_canadian
-				# }
-			# }
+			triggered_desc = {
+				desc = party_national_social_christian_party
+				trigger = {
+					country_has_primary_culture = cu:anglo_canadian
+				}
+			}
 			triggered_desc = {
 				desc = party_iran_e_no_party
 				trigger = {
 					country_has_primary_culture = cu:persian
 				}
 			}
-			# triggered_desc = {
-				# desc = integralist_action_party
-				# trigger = {
-					# country_has_primary_culture = cu:brazilian
-				# }
-			# }
+			triggered_desc = {
+				desc = integralist_action_party
+				trigger = {
+					country_has_primary_culture = cu:brazilian
+				}
+			}
 			triggered_desc = {
 				desc = falangist_party
 				trigger = {
@@ -245,10 +251,20 @@
 		owner = {
 			country_has_voting_franchise = yes
 		}
+		OR = {
+	     	NOT = {
+	         	owner = {
+	         		has_variable = only_valid_party
+	         	}
+	        }
+	        owner.var:only_valid_party = {
+	        	is_party_type = fascist_party
+	        }
+	    }
 	}
-
+	
 	# Root - IG considering joining
-    # scope:number - the number of IGs that would join this party before the root IG
+	# scope:number - the number of IGs that would join this party before the root IG
 	join_weight = {
 		value = {
 			value = -5
@@ -258,8 +274,8 @@
 			limit = {
 				leader = {
 					OR = {
-						has_ideology = ideology_fascist
-						has_ideology = ideology_ethno_nationalist
+						has_ideology = ideology:ideology_fascist
+						has_ideology = ideology:ideology_ethno_nationalist
 					}
 				}
 			}
@@ -272,7 +288,7 @@
 			limit = {
 				is_powerful = yes
 				leader = {
-					has_ideology = ideology_fascist
+					has_ideology = ideology:ideology_fascist
 				}
 			}
 			add = {
@@ -282,7 +298,7 @@
 		}
 		if = { # fascism is a reactionary ideology
 			limit = {
-				has_ideology = ideology_reactionary
+				has_ideology = ideology:ideology_reactionary
 			}
 			add = {
 				value = 5
@@ -303,7 +319,7 @@
 					any_interest_group = {
 						is_powerful = yes
 						leader = {
-							has_ideology = ideology_fascist
+							has_ideology = ideology:ideology_fascist
 						}
 					}
 				}
@@ -313,15 +329,34 @@
 				desc = "from_weak_conservatives_fascism"
 			}
 		}
+		if = { # socialists and radicals won't join conservative parties
+			limit = {
+				leader = { 
+					OR = {
+						has_ideology = ideology:ideology_communist
+						has_ideology = ideology:ideology_vanguardist
+						has_ideology = ideology:ideology_anarchist
+						has_ideology = ideology:ideology_social_democrat
+						has_ideology = ideology:ideology_radical
+						has_ideology = ideology:ideology_atheist
+					}
+				}
+			}
+			add = {
+				value = -20
+				desc = "from_leftist"
+			}
+		}
 		if = { # various progressives dislike fascism
 			limit = {
 				leader = {
 					OR = {
-						has_ideology = ideology_atheist
-						has_ideology = ideology_feminist
-						has_ideology = ideology_reformer
-						has_ideology = ideology_abolitionist
-						has_ideology = ideology_pacifist
+						has_ideology = ideology:ideology_atheist
+						has_ideology = ideology:ideology_feminist
+						has_ideology = ideology:ideology_reformer
+						has_ideology = ideology:ideology_abolitionist
+						has_ideology = ideology:ideology_pacifist
+						has_ideology = ideology:ideology_humanitarian
 					}	
 				}
 			}
@@ -342,7 +377,7 @@
 		if = { # free trade advocates don't love protectionism
 			limit = {
 				leader = {
-					has_ideology = ideology_market_liberal
+					has_ideology = ideology:ideology_market_liberal
 				}
 			}
 			add = {
@@ -353,7 +388,7 @@
 		if = { # moderates are scared of radical politics
 			limit = {
 				leader = {
-					has_ideology = ideology_moderate
+					has_ideology = ideology:ideology_moderate
 				}
 			}
 			add = {
@@ -363,7 +398,7 @@
 		}
 		if = { # patriots are inclined towards fascism
 			limit = {
-				has_ideology = ideology_patriotic
+				has_ideology = ideology:ideology_patriotic
 			}
 			add = {
 				value = 4
@@ -372,7 +407,7 @@
 		}
 		if = { # rural folk will ally with anti-migration faction
 			limit = {
-				has_ideology = ideology_isolationist
+				has_ideology = ideology:ideology_isolationist
 				owner = {
 					has_law = law_type:law_no_migration_controls
 				}
@@ -386,7 +421,7 @@
 			limit = {
 				OR = {
 					has_paternalist_ideology = yes
-					has_ideology = ideology_patriotic
+					has_ideology = ideology:ideology_patriotic
 				}
 				owner = {
 					has_technology_researched = law_enforcement
@@ -401,13 +436,13 @@
 		if = { # opposition to peasant levies
 			limit = {
 				OR = {
-					has_ideology = ideology_jingoist
-					has_ideology = ideology_particularist
-					has_ideology = ideology_sikh_moralist
+					has_ideology = ideology:ideology_jingoist
+					has_ideology = ideology:ideology_particularist
+					has_ideology = ideology:ideology_sikh_moralist
 					leader = {
 						OR = {
-							has_ideology = ideology_fascist
-							has_ideology = ideology_jingoist_leader
+							has_ideology = ideology:ideology_fascist
+							has_ideology = ideology:ideology_jingoist_leader
 						}
 					}
 				}
@@ -423,9 +458,9 @@
 		if = { # loyalist-meritocratic alliance for tax reform
 			limit = {
 				OR = {
-					has_ideology = ideology_meritocratic
+					has_ideology = ideology:ideology_meritocratic
 					AND = {
-						has_ideology = ideology_loyalist
+						has_ideology = ideology:ideology_loyalist
 						owner = {
 							NOT = { has_law = law_type:law_graduated_taxation }
 						}
@@ -444,42 +479,177 @@
 			}
 		}
 		if = {
-            limit = {
-                scope:number = 1
-                is_powerful = no
-                is_marginal = no
-            }
-            multiply = {
-                value = 2
-                desc = "from_influential_supporting_member"
-            }
-        }
-        else_if = {
-            limit = {
-                scope:number = 2
-            }
-            multiply = {
-                value = 0.5
-                desc = "from_two_prior_members"
-            }
-        }
-        else_if = {
-            limit = {
-                scope:number = 3
-            }
-            multiply = {
-                value = 0.25
-                desc = "from_three_prior_members"
-            }
-        }
-        else_if = {
-            limit = {
-                scope:number > 3
-            }
-            multiply = {
-                value = 0.1
-                desc = "from_more_than_three_prior_members"
-            }
-        }
+			limit = {
+				scope:number = 1
+				is_powerful = no
+				is_marginal = no
+			}
+			multiply = {
+				value = 2
+				desc = "from_influential_supporting_member"
+			}
+		}
+		else_if = {
+			limit = {
+				scope:number = 2
+			}
+			multiply = {
+				value = 0.5
+				desc = "from_two_prior_members"
+			}
+		}
+		else_if = {
+			limit = {
+				scope:number = 3
+			}
+			multiply = {
+				value = 0.25
+				desc = "from_three_prior_members"
+			}
+		}
+		else_if = {
+			limit = {
+				scope:number > 3
+			}
+			multiply = {
+				value = 0.1
+				desc = "from_more_than_three_prior_members"
+			}
+		}
+		if = { # authoritarians inclined towards fascism
+			limit = {
+				leader = {
+					has_ideology = ideology:ideology_authoritarian
+				}
+			}
+			add = {
+				value = 3
+				desc = "from_authoritarian"
+			}
+		}
+		if = { # anti-orleanist
+			limit = {
+				leader = {
+					OR = {
+						has_ideology = ideology:ideology_bonapartist
+						has_ideology = ideology:ideology_legitimist
+					}
+				}
+				owner = {
+					any_interest_group = {
+						has_party = yes
+						party = {
+							is_party_type = fascist_party
+						}
+						is_powerful = yes
+						leader = {
+							has_ideology = ideology:ideology_orleanist
+						}
+					}
+				}
+			}
+			add = {
+				value = -5
+				desc = "from_french_monarchist_rival"
+			}
+		}
+		if = { # anti-legitimist
+			limit = {
+				leader = {
+					OR = {
+						has_ideology = ideology:ideology_bonapartist
+						has_ideology = ideology:ideology_orleanist
+					}
+				}
+				owner = {
+					any_interest_group = {
+						has_party = yes
+						party = {
+							is_party_type = fascist_party
+						}
+						is_powerful = yes
+						leader = {
+							has_ideology = ideology:ideology_legitimist
+						}
+					}
+				}
+			}
+			add = {
+				value = -5
+				desc = "from_french_monarchist_rival"
+			}
+		}
+		if = { # anti-bonapartist
+			limit = {
+				leader = {
+					OR = {
+						has_ideology = ideology:ideology_legitimist
+						has_ideology = ideology:ideology_orleanist
+					}
+				}
+				owner = {
+					any_interest_group = {
+						has_party = yes
+						party = {
+							is_party_type = fascist_party
+						}
+						is_powerful = yes
+						leader = {
+							has_ideology = ideology:ideology_bonapartist
+						}
+					}
+				}
+			}
+			add = {
+				value = -5
+				desc = "from_french_monarchist_rival"
+			}
+		}
+		if = {
+			limit = {
+				owner = {
+	         		has_variable = only_valid_party
+	         	}
+	         	NOT = {
+			        owner.var:only_valid_party = {
+			        	is_party_type = fascist_party
+			        }
+			    }
+			}
+			multiply = {
+				value = 0
+			}
+		}
+		if = {
+			limit = {
+				owner = {
+	         		has_variable = only_valid_party
+	         	}
+				 owner.var:only_valid_party = {
+					 is_party_type = fascist_party
+				 }
+	         	owner.ruler = {
+					this.interest_group = prev
+				}
+			}
+			add = {
+				value = 1000
+				desc = "from_only_legal_party"
+			}
+		}
+		else_if = {
+			limit = {
+				owner = {
+	         		has_variable = only_valid_party
+	         	}
+	         	 owner.var:only_valid_party = {
+		        	is_party_type = fascist_party
+		        }
+			}
+			add = {
+				value = 3
+				desc = "from_only_legal_party"
+			}
+		}
 	}
 }
