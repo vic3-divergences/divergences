@@ -227,13 +227,49 @@ dvg_amazonie.4 = {
 	}
 	
 	immediate = {
+	if = {
+			limit = {
+				has_variable = ant_will_spawn_var
+			}
+			random_country = {
+				limit = {	
+					is_revolutionary = yes
+					country_definition = root.country_definition
+				}
+				change_tag = ANT
+				save_scope_as = ANT_scope	
+				
+				# Re-enslave pops if the ACW happens after slavery has been abolished
+				if = {
+					limit = {
+						c:AMA = {
+							has_variable = slavery_recently_abolished
+						}						
+					}
+					
+					every_scope_state = {
+						enslave_discriminated_farm_workers = yes
+					}					
+				}
+								
+				
+				every_scope_state = {
+					state_region = {
+						add_claim = root
+					}
+				}
+			}
+		}
 	ig:ig_landowners = {
 			save_scope_as = planteurs_ig
 			leader = {
 				save_scope_as = landowners_leader
 			}
 		}
-	
+	if = {
+	limit = {
+	NOT = {has_variable = ant_will_spawn_var}
+	}
 	create_country = { #Antartica
 				tag = ANT
 				origin = this
@@ -242,6 +278,7 @@ dvg_amazonie.4 = {
 
 				
 			}
+	}
 	c:ANT = {
 			
 			activate_law = law_type:law_slave_trade
@@ -284,25 +321,29 @@ dvg_amazonie.4 = {
 				name = antarctica_var
 				add = -20
 			}
-		
-		create_diplomatic_play = {
+		if = {
+				limit = {
+				NOT = {is_diplomatic_play_enemy_of = c:ANT}
+				}
+				create_diplomatic_play = {
 				
 			
-				target_country = c:ANT
+					target_country = c:ANT
+					
+					war = no
+					
+					type = dp_rebellion_annex
+					
+					add_war_goal = {
+						holder = c:ANT
+						type = war_reparations
+						target_country = c:AMA
+					}
 				
-				war = no
-				
-				type = dp_rebellion_annex
-				
-				add_war_goal = {
-					holder = c:ANT
-					type = annex_country
-					target_country = c:AMA
 				}
-				
-			}
+		}
 		
-	ai_chance = {
+	    ai_chance = {
 			base = 50
 		}
 	}
@@ -317,22 +358,27 @@ dvg_amazonie.4 = {
 				
 		play_as = c:ANT
 		
-		create_diplomatic_play = {
-				
+		if = {
+			limit = {
+			NOT = {is_diplomatic_play_enemy_of = c:ANT}
+			}
+			create_diplomatic_play = {
 			
+		
 				target_country = c:ANT
 				
 				war = no
 				
-				type = dp_annex_war
+				type = dp_rebellion_annex
 				
 				add_war_goal = {
 					holder = c:ANT
-					type = annex_country
+					type = war_reparations
 					target_country = c:AMA
 				}
-				
+			
 			}
+		}
 		
 	ai_chance = {
 			base = 50
@@ -757,7 +803,7 @@ dvg_amazonie.9 = {
 		s:STATE_AMAZONIE_INFERIEURE = {
 			set_owner_of_provinces = {
 				country = c:BRS
-				provinces = { "xC48D73" "x96AF4C"}
+				provinces = { "xC48D73" "x96AF4C" "x11330B" "x9AD896" "xA5B966" "xAF60BB" }
 			}
 		}
 	}
@@ -1717,7 +1763,13 @@ dvg_amazonie.17 = {
 		
 			activate_law = law_type:law_slavery_banned
 			activate_law = law_type:law_colonial_resettlement
+			activate_law = law_type:law_national_militia
 			activate_law = law_type:law_multicultural
+			add_modifier = {
+						name = dvg_revolutionary_militias
+						days = 720
+						is_decaying	= yes
+					}
 			ig:ig_devout = {
 				
 				set_interest_group_name = ig_jesuits
@@ -2050,6 +2102,3 @@ dvg_amazonie.21 = {
 			}
 	}
 }
-
-
-
