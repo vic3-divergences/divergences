@@ -383,7 +383,7 @@ dvg_hungary.13 = {
 		
 
 		### Conference begins
-		trigger_event = { id = dvg_hungary.21 months = 2 }
+		#trigger_event = { id = dvg_hungary.21 months = 2 }
 	}
 
 }
@@ -606,7 +606,7 @@ dvg_hungary.21 = {
 				NOT = { this = c:DUA }
 			}
 			trigger_event = dvg_hungary.21
-			trigger_event = { id = dvg_hungary.22 days = 8 }
+			trigger_event = { id = dvg_hungary.22 days = 20 }
 		}
 	}
 
@@ -2066,24 +2066,30 @@ dvg_hungary.54 = {
 
 
 	immediate = {
+		
 		if = {
 			limit = {
+				this = c:PLC
 				c:TUR = {has_variable = dvg_attend_hungarian_conference}
 			}
 			c:TUR = {
 				trigger_event = { id = dvg_hungary.55 days = 10 }
 			}
 		} else_if = {
-			limit = { c:AUS = { has_variable = dvg_attend_hungarian_conference }}
+			limit = { 
+				this = c:PLC
+				c:AUS = { has_variable = dvg_attend_hungarian_conference }}
 			c:AUS = {
 				trigger_event = { id = dvg_hungary.56 days = 10 } ### + dvg_hungary.57
 			}
-		} else = {
+		} else_if = {
+			limit = {
+				this = c:PLC
+			}
 			c:DUA = {
 				trigger_event = { id = dvg_hungary.60 days = 10 }
 			}
 		}
-
 		
 	}
 
@@ -2144,6 +2150,8 @@ dvg_hungary.54 = {
 			trigger_event = { id = dvg_hungary.54 days = 1 }
 		}
 
+
+
 		ai_chance = {
 			base = 50
 		}
@@ -2168,17 +2176,23 @@ dvg_hungary.55 = {
 
 
 	immediate = {
+		
 		if = {
-			limit = { c:AUS = { has_variable = dvg_attend_hungarian_conference }}
+			limit = { 
+				c:AUS = { has_variable = dvg_attend_hungarian_conference }
+				this = c:TUR
+			}
 			c:AUS = {
 				trigger_event = { id = dvg_hungary.56 days = 10 } ### + dvg_hungary.57
 			}
-		} else = {
+		} else_if = {
+			limit = {
+				this = c:TUR
+			}
 			c:DUA = {
 				trigger_event = { id = dvg_hungary.60 days = 10 }
 			}
 		}
-
 		
 	}
 
@@ -2204,18 +2218,19 @@ dvg_hungary.55 = {
 			}
 			dvg_hungary_crisis_pom_power_gain = yes
 			set_global_variable = dvg_hungarian_crisis_tur_support_pom
+			every_country = {
+				limit = {
+					has_variable = dvg_attend_hungarian_conference
+					NOT = { this = c:TUR }
+				}
+				trigger_event = { id = dvg_hungary.55 days = 1 }
+				
+			}
 		} else = {
 			custom_tooltip  = DVG_HUNGARIAN_CRISIS_POM_POWER_GAIN
 		}
 		
-		every_country = {
-			limit = {
-				has_variable = dvg_attend_hungarian_conference
-				NOT = { this = c:TUR }
-			}
-			trigger_event = { id = dvg_hungary.55 days = 1 }
-			
-		}
+		
 		
 		
 	}
@@ -2231,12 +2246,15 @@ dvg_hungary.55 = {
 			}
 		}
 
-		every_country = {
-			limit = {
-				has_variable = dvg_attend_hungarian_conference
-				NOT = { this = c:TUR }
+		if = {
+			limit = { this = c:TUR } 
+			every_country = {
+				limit = {
+					has_variable = dvg_attend_hungarian_conference
+					NOT = { this = c:TUR }
+				}
+				trigger_event = { id = dvg_hungary.55 days = 1 }
 			}
-			trigger_event = { id = dvg_hungary.55 days = 1 }
 		}
 
 		ai_chance = {
@@ -2263,10 +2281,15 @@ dvg_hungary.56 = {
 
 
 	immediate = {
-		c:DUA = {
-			trigger_event = { id = dvg_hungary.60 days = 30 }
+		
+		if = {
+			limit = { 
+				this = c:AUS
+			}
+			c:DUA = {
+				trigger_event = { id = dvg_hungary.60 days = 30 }
+			}
 		}
-
 		
 	}
 
@@ -2279,6 +2302,8 @@ dvg_hungary.56 = {
 		ai_chance = {
 			base = 30
 		}
+
+		
 		
 	}
 
@@ -2289,6 +2314,7 @@ dvg_hungary.56 = {
 		c:BOH = {
 			trigger_event = dvg_hungary.57
 		}
+
 		
 		ai_chance = {
 			base = 70
@@ -2397,7 +2423,11 @@ dvg_hungary.60 = {
 	desc = dvg_hungary.60.d
 	flavor = dvg_hungary.60.f
 
+	immediate = {
+		
 
+		
+	}
 
 	option = {
 		name = dvg_hungary.60.a
@@ -2422,6 +2452,21 @@ dvg_hungary.60 = {
 			set_global_variable = dvg_hungarian_crisis_complete
 		}
 
+		if={
+			limit = {
+				this = c:DUA
+			}
+			every_country = {
+				limit = {
+					has_variable = dvg_attend_hungarian_conference
+					NOT = { this = c:DUA }
+				}
+				trigger_event = { id = dvg_hungary.60 days = 1 }
+			}
+		}
+
+
+
 		ai_chance = {
 			base = 30
 		}
@@ -2437,6 +2482,24 @@ dvg_hungary.60 = {
 				this = c:DUA
 				NOT = { has_global_variable = dvg_hungarian_crisis_dua_support_pom }
 			}
+		}
+
+		if={
+			limit = {
+				this = c:DUA
+			}
+			every_country = {
+				limit = {
+					has_variable = dvg_attend_hungarian_conference
+					NOT = { this = c:DUA }
+				}
+				trigger_event = { id = dvg_hungary.60 days = 1 }
+			}
+		}
+
+		if = {
+			limit = { NOT = {this = c:DUA } }
+			set_global_variable = dvg_hungarian_crisis_complete
 		}
 
 		ai_chance = {
