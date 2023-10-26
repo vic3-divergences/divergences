@@ -1,4 +1,5 @@
-﻿namespace = dvg_lotharingia
+﻿
+namespace = dvg_lotharingia
 
 
 dvg_lotharingia.1 = {
@@ -34,9 +35,8 @@ dvg_lotharingia.1 = {
 		}
 		add_modifier = {
 			name = modifier_army_bolstered 
-			months = 120
+			months = 240
 			is_decaying	= yes
-			
 		}
 		add_radicals = {
 			value = 0.4
@@ -546,6 +546,7 @@ s:STATE_MARCHES_OUEST = {
 		}
 
 		c:ATL = {
+			save_scope_as = scope_ATL
 		if = {
 			limit = {
 				has_variable = warlord_state
@@ -574,6 +575,7 @@ s:STATE_MARCHES_OUEST = {
 			save_scope_as = scope_random_warlord_four
 			set_variable = var_warlord_four
 		}
+
 	}
 
 	option = {
@@ -1474,13 +1476,7 @@ dvg_lotharingia.13 = { #Statue torn down
 	icon = "gfx/interface/icons/event_icons/event_protest.dds"
 
 	trigger = {
-		NAND = {
-			has_law = law_type:law_autocracy
-			has_law = law_type:law_monarchy
-		}
-		any_scope_state = {
-			has_variable = ruler_statue_var
-		}
+		
 	}
 
 	immediate = {
@@ -1509,6 +1505,16 @@ dvg_lotharingia.13 = { #Statue torn down
 				months = normal_modifier_time
 			}
 		}
+		if = {
+				limit = {
+					c:BEO = { has_law = law_type:law_monarchy }
+				}
+				change_relations = {
+				country = c:BEO
+				value = -20
+			}
+			}
+		
 	}
 
 	option = { #No
@@ -1552,3 +1558,94 @@ dvg_lotharingia.13 = { #Statue torn down
 }
 
 
+dvg_lotharingia.14 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_lotharingia.14.t
+	desc = dvg_lotharingia.14.d
+	flavor = dvg_lotharingia.14.f
+	
+	event_image = {
+		video = "middleeast_courtroom_upheaval"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+	    
+	}
+
+	immediate = {
+		if = {
+			limit = { exists = s:STATE_AVALON.region_state:BLT }
+			create_country = { #Lotharingia
+				tag = LOT
+				origin = this
+				state = s:STATE_LORRAINE_ATLANTIQUE.region_state:BLT
+				state = s:STATE_NOUVELLE_ALSACE.region_state:BLT
+				state = s:STATE_LIBREVILLE.region_state:BLT
+				state = s:STATE_BOURGOGNE_DU_SUD.region_state:BLT
+				state = s:STATE_BRUXELLES_SUR_ODON.region_state:BLT
+				state = s:STATE_MARCHES_OUEST.region_state:BLT
+				state = s:STATE_COTE_DU_CAFE.region_state:BLT
+
+				on_created = {
+					warlord_setup_effect = yes
+					set_variable = warlord_state
+				}
+			}
+			
+			c:LOT = { save_scope_as = scope_LOT
+			
+			activate_law = law_type:law_parliamentary_republic
+			
+				
+			}
+			
+			
+		}	
+	}
+	
+	
+	# Vive!
+	option = {
+		name = dvg_lotharingia.14.a
+		default_option = yes
+		
+		create_diplomatic_play = {
+			name = new_alsace_independence
+		
+			target_country = c:LOT
+			
+			war = yes
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:LOT
+				type = war_reparations
+				target_country = c:BLT
+			}
+		}
+
+		ai_chance = {
+			base = 20
+		}
+	}
+	option = {
+		name = dvg_lotharingia.14.b
+		default_option = yes
+		
+		change_tag = BEO
+
+		ai_chance = {
+			base = 80
+		}
+	}
+}

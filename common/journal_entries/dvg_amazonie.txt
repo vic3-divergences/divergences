@@ -1,5 +1,4 @@
-﻿
-je_amazonie_reconstruction = {
+﻿je_amazonie_reconstruction = {
 	icon = "gfx/interface/icons/event_icons/event_scales.dds"
 
 	is_shown_when_inactive =
@@ -23,17 +22,22 @@ je_amazonie_reconstruction = {
 	on_monthly_pulse = {
 		effect = {
 			if = {
-				limit = {
-					cu:afro_amerigan = {
-			NOT = { culture_is_discriminated_in = ROOT }
-		}
-					turmoil < 0.2	
+				NOT = { cu:afro_amerigan = { culture_is_discriminated_in = ROOT}	}
+				capital = {
+					
+					turmoil < 0.1
 				}
-				change_variable = {
+				any_scope_state = {
+					count >= 3
+						is_incorporated = yes
+						is_capital = no
+						turmoil < 0.25
+				 }
+			}
+			change_variable = {
 					name = reconcile_var
 					add = 1
 				}
-			}
 		}
 	}
 
@@ -44,7 +48,7 @@ je_amazonie_reconstruction = {
 			scope:journal_entry = { is_goal_complete = yes }
 		}
 		
-		NOT = { cu:afro_amerigan = { culture_is_discriminated_in = ROOT}		}
+		NOT = { cu:afro_amerigan = { culture_is_discriminated_in = ROOT}	}
 		capital = {
 			
 			devastation = 0
@@ -451,13 +455,13 @@ je_antarctica_insurgency = {
 			scope:journal_entry = { is_goal_complete = yes }
 		}
 		
-		ig:ig_landowners = {
-						AND = {
-						is_in_government = no
-						is_insurrectionary = yes
-						is_powerful = yes
-						}
-					}
+		any_country = {
+			is_revolutionary = yes
+			country_definition = root.country_definition
+			ig:ig_landowners = {
+				is_in_government = yes
+			}				
+		}
 		
 		AND = {
 		has_law = law_type:law_slavery_banned
@@ -473,6 +477,18 @@ je_antarctica_insurgency = {
 	
 	
 	on_complete = {
+		if = {
+			limit = {
+				any_country = {
+					is_revolutionary = yes
+					country_definition = root.country_definition
+					ig:ig_landowners = {
+						is_in_government = yes
+					}				
+				}
+			}
+			set_variable = ant_will_spawn_var
+		}
 		set_variable = antarctica_complete
 		trigger_event = { id = dvg_amazonie.4 }
 	}
@@ -485,8 +501,6 @@ je_antarctica_insurgency = {
 				
 			}
 			 has_law = law_type:law_slavery_banned
-			 
-			
 		}
 	}
 	
@@ -538,4 +552,3 @@ je_retake_para = {
 	}
 	should_be_pinned_by_default = yes
 }
-
