@@ -1,0 +1,510 @@
+﻿dvg_restore_tuscany = {
+	is_shown = {
+		exists = c:PRO
+        this = c:PRO
+        has_law = law_type:law_monarchy
+        NOT = { owns_entire_state_region = STATE_TUSCANY }
+		NOT = { has_global_variable = medici_reconquest }
+		is_diplomatic_play_committed_participant = no	
+	}
+	
+	
+    possible = {
+		exists = c:TUS
+        c:TUS = {
+		
+		NOT = { has_law = law_type:law_monarchy }
+
+		}
+	}
+
+    when_taken = {
+		
+        set_global_variable = {
+            name = medici_reconquest
+            value = 0
+        }
+        create_diplomatic_play = {
+            
+        
+            target_state = s:STATE_TUSCANY.region_state:TUS
+            
+            war = yes
+            
+            type = dp_return_state
+            
+            add_war_goal = {
+                holder = c:TUS
+                type = revoke_claim
+                target_state = s:STATE_TUSCANY.region_state:TUS
+                target_country = c:PRO
+            }
+            
+           
+        }
+		ai_chance = {
+			base = 100
+		}
+    }
+
+	
+}
+
+dvg_reclaim_france = {
+	is_shown = {
+		
+        NOT = { has_global_variable = valois_reconquest }	
+		
+        NOT = { exists = c:TAP }
+
+		OR = {
+		AND = { exists = c:PRO
+
+		c:PRO = ROOT 
+		}
+		AND = {
+		was_formed_from = PRO
+		}
+		}
+	}
+
+    possible = {
+		country_rank >= rank_value:major_power
+        
+        has_law = law_type:law_monarchy
+		
+	}
+		
+		
+
+    when_taken = {
+		every_state_region = {
+			limit = {
+			
+			is_homeland = cu:french
+				
+			
+			}
+			add_claim = ROOT
+		}
+		every_state_region = {
+			limit = {
+			
+			is_homeland = cu:occitan
+				
+			
+			}
+			add_claim = ROOT
+		}
+
+        add_journal_entry = {
+			type = je_valois_claim
+		}
+		
+		
+		create_incident = {
+			country = c:PRO
+			value = 27
+		}
+		set_global_variable = {
+				name = valois_reconquest
+				value = 0
+			}
+    }
+
+	ai_chance = {
+		base = 100
+	}
+}
+dvg_transalpina = {
+	is_shown = {
+		NOT = { has_game_rule = plausible_formable_nations }
+		NOT = { exists = c:TAP }
+
+		OR = {
+		AND = { exists = c:PRO
+
+		c:PRO = ROOT 
+		}
+		AND = {
+		was_formed_from = PRO
+		}
+		}
+		
+	}
+	
+	
+    possible = {
+		owns_entire_state_region = STATE_ILE_DE_FRANCE
+		owns_entire_state_region = STATE_LAZIO
+		any_scope_state = {
+		
+			count >= 3
+					
+				AND = {	
+					region = sr:region_france
+					
+					
+					owner = ROOT
+	
+				}
+				}
+		any_scope_state = {
+		
+					count >= 4
+							
+						AND = {	
+							region = sr:region_occitania
+							
+							
+							owner = ROOT
+			
+						}
+				}
+		any_scope_state = {
+		
+					count >= 5
+							
+						AND = {	
+							region = sr:region_italy
+							
+							
+							owner = ROOT
+			
+						}
+			 }
+		
+
+        has_law = law_type:law_monarchy
+
+		has_technology_researched = pan-nationalism
+	}
+
+    when_taken = {
+		add_primary_culture = cu:central_italian
+		add_primary_culture = cu:french
+		add_primary_culture = cu:occitan
+		add_primary_culture = cu:north_italian
+		add_primary_culture = cu:romand
+		change_tag = TAP
+    }
+
+	ai_chance = {
+		base = 100
+	}
+}
+
+dvg_claim_lucca = {
+	is_shown = {
+	exists = c:PRO
+        exists = c:LUC
+        exists = c:PAP
+        this = c:PRO
+        has_law = law_type:law_monarchy
+        owns_entire_state_region = STATE_TUSCANY
+        NOT = { has_global_variable = lucca_claim }	
+	}
+	
+	
+    possible = {
+        exists = c:LUC
+        NOT = { has_truce_with = c:LUC }
+        NOT = { has_truce_with = c:PAP }
+		owns_entire_state_region = STATE_TUSCANY
+	}
+
+    when_taken = {
+		 set_global_variable = {
+            name = lucca_claim
+            value = 0
+        }
+		c:LUC = {
+			trigger_event = { id = dvg_provence.4 }
+		}
+    }
+
+	ai_chance = {
+		base = 100
+	}
+}
+dvg_provence_protestant = {
+	is_shown = {
+		exists = c:PRO
+		c:PRO = THIS
+		NOT = { country_has_state_religion = rel:protestant }
+        has_global_variable = valois_excommunicated
+	}
+
+	possible = {
+		
+		has_law = law_type:law_monarchy
+		NOT = { has_law = law_type:law_state_religion }
+	}
+
+	when_taken = {
+		set_state_religion = rel:protestant
+		change_relations = {
+			country = C:BRG
+			value = 20
+		}
+        change_relations = {
+			country = C:SCA
+			value = 10
+		}
+        change_relations = {
+			country = C:ARA
+			value = -30
+		}
+        change_relations = {
+			country = C:DUA
+			value = -15
+		}
+        change_relations = {
+			country = C:SPA
+			value = -15
+		}
+        add_loyalists = {
+			value = 0.40
+			religion = rel:protestant
+		}
+		ig:ig_devout = {
+			set_interest_group_name = ig_evangelical_church
+		}
+	}
+
+	ai_chance = {
+		base = 10
+	}
+}
+
+dvg_annex_avignon = {
+	is_shown = {
+		
+		exists = c:AVN
+		exists = c:PAP
+		any_neighbouring_state = {
+            owner = c:AVN
+        }
+	}
+
+    possible = {
+		exists = c:PAP
+		has_war_with = c:PAP
+	}
+    when_taken = {
+		annex = c:AVN
+    }
+
+	ai_chance = {
+		base = 100
+	}
+}
+dvg_promote_occitania = {
+	is_shown = {
+		NOT = {
+			has_truce_with = c:DUA
+			}
+		exists = c:PRO
+		exists = c:DUA
+		any_neighbouring_state = {
+            owner = c:DUA
+        }
+		OR = {
+	
+		c:PRO = {is_player = yes}
+		c:PRO = {country_has_state_religion = rel:protestant}
+		}
+	}
+
+    possible = {
+		OR = {
+			year >= 1850
+			has_technology_researched = nationalism
+		}
+	}
+    when_taken = {
+		
+		create_truce = { country = c:DUA months = 36 }
+		c:DUA = {
+			
+			add_radicals = {
+				value = 0.3
+				culture = cu:occitan
+			}
+			add_radicals = {
+				value = 0.1
+				culture = cu:french
+			}
+			if = {
+				limit = {
+					has_journal_entry = je_french_integration
+				}
+				change_variable = { name = french_progress subtract = 10 }
+			}
+			if = {
+				limit = {
+					has_journal_entry = je_total_revolution
+				}
+				change_variable = { name = dua_total_revolution_revolt add = 10 }
+			}
+			
+			
+
+
+		}
+		c:DUA = {trigger_event = dvg_dua.119}
+    }
+
+	ai_chance = {
+		base = 100
+	}
+}
+dvg_promote_italia = {
+	is_shown = {
+		
+		any_primary_culture = {
+			has_discrimination_trait = italophone
+		}
+		NOT = {exists = c:ITA}
+		NOT = {exists = c:ITC}
+	}
+
+    possible = {
+		year >= 1845
+		has_technology_researched = mass_communication
+		has_technology_researched = international_relations
+		any_country = {
+			any_primary_culture = {
+				has_discrimination_trait = italophone
+			}
+			has_technology_researched = nationalism
+		}
+	}
+    when_taken = {
+		add_technology_researched = nationalism
+    }
+
+	ai_chance = {
+		base = 100
+	}
+}
+
+﻿dvg_ITC_acceptprovencal = {
+	is_shown = {
+		exists = c:ITC
+		root = c:ITC
+		NOT = {
+			c:ITC = {
+				country_has_primary_culture = cu:occitan
+			}
+		}
+		was_formed_from = PRO
+	}
+
+	possible = {
+		NOT = { has_law = law_type:law_ethnostate }
+	}
+	
+    when_taken = {
+		c:ITC = {
+			add_primary_culture = cu:greek
+		}
+		add_radicals = {
+			value = 0.10
+			culture = cu:occitan
+		}
+		add_radicals = {
+			value = 0.10
+			culture = cu:north_italian
+		}
+		add_radicals = {
+			value = 0.20
+			culture = cu:south_italian
+		}
+		add_radicals = {
+			value = 0.20
+			culture = cu:central_italian
+		}
+    }
+
+	ai_chance = {
+		base = 100
+	}
+}
+﻿dvg_ITA_acceptprovencal = {
+	is_shown = {
+		exists = c:ITA
+		root = c:ITA
+		NOT = {
+			c:ITA = {
+				country_has_primary_culture = cu:occitan
+			}
+		}
+		was_formed_from = PRO
+	}
+
+	possible = {
+		NOT = { has_law = law_type:law_ethnostate }
+	}
+	
+    when_taken = {
+		c:ITA = {
+			add_primary_culture = cu:greek
+		}
+		add_radicals = {
+			value = 0.10
+			culture = cu:occitan
+		}
+		add_radicals = {
+			value = 0.10
+			culture = cu:north_italian
+		}
+		add_radicals = {
+			value = 0.20
+			culture = cu:south_italian
+		}
+		add_radicals = {
+			value = 0.20
+			culture = cu:central_italian
+		}
+    }
+
+	ai_chance = {
+		base = 100
+	}
+}
+﻿dvg_FRA_acceptprovencal = {
+	is_shown = {
+		exists = c:FRA
+		root = c:FRA
+		NOT = {
+			c:FRA = {
+				country_has_primary_culture = cu:occitan
+			}
+		}
+		was_formed_from = PRO
+	}
+
+	possible = {
+		NOT = { has_law = law_type:law_ethnostate }
+	}
+	
+    when_taken = {
+		c:FRA = {
+			add_primary_culture = cu:greek
+		}
+		add_radicals = {
+			value = 0.10
+			culture = cu:occitan
+		}
+		add_radicals = {
+			value = 0.20
+			culture = cu:french
+		}
+    
+
+	ai_chance = {
+		base = 100
+	}
+}
+
