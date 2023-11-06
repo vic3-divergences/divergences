@@ -41,7 +41,7 @@ dvg_spain.1 = {
 		name = dvg_spain.1.a
 		default_option = yes
 		add_journal_entry = {
-			type = je_caladeran_war_of_independence_spain
+			type = je_colombian_war_of_independence_SPA
 		}
 		add_radicals = {
 			value = 0.1
@@ -52,7 +52,7 @@ dvg_spain.1 = {
 	}
 }
 
-# The Revolt is Quashed
+# Colombian Alliance is defeated
 dvg_spain.2 = {
 	type = country_event
 	placement = ROOT
@@ -96,7 +96,8 @@ dvg_spain.2 = {
 	}
 }
 
-# Oof we lost
+# Colombian Alliance defeats Spain
+# make an event for VIJ later once india is reworked!>!>!>
 dvg_spain.3 = {
 	type = country_event
 	placement = ROOT
@@ -118,9 +119,11 @@ dvg_spain.3 = {
 	
 	trigger = {
 	}
+	
 	immediate = {
 		save_scope_as = spain_scope
 	}
+	
 	# No Viceroy Path 
 	option = {
 		name = dvg_spain.3.a
@@ -148,7 +151,6 @@ dvg_spain.3 = {
 		}
 	}
 }
-#make an event for VIJ later once india is reworked!>!>!>
 
 # Reconquered New Spain note that unless something weird af happens, ai spain shouldn't really be doing this path
 dvg_spain.4 = {
@@ -2045,3 +2047,122 @@ dvg_spain.26 = {
 		}
 	}
 }
+
+# Truce with Colombian Alliance?
+dvg_spain.27 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.27.t
+	desc = dvg_spain.27.d
+	flavor = dvg_spain.27.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		year = 1838
+		this = c:SPA
+		exists = c:GCO
+		c:SPA = {
+			has_war_with = c:GCO
+			NOT = { has_truce_with = c:GCO }
+		}
+	}
+	
+	immediate = {
+	}
+	
+	# Sign truce
+	option = {
+		name = dvg_spain.27.a
+		default_option = yes
+		set_global_variable = {
+			name = dvg_SPA_truce_of_1838
+			value = yes
+		}
+		every_diplomatic_play = {
+			limit = {
+				initiator_is = c:SPA
+				target_is = c:GCO
+			}
+			end_play = yes
+		}
+		c:SPA = {
+			create_truce = {
+				country = c:GCO
+				months = 48
+			}
+		}
+		c:GRA = {
+			trigger_event = { id = dvg_granada.8 days = 365 }	# Siege of Cartagena countryside
+		}		
+		ai_chance = {
+			base = 1
+		}
+	}
+	
+	# Continue the war
+	option = {
+		name = dvg_spain.27.b
+		c:GRA = {
+			trigger_event = { id = dvg_granada.5 days = 7 }	# Herrera Revolution
+		}
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+
+# Withdrawal from Granada
+dvg_spain.28 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.28.t
+	desc = dvg_spain.28.d
+	flavor = dvg_spain.28.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+		c:SPA = {
+			create_truce = {
+				country = c:GRA
+				months = 48
+			}
+		}
+	}
+	
+	# Let them go
+	option = {
+		name = dvg_spain.28.a
+		default_option = yes
+		change_relations = {
+			country = c:GRA
+			value = -50
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
