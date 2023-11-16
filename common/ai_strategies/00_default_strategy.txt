@@ -294,70 +294,107 @@ ai_strategy_default = {
 	# root and scope:overlord is the AI doing the evaluation, scope:subject is prospective subject
 	subject_value = {
 		value = 0
-
-		add = {
-			if = {
-				limit = {
-					OR = {						
-						has_attitude = {
-							who = scope:subject
-							attitude = protective
+				
+		# PUT ALL REGULAR SUBJECT SCORES INSIDE THE BELOW IF STATEMENT TO PREVENT AI FROM TAKING UNREACHABLE SUBJECTS
+		if = {
+			limit = {		
+				OR = {
+					scope:target_country = { is_subject_of = root }
+					can_reach_target_country = yes	
+				}
+			}	
+			
+			add = {
+				if = {
+					limit = {
+						OR = {			
+							scope:target_country = { is_subject_of = root }	
+							has_attitude = {
+								who = scope:target_country
+								attitude = protective
+							}
+							has_attitude = {
+								who = scope:target_country
+								attitude = domineering
+							}							
 						}
-						has_attitude = {
-							who = scope:subject
-							attitude = domineering
-						}							
 					}
-				}
 
-				value = 50
-			
-				add = {
-					value = scope:subject.gdp
-					divide = 200000
-					max = 50						
-				}
-			}
-			
-			if = {
-				limit = {
-					has_secret_goal = {
-						who = scope:subject
-						secret_goal = protect
-					}						
+					value = 50
+				
+					add = {
+						value = scope:target_country.gdp
+						divide = 200000
+						max = 50						
+					}
 				}
 				
-				multiply = 0.5
+				if = {
+					limit = {
+						has_secret_goal = {
+							who = scope:target_country
+							secret_goal = protect
+						}						
+					}
+					
+					multiply = 0.5
+				}
+				
+				if = {
+					limit = {
+						NOT = { has_strategic_adjacency = scope:target_country }
+					}
+					multiply = 0.5
+				}
 			}
 			
+			# Special logic for very important subjects like East India Company
+			if = {
+				limit = { 
+					scope:target_country = { 
+						is_subject_of = root
+						prestige >= 250				
+					} 					
+				}
+				add = 100
+			}	
+
 			if = {
 				limit = {
-					NOT = { has_strategic_adjacency = scope:subject }
+					lenient_ai_behavior_trigger = yes
 				}
 				multiply = 0.5
 			}
-		}
 
-		if = {
-			limit = {
-				has_journal_entry = je_scramble_for_africa
-
-				# Scramble for Africa powers should only care about the Boers once diamonds are found
-				scope:subject = {
-					country_is_in_africa = yes
-					any_scope_building = {
-						OR = {
-							is_building_type = building_gold_mine
-							is_building_type = building_gold_fields
+			if = {
+				limit = {
+					AND = {
+						has_radical_leftist_government = no			
+						scope:target_country = {
+							has_radical_leftist_government = yes
 						}
 					}
+					
 				}
+				multiply = 1.5
 			}
-			add = 50
+
+			if = {
+				limit = {
+					AND = {
+						has_radical_leftist_economy = no			
+						scope:target_country = {
+							has_radical_leftist_economy = yes
+						}
+					}
+					
+				}
+				multiply = 1.5
+			}	
 		}
 
 		min = 0
-		max = 100
+		max = 200
 	}
 
 	# How much does the AI desire becoming another country's subject
@@ -1151,177 +1188,7 @@ ai_strategy_default = {
 	# How important is it that the AI maintains an interest in a specific strategic region (added on top of region value calculations set in defines)
 	# Using this value in other strategies will function additively
 	strategic_region_scores = {				
-		region_nile_basin = {
-			if = {
-				limit = {
-					OR = {
-						AND = {
-							country_rank = rank_value:great_power
-							has_technology_researched = malaria_prevention
-						}
-						has_journal_entry = je_scramble_for_africa
-					}						
-				}
-				add = 200
-			}		
-		}
-		region_north_africa = {
-			if = {
-				limit = {
-					OR = {
-						AND = {
-							country_rank = rank_value:great_power
-							has_technology_researched = malaria_prevention
-						}
-						has_journal_entry = je_scramble_for_africa
-					}		
-				}
-				add = 200
-			}		
-		}
-		region_senegal = {
-			if = {
-				limit = {
-					OR = {
-						AND = {
-							country_rank = rank_value:great_power
-							has_technology_researched = malaria_prevention
-						}
-						has_journal_entry = je_scramble_for_africa
-					}		
-				}
-				add = 200
-			}		
-		}
-		region_niger = {
-			if = {
-				limit = {
-					OR = {
-						AND = {
-							country_rank = rank_value:great_power
-							has_technology_researched = malaria_prevention
-						}
-						has_journal_entry = je_scramble_for_africa
-					}		
-				}
-				add = 200
-			}		
-		}
-		region_congo = {
-			if = {
-				limit = {
-					OR = {
-						AND = {
-							country_rank = rank_value:great_power
-							has_technology_researched = malaria_prevention
-						}
-						has_journal_entry = je_scramble_for_africa
-					}		
-				}
-				add = 200
-			}		
-		}
-		region_southern_africa = {
-			if = {
-				limit = {
-					OR = {
-						AND = {
-							country_rank = rank_value:great_power
-							has_technology_researched = malaria_prevention
-						}
-						has_journal_entry = je_scramble_for_africa
-					}		
-				}
-				add = 200
-			}		
-		}
-		region_zanj = {
-			if = {
-				limit = {
-					OR = {
-						AND = {
-							country_rank = rank_value:great_power
-							has_technology_researched = malaria_prevention
-						}
-						has_journal_entry = je_scramble_for_africa
-					}		
-				}
-				add = 200
-			}		
-		}
-		region_north_germany = {
-			if = {
-				limit = {
-					country_is_in_europe = yes
-					country_rank >= rank_value:great_power
-				}
-				add = 100
-			}
-					
-		}
-		region_south_germany = {
-			if = {
-				limit = {
-					country_is_in_europe = yes
-					country_rank >= rank_value:great_power
-				}
-				add = 100
-			}
-							
-		}		
-		region_italy = {
-			if = {
-				limit = {
-					country_is_in_europe = yes
-					country_rank >= rank_value:great_power
-				}
-				add = 100
-			}
-		}
-		region_baltic = {
-			if = {
-				limit = { 
-					wants_to_solve_schleswig_holstein = yes			
-				}			
-				add = 100
-			}
-		}
-		region_balkans = {
-			if = {
-				limit = {
-					country_is_in_europe = yes
-					country_rank >= rank_value:great_power
-				}
-				add = 50
-			}
-		}
-		region_england = {
-			if = {
-				limit = {
-					country_is_in_europe = yes
-					country_rank >= rank_value:great_power
-				}
-				add = 50
-			}
-		}	
-		region_iberia = {
-			if = {
-				limit = {
-					country_is_in_europe = yes
-					country_rank >= rank_value:great_power
-				}
-				add = 50
-			}
-		}
-		region_rhine = {
-			if = {
-				limit = {
-					country_is_in_europe = yes
-					country_rank >= rank_value:great_power
-				}
-				add = 50
-			}
-		}	
+		
 				
 	}
 	
@@ -1694,17 +1561,7 @@ ai_strategy_default = {
 				}
 				multiply = 1.5
 			}
-			
-			if = { 
-				limit = {
-					exists = c:RSM
-					THIS = {
-						has_journal_entry = je_risorgimento
-					}
-					has_variable = rsm_friendship
-				}
-				add = 100
-			}
+
 
 			if = {
 				limit = {
@@ -2293,34 +2150,7 @@ ai_strategy_default = {
 				multiply = 1.5
 			}			
 
-			if = {
-				limit = {
-					country_has_primary_culture = cu:russian
-					has_law = law_type:law_national_supremacy
-					has_technology_researched = nationalism
-					OR = {
-						AND = {	
-							exists = c:KZH
-							scope:target_country = {
-								this = c:KZH
-							}
-						}
-						AND = {	
-							exists = c:UZH
-							scope:target_country = {
-								this = c:UZH
-							}
-						}
-						AND = {	
-							exists = c:OZH
-							scope:target_country = {
-								this = c:OZH
-							}
-						}
-					}
-				}
-				add = 100
-			}
+			
 			
 			if = {
 				limit = {
