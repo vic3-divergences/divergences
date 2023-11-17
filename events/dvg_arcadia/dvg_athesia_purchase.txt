@@ -1,0 +1,285 @@
+﻿# Based on vanilla Alaska Purchase events
+namespace = dvg_athesia_purchase
+
+# An Offer for Athesia
+dvg_athesia_purchase.1 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_athesia_purchase.1.t
+	desc = dvg_athesia_purchase.1.d
+	flavor = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					scope:athesia_seller = {
+						c:VEN ?= this
+					}
+				}
+				desc = dvg_athesia_purchase.1.f_ven
+			}
+			triggered_desc = {
+				trigger = {
+					always = yes
+				}
+				desc = dvg_athesia_purchase.1.f
+			}
+		}
+	}
+
+	duration = 3
+
+	event_image = {
+		video = "unspecific_signed_contract"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_trade.dds"
+
+	trigger = {
+	}
+
+	immediate = {
+		# Scopes set in dvg_athesia_purchase.4
+	}
+
+	option = {
+		name = dvg_athesia_purchase.1.a
+		default_option = yes
+		add_modifier = {
+			name = athesia_ven_big_money
+			months = 12
+			is_decaying = no
+		}
+		scope:athesia_buyer = {
+			trigger_event = { id = dvg_athesia_purchase.2 days = 0 popup = yes }
+		}
+		show_as_tooltip = {
+			random_state = {
+				limit = {
+					state_region = s:STATE_ATHESIA
+					owner = scope:athesia_seller
+				}
+				set_state_owner = scope:athesia_buyer
+			}
+			random_state = {
+				limit = {
+					state_region = s:STATE_ELEUTHERA
+					owner = scope:athesia_seller
+				}
+				set_state_owner = scope:athesia_buyer
+			}
+			change_relations = {
+				country = scope:athesia_buyer
+				value = 10
+			}
+		}
+		ai_chance = {
+			base = 75
+		}
+	}
+	option = {
+		name = dvg_athesia_purchase.1.b
+		scope:athesia_buyer = {
+			trigger_event = { id = dvg_athesia_purchase.3 days = 0 popup = yes }
+		}
+		show_as_tooltip = {
+			change_relations = {
+				country = scope:athesia_buyer
+				value = -20
+			}
+		}
+		ai_chance = {
+			base = 0
+			modifier = {
+				trigger = {
+					scope:athesia_seller = { 
+						NOT = {
+							has_variable = athesia_sale_cooldown #Unsolicited offer
+						}
+					}
+				}
+				add = 25
+			}
+		}
+	}
+}
+
+# The Athesia Purchase
+dvg_athesia_purchase.2 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_athesia_purchase.2.t
+	desc = dvg_athesia_purchase.2.d
+	flavor = dvg_athesia_purchase.2.f
+
+	duration = 3
+
+	event_image = {
+		video = "unspecific_signed_contract"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
+
+	trigger = {
+	}
+
+	immediate = {
+		# Scopes set in dvg_athesia_purchase.4
+	}
+
+	option = {
+		name = dvg_athesia_purchase.2.a
+		default_option = yes
+		add_modifier = {
+			name = athesia_pla_big_money
+			months = 12
+		}
+		scope:athesia_seller = {
+			set_variable = successful_sale_of_athesia
+		}
+		random_state = {
+			limit = {
+				state_region = s:STATE_ATHESIA
+				owner = scope:athesia_seller
+			}
+			set_state_owner = scope:athesia_buyer
+		}
+		random_state = {
+			limit = {
+				state_region = s:STATE_ELEUTHERA
+				owner = scope:athesia_seller
+			}
+			set_state_owner = scope:athesia_buyer
+		}
+		change_relations = {
+			country = scope:athesia_seller
+			value = 10
+		}
+	}
+}
+
+# Failed Athesia Purchase
+dvg_athesia_purchase.3 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_athesia_purchase.3.t
+	desc = dvg_athesia_purchase.3.d
+	flavor = dvg_athesia_purchase.3.f
+
+	duration = 3
+
+	event_image = {
+		video = "unspecific_signed_contract"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
+
+	trigger = {
+	}
+
+	immediate = {
+		# Scopes set in dvg_athesia_purchase.4
+	}
+
+	option = {
+		name = dvg_athesia_purchase.3.a
+		default_option = yes
+		s:STATE_ATHESIA = {
+			add_claim = ROOT
+		}
+		s:STATE_ELEUTHERA = {
+			add_claim = ROOT
+		}
+		change_relations = {
+			country = scope:athesia_seller
+			value = -20
+		}
+	}
+	option = {
+		name = dvg_athesia_purchase.3.b
+		default_option = yes
+		change_relations = {
+			country = scope:athesia_seller
+			value = -5
+		}
+	}
+}
+
+# Making an Offer
+dvg_athesia_purchase.4 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_athesia_purchase.4.t
+	desc = dvg_athesia_purchase.4.d
+	flavor = dvg_athesia_purchase.4.f
+
+	duration = 3
+
+	event_image = {
+		video = "unspecific_signed_contract"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	trigger = {
+	}
+
+	immediate = {
+		root = {
+			save_scope_as = athesia_buyer
+		}
+		random_state = {
+			limit = {
+				AND = {
+					state_region = s:STATE_ATHESIA
+					state_region = s:STATE_ELEUTHERA
+				}
+				owner = {
+					NOT = {
+						is_country_type = decentralized
+					}
+				}
+			}
+			save_scope_as = athesia_scope
+			owner = {
+				save_scope_as = athesia_seller
+			}
+		}
+	}
+
+	option = {
+		name = dvg_athesia_purchase.4.a
+		ai_chance = {
+			base = 1
+		}
+		custom_tooltip = dvg_athesia_purchase.4.tt1 # 3 million over a year
+		scope:athesia_seller = {
+			trigger_event = {
+				id = dvg_athesia_purchase.1
+				days = 0
+				popup = yes
+			}
+		}
+	}
+	option = { # perhaps another time
+		name = dvg_athesia_purchase.4.c
+		default_option = yes
+		ai_chance = {
+			base = 0
+		}
+		scope:athesia_seller = {
+			post_notification = athesia_negotiations_fail
+		}
+	}
+}
