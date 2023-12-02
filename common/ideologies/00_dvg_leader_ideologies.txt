@@ -59,3 +59,90 @@ ideology_trekker = {
 		law_collectivized_agriculture = disapprove
 	}
 }
+
+ideology_adventurer = {
+	icon = "gfx/interface/icons/ideology_icons/ideology_leader/ideology_leader_despotic_utopian.dds"
+	character_ideology = yes
+
+
+	lawgroup_citizenship = {
+		law_ethnostate = strongly_disapprove
+		law_national_supremacy = strongly_disapprove
+		law_racial_segregation = disapprove
+		law_cultural_exclusion = neutral
+		law_multicultural = approve	
+	}
+
+	lawgroup_trade_policy = {		
+		law_isolationism = strongly_disapprove
+		law_mercantilism = neutral
+		law_protectionism = neutral
+		law_free_trade = strongly_approve
+	}
+	
+
+	possible = {
+
+		### USE THIS VARIABLE IF YOU WANT IT TO SPAWN IN YOUR NATION!
+		#has_variable = dvg_ideology_adventurer_possible
+		###
+		
+		# trade unions should always go vanguardist instead if available
+		
+		scope:interest_group = { 
+			OR = {
+				is_interest_group_type = ig_industrialists
+				is_interest_group_type = ig_petty_bourgeoisie
+				is_interest_group_type = ig_intelligentsia
+			}
+		}
+		scope:interest_group = {
+			NOR = {
+				has_variable = communist_ig_var
+				has_variable = chose_vanguardism
+				has_variable = chose_fascism
+				has_variable = chose_conservatism
+				has_variable = chose_ethno_nationalism
+			}
+		}
+	}
+
+
+	leader_weight = {
+		value = 100
+		# less likely if issues are not relevant
+		if = {
+			limit = {
+				owner = { 
+					OR = {
+						has_law = law_type:law_autocracy
+						has_law = law_type:law_oligarchy
+						has_law = law_type:law_technocracy
+						has_law = law_type:law_single_party_state
+					}
+					has_law = law_type:law_multicultural
+					has_law = law_type:law_isolationism
+				}
+			}
+			add = -50
+		}
+		# less likely if not in government
+		if = {
+			limit = {
+				scope:interest_group = {
+					is_in_government = no
+				}
+			}
+			add = -50
+		}
+		# less likely for loyal IG's
+		if = {
+			limit = {
+				scope:interest_group = {
+					ig_approval > happy
+				}
+			}
+			add = -50
+		}
+	}
+}
