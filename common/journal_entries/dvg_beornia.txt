@@ -383,6 +383,41 @@ je_cattle_barons_wrath = {
 		}
 	}
 
+	on_monthly_pulse = {
+		
+		effect = {
+			if = {
+				limit = {
+					any_civil_war = {
+						civil_war_progress > 0.5
+					}
+					NOT = { has_variable = je_pedro_civilwar_point }
+				}
+				change_variable = { name = cattle_barons_var add = 1 }
+				set_variable = { name = je_pedro_civilwar_point years = 3 }
+			}
+			if = {
+				limit = {
+					OR = {
+						in_default = yes
+						has_modifier = declared_bankruptcy
+					}
+					NOT = { has_variable = je_pedro_default_point }
+				}
+				change_variable = { name = cattle_barons_var add = 1 }
+				set_variable = { name = je_pedro_default_point }
+			}
+			if = {
+				limit = {
+					country_rank >= rank_value:great_power
+					NOT = { has_variable = je_pedro_gp_point }
+				}
+				change_variable = { name = cattle_barons_var subtract = 1 }
+				set_variable = { name = je_pedro_gp_point }
+			}
+		}
+	}
+
 	
 
 	complete = {
@@ -410,15 +445,32 @@ je_cattle_barons_wrath = {
 	
 	fail = {
 		OR = {
-			ig:ig_landowners = {
-				is_powerful = no
-				is_in_government = no
+			AND = {
+				custom_tooltip = {
+					text = je_edward_fail
+					var:cattle_barons_var = 8
+				}
+				ig:ig_landowners = {
+					is_powerful = yes
+				}
+				ig:ig_industrialists = {
+					is_powerful = no
+				}
 			}
-			NOT = { 
-			        has_law = law_type:law_monarchy
+			AND = {
+				custom_tooltip = {
+					text = je_edward_fail_2
+					var:cattle_barons_var > 6
+				}
+				custom_tooltip = {
+					text = edward_dead
+					ruler = {
+						NOT = {
+							has_variable = is_edward
+						}
+					}
+				}
 			}
-			
-			
 		}
 	}
 	
@@ -460,7 +512,7 @@ je_cattle_barons_wrath = {
 					NOT = { has_variable = cattle_barons_var_subject }
 					is_subject = yes
 				}
-				post_notification = warlord_china_explosion_point_add
+				post_notification = beornia_coup_point_add
 				change_variable = {
 					name = cattle_barons_var
 					add = 1
@@ -472,17 +524,82 @@ je_cattle_barons_wrath = {
 					NOT = { has_variable = cattle_barons_var_loans }
 					taking_loans = yes
 				}
-				post_notification = warlord_china_explosion_point_add
+				post_notification = beornia_coup_point_add
 				change_variable = {
 					name = cattle_barons_var
 					add = 1
 				}
 				set_variable = cattle_barons_var_loans
 			}
-			
-			
+			if = {
+				limit = {
+					has_law = law_type:law_religious_schools
+				}
+				post_notification = beornia_coup_point_add
+				change_variable = {
+					name = cattle_barons_var
+					subtract = 1
+				}
+				
+			}
+			if = {
+				limit = {
+					has_law = law_type:law_racial_segregation
+				}
+				post_notification = beornia_coup_point_add
+				change_variable = {
+					name = cattle_barons_var
+					add = 1
+				}
+				
+			}
+		
+		if = {
+			limit = {
+				has_law = law_type:law_cultural_exclusion
+			}
+			post_notification = beornia_coup_point_add
+			change_variable = {
+				name = cattle_barons_var
+				add = 1
+			}
 		}
+		if = {
+			limit = {
+				has_law = law_type:law_multicultural
+			}
+			post_notification = beornia_coup_point_add
+			change_variable = {
+				name = cattle_barons_var
+				add = 1
+			}
+		}
+		if = {
+			limit = {
+				has_law = law_type:law_no_migration_controls
+			}
+			post_notification = beornia_coup_point_add
+			change_variable = {
+				name = cattle_barons_var
+				add = 1
+			}
+		}
+		if = {
+			limit = {
+				has_law = law_type:law_serfdom
+			}
+			post_notification = beornia_coup_point_subtract
+			change_variable = {
+				name = cattle_barons_var
+				subtract = 2
+			}
+		}
+		
+		}
+			
+			
 	}
+	
 	
 	timeout = 7125
 	
@@ -687,12 +804,11 @@ je_england_reclaim = {
     }
 	}
 	invalid = {
-		OR = = {
 		exists = c:ENG
 		NOT = {
 			c:DUA = {owns_entire_state_region = STATE_YORKSHIRE}
 		}
-		}
+		
 	}
 
 	progressbar = yes
