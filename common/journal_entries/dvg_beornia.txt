@@ -262,7 +262,6 @@ je_anglo_summit = {
 
 	group = je_group_foreign_affairs
 
-	group = je_group_historical_content
 
 	possible = {
 		
@@ -385,10 +384,10 @@ je_cattle_barons_wrath = {
 					any_civil_war = {
 						civil_war_progress > 0.5
 					}
-					NOT = { has_variable = je_pedro_civilwar_point }
+					NOT = { has_variable = je_edward_civilwar_point }
 				}
 				change_variable = { name = cattle_barons_var add = 1 }
-				set_variable = { name = je_pedro_civilwar_point years = 3 }
+				set_variable = { name = je_edward_civilwar_point years = 3 }
 			}
 			if = {
 				limit = {
@@ -396,18 +395,18 @@ je_cattle_barons_wrath = {
 						in_default = yes
 						has_modifier = declared_bankruptcy
 					}
-					NOT = { has_variable = je_pedro_default_point }
+					NOT = { has_variable = je_edward_default_point }
 				}
 				change_variable = { name = cattle_barons_var add = 1 }
-				set_variable = { name = je_pedro_default_point }
+				set_variable = { name = je_edward_default_point }
 			}
 			if = {
 				limit = {
 					country_rank >= rank_value:great_power
-					NOT = { has_variable = je_pedro_gp_point }
+					NOT = { has_variable = je_edward_gp_point }
 				}
 				change_variable = { name = cattle_barons_var subtract = 1 }
-				set_variable = { name = je_pedro_gp_point }
+				set_variable = { name = je_edward_gp_point }
 			}
 		}
 	}
@@ -506,7 +505,6 @@ je_cattle_barons_wrath = {
 					NOT = { has_variable = cattle_barons_var_subject }
 					is_subject = yes
 				}
-				post_notification = beornia_coup_point_add
 				change_variable = {
 					name = cattle_barons_var
 					add = 1
@@ -518,7 +516,6 @@ je_cattle_barons_wrath = {
 					NOT = { has_variable = cattle_barons_var_loans }
 					taking_loans = yes
 				}
-				post_notification = beornia_coup_point_add
 				change_variable = {
 					name = cattle_barons_var
 					add = 1
@@ -528,65 +525,139 @@ je_cattle_barons_wrath = {
 			if = {
 				limit = {
 					has_law = law_type:law_religious_schools
+					NOT = { has_variable = beo_religious_schools }
 				}
-				post_notification = beornia_coup_point_add
 				change_variable = {
 					name = cattle_barons_var
 					subtract = 1
 				}
-				
+				set_variable = beo_religious_schools
 			}
 			if = {
 				limit = {
 					has_law = law_type:law_racial_segregation
+					NOT = { has_variable = beo_racial_segregation }
 				}
-				post_notification = beornia_coup_point_add
 				change_variable = {
 					name = cattle_barons_var
 					add = 1
 				}
-				
+				set_variable = beo_racial_segregation
+
 			}
 		
 		if = {
 			limit = {
 				has_law = law_type:law_cultural_exclusion
+				NOT = { has_variable = beo_multicultural }
 			}
-			post_notification = beornia_coup_point_add
 			change_variable = {
 				name = cattle_barons_var
-				add = 1
+				add = 2
 			}
+			set_variable = beo_multicultural
 		}
 		if = {
 			limit = {
 				has_law = law_type:law_multicultural
+				NOT = { has_variable = beo_multicultural }
 			}
-			post_notification = beornia_coup_point_add
 			change_variable = {
 				name = cattle_barons_var
-				add = 1
+				add = 2
 			}
+			set_variable = beo_multicultural
 		}
 		if = {
 			limit = {
 				has_law = law_type:law_no_migration_controls
+				NOT = { has_variable = beo_open_borders }
 			}
-			post_notification = beornia_coup_point_add
 			change_variable = {
 				name = cattle_barons_var
 				add = 1
 			}
+			set_variable = beo_open_borders
 		}
 		if = {
 			limit = {
-				has_law = law_type:law_serfdom
+				has_law = law_type:law_autocracy
+				NOT = { has_variable = beo_autocracy }
 			}
-			post_notification = beornia_coup_point_subtract
+			change_variable = {
+				name = cattle_barons_var
+				add = 1
+			}
+			set_variable = beo_autocracy
+		}
+		if = {
+			limit = {
+				NOT = {has_law = law_type:law_landed_voting}
+				NOT = {has_law = law_type:law_oligarchy}
+				NOT = { has_variable = beo_democracy }
+				
+			}
+			change_variable = {
+				name = cattle_barons_var
+				add = 1 
+			}
+			set_variable = beo_democracy
+		}
+		
+		if = {
+			limit = {
+				has_law = law_type:law_serfdom
+				NOT = { has_variable = beo_serfdom }
+			}
 			change_variable = {
 				name = cattle_barons_var
 				subtract = 2
 			}
+			set_variable = beo_serfdom
+		}
+		if = {
+			limit = {
+				OR = {
+				has_law = law_type:law_oligarchy
+				has_law = law_type:law_landed_voting
+				}
+				NOT = { has_variable = beo_oligarchy }
+			}
+			change_variable = {
+				name = cattle_barons_var
+				subtract = 2
+			}
+			set_variable = beo_oligarchy
+		}
+		if = {
+			limit = {
+				has_law = law_type:law_national_supremacy
+				NOT = { has_variable = beo_national_supremacy }
+			}
+			change_variable = {
+				name = cattle_barons_var
+				subtract = 2
+			}
+			set_variable = beo_national_supremacy
+		}
+		if = {
+			limit = {
+				NOT = { has_variable = beo_war_loser }
+				OR = {
+					has_variable = recently_lost_war
+					AND = {
+						has_variable = recently_had_war
+						NOT = {
+							has_variable = recently_won_war
+						}
+					}
+				} 
+			}
+			change_variable = {
+				name = cattle_barons_var
+				add = 1
+			}
+			set_variable = beo_war_loser
 		}
 		
 		}
@@ -737,8 +808,9 @@ je_england_reclaim = {
 
 	scripted_button = beo_england_bribery_button
 
-	scripted_button = beo_england_harold_sponsor
+	scripted_button = beo_england_harold_sponsorship
 
+	scripted_button = beo_cancel_agitation_button
 
     is_shown_when_inactive = {
 		
@@ -766,6 +838,13 @@ je_england_reclaim = {
         has_technology_researched = nationalism
 
 		country_rank > rank_value:insignificant_power
+
+		NOT = { has_law = law_type:law_no_colonial_affairs }
+
+		NOT = { has_law = law_type:law_frontier_colonization }
+
+		NOT = { has_law = law_type:law_isolationism }
+
     }
 
     immediate = {
@@ -805,24 +884,29 @@ je_england_reclaim = {
 	invalid = {
 
 		custom_tooltip = england_exists_tt
+
+		OR = {
 		
 		exists = c:ENG
+
+		has_global_variable = beo_reclaim_cancelled
+		
+		}
 	}
 	on_invalid = {
 		trigger_event = {
 			id = dvg_england.9
 		}
 	}
-	on_monthly_pulse = {
+	on_weekly_pulse = {
 		effect = {
 			if = {
 				limit = {
 					has_modifier = funding_english_radicals
-
 				}
 				
 				change_variable = {
-					name = new_mercia_var
+					name = cavendish_var
 					add = 1
 				}
 			}
