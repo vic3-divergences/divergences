@@ -38,9 +38,6 @@
 			
 			}
 		}
-		
-		
-		
 	}
 	
 	on_complete = {
@@ -175,7 +172,6 @@ je_ameriga_conquer = {
 		
 		
 		OR = {
-			text = lost_war_tt
 			
 			custom_tooltip = {
 				text = lost_war_tt
@@ -356,9 +352,7 @@ je_anglo_summit = {
 	
 	on_timeout = {
 		trigger_event = {
-			
 			id = dvg_england.10
-
 		}
 		}
 	
@@ -737,14 +731,17 @@ je_england_conquer = {
 je_england_reclaim = {
     icon = "gfx/interface/icons/event_icons/waving_flag.dds"
 
-	group = je_group_historical_content
+	group = je_group_foreign_affairs
 
     scripted_button = beo_england_seperatist_button
 
 	scripted_button = beo_england_bribery_button
 
+	scripted_button = beo_england_harold_sponsor
+
+
     is_shown_when_inactive = {
-		year >= 1955
+		
         OR = {
             c:BEO ?= this
             c:ENG ?= this
@@ -772,22 +769,21 @@ je_england_reclaim = {
     }
 
     immediate = {
-        cu:beornian = {
-            save_scope_as = beornian_culture_scope
-        }
+        
 		set_variable = {
 			name = cavendish_var
 			value = 25
 		}
+		cu:beornian = {
+            save_scope_as = beornian_culture_scope
+        }
     }
 
     complete = {
-        sr:region_england = {
-            any_scope_state = {
-                count = all
-                owner = root
-            }
-        }
+        trigger_if = {
+			limit = { exists = var:cavendish_var }
+			scope:journal_entry = { is_goal_complete = yes }
+		}
     }
 
     on_complete = {
@@ -797,18 +793,43 @@ je_england_reclaim = {
 		value = 75
 	}
 	fail = {
-		var:cavendish_var <= 0
+		OR = {
+		var:cavendish_var < 0
+		NOT = { has_law = law_type:law_monarchy }
+		}
     }
 	on_fail = {
 		c:DUA = {trigger_event = { id = dvg_england.5 days = 0 popup = yes }
     }
 	}
 	invalid = {
-		exists = c:ENG
-		NOT = {
-			c:DUA = {owns_entire_state_region = STATE_YORKSHIRE}
-		}
+
+		custom_tooltip = england_exists_tt
 		
+		exists = c:ENG
+	}
+	on_invalid = {
+		trigger_event = {
+			id = dvg_england.9
+		}
+	}
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					has_modifier = funding_english_radicals
+
+				}
+				
+				change_variable = {
+					name = new_mercia_var
+					add = 1
+				}
+			}
+			
+			
+			
+		}
 	}
 
 	progressbar = yes
