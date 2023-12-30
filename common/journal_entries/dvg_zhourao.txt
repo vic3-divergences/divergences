@@ -142,8 +142,8 @@ je_red_sultan = {
 		custom_tooltip = {
 			text = dvg_red_sultan_died_comp_tt
 			OR = {
-				this = { var:dvg_zhusha_stability_of_succession_variable_var = 6 }
-				this = { var:dvg_zhusha_stability_of_succession_variable_var = 0 }
+				this = { var:dvg_zhusha_stability_of_succession_variable_var > 4 }
+				this = { var:dvg_zhusha_stability_of_succession_variable_var < 2 }
 			}
 			c:ZSA = {
 				is_player = yes
@@ -162,44 +162,57 @@ je_red_sultan = {
 		
 	 }	
 	
-	  fail = {
+	fail = {
 		
 		custom_tooltip = {
 			text = dvg_red_sultan_died_fail_tt
-			OR = {
-				has_variable = dvg_sultan_can_die
-				
-				AND = {
-					c:ZSA = {
-						is_player = no
-					}
-					
-				}
-				NOT = {
-					OR = {
-						this = { var:dvg_zhusha_stability_of_succession_variable_var = 6 }
-						this = { var:dvg_zhusha_stability_of_succession_variable_var = 0 }
-					}
-				}
-				ig:ig_intelligentsia = {
-					is_powerful = yes
-				}
-			AND = {
-				OR = {
-					
-					ig:ig_landowners = {
-						ig_approval <= angry
-					}
-					ig:ig_landowners = {
-						is_marginal = yes
-					}
-					
-				}
+						
+		
+		c:ZSA = {
+			ruler = {
+				NOT = { has_variable = is_red_sultan }
 			}
-			}
-			
 		}
-	
+
+		OR = {
+			this = { var:dvg_zhusha_stability_of_succession_variable_var <= 4 }
+			this = { var:dvg_zhusha_stability_of_succession_variable_var >= 2 }
+		}
+		}
+	}
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					ig:ig_armed_forces = {
+						is_powerful = yes	
+					}
+					NOT = {has_variable = zsa_armed_forces
+					
+				}
+				}
+				change_variable = {
+					name = dvg_zhusha_stability_of_succession_variable_var
+					add = 1
+				}
+				set_variable = zsa_armed_forces
+			}
+			if = {
+				limit = {
+					ig:ig_landowners = {
+						is_powerful = yes
+					}
+					NOT = {has_variable = zsa_landowners
+					
+				}
+				}
+				change_variable = {
+					name = dvg_zhusha_stability_of_succession_variable_var
+					subtract = 1
+				}
+				set_variable = zsa_landowners
+			}
+		}
 	}
 	on_complete = {
 		trigger_event = { id = dvg_zhourao.704 popup = yes days = 10 }
@@ -207,6 +220,13 @@ je_red_sultan = {
 	
     on_fail = {
 		trigger_event = { id = dvg_zhourao.705 popup = yes }
+	}
+
+	invalid = {
+		NOT = {  has_law = law_type:law_monarchy  }
+	}
+	on_invalid = {
+		
 	}
 
 	current_value = {
