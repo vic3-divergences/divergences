@@ -24,7 +24,7 @@
 	on_monthly_pulse = {
 		effect = {
 			if = {
-				NOT = { cu:afro_amerigan = { culture_is_discriminated_in = ROOT}	}
+				limit = { NOT = {cu:afro_amerigan = { culture_is_discriminated_in = ROOT}	}
 				capital = {
 					
 					turmoil < 0.1
@@ -41,6 +41,7 @@
 					add = 1
 				}
 		}
+	}
 	}
 
 	complete = {
@@ -74,11 +75,18 @@
 	}
 	
 	fail = {
-		
+		has_law = law_type:law_ethnostate
+		NOT = {		has_law = law_type:law_slavery_banned	}
+		has_technology_researched = political_agitation
+		any_scope_state = {
+			count > 4
+				is_incorporated = yes
+				turmoil > 0.85
+			}
 	}
 	
 	on_fail = {
-		
+		trigger_event = { id = dvg_amazonie.13 popup = yes }
 	}
 
 	current_value = {
@@ -242,7 +250,7 @@ je_amazonie_annex = {
 
 
 je_equinoxea_annex = {
-	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	icon = "gfx/interface/icons/invention_icons/law_enforcement.dds"
 
 	group = je_group_internal_affairs
 
@@ -272,6 +280,21 @@ je_equinoxea_annex = {
 		trigger_event = { id = dvg_amazonie.9 popup = yes }
 		
     }
+
+	fail = {
+		has_truce_with = c:EQX
+		NOT = { 
+		owns_entire_state_region = STATE_VAURA
+		owns_entire_state_region = STATE_CAPPADOCE
+		}
+		year > 1850
+		government_legitimacy < 65
+	}
+
+
+	on_fail = {
+		trigger_event = { id = dvg_amazonie.24 popup = yes }
+	}
 
 	should_be_pinned_by_default = yes
 }
@@ -381,7 +404,15 @@ je_equinoxea_insurgency = {
 					add = 1
 				}
 			}
+			
 		}
+		events = { 
+			dvg_amazonie.22
+			dvg_amazonie.23
+			dvg_amazonie.25
+			dvg_amazonie.27
+			dvg_amazonie.28
+			}
 	}
 
 	complete = {
@@ -405,10 +436,11 @@ je_equinoxea_insurgency = {
 	
 	on_complete = {
 		set_variable = equinoxea_complete
-		trigger_event = { id = dvg_amazonie.13 }
+		trigger_event = { id = dvg_amazonie.28 }
 	}
 	
 	fail = {
+		
 		AND = {
 			
 			 has_law = law_type:law_slavery_banned
@@ -421,6 +453,23 @@ je_equinoxea_insurgency = {
 	 on_fail = {
 		set_variable = equinoxea_complete
 		trigger_event = { id = dvg_amazonie.12 }
+	}
+	invalid = {
+		NOT = {
+		any_scope_state = {
+			is_incorporated = yes
+			state_region = { 
+				
+			is_homeland = cu:equinoxien
+				
+			}
+			
+		}
+		}
+	}
+	on_invalid = {
+		set_variable = equinoxea_complete
+		trigger_event = { id = dvg_amazonie.24 }
 	}
 	
 
@@ -573,6 +622,11 @@ je_one_amazonie = {
 	
 	group = je_group_internal_affairs
 
+	possible = {
+		country_has_primary_culture = cu:afro_amerigan
+		country_has_primary_culture = cu:equinoxien
+	}
+
 	complete = {
 		country_or_subject_owns_entire_state_region = STATE_GOUAS
 		country_or_subject_owns_entire_state_region = STATE_COTE_DU_SUCRE
@@ -590,31 +644,8 @@ je_one_amazonie = {
 	
 
 	on_complete = {
-		every_scope_state = {
-			limit = {
-				owner = ROOT
-				state_region = {
-					OR = {
-					is_homeland = cu:equinoxien
-					is_homeland = cu:antarctican
-					}
-				}
-			}
-
-			state_region = {
-				remove_homeland = equinoxien
-				remove_homeland = antarctican
-				remove_homeland = afro_amerigan
-			}
-			hidden_effect = {create_pop = {
-				culture = amazonien
-				size = 1000
-			}
-			}
-		}
-		add_primary_culture = cu:amazonien
-		remove_primary_culture = cu:antarctican
-		remove_primary_culture = cu:equinoxien
+		trigger_event = dvg_amazonie.33
+		
 
 	}
 	weight = 100
@@ -645,5 +676,34 @@ je_no_amazonie = {
 		}
 	}
 	weight = 100
+	should_be_pinned_by_default = yes
+}
+
+je_eqx_recognition = {
+	icon = "gfx/interface/icons/invention_icons/nationalism.dds"
+
+	group = je_group_historical_content
+
+	
+
+    possible = {
+	
+		
+	}
+
+	complete = {
+		is_diplomatic_play_committed_participant = no
+
+		is_subject = no 
+
+		owns_entire_state_region = STATE_CAPPADOCE
+		owns_entire_state_region = STATE_VAURA
+	}
+    on_complete = {
+		set_country_type = recognized
+	}
+		
+    
+
 	should_be_pinned_by_default = yes
 }
