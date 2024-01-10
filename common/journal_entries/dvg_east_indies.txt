@@ -453,3 +453,97 @@ je_lanfang_migration = {
 
 	should_be_pinned_by_default = yes
 }
+
+je_tionghoa_culture = {
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	group = je_group_internal_affairs
+
+	# Now activated by event
+
+	modifiers_while_active = {
+		modifier_assimilation_nnc
+	}
+	is_shown_when_inactive = {
+
+		exists = c:LAN
+
+		c:LAN = ROOT
+	}
+
+	immediate = {
+		if = {
+			limit = {
+				c:LAN ?= this
+			}
+			cu:hakka = {
+				save_scope_as = old_national_culture
+			}
+			cu:tionghoa = {
+				save_scope_as = new_national_culture
+			}
+			set_variable = {
+				name = lanfang_var
+				value = 20
+			}
+			
+		
+	}
+	trigger_event = {id = dvg_lanfang.1}
+	}
+	possible = {
+		is_subject = no
+		has_technology_researched = nationalism
+	}
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					has_technology_researched = nationalism
+				}
+				change_variable = {
+					name = lanfang_var
+					add = 2
+				}
+			}
+			if = {
+				limit = {
+					has_technology_researched = pan-nationalism
+				}
+				change_variable = {
+					name = lanfang_var
+					add = -1
+				}
+			}
+			
+		}
+	}
+
+	complete = {
+		trigger_if = {
+			limit = { exists = var:lanfang_var }
+			scope:journal_entry = { is_goal_complete = yes }
+		}
+	}
+
+	on_complete = {
+		trigger_event = {
+			id = dvg_lanfang.2
+		}
+		add_loyalists = {
+			value = large_radicals
+			culture = scope:new_national_culture
+		}
+	}
+	progressbar = yes
+
+	goal_add_value = {
+		value = 600
+	}
+
+	scripted_button = je_south_american_national_identity_integrate_a_state
+
+	weight = 100
+
+	should_be_pinned_by_default = yes
+}
