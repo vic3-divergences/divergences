@@ -1,6 +1,8 @@
 ﻿je_new_mercia_independent = {
 	icon = "gfx/interface/icons/invention_icons/mechanized_farming.dds"
 
+	group = je_group_foreign_affairs
+
 	is_shown_when_inactive = {	
 	exists = c:BEO
 	this = c:BEO
@@ -36,9 +38,6 @@
 			
 			}
 		}
-		
-		
-		
 	}
 	
 	on_complete = {
@@ -100,7 +99,9 @@
 }
 
 je_ameriga_conquer = {
-	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	icon = "gfx/interface/icons/invention_icons/wargaming.dds"
+
+	group = je_group_foreign_affairs
 
 	is_shown_when_inactive = {	
 		
@@ -171,7 +172,6 @@ je_ameriga_conquer = {
 		
 		
 		OR = {
-			text = lost_war_tt
 			
 			custom_tooltip = {
 				text = lost_war_tt
@@ -203,6 +203,8 @@ je_ameriga_conquer = {
 
 je_world_conquer = {
 	icon = "gfx/interface/icons/invention_icons/civilizing_mission.dds"
+
+	group = je_group_foreign_affairs
 
 	is_shown_when_inactive = {	
 		
@@ -258,7 +260,8 @@ je_world_conquer = {
 je_anglo_summit = {
 	icon = "gfx/interface/icons/invention_icons/pan_nationalism.dds"
 
-	group = je_group_historical_content
+	group = je_group_foreign_affairs
+
 
 	possible = {
 		
@@ -348,9 +351,7 @@ je_anglo_summit = {
 	
 	on_timeout = {
 		trigger_event = {
-			
 			id = dvg_england.10
-
 		}
 		}
 	
@@ -375,11 +376,101 @@ je_cattle_barons_wrath = {
 		}
 	}
 
+	on_monthly_pulse = {
+		
+		effect = {
+			if = {
+				limit = {
+					any_civil_war = {
+						civil_war_progress > 0.5
+					}
+					NOT = { has_variable = je_edward_civilwar_point }
+				}
+				change_variable = { name = cattle_barons_var add = 1 }
+				set_variable = { name = je_edward_civilwar_point years = 3 }
+			}
+			if = {
+				limit = {
+					OR = {
+						in_default = yes
+						has_modifier = declared_bankruptcy
+					}
+					NOT = { has_variable = je_edward_default_point }
+				}
+				change_variable = { name = cattle_barons_var add = 1 }
+				set_variable = { name = je_edward_default_point }
+			}
+			if = {
+				limit = {
+					country_rank >= rank_value:great_power
+					NOT = { has_variable = je_edward_gp_point }
+				}
+				change_variable = { name = cattle_barons_var subtract = 1 }
+				set_variable = { name = je_edward_gp_point }
+			}
+			if = {
+				limit = {
+					NOT = { has_variable = avalon_polluted }
+					any_scope_state = { 
+						is_capital = yes
+						state_region = {
+						pollution_amount > 150
+						}
+						
+					}
+				}
+				set_variable = { name = avalon_polluted }
+				change_variable = { name = cattle_barons_var add = 1 }
+				
+			}
+			if = {
+				limit = {
+					ig:ig_landowners = {
+						is_powerful = no
+						is_in_government = yes
+					}
+				}
+				change_variable = {
+					name = cattle_barons_var
+					add = -1
+				}
+			}
+			if = {
+				limit = {
+					ig:ig_landowners = {
+						is_powerful = no
+						is_in_government =  no
+					}
+				}
+				change_variable = {
+					name = cattle_barons_var
+					add = -2
+				}
+			}
+			if = {
+				limit = {
+					root.average_sol > 10
+				}
+				change_variable = {
+					name = cattle_barons_var
+					add = -1
+				}
+			}
+		}
+	}
+
 	
 
 	complete = {
 		# If-else clause to avoid errors because of missing variable before JE activates
+		custom_tooltip = {
+		text = je_edward_special_tooltip_advance
+	
 		trigger_if = {
+			
+
+			
+			
 			limit = { exists = var:cattle_barons_var }
 			
 			
@@ -387,10 +478,12 @@ je_cattle_barons_wrath = {
 			scope:journal_entry = { is_goal_complete = yes }
 			
 			}
+			
 		}
 		
 		
 		
+	}
 	}
 	
 	on_complete = {
@@ -401,16 +494,31 @@ je_cattle_barons_wrath = {
 	}
 	
 	fail = {
+		
 		OR = {
-			ig:ig_landowners = {
-				is_powerful = no
-				is_in_government = no
+			AND = {
+				
+				ig:ig_landowners = {
+					is_powerful = no
+				}
+				ig:ig_industrialists = {
+					is_powerful = yes
+				}
 			}
-			NOT = { 
-			        has_law = law_type:law_monarchy
+			AND = {
+				custom_tooltip = {
+					text = je_edward_special_tooltip_deplete
+					var:cattle_barons_var < 6
+				}
+				custom_tooltip = {
+					text = edward_dead
+					ruler = {
+						NOT = {
+							has_variable = is_edward
+						}
+					}
+				}
 			}
-			
-			
 		}
 	}
 	
@@ -421,9 +529,13 @@ je_cattle_barons_wrath = {
 		}
 	}
 	invalid = {
-		ig:ig_landowners = {
-				is_insurrectionary = yes
-			}
+		any_country = {
+			is_revolutionary = yes
+			country_definition = root.country_definition
+			ig:ig_landowners = {
+				is_in_government = yes
+			}				
+		}
 	}
 	on_invalid = {
 		set_variable = beornia_complete
@@ -452,7 +564,6 @@ je_cattle_barons_wrath = {
 					NOT = { has_variable = cattle_barons_var_subject }
 					is_subject = yes
 				}
-				post_notification = warlord_china_explosion_point_add
 				change_variable = {
 					name = cattle_barons_var
 					add = 1
@@ -464,19 +575,168 @@ je_cattle_barons_wrath = {
 					NOT = { has_variable = cattle_barons_var_loans }
 					taking_loans = yes
 				}
-				post_notification = warlord_china_explosion_point_add
 				change_variable = {
 					name = cattle_barons_var
 					add = 1
 				}
 				set_variable = cattle_barons_var_loans
 			}
-			
-			
+			if = {
+				limit = {
+					has_law = law_type:law_religious_schools
+					NOT = { has_variable = beo_religious_schools }
+				}
+				change_variable = {
+					name = cattle_barons_var
+					subtract = 1
+				}
+				set_variable = beo_religious_schools
+			}
+			if = {
+				limit = {
+					has_law = law_type:law_racial_segregation
+					NOT = { has_variable = beo_racial_segregation }
+				}
+				change_variable = {
+					name = cattle_barons_var
+					add = 1
+				}
+				set_variable = beo_racial_segregation
+
+			}
+		
+		if = {
+			limit = {
+				has_law = law_type:law_cultural_exclusion
+				NOT = { has_variable = beo_multicultural }
+			}
+			change_variable = {
+				name = cattle_barons_var
+				add = 2
+			}
+			set_variable = beo_multicultural
 		}
+		if = {
+			limit = {
+				has_law = law_type:law_multicultural
+				NOT = { has_variable = beo_multicultural }
+			}
+			change_variable = {
+				name = cattle_barons_var
+				add = 2
+			}
+			set_variable = beo_multicultural
+		}
+		if = {
+			limit = {
+				has_law = law_type:law_no_migration_controls
+				NOT = { has_variable = beo_open_borders }
+			}
+			change_variable = {
+				name = cattle_barons_var
+				add = 1
+			}
+			set_variable = beo_open_borders
+		}
+		if = {
+			limit = {
+				has_law = law_type:law_autocracy
+				NOT = { has_variable = beo_autocracy }
+			}
+			change_variable = {
+				name = cattle_barons_var
+				add = 1
+			}
+			set_variable = beo_autocracy
+		}
+		if = {
+			limit = {
+				NOT = {has_law = law_type:law_landed_voting}
+				NOT = {has_law = law_type:law_oligarchy}
+				NOT = { has_variable = beo_democracy }
+				
+			}
+			change_variable = {
+				name = cattle_barons_var
+				add = 1 
+			}
+			set_variable = beo_democracy
+		}
+		
+		if = {
+			limit = {
+				has_law = law_type:law_serfdom
+				NOT = { has_variable = beo_serfdom }
+			}
+			change_variable = {
+				name = cattle_barons_var
+				subtract = 2
+			}
+			set_variable = beo_serfdom
+		}
+		if = {
+			limit = {
+				OR = {
+				has_law = law_type:law_oligarchy
+				has_law = law_type:law_landed_voting
+				}
+				NOT = { has_variable = beo_oligarchy }
+			}
+			change_variable = {
+				name = cattle_barons_var
+				subtract = 2
+			}
+			set_variable = beo_oligarchy
+		}
+		if = {
+			limit = {
+				has_law = law_type:law_ethnostate
+				NOT = { has_variable = beo_national_supremacy }
+			}
+			change_variable = {
+				name = cattle_barons_var
+				subtract = 2
+			}
+			set_variable = beo_national_supremacy
+		}
+		if = {
+			limit = {
+				NOT = { has_law = law_type:law_no_health_system}
+				NOT = { has_variable = beo_national_supremacy }
+			}
+			change_variable = {
+				name = cattle_barons_var
+				subtract = 2
+			}
+			set_variable = beo_hospitals
+		}
+		if = {
+			limit = {
+				NOT = { has_variable = beo_war_loser }
+				OR = {
+					has_variable = recently_lost_war
+					AND = {
+						has_variable = recently_had_war
+						NOT = {
+							has_variable = recently_won_war
+						}
+					}
+				} 
+			}
+			change_variable = {
+				name = cattle_barons_var
+				add = 1
+			}
+			set_variable = beo_war_loser
+		}
+		
+		}
+			
+			
 	}
 	
-	timeout = 7125
+	
+	timeout = 10125
 	
 	on_timeout = {
 		trigger_event = {
@@ -493,6 +753,8 @@ je_cattle_barons_wrath = {
 
 je_beornia_conquer = {
 	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	group = je_group_foreign_affairs
 
 	is_shown_when_inactive = {	
 		
@@ -554,6 +816,8 @@ je_beornia_conquer = {
 je_england_conquer = {
 	icon = "gfx/interface/icons/event_icons/event_map.dds"
 
+	group = je_group_foreign_affairs
+
 	is_shown_when_inactive = {
 	
 		exists = c:BEO
@@ -605,84 +869,57 @@ je_england_conquer = {
 
 }
 
-je_england_reclaim = {
-    icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+
+je_patagonia = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
 
 	group = je_group_historical_content
 
-    scripted_button = beo_england_seperatist_button
-
-	scripted_button = beo_england_bribery_button
-
-    is_shown_when_inactive = {
-        OR = {
-            c:BEO ?= this
-            c:ENG ?= this
-            AND = {
-                c:HBE ?= this
-                ruler = {
-                    culture = cu:beornian
-                }
-            }
-        }
-        NOT = {
-            sr:region_england = {
-                any_scope_state = {
-                    count = all
-                    owner = root
-                }
-            }
-        }
-    }
-
-    possible = {
-        has_technology_researched = nationalism
-
-		country_rank > rank_value:insignificant_power
-    }
-
-    immediate = {
-        cu:beornian = {
-            save_scope_as = beornian_culture_scope
-        }
-		set_variable = {
-			name = cavendish_var
-			value = 25
+	is_shown_when_inactive = {
+		OR = {
+		exists = c:PAT
+		exists = c:THL
 		}
-    }
-
-    complete = {
-        sr:region_england = {
-            any_scope_state = {
-                count = all
-                owner = root
-            }
-        }
-    }
-
-    on_complete = {
-        trigger_event = { id = dvg_england.2 days = 0 popup = yes }
-    }
-	goal_add_value = {
-		value = 75
-	}
-	fail = {
-		var:cavendish_var <= 0
-    }
-	on_fail = {
-		c:DUA = {trigger_event = { id = dvg_england.5 days = 0 popup = yes }
-    }
-	}
-	invalid = {
-		OR = = {
-		exists = c:ENG
-		NOT = {
-			c:DUA = {owns_entire_state_region = STATE_YORKSHIRE}
+		OR = {
+		any_neighbouring_state = {
+			owner = c:PAT
 		}
+		any_neighbouring_state = {
+			owner = c:THL
+		}
+		}
+		OR = {
+			country_has_primary_culture = cu:aimara
+			country_has_primary_culture = cu:beornian
 		}
 	}
 
-	progressbar = yes
+	scripted_button = patagonia_button
 
-    should_be_pinned_by_default = yes
+	possible = {
+		NOT = { has_law = law_type:law_no_colonial_affairs }
+	}
+
+	complete = {
+		OR = {
+			AND = {
+				owns_entire_state_region = STATE_NEW_CORNWALL
+				owns_entire_state_region = STATE_LANDS_END
+			}
+		}
+	}
+
+	on_complete = {
+		trigger_event = { id = patagonia.1 }
+	}
+
+	on_monthly_pulse = {
+		random_events = {
+			85 = 0
+			10 = patagonia.2
+			5 = bp1_patagonia.1
+		}
+	}
+
+	weight = 20
 }

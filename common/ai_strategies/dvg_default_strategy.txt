@@ -1,0 +1,3002 @@
+﻿ai_strategy_default = {
+	icon = "gfx/interface/icons/ai_strategy_icons/placate_population.dds" # Never shown
+
+
+	# These are the tax levels the AI will try to stay within, though it can go above max tax level if in a financial emergency
+	# Using a different value in a strategy will override these values
+	desired_tax_level = medium
+	max_tax_level = high
+	min_tax_level = low
+	
+	# The AI will avoid getting this much infamy unless it's a wargoal it really wants
+	# Using a different value in a strategy will override this value
+	undesirable_infamy_level = {
+		value = 50
+	}
+	
+	# The AI will never deliberately add wargoals that will bring its infamy this high
+	# Using a different value in a strategy will override this value
+	unacceptable_infamy_level = {
+		value = 100
+	}
+
+	# How much is the AI's diplomatic acceptance, etc affected by government ideological differences
+	# Using a different value in a strategy will override this value
+	ideological_opinion_effect_mult = {
+		value = 1.0
+	}	
+	
+	# Chance each day that the AI will stop enacting a law that is going to spark a civil war (1 aversion should translate into ~25% chance of avoiding a civil war)
+	# Using a different value in a strategy will override this value
+	revolution_aversion = {
+		value = 5 
+	}
+	
+	# If base chance for law to pass is below this, don't enact it
+	# Using a different value in a strategy will override this value
+	min_law_chance_to_pass = {
+		value = 50
+	}
+
+	# How progressive is the AI willing to be when passing laws
+	# Using a different value in a strategy will override this value
+	max_progressiveness = {
+		value = 25
+	}  
+	
+	# How regressive is the AI willing to be when passing laws
+	# Using a different value in a strategy will override this value
+	max_regressiveness = {
+		value = 25 
+	}
+	
+	# Added to base neutrality in diplomatic plays	
+	# Using this value in other strategies will function additively
+	diplomatic_play_neutrality = {
+		value = 50 
+	}
+
+	# Added to base boldness in diplomatic plays	
+	# Using this value in other strategies will function additively
+	diplomatic_play_boldness = {
+		value = 50
+	}
+
+	# How many maneuvers are we OK with using up in the initial phase to add more wargoals
+	# Using this value in other strategies will function additively (values below 0 or above 1 have no further effect)
+	wargoal_maneuvers_fraction = {
+		value = 0.35
+		
+		if = {
+			limit = { 
+				scope:enemy_country.country_rank > country_rank 
+			}
+			
+			add = -0.1
+		}			
+	}
+
+	# Chance each update that the AI is willing to start changing a law (1 = 1%)
+	# Using this value in other strategies will function additively
+	change_law_chance = { 
+		value = 1
+	}
+
+	# Which IGs should the AI try to put in power
+	# Using this value in other strategies will function additively
+	pro_interest_groups = {}
+	
+	# Which IGs should the AI try to avoid putting in power
+	# Using this value in other strategies will function additively
+	anti_interest_groups = {}
+
+	# Which institutions should the AI prefer to invest in
+	# Using this value in other strategies will function additively
+	institution_scores = {
+		institution_colonial_affairs = {	
+			value = 10		
+		}				
+		institution_social_security = {	
+			value = 10		
+		}
+		institution_workplace_safety = {	
+			value = 10		
+		}		
+		institution_schools = {	
+			value = 10	
+		}		
+		institution_police = {	
+			value = 10		
+		}		
+		institution_health_system = {	
+			value = 10	
+		}		
+		institution_home_affairs = {	
+			value = 10		
+		}				
+	}
+
+	# How much value does the AI place on an obligation from another country?
+	# Using this value in other strategies will function additively
+	obligation_value = {
+		value = 5
+	
+		# Compare ranks - higher rank than us has increased value, lower rank decreased value
+		if = {
+			limit = {
+				scope:target_country.country_rank > country_rank
+			}
+			add = {
+				value = scope:target_country.country_rank
+				multiply = 5
+			}	
+			subtract = {
+				value = country_rank
+				multiply = 5
+			}				
+		}
+		else_if = {
+			limit = {
+				scope:target_country.country_rank < country_rank
+			}
+			add = {
+				value = scope:target_country.country_rank
+				multiply = 2
+			}	
+			subtract = {
+				value = country_rank
+				multiply = 2
+			}			
+		}
+		
+		# Bonus for obligations from Great Powers
+		if = {
+			limit = { scope:target_country.country_rank = rank_value:great_power }
+			add = 5
+		}
+		
+		# Domineering/Protective AI wants to use the obligation to cajole the country into a subordinate relationship
+		if = {
+			limit = {
+				OR = {
+					has_attitude = {
+						who = scope:target_country
+						attitude = protective
+					}
+					has_attitude = {
+						who = scope:target_country
+						attitude = domineering
+					}			
+				}			
+			}
+			add = 15
+		}
+		
+		# Rebellious AI wants to use the obligation to break free
+		if = {
+			limit = {
+				has_attitude = {
+					who = scope:target_country
+					attitude = rebellious
+				}				
+			}
+			add = 30 
+		}
+		
+		# Having an obligation can stop a country from attacking us
+		if = {
+			limit = {
+				scope:target_country = {
+					OR = {
+						has_attitude = {
+							who = root
+							attitude = belligerent
+						}
+						has_attitude = {
+							who = root
+							attitude = domineering
+						}	
+					}
+				}
+			}
+			add = 10 
+		}
+
+		# Small boost for generally friendly attitudes
+		if = {
+			limit = {
+				OR = {
+					has_attitude = {
+						who = scope:target_country
+						attitude = genial
+					}
+					has_attitude = {
+						who = scope:target_country
+						attitude = cooperative
+					}						
+				}			
+			}
+			add = 5
+		}			
+		
+		# Countries with Economic Imperialism is always looking to bring more countries into their market
+		if = {
+			limit = {
+				has_strategy = ai_strategy_economic_imperialism
+				scope:target_country.country_rank < country_rank
+				NOR = {
+					scope:target_country = { is_subject = yes }
+					has_diplomatic_pact = {
+						who = scope:target_country
+						type = customs_union
+					}					
+				}
+			}		
+			add = 5
+		}				
+	
+		multiply = {
+			value = "scope:target_country.relations:root"
+			multiply = 0.01
+			add = 1
+			min = 0.5
+			max = 2.0				
+		}	
+
+		multiply = {
+			value = "scope:target_country.ai_army_comparison(root)"
+			divide = 10
+			add = 1
+			min = 0.5
+			max = 2.0
+		}
+
+		multiply = {
+			value = "ai_ideological_opinion(scope:target_country)"
+			multiply = 0.025
+			add = 1
+			min = 0.5
+			max = 1.5
+		}
+		
+		
+		if = { # If AI doesn't care about them at all, they don't want an obligation
+			limit = {
+				has_attitude = {
+					who = scope:target_country
+					attitude = disinterested
+				}						
+			}
+			multiply = 0.0
+		}				
+		else_if = { # Obligations are less valuable if it's from a country the AI is just cautious towards	
+			limit = {
+				has_attitude = {
+					who = scope:target_country
+					attitude = cautious
+				}						
+			}
+			multiply = 0.25
+		}			
+
+		min = 0
+		max = 30
+	}
+
+	# How much does the AI desire a state owned by another country
+	# Using this value in other strategies will function additively
+	# root = country
+	# scope:target_state = state
+	# scope:target_country = state owner
+	state_value = {
+		value = 0		
+
+		if = { # PUT STATE SCORES INSIDE THE BELOW IF STATEMENT TO PREVENT AI FROM TAKING UNREACHABLE STATES
+		
+			limit = {	
+				OR = {
+					scope:target_state = { owner = root }
+					can_reach_target_state = yes
+				}				
+			}	
+
+			if = {
+				limit = {
+					OR = {
+						scope:target_state = { owner = root }				
+						ai_desires_target_state = yes
+					}
+				}
+				
+				add = {
+					value = 20
+				
+					add = {
+						value = scope:target_state.state_population
+						divide = 100000
+						max = 20						
+					}
+					
+					add = {
+						value = scope:target_state.gdp
+						divide = 100000
+						max = 20
+					}						
+				}	
+
+				if = {
+					limit = { scope:target_state = { is_treaty_port = yes } }
+					add = 20
+				}
+			}
+			
+			if = {
+				limit = {
+					scope:target_state = { owner = root }
+				}		
+				
+				if = { # Very reluctant to cede incorporate states
+					limit = { scope:target_state = { is_incorporated = yes } }
+					
+					if = {
+						limit = {
+							scope:target_state = { is_homeland_of_country_cultures = root }
+						}
+						multiply = 8.0
+					}
+					else = {
+						multiply = 6.0 
+					}	
+				}
+				else_if = { # Reluctant to cede states adjacent or sea adjacent to incorporate states
+					limit = { 
+						scope:target_state = { 
+							OR = {
+								any_neighbouring_state = { 
+									owner = root 
+									is_incorporated = yes 
+								} 							
+								any_sea_node_adjacent_state = { 
+									owner = root 
+									is_incorporated = yes 
+								}
+							}
+						} 
+					}
+					
+					if = {
+						limit = {
+							scope:target_state = { is_homeland_of_country_cultures = root }
+						}
+						multiply = 6.0
+					}
+					else = {
+						multiply = 4.0 
+					}	
+				}				
+				else = { # Value owned states higher than foreign states by default
+					if = {
+						limit = {
+							scope:target_state = { is_homeland_of_country_cultures = root }
+						}
+						multiply = 3.0
+					}
+					else = {
+						multiply = 2.0 
+					}							
+				}
+		
+				# Isolated states are worth less
+				# Check that this isn't caused by convoy raiding through the is_at_war trigger
+				if = {
+					limit = {
+						is_at_war = no 
+						scope:target_state = { is_isolated_from_market = yes }					
+					}
+					multiply = 0.5
+					
+					if = {
+						limit = { 					
+							NOT = {
+								any_neighbouring_state = { owner = root }
+							}
+						}
+						multiply = 0.5
+					}
+				}		
+			}
+			else = {
+				if = {
+					limit = { 
+						OR = {
+							scope:target_state = { 
+								is_split_state = yes 
+								region = { 
+									any_scope_state = { owner = ROOT }
+								}
+							}
+							scope:target_state = { has_claim_by = root } 
+						}					
+					}
+					multiply = 2.0
+				}
+
+				if = {
+					limit = { 
+						NOT = { has_strategic_land_adjacency = scope:target_state } 
+						scope:target_state = { has_port = no }
+					}
+					multiply = 0.5
+				}
+
+				if = {
+					limit = {
+						has_strategic_land_adjacency = scope:target_country
+						NOT = { has_strategic_land_adjacency = scope:target_state }
+					}
+					multiply = 0.5
+				}
+				else_if = {
+					limit = {
+						is_adjacent_to_country = scope:target_country
+						NOT = { is_adjacent_to_state = scope:target_state }
+					}
+					multiply = 0.75
+				}		
+
+				# More reluctant to get involved in plays for states that AI doesn't strongly desire
+				if = {
+					limit = {
+						is_diplomatic_play_involved_with = scope:target_country
+						ai_strongly_desires_target_state = no					
+					}
+					multiply = 0.5
+				}
+			
+				if = {
+					limit = {
+						scope:target_state = { is_homeland_of_country_cultures = root }
+					}
+					multiply = 1.5
+				}				
+			}
+			
+			if = {
+				limit = {
+					lenient_ai_behavior_trigger = yes
+					scope:target_state = { is_homeland_of_country_cultures = scope:target_country }
+				}
+				multiply = 0.0
+			}
+		}
+		
+		min = 0
+		if = {
+			limit = { scope:target_state = { owner = root } }
+			max = 1000
+		}
+		else = {
+			max = 200
+		}			
+	}
+
+	# How much does the AI desire a state owned by another country
+	# Using this value in other strategies will function additively
+	# root = country
+	# scope:target_state = state
+	# scope:target_country = state owner
+	treaty_port_value = {
+		value = 0
+
+		if = {
+			limit = {	
+				scope:target_state = { 
+					is_treaty_port = yes 
+					region = { 
+						any_scope_state = { 
+							OR = {
+								owner = { is_subject_of = ROOT }
+								owner = ROOT
+							}
+						}
+					}
+				}
+			}
+			add = 40
+		}
+
+		if = {
+			limit = {
+				OR = {
+					scope:target_country = {
+						has_diplomatic_pact = {
+							who = root
+							type = embargo
+						}
+					}	
+					AND = {
+						has_strategy = ai_strategy_economic_imperialism
+						"num_mutual_trade_route_levels_with_country(root)" >= 10
+						OR = {
+							has_attitude = {
+								who = scope:target_country
+								attitude = belligerent
+							}
+							has_attitude = {
+								who = scope:target_country
+								attitude = domineering
+							}	
+							has_attitude = {
+								who = scope:target_country
+								attitude = antagonistic
+							}								
+						}							
+					}
+				}				
+			}
+
+			add = {
+				value = 5
+			
+				add = {
+					value = scope:target_state.state_population
+					divide = 200000
+					max = 10
+				}
+				
+				add = {
+					value = scope:target_state.gdp
+					divide = 200000
+					max = 10
+				}
+			
+				if = {
+					limit = {
+						any_scope_building = {
+							is_building_type = building_trade_center
+							level > 0
+						}						
+					}
+					add = 5
+				}
+				
+				if = {
+					limit = {
+						OR = {
+							is_country_type = unrecognized
+							scope:target_country = { NOT = { is_country_type = unrecognized } }
+						}						
+					}
+					multiply = 0.5
+				}
+					
+				if = {
+					limit = {
+						has_strategic_adjacency = scope:target_state		
+					}
+					multiply = 1.25
+				}	
+
+				if = {
+					limit = {
+						scope:target_state = { is_incorporated = no	}
+					}
+					multiply = 0.25
+				}						
+			}										
+		}
+		
+		# Not worth doing against very small markets
+		if = {
+			limit = {
+				scope:target_country = {
+					gdp < 2000000 
+				}
+			}
+			multiply = 0
+		}					
+
+		if = {
+			limit = {
+				has_treaty_port_in_country = scope:target_country
+			}
+			multiply = 0
+		}
+		
+		# Don't want treaty ports on countries in our market
+		if = {
+			limit = {
+				market_capital.market = scope:target_country.market_capital.market
+			}
+			multiply = 0
+		}			
+		
+		if = {
+			limit = {
+				scope:target_country = {
+					has_diplomatic_pact = {
+						who = root
+						type = trade_agreement
+					}	
+				}
+			}
+			multiply = 0
+		}
+		
+		if = {
+			limit = {
+				can_reach_target_state = no
+			}
+			multiply = 0
+		}			
+
+		min = 0
+		max = 100		
+	}
+
+	# How much does the AI desire another country as their subject
+	# Using this value in other strategies will function additively
+	# root is the AI doing the evaluation, scope:target_country is prospective subject
+	subject_value = {
+		value = 0
+				
+		# PUT ALL REGULAR SUBJECT SCORES INSIDE THE BELOW IF STATEMENT TO PREVENT AI FROM TAKING UNREACHABLE SUBJECTS
+		if = {
+			limit = {		
+				OR = {
+					scope:target_country = { is_subject_of = root }
+					can_reach_target_country = yes	
+				}
+			}	
+			
+			add = {
+				if = {
+					limit = {
+						OR = {			
+							scope:target_country = { is_subject_of = root }	
+							has_attitude = {
+								who = scope:target_country
+								attitude = protective
+							}
+							has_attitude = {
+								who = scope:target_country
+								attitude = domineering
+							}							
+						}
+					}
+
+					value = 50
+				
+					add = {
+						value = scope:target_country.gdp
+						divide = 200000
+						max = 50						
+					}
+				}
+				
+				if = {
+					limit = {
+						has_secret_goal = {
+							who = scope:target_country
+							secret_goal = protect
+						}						
+					}
+					
+					multiply = 0.5
+				}
+				
+				if = {
+					limit = {
+						NOT = { has_strategic_adjacency = scope:target_country }
+					}
+					multiply = 0.5
+				}
+			}
+			
+			# Special logic for very important subjects 
+			if = {
+				limit = { 
+					scope:target_country = { 
+						is_subject_of = root
+						prestige >= 250				
+					} 					
+				}
+				add = 100
+			}								
+
+			if = {
+				limit = {
+					lenient_ai_behavior_trigger = yes
+				}
+				multiply = 0.5
+			}
+
+			if = {
+				limit = {
+					AND = {
+						has_radical_leftist_government = no			
+						scope:target_country = {
+							has_radical_leftist_government = yes
+						}
+					}
+					
+				}
+				multiply = 1.5
+			}
+
+			if = {
+				limit = {
+					AND = {
+						has_radical_leftist_economy = no			
+						scope:target_country = {
+							has_radical_leftist_economy = yes
+						}
+					}
+					
+				}
+				multiply = 1.5
+			}	
+		}
+
+		min = 0
+		max = 200
+	}
+
+	# How much does the AI desire becoming another country's subject
+	# Using this value in other strategies will function additively
+	# root is the AI doing the evaluation, scope:overlord is prospective overlord
+	become_subject_value = {
+		value = -100
+
+		if = {
+			limit = {
+				NOT = { has_strategic_adjacency = scope:overlord }
+			}
+			
+			add = -10
+		}			
+
+		if = {
+			limit = { 
+				has_strategy = ai_strategy_armed_isolationism 
+			}
+			
+			add = -25
+		}				
+		
+		if = {
+			limit = {
+				"scope:overlord.ai_army_comparison(root)" > 0
+			}
+			add = {
+				value = "scope:overlord.ai_army_comparison(root)"
+				max = 25
+			}				
+		}
+		else = {
+			add = -1000		
+		}	
+
+		if = {
+			limit = {
+				"scope:overlord.ai_ideological_opinion(root)" > 0
+			}
+			add = {
+				value = "scope:overlord.ai_ideological_opinion(root)"
+				multiply = 0.5
+				max = 10
+			}					
+		}
+		else_if = {
+			limit = {
+				"scope:overlord.ai_ideological_opinion(root)" < 0
+			}
+			add = {
+				value = "scope:overlord.ai_ideological_opinion(root)"
+				min = -30
+			}					
+		}			
+
+		if = {
+			limit = {
+				has_diplomatic_pact = {
+					who = scope:overlord
+					type = customs_union
+				}					
+			}
+			add = 10
+		}					
+		
+		add = {
+			if = {
+				limit = {
+					OR = {
+						has_attitude = {
+							who = scope:overlord
+							attitude = genial
+						}
+						has_attitude = {
+							who = scope:overlord
+							attitude = conciliatory
+						}							
+						has_attitude = {
+							who = scope:overlord
+							attitude = loyal
+						}	
+						has_attitude = {
+							who = scope:overlord
+							attitude = cooperative
+						}							
+					}
+				}
+				value = 10
+			}			
+			if = {
+				limit = {
+					has_attitude = {
+						who = scope:overlord
+						attitude = cautious
+					}
+				}
+				value = -25
+			}					
+			if = {
+				limit = {
+					OR = {
+						has_attitude = {
+							who = scope:overlord
+							attitude = antagonistic
+						}
+						has_attitude = {
+							who = scope:overlord
+							attitude = domineering
+						}	
+						has_attitude = {
+							who = scope:overlord
+							attitude = belligerent
+						}	
+						has_attitude = {
+							who = scope:overlord
+							attitude = rebellious
+						}
+						has_attitude = {
+							who = scope:overlord
+							attitude = protective
+						}							
+					}
+				}
+				value = -100
+			}							
+		}			
+
+		add = {
+			if = {
+				limit = {
+					"relations(scope:overlord)" < relations_threshold:cordial
+				}
+				value = -25
+			}					
+			if = {
+				limit = {
+					"relations(scope:overlord)" >= relations_threshold:cordial
+					"relations(scope:overlord)" < relations_threshold:amicable
+				}
+				value = 5
+			}					
+			if = {
+				limit = {
+					"relations(scope:overlord)" >= relations_threshold:amicable
+					"relations(scope:overlord)" < relations_threshold:friendly
+				}
+				value = 10
+			}	
+			if = {
+				limit = {
+					"relations(scope:overlord)" >= relations_threshold:friendly
+				}
+				value = 25
+			}				
+		}
+		
+		add = {
+			if = {
+				limit = {
+					"scope:overlord.infamy" >= infamy_threshold:infamous
+					"scope:overlord.infamy" < infamy_threshold:notorious
+				}
+				value = -25
+			}	
+			if = {
+				limit = {
+					"scope:overlord.infamy" >= infamy_threshold:notorious
+					"scope:overlord.infamy" < infamy_threshold:pariah
+				}
+				value = -50
+			}
+			if = {
+				limit = {
+					"scope:overlord.infamy" >= infamy_threshold:pariah
+				}
+				value = -100
+			}					
+		}					
+
+		add = {
+			if = {
+				limit = { scope:overlord = { country_rank > root.country_rank } }
+				value = 10
+			}
+			
+			if = {
+				limit = { scope:overlord = { country_rank < root.country_rank } }
+				value = -10
+			}				
+		}	
+
+		max = 0
+		min = -200
+	}
+	
+	
+	# Recklessness multiplies the AI's estimation of its own strength, so at recklessness 2 it believes its forces to be twice as strong as they actually are
+	# The AI wants to have at least parity in what it believes its own forces to be and what the enemy forces are, so at recklessness 2 it's OK with only having 50% of the enemy strength
+	# Using this value in other strategies will function additively
+	recklessness = {
+		value = 1
+		
+		# Braver against pariah countries
+		if = {
+			limit = {
+				scope:target_country.infamy >= infamy_threshold:pariah		
+			}
+			add = 1
+		}		
+		
+		# Braver against own overlord in general
+		if = {
+			limit = {
+				is_subject_of = scope:target_country				
+			}
+			add = 1
+		}			
+
+	}
+
+	# How likely is the AI to start a diplomatic play against another country if their attitude allows for it
+	# Using this value in other strategies will function additively
+	aggression = {
+		value = 0
+		
+		# Higher aggression against subject/overlord if domineering or rebellious
+		if = {
+			limit = {
+				OR = {
+					is_subject_of = scope:target_country
+					scope:target_country = { is_subject_of = root }
+				}				
+			}
+			add = 5
+		}		
+		
+		# Very high aggression against pariah countries by Great Powers
+		if = {
+			limit = {
+				country_rank = rank_value:great_power
+				scope:target_country = {
+					infamy >= infamy_threshold:pariah
+					NOT = {
+						any_diplomatic_play = {
+							is_diplomatic_play_type = dp_contain_threat
+							target_is = scope:target_country					
+						}					
+					}
+				}
+			}
+			add = 25
+		}		
+
+		# Aggression against radical leftists
+		if = {
+			limit = {	
+				AND = {
+					has_radical_leftist_government = no
+					scope:target_country = {
+						has_radical_leftist_government = yes
+					}
+				}
+			}
+			add = 5
+		}
+		
+		if = {
+			limit = {	
+				has_radical_leftist_economy = no
+				scope:target_country = {
+					has_radical_leftist_economy = yes				
+				}				
+			}
+			add = 5
+		}		
+
+	}
+
+	# How much construction output should the AI aim for
+	# Using this value in other strategies will function additively
+	wanted_construction_output = {
+		value = 10 # Accounts for the 10 free construction from base modifiers
+
+		add = {
+			value = investment_pool_income
+			divide = 750 # 1 construction output per this much into the investment pool				
+		}
+		
+		add = {
+			value = income
+					
+			divide = 3000 # 1 construction output per this much income
+
+			min = 0
+		}
+		
+		if = {
+			limit = { country_rank >= rank_value:great_power }
+			add = 50
+		}		
+		else_if = {
+			limit = { country_rank >= rank_value:major_power }
+			add = 25
+		}		
+
+		min = 1
+		max = 1000
+	}
+
+	# How many levels of barracks should the AI have
+	# Using this value in other strategies will function additively
+	wanted_army_size = {
+		value = 0
+		
+		# To increase base army size for small countries, capped at 1 million population
+		add = {
+			value = cached_ai_incorporated_population
+			divide = 100000 # 1 level of barracks per 100k incorporated population	
+			
+			max = 10
+		}			
+	
+		add = {
+			value = cached_ai_incorporated_population
+			divide = 250000 # 1 level of barracks per 250k incorporated population	
+		}		
+		
+		add = {
+			value = cached_ai_unincorporated_population
+			divide = 1000000 # 1 level of barracks per 1 million unincorporated population	
+		}
+		
+		max = 250 # No more than 250 from population
+
+		add = {
+			value = gdp
+			divide = 500000 # 1 level of barracks per 500k gdp
+		}				
+		
+		# More advanced standing armies are expensive and should be smaller relative to population
+		if = {
+			limit = { has_technology_researched = line_infantry }
+			multiply = 0.9
+		}
+
+		if = {
+			limit = { has_technology_researched = general_staff }
+			multiply = 0.9
+		}
+
+		if = {
+			limit = { has_technology_researched = trench_works }
+			multiply = 0.9
+		}
+
+		if = {
+			limit = { has_technology_researched = nco_training }
+			multiply = 0.9
+		}
+		
+		if = {
+			limit = { has_technology_researched = mobile_armor }
+			multiply = 0.9
+		}	
+
+		# Factor in strategies
+		if = {
+			limit = { 
+				OR = {
+					has_strategy = ai_strategy_territorial_expansion 
+					has_strategy = ai_strategy_unify_germany
+					has_strategy = ai_strategy_unify_italy
+					has_strategy = ai_strategy_unify_ethiopia
+					has_strategy = ai_strategy_unify_china
+				}
+			}
+			multiply = 1.25
+		}		
+
+		max = 500
+		min = 1
+	}
+
+	# How many levels of naval base should the AI have
+	# Using this value in other strategies will function additively
+	wanted_navy_size = {
+		value = 0
+	
+		# 1 level of naval base per 350k coastal incorporated population							
+		add = {
+			value = cached_ai_incorporated_coastal_population
+			divide = 350000 
+		}
+
+		# 1 level of naval base per 1 million coastal unincorporated population					
+		add = {
+			value = cached_ai_unincorporated_coastal_population
+			divide = 1000000 
+		}
+
+		# 1 level of naval base per 1 million population in direct overseas subjects	
+		add = {
+			value = cached_ai_overseas_subject_population
+			divide = 1000000 
+		}	
+
+		max = 250 # No more than 250 from population		
+
+		# 1 level of naval base per 1 million gdp, multiplied by relative incorporated coastal population to total incorporated population
+		add = {
+			value = gdp
+			divide = cached_ai_incorporated_population
+			multiply = cached_ai_incorporated_coastal_population
+			divide = 1000000 
+		}			
+		
+		# More advanced navies are expensive and should be smaller relative to population
+		if = {
+			limit = { has_technology_researched = ironclad_tech }
+			multiply = 0.8
+		}
+
+		if = {
+			limit = { has_technology_researched = dreadnought }
+			multiply = 0.8
+		}
+
+		if = {
+			limit = { has_technology_researched = battleship_tech }
+			multiply = 0.8
+		}
+
+		# Factor in strategies
+		if = {
+			limit = { 
+				OR = {
+					has_strategy = ai_strategy_colonial_expansion 
+					has_strategy = ai_strategy_economic_imperialism
+				}
+			}
+			multiply = 1.25
+		}
+
+		if = {
+			limit = { has_strategy = ai_strategy_armed_isolationism }
+			multiply = 0.75
+		}
+		
+		if = {
+			limit = { country_rank < rank_value:major_power }
+			multiply = 0.75
+		}						
+		
+		if = {
+			limit = { is_country_type = unrecognized }
+			multiply = 0.5
+		}	
+		
+		if = {
+			limit = { has_strategy = ai_strategy_maintain_mandate_of_heaven }
+			multiply = 0.25
+		}		
+
+		max = 500
+		min = 0		
+	}	
+
+	# Set the weights for combat unit groups, this determines the ratio that the AI aims to have of each, and thus what unit types it adds to formations
+	# Using this value in other strategies will function additively
+	# root = country
+	# scope:military_formation = military formation
+	combat_unit_group_weights = {
+		combat_unit_group_infantry = {
+			value = 100
+		}
+		combat_unit_group_artillery = {
+			value = 0			
+			if = {
+				limit = { has_technology_researched = artillery }
+				add = 15
+			}	
+			if = {
+				limit = { has_technology_researched = napoleonic_warfare }
+				add = 5
+			}	
+			if = {
+				limit = { has_technology_researched = breech_loading_artillery }
+				add = 10
+			}
+			if = {
+				limit = { has_technology_researched = wargaming }
+				add = 10
+			}
+			
+			if = {
+				limit = { has_law = law_type:law_peasant_levies }
+				multiply = 0.5
+			}			
+			else_if = {
+				limit = { has_law = law_type:law_national_militia }
+				multiply = 0.75
+			}
+			else_if = {
+				limit = { has_law = law_type:law_professional_army }
+				multiply = 1.25
+			}			
+		}
+		combat_unit_group_cavalry = {
+			value = 20
+			if = {
+				limit = { has_technology_researched = mobile_armor }
+				add = 10
+			}
+			
+			if = {
+				limit = { has_law = law_type:law_national_militia }
+				multiply = 0.5
+			}
+			else_if = {
+				limit = { has_law = law_type:law_professional_army }
+				multiply = 1.25
+			}			
+			else_if = {
+				limit = { has_law = law_type:law_peasant_levies }
+				multiply = 1.5
+			}				
+		}
+		combat_unit_group_light_ship = {
+			value = 100				
+		}
+		combat_unit_group_capital_ship = {
+			value = 0
+			if = {
+				limit = { country_rank = rank_value:great_power }
+				add = 30
+			}
+			if = {
+				limit = { country_rank = rank_value:major_power }
+				add = 10
+			}			
+		}
+		combat_unit_group_support_ship = {
+			value = 0
+			if = {
+				limit = { has_technology_researched = submarine }
+				add = 10
+			}
+			if = {
+				limit = { has_technology_researched = carrier_tech }
+				add = 10
+			}			
+		}		
+	}
+
+	# How many conscript battalions should the AI aim to have for each regular battalion in a formation?
+	# root = country
+	# scope:military_formation = military formation
+	# Using this value in other strategies will function additively
+	conscript_battalion_ratio = {
+		value = 0
+		if = {
+			limit = { has_law = law_type:law_national_militia }
+			add = 5
+		}
+		else_if = {
+			limit = { has_law = law_type:law_professional_army }
+			add = 0.5
+		}			
+		else_if = {
+			limit = { has_law = law_type:law_peasant_levies }
+			add = 1
+		}	
+		else_if = {
+			limit = { has_law = law_type:law_mass_conscription }
+			add = 2
+		}		
+	}
+
+	# Add a multiplier to the score AI assigns to particular building groups (default 1)
+	# Using this value in other strategies will result in several multiplications
+	building_group_weights = {}
+	
+	# Which buildings should the AI subsidize
+	# Using a different value in a strategy will override this value
+	subsidies = {
+		building_power_plant = must_have
+		building_railway = must_have
+		building_trade_center = must_have		
+	}
+
+	# Specifying values here will override subsidy priorities while at war
+	# Using a different value in a strategy will override this value
+	war_subsidies = {}	
+	
+	# How should the AI plan for production and trade of specific goods
+	# Using a different value in a strategy will override this value
+	goods_stances = {
+		small_arms = {
+			stance = wants_high_supply
+			trigger = {
+				has_technology_researched = napoleonic_warfare
+			}
+		}
+		artillery = {
+			stance = wants_high_supply
+			trigger = {
+				has_technology_researched = artillery
+			}
+		}
+		ammunition = {
+			stance = wants_high_supply
+			trigger = {
+				has_technology_researched = general_staff
+			}
+		}
+		aeroplanes = {
+			stance = wants_high_supply
+			trigger = {
+				has_technology_researched = military_aviation
+				country_rank >= rank_value:major_power
+			}
+		}
+		tanks = {
+			stance = wants_high_supply
+			trigger = {
+				has_technology_researched = mobile_armor
+				country_rank >= rank_value:major_power
+			}
+		}
+		clippers = {
+			stance = wants_high_supply
+			trigger = {
+				has_technology_researched = navigation
+				NAND = {
+					has_technology_researched = ironclad_tech
+					has_technology_researched = gantry_cranes				
+				}
+				has_port = yes
+				country_rank >= rank_value:major_power
+			}
+		}
+		manowars = {
+			stance = wants_high_supply
+			trigger = {
+				has_technology_researched = admiralty
+				NAND = {
+					has_technology_researched = ironclad_tech
+					has_technology_researched = gantry_cranes				
+				}
+				has_port = yes
+				country_rank >= rank_value:major_power
+			}
+		}	
+		steamers = {
+			stance = wants_high_supply
+			trigger = {
+				has_technology_researched = ironclad_tech
+				has_technology_researched = gantry_cranes
+				has_port = yes
+				country_rank >= rank_value:major_power
+			}
+		}			
+		ironclads = {
+			stance = wants_high_supply
+			trigger = {
+				has_technology_researched = ironclad_tech
+				has_technology_researched = gantry_cranes
+				has_port = yes
+				country_rank >= rank_value:major_power				
+			}
+		}	
+		paper = {
+			stance = wants_high_supply
+			trigger = {
+				has_technology_researched = centralization
+				total_population >= 1000000
+				NOT = { has_law = law_type:law_traditionalism }
+			}
+		}
+		electricity = { 
+			stance = wants_high_supply
+			trigger = {
+				has_technology_researched = electrical_generation
+			}
+		}			
+		coal = { 
+			stance = wants_high_supply
+			trigger = {
+				has_technology_researched = railways
+			}
+		}	
+		engines = { 
+			stance = wants_high_supply
+			trigger = {
+				has_technology_researched = railways
+			}
+		}		
+		dye = { 
+			stance = wants_high_supply 
+			trigger = {
+				has_building = building_textile_mills
+				has_technology_researched = lathe
+			}
+		}
+		silk = { 
+			stance = wants_high_supply 
+			trigger = {
+				has_building = building_textile_mills
+				total_population >= 1000000
+			}
+		}
+		hardwood = { 
+			stance = wants_high_supply 
+			trigger = {
+				has_building = building_furniture_manufacturies
+				total_population >= 1000000
+			}
+		}		
+	}
+
+	# How many of its interests should the AI dedicate to regions with unrecognized and decentralized powers
+	# Using a different value in a strategy will override this value
+	colonial_interest_ratio = {
+		value = 0.0
+
+		if = {
+			limit = { 
+				is_country_type = recognized
+				navy_size >= 25 				
+			}
+			add = 0.1
+		}
+		
+		if = {
+			limit = { 
+				is_country_type = recognized
+				navy_size >= 50 		
+			}
+			add = 0.1
+		}		
+		
+		if = {
+			limit = { 
+				is_country_type = recognized
+				navy_size >= 75 				
+			}
+			add = 0.1
+		}		
+	}
+
+
+	# How important is it that the AI maintains an interest in a specific strategic region (added on top of region value calculations set in defines)
+	# Using this value in other strategies will function additively
+	strategic_region_scores = {
+				
+	}
+
+	# How likely should the AI be to have a particular strategic desire towards another country
+	# Using this value in other strategies will function additively
+	# scope:target_country = target country
+	secret_goal_scores = {
+		none = {
+			value = 0
+			
+			if = {
+				limit = {		
+					scope:target_country = { NOT = { is_subject_of = root } }
+					root = { NOT = { is_subject_of = scope:target_country } }
+				}
+				add = 150	
+			}				
+					
+		}
+
+		befriend = {
+			value = 200
+			
+			if = {
+				limit = {	
+					country_rank <= scope:target_country.country_rank
+				}
+				add = 100
+			}
+			
+			multiply = {
+				value = "ai_ideological_opinion(scope:target_country)"
+				multiply = 0.05
+				add = 1
+				min = 0.25
+				max = 2.0
+			}	
+
+			if = {
+				limit = {	
+					AND = {
+						has_radical_leftist_government = yes
+						scope:target_country = {
+							has_radical_leftist_government = yes
+						}
+					}
+				}
+				multiply = 1.5
+			}
+			
+			if = {
+				limit = {	
+					AND = {
+						has_radical_leftist_economy = yes
+						scope:target_country = {
+							has_radical_leftist_economy = yes
+						}
+					}
+				}
+				multiply = 1.5
+			}			
+
+			if = {
+				limit = {
+					AND = {
+						has_radical_leftist_government = no			
+						scope:target_country = {
+							has_radical_leftist_government = yes
+						}
+					}
+					
+				}
+				multiply = 0.5
+			}
+	
+			if = {
+				limit = {
+					AND = {
+						has_radical_leftist_economy = no			
+						scope:target_country = {
+							has_radical_leftist_economy = yes
+						}
+					}
+					
+				}
+				multiply = 0.5
+			}	
+	
+			if = {
+				limit = {
+					lenient_ai_behavior_trigger = yes
+				}
+				multiply = 1.5
+			}
+			
+			if = {
+				limit = {
+					harsh_ai_behavior_trigger = yes
+				}
+				multiply = 0.75
+			}	
+
+			if = {
+				limit = {
+					scope:target_country.infamy >= infamy_threshold:infamous
+				}
+				multiply = 0.9
+			}	
+
+			if = {
+				limit = {
+					scope:target_country.infamy >= infamy_threshold:notorious
+				}
+				multiply = 0.9
+			}	
+
+			if = {
+				limit = {
+					scope:target_country.infamy >= infamy_threshold:pariah
+				}
+				multiply = 0.5
+			}
+			
+			if = {
+				limit = {
+					OR = {
+						has_diplomatic_pact = {
+							who = scope:target_country
+							type = rivalry
+						}					
+						scope:target_country = { relations:root <= relations_threshold:poor }					
+					}				
+				}
+				multiply = 0.0
+			}
+		}
+
+		reconcile = {
+			value = 0
+
+			if = {
+				limit = {
+					OR = {
+						has_diplomatic_pact = {
+							who = scope:target_country
+							type = rivalry
+						}	
+						scope:target_country = { relations:root <= relations_threshold:poor }		
+					}
+											
+				}
+				
+				add = 100					
+			}
+
+			multiply = {
+				value = "ai_ideological_opinion(scope:target_country)"
+				multiply = 0.05
+				add = 1
+				min = 0.25
+				max = 2.0
+			}	
+
+			if = {
+				limit = {	
+					AND = {
+						has_radical_leftist_government = yes
+						scope:target_country = {
+							has_radical_leftist_government = yes
+						}
+					}
+				}
+				multiply = 1.5
+			}
+			
+			if = {
+				limit = {	
+					AND = {
+						has_radical_leftist_economy = yes
+						scope:target_country = {
+							has_radical_leftist_economy = yes
+						}
+					}
+				}
+				multiply = 1.5
+			}			
+
+			if = {
+				limit = {
+					AND = {
+						has_radical_leftist_government = no			
+						scope:target_country = {
+							has_radical_leftist_government = yes
+						}
+					}
+					
+				}
+				multiply = 0.5
+			}
+	
+			if = {
+				limit = {
+					AND = {
+						has_radical_leftist_economy = no			
+						scope:target_country = {
+							has_radical_leftist_economy = yes
+						}
+					}
+					
+				}
+				multiply = 0.5
+			}	
+	
+			
+			if = {
+				limit = {
+					scope:target_country = {
+						is_revolutionary = yes
+						scope:target_country.civil_war_origin_country = root
+					}
+				}
+				multiply = 0.10
+			}
+			
+			if = {
+				limit = {
+					lenient_ai_behavior_trigger = yes
+				}
+				multiply = 1.5
+			}
+			
+			if = {
+				limit = {
+					harsh_ai_behavior_trigger = yes
+				}
+				multiply = 0.75
+			}	
+
+			if = {
+				limit = {
+					scope:target_country.infamy >= infamy_threshold:infamous
+				}
+				multiply = 0.9
+			}	
+
+			if = {
+				limit = {
+					scope:target_country.infamy >= infamy_threshold:notorious
+				}
+				multiply = 0.9
+			}	
+
+			if = {
+				limit = {
+					scope:target_country.infamy >= infamy_threshold:pariah
+				}
+				multiply = 0.5
+			}	
+		}
+
+		protect = {
+			value = 0
+			
+			if = {
+				limit = {
+					OR = {
+						country_rank > scope:target_country.country_rank	
+						scope:target_country = { is_subject_of = root }	
+					}
+				}
+				add = 200
+			}
+			
+			multiply = {
+				value = "ai_ideological_opinion(scope:target_country)"
+				multiply = 0.05
+				add = 1
+				min = 0.25
+				max = 2.0
+			}	
+
+			if = {
+				limit = {	
+					AND = {
+						has_radical_leftist_government = yes
+						scope:target_country = {
+							has_radical_leftist_government = yes
+						}
+					}
+				}
+				multiply = 1.5
+			}
+			
+			if = {
+				limit = {	
+					AND = {
+						has_radical_leftist_economy = yes
+						scope:target_country = {
+							has_radical_leftist_economy = yes
+						}
+					}
+				}
+				multiply = 1.5
+			}			
+
+			if = {
+				limit = {
+					AND = {
+						has_radical_leftist_government = no			
+						scope:target_country = {
+							has_radical_leftist_government = yes
+						}
+					}
+					
+				}
+				multiply = 0.5
+			}
+	
+			if = {
+				limit = {
+					AND = {
+						has_radical_leftist_economy = no			
+						scope:target_country = {
+							has_radical_leftist_economy = yes
+						}
+					}
+					
+				}
+				multiply = 0.5
+			}	
+
+			if = {
+				limit = {
+					harsh_ai_behavior_trigger = yes
+				}
+				multiply = 0.75
+			}
+
+			if = {
+				limit = {
+					scope:target_country.infamy >= infamy_threshold:infamous
+				}
+				multiply = 0.9
+			}	
+
+			if = {
+				limit = {
+					scope:target_country.infamy >= infamy_threshold:notorious
+				}
+				multiply = 0.9
+			}	
+
+			if = {
+				limit = {
+					scope:target_country.infamy >= infamy_threshold:pariah
+				}
+				multiply = 0.5
+			}				
+
+			if = {
+				limit = {
+					OR = {
+						has_diplomatic_pact = {
+							who = scope:target_country
+							type = rivalry
+						}					
+						scope:target_country = { relations:root <= relations_threshold:poor }					
+					}				
+				}
+				multiply = 0.0
+			}	
+
+			if = {
+				limit = {		
+					NOR = {
+						country_rank = rank_value:great_power
+						has_strategic_adjacency = scope:target_country
+						AND = {
+							country_rank >= rank_value:major_power
+							scope:target_country = { is_country_type = unrecognized }
+						}						
+					}
+				}
+				multiply = 0.0					
+			}
+
+			if = {
+				limit = {		
+					is_subject_of = scope:target_country	
+				}
+				multiply = 0.0	
+			}				
+		}
+
+		antagonize = {
+			value = 0
+			
+			if = {
+				limit = {
+					countries_are_valid_rivals = yes
+				}
+				add = 50
+			}
+			
+			if = {
+				limit = {		
+					has_diplomatic_pact = {
+						who = scope:target_country
+						type = rivalry
+					}	
+				}
+				add = 100
+			}
+			
+			if = {
+				limit = {
+					can_reach_target_country = yes	
+					NOT = { is_subject_of = scope:target_country }
+				}
+				add = 50
+			}			
+			
+			if = {
+				limit = {		
+					is_subject_of = scope:target_country	
+				}
+				add = 100			
+			}
+
+			if = {
+				limit = {
+					scope:target_country = {
+						is_revolutionary = yes
+						scope:target_country.civil_war_origin_country = root
+					}
+				}
+				add = 500
+			}
+			
+			multiply = {
+				value = "ai_ideological_opinion(scope:target_country)"
+				multiply = -0.05
+				add = 1
+				min = 0.25
+				max = 2.0
+			}							
+			
+			if = {
+				limit = {
+					lenient_ai_behavior_trigger = yes
+				}
+				multiply = 0.75
+			}
+			
+			if = {
+				limit = {
+					harsh_ai_behavior_trigger = yes
+				}
+				multiply = 1.5
+			}	
+			
+			if = {
+				limit = {
+					has_game_rule = high_ai_aggression
+				}
+				multiply = 0.75 # Yes, this is actually intended to be a decrease - AI should want to conquer/dominate more instead
+			}			
+
+			if = {
+				limit = {
+					has_game_rule = low_ai_aggression
+				}
+				multiply = 1.5 # Yes, this is actually intended to be an increase - it's to partially compensate for lowered conquer/dominate desires
+			}				
+			
+			if = {
+				limit = {		
+					scope:target_country = { is_subject_of = root }		
+				}
+				multiply = 0.0	
+			}
+
+			if = {
+				limit = {	
+					AND = {
+						has_radical_leftist_government = yes
+						scope:target_country = {
+							has_radical_leftist_government = yes
+						}
+					}
+				}
+				multiply = 0.5
+			}
+			
+			if = {
+				limit = {	
+					AND = {
+						has_radical_leftist_economy = yes
+						scope:target_country = {
+							has_radical_leftist_economy = yes
+						}
+					}
+				}
+				multiply = 0.5
+			}			
+
+			if = {
+				limit = {
+					AND = {
+						has_radical_leftist_government = no			
+						scope:target_country = {
+							has_radical_leftist_government = yes
+						}
+					}
+					
+				}
+				multiply = 1.5
+			}
+	
+			if = {
+				limit = {
+					AND = {
+						has_radical_leftist_economy = no			
+						scope:target_country = {
+							has_radical_leftist_economy = yes
+						}
+					}
+					
+				}
+				multiply = 1.5
+			}
+
+			# Shouldn't usually upset diplomatic pacts unless they're bankrupt or infamous
+			if = {
+				limit = {
+					scope:target_country = { 
+						in_default = no 
+						infamy < infamy_threshold:notorious
+					}						
+				}
+
+				if = {
+					limit = {
+						has_diplomatic_pact = {
+							who = scope:target_country
+							type = defensive_pact
+						}	
+					}
+					multiply = 0.5
+				}	
+
+				if = {
+					limit = {
+						has_diplomatic_pact = {
+							who = scope:target_country
+							type = alliance
+						}		
+					}
+					multiply = 0.25
+				}	
+
+				if = {
+					limit = {
+						has_diplomatic_pact = {
+							who = scope:target_country
+							type = trade_agreement
+						}			
+					}
+					multiply = 0.5
+				}				
+
+				if = {
+					limit = {
+						has_diplomatic_pact = {
+							who = scope:target_country
+							type = customs_union
+						}								
+					}
+					multiply = 0.25
+				}				
+			}				
+			
+			if = {
+				limit = { is_still_learning = yes }
+				multiply = 0
+			}	
+
+		}
+
+		conquer = {
+			value = 0
+
+			# PUT ALL ADDITIVE CONQUER SCORES INSIDE THE BELOW IF STATEMENT TO PREVENT AI FROM ATTACKING UNREACHABLE COUNTRIES
+			if = {
+				limit = { can_reach_target_country = yes }
+
+				if = {
+					limit = {
+						NOT = { is_country_type = unrecognized }
+						scope:target_country = { is_country_type = unrecognized }
+					}
+					add = 50
+
+					if = {
+						limit = { has_technology_researched = civilizing_mission }
+						add = 50
+					}
+				}
+
+				if = {
+					limit = {
+						scope:target_country = {
+							any_scope_state = {
+								root = { has_claim = prev }
+							}
+						}
+					}
+					add = 200
+				}
+			}
+
+			multiply = {
+				value = "ai_ideological_opinion(scope:target_country)"
+				multiply = -0.05
+				add = 1
+				min = 0.25
+				max = 2.0
+			}	
+
+			if = {
+				limit = { scope:target_country = { has_modifier = declared_bankruptcy } }
+				multiply = 2.0
+			}	
+
+			if = {
+				limit = {	
+					AND = {
+						has_radical_leftist_government = yes
+						scope:target_country = {
+							has_radical_leftist_government = yes
+						}
+					}
+				}
+				multiply = 0.5
+			}
+			
+			if = {
+				limit = {	
+					AND = {
+						has_radical_leftist_economy = yes
+						scope:target_country = {
+							has_radical_leftist_economy = yes
+						}
+					}
+				}
+				multiply = 0.5
+			}			
+
+			if = {
+				limit = {
+					AND = {
+						has_radical_leftist_government = no			
+						scope:target_country = {
+							has_radical_leftist_government = yes
+						}
+					}
+					
+				}
+				multiply = 1.5
+			}
+	
+			if = {
+				limit = {
+					AND = {
+						has_radical_leftist_economy = no			
+						scope:target_country = {
+							has_radical_leftist_economy = yes
+						}
+					}
+					
+				}
+				multiply = 1.5
+			}			
+			
+			if = {
+				limit = {
+					lenient_ai_behavior_trigger = yes
+				}
+				multiply = 0.25
+			}
+			
+			if = {
+				limit = {
+					harsh_ai_behavior_trigger = yes
+				}
+				multiply = 1.25
+			}
+			
+			if = {
+				limit = {
+					has_game_rule = high_ai_aggression
+				}
+				multiply = 1.5
+			}
+			
+			if = {
+				limit = {
+					has_game_rule = low_ai_aggression
+				}
+				multiply = 0.5
+			}			
+
+			# Shouldn't usually upset diplomatic pacts unless they're bankrupt or infamous
+			if = {
+				limit = {
+					scope:target_country = { 
+						in_default = no 
+						infamy < infamy_threshold:notorious
+					}						
+				}
+
+				if = {
+					limit = {
+						has_diplomatic_pact = {
+							who = scope:target_country
+							type = defensive_pact
+						}	
+					}
+					multiply = 0.5
+				}	
+
+				if = {
+					limit = {
+						has_diplomatic_pact = {
+							who = scope:target_country
+							type = alliance
+						}		
+					}
+					multiply = 0.25
+				}	
+
+				if = {
+					limit = {
+						has_diplomatic_pact = {
+							who = scope:target_country
+							type = trade_agreement
+						}			
+					}
+					multiply = 0.5
+				}				
+
+				if = {
+					limit = {
+						has_diplomatic_pact = {
+							who = scope:target_country
+							type = customs_union
+						}								
+					}
+					multiply = 0.25
+				}				
+			}
+
+			if = {
+				limit = {		
+					is_subject_of = scope:target_country	
+				}
+				multiply = 0.0	
+			}			
+			
+			if = {
+				limit = { is_still_learning = yes }
+				multiply = 0
+			}
+		}	
+
+		dominate = {
+			value = 0
+
+			if = {
+				limit = {
+					scope:target_country = { 
+						is_subject_of = root
+						relations:root < relations_threshold:cordial 
+						scope:target_country.country_rank < rank_value:major_power
+					}
+				}
+				add = 50
+			}	
+
+			if = {
+				limit = {
+					can_reach_target_country = yes
+					country_rank > scope:target_country.country_rank
+					NOT = { is_country_type = unrecognized }
+					scope:target_country = { is_country_type = unrecognized }
+					scope:target_country = { NOT = { is_subject_of = root }	}
+				}
+				add = 25
+				
+				if = {
+					limit = { has_technology_researched = civilizing_mission }
+					add = 25
+				}					
+			}			
+			
+			if = {
+				limit = {
+					can_reach_target_country = yes
+					country_rank > scope:target_country.country_rank
+					scope:target_country.country_rank < rank_value:major_power
+					scope:target_country = { NOT = { is_subject_of = root }	}
+				}
+				add = 25
+			}
+			
+			multiply = {
+				value = "ai_ideological_opinion(scope:target_country)"
+				multiply = -0.05
+				add = 1
+				min = 0.25
+				max = 2.0
+			}	
+
+			if = {
+				limit = {	
+					AND = {
+						has_radical_leftist_government = yes
+						scope:target_country = {
+							has_radical_leftist_government = yes
+						}
+					}
+				}
+				multiply = 0.5
+			}
+			
+			if = {
+				limit = {	
+					AND = {
+						has_radical_leftist_economy = yes
+						scope:target_country = {
+							has_radical_leftist_economy = yes
+						}
+					}
+				}
+				multiply = 0.5
+			}			
+
+			if = {
+				limit = {
+					AND = {
+						has_radical_leftist_government = no			
+						scope:target_country = {
+							has_radical_leftist_government = yes
+						}
+					}
+					
+				}
+				multiply = 1.5
+			}
+	
+			if = {
+				limit = {
+					AND = {
+						has_radical_leftist_economy = no			
+						scope:target_country = {
+							has_radical_leftist_economy = yes
+						}
+					}
+					
+				}
+				multiply = 1.5
+			}			
+			
+			if = {
+				limit = {
+					lenient_ai_behavior_trigger = yes
+				}
+				multiply = 0.50
+			}		
+			
+			if = {
+				limit = { scope:target_country = { has_modifier = declared_bankruptcy } }
+				multiply = 2.0
+			}			
+			
+			if = {
+				limit = {
+					harsh_ai_behavior_trigger = yes
+				}
+				multiply = 1.5
+			}	
+
+			if = {
+				limit = {
+					has_game_rule = high_ai_aggression
+				}
+				multiply = 1.5
+			}
+			
+			if = {
+				limit = {
+					has_game_rule = low_ai_aggression
+				}
+				multiply = 0.5
+			}
+			
+			# Shouldn't usually upset diplomatic pacts unless they're bankrupt or infamous
+			if = {
+				limit = {
+					scope:target_country = { 
+						in_default = no 
+						infamy < infamy_threshold:notorious
+					}						
+				}
+
+				if = {
+					limit = {
+						has_diplomatic_pact = {
+							who = scope:target_country
+							type = defensive_pact
+						}	
+					}
+					multiply = 0.5
+				}	
+
+				if = {
+					limit = {
+						has_diplomatic_pact = {
+							who = scope:target_country
+							type = alliance
+						}		
+					}
+					multiply = 0.25
+				}	
+
+				if = {
+					limit = {
+						has_diplomatic_pact = {
+							who = scope:target_country
+							type = trade_agreement
+						}			
+					}
+					multiply = 0.5
+				}				
+
+				if = {
+					limit = {
+						has_diplomatic_pact = {
+							who = scope:target_country
+							type = customs_union
+						}								
+					}
+					multiply = 0.25
+				}				
+			}			
+
+			if = {
+				limit = {		
+					NOR = {
+						country_rank = rank_value:great_power
+						has_strategic_adjacency = scope:target_country 
+						AND = {
+							country_rank >= rank_value:major_power
+							scope:target_country = { is_country_type = unrecognized }
+						}
+					}
+				}
+				multiply = 0.0					
+			}			
+			
+			if = {
+				limit = {		
+					is_subject_of = scope:target_country	
+				}
+				multiply = 0.0	
+			}
+			
+			if = {
+				limit = { is_still_learning = yes }
+				multiply = 0
+			}
+		}			
+	}
+	
+	# How much should the AI value a wargoal against another country/state
+	# Using this value in other strategies will function additively
+	# scope:target_country = wargoal target country
+	# scope:target_state = wargoal target state (if any)
+	wargoal_scores = {
+		conquer_state = {
+			if = {
+				limit = {
+					OR = {
+						has_secret_goal = {
+							who = scope:target_state.owner
+							secret_goal = conquer
+						}	
+						has_attitude = {
+							who = scope:target_country
+							attitude = antagonistic
+						}						
+					}				
+				}
+				
+				add = scope:target_state.ai_state_value:root
+			}			
+
+			min = 0
+			max = 100				
+		}
+		
+		return_state = {
+			add = scope:target_state.ai_state_value:root	
+
+			if = {
+				limit = {
+					is_diplomatic_play_enemy_of = scope:target_country
+				}
+				
+				multiply = 5
+				min = 0
+				max = 1000			
+			}
+			else = {
+				min = 0
+				max = 200				
+			}			
+		}	
+		
+		take_treaty_port = {
+			add = scope:target_state.ai_treaty_port_value:root				
+		}
+		
+		transfer_subject = {
+			if = {
+				limit = {
+					has_secret_goal = {
+						who = scope:target_country
+						secret_goal = dominate
+					}
+				}
+			
+				add = scope:target_country.ai_subject_value:root
+			}			
+
+			min = 0
+			max = 100			
+		}		
+		
+		make_protectorate = {
+			if = {
+				limit = {
+					has_secret_goal = {
+						who = scope:target_country
+						secret_goal = dominate
+					}
+				}
+			
+				add = scope:target_country.ai_subject_value:root			
+			}	
+
+			min = 0
+			max = 100				
+		}
+		
+		make_tributary = {
+			if = {
+				limit = {
+					has_secret_goal = {
+						who = scope:target_country
+						secret_goal = dominate
+					}	
+				}
+			
+				add = scope:target_country.ai_subject_value:root			
+			}	
+
+			min = 0
+			max = 100				
+		}
+
+		increase_autonomy = {
+			value = 100			
+		}
+	
+		reduce_autonomy = {
+			value = 100	
+		}		
+
+		war_reparations = {
+			value = 0
+			
+			add = {
+				value = "scope:target_country.ai_gdp_comparison(root)"
+				add = 1
+				multiply = 5
+				min = 0
+				max = 15
+
+				if = {
+					limit = {
+						has_diplomatic_pact = {
+							who = scope:target_country
+							type = rivalry
+						}						
+					}
+					
+					multiply = 1.5
+				}
+			}
+
+			min = 0
+			max = 100			
+		}	
+
+		humiliation = {
+			value = 25
+		}	
+
+		regime_change = {
+			value = 0
+			
+			if = {
+				limit = {
+					country_rank >= rank_value:major_power					
+					OR = {
+						has_diplomatic_pact = {
+							who = scope:target_country.top_overlord
+							type = rivalry
+						}	
+						"ai_ideological_opinion(scope:target_country)" <= -25	
+					}
+				}
+				add = 10
+			}
+
+			if = {
+				limit = {
+					AND = {
+						has_radical_leftist_government = no			
+						scope:target_country = {
+							has_radical_leftist_government = yes
+						}
+					}
+					
+				}
+				add = 100
+			}
+	
+			if = {
+				limit = {
+					AND = {
+						has_radical_leftist_economy = no			
+						scope:target_country = {
+							has_radical_leftist_economy = yes
+						}
+					}
+					
+				}
+				add = 100
+			}					
+		}		
+		
+		open_market = {
+			value = 0
+			
+			if = {
+				limit = {
+					scope:target_country = {
+						has_diplomatic_pact = {
+							who = root
+							type = embargo
+						}	
+					}
+					can_reach_target_country = yes
+				}
+				add = 50
+			}			
+
+			if = {
+				limit = {
+					AND = {
+						has_radical_leftist_government = no			
+						scope:target_country = {
+							has_radical_leftist_government = yes
+						}
+					}
+					
+				}
+				add = 50
+			}
+	
+			if = {
+				limit = {
+					AND = {
+						has_radical_leftist_economy = no			
+						scope:target_country = {
+							has_radical_leftist_economy = yes
+						}
+					}
+					
+				}
+				add = 50
+			}					
+			
+			# Not worth doing against very small markets
+			if = {
+				limit = {
+					scope:target_country = {
+						gdp < 2000000
+					}
+				}
+				multiply = 0
+			}				
+			
+			# Don't want to open our own market...
+			if = {
+				limit = {
+					market_capital.market = scope:target_country.market_capital.market
+				}
+				multiply = 0
+			}
+		}	
+
+		ban_slavery = {
+			value = 0
+			
+			if = {
+				limit = {
+					country_rank >= rank_value:major_power
+					OR = {
+						has_strategy = ai_strategy_progressive_agenda
+						has_strategy = ai_strategy_egalitarian_agenda
+					}					
+				}
+
+				add = {
+					value = scope:target_country.gdp
+					divide = 100000
+					max = 25						
+				}
+
+				
+				# Relations with target
+				multiply = {
+					value = "scope:target_country.relations:root"
+					multiply = -0.01
+					add = 1
+					min = 0.5
+					max = 2.0				
+				}
+				
+				# Ideological opinion of target
+				multiply = {
+					value = "ai_ideological_opinion(scope:target_country)"
+					multiply = -0.05
+					add = 1
+					min = 0.5
+					max = 2.0
+				}				
+			}
+
+			min = 0
+			max = 100
+		}		
+
+		revoke_claim = {
+			if = {
+				limit = {
+					scope:target_state = { owner = root }
+				}
+				
+				add = 10
+				
+				add = {
+					value = scope:target_state.state_population
+					divide = 200000
+					max = 10						
+				}
+				
+				add = {
+					value = scope:target_state.gdp
+					divide = 200000
+					max = 10						
+				}											
+				
+				if = {
+					limit = {
+						scope:target_state = { is_homeland_of_country_cultures = root }
+					}
+					multiply = 1.25
+				}
+
+				if = {
+					limit = {
+						scope:target_state = { is_incorporated = no }
+					}
+					multiply = 0.5
+				}				
+			}
+
+			min = 0
+			max = 50			
+		}	
+
+		contain_threat = {
+			value = 1000
+		}	
+
+		annex_country = {
+			value = 100
+		
+			add = {
+				value = scope:target_country.gdp
+				divide = 100000
+				max = 100						
+			}
+
+			if = {
+				limit = {
+					has_strategic_adjacency = scope:target_country
+				}
+				multiply = 1.5
+			}									
+			
+			if = {
+				limit = {
+					lenient_ai_behavior_trigger = yes
+				}
+				multiply = 0.0
+			}
+
+			min = 0
+			max = 200			
+		}			
+		
+		colonization_rights = {
+			value = 100
+		}	
+
+		unification = {
+			value = 100
+		
+			add = {
+				value = scope:target_country.gdp
+				divide = 100000
+				max = 100						
+			}
+
+			if = {
+				limit = {
+					has_strategic_adjacency = scope:target_country
+				}
+				multiply = 1.5
+			}	
+			
+			if = {
+				limit = {
+					lenient_ai_behavior_trigger = yes
+				}
+				multiply = 0.0
+			}
+
+			min = 0
+			max = 200				
+		}			
+
+		liberate_subject = {
+			value = 0	
+			
+			if = {
+				limit = {
+					scope:target_country.top_overlord.infamy >= infamy_threshold:notorious		
+				}
+				add = 25
+				
+				if = {
+					limit = {
+						has_diplomatic_pact = {
+							who = scope:target_country.top_overlord
+							type = rivalry
+						}							
+					}
+					add = 25
+				}
+
+				if = {
+					limit = {
+						scope:target_country.top_overlord.infamy >= infamy_threshold:pariah
+					}
+					add = 25
+				}
+			}
+
+			# Relations with subject
+			multiply = {
+				value = "scope:target_country.relations:root"
+				multiply = 0.01
+				add = 1
+				min = 0.25
+				max = 2.0				
+			}
+			
+			# Ideological opinion of subject
+			multiply = {
+				value = "ai_ideological_opinion(scope:target_country)"
+				multiply = 0.05
+				add = 1
+				min = 0.25
+				max = 2.0
+			}					
+
+			min = 0
+			max = 100			
+		}	
+
+		liberate_country = {
+			value = 0
+		
+			if = {
+				limit = {
+					scope:target_country.infamy >= infamy_threshold:notorious
+				}
+				add = 25
+				
+				if = {
+					limit = {
+						has_diplomatic_pact = {
+							who = scope:target_country
+							type = rivalry
+						}			
+					}
+					add = 25
+				}
+
+				if = {
+					limit = {
+						scope:target_country.infamy >= infamy_threshold:pariah
+					}
+					add = 25
+				}				
+			}
+			
+			# Relations with target
+			multiply = {
+				value = "scope:target_country.relations:root"
+				multiply = -0.01
+				add = 1
+				min = 0.5
+				max = 2.0				
+			}
+			
+			# Ideological opinion of target
+			multiply = {
+				value = "ai_ideological_opinion(scope:target_country)"
+				multiply = -0.05
+				add = 1
+				min = 0.5
+				max = 2.0
+			}			
+
+			min = 0
+			max = 100				
+		}
+
+		force_recognition = {
+			value = 0
+			
+			if = {
+				limit = {
+					country_rank = rank_value:unrecognized_major_power
+					navy_size >= 50
+					army_size >= 200
+					OR = {
+						has_strategy = ai_strategy_nationalist_agenda
+						has_strategy = ai_strategy_progressive_agenda
+						has_strategy = ai_strategy_egalitarian_agenda
+					}
+				}
+				add = 100
+			}
+		}	
+
+		independence = {
+			value = 100
+		}	
+					
+
+		secession = {
+			value = 100
+		}		
+	}
+
+	# Trigger for whether this strategy can be randomly allocated to a country
+	possible = {
+		always = no
+	}
+	
+	# Chance that this strategy will be randomly allocated to a country
+	weight = {
+		value = 0		
+	}
+
+}
