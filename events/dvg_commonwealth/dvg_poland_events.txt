@@ -41,8 +41,12 @@ dvg_poland.1 = {
                 name = modifier_slave_to_liberty
                 months = -1
             }
+            add_modifier = {
+                name = the_inevitable_sejm
+                months = -1
+            }
             custom_tooltip = {
-                text = diplomatic_plays_blocked_until_golden_liberty
+                text = diplomatic_plays_blocked_until_first_sejm
                 add_modifier = {
                     name = diplomatic_plays_blocked
                     months = -1
@@ -76,10 +80,27 @@ dvg_poland.2 = {
 	}
 
 	immediate = {
+		c:POL = {
+			ruler = { kill_character = yes }		
+			create_character = {
+				first_name = Interregnum_firstname
+				last_name = Interregnum_surname
+				ruler = yes
+				noble = yes
+				birth_date = 1800.1.1
+				interest_group = ig_landowners
+				ideology = ideology_oligarchic
+				traits = {
+					immortal
+				}
+			}
+		}
 	}
 
 	option = {
 		name = dvg_poland.2.a
+		set_variable = POL_first_sejm
+		# set_global_variable = SMO_kingdead
 	}
 }
 
@@ -104,6 +125,9 @@ dvg_poland.3 = {
 	duration = 3
 
 	trigger = {
+		tag = POL
+		has_variable = POL_first_sejm
+		NOT = { has_variable = Sejm_not_king }
 	}
 
 	immediate = {
@@ -111,6 +135,20 @@ dvg_poland.3 = {
 
 	option = {
 		name = dvg_poland.3.a
+		set_variable = Sejm_not_king
+		show_as_tooltip = {
+            remove_modifier = {
+                name = the_inevitable_sejm
+                months = -1
+            }
+            custom_tooltip = {
+                text = diplomatic_plays_unlocked_post_first_sejm
+                remove_modifier = {
+                    name = diplomatic_plays_blocked
+                    months = -1
+                }	
+            }	
+		}
 	}
 }
 
@@ -135,6 +173,9 @@ dvg_poland.4 = {
 	duration = 3
 
 	trigger = {
+		tag = POL
+		has_variable = Sejm_not_king
+		NOT = { has_variable = Sejm_black }
 	}
 
 	immediate = {
@@ -142,6 +183,7 @@ dvg_poland.4 = {
 
 	option = {
 		name = dvg_poland.4.a
+		set_variable = Sejm_black
 	}
 }
 
@@ -166,6 +208,9 @@ dvg_poland.5 = {
 	duration = 3
 
 	trigger = {
+		tag = POL
+		has_variable = Sejm_black
+		NOT = { has_global_variable = POL_EASTERN_COLLAPSE }
 	}
 
 	immediate = {
@@ -173,6 +218,7 @@ dvg_poland.5 = {
 
     option = {
         name = dvg_poland.5.a
+		set_global_variable = POL_EASTERN_COLLAPSE
         c:POL = {
             if = {
                 limit = {
@@ -218,7 +264,6 @@ dvg_poland.5 = {
                 create_truce = { country = c:MOL months = 24 }
             }
 		}
-
         set_global_variable = move_CSK
 	}
 }
@@ -244,6 +289,14 @@ dvg_poland.6 = {
 	duration = 3
 
 	trigger = {
+		tag = POL
+		has_global_variable = POL_EASTERN_COLLAPSE
+		NOT = { 
+			OR = { 
+				has_variable = POL_Habsburg_authorized
+				has_variable = POL_Habsburg_refused
+			}
+		}
 	}
 
 	immediate = {
@@ -251,6 +304,44 @@ dvg_poland.6 = {
 
 	option = {
 		name = dvg_poland.6.a
+		set_variable = POL_Habsburg_authorized
+		change_relations = { 
+			country = c:BOH
+			value = -100
+		}
+		change_relations = { 
+			country = c:SCA
+			value = -100
+		}
+		ai_chance = {
+			base = 20
+			modifier = {
+				trigger = {
+					has_global_variable = not_stanislaw_global 	# this is used for railroading
+				}
+				add = -20
+			}
+		}
+	}
+	
+	option = {
+		name = dvg_poland.6.b
+		set_variable = POL_Habsburg_refused
+		ai_chance = { 
+			base = 80
+			modifier = {
+				trigger = {
+					c:KIE = { is_player = yes }
+				}
+				add = -80
+			}
+			modifier = {
+				trigger = {
+					has_global_variable = stanislaw_global 	# this is used for railroading
+				}
+				add = -80
+			}
+		}
 	}
 }
 
@@ -275,13 +366,48 @@ dvg_poland.7 = {
 	duration = 3
 
 	trigger = {
+		tag = POL
+		has_variable = POL_Habsburg_authorized
 	}
 
 	immediate = {
+		c:POL = {
+			ruler = { kill_character = yes }		
+			create_character = {
+				historical = yes
+				first_name = Stanislaw
+				last_name = von_Habsburg
+				ruler = yes
+				noble = yes
+				birth_date = 1795.6.10
+				interest_group = ig_petty_bourgeoisie
+				ideology = ideology_royalist
+				traits = {
+					ambitious
+					expert_political_operator
+				}
+			}
+		}
 	}
 
 	option = {
 		name = dvg_poland.7.a
+		# notify Austria event WIP
+	}
+	
+	option = {
+		name = dvg_poland.7.b
+		# notify Austria event WIP
+	}
+	
+	option = {
+		name = dvg_poland.7.c
+		# notify Austria event WIP
+	}
+	
+	option = {
+		name = dvg_poland.7.d
+		# notify Austria event WIP
 	}
 }
 
