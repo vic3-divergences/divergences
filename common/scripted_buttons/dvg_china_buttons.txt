@@ -1,0 +1,156 @@
+﻿dvg_ban_missionaries_button = {
+	name = "CHI_deport_missionaries_button"
+	desc = "CHI_deport_missionaries_button_desc"
+
+	visible = { always = yes }
+
+	possible = {
+		any_scope_state = {
+			owner = ROOT
+			has_modifier = dvg_xijao_missions
+		}
+		authority >= 200
+		OR = {
+		NOT = {has_law = law_type:law_no_police}
+		NOT = {has_law = law_type:law_no_home_affairs}
+		}
+	}
+
+	
+
+	effect = {
+		add_modifier = {
+			name = modifier_chi_deporting_missionaries
+			months = normal_modifier_time
+		}
+		every_scope_state = {
+			limit = {
+				has_modifier = dvg_xijao_missions
+			}
+			remove_modifier = dvg_xijao_missions
+		}
+		if = {
+			limit = { has_journal_entry = je_xijiao_missions_receive 
+			has_variable = dvg_xijiao_var 
+			}
+			change_variable = {
+				name = dvg_xijiao_var
+				add = -10
+			}
+
+		}
+		change_relations = {
+			country = c:JIA
+			value = -15
+		}
+	}
+}
+
+ban_opium_button = {
+	name = "ban_opium"
+	desc = "ban_opium_desc"
+
+	visible = { 
+		has_journal_entry = je_opium_obsession
+		exists = market
+		market.owner = root
+		NOT = { is_banning_goods = g:opium }
+	}
+
+	possible = {
+		has_journal_entry = je_opium_obsession
+		NOT = { has_law = law_type:law_free_trade }
+		NOT = { has_variable = lost_opium_wars }
+		exists = market	
+	}
+
+	effect = {
+		add_banned_goods = g:opium
+		add_modifier = {
+			name = opium_ban_authority
+		}
+	}
+
+	ai_chance = {
+        base = 0
+		modifier = {
+			trigger = {
+				OR = {
+					has_strategy = ai_strategy_conservative_agenda
+					has_strategy = ai_strategy_reactionary_agenda
+					has_strategy = ai_strategy_maintain_mandate_of_heaven
+				}
+			}
+			add = 10
+		}		 
+    }
+}
+
+
+unban_opium_button = {
+	name = "remove_opium_ban"
+	desc = "remove_opium_ban_desc"
+
+	visible = { 
+		has_journal_entry = je_opium_obsession
+		is_banning_goods = g:opium
+		exists = market
+		market.owner = root
+	}
+
+	possible = {
+		always = yes
+	}
+
+	effect = {
+		remove_banned_goods = g:opium
+		remove_modifier = opium_ban_authority
+	}
+
+	ai_chance = {
+		base = 0
+		  modifier = {
+			  trigger = {
+				  has_strategy = ai_strategy_progressive_agenda
+			  }
+			  add = 10
+		  }		 
+	 }	
+}
+export_missionaries_button = {
+	name = "export_missionaries"
+	desc = "export_missionaries_desc"
+
+	visible = { 
+		has_journal_entry = je_xijiao_missions_send
+		
+	}
+
+	possible = {
+		always = yes
+		NOT = {has_modifier = dvg_exporting_missionaries}
+		has_technology_researched = mass_communication
+	}
+
+	effect = {
+		add_modifier = {
+			name = dvg_exporting_missionaries
+			months = 18
+
+		}
+		every_country = {
+			limit = {country_has_primary_culture = cu:han}
+			trigger_event = dvg_xijiao.2
+		}
+	}
+
+	ai_chance = {
+		base = 0
+		  modifier = {
+			  trigger = {
+				  has_strategy = ai_strategy_progressive_agenda
+			  }
+			  add = 10
+		  }		 
+	 }	
+}
