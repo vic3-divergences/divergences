@@ -9,7 +9,7 @@ dvg_dzungaria.1 = {  #Dzungar intro
 	flavor = dvg_dzungaria.1.f
 	
 	event_image = {
-		video = "middleeast_courtroom_upheaval"
+		texture = "gfx/event_pictures/mongol_armies.dds"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
@@ -22,16 +22,52 @@ dvg_dzungaria.1 = {  #Dzungar intro
 	trigger = {
 	    
 	}
+	immediate = {
+		set_variable = {
+			name = dzungar_var
+			value = 0
+		}
+		set_variable = {
+			name = dzungar_separatist_var
+			value = 0
+		}
+		set_variable = {
+			name = dzungar_legitimacy_var
+			value = 0
+		}
+		add_journal_entry = {
+			type = je_galdan_khan
+		}
+		add_journal_entry = {
+			type = je_dzungar_legitimacy
+		}
+		add_journal_entry = {
+			type = je_dzungar_separatism
+		}
+	}
 	
 	
 	
 	option = {
 		name = dvg_dzungaria.1.a
 		default_option = yes
-		add_journal_entry = {
-			type = je_galdan_khan
-		}
 		
+		add_journal_entry = {
+			type = je_dzungar_china
+		}
+		add_journal_entry = {
+			type = je_dzungar_europe
+		}
+		add_journal_entry = {
+			type = je_dzungar_society_pn
+		}
+		add_modifier = {
+			name = realpolitik
+			days = 5475
+			is_decaying = yes
+		}
+
+		trigger_event = { id = dvg_dzungaria.4 popup = yes }		
 	}
 }
 
@@ -63,8 +99,6 @@ dvg_dzungaria.2 = { #Split Dzungaria up into warlord states
 
 	immediate = {
 		set_global_variable = dzungaria_shatters
-
-		remove_global_variable = atlantia_indepdendent
 		
 		set_variable = chinese_central_government
 		
@@ -88,7 +122,7 @@ dvg_dzungaria.2 = { #Split Dzungaria up into warlord states
 		s:STATE_KIRGHIZIA = {
 					add_claim = c:DZU
 				}
-		
+	
 		if = {
 			limit = { exists = s:STATE_SEMIRECHE.region_state:DZU }
 			create_country = { #Kazakhstan
@@ -97,7 +131,9 @@ dvg_dzungaria.2 = { #Split Dzungaria up into warlord states
 				state = s:STATE_SEMIRECHE.region_state:DZU
 				state = s:STATE_AKMOLINSK.region_state:DZU
 				state = s:STATE_URALSK.region_state:DZU
-
+				state = s:STATE_ASTRAKHAN.region_state:DZU
+				state = s:STATE_IDEL.region_state:DZU
+				state = s:STATE_BASHKORTOSTAN.region_state:DZU
 				on_created = {
 					warlord_setup_effect = yes
 					set_variable = warlord_state
@@ -115,7 +151,10 @@ dvg_dzungaria.2 = { #Split Dzungaria up into warlord states
 		}
 
 		if = {
-			limit = { exists = s:STATE_ULIASTAI.region_state:DZU }
+			limit = { 
+			exists = s:STATE_ULIASTAI.region_state:DZU
+			NOT = {country_has_state_religion = rel:gelugpa }
+			}
 			create_country = { #Mongolia
 				tag = MGL
 				origin = this
@@ -123,6 +162,10 @@ dvg_dzungaria.2 = { #Split Dzungaria up into warlord states
 				state = s:STATE_URGA.region_state:DZU
 				state = s:STATE_TRANS_BAIKAL.region_state:DZU
 				state = s:STATE_IRKUTSK.region_state:DZU
+				state = s:STATE_YAKUTSK.region_state:DZU
+				state = s:STATE_NORTHERN_MANCHURIA.region_state:DZU
+				state = s:STATE_SOUTHERN_MANCHURIA.region_state:DZU
+				state = s:STATE_OUTER_MANCHURIA.region_state:DZU
 
 				on_created = {
 					warlord_setup_effect = yes
@@ -133,11 +176,16 @@ dvg_dzungaria.2 = { #Split Dzungaria up into warlord states
 		}
 
 		if = {
-			limit = { exists = s:STATE_UZBEKIA.region_state:DZU }
+			limit = { exists = s:STATE_UZBEKIA.region_state:DZU
+			NOT = {country_has_state_religion = rel:sunni }
+			}
 			create_country = { #Uzbekistan
 				tag = UZB 
 				origin = this
 				state = s:STATE_UZBEKIA.region_state:DZU
+				state = s:STATE_TURKMENIA.region_state:DZU
+				state = s:STATE_TAJIKISTAN.region_state:DZU
+				state = s:STATE_KIRGHIZIA.region_state:DZU
 
 				on_created = {
 					warlord_setup_effect = yes
@@ -147,24 +195,10 @@ dvg_dzungaria.2 = { #Split Dzungaria up into warlord states
 			c:UZB = { save_scope_as = scope_UZB }
 		}
 
-		if = {
-			limit = { exists = s:STATE_KIRGHIZIA.region_state:DZU }
-			create_country = { #Kokand
-				tag = KOK
-				origin = this
-				state = s:STATE_KIRGHIZIA.region_state:DZU
-				state = s:STATE_TAJIKISTAN.region_state:DZU
-
-				on_created = {
-					warlord_setup_effect = yes
-					set_variable = warlord_state
-				}
-			}
-			c:KOK = { save_scope_as = scope_KOK }
-		}
+		
 		if = {
 			limit = { exists = s:STATE_TIANSHAN.region_state:DZU }
-			create_country = { #Kokand
+			create_country = { #Xinjiang
 				tag = XIN
 				origin = this
 				state = s:STATE_TIANSHAN.region_state:DZU
@@ -238,20 +272,7 @@ dvg_dzungaria.2 = { #Split Dzungaria up into warlord states
 			set_variable = var_warlord_three
 		}
 
-		c:KOK = {
-		if = {
-			limit = {
-				has_variable = warlord_state
-				NOR = {
-					has_variable = var_warlord_one
-					has_variable = var_warlord_two
-					has_variable = var_warlord_three
-				}
-			}
-			}
-			save_scope_as = scope_random_warlord_four
-			set_variable = var_warlord_four
-		}
+		
 	}
 
 	option = {
@@ -264,14 +285,14 @@ dvg_dzungaria.2 = { #Split Dzungaria up into warlord states
 		create_diplomatic_play = {
 			
 		
-			target_country = c:KOK
+			target_country = c:UZB
 			
 			war = yes
 			
 			type = dp_rebellion_annex
 			
 			add_war_goal = {
-				holder = c:KOK
+				holder = c:UZB
 				type = war_reparations
 				
 				target_country = c:DZU
@@ -343,14 +364,14 @@ dvg_dzungaria.2 = { #Split Dzungaria up into warlord states
 		create_diplomatic_play = {
 			
 		
-			target_country = c:KOK
+			target_country = c:UZB
 			
 			war = no
 			
 			type = dp_rebellion_annex
 			
 			add_war_goal = {
-				holder = c:KOK
+				holder = c:UZB
 				type = war_reparations
 				target_country = c:DZU
 			}
@@ -420,14 +441,14 @@ dvg_dzungaria.2 = { #Split Dzungaria up into warlord states
 		create_diplomatic_play = {
 			
 		
-			target_country = c:KOK
+			target_country = c:UZB
 			
 			war = no
 			
 			type = dp_rebellion_annex
 			
 			add_war_goal = {
-				holder = c:KOK
+				holder = c:UZB
 				type = war_reparations
 				target_country = c:DZU
 			}
@@ -487,86 +508,6 @@ dvg_dzungaria.2 = { #Split Dzungaria up into warlord states
 	}
 		play_as = scope:scope_random_warlord_three
 	}
-
-	option = {
-		name = dvg_dzungaria.2.aa
-		trigger = {
-			exists = scope:scope_random_warlord_four
-			is_player = yes
-		}
-		c:DZU = {
-		
-		create_diplomatic_play = {
-			
-		
-			target_country = c:MGL
-			
-			war = yes
-			
-			type = dp_rebellion_annex
-			
-			add_war_goal = {
-				holder = c:MGL
-				type = annex_country
-				target_country = c:DZU
-			}
-		}
-		create_diplomatic_play = {
-			
-		
-			target_country = c:XIN
-			
-			war = no
-			
-			type = dp_rebellion_annex
-			
-			add_war_goal = {
-				holder = c:XIN
-				type = conquer_state
-				target_state = s:STATE_DZUNGARIA.region_state:DZU
-				target_country = c:DZU
-			}
-			add_war_goal = {
-				holder = c:XIN
-				type = conquer_state
-				target_state = s:STATE_JETISY.region_state:DZU
-				target_country = c:DZU
-			}
-		}
-	   create_diplomatic_play = {
-			
-		
-			target_country = c:KAZ
-			
-			war = yes
-			
-			type = dp_rebellion_annex
-			
-			add_war_goal = {
-				holder = c:KAZ
-				type = war_reparations
-				target_country = c:DZU
-			}
-		}
-	   create_diplomatic_play = {
-			name = guarani_independence
-		
-			target_country = c:KOK
-			
-			war = no
-			
-			type =dp_rebellion_annex
-			
-			add_war_goal = {
-				holder = c:KOK
-				type = war_reparations
-				target_country = c:DZU
-			}
-		}
-	}
-		play_as = scope:scope_random_warlord_four
-	}
-
 	option = {
 		
 		name = dvg_dzungaria.2.a
@@ -575,14 +516,14 @@ dvg_dzungaria.2 = { #Split Dzungaria up into warlord states
 		create_diplomatic_play = {
 			
 		
-			target_country = c:KOK
+			target_country = c:UZB
 			
 			war = no
 			
 			type = dp_rebellion_annex
 			
 			add_war_goal = {
-				holder = c:KOK
+				holder = c:UZB
 				type = war_reparations
 				target_country = c:DZU
 			}
@@ -649,14 +590,14 @@ dvg_dzungaria.2 = { #Split Dzungaria up into warlord states
 		create_diplomatic_play = {
 			
 		
-			target_country = c:KOK
+			target_country = c:UZB
 			
 			war = no
 			
 			type = dp_rebellion_annex
 			
 			add_war_goal = {
-				holder = c:KOK
+				holder = c:UZB
 				type = war_reparations
 				target_country = c:DZU
 			}
@@ -746,17 +687,429 @@ dvg_dzungaria.3 = {  #Dzungar Holds on
 	
 	
 	option = {
-		trigger = {
-
-			owns_entire_state_region = STATE_BEIJING
-		}
+		
 		name = dvg_dzungaria.3.a
 		default_option = yes
 		add_loyalists = {
-			value = 0.15
+			value = 0.25
 		}
-		add_primary_culture = cu:han
+		
+		
 		
 	}
 	
+}
+
+dvg_dzungaria.4 = {  #Dzungar Religion?
+	type = country_event
+	placement = ROOT
+
+	title = dvg_dzungaria.4.t
+	desc = dvg_dzungaria.4.d
+	flavor = dvg_dzungaria.4.f
+	
+	event_image = {
+		video = "gfx/event_pictures/asia_buddhism.bk2"
+
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+	    
+	}
+	immediate = {
+		c:TIB = { save_scope_as = scope_TIB}
+		c:DZU = { save_scope_as = scope_DZU}
+	}
+	
+	
+	
+	option = {
+		name = dvg_dzungaria.4.a
+		default_option = yes
+
+		set_state_religion = rel:gelugpa
+
+		change_relations = {
+			country = c:TIB
+			value = 15
+		}
+		add_primary_culture = cu:tuvan
+		every_state_region = {
+			limit = {
+			OR = {
+				is_homeland = cu:kazak
+				is_homeland = cu:xacitarxani
+				}
+			}
+			add_homeland = cu:kalmyk
+		}
+		hidden_effect = {
+			every_scope_state = {
+				limit = {
+					owner = ROOT
+				}
+				random_scope_pop = {
+					limit = { culture = cu:kazak }
+					change_pop_culture = { target = cu:kalmyk value = 1 }
+					
+				}
+				convert_population = {
+					target = rel:gelugpa
+					value = 0.1
+				}
+			}
+		}
+
+		add_loyalists = {
+			value = 0.35
+			religion = rel:gelugpa
+		}
+		add_radicals = {
+			value = 0.30
+			religion = rel:sunni
+		}
+		ai_chance = {
+			base = 50
+		}
+		
+	}
+	option = {
+		name = dvg_dzungaria.4.b
+		
+		set_state_religion = rel:sunni
+
+		add_primary_culture = cu:uzbek
+		add_primary_culture = cu:uighur
+		add_primary_culture = cu:tajik
+		remove_primary_culture = cu:kalmyk
+
+
+		add_loyalists = {
+			value = 0.35
+			religion = rel:sunni
+		}
+		add_radicals = {
+			value = 0.30
+			religion = rel:gelugpa
+		}
+		ig:ig_devout = {
+			set_interest_group_name = ig_sunni_madrasahs
+			remove_ideology = ideology_buddhist_moralist
+			add_ideology = ideology_moralist
+		}
+
+		change_relations = {
+			country = c:TIB
+			value = -35
+		}
+		ai_chance = {
+			base = 50
+		}
+		
+	}
+
+}
+
+dvg_dzungaria.5 = {  #Dzungar conquer China
+	type = country_event
+	placement = ROOT
+
+	title = dvg_dzungaria.5.t
+	desc = dvg_dzungaria.5.d
+	flavor = dvg_dzungaria.5.f
+	
+	event_image = {
+		texture = "gfx/event_pictures/great_wall.dds"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+	    
+	}
+	immediate = {
+	
+	}
+	
+	
+	
+	option = {
+		name = dvg_dzungaria.5.a
+		default_option = yes
+		trigger = {
+			owns_entire_state_region = STATE_BEIJING
+		}
+		add_primary_culture = cu:han
+		set_capital = STATE_BEIJING
+		custom_tooltip = {
+		text = claim_china_tt
+		every_state_region = {
+			limit = {
+			OR = {
+				is_homeland = cu:han
+				}
+			}
+			add_claim = ROOT
+		}
+		}
+		add_journal_entry = {
+			type = je_mongol_conquest
+		}
+
+		
+	}
+	option = {
+		name = dvg_dzungaria.5.b
+		trigger = {
+			NOT = {owns_entire_state_region = STATE_BEIJING}
+		}
+		add_primary_culture = cu:han
+		custom_tooltip = {
+		text = claim_china_tt
+		every_state_region = {
+			limit = {
+			OR = {
+				is_homeland = cu:han
+				}
+			}
+			add_claim = ROOT
+		}
+		}
+		add_journal_entry = {
+			type = je_mongol_conquest
+		}
+
+		
+	}
+}
+
+dvg_dzungaria.6 = {
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = "gfx/event_pictures/europenorthamerica_before_the_battle.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/Events/europenorthamerica/capitalists_meeting"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/capitalists_meeting"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	title = dvg_dzungaria.6.t
+	desc = dvg_dzungaria.6.d
+	flavor = dvg_dzungaria.6.f
+
+	duration = 1
+
+	trigger = {
+	}
+
+	immediate = {
+		
+		c:DZU = {save_scope_as = dzu_scope
+		
+		
+		
+		}
+
+	}
+
+	option = {
+		name = dvg_dzungaria.6.a
+		
+	
+		default_option = yes
+		
+		if = {
+			limit = {owns_entire_state_region = STATE_CRIMEA }
+
+			add_primary_culture = cu:kirim
+		}
+		if = {
+			limit = {owns_entire_state_region = STATE_ASTRAKHAN }
+
+			add_primary_culture = cu:xacitarxani
+		}
+		if = {
+			limit = {country_has_primary_culture = cu:kalmyk }
+
+			every_state_region = {
+				limit = {
+				OR = {
+					is_homeland = cu:kirim
+					is_homeland = cu:kazani
+					is_homeland = cu:bashkir
+					is_homeland = cu:sibir
+					}
+				}
+				add_homeland = cu:kalmyk
+			}
+		}
+		
+		
+		
+		every_country = {
+			limit = { 
+			
+			NOT = { country_has_primary_culture = cu:mongol }
+			any_primary_culture = {
+				OR = {
+				has_discrimination_trait = east_slavic
+				has_discrimination_trait = kipchak
+				}
+			}
+						
+			}
+			
+			save_scope_as = dzu_target
+			
+			
+				
+			
+			scope:dzu_scope = { create_diplomatic_play = {
+			
+				target_country = scope:dzu_target
+				
+				
+				type = dp_annex_war
+
+				add_war_goal = {
+				holder = scope:dzu_target
+				type = contain_threat
+				target_country = c:DZU
+				}
+			}
+
+			}
+			
+			
+			
+			
+			
+	    }
+		ai_chance = {
+			base = 85
+		}
+	
+	}
+	option = {
+		name = dvg_dzungaria.6.b
+
+		create_incident = {
+			country = c:NOV
+			value = 25
+		}
+		every_state_region = {
+			limit = {
+			OR = {
+				is_homeland = cu:kirim
+				is_homeland = cu:kazani
+				is_homeland = cu:bashkir
+				is_homeland = cu:sibir
+				}
+			}
+			add_homeland = cu:kalmyk
+		}
+		
+		if = {
+			limit = {owns_entire_state_region = STATE_CRIMEA }
+
+			add_primary_culture = cu:kirim
+		}
+		if = {
+			limit = {owns_entire_state_region = STATE_ASTRAKHAN }
+
+			add_primary_culture = cu:xacitarxani
+		}
+		
+
+		every_state_region = {
+			limit = {
+			OR = {
+				is_homeland = cu:kirim
+				is_homeland = cu:bashkir
+				is_homeland = cu:sibir
+				is_homeland = cu:ugrian
+				is_homeland = cu:xacitarxani
+				is_homeland = cu:cossack
+				}
+			}
+			add_claim = ROOT
+		}
+
+		
+		ai_chance = {
+			base = 15
+		}
+	}
+}
+
+
+dvg_dzungaria.7 = {  #Dzungar Tibet Union
+	type = country_event
+	placement = ROOT
+
+	title = dvg_dzungaria.7.t
+	desc = dvg_dzungaria.7.d
+	flavor = dvg_dzungaria.7.f
+	
+	event_image = {
+		video = "gfx/event_pictures/asia_buddhism.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+	    
+	}
+	immediate = {
+		c:TIB = { save_scope_as = scope_TIB
+		ruler = {
+			save_scope_as = lama_scope
+		}
+		}
+		c:DZU = { save_scope_as = scope_DZU}
+
+		
+	}
+	
+	
+	
+	option = {
+		name = dvg_dzungaria.7.a
+		default_option = yes
+
+		scope:lama_scope = {
+			transfer_character = c:DZU
+			set_as_interest_group_leader = yes
+		}
+
+		add_primary_culture = cu:tibetan
+
+		add_loyalists = {
+			value = 0.30
+			religion = rel:gelugpa
+		}
+		
+		annex = c:TIB	
+		
+		
+	}
 }
