@@ -115,7 +115,9 @@ dvg_xijiao.2 = {
 
 	immediate = {
 		random_scope_state = {
-			
+			limit = {
+				owner = ROOT
+			}
 			save_scope_as = cult_state
 			set_variable = {
 				name = cult_center
@@ -139,9 +141,10 @@ dvg_xijiao.2 = {
 			convert_population = {
 				target = rel:taiping value = 0.1
 			}
-			add_journal_entry = {
-				type = je_xijao_missions_receive
-			}
+			
+		}
+		add_journal_entry = {
+			type = je_xijao_missions_receive
 		}
 		if = {
 			limit = {
@@ -153,7 +156,7 @@ dvg_xijiao.2 = {
 					culture = cu:han
 					religion = rel:taiping
 					interest_group = ig_devout
-					ideology = ideology_theocrat
+					ideology = ideology_xijiao_leader
 					is_agitator = yes
 					on_created = {
 						add_modifier = {
@@ -294,19 +297,24 @@ dvg_xijiao.4 = {
 	}
 	immediate = {
 		hidden_effect = {
-			random_scope_character = {
-				limit = {
-					has_variable = hong_var
-				}
-				kill_character = yes
-			}
-			random_character_in_exile_pool = {
-				limit = {
-					has_variable = hong_var
-				}
-				kill_character = yes
-			}
+			
 		}
+		random_scope_state = {
+			limit = {
+				OR = {
+				has_variable = cult_center
+				has_modifier = dvg_xijao_missions
+				has_modifier = god_worshippers
+				}
+				owner = ROOT
+				any_scope_pop = {
+					has_pop_religion = taiping
+				}
+				
+			}
+			save_scope_as = dvg_xijao_kingdom_spawn
+		}
+		
 		every_state = {
 			limit = {
 				has_modifier = god_worshippers
@@ -327,17 +335,7 @@ dvg_xijiao.4 = {
 				set_variable = saved_incorporated_state
 			}
 		}		
-		random_scope_state = {
-			limit = {
-				has_variable = cult_center
-				any_scope_pop = {
-					has_pop_religion = taiping
-					religion_accepted = no
-				}
-				radical_fraction = { value >= 0.15 }
-			}
-			save_scope_as = dvg_xijao_kingdom_spawn
-		}
+		
 		create_country = {
 			tag = TPG
 			origin = this
@@ -346,7 +344,7 @@ dvg_xijiao.4 = {
 				ig:ig_devout = {
 					set_interest_group_name = ig_taiping_god_worshippers
 					remove_ideology = ideology_moralist
-					add_ideology = ideology_dvg_xijao_kingdom_theocratic
+					add_ideology = ideology_heavenly_kingdom_theocratic
 					add_modifier = {
 						name = taiping_god_worshippers
 						months = very_long_modifier_time
@@ -361,7 +359,7 @@ dvg_xijiao.4 = {
 					}
 					ig:ig_devout = {
 						leader = {
-							set_ideology = ideology:ideology_theocrat
+							set_ideology = ideology:ideology_xijiao_leader
 						}
 						add_ruling_interest_group = yes
 					}
@@ -455,6 +453,11 @@ dvg_xijiao.4 = {
 			set_variable = { name = gold_transfer_nil value = var:gold_transfer }
 			change_variable = { name = gold_transfer_nil divide = -1 }
 		}
+		c:JIA = { save_scope_as = scope_JIA
+		ruler = {
+			save_scope_as = sun_scope
+		}
+		}
 		if = {
 			limit = { has_journal_entry = je_warlord_china }
 			chi_remove_1_fragile_unity = yes
@@ -472,6 +475,10 @@ dvg_xijiao.4 = {
 				country = JIA
 				type = puppet
 			}
+		}
+		scope:sun_scope = {
+			transfer_character = c:TPG
+			set_character_as_ruler = yes
 		}
 		
 	}
@@ -643,7 +650,7 @@ dvg_xijiao.5 = {
 		name = dvg_xijiao.5.a
 		default_option = yes
 		custom_tooltip = {
-			text = mass_reconversion_tt
+			text = xijiao_flee
 			every_scope_state = {
 				limit = {
 					any_scope_pop = {
@@ -658,33 +665,26 @@ dvg_xijiao.5 = {
 					target = rel:mahayana value = 0.1
 				}
 			}
-		}
-		ordered_country = {
-			limit = {
-				country_rank >= rank_value:great_power
-				religion = {
-					has_discrimination_trait = christian
+			random_scope_pop = {
+				limit = {
+				religion = rel:taiping
+					
+				exists = c:MJN
 				}
+				move_pop = s:STATE_WEIHUAI.region_state:MJN
 			}
-			order_by = country_rank
-			save_scope_as = christian_gp
-		}
-		create_incident = {
-			country = scope:christian_gp
-			value = 25
-		}
-		every_country = {
-			limit = {
-				country_rank >= rank_value:great_power
-				religion = {
-					has_discrimination_trait = christian
+			random_scope_pop = {
+				limit = {
+				religion = rel:taiping
+					
+				exists = c:QQQ
 				}
-			}
-			change_relations = {
-				country = root
-				value = -25
+				move_pop = s:STATE_SANBAO.region_state:QQQ
 			}
 		}
+		
+		
+		
 	}
 	option = { # mercy and pardons
 		name = dvg_xijiao.5.b
@@ -936,402 +936,113 @@ dvg_xijiao.8 = {
 		
 	}
 }
-
-# Missionaries
-
-namespace = CHI_missionaries
-
-# Evangelisation in a state
-CHI_missionaries.1 = {
+dvg_xijiao.10 = {
 	type = country_event
-	placement = scope:evangelisation_state
-
-	title = CHI_missionaries.1.t
-	desc = CHI_missionaries.1.d
-	flavor = CHI_missionaries.1.f
-
-	event_image = {
-		video = "asia_union_leader"
-	}
-
-	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
-
-	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
+	placement = root
+	title = dvg_xijiao.10.t
+	desc = dvg_xijiao.10.d
+	flavor = dvg_xijiao.10.f
 
 	duration = 3
 
-	cooldown = { months = normal_modifier_time }
+	event_image = {
+		video = "gfx/event_pictures/asia_westerners_arriving.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/europenorthamerica_rich_and_poor"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
 
 	trigger = {
-		any_scope_state = {
-			has_variable = open_to_missionaries_state
-		}
 	}
+
 	immediate = {
-		random_scope_state = {
-			limit = {
-				has_variable = open_to_missionaries_state
-			}
-			save_scope_as = evangelisation_state
-		}
-		change_variable = { name = missionary_works_counter add = 1 }
+		
 	}
+
 	option = {
-		name = CHI_missionaries.1.a
-		scope:evangelisation_state = {
-			add_modifier = {
-				name = modifier_china_state_evangelisation
-				months = normal_modifier_time
-			}
-			convert_population = {
-				target = rel:taiping 
-				value = 0.03
-			}
-			add_radicals_in_state = {
-				value = small_radicals
-				religion = rel:mahayana
-			}
-		}
-	}
-	option = {
-		name = CHI_missionaries.1.b
+		name = dvg_xijiao.10.a
 		default_option = yes
-		scope:evangelisation_state = {
-			add_modifier = {
-				name = modifier_china_state_evangelisation
-				months = normal_modifier_time
-				multiplier = 0.5
-			}
-			convert_population = {
-				target = rel:taiping 
-				value = 0.01
-			}
+
+		add_journal_entry = {
+			type = je_xijiao_takoever
 		}
-	}
-}
-
-# Missionaries attempted to go where they shouldn't
-CHI_missionaries.2 = {
-	type = country_event
-	placement = scope:forbidden_state
-
-	title = CHI_missionaries.2.t
-	desc = CHI_missionaries.2.d
-	flavor = CHI_missionaries.2.f
-
-	event_image = {
-		video = "southamerica_aristocrats"
-	}
-
-	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
-
-	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
-
-	duration = 3
-
-	cooldown = { months = normal_modifier_time }
-
-	trigger = {
-		NOT = {
-			has_law = law_type:law_closed_borders
-		}
-		any_scope_state = {
-			any_neighbouring_state = {
-				owner = ROOT
-				has_variable = open_to_missionaries_state
-			}
-			NOT = {
-				has_variable = open_to_missionaries_state
-			}
-			NOT = {
-				has_variable = missionary_fear
-			}
-		}
-		any_country = {
-			has_diplomatic_relevance = root
+		create_character = {
+			culture = cu:han
 			religion = rel:taiping
-		}
-	}
-	immediate = {
-		random_scope_state = {
-			limit = {
-				any_neighbouring_state = {
-					owner = ROOT
-					has_variable = open_to_missionaries_state
-				}
-				NOT = {
-					has_variable = open_to_missionaries_state
-				}
-				NOT = {
-					has_variable = missionary_fear
+			interest_group = ig_devout
+			ideology = ideology_xijiao_leader
+			is_agitator = yes
+			on_created = {
+				add_modifier = {
+					name = modifier_brother_of_christ
+					months = long_modifier_time
 				}
 			}
-			save_scope_as = forbidden_state
 		}
-		random_country = {
-			limit = {
-				has_diplomatic_relevance = root
-				religion = rel:taiping
-			}
-			save_scope_as = missionary_country
-		}
-		change_variable = { name = missionary_works_counter add = 1 }
-		random_scope_state = {
-			limit = {
-				region = sr:region_central_asia
-			}
-			save_scope_as = deportation_state
-		}
+		
+		
 	}
 	option = {
-		name = CHI_missionaries.2.a
-		scope:missionary_country = {
-			change_relations = {
-				country = ROOT
-				value = -15
-			}
-		}
-		scope:forbidden_state = {
-			custom_tooltip = missionaries_forbidden_10_years_tt
-			set_variable = { name = missionary_fear years = 10 } 
-		}
-	}
-	option = {
-		name = CHI_missionaries.2.b
+		name = dvg_xijiao.10.b
 		default_option = yes
-		trigger = {
-			any_scope_state = {
-				region = sr:region_central_asia
-			}
-		}
-		custom_tooltip = {
-			text = deport_to_central_asia_tt
-		}
-		scope:missionary_country = {
-			change_relations = {
-				country = ROOT
-				value = -10
-			}
-		}
-		scope:deportation_state = {
-			add_loyalists_in_state = {
-				pop_type = aristocrats
-				value = small_radicals
-			}
-		}
-	}
-	option = {
-		name = CHI_missionaries.2.c
-		scope:forbidden_state = {
-			add_radicals_in_state = {
-				value = medium_radicals
-				religion = rel:mahayana
-			}
-			custom_tooltip = open_to_missionaries_tt
-			set_variable = open_to_missionaries_state
-		}
+
+		
+		
 	}
 }
 
-# Missionary schools
-CHI_missionaries.3 = {
+dvg_xijiao.11 = {
 	type = country_event
-	placement = scope:missionary_schools_state
-
-	title = CHI_missionaries.3.t
-	desc = CHI_missionaries.3.d
-	flavor = CHI_missionaries.3.f
-
-	event_image = {
-		video = "southamerica_christianity"
-	}
-
-	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
-
-	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
+	placement = root
+	title = dvg_xijiao.11.t
+	desc = dvg_xijiao.11.d
+	flavor = dvg_xijiao.11.f
 
 	duration = 3
 
-	cooldown = { months = normal_modifier_time }
+	event_image = {
+		video = "gfx/event_pictures/asia_westerners_arriving.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/europenorthamerica_rich_and_poor"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
 
 	trigger = {
-		any_scope_state = {
-			has_variable = open_to_missionaries_state
-			NOT = {
-				has_modifier = modifier_chi_missionary_schools
-			}
-		}
 	}
+
 	immediate = {
-		random_scope_state = {
-			limit = {
-				has_variable = open_to_missionaries_state
-				NOT = {
-					has_modifier = modifier_chi_missionary_schools
-				}
-			}
-			save_scope_as = missionary_schools_state
-		}
-		change_variable = { name = missionary_works_counter add = 1 }
+		
 	}
+
 	option = {
-		name = CHI_missionaries.3.a
-		scope:missionary_schools_state = {
+		name = dvg_xijiao.11.a
+		default_option = yes
+
+		ig:ig_devout = {
+			set_interest_group_name = ig_taiping_god_worshippers
+			remove_ideology = ideology_moralist
+			add_ideology = ideology_heavenly_kingdom_theocratic
 			add_modifier = {
-				name = modifier_chi_missionary_schools
-				months = normal_modifier_time
+				name = taiping_god_worshippers
+				months = very_long_modifier_time
+				is_decaying = yes
 			}
+			
+			
+		}
+		set_state_religion = rel:taiping
+		
+		s:STATE_WEIHUAI.region_state:MJN = {
 			convert_population = {
-				target = rel:taiping 
-				value = 0.01
+				target = rel:taiping value = 0.10
 			}
 		}
+		
+		
 	}
-	option = {
-		name = CHI_missionaries.3.b
-		default_option = yes
-		scope:missionary_schools_state = {
-			add_modifier = {
-				name = modifier_chi_rebuked_christian_missionaries
-				months = normal_modifier_time
-			}
-		}
-	}
-}
-
-# Missionary hospitals
-CHI_missionaries.4 = {
-	type = country_event
-	placement = scope:missionary_hospitals_state
-
-	title = CHI_missionaries.4.t
-	desc = CHI_missionaries.4.d
-	flavor = CHI_missionaries.4.f
-
-	event_image = {
-		video = "unspecific_sick_in_hospital"
-	}
-
-	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
-
-	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
-
-	duration = 3
-
-	cooldown = { months = normal_modifier_time }
-
-	trigger = {
-		any_scope_state = {
-			has_variable = open_to_missionaries_state
-			NOT = {
-				has_modifier = modifier_chi_missionary_hospitals
-			}
-		}
-	}
-	immediate = {
-		random_scope_state = {
-			limit = {
-				has_variable = open_to_missionaries_state
-				NOT = {
-					has_modifier = modifier_chi_missionary_hospitals
-				}
-			}
-			save_scope_as = missionary_hospitals_state
-		}
-		change_variable = { name = missionary_works_counter add = 1 }
-	}
-	option = {
-		name = CHI_missionaries.4.a
-		scope:missionary_hospitals_state = {
-			add_modifier = {
-				name = modifier_chi_missionary_hospitals
-				months = normal_modifier_time
-			}
-			convert_population = {
-				target = rel:taiping 
-				value = 0.01
-			}
-		}
-	}
-	option = {
-		name = CHI_missionaries.4.b
-		default_option = yes
-		scope:missionary_hospitals_state = {
-			add_modifier = {
-				name = modifier_chi_rebuked_christian_missionaries
-				months = normal_modifier_time
-			}
-		}
-	}
-}
-
-# Missionaries stir social conflict
-CHI_missionaries.5 = {
-	type = country_event
-	placement = scope:missionary_strife_state
-
-	title = CHI_missionaries.5.t
-	desc = CHI_missionaries.5.d
-	flavor = CHI_missionaries.5.f
-
-	event_image = {
-		video = "votp_prison"
-	}
-
-	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
-
-	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
-
-	duration = 3
-
-	cooldown = { months = normal_modifier_time }
-
-	trigger = {
-		any_scope_state = {
-			has_variable = open_to_missionaries_state
-		}
-		any_country = {
-			has_diplomatic_relevance = root
-			religion = rel:taiping
-		}
-	}
-	immediate = {
-		random_scope_state = {
-			limit = {
-				has_variable = open_to_missionaries_state
-			}
-			save_scope_as = missionary_strife_state
-		}
-		random_country = {
-			limit = {
-				has_diplomatic_relevance = root
-				religion = rel:taiping
-			}
-			save_scope_as = missionary_country
-		}
-		change_variable = { name = missionary_works_counter add = 1 }
-	}
-	option = {
-		name = CHI_missionaries.5.a
-		default_option = yes
-		scope:missionary_strife_state = {
-			add_radicals_in_state = {
-				value = medium_radicals
-			}
-		}
-	}
-	option = {
-		name = CHI_missionaries.5.b
-		scope:missionary_strife_state = {
-			add_radicals_in_state = {
-				value = small_radicals
-			}
-		}
-		scope:missionary_country = {
-			change_relations = {
-				country = ROOT
-				value = -10
-			}
-		}
-	}
+	
 }

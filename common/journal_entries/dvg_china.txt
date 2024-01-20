@@ -227,9 +227,7 @@ je_xijiao_missions_send = {
 	scripted_button = export_missionaries_button
 
 	complete = {
-		scope:journal_entry = {
-			is_goal_complete = yes
-		}
+		has_global_variable = xijiao_revolt
 	}
 
 	on_complete = {
@@ -257,7 +255,7 @@ je_xijiao_missions_send = {
 	
 
 	current_value = {
-		value = var:dvg_shun_var
+		value = var:dvg_xijiao_var
 	}
 
 	goal_add_value = {
@@ -283,6 +281,10 @@ je_xijao_missions_receive = {
 	}
 
 	immediate = {
+		set_variable = {
+			name = dvg_xijiao_var
+			value = 0
+		}
 		random_scope_state = {
 			limit = {
 				is_incorporated = yes
@@ -298,6 +300,7 @@ je_xijao_missions_receive = {
 				}
 				turmoil > 0.15
 			}
+			
 			add_modifier = {
 				name = god_worshippers
 				months = short_modifier_time
@@ -314,13 +317,25 @@ je_xijao_missions_receive = {
 			1 = dvg_xijiao.3
 		}
 	}
+	current_value = {
+		value = var:dvg_xijiao_var
+	}
 
 	complete = {
-		NOT = {
-			any_scope_state = {
-				has_modifier = god_worshippers
+
+		OR = {
+		has_global_variable = xijiao_revolt
+		any_country = {
+			is_revolutionary = yes
+			country_definition = root.country_definition
+			ruler = {
+				has_ideology = ideology:ideology_theocrat
 			}
 		}
+
+		}
+
+		
 	}
 	on_complete = {
 		trigger_event = {
@@ -329,22 +344,23 @@ je_xijao_missions_receive = {
 	}
 
 	fail = {
-		any_scope_state = {
-			has_modifier = god_worshippers
-			count >= 4
-		}
-		any_scope_state = {
-			has_modifier = god_worshippers
+		NOT = {
+			any_scope_state = {
+				has_modifier = god_worshippers
+			}
 			any_scope_pop = {
 				has_pop_religion = taiping
-				religion_accepted = no
 			}
-			turmoil >= 0.15
 		}
 	}
 
 	on_fail = {
 		
+	}
+	progressbar = yes
+
+	goal_add_value = {
+		add = 18
 	}
 
 	weight = 10000
