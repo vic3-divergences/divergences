@@ -307,6 +307,7 @@ dvg_xijiao.4 = {
 				has_modifier = god_worshippers
 				}
 				owner = ROOT
+				is_capital = no
 				any_scope_pop = {
 					has_pop_religion = taiping
 				}
@@ -487,25 +488,29 @@ dvg_xijiao.4 = {
 		name = dvg_xijiao.4.a
 		default_option = yes
 		ai_chance = { base = 1 }
+		
 		add_journal_entry = {
-			type = je_taiping
+			type = je_xijiao_conquer
 		}
-		c:TPG = {
-			add_journal_entry = {
-				type = je_taiping_revolution
-			}
-		}
-		assign_taiping_states = yes
-		scope:dvg_xijao_kingdom_scope ?= {		
-			create_diplomatic_play = {
-				name = taiping_rebellion
+		
+		create_diplomatic_play = {
+			
+			target_country = scope:scope_JIA
+			
+			war = no
+			
+			type = dp_unify_china
+
+			add_war_goal = {
+				holder = scope:scope_JIA
+				type = annex_country
 				target_country = ROOT
-				type = dp_taiping_rebellion
 			}
-			hidden_effect = { #Why? Because the Taiping Rebellion play grants an insane amount of infamy.
-				change_infamy = -150
-			}
+
+			
 		}
+		
+		
 		hidden_effect = {
 			c:TPG = {
 				create_taiping_characters = yes	
@@ -514,17 +519,7 @@ dvg_xijiao.4 = {
 				}
 				add_treasury = var:gold_transfer	
 			}
-			random_diplomatic_play = {
-				limit = {
-					c:TPG = {
-						is_diplomatic_play_initiator = yes
-					}
-					ROOT = {
-						is_diplomatic_play_target = yes
-					}
-				}
-				add_diplomatic_play_war_support = { target = c:TPG value = 100 }
-			}
+			
 			every_state = {
 				limit = {
 					owner = ROOT
@@ -543,66 +538,7 @@ dvg_xijiao.4 = {
 			}
 		}	
 	}
-	option = {
-		name = dvg_xijiao.4.b
-		ai_chance = { base = 0 }
-		add_journal_entry = {
-			type = je_taiping
-		}
-		c:TPG = {
-			add_journal_entry = {
-				type = je_taiping_revolution
-			}
-		}
-		assign_taiping_states = yes
-		scope:dvg_xijao_kingdom_scope = {		
-			create_diplomatic_play = {
-				name = taiping_rebellion
-				target_country = ROOT
-				type = dp_taiping_rebellion
-			}
-			hidden_effect = {
-				change_infamy = -150
-			}
-		}
-		hidden_effect = {
-			c:TPG = {
-				create_taiping_characters = yes	
-				ROOT = {
-					add_treasury = prev.var:gold_transfer_nil
-				}
-				add_treasury = var:gold_transfer	
-			}
-			random_diplomatic_play = {
-				limit = {
-					c:TPG = {
-						is_diplomatic_play_initiator = yes
-					}
-					ROOT = {
-						is_diplomatic_play_target = yes
-					}
-				}
-				add_diplomatic_play_war_support = { target = c:TPG value = 100 }
-			}
-			every_state = {
-				limit = {
-					owner = ROOT
-					OR = {	
-						is_split_state = no
-						state_region = {
-							any_state = {
-								is_treaty_port = yes
-							}
-						}
-					}
-				}
-				this.state_region = {
-					add_claim = c:TPG
-				}
-			}
-		}
-		play_as = scope:dvg_xijao_kingdom_scope
-	}
+	
 }
 
 # Aftermath event
@@ -935,6 +871,67 @@ dvg_xijiao.8 = {
 		default_option = yes
 		
 	}
+}
+dvg_xijiao.9 = {
+	type = country_event
+	placement = root
+	title = dvg_xijiao.9.t
+	desc = dvg_xijiao.9.d
+	flavor = dvg_xijiao.9.f
+
+	duration = 3
+
+	event_image = {
+		video = "gfx/event_pictures/asia_politician_parliament_motion.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/europenorthamerica_rich_and_poor"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	trigger = {
+	}
+
+	immediate = {
+		every_country = {
+			limit = { 
+			 country_has_primary_culture = cu:han 
+			 NOT = {country_has_state_religion = rel:taiping}
+			}
+			
+			save_scope_as = tpg_target	
+			change_relations = {
+					country = ROOT
+					value = -30
+				}
+			
+	    }
+	}
+
+	option = {
+		name = dvg_xijiao.9.a
+		default_option = yes
+		every_country = {
+			if = {
+				limit = {
+					is_ai = yes			
+					country_has_state_religion = rel:taiping
+				}			
+				root = { annex = prev }
+			}
+		}
+		change_infamy = -1000
+		change_infamy = 50
+
+		
+		
+		change_tag = TPG
+
+		
+		
+	}
+	
 }
 dvg_xijiao.10 = {
 	type = country_event
