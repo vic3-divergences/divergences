@@ -60,9 +60,9 @@ dvg_shun.1 = {
 dvg_shun.2  = {
 	type = country_event
 	placement = root
-	title = china_is_whole_again.t
-	desc = china_is_whole_again.d
-	flavor = china_is_whole_again.f
+	title = dvg_shun.2.t
+	desc = dvg_shun.2.d
+	flavor = dvg_shun.2.f
 
 	icon = "gfx/interface/icons/event_icons/event_scales.dds"
 
@@ -88,7 +88,7 @@ dvg_shun.2  = {
 	}
 
 	option = {
-		name = china_is_whole_again.a
+		name = dvg_shun.2.a
 		default_option = yes
 	#	add_modifier = {
 	#		name = ottoman_army_reform
@@ -96,13 +96,13 @@ dvg_shun.2  = {
 	#	}
 	}
 }
-
+#Fail
 dvg_shun.3 ={
 	type = country_event
 	placement = root
-	title = then_it_broke_again.t
-	desc = then_it_broke_again.d
-	flavor = then_it_broke_again.f
+	title = dvg_shun.3.t
+	desc = dvg_shun.3.d
+	flavor = dvg_shun.3.f
 
 	icon = "gfx/interface/icons/event_icons/event_skull.dds"
 
@@ -116,23 +116,455 @@ dvg_shun.3 ={
 	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/london_center"
 
 	trigger = {
-		has_variable = dont_trigger
+		exists = c:SHU
+		this = c:SHU
+		NOT = { has_global_variable = dzungaria_shatters }
 	}
 
 	immediate = {
-		set_variable = then_it_broke_again
-	#	remove_modifier = questioned_mandate
-	#	remove_modifier = china_tax
-	#	remove_modifier = china_bureaucracy
-	#	remove_modifier = decentralized_conscription
+		set_global_variable = dzungaria_shatters
+		
+		set_variable = chinese_central_government
+		
+		
+			s:STATE_SHANXI = {
+					add_claim = c:SHU
+				}
+			s:STATE_SHANDONG= {
+					add_claim = c:SHU
+				}
+			s:STATE_GANSU = {
+					add_claim = c:SHU
+				}
+			s:STATE_XIAN = {
+					add_claim = c:SHU
+				}
+			s:STATE_JIANGSU = {
+					add_claim = c:SHU
+				}	
+
+			s:STATE_HENAN = {
+					add_claim = c:SHU
+				}
+	
+		if = {
+			limit = { exists = s:STATE_SHANDONG.region_state:SHU }
+			create_country = { #Shandong
+				tag = SHA
+				origin = this
+				state = s:STATE_JIANGSU.region_state:SHU
+				on_created = {
+					warlord_setup_effect = yes
+					set_variable = warlord_state
+				}
+			}
+			c:SHA = { save_scope_as = scope_SHA }
+			if = {
+				limit = { exists = s:STATE_SHANDONG.region_state:SHU }
+				s:STATE_JIANGSU.region_state:SHU = { set_state_owner = c:SHA }
+			}
+			
+		}
+
+		if = {
+			limit = { 
+			exists = s:STATE_SHANXI.region_state:SHU
+			owns_entire_state_region = STATE_BEIJING
+			}
+			create_country = { #Shaanxi
+				tag = SHN
+				origin = this
+				state = s:STATE_HINGGAN.region_state:SHU
+				state = s:STATE_XIAN.region_state:SHU
+				state = s:STATE_GANSU.region_state:SHU
+				state = s:STATE_NINGXIA.region_state:SHU
+				state = s:STATE_HENAN.region_state:SHU
+
+
+				on_created = {
+					warlord_setup_effect = yes
+					
+				}
+			}
+			c:SHN = { save_scope_as = scope_SHN}
+		}
+
+		if = {
+			limit = { exists = s:STATE_SHENGJING.region_state:SHU
+			
+			}
+			create_country = { #Uzbekistan
+				tag = JNZ 
+				origin = this
+				state = s:STATE_UZBEKIA.region_state:SHU
+				state = s:STATE_TURKMENIA.region_state:SHU
+				state = s:STATE_TAJIKISTAN.region_state:SHU
+				state = s:STATE_KIRGHIZIA.region_state:SHU
+
+				on_created = {
+					warlord_setup_effect = yes
+					set_variable = warlord_state
+				}
+			}
+			c:JNZ = { save_scope_as = scope_JNZ }
+		}
+
+		
+		if = {
+			limit = { exists = s:STATE_TIANSHAN.region_state:SHU }
+			create_country = { #Xinjiang
+				tag = XIN
+				origin = this
+				state = s:STATE_TIANSHAN.region_state:SHU
+
+				on_created = {
+					warlord_setup_effect = yes
+					set_variable = warlord_state
+				}
+			}
+			c:XIN = { save_scope_as = scope_XIN }
+		}
+
+		
+
+		every_subject_or_below = {
+			limit = {
+				is_subject_of = ROOT
+				OR = {
+					is_subject_type = subject_type_vassal
+					is_subject_type = subject_type_protectorate
+					is_subject_type = subject_type_dominion
+					is_subject_type = subject_type_puppet
+				}
+			}
+			
+			make_independent = yes
+		}
+
+		c:SHA = {
+		 if = {
+			limit = {
+				has_variable = warlord_state
+				NOR = {
+					has_variable = var_warlord_two
+					has_variable = var_warlord_three
+					has_variable = var_warlord_four 
+				}
+			}
+			}
+			save_scope_as = scope_random_warlord_one
+			set_variable = var_warlord_one
+		}
+
+		c:SHN = {
+		if = {
+			limit = {
+				has_variable = warlord_state
+				NOR = {
+					has_variable = var_warlord_one
+					has_variable = var_warlord_three
+					has_variable = var_warlord_four
+				}
+			}
+			}
+			save_scope_as = scope_random_warlord_two
+			set_variable = var_warlord_two
+		}
+
+		c:JNZ = {
+		if = {
+			limit = {
+				has_variable = warlord_state
+				NOR = {
+					has_variable = var_warlord_one
+					has_variable = var_warlord_two
+					has_variable = var_warlord_four
+				}
+			}
+			}
+			save_scope_as = scope_random_warlord_three
+			set_variable = var_warlord_three
+		}
+
+		
 	}
 
 	option = {
-		name = then_it_broke_again.a
+		name = dvg_shun.2.ab
+		trigger = {
+			exists = scope:scope_random_warlord_one
+			is_player = yes
+		}
+		c:SHU = {
+		create_diplomatic_play = {
+			
+		
+			target_country = c:JNZ
+			
+			war = yes
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:JNZ
+				type = war_reparations
+				
+				target_country = c:SHU
+			}
+		}
+		
+		create_diplomatic_play = {
+			
+		
+			target_country = c:SHA
+			
+			war = yes
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:SHA
+				type = war_reparations
+				target_country = c:SHU
+			}
+		}
+		create_diplomatic_play = {
+		
+		
+			target_country = c:SHN
+			
+			war = yes
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:SHN
+				type = annex_country
+				target_country = c:SHU
+			}
+		}			
+	}
+		play_as = scope:scope_random_warlord_one
+	}
+
+	option = {
+		name = dvg_shun.2.b
+		trigger = {
+			exists = scope:scope_random_warlord_two
+			is_player = yes
+		}
+		c:SHU = {
+		create_diplomatic_play = {
+			
+		
+			target_country = c:JNZ
+			
+			war = no
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:JNZ
+				type = war_reparations
+				target_country = c:SHU
+			}
+		}
+		
+		create_diplomatic_play = {
+			
+			target_country = c:SHA
+			
+			war = no
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:SHA
+				type = war_reparations
+				target_country = c:SHU
+			}
+		}
+		create_diplomatic_play = {
+			
+		
+			target_country = c:SHN
+			
+			war = yes
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:SHN
+				type = annex_country
+				target_country = c:SHU
+			}
+		}			
+	}
+		play_as = scope:scope_random_warlord_two
+	}
+
+	option = {
+		name = dvg_shun.2.c
+		trigger = {
+			exists = scope:scope_random_warlord_three
+			is_player = yes
+		}
+		c:SHU = {
+		create_diplomatic_play = {
+			
+		
+			target_country = c:JNZ
+			
+			war = no
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:JNZ
+				type = war_reparations
+				target_country = c:SHU
+			}
+		}
+		
+		create_diplomatic_play = {
+			
+		
+			target_country = c:SHA
+			
+			war = no
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:SHA
+				type = war_reparations
+				target_country = c:SHU
+			}
+		}
+		create_diplomatic_play = {
+			
+		
+			target_country = c:SHN
+			
+			war = yes
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:SHN
+				type = annex_country
+				target_country = c:SHU
+			}
+		}			
+	}
+		play_as = scope:scope_random_warlord_three
+	}
+	option = {
+		
+		name = dvg_shun.2.a
 		default_option = yes
-	#	add_modifier = {
-	#		name = ottoman_army_reform
-	#		months = normal_modifier_time
-	#	}
+		c:SHU = {
+		create_diplomatic_play = {
+			
+		
+			target_country = c:JNZ
+			
+			war = no
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:JNZ
+				type = war_reparations
+				target_country = c:SHU
+			}
+		}
+		
+		create_diplomatic_play = {
+			
+		
+			target_country = c:SHA
+			
+			war = no
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:SHA
+				type = war_reparations
+				target_country = c:SHU
+			}
+		}
+		create_diplomatic_play = {
+			
+		
+			target_country = c:SHN
+			
+			war = no
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:SHN
+				type = annex_country
+				target_country = c:SHU
+			}
+		}			
+	 }
+	}
+	option = {
+		
+		name = dvg_shun.2.ac
+
+		c:SHU = {
+		create_diplomatic_play = {
+			
+		
+			target_country = c:JNZ
+			
+			war = no
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:JNZ
+				type = war_reparations
+				target_country = c:SHU
+			}
+		}
+		
+		create_diplomatic_play = {
+			
+		
+			target_country = c:SHA
+			
+			war = no
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:SHA
+				type = war_reparations
+				target_country = c:SHU
+			}
+		}
+		create_diplomatic_play = {
+			
+		
+			target_country = c:SHN
+			
+			war = no
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:SHN
+				type = annex_country
+				target_country = c:SHU
+			}
+		}
+			
+	}
+
 	}
 }
