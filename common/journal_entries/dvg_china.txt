@@ -7,7 +7,7 @@ je_decline_of_great_shun_main = {
 	immediate = {
 		set_variable = {
 			name = dvg_shun_var
-			value = 2
+			value = 4
 		}
 	}
 
@@ -22,6 +22,146 @@ je_decline_of_great_shun_main = {
 		trigger_event = {
 			id = dvg_shun.2
 		}
+	}
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					ig:ig_landowners = {
+						is_powerful = no
+						is_in_government = yes
+					}
+				}
+				change_variable = {
+					name = dvg_shun_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					owns_entire_state_region = STATE_NANJING
+					NOT = {has_variable = shun_nanjing}
+				}
+				change_variable = {
+					name = dvg_shun_var
+					add = 2
+				}
+				set_variable = shun_nanjing
+			}
+			if = {
+				limit = {
+					is_country_type = recognized
+					NOT = {has_variable = shun_recognized}
+				}
+				change_variable = {
+					name = dvg_shun_var
+					add = 1
+				}
+				set_variable = shun_recognized
+			}
+			if = {
+				limit = {
+					ig:ig_landowners = {
+						is_powerful = no
+						is_in_government =  no
+					}
+
+				}
+				change_variable = {
+					name = dvg_shun_var
+					add = 2
+				}
+			}
+			if = {
+				limit = {
+					authority >= 800  
+
+				}
+				change_variable = {
+					name = dvg_shun_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					bureaucracy >= 800  
+
+				}
+				change_variable = {
+					name = dvg_shun_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					government_legitimacy >= 80  
+
+				}
+				change_variable = {
+					name = dvg_shun_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						owns_entire_state_region = STATE_BEIJING
+					}
+
+				}
+				change_variable = {
+					name = dvg_shun_var
+					subtract = 4
+				}
+				set_variable = beijing_lost
+			}
+			if = {
+				limit = {
+					NOT = { has_variable = shu_war_loser }
+					OR = {
+						has_variable = recently_lost_war
+						AND = {
+							has_variable = recently_had_war
+							NOT = {
+								has_variable = recently_won_war
+							}
+						}
+					} 
+				}
+				change_variable = {
+					name = dvg_shun_var
+					subtract = 1
+				}
+				set_variable = shu_war_loser
+			}
+			if = {
+				limit = {
+					NOT = { has_variable = shun_loans }
+					taking_loans = yes
+				}
+				change_variable = {
+					name = dvg_shun_var
+					subtract = 1
+				}
+				set_variable = shun_loans
+			}
+			if = {
+				limit = {
+					OR = {
+						in_default = yes
+						has_modifier = declared_bankruptcy
+					}
+					NOT = { has_variable = shun_bankruptcy }
+				}
+				change_variable = { name = dvg_shun_var subtract = 2 }
+				set_variable = { name = shun_bankruptcy }
+			}
+			
+		}
+	}
+
+	fail = {
+		
 	}
 
 	timeout = 7300
@@ -47,69 +187,6 @@ je_decline_of_great_shun_main = {
 	weight = 10000
 	should_be_pinned_by_default = yes
 }
-
-je_conquer_taiwan = {
-	icon = "gfx/interface/icons/event_icons/event_military.dds"
-
-	group = je_group_foreign_affairs
-
-	complete = {
-		NOT = {
-			any_scope_state = {
-		
-				count >= 2
-						
-					AND = {	
-						region = sr:region_south_china
-						
-						
-						owner = c:FRS
-		
-					}
-					}
-		}
-		
-		any_scope_state = {
-		
-				count = 0
-						
-					AND = {	
-						region = sr:region_north_china
-						
-						
-						owner = c:FRS
-		
-					}
-		}
-	}
-
-	on_complete = {
-		custom_tooltip = decline_of_shun_advance
-		change_variable = {
-			name = dvg_shun_var
-			add = 2
-		}
-		set_variable = completed_reclaim_formosa
-	}
-
-	invalid = {
-		custom_tooltip = {
-			text = finished_sick_man_tt
-			has_variable = sick_man_complete
-		}
-	}
-
-#	on_weekly_pulse = {
-#		events = {
-#			egyptian_crisis_events.1
-#		}
-#	}
-
-	
-
-	weight = 5000
-}
-
 je_conquer_beijing_manchus = {
 	icon = "gfx/interface/icons/invention_icons/artillery.dds"
 	
