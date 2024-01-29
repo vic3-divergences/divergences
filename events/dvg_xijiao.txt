@@ -289,7 +289,10 @@ dvg_xijiao.4 = {
 	duration = 3
 
 	trigger = {
+		NOT = {
 
+			is_diplomatic_play_enemy_of = c:TPG
+		}
 	}
 	immediate = {
 		hidden_effect = {
@@ -332,17 +335,8 @@ dvg_xijiao.4 = {
 			limit = { has_journal_entry = je_warlord_china }
 			chi_remove_1_fragile_unity = yes
 		}
-		add_modifier = {
-			name = taiping_taiping_rebellion
-			months = long_modifier_time
-		}
-		c:TPG = {		
-			add_modifier = {
-				name = taiping_taiping_rebellion
-				months = long_modifier_time
-			}
-			
-		}
+		
+		
 		
 		
 	}
@@ -351,22 +345,27 @@ dvg_xijiao.4 = {
 	option = {
 		name = dvg_xijiao.4.a
 		default_option = yes
-		ai_chance = { base = 1 }
 		
+		
+		every_country = {
+			limit = { country_has_state_religion = rel:taiping }
+			save_scope_as = tpg_revolt
+		}
 		add_journal_entry = {
 			type = je_xijiao_conquer
 		}
 		
+		
 		create_diplomatic_play = {
 			
-			target_country = c:TPG
+			target_country = scope:tpg_revolt
 			
 			war = no
 			
-			type = dp_unify_china
+			type = dp_rebellion_annex
 
 			add_war_goal = {
-				holder = c:TPG
+				holder = scope:tpg_revolt
 				type = annex_country
 				target_country = ROOT
 			}
@@ -374,32 +373,8 @@ dvg_xijiao.4 = {
 			
 		}
 		
-		
-		hidden_effect = {
-			c:TPG = {
-				ROOT = {
-					add_treasury = prev.var:gold_transfer_nil
-				}
-				add_treasury = var:gold_transfer	
-			}
-			
-			every_state = {
-				limit = {
-					owner = ROOT
-					OR = {	
-						is_split_state = no
-						state_region = {
-							any_state = {
-								is_treaty_port = yes
-							}
-						}
-					}
-				}
-				this.state_region = {
-					add_claim = c:TPG
-				}
-			}
-		}	
+	
+		ai_chance = { base = 100 }	
 	}
 	
 }
@@ -482,7 +457,8 @@ dvg_xijiao.5 = {
 			}
 		}
 		
-		
+		ai_chance = { base = 01 }	
+
 		
 	}
 	option = { # mercy and pardons
@@ -491,6 +467,32 @@ dvg_xijiao.5 = {
 			value = 0.2
 			religion = rel:taiping
 		}
+		ai_chance = { base = 01 }	
+
+	}
+	option = { #unify China
+		name = dvg_xijiao.5.c
+		random_country = {
+			limit = {
+				country_has_primary_culture = cu:han
+				is_adjacent_to_country = ROOT
+			}
+			save_scope_as = chi_target
+		}
+		create_diplomatic_play = {
+			type = dp_unify_china
+
+			war = no
+
+			target_country = scope:chi_target
+
+			add_war_goal = {
+				holder = scope:chi_target
+				type = annex_country
+			}
+		}
+		ai_chance = { base = 100 }	
+
 	}
 }
 
@@ -809,7 +811,7 @@ dvg_xijiao.9 = {
 				country_has_primary_culture = cu:han
 				NOT = {  country_has_state_religion = rel:taiping }
 			}
-			trigger_event = { id = dvg_xijiao.4}
+			
 		}
 		change_infamy = -1000
 		change_infamy = 50
