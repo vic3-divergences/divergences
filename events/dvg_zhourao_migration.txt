@@ -1,0 +1,204 @@
+﻿namespace = zhr_migration
+# South America Migration events
+
+# SA migration button event
+zhr_migration.1 = {
+	type = country_event
+	placement = scope:migration_target_state
+	
+	title = zhr_migration.1.t
+	desc = zhr_migration.1.d
+	flavor = zhr_migration.1.f
+	
+	event_image = {
+		video = "asia_union_leader"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+	
+	duration = 3
+	
+	trigger = {
+		# triggered by southamerica_migration_button
+	}
+
+	immediate = {
+		# Note that this closely reflects triggers in the button. Do not change one without changing both
+		random_country = {
+			limit = {
+				country_rank <= rank_value:major_power
+				custom_tooltip = {
+					text = is_in_china_tt
+					any_primary_culture = {
+						has_discrimination_trait = sinosphere
+					}
+				}
+				
+				average_sol <= root.average_sol
+				any_primary_culture = {
+					culture_can_have_mass_migration_to = ROOT
+				}
+				any_scope_state = {
+					is_incorporated = yes
+					custom_tooltip = {
+						text = is_in_china_tt
+						state_region = {
+							is_homeland = cu:han
+						}
+					}
+					count >= 3
+				}
+			}
+			save_scope_as = migration_country
+			random_scope_state = {
+				limit = {
+					is_incorporated = yes
+					state_region = {
+						is_homeland = cu:han
+					}
+					any_scope_culture = {
+						has_homeland = PREV
+						culture_can_have_mass_migration_to = ROOT
+					}
+				}
+				save_scope_as = migration_state
+				random_scope_culture = {
+					limit = {
+						has_homeland = PREV
+						culture_can_have_mass_migration_to = ROOT
+					}
+					save_scope_as = migration_culture
+				}
+			}
+
+		}
+		ordered_scope_state = {
+			limit = {
+				
+				trigger_else_if = {
+					limit = {
+						owner = c:LAN
+					}
+					is_incorporated = yes
+				}
+				
+			}
+			order_by = average_sol
+			save_scope_as = migration_target_state
+		}
+	}
+
+	option = {
+		name = zhr_migration.1.a
+		add_modifier = {
+			name = zhr_migration_cost
+			months = normal_modifier_time
+		}
+		scope:migration_target_state = {
+			create_mass_migration = {
+				origin = scope:migration_country
+				culture = scope:migration_culture
+			}
+		}
+	}
+}
+
+# Startup event
+zhr_migration.2 = {
+	type = country_event
+	placement = ROOT
+	
+	title = zhr_migration.2.t
+	desc = zhr_migration.2.d
+	flavor = zhr_migration.2.f
+	
+	event_image = {
+		video = "asia_poor_people_moving"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+	
+	duration = 3
+	
+	trigger = {
+		# triggered by je_south_america_migration
+	}
+
+	option = {
+		name = zhr_migration.2.a
+		default_option = yes
+		custom_tooltip = {
+			text = zhr_migration_button_exists_tt
+			set_variable = enable_zhr_migration_button
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_south_america_migration
+			}
+			custom_tooltip = {
+				text = zhr_migration2_tt
+				every_scope_state = {
+					limit = {
+						is_incorporated = yes
+						state_is_in_south_america = yes
+					}
+					add_modifier = {
+						name = zhr_migration_attraction
+						months = long_modifier_time
+					}
+				}
+			}
+		}
+		
+		
+
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+	option = {
+		name = zhr_migration.2.b
+		custom_tooltip = zhr_migration_cancel_tt
+		set_variable = cancel_zhr_migration_var
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+
+# Completion event
+zhr_migration.3 = {
+	type = country_event
+	placement = ROOT
+	
+	title = zhr_migration.3.t
+	desc = zhr_migration.3.d
+	flavor = zhr_migration.3.f
+	
+	event_image = {
+		video = "africa_construction_colony"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+	
+	duration = 3
+	
+	trigger = {
+		# triggered by je_south_america_migration
+	}
+
+	option = {
+		name = zhr_migration.3.a
+		add_modifier = {
+			name = populated_southamerica
+		}
+	}
+}
+

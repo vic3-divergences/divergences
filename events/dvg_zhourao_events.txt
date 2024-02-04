@@ -749,6 +749,10 @@ dvg_zhourao.10 = {
 		ai_chance = {
 			base = 1
 		}
+		
+		#this is just here to clean the error log, only ONE option will show up in-game
+		default_option = yes
+		
 	}
 	# Reunification is complete!
 	option = {
@@ -1332,6 +1336,7 @@ dvg_zhourao.702 = {
 	duration = 3
 
 	trigger = {
+		has_journal_entry = je_red_sultan
 	}
 	
 	immediate = {
@@ -1461,11 +1466,11 @@ dvg_zhourao.703 = {
 				name = dvg_zhusha_stability_of_succession_variable_var
 				add = 3
 			}
-			trigger_event = { id = dvg_zhourao.715 days = 800 popup = yes } #xinjiao
-			trigger_event = { id = dvg_zhourao.716 days = 2400 popup = yes } #jinxingtang
-			trigger_event = { id = dvg_zhourao.712 days = 3280 popup = yes } #concerns over islam
-			trigger_event = { id = dvg_zhourao.717 days = 4015 popup = yes } #weeb prince
-			trigger_event = { id = dvg_zhourao.702 days = 6570 popup = yes } #yalai raid
+			trigger_event = { id = dvg_zhourao.715 days = 80 popup = yes } #xinjiao
+			trigger_event = { id = dvg_zhourao.716 days = 240 popup = yes } #jinxingtang
+			trigger_event = { id = dvg_zhourao.712 days = 328 popup = yes } #concerns over islam
+			trigger_event = { id = dvg_zhourao.717 days = 401 popup = yes } #weeb prince
+			trigger_event = { id = dvg_zhourao.702 days = 657 popup = yes } #yalai raid
 		}
 
 		ai_chance = {
@@ -1498,6 +1503,18 @@ dvg_zhourao.704 = {
 	}
 	
 	immediate = {
+		ig:ig_armed_forces = {
+			save_scope_as = armed_forces_ig
+			leader = {
+				save_scope_as = leader_luoxi
+			}
+		}
+		ig:ig_landowners = {
+			save_scope_as = landowners_ig
+			leader = {
+				save_scope_as = leader_lushou
+			}
+		}
 	}
 	
 	# Lushou
@@ -1510,28 +1527,22 @@ dvg_zhourao.704 = {
 		}
 		trigger = {
 			has_variable = dvg_zhusha_stability_of_succession_variable_var
-			this = { var:dvg_zhusha_stability_of_succession_variable_var = 0 }
+			this = { var:dvg_zhusha_stability_of_succession_variable_var <= 2 }
+		}
+		scope:leader_lushou = {
+			set_character_as_ruler = yes
+
+			remove_trait = immortal
+		}
+		scope:leader_luoxi = {
+			remove_trait = immortal
 		}
 		hidden_effect = {
 			change_relations = {
 				country = c:DUA
 				value = 50
 			}
-			create_character = {
-				first_name = "Ma"
-				last_name = "Lushou"
-				birth_date = 1796.9.13
-				culture = cu:zhourao
-				ruler = yes
-				religion = sunni
-				noble = yes
-				interest_group = ig_landowners
-				ideology = ideology_ethno_nationalist
-				traits = { 
-					charismatic
-					ambitious
-				}
-			}
+			
 		}
 		ai_chance = {
 			base = 1
@@ -1539,7 +1550,7 @@ dvg_zhourao.704 = {
 	}
 	# Luoxi
 	option = {
-		name = dvg_zhourao.704.a
+		name = dvg_zhourao.704.b
 		default_option = yes
 		add_loyalists = {
 			value = 0.1
@@ -1547,28 +1558,22 @@ dvg_zhourao.704 = {
 		}
 		trigger = {
 			has_variable = dvg_zhusha_stability_of_succession_variable_var
-			this = { var:dvg_zhusha_stability_of_succession_variable_var = 6 }
+			this = { var:dvg_zhusha_stability_of_succession_variable_var >= 4 }
+		}
+		scope:leader_lushou = {
+
+			remove_trait = immortal
+		}
+		scope:leader_luoxi = {
+			set_character_as_ruler = yes
+			remove_trait = immortal
 		}
 		hidden_effect = {
 			change_relations = {
 				country = c:JAP
 				value = 50
 			}
-			create_character = {
-				first_name = "Ma"
-				last_name = "Luoxi"
-				birth_date = 1795.10.24
-				culture = cu:zhourao
-				ruler = yes
-				religion = sunni
-				noble = yes
-				interest_group = ig_armed_forces
-				ideology = ideology_reformer
-				traits = { 
-					charismatic
-					ambitious
-				}
-			}
+			
 		}
 		ai_chance = {
 			base = 1
@@ -1602,7 +1607,8 @@ dvg_zhourao.705 = {
 	immediate = { #So I somehow have to get the stab. succ. var here.
 		add_modifier = {
 			name = dvg_red_princed
-			days = -1
+			days = 365
+			is_decaying = yes
 		}
 		hidden_effect = {
 			set_variable = {
@@ -1632,12 +1638,10 @@ dvg_zhourao.705 = {
 		hidden_effect = {
 			change_variable = {
 				name = dvg_zhusha_princely_power_variable_var
-				add = 6
+				add = 4
 			}
 		}
-		trigger = {
-			this = { var:dvg_zhusha_stability_of_succession_variable_var > 4 }
-		}
+		
 		trigger_event = { id = dvg_zhourao.709 days = 60 }
 		c:DUA = {
 			trigger_event = { id = dvg_zhourao.706 days = 30 }
@@ -1666,222 +1670,7 @@ dvg_zhourao.705 = {
 			base = 1
 		}
 	}
-	# shit 4
-	option = {
-		name = dvg_zhourao.705.a
-		default_option = yes
-		add_radicals = {
-			value = 0.1
-			culture = cu:zhourao
-		}
-		hidden_effect = {
-			set_variable = {
-				name = dvg_zhusha_princely_power_variable_var
-				value = 0
-			}
-		}
-		add_journal_entry = {
-			type = je_red_prince
-		}
-		hidden_effect = {
-			change_variable = {
-				name = dvg_zhusha_princely_power_variable_var
-				add = 5
-			}
-		}
-		trigger = {
-			this = { var:dvg_zhusha_stability_of_succession_variable_var < 4 }
-		}
-		trigger_event = { id = dvg_zhourao.709 days = 60 }
-		c:DUA = {
-			trigger_event = { id = dvg_zhourao.706 days = 30 }
-		}
-		c:JAP = {
-			trigger_event = { id = dvg_zhourao.706 days = 30 }
-		}
-		if = {
-			limit = {
-				exists = c:ZHR
-			}
-			c:ZHR  = {
-				trigger_event = { id = dvg_zhourao.706 days = 30 }
-			}
-		}
-		if = {
-			limit = {
-				exists = c:MJN
-			}
-			c:MJN  = {
-				trigger_event = { id = dvg_zhourao.706 days = 30 }
-			}
-		}
-
-		ai_chance = {
-			base = 1
-		}
-	}
-	# shit 3
-	option = {
-		name = dvg_zhourao.705.a
-		default_option = yes
-		add_radicals = {
-			value = 0.1
-			culture = cu:zhourao
-		}
-		hidden_effect = {
-			set_variable = {
-				name = dvg_zhusha_princely_power_variable_var
-				value = 0
-			}
-		}
-		add_journal_entry = {
-			type = je_red_prince
-		}
-		hidden_effect = {
-			change_variable = {
-				name = dvg_zhusha_princely_power_variable_var
-				add = 3
-			}
-		}
-		trigger = {
-			this = { var:dvg_zhusha_stability_of_succession_variable_var = 3 }
-		}
-		trigger_event = { id = dvg_zhourao.709 days = 60 }
-		c:DUA = {
-			trigger_event = { id = dvg_zhourao.706 days = 30 }
-		}
-		c:JAP = {
-			trigger_event = { id = dvg_zhourao.706 days = 30 }
-		}
-		if = {
-			limit = {
-				exists = c:ZHR
-			}
-			c:ZHR  = {
-				trigger_event = { id = dvg_zhourao.706 days = 30 }
-			}
-		}
-		if = {
-			limit = {
-				exists = c:MJN
-			}
-			c:MJN  = {
-				trigger_event = { id = dvg_zhourao.706 days = 30 }
-			}
-		}
-
-		ai_chance = {
-			base = 1
-		}
-	}
-	# shit 2
-	option = {
-		name = dvg_zhourao.705.a
-		default_option = yes
-		add_radicals = {
-			value = 0.1
-			culture = cu:zhourao
-		}
-		hidden_effect = {
-			set_variable = {
-				name = dvg_zhusha_princely_power_variable_var
-				value = 0
-			}
-		}
-		add_journal_entry = {
-			type = je_red_prince
-		}
-		hidden_effect = {
-			change_variable = {
-				name = dvg_zhusha_princely_power_variable_var
-				add = 3
-			}
-		}
-		trigger = {
-			this = { var:dvg_zhusha_stability_of_succession_variable_var = 2 }
-		}
-		trigger_event = { id = dvg_zhourao.709 days = 60 }
-		c:DUA = {
-			trigger_event = { id = dvg_zhourao.706 days = 30 }
-		}
-		c:JAP = {
-			trigger_event = { id = dvg_zhourao.706 days = 30 }
-		}
-		if = {
-			limit = {
-				exists = c:ZHR
-			}
-			c:ZHR  = {
-				trigger_event = { id = dvg_zhourao.706 days = 30 }
-			}
-		}
-		if = {
-			limit = {
-				exists = c:MJN
-			}
-			c:MJN  = {
-				trigger_event = { id = dvg_zhourao.706 days = 30 }
-			}
-		}
-
-		ai_chance = {
-			base = 1
-		}
-	}
-	# shit 1
-	option = {
-		name = dvg_zhourao.705.a
-		default_option = yes
-		add_radicals = {
-			value = 0.1
-			culture = cu:zhourao
-		}
-		hidden_effect = {
-			set_variable = {
-				name = dvg_zhusha_princely_power_variable_var
-				value = 0
-			}
-		}
-		add_journal_entry = {
-			type = je_red_prince
-		}
-		hidden_effect = {
-			change_variable = {
-				name = dvg_zhusha_princely_power_variable_var
-				add = 2
-			}
-		}
-		trigger = {
-			this = { var:dvg_zhusha_stability_of_succession_variable_var = 1 }
-		}
-		trigger_event = { id = dvg_zhourao.709 days = 60 }
-		c:DUA = {
-			trigger_event = { id = dvg_zhourao.706 days = 30 }
-		}
-		c:JAP = {
-			trigger_event = { id = dvg_zhourao.706 days = 30 }
-		}
-		if = {
-			limit = {
-				exists = c:ZHR
-			}
-			c:ZHR  = {
-				trigger_event = { id = dvg_zhourao.706 days = 30 }
-			}
-		}
-		if = {
-			limit = {
-				exists = c:MJN
-			}
-			c:MJN  = {
-				trigger_event = { id = dvg_zhourao.706 days = 30 }
-			}
-		}
-
-		ai_chance = {
-			base = 1
-		}
-	}
+	
 }
 
 # Red Princes War breaks out
@@ -2400,6 +2189,7 @@ dvg_zhourao.712 = {
 	duration = 3
 
 	trigger = {
+		has_journal_entry = je_red_sultan
 	}
 	
 	immediate = {
@@ -2476,6 +2266,19 @@ dvg_zhourao.713 = {
 	}
 	
 	immediate = {
+
+		ig:ig_armed_forces = {
+			save_scope_as = armed_forces_ig
+			leader = {
+				save_scope_as = leader_luoxi
+			}
+		}
+		ig:ig_landowners = {
+			save_scope_as = landowners_ig
+			leader = {
+				save_scope_as = leader_lushou
+			}
+		}
 	}
 	
 	# Lushou
@@ -2484,6 +2287,14 @@ dvg_zhourao.713 = {
 		default_option = yes
 		trigger = {
 			has_variable = lushou_won_red_prince_war
+		}
+		scope:leader_lushou = {
+			set_character_as_ruler = yes
+
+			remove_trait = immortal
+		}
+		scope:leader_luoxi = {
+			remove_trait = immortal
 		}
 		remove_modifier = dvg_red_princed
 		add_modifier = {
@@ -2502,12 +2313,20 @@ dvg_zhourao.713 = {
 		trigger = {
 			has_variable = luoxi_won_red_prince_war
 		}
+		scope:leader_luoxi = {
+			set_character_as_ruler = yes
+			remove_trait = immortal
+		}
+		scope:leader_lushou = {
+			remove_trait = immortal
+		}
 		remove_modifier = dvg_red_princed
 		add_modifier = {
 			name = dvg_red_prince_recovery
 			days = 365
 			is_decaying	= yes
 		}
+		
 		ai_chance = {
 			base = 1
 		}
@@ -2584,6 +2403,7 @@ dvg_zhourao.715 = {
 	duration = 3
 
 	trigger = {
+		has_journal_entry = je_red_sultan
 	}
 	
 	immediate = {
@@ -2620,6 +2440,7 @@ dvg_zhourao.716 = {
 	duration = 3
 
 	trigger = {
+		has_journal_entry = je_red_sultan
 	}
 	
 	immediate = {
@@ -2656,6 +2477,7 @@ dvg_zhourao.717 = {
 	duration = 3
 
 	trigger = {
+		has_journal_entry = je_red_sultan
 	}
 	
 	immediate = {
@@ -2746,8 +2568,15 @@ dvg_zhourao.719 = {
 	option = {
 		name = dvg_zhourao.719.a
 		default_option = yes
+		
 		custom_tooltip = {
 			text = dvg_the_end_tt
+			scope:leader_lushou = {	
+				remove_trait = immortal
+			}
+			scope:leader_luoxi = {
+				remove_trait = immortal
+			}
 			if = {
 				limit = {
 					NOT = { has_law = law_type:law_presidential_republic }
@@ -2921,6 +2750,45 @@ dvg_zhourao.1002 = {
 		}
 		ai_chance = {
 			base = 0
+		}
+	}
+}
+dvg_zhourao.1100 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_zhourao.1100.t
+	desc = dvg_zhourao.1100.d
+	flavor = dvg_zhourao.1100.f
+
+	event_image = {
+		video = "asia_farmers_market"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_zhourao_ink.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+	}
+	
+	# For democracy!
+	option = {
+		name = dvg_zhourao.1100.a
+		every_state_region = {
+			limit = {
+			OR = {
+				is_homeland = cu:aborigine
+				}
+			
+			}
+			add_homeland = cu:zhourao
 		}
 	}
 }

@@ -1,7 +1,10 @@
 ﻿dvg_embrace_han = {
 	is_shown = {
 		NOT = { country_has_primary_culture = cu:han }
-		NOT = { has_game_rule = plausible_formable_nations }
+		OR = {
+		has_interest_marker_in_region = region_south_china
+		has_interest_marker_in_region = region_north_china
+		}
 		ROOT = {
 			culture_percent_country = {
 			  target = cu:han
@@ -22,7 +25,6 @@
 			}
 		any_scope_state = {
 						is_incorporated = yes
-						is_capital = no
 						state_region = { 
 							OR = {
 								is_homeland = cu:han
@@ -37,23 +39,274 @@
 		has_law = law_type:law_racial_segregation
 		has_law = law_type:law_cultural_exclusion
 		}
-		has_technology_researched = pan-nationalism
 		OR = {
 		  any_primary_culture = {
 				has_discrimination_trait = sinosphere
 			}
+		   any_primary_culture = {
+				has_discrimination_trait = han_chinese
+			}
 		ROOT = {
 			culture_percent_country = {
 			  target = cu:han
-			  value >= 0.55
+			  value >= 0.65
 			}
 		}
 		}
-}
+	}
 
     when_taken = {
 		
 		add_primary_culture = cu:han
+
+		add_journal_entry = {
+				type = je_china_reunification_outsider
+			}
+		
+    }
+
+	ai_chance = {
+		base = 100
+	}
+}
+
+dvg_dzu_tib_union = {
+	is_shown = {
+	
+		country_has_primary_culture = cu:mongol
+		country_has_state_religion = rel:gelugpa
+		
+		exists = c:TIB
+
+		OR = {
+		
+		has_law = law_type:law_monarchy
+		has_law = law_type:law_theocracy
+
+		}
+		
+		c:TIB = {has_law = law_type:law_theocracy }
+
+		NOT = {
+			has_global_variable = dzu_tib_united
+		}
+	}
+
+    possible = {
+
+		has_law = law_type:law_state_religion
+		has_law = law_type:law_cultural_exclusion
+		NOT = {has_journal_entry = je_galdan_khan}
+		has_technology_researched = pan-nationalism
+			c:TIB = {
+				is_at_war = no
+				
+				market = {
+					owner = ROOT
+				}
+				
+				has_law = law_type:law_theocracy
+				
+				owner = {
+					is_ai = yes
+					
+					relations:root >= relations_threshold:amicable
+					
+					this.gdp < root.gdp
+				}
+				
+		}
+		
+	}
+		
+
+    when_taken = {
+		trigger_event = { id = dvg_dzungaria.7 popup = yes }
+		set_global_variable = {
+			name = dzu_tib_united
+			value = 0
+		}
+    }
+
+	ai_chance = {
+		base = 100
+	}
+}
+
+dvg_annex_siberia = {
+	is_shown = {
+	
+		NOT = { is_country_type = decentralized }
+		exists = c:SIB
+
+
+
+		any_primary_culture = {
+			has_discrimination_trait = north_asian_heritage
+		}
+		any_neighbouring_state = {
+			owner = {is_country_type = decentralized}
+		}
+		has_interest_marker_in_region = sr:region_west_siberia
+		
+	}
+
+    possible = {
+
+		OR = {
+			is_player = yes
+			year >= 1900
+			is_country_type = recognized
+		}
+		has_technology_researched = nationalism
+		has_technology_researched = colonization
+		NOT = { has_law = law_type:law_no_colonial_affairs }
+		army_size >= 20
+		
+	
+	}
+
+    when_taken = {
+		every_country = {
+			if = {
+				limit = {
+					is_ai = yes			
+					is_country_type = decentralized
+					any_primary_culture = {
+						has_discrimination_trait = north_asian_heritage
+						
+					}
+					any_scope_state = {
+						region = sr:region_west_siberia
+					}
+
+				}			
+				root = { annex = prev }
+			}
+		}
+		create_incident = {
+			country = ROOT
+			value = 5
+		}
+    }
+
+	ai_chance = {
+		base = 100
+	}
+}
+dvg_annex_yakutia = {
+	is_shown = {
+	
+		NOT = { is_country_type = decentralized }
+		exists = c:YAK
+
+
+		any_primary_culture = {
+			has_discrimination_trait = north_asian_heritage
+		}
+		any_neighbouring_state = {
+			owner = {is_country_type = decentralized}
+		}
+		has_interest_marker_in_region = sr:region_east_siberia
+
+		
+	}
+
+    possible = {
+
+		OR = {
+			is_player = yes
+			year >= 1900
+			is_country_type = recognized
+		}
+		has_technology_researched = nationalism
+		has_technology_researched = colonization
+		NOT = { has_law = law_type:law_no_colonial_affairs }
+		army_size >= 20
+		
+	
+	}
+
+    when_taken = {
+		every_country = {
+			if = {
+				limit = {
+					is_ai = yes			
+					is_country_type = decentralized
+					any_primary_culture = {
+						has_discrimination_trait = north_asian_heritage
+					}
+					any_scope_state = {
+						region = sr:region_east_siberia
+					}
+				}			
+				root = { annex = prev }
+			}
+		}
+		create_incident = {
+			country = ROOT
+			value = 5
+		}
+    }
+
+	ai_chance = {
+		base = 100
+	}
+}
+dvg_tib_dzu_union = {
+	is_shown = {
+	
+		country_has_primary_culture = cu:tibetan
+		country_has_state_religion = rel:gelugpa
+		
+		exists = c:TIB
+		exists = c:DZU
+
+		has_law = law_type:law_theocracy
+
+		
+		c:TIB = ROOT
+		c:TIB = {has_law = law_type:law_theocracy }
+		c:DZU = {country_has_state_religion = rel:gelugpa}
+
+		NOT = {
+			has_global_variable = dzu_tib_united
+		}
+	}
+
+    possible = {
+
+		has_law = law_type:law_state_religion
+		has_law = law_type:law_cultural_exclusion
+		has_technology_researched = pan-nationalism
+			c:DZU = {
+				is_at_war = no
+				
+				market = {
+					owner = ROOT
+				}
+				
+				has_law = law_type:law_state_religion
+				
+				owner = {
+					is_ai = yes
+					
+					relations:root >= relations_threshold:amicable
+					
+					this.gdp < root.gdp
+				}
+				
+		}
+		
+	}
+		
+
+    when_taken = {
+		trigger_event = { id = dvg_dzungaria.8 popup = yes }
+		set_global_variable = {
+			name = dzu_tib_united
+			value = 0
+		}
     }
 
 	ai_chance = {

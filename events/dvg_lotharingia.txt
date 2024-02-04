@@ -390,15 +390,14 @@ dvg_lotharingia.5 = { #Split Lotharingia up into warlord states
 	}
 
 	immediate = {
+		
 		set_global_variable = lotharingia_shatters
 
 		remove_global_variable = atlantia_indepdendent
 		
 		set_variable = chinese_central_government
 		
-		s:STATE_TRANSFLEUVE = {
-			add_claim = c:BEO
-		}
+		
 		s:STATE_LIBREVILLE = {
 			add_claim = c:ATL
 		}
@@ -490,6 +489,7 @@ s:STATE_MARCHES_OUEST = {
 				state = s:STATE_GRAND_CHACO.region_state:LOT
 				state = s:STATE_EOFERWIC.region_state:LOT
 				state = s:STATE_NORTHUMBRIA.region_state:LOT
+				state = s:STATE_AMAZONIE_INFERIEURE.region_state:LOT
 
 				on_created = {
 					warlord_setup_effect = yes
@@ -1240,7 +1240,7 @@ dvg_lotharingia.10 = {
 			}
 			scope:atlantia_state = {
 				state_region = {
-					add_homeland = lotharian #DVG
+					add_homeland = cu:lotharian #DVG
 				}
 			}
 		}
@@ -1383,11 +1383,14 @@ dvg_lotharingia.12 = { #A statue made of the king
 	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
 
 	trigger = {
+		OR = {
 		
 		any_scope_state = {
 			is_incorporated = yes
 			has_building = building_urban_center
 			
+		}
+
 		}
 		
 	}
@@ -1646,6 +1649,280 @@ dvg_lotharingia.14 = {
 
 		ai_chance = {
 			base = 80
+		}
+	}
+}
+# De Aigle criticized
+dvg_lotharingia.15 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_lotharingia.15.t
+	desc = dvg_lotharingia.15.d
+	flavor = dvg_lotharingia.15.f
+	
+	event_image = {
+		video = "southamerica_election"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+	    has_journal_entry = je_lotharian_house_of_cards
+
+		has_variable = aigle_var
+		this = { var:aigle_var >= 140 }
+
+		has_technology_researched = mass_communication
+	}
+	
+	
+	# Vive!
+	option = {
+		name = dvg_lotharingia.15.a
+		default_option = yes
+		
+		
+		add_radicals = {
+			value = 0.4
+			culture = cu:lotharian
+		}
+
+		c:ATL = { trigger_event = { id = dvg_lotharingia.16 popup = yes days = 15 } }
+
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+# Varennes Convention
+dvg_lotharingia.16 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_lotharingia.16.t
+	desc = dvg_lotharingia.16.d
+	flavor = dvg_lotharingia.16.f
+	
+	event_image = {
+		video = "europenorthamerica_capitalists_meeting"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+	    
+	}
+	
+	
+	# Vive!
+	option = {
+		name = dvg_lotharingia.16.a
+		default_option = yes
+		
+		c:LOT = { trigger_event = { id = dvg_lotharingia.17 popup = yes days = 15 } }
+
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+dvg_lotharingia.17 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_lotharingia.17.t
+	desc = dvg_lotharingia.17.d
+	flavor = dvg_lotharingia.17.f
+	
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	immediate = {
+
+		ruler = {
+			save_scope_as = de_aigle_scope
+		}
+
+		c:ATL = {	save_scope_as = scope_ATL}
+		
+		c:ATL = {ruler = {
+			save_scope_as = atl_ruler
+		}
+		}
+		
+	}
+
+	trigger = {
+	    
+	}
+	
+	
+	# Vive!
+	option = {
+		name = dvg_lotharingia.17.a
+		default_option = yes
+		custom_tooltip = {
+		text = lot_split_tt
+		
+		if = {
+			limit = { exists = s:STATE_BOURGOGNE_DU_SUD.region_state:LOT }
+			create_country = { #Odonia
+				tag = ODO
+				origin = this
+				state = s:STATE_BOURGOGNE_DU_SUD.region_state:LOT
+				state = s:STATE_TRANSFLEUVE.region_state:LOT
+
+				on_created = {
+					warlord_setup_effect = yes
+					set_variable = warlord_state
+				}
+			}
+			c:ODO = { save_scope_as = scope_ODO }
+			if = {
+				limit = { exists = s:STATE_BOURGOGNE_DU_SUD.region_state:LOT }
+				s:STATE_BOURGOGNE_DU_SUD.region_state:LOT = { set_state_owner = c:ODO }
+			}
+			if = {
+				limit = { exists = s:STATE_TRANSFLEUVE.region_state:LOT }
+				s:STATE_TRANSFLEUVE.region_state:LOT = { set_state_owner = c:ODO }
+			}
+		}
+		if = {
+			limit = { exists = s:STATE_NOUVELLE_ALSACE.region_state:LOT }
+			create_country = { #Nouvelle Alsace
+				tag = NEA
+				origin = this
+				state = s:STATE_NOUVELLE_ALSACE.region_state:LOT
+				state = s:STATE_LIBREVILLE.region_state:LOT
+
+				on_created = {
+					warlord_setup_effect = yes
+					set_variable = warlord_state
+				}
+			}
+			c:NEA = { save_scope_as = scope_NEA}
+		}
+		c:LOT = {
+			create_diplomatic_pact = {
+				country = c:ODO
+				type = puppet 
+			}
+			create_diplomatic_pact = {
+				country = c:NEA
+				type = puppet 
+			}
+		}
+		c:ATL = { trigger_event = { id = dvg_lotharingia.18 popup = yes days = 5 } }
+		trigger_event = { id = dvg_lotharingia.18 popup = yes days = 5 }
+		}
+		ai_chance = {
+			base = 30
+		}
+
+	}
+	option = {
+		name = dvg_lotharingia.17.b
+		
+		change_variable = {
+			name = aigle_var
+			add = 15
+		}
+		c:ATL = { trigger_event = { id = dvg_lotharingia.19 popup = yes days = 5 } }
+
+		ai_chance = {
+			base = 70
+		}
+	}
+}
+
+dvg_lotharingia.18 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_lotharingia.18.t
+	desc = dvg_lotharingia.18.d
+	flavor = dvg_lotharingia.18.f
+	
+	event_image = {
+		video = "unspecific_signed_contract"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+	    
+	}
+	
+	
+	# Vive!
+	option = {
+		name = dvg_lotharingia.18.a
+		default_option = yes
+		
+		
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+dvg_lotharingia.19 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_lotharingia.19.t
+	desc = dvg_lotharingia.19.d
+	flavor = dvg_lotharingia.19.f
+	
+	event_image = {
+		video = "unspecific_politicians_arguing"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+	    
+	}
+	
+	
+	# Vive!
+	option = {
+		name = dvg_lotharingia.18.a
+		default_option = yes
+		
+		
+		ai_chance = {
+			base = 100
 		}
 	}
 }

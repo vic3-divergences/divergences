@@ -52,6 +52,7 @@ dvg_amazonie.1 = {
 		add_journal_entry = {
 			type = je_antarctica_insurgency
 		}
+		
 		add_loyalists = {
 			value = 0.25
 		}
@@ -69,9 +70,11 @@ dvg_amazonie.1 = {
 		
 		
 		}
+	
 	ai_chance = {
 			base = 100
-		}
+		
+	}
 	}
 }
 
@@ -115,13 +118,16 @@ dvg_amazonie.2 = {
 		add_loyalists = {
 			value = 0.25
 		}
+		add_journal_entry = {
+			type = je_eqx_recognition
+		}
 		ig:ig_devout = {
 			remove_ideology = ideology_moralist
 			add_ideology = ideology_jesuit
 		}
 	add_radicals = {
 			value = 0.15
-			culture = cu:amazonien
+			culture = cu:antarctican
 		}
 	
 	 add_modifier = {
@@ -170,7 +176,7 @@ dvg_amazonie.3 = {
 		
 	add_radicals = {
 			value = 0.25
-			culture = cu:amazonien
+			culture = cu:antarctican
 		}
 	add_loyalists = {
 			value = 0.25
@@ -292,7 +298,7 @@ dvg_amazonie.4 = {
 			
 			add_journal_entry = {
 			type = je_antarctica_independent
-		}
+			}
 	}
 	c:ANT = { save_scope_as = scope_ANT }
 	}   
@@ -339,8 +345,20 @@ dvg_amazonie.4 = {
 						type = war_reparations
 						target_country = c:AMA
 					}
+					
 				
 				}
+		}
+		c:AMA = {
+		    
+		    create_diplomatic_pact = {
+		    	country = c:GOU
+		    	type = protectorate
+		    }
+			create_diplomatic_pact = {
+		    	country = c:EQX
+		    	type = protectorate
+		    }
 		}
 		
 	    ai_chance = {
@@ -417,6 +435,7 @@ dvg_amazonie.5 = {
 				save_scope_as = landowners_leader
 			}
 		}
+	c:AMA = {save_scope_as = scope_AMA}
 	}
 	
 	option = {
@@ -424,6 +443,12 @@ dvg_amazonie.5 = {
 		default_option = yes
 		
 		c:AMA = { trigger_event = { id = dvg_amazonie.6 popup = yes } }
+		add_modifier = {
+			name = dvg_demoratic_miltias
+			days = 365
+			is_decaying = yes
+		}
+
 		ai_chance = {
 			base = 50
 		}
@@ -465,6 +490,11 @@ dvg_amazonie.5 = {
 				country = c:EQX
 				type = puppet
 			}
+		}
+		add_modifier = {
+			name = dvg_demoratic_miltias
+			days = 365
+			is_decaying = yes
 		}
 		create_diplomatic_play = {
 				
@@ -704,7 +734,7 @@ dvg_amazonie.8 = {
 		
 		add_loyalists = {
 			value = 0.20
-			culture = cu:amazonien
+			culture = cu:antarctican
 		}
 		change_variable = {
 				name = antarctica_var
@@ -746,7 +776,7 @@ dvg_amazonie.8 = {
                 }
 		add_radicals = {
 			value = 0.35
-			culture = cu:amazonien
+			culture = cu:antarctican
 		}
 		
 		change_variable = {
@@ -814,6 +844,11 @@ dvg_amazonie.9 = {
 		
 		add_loyalists = {
 			value = 0.25
+			culture = cu:equinoxien
+		}
+		add_radicals = {
+			value = 0.25
+			culture = cu:antarctican
 		}
 		add_radicals = {
 			value = 0.25
@@ -874,6 +909,7 @@ dvg_amazonie.9 = {
 		
 		add_radicals = {
 			value = 0.25
+			culture = cu:equinoxien
 		}
 		change_variable = {
 				name = antarctica_var
@@ -1023,7 +1059,7 @@ dvg_amazonie.10 = {
 	}
 }
 
-dvg_amazonie.12 = {
+dvg_amazonie.12 = { #Amazonien successful integration
 	type = country_event
 	placement = ROOT
 
@@ -1057,16 +1093,13 @@ dvg_amazonie.12 = {
 	option = {
 		name = dvg_amazonie.12.a
 		default_option = yes
-		
+
 		add_loyalists = {
 			value = 0.35
 			culture = cu:afro_amerigan
 		}
-		add_radicals = {
-			value = 0.15
-			culture = cu:amazonien
-		}
 		add_primary_culture = cu:afro_amerigan
+
 	
 		ig:ig_landowners = {
 			set_interest_group_name = ig_landowners
@@ -1102,326 +1135,29 @@ dvg_amazonie.13 = { #Split Amazonie up into warlord states
 	trigger = {
 		exists = c:AMA
 		this = c:AMA
-		NOT = { has_global_variable = amazonie_shatters }
+		
 	}
 
 	immediate = {
-		set_global_variable = amazonie_shatters
-
-		remove_global_variable = atlantia_independent
 		
-		set_variable = amazonien_central_government
 		
-		s:STATE_PARA = {
-			add_claim = c:GRA
-		}
-		s:STATE_GOUAS = {
-			add_claim = c:ATL
-		}
-		
-
-		s:STATE_VAURA = {
-			add_claim = c:AMA
-		}
-		s:STATE_PARA = {
-			add_claim = c:AMA
-		}
-		s:STATE_GOUAS = {
-			add_claim = c:AMA
-		}	
-
-		s:STATE_CAPPADOCE = {
-			add_claim = c:AMA
-		}
-		
-		if = {
-			limit = { exists = s:STATE_VAURA.region_state:AMA }
-			create_country = { #Equinoxea
-				tag = EQX
-				origin = this
-				state = s:STATE_VAURA.region_state:AMA
-				state = s:STATE_PARA.region_state:AMA
-				state = s:STATE_CAPPADOCE.region_state:AMA
-
-				on_created = {
-					warlord_setup_effect = yes
-					set_variable = warlord_state
-				}
-			}
-			c:EQX = { save_scope_as = scope_EQX 
-			activate_law = law_type:law_slavery_banned
-			add_journal_entry = {
-			type = je_amazonie_annex
-		}
-			}
-			if = {
-				limit = { exists = s:STATE_VAURA.region_state:AMA }
-				s:STATE_VAURA.region_state:AMA = { set_state_owner = c:EQX }
-			}
-			if = {
-				limit = { exists = s:STATE_PARA.region_state:AMA }
-				s:STATE_PARA.region_state:AMA = { set_state_owner = c:EQX }
-			}
-		}
-
-		if = {
-			limit = { exists = s:STATE_GOUAS.region_state:AMA }
-			create_country = { #Gouas
-				tag = GOU
-				origin = this
-				state = s:STATE_GOUAS.region_state:AMA
-				state = s:STATE_GOUAS.region_state:AMA
-
-				on_created = {
-					warlord_setup_effect = yes
-					set_variable = warlord_state
-				}
-			}
-			c:GOU = { save_scope_as = scope_GOU}
-		}
-
-		if = {
-			limit = { exists = s:STATE_COTE_DU_CAFE.region_state:AMA }
-			create_country = { #Atlantia
-				tag = ATL 
-				origin = this
-				state = s:STATE_COTE_DU_CAFE.region_state:AMA
-				state = s:STATE_NOUVELLE_ALSACE.region_state:AMA
-				state = s:STATE_LIBREVILLE.region_state:AMA
-
-				on_created = {
-					warlord_setup_effect = yes
-					set_variable = warlord_state
-				}
-			}
-			c:ATL = { save_scope_as = scope_ATL }
-			
-			
-		}
-
-		
-		if = {
-			limit = { exists = s:STATE_CHACO_BOREAL.region_state:AMA }
-			create_country = { #Taragui
-				tag = TGI
-				origin = this
-				state = s:STATE_GRAND_CHACO.region_state:AMA
-				state = s:STATE_MARCHES_OUEST.region_state:AMA
-				state = s:STATE_CHACO_BOREAL.region_state:AMA
-				state = s:STATE_SERMOISE_SUR_ODON.region_state:AMA
-				
-
-				on_created = {
-					warlord_setup_effect = yes
-					set_variable = warlord_state
-				}
-			}
-			
-		}
 		
 
 		
-
-		every_subject_or_below = {
-			limit = {
-				is_subject_of = ROOT
-				OR = {
-					is_subject_type = subject_type_vassal
-					is_subject_type = subject_type_protectorate
-					is_subject_type = subject_type_dominion
-					is_subject_type = subject_type_puppet
-				}
-			}
-			
-			make_independent = yes
-		}
-
-		c:EQX = {
-		 if = {
-			limit = {
-				has_variable = warlord_state
-				NOR = {
-					has_variable = var_breakaway_two
-					has_variable = var_breakaway_three
-					has_variable = var_breakaway_four 
-				}
-			}
-			}
-			save_scope_as = scope_random_warlord_one
-			set_variable = var_breakaway_one
-		}
-
-		c:GOU = {
-		if = {
-			limit = {
-				has_variable = warlord_state
-				NOR = {
-					has_variable = var_breakaway_one
-					has_variable = var_breakaway_three
-					has_variable = var_breakaway_four
-				}
-			}
-			}
-			save_scope_as = scope_random_warlord_two
-			set_variable = var_breakaway_two
-		}
-
-		c:ATL = {
-		if = {
-			limit = {
-				has_variable = warlord_state
-				NOR = {
-					has_variable = var_breakaway_one
-					has_variable = var_breakaway_two
-					has_variable = var_breakaway_four
-				}
-			}
-			}
-			save_scope_as = scope_random_warlord_three
-			set_variable = var_breakaway_three
-		}
 	}
-
 	option = {
-		name = dvg_amazonie.13.ab
-		trigger = {
-			exists = scope:scope_random_warlord_one
-			is_player = yes
-		}
-		c:AMA = {
-		
-			
-			create_diplomatic_play = {
-			
-		
-			 target_country = c:EQX
-			
-			 war = yes
-			
-			 type = dp_rebellion_annex
-			
-				add_war_goal = {
-				holder = c:EQX
-				type = annex_country
-				target_country = c:AMA
-				}
-		 	}
-			create_diplomatic_play = {
-	
-			target_country = c:GOU
-			
-			war = yes
-			
-			type = dp_rebellion_annex
-			
-			add_war_goal = {
-				holder = c:GOU
-				type = annex_country
-				target_country = c:AMA
-				}
-			}			
-	    }
-	
-		play_as = c:EQX
-	}
-
-	option = {
-		name = dvg_amazonie.13.b
-		trigger = {
-			exists = scope:scope_random_warlord_two
-			is_player = yes
-		}
-		c:AMA = {
-		
-		 
-			create_diplomatic_play = {
-				
-			
-				target_country = c:EQX
-				
-				war = yes
-				
-				type = dp_rebellion_annex
-				
-				add_war_goal = {
-					holder = c:EQX
-					type = annex_country
-					target_country = c:AMA
-					}
-				}			
-		}
-		play_as = c:GOU
-	}
-
-	option = {
-		name = dvg_amazonie.13.c
-		trigger = {
-			exists = scope:scope_random_warlord_three
-			is_player = yes
-		}
-		c:AMA = {
-		
-		
-			create_diplomatic_play = {
-				
-			
-				target_country = c:EQX
-				
-				war = yes
-				
-				type = dp_rebellion_annex
-				
-				add_war_goal = {
-					holder = c:EQX
-					type = annex_country
-					target_country = c:AMA
-				}
-			}			
-	    }
-		play_as = c:ATL
-	}
-
-	option = {
-		default_option = yes
-		
 		name = dvg_amazonie.13.a
+
 		add_journal_entry = {
-			type = je_amazonie_reconstruction
+			type = je_equinoxea_insurgency
 		}
-		c:AMA = {
-		
-		create_diplomatic_play = {
-			name = new_alsace_independence
-		
-			target_country = c:GOU
-			
-			war = no
-			
-			type = dp_rebellion_annex
-			
-			add_war_goal = {
-				holder = c:GOU
-				type = war_reparations
-				target_country = c:AMA
-			}
+		add_journal_entry = {
+			type = je_antarctica_insurgency
 		}
-		create_diplomatic_play = {
-			
-		
-			target_country = c:EQX
-			
-			war = no
-			
-			type = dp_rebellion_annex
-			
-			add_war_goal = {
-				holder = c:EQX
-				type = annex_country
-				target_country = c:AMA
-			}
-		}			
 	}
-	}
+	
+	
+	
 }
 
 dvg_amazonie.14 = {
@@ -1506,7 +1242,7 @@ dvg_amazonie.14 = {
 			}
 	}
 }
-
+#Bresiliens
 dvg_amazonie.15 = {
 	type = country_event
 	placement = ROOT
@@ -1545,7 +1281,7 @@ dvg_amazonie.15 = {
 		
 		add_radicals = {
 				value = 0.15
-				culture = cu:amazonien
+				culture = cu:antarctican
 			}
 		add_loyalists = {
 				value = 0.25
@@ -1669,7 +1405,7 @@ dvg_amazonie.16 = {
 		
 		add_loyalists = {
 				value = 0.15
-				culture = cu:amazonien
+				culture = cu:antarctican
 			}
 		
 			
@@ -1880,7 +1616,7 @@ dvg_amazonie.19 = {
 		
 			add_loyalists = {
 					value = 0.15
-					culture = cu:amazonien
+					culture = cu:antarctican
 				}
 			add_radicals = {
 					value = 0.60
@@ -1890,6 +1626,8 @@ dvg_amazonie.19 = {
 					name = warlord_legitimacy
 					months = normal_modifier_time
 				}
+			
+			
 			hidden_effect = {
 				random_scope_pop = {
 							limit = {
@@ -1990,7 +1728,7 @@ dvg_amazonie.20 = {
 		
 		add_radicals = {
 			value = 0.15
-			culture = cu:amazonien
+			culture = cu:equinoxien
 		}
 		add_radicals = {
 			value = 0.35
@@ -2000,7 +1738,7 @@ dvg_amazonie.20 = {
 		
 		
 		add_modifier = {
-                    name = dvg_modifier_amazonien_independence_payments
+                    name = dvg_modifier_antarctican_independence_payments
                     months = 100
                 }
 		
@@ -2076,7 +1814,7 @@ dvg_amazonie.21 = {
 				
 				war = no
 				
-				type = dp_make_dominion
+				type = dp_make_protectorate
 				
 				add_war_goal = {
 					holder = c:EQX
@@ -2101,4 +1839,990 @@ dvg_amazonie.21 = {
 				base = 50
 			}
 	}
+}
+dvg_amazonie.22 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_amazonie.22.t
+	desc = dvg_amazonie.22.d
+	flavor = dvg_amazonie.22.f
+	
+	event_image = {
+		video = "gfx/event_pictures/europenorthamerica_gold_prospectors.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	    has_variable = equinoxea_var
+		this = { var:equinoxea_var >= 30 }
+		NOT = {exists = c:GOU }
+	}
+	immediate = {
+	c:EQX = { save_scope_as = scope_EQX }
+	c:ATL = { save_scope_as = scope_ATL }
+	c:AMA = {
+			random_scope_state = {
+				limit = {
+					state_region = s:STATE_FRANCE_ANTARTIQUE
+				}
+				save_scope_as = dvg_amazonie
+			}
+		}
+	ig:ig_landowners = {
+			save_scope_as = planteurs_ig
+			leader = {
+				save_scope_as = landowners_leader
+			}
+		}
+	}
+	
+	
+	option = {
+		name = dvg_amazonie.22.a
+		ai_chance = {
+			base = 100
+		
+		}
+		
+		}
+	
+	
+}
+
+#Gouas Oath
+dvg_amazonie.23 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_amazonie.23.t
+	desc = dvg_amazonie.23.d
+	flavor = dvg_amazonie.23.f
+	
+	event_image = {
+		video = "gfx/event_pictures/europenorthamerica_gold_prospectors.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		has_variable = equinoxea_var
+		has_journal_entry = je_equinoxea_insurgency
+		NOT = {has_law = law_type:law_oligarchy}
+		OR = {
+			this = { var:equinoxea_var >= 25 }
+			s:STATE_GOUAS.region_state:AMA = {
+				turmoil >= 0.33
+			}
+
+		}
+		NOT = {exists = c:GOU }
+	}
+	immediate = {
+	c:EQX = { save_scope_as = scope_EQX }
+	c:ATL = { save_scope_as = scope_ATL }
+	c:AMA = {
+			random_scope_state = {
+				limit = {
+					state_region = s:STATE_FRANCE_ANTARTIQUE
+				}
+				save_scope_as = dvg_amazonie
+			}
+		}
+	ig:ig_landowners = {
+			save_scope_as = planteurs_ig
+			leader = {
+				save_scope_as = landowners_leader
+			}
+		}
+	}
+	
+	
+	option = {
+		name = dvg_amazonie.23.a
+		ai_chance = {
+			base = 100
+		
+		}
+		
+		}
+	
+	
+}
+
+#End of Federation
+
+dvg_amazonie.24 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_amazonie.24.t
+	desc = dvg_amazonie.24.d
+	flavor = dvg_amazonie.24.f
+	
+	event_image = {
+		video = "gfx/event_pictures/southamerica_election.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	    
+	}
+	immediate = {
+		if = {
+			limit = { exists = s:STATE_GOUAS.region_state:AMA }
+			create_country = { #Gouas
+				tag = GOU
+				origin = this
+				state = s:STATE_GOUAS.region_state:AMA
+				state = s:STATE_GOUAS.region_state:AMA
+
+				on_created = {
+					warlord_setup_effect = yes
+					set_variable = warlord_state
+				}
+			}
+			c:GOU = { save_scope_as = scope_GOU}
+		}
+		if = {
+			limit = { exists = s:STATE_VAURA.region_state:AMA }
+			create_country = { #Equinoxea
+				tag = EQX
+				origin = this
+				state = s:STATE_VAURA.region_state:AMA
+				state = s:STATE_PARA.region_state:AMA
+				state = s:STATE_CAPPADOCE.region_state:AMA
+
+				on_created = {
+					warlord_setup_effect = yes
+					set_variable = warlord_state
+				}
+			}
+			c:EQX = { save_scope_as = scope_EQX 
+			activate_law = law_type:law_slavery_banned
+			add_journal_entry = {
+			type = je_amazonie_annex
+		}
+			}
+			if = {
+				limit = { exists = s:STATE_AMAZONIE_INFERIEURE.region_state:AMA }
+				s:STATE_AMAZONIE_INFERIEURE.region_state:AMA = { set_state_owner = c:EQX }
+			}
+			if = {
+				limit = { exists = s:STATE_AMAZONIE_PROFONDE.region_state:AMA }
+				s:STATE_AMAZONIE_PROFONDE.region_state:AMA = { set_state_owner = c:EQX }
+			}
+			if = {
+				limit = { exists = s:STATE_PROCHE_AMAZONIE.region_state:AMA }
+				s:STATE_PROCHE_AMAZONIE.region_state:AMA = { set_state_owner = c:EQX }
+			}
+		}
+		c:EQX = { save_scope_as = scope_EQX }
+		c:ATL = { save_scope_as = scope_ATL }
+		c:GOU = { save_scope_as = scope_GOU }
+		c:AMA = {
+			random_scope_state = {
+				limit = {
+					state_region = s:STATE_FRANCE_ANTARTIQUE
+				}
+				save_scope_as = dvg_amazonie
+			}
+		}
+		 ig:ig_landowners = {
+			save_scope_as = planteurs_ig
+			leader = {
+				save_scope_as = landowners_leader
+			}
+		}
+	}
+	
+	
+	option = {
+		name = dvg_amazonie.24.a
+
+		create_country = { #Atlantia
+				tag = ATL
+				origin = this
+				state = s:STATE_COTE_DU_CAFE.region_state:AMA
+			}
+		every_subject_or_below = {
+				make_independent = yes
+			}
+		
+		change_tag = ANT
+
+
+		ai_chance = {
+			base = 100
+		
+		}
+
+
+		}
+	
+	
+}
+
+#Victoire Convention 
+dvg_amazonie.25 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_amazonie.25.t
+	desc = dvg_amazonie.25.d
+	flavor = dvg_amazonie.25.f
+	
+	event_image = {
+		video = "gfx/event_pictures/southamerica_aristocrats.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		has_variable = equinoxea_var
+		has_journal_entry = je_equinoxea_insurgency
+		NOT = {has_law = law_type:law_oligarchy}
+		this = { var:equinoxea_var >= 80 }
+		NOT = {exists = c:GOU }
+	}
+	immediate = {
+	c:EQX = { save_scope_as = scope_EQX }
+	c:ATL = { save_scope_as = scope_ATL }
+	c:AMA = {
+			random_scope_state = {
+				limit = {
+					state_region = s:STATE_FRANCE_ANTARTIQUE
+				}
+				save_scope_as = dvg_amazonie
+			}
+		}
+	ig:ig_landowners = {
+			save_scope_as = planteurs_ig
+			leader = {
+				save_scope_as = landowners_leader
+			}
+		}
+	}
+	
+	
+	option = {
+		name = dvg_amazonie.25.a
+		custom_tooltip = {
+		text = ama_split_tt
+		if = {
+			limit = { exists = s:STATE_GOUAS.region_state:AMA }
+			create_country = { #Gouas
+				tag = GOU
+				origin = this
+				state = s:STATE_GOUAS.region_state:AMA
+				state = s:STATE_GOUAS.region_state:AMA
+
+				on_created = {
+					warlord_setup_effect = yes
+					set_variable = warlord_state
+				}
+			}
+			c:GOU = { save_scope_as = scope_GOU}
+		}
+		if = {
+			limit = { exists = s:STATE_VAURA.region_state:AMA }
+			create_country = { #Equinoxea
+				tag = EQX
+				origin = this
+				state = s:STATE_VAURA.region_state:AMA
+				state = s:STATE_PARA.region_state:AMA
+				state = s:STATE_CAPPADOCE.region_state:AMA
+
+				on_created = {
+					warlord_setup_effect = yes
+					set_variable = warlord_state
+				}
+			}
+			c:EQX = { save_scope_as = scope_EQX 
+			activate_law = law_type:law_slavery_banned
+			add_journal_entry = {
+			type = je_amazonie_annex
+		}
+			}
+			if = {
+				limit = { exists = s:STATE_AMAZONIE_INFERIEURE.region_state:AMA }
+				s:STATE_AMAZONIE_INFERIEURE.region_state:AMA = { set_state_owner = c:EQX }
+			}
+			if = {
+				limit = { exists = s:STATE_AMAZONIE_PROFONDE.region_state:AMA }
+				s:STATE_AMAZONIE_PROFONDE.region_state:AMA = { set_state_owner = c:EQX }
+			}
+			if = {
+				limit = { exists = s:STATE_PROCHE_AMAZONIE.region_state:AMA }
+				s:STATE_PROCHE_AMAZONIE.region_state:AMA = { set_state_owner = c:EQX }
+			}
+		}
+
+		set_global_variable = amazonie_shatters
+		}
+		ai_chance = {
+				base = 50
+			
+		}
+	}
+	option = {
+		name = dvg_amazonie.25.b
+		default_option = yes
+		
+		change_variable = {
+			name = antarctica_var
+			add = 15
+		}
+		c:ATL = {trigger_event = { id = dvg_amazonie.32 days = 10} }
+
+		trigger_event = { id = dvg_amazonie.32 days = 10}
+	
+		ai_chance = {
+				base = 50
+			
+		}
+	}
+	
+}
+
+dvg_amazonie.26 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_amazonie.26.t
+	desc = dvg_amazonie.26.d
+	flavor = dvg_amazonie.26.f
+	
+	event_image = {
+		video = "gfx/event_pictures/europenorthamerica_capitalists_meeting.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	    
+	}
+	immediate = {
+	c:EQX = { save_scope_as = scope_EQX }
+	c:GOU = { save_scope_as = scope_GOU }
+	c:ATL = { save_scope_as = scope_ATL }
+	c:AMA = {
+			random_scope_state = {
+				limit = {
+					state_region = s:STATE_FRANCE_ANTARTIQUE
+				}
+				save_scope_as = dvg_amazonie
+			}
+		}
+	ig:ig_landowners = {
+			save_scope_as = planteurs_ig
+			leader = {
+				save_scope_as = landowners_leader
+			}
+		}
+	}
+	
+	
+	option = {
+		name = dvg_amazonie.26.a
+
+		ai_chance = {
+			base = 100
+		
+		}
+		
+		}
+	
+	
+}
+
+#Conseil Coup
+
+dvg_amazonie.27 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_amazonie.27.t
+	desc = dvg_amazonie.27.d
+	flavor = dvg_amazonie.27.f
+	
+	event_image = {
+		video = "gfx/event_pictures/unspecific_military_parade.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	    has_variable = equinoxea_var
+		has_journal_entry = je_equinoxea_insurgency
+		NOT = {has_law = law_type:law_oligarchy}
+		this = { var:equinoxea_var >= 70 }
+		NOT = {exists = c:GOU }
+	}
+	immediate = {
+		c:EQX = { save_scope_as = scope_EQX }
+		c:GOU = { save_scope_as = scope_GOU }
+		c:ATL = { save_scope_as = scope_ATL }
+		ig:ig_landowners = {
+			save_scope_as = planteurs_ig
+			leader = {
+				save_scope_as = landowners_leader
+			}
+		}
+		ig:ig_armed_forces = {
+			save_scope_as = armed_forces_ig
+			leader = {
+				save_scope_as = armed_forces_leader
+			}
+		}
+	}
+	
+	option = {
+		name = dvg_amazonie.27.a
+		
+		scope:armed_forces_leader = {
+			set_character_as_ruler = yes
+		}
+		activate_law = law_type:law_oligarchy
+
+		add_modifier = {
+            name = dvg_modifier_armed_forces_bolstered
+            months = 120
+			is_decaying = yes 
+        }
+
+		set_ruling_interest_groups = { ig_armed_forces }
+
+	    ai_chance = {
+			base = 100
+	    }
+	}
+}
+
+dvg_amazonie.28 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_amazonie.28.t
+	desc = dvg_amazonie.28.d
+	flavor = dvg_amazonie.28.f
+	
+	event_image = {
+		video = "gfx/event_pictures/southamerica_slaves_night.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	    has_variable = equinoxea_var
+		has_journal_entry = je_equinoxea_insurgency
+		NOT = {has_law = law_type:law_oligarchy}
+		NOT = {exists = c:GOU }
+		OR = {
+			this = { var:equinoxea_var >= 40 }
+			s:STATE_CAPPADOCE.region_state:AMA = {
+				turmoil >= 0.55
+			}
+			s:STATE_VAURA.region_state:AMA = {
+				turmoil >= 0.55
+			}
+		}
+		
+	}
+	immediate = {
+	c:EQX = { save_scope_as = scope_EQX }
+	c:GOU = { save_scope_as = scope_GOU }
+	c:ATL = { save_scope_as = scope_ATL }
+	
+	ig:ig_landowners = {
+			save_scope_as = planteurs_ig
+			leader = {
+				save_scope_as = landowners_leader
+			}
+		}
+	ig:ig_armed_forces = {
+			save_scope_as = armed_forces_ig
+			leader = {
+				save_scope_as = armed_forces_leader
+			}
+		}
+	}
+	
+	
+	option = {
+		name = dvg_amazonie.28.a
+
+		c:ATL = {trigger_event = { id = dvg_amazonie.30 days = 10} }
+
+		
+		add_radicals = {
+			value = 0.1
+			culture = cu:equinoxien
+		}
+	    ai_chance = {
+			base = 100
+		}
+	}
+}
+#EQX breakaway
+dvg_amazonie.29 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_amazonie.29.t
+	desc = dvg_amazonie.29.d
+	flavor = dvg_amazonie.29.f
+	
+	event_image = {
+		video = "gfx/event_pictures/europenorthamerica_springtime_of_nations.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	    
+	}
+	immediate = {
+	c:EQX = { save_scope_as = scope_EQX }
+	c:GOU = { save_scope_as = scope_GOU }
+	c:ATL = { save_scope_as = scope_ATL }
+	
+	ig:ig_landowners = {
+			save_scope_as = planteurs_ig
+			leader = {
+				save_scope_as = landowners_leader
+			}
+		}
+	ig:ig_armed_forces = {
+			save_scope_as = armed_forces_ig
+			leader = {
+				save_scope_as = armed_forces_leader
+			}
+		}
+	}
+	
+	
+	option = {
+		name = dvg_amazonie.29.a
+
+		if = {
+			limit = { exists = s:STATE_VAURA.region_state:AMA }
+			create_country = { #Equinoxea
+				tag = EQX
+				origin = this
+				state = s:STATE_VAURA.region_state:AMA
+				state = s:STATE_PARA.region_state:AMA
+				state = s:STATE_CAPPADOCE.region_state:AMA
+
+				on_created = {
+					warlord_setup_effect = yes
+					set_variable = warlord_state
+				}
+			}
+			c:EQX = { save_scope_as = scope_EQX 
+			activate_law = law_type:law_slavery_banned
+			add_journal_entry = {
+			type = je_amazonie_annex
+		}
+			}
+			if = {
+				limit = { exists = s:STATE_AMAZONIE_INFERIEURE.region_state:AMA }
+				s:STATE_AMAZONIE_INFERIEURE.region_state:AMA = { set_state_owner = c:EQX }
+			}
+			if = {
+				limit = { exists = s:STATE_AMAZONIE_PROFONDE.region_state:AMA }
+				s:STATE_AMAZONIE_PROFONDE.region_state:AMA = { set_state_owner = c:EQX }
+			}
+			if = {
+				limit = { exists = s:STATE_PROCHE_AMAZONIE.region_state:AMA }
+				s:STATE_PROCHE_AMAZONIE.region_state:AMA = { set_state_owner = c:EQX }
+			}
+		}
+		
+		set_global_variable = amazonie_shatters
+
+		
+	
+	ai_chance = {
+			base = 100
+		
+	}
+	}
+}
+
+dvg_amazonie.30 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_amazonie.30.t
+	desc = dvg_amazonie.30.d
+	flavor = dvg_amazonie.30.f
+	
+	event_image = {
+		video = "votp_agitators_sneaking"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+
+		NOR = {
+			owns_entire_state_region = STATE_GOUAS
+			exists = c:GOU
+		}
+		c:AMA = {
+			owns_entire_state_region = STATE_GOUAS
+		}
+	    
+	}
+	immediate = {
+	c:EQX = { save_scope_as = scope_EQX }
+	c:GOU = { save_scope_as = scope_GOU }
+	c:ATL = { save_scope_as = scope_ATL }
+	
+	ig:ig_landowners = {
+			save_scope_as = planteurs_ig
+			leader = {
+				save_scope_as = landowners_leader
+			}
+		}
+	ig:ig_armed_forces = {
+			save_scope_as = armed_forces_ig
+			leader = {
+				save_scope_as = armed_forces_leader
+			}
+		}
+	}
+	
+	
+	option = {
+		name = dvg_amazonie.30.a
+		default_option = yes
+
+
+		c:AMA = {trigger_event = { id = dvg_amazonie.31 days = 10} }
+
+
+		create_incident = {
+			country = ROOT
+			value = 8
+		}
+	
+	ai_chance = {
+			base = 100
+		
+	}
+	}
+	option = {
+		name = dvg_amazonie.30.b
+		
+
+		
+	
+	ai_chance = {
+			base = 100
+		
+	}
+	}
+	
+}
+
+dvg_amazonie.31 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_amazonie.31.t
+	desc = dvg_amazonie.31.d
+	flavor = dvg_amazonie.31.f
+	
+	event_image = {
+		video = "unspecific_ruler_speaking_to_people"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	    
+	}
+	immediate = {
+	c:EQX = { save_scope_as = scope_EQX }
+	c:GOU = { save_scope_as = scope_GOU }
+	c:ATL = { save_scope_as = scope_ATL }
+	
+	
+	ig:ig_landowners = {
+			save_scope_as = planteurs_ig
+			leader = {
+				save_scope_as = landowners_leader
+			}
+		}
+	ig:ig_armed_forces = {
+			save_scope_as = armed_forces_ig
+			leader = {
+				save_scope_as = armed_forces_leader
+			}
+		}
+	if = {
+			limit = { exists = s:STATE_GOUAS.region_state:AMA }
+			create_country = { #Gouas
+				tag = GOU
+				origin = this
+				state = s:STATE_GOUAS.region_state:AMA
+				state = s:STATE_GOUAS.region_state:AMA
+
+				on_created = {
+					warlord_setup_effect = yes
+					set_variable = warlord_state
+				}
+			}
+			c:GOU = { save_scope_as = scope_GOU}
+		}
+	}
+	
+	
+	option = {
+		name = dvg_amazonie.31.a
+		default_option = yes
+		
+		create_diplomatic_play = {
+				
+			
+			target_country = c:GOU
+			
+			war = no
+			
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:GOU
+				type = war_reparations
+				target_country = c:AMA
+			}
+		
+		}
+		
+	
+	ai_chance = {
+			base = 100
+		
+	}
+	}
+	option = {
+		name = dvg_amazonie.31.b
+		
+
+		
+	
+	ai_chance = {
+			base = 100
+		
+	}
+	}
+	option = {
+		name = dvg_amazonie.31.c
+		
+		change_tag = GOU
+		
+	
+	ai_chance = {
+			base = 100
+		
+	}
+	}
+}
+
+dvg_amazonie.32 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_amazonie.32.t
+	desc = dvg_amazonie.32.d
+	flavor = dvg_amazonie.32.f
+	
+	event_image = {
+		video = "unspecific_ruler_speaking_to_people"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	    
+	}
+	immediate = {
+	c:EQX = { save_scope_as = scope_EQX }
+	c:GOU = { save_scope_as = scope_GOU }
+	c:ATL = { save_scope_as = scope_ATL }
+	
+	ig:ig_landowners = {
+			save_scope_as = planteurs_ig
+			leader = {
+				save_scope_as = landowners_leader
+			}
+		}
+	ig:ig_armed_forces = {
+			save_scope_as = armed_forces_ig
+			leader = {
+				save_scope_as = armed_forces_leader
+			}
+		}
+	}
+	
+	
+	option = {
+		name = dvg_amazonie.32.a
+	
+	ai_chance = {
+			base = 100
+		
+	}
+	}
+	
+	
+}
+
+dvg_amazonie.33 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_amazonie.33.t
+	desc = dvg_amazonie.33.d
+	flavor = dvg_amazonie.33.f
+	
+	event_image = {
+		video = "europenorthamerica_capitalists_meeting"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	    
+	}
+	immediate = {
+	c:EQX = { save_scope_as = scope_EQX }
+	c:GOU = { save_scope_as = scope_GOU }
+	c:ATL = { save_scope_as = scope_ATL }
+	
+	ig:ig_landowners = {
+			save_scope_as = planteurs_ig
+			leader = {
+				save_scope_as = landowners_leader
+			}
+		}
+	ig:ig_armed_forces = {
+			save_scope_as = armed_forces_ig
+			leader = {
+				save_scope_as = armed_forces_leader
+			}
+		}
+	}
+	
+	
+	option = {
+		name = dvg_amazonie.33.a
+		custom_tooltip = {
+		text = one_amazonie_tt
+		every_scope_state = {
+			limit = {
+				owner = ROOT
+				state_region = {
+					OR = {
+					is_homeland = cu:equinoxien
+					is_homeland = cu:antarctican
+					is_homeland = cu:amazonian
+					}
+				}
+			}
+
+			state_region = {
+				remove_homeland = cu:equinoxien
+				remove_homeland = cu:afro_amerigan
+			}
+			hidden_effect = {create_pop = {
+				culture = amazonien
+				size = 1000
+			}
+			}
+		}
+		
+		every_country = {
+			every_scope_pop = {
+				limit = { culture = cu:equinoxien }
+				change_pop_culture = { target = cu:amazonien value = 1 }
+			}
+		}
+		add_primary_culture = cu:amazonien
+		remove_primary_culture = cu:antarctican
+		remove_primary_culture = cu:equinoxien
+		remove_primary_culture = cu:afro_amerigan
+	}
+	ai_chance = {
+			base = 100
+		
+	}
+
+	}
+	
+	
 }

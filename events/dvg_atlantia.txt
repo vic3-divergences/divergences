@@ -1,4 +1,4 @@
-namespace = dvg_atlantia
+﻿namespace = dvg_atlantia
 
 
 dvg_atlantia.10 = {
@@ -46,18 +46,28 @@ dvg_atlantia.1 = {
 	desc = dvg_atlantia.1.d
 	flavor = {
         first_valid = {
-            triggered_desc = {
+			triggered_desc = {
                 trigger = {
-                    exists = c:AMA
-                }
-                desc = dvg_atlantia.1.f
-            }
-            triggered_desc = {
-                trigger = {
-                  NOT = { exists = c:AMA}
+                  has_global_variable = equinoxean_victory
                 }
                 desc = dvg_atlantia.1.f2
             }
+			triggered_desc = {
+                trigger = {
+                  AND = { exists = c:AMA
+				  		  exists = c:EQX
+						}
+                }
+                desc = dvg_atlantia.1.f3
+            }
+            triggered_desc = {
+                trigger = {
+                    exists = c:AMA
+					NOT = {exists = c:EQX}
+                }
+                desc = dvg_atlantia.1.f
+            }
+			
         }
     }
 	
@@ -84,10 +94,13 @@ dvg_atlantia.1 = {
 			exists = c:AMA
 			}
 		c:AMA = { save_scope_as = ama_scope }
-			 }
-		
-		
-			 
+			 } 
+		if = {
+			limit = {
+				exists = c:EQX
+					}
+			c:EQX = { save_scope_as = eqx_scope }
+		}
 		
 	}
 	
@@ -97,19 +110,39 @@ dvg_atlantia.1 = {
 		name = dvg_atlantia.1.a
 		default_option = yes
 		trigger = {
-	exists = c:AMA
-	}
+		exists = c:AMA
+		}
 		add_radicals = {
 			value = 0.5
 			culture = cu:lotharian
 		}
-		add_radicals = {
-			value = 0.5
-			culture = cu:afro_frankish
+		if = {
+			limit = {
+			
+				NOT = {has_global_variable = equinoxean_victory}
+				}
+			add_radicals = {
+					value = 0.5
+					culture = cu:afro_amerigan
+				}
 		}
-		add_loyalists = {
-			value = 0.5
-			culture = cu:amazonien
+		if = {
+			limit = {
+			
+				has_global_variable = equinoxean_victory
+				}
+			add_radicals = {
+					value = 0.5
+					culture = cu:antarctican
+				}
+			add_loyalists = {
+					value = 0.5
+					culture = cu:equinoxien
+				}
+			add_loyalists = {
+					value = 0.5
+					culture = cu:afro_amerigan
+				}
 		}
 		
 		play_as = c:AMA
@@ -127,6 +160,16 @@ dvg_atlantia.1 = {
 				}
 			}
 		}
+		every_scope_state = {
+			limit = {
+				state_region = {
+					is_homeland = cu:atlantian
+				}
+			}
+
+			state_region = {
+			}
+		}
 		
 		ai_chance = {
 			base = 20
@@ -134,21 +177,21 @@ dvg_atlantia.1 = {
 			modifier = {
 			        
 				trigger = {
-					"relations(scope:ama_scope)" >= relations_threshold:cordial
+					#"relations(scope:ama_scope)" >= relations_threshold:cordial
 				}
 				add = 10
 			}
 			
 			modifier = {
 				trigger = {
-					"relations(scope:ama_scope)" >= relations_threshold:amicable
+					#"relations(scope:ama_scope)" >= relations_threshold:amicable
 				}
 				add = 30
 			}				
 
 			modifier = {
 				trigger = {
-					"relations(scope:ama_scope)" >= relations_threshold:friendly
+					#"relations(scope:ama_scope)" >= relations_threshold:friendly
 				}
 				add = 50
 			}
@@ -156,6 +199,10 @@ dvg_atlantia.1 = {
 	}
 	option = {
 		name = dvg_atlantia.1.b
+
+		trigger = {
+			exists = c:LOT
+				}
 		
 		add_loyalists = {
 			value = 0.5
@@ -163,11 +210,23 @@ dvg_atlantia.1 = {
 		}
 		add_radicals = {
 			value = 0.5
-			culture = cu:amazonien
+			culture = cu:antarctican
 		}
 		add_radicals = {
 			value = 0.75
 			culture = cu:atlantian
+		}
+		every_scope_state = {
+			limit = {
+				state_region = {
+					is_homeland = cu:atlantian
+				}
+			}
+
+			state_region = {
+				add_homeland = cu:lotharian
+				remove_homeland = cu:atlantian
+			}
 		}
 		
 		play_as = c:LOT
@@ -194,21 +253,21 @@ dvg_atlantia.1 = {
 			base = 25
 			modifier = {
 				trigger = {
-					"relations(scope:lot_scope)" >= relations_threshold:cordial
+					#"relations(scope:lot_scope)" >= relations_threshold:cordial
 				}
 				add = 10
 			}
 			
 			modifier = {
 				trigger = {
-					"relations(scope:lot_scope)" >= relations_threshold:amicable
+					#"relations(scope:lot_scope)" >= relations_threshold:amicable
 				}
 				add = 30
 			}				
 
 			modifier = {
 				trigger = {
-					"relations(scope:lot_scope)" >= relations_threshold:friendly
+					#"relations(scope:lot_scope)" >= relations_threshold:friendly
 				}
 				add = 50
 			}
@@ -220,15 +279,22 @@ dvg_atlantia.1 = {
 		name = dvg_atlantia.1.c
 
 		
-		
-		
+		if = {
+			limit = {
+				NOT = {has_technology_researched = nationalism }
+				has_technology_researched = mass_communication
+			}
+
+			add_technology_researched = nationalism
+		}
+
 		add_radicals = {
 			value = 0.3
 			culture = cu:lotharian
 		}
 		add_radicals = {
 			value = 0.3
-			culture = cu:amazonien
+			culture = cu:antarctican
 		}
 		add_loyalists = {
 			value = 0.55
@@ -257,8 +323,8 @@ dvg_atlantia.1 = {
 		}
 		c:LOT = {
 		       
-			add_journal_entry = 
-			{ type = je_reconquering_atlantia }
+			
+			add_journal_entry = { type = je_reconquering_atlantia }
 			
 		}
 		c:LOT = { trigger_event = { id = dvg_atlantia.12 popup = yes } }
@@ -266,6 +332,58 @@ dvg_atlantia.1 = {
 
 		ai_chance = {
 			base = 65
+		}
+	}
+	option = {
+		name = dvg_atlantia.1.e
+		default_option = yes
+		trigger = {
+		exists = c:EQX
+		any_neighbouring_state = {
+			owner = c:EQX
+		}
+		}
+		add_radicals = {
+			value = 0.5
+			culture = cu:lotharian
+		}
+		add_loyalists = {
+			value = 0.4
+			culture = cu:afro_amerigan
+		}
+		add_radicals = {
+			value = 0.5
+			culture = cu:antarctican
+		}
+		
+		play_as = c:EQX
+		
+		add_radicals = {
+			value = 0.55
+			culture = cu:atlantian
+		}
+		c:EQX = {
+			set_variable = tex_annexation
+			trigger_event = { id = dvg_atlantia.2 }
+			show_as_tooltip = {
+				c:EQX = {
+					annex = ROOT
+				}
+			}
+		}
+		every_scope_state = {
+			limit = {
+				state_region = {
+					is_homeland = cu:atlantian
+				}
+			}
+
+			state_region = {
+			}
+		}
+		
+		ai_chance = {
+			base = 100
 		}
 	}
 }
@@ -429,7 +547,7 @@ dvg_atlantia.3 = {
 		}
 	}
 }
-
+#LOT invades Atlantia
 dvg_atlantia.4 = {
 	type = country_event
 	placement = ROOT
@@ -504,7 +622,7 @@ dvg_atlantia.4 = {
 				value = -25
 			}
 		ai_chance = {
-			base = 80
+			base = 99
 		}
 	}
 	
@@ -526,7 +644,7 @@ dvg_atlantia.4 = {
 			}
 		}
 		ai_chance = {
-			base = 20
+			base = 1
 		}
 	}
 }
@@ -581,10 +699,7 @@ dvg_atlantia.5 = {
 		activate_law = law_type:law_national_guard
 		}
 		c:ATL = {
-		create_diplomatic_pact = {
-			country = c:NEA
-			type = protectorate
-		}
+		
 		add_modifier = {
 			name = dvg_atlantia_giving_support
 			days = 1825
@@ -596,9 +711,7 @@ dvg_atlantia.5 = {
 				value = 0
 			}
 		set_global_variable = nouvellsatian_support
-		ai_chance = {
-			base = 40
-		}
+		
 		c:LOT = { trigger_event = dvg_atlantia.9 
 				
 		
@@ -984,7 +1097,7 @@ dvg_atlantia.13 = {
 		 }
 	 }
 	 ai_chance = {
-			base = 30
+			base = 1
 		}
 		
 		
@@ -1001,7 +1114,7 @@ dvg_atlantia.13 = {
 		
 	}
 	ai_chance = {
-			base = 70
+			base = 99
 		}
    }
 	
@@ -1153,5 +1266,168 @@ dvg_atlantia.15 = {
 		
 	}
 	
+	
+}
+
+dvg_atlantia.16 = {
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = "europenorthamerica_capitalists_meeting"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "texan_war_of_independence.1"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	title = dvg_atlantia.16.t
+	desc = dvg_atlantia.16.d
+	flavor = dvg_atlantia.16.f
+
+	duration = 1
+
+	trigger = {
+	}
+
+	immediate = {
+		
+	}
+
+	option = {
+		name = dvg_atlantia.16.a
+		default_option = yes	
+	}	
+	
+}
+dvg_atlantia.17 = {
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = "europenorthamerica_capitalists_meeting"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "texan_war_of_independence.1"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	title = dvg_atlantia.17.t
+	desc = dvg_atlantia.17.d
+	flavor = dvg_atlantia.17.f
+
+	duration = 1
+
+	trigger = {
+	}
+
+	immediate = {
+		
+	}
+
+	option = {
+		name = dvg_atlantia.17.a
+		default_option = yes	
+	}	
+	
+}
+dvg_atlantia.18 = {
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = "europenorthamerica_capitalists_meeting"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "texan_war_of_independence.1"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	title = dvg_atlantia.18.t
+	desc = dvg_atlantia.18.d
+	flavor = dvg_atlantia.18.f
+
+	duration = 1
+
+	trigger = {
+	}
+
+	immediate = {
+		
+	}
+
+	option = {
+		name = dvg_atlantia.18.a
+		default_option = yes	
+	}	
+	
+}
+dvg_atlantia.19 = {
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = "europenorthamerica_capitalists_meeting"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "texan_war_of_independence.1"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	title = dvg_atlantia.19.t
+	desc = dvg_atlantia.19.d
+	flavor = dvg_atlantia.19.f
+
+	duration = 1
+
+	trigger = {
+
+		is_player = yes
+	}
+
+	immediate = {
+
+		c:AMA = {
+			save_scope_as = ama_scope
+		}
+		c:LOT = {
+			save_scope_as = lot_scope
+		}
+		
+	}
+
+	option = {
+		name = dvg_atlantia.19.a
+		default_option = yes
+		
+		random_scope_state = {
+			limit = {
+				owner = c:AMA
+			}
+			add_modifier = {
+				name = dvg_fragile_state
+				months = 12
+			}
+			
+		}
+		
+		ai_chance = {
+			base = 50
+		}
+	}	
+	option = {
+		name = dvg_atlantia.19.b
+		
+		random_scope_state = {
+			limit = {
+				owner = c:LOT
+			}
+			add_modifier = {
+				name = dvg_fragile_state
+				months = 12
+			}
+		}
+		
+	}
 	
 }
