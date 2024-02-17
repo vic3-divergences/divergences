@@ -1,0 +1,114 @@
+﻿je_japan_regency = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	# note that if you change this, also update the decision
+	
+	group = je_group_internal_affairs
+
+	immediate = {
+		set_variable = {
+			name = nippon_var
+			value = 0
+		}
+	}
+
+	progressbar = yes
+
+	current_value = {
+		value = var:dvg_nippon_var
+	}
+	
+	complete = {
+		year >= 1855
+		custom_tooltip = {
+			text = japan_je_complete_tt
+			OR = {
+				this = { var:dvg_nippon_var >= 4 }
+				this = { var:dvg_nippon_var <= 7 }
+				}
+		}
+		
+	}
+
+    on_complete = {
+		
+
+		every_character = {
+			limit = {
+				has_trait = immortal
+			}
+
+			remove_trait = immortal
+		}
+		
+		
+	}
+
+	fail = {
+		year >= 1855
+		custom_tooltip = {
+		text = japan_je_fail_tt
+		has_variable = dvg_nippon_var
+		OR = {
+		this = { var:dvg_nippon_var < 4 }
+		this = { var:dvg_nippon_var > 7 }
+		}
+		}
+	}
+
+	on_fail = {
+		if ={
+			limit = {
+				this = { var:dvg_nippon_var > 7 }
+			}
+			trigger_event = { id = dvg_japan.18 }
+
+		}
+		every_character = {
+			limit = {
+				has_trait = immortal
+			}
+
+			remove_trait = immortal
+		}
+	}
+
+	goal_add_value = {
+		add = 10
+	}
+	invalid = {
+		NOT = {
+			has_law = law_type:law_monarchy
+		}
+		
+	}
+	on_invalid = {
+		every_character = {
+			limit = {
+				has_trait = immortal
+			}
+
+			remove_trait = immortal
+		}
+	}
+
+	on_monthly_pulse = {
+		effect = {
+
+			if = {
+				limit = {
+					this = { var:dvg_nippon_var > 7 }
+					NOT = {
+						has_global_variable = angry_mitsuhito
+					}
+				}
+				set_global_variable = angry_mitsuhito
+			}
+			
+		}
+		
+	}
+	
+	
+	weight = 10000
+	should_be_pinned_by_default = yes
+}
