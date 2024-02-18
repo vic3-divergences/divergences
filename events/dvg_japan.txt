@@ -75,22 +75,7 @@ dvg_japan.2 = {
 		name = dvg_japan.2.a
 		default_option = yes
 
-		create_character = {
-			historical = yes
-			first_name = Yusumoto
-			last_name = Hideki
-			is_agitator = yes
-			ideology = ideology_radical
-			interest_group = ig_armed_forces
-			birth_date = 1799.11.24
-			traits = {
-				explorer
-				experienced_naval_commander
-				surveyor
-				scarred
-				literary
-			}
-		}
+		
 		hidden_effect = {
 
 			trigger_event = {
@@ -110,42 +95,7 @@ dvg_japan.2 = {
 		
 	}
 
-	option = {
-		name = dvg_japan.2.b
-		default_option = yes
-
-		create_character = {
-			historical = yes
-			first_name = Yusumoto
-			last_name = Hideki
-			is_agitator = yes
-			ideology = ideology_radical
-			interest_group = ig_armed_forces
-			birth_date = 1799.11.24
-			traits = {
-				explorer
-				experienced_naval_commander
-				surveyor
-				scarred
-				literary
-			}
-			on_created = {
-				exile_character = yes
-			}
-		}
-		ai_chance = {
-			base = 50
-		}
-		hidden_effect = {
-
-			trigger_event = {
-				id = dvg_japan.5
-				days = 725
 	
-			}
-			
-		}
-	}
 }
 
 dvg_japan.3 = {
@@ -1386,6 +1336,8 @@ dvg_japan.18 = {
 		scope:neoshogun_scope = {
 
 			set_character_as_ruler = yes
+
+			add_trait = bandit
 		}
 		
 			
@@ -1396,13 +1348,13 @@ dvg_japan.18 = {
 	}
 }
 #Japanese Civil War
-dvg_japan.19 = {
+dvg_japan.20 = {
 	type = country_event
 	placement = ROOT
 
-	title = dvg_japan.19.t
-	desc = dvg_japan.19.d
-	flavor = dvg_japan.19.f
+	title = dvg_japan.20.t
+	desc = dvg_japan.20.d
+	flavor = dvg_japan.20.f
 
 	event_image = {
 		video = "gfx/event_pictures/unspecific_naval_battle.bk2"
@@ -1419,40 +1371,72 @@ dvg_japan.19 = {
 		
 	}
 	immediate = {
+		
 		if = {
 			limit = { exists = s:STATE_KANTO.region_state:JAP }
 			create_country = { #Republicans/Odawara
 				tag = ODW
 				origin = this
-				state = s:STATE_KANTO.region_state:SHU
+				state = s:STATE_TOHOKU.region_state:SHU
 				
 			}
 			c:ODW = { save_scope_as = scope_ODW }
+			
+
 			if = {
 				limit = { exists = s:STATE_KANTO.region_state:SHU }
 				s:STATE_KANTO.region_state:JAP = { set_state_owner = c:ODW }
 				s:STATE_TOHOKU.region_state:JAP = { set_state_owner = c:ODW }
 			}
 			
+			
+		}
+		every_scope_character = {
+			limit = {
+				has_variable = hideki_var
+
+			}
+			transfer_character = c:ODW
+			set_character_as_ruler = yes
 		}
 
 		if = {
 			limit = { 
-			exists = s:STATE_SHANXI.region_state:SHU
-			owns_entire_state_region = STATE_BEIJING
+			exists = s:STATE_CHUGOKU.region_state:JAP
+			owns_entire_state_region = STATE_CHUGOKU
 			}
 			create_country = { #Satsuma/Konoe
 				tag = CHO
 				origin = this
 				state = s:STATE_CHUGOKU.region_state:JAP
-				if = {
-					limit = { exists = s:STATE_CHUGOKU.region_state:JAP }
-					s:STATE_SHIKOKU.region_state:JAP = { set_state_owner = c:CHO }
-					s:STATE_KYUSHU.region_state:JAP = { set_state_owner = c:CHO }
-				}
+				
 				
 			}
+			if = {
+				limit = { exists = s:STATE_CHUGOKU.region_state:JAP }
+				s:STATE_SHIKOKU.region_state:JAP = { set_state_owner = c:CHO }
+				s:STATE_KYUSHU.region_state:JAP = { set_state_owner = c:CHO }
+			}
 			c:SAT = { save_scope_as = scope_SAT}
+			c:SAT = { 
+
+				create_character = {
+					historical = yes
+					first_name = Konoe
+					last_name = Yamato
+					ruler = yes 
+					ideology = ideology_moderate
+					interest_group = ig_landowners
+					ig_leader = yes
+					birth_date = 1799.11.24
+					traits = {
+						wrathful
+						basic_political_operator
+					}
+					
+				}
+			}
+
 		}
 	}
 
