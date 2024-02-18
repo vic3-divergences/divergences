@@ -194,3 +194,150 @@ je_unify_japan = {
 	should_be_pinned_by_default = yes
 	inheritable = no
 }
+je_siberia_expedition = {
+
+	group = je_group_expeditions
+
+	on_monthly_pulse = {
+		random_events = {
+			80 = 0
+			
+			#Standard event
+			20 = expedition_events.20 #posts a notification
+			
+			20 = expedition_events.220 #river crossing
+			20 = expedition_events.230 #bear sighting
+			10 = expedition_events.240 #expedition photographs
+			20 = expedition_events.250 #mountain spotted
+			20 = expedition_events.260 #snow
+			20 = expedition_events.270 #plants
+			20 = expedition_events.280 #lost
+			
+			#New events
+			30 = expedition_events.290 #build a fort
+			15 = expedition_events.291 #pregnant woman
+			30 = expedition_events.292 #crew disobeys
+			20 = expedition_events.293 #give the crew a quest
+			20 = expedition_events.296 #listen to your guide
+			30 = expedition_events.297 #cabin fever
+			
+			#Events shared with the Africa expeditions
+			5 = expedition_events.140 #leader's breakdown
+			5 = expedition_events.560 #commander vice
+		}
+	}
+	
+	immediate = { 
+		random_scope_character = {
+			limit = {
+				has_variable = expedition_leader_var
+			}
+			save_scope_as = expedition_leader
+		}
+	}
+	
+	status_desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = expedition_low_peril_loc
+				trigger = {
+					var:expedition_peril < 4
+				}
+			}
+			triggered_desc = {
+				desc = expedition_medium_peril_loc
+				trigger = {
+					var:expedition_peril <= 5
+				}
+			}
+			triggered_desc = {
+				desc = expedition_high_peril_loc
+				trigger = {
+					var:expedition_peril >= 6
+				}
+			}
+		}
+	}
+	
+    complete = {
+		custom_tooltip = {
+			text = je_expedition_success
+			scope:journal_entry = {
+				is_goal_complete = yes
+			}
+		}
+	}
+	
+	on_complete = {
+		random_list = {
+			33 = {
+				trigger = { NOT = { has_global_variable = buenaventura_river_disproven } }
+				#trigger_event = { id = expedition_events.300 }
+			}
+			33 = {
+				trigger = { NOT = { has_global_variable = oregon_trail_mapped } }
+				#trigger_event = { id = expedition_events.301 }
+			}
+			33 = {
+				trigger = { NOT = { has_global_variable = great_salt_lake_mapped } }
+				#trigger_event = { id = expedition_events.302 }
+			}
+		}
+		remove_variable = on_expedition
+		remove_variable = congo_river_expedition_var
+		remove_modifier = modifier_large_expedition_cost
+		set_variable = west_america_expedition_success_var #grand exhibition check
+
+		every_state_region = {
+			limit = {
+				is_homeland = cu:yakut
+				is_homeland = cu:ainu
+				is_homeland = cu:siberian
+			}
+			add_claim = ROOT
+		}
+
+		random_scope_character = {
+			limit = {
+				has_variable = expedition_leader_var
+			}
+			remove_variable = expedition_leader_var
+		}
+		
+	}
+    
+   fail = {
+		custom_tooltip = {
+			text = je_expedition_fail
+			var:expedition_peril >= 8
+		}
+    }
+	
+	on_fail = {
+		trigger_event = { id = expedition_events.205 }
+		remove_variable = on_expedition
+		remove_variable = west_america_expedition_var
+		remove_modifier = modifier_large_expedition_cost
+		random_scope_character = {
+			limit = {
+				has_variable = expedition_leader_var
+			}
+			remove_variable = expedition_leader_var
+		}
+	}
+	
+	current_value = {
+		value = var:expedition_progress
+	}
+
+	goal_add_value = {
+		add = 12
+	}
+	
+	progressbar = yes
+	
+    weight = 200
+    transferable = no
+    should_be_pinned_by_default = yes
+}
+
