@@ -51,11 +51,11 @@ dvg_gran_colombia.2 = {
 	flavor = dvg_gran_colombia.2.f
 	
 	event_image = {
-		video = "southamerica_aristocrats"
+		video = "europenorthamerica_springtime_of_nations"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
-	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/springtime_of_nations"
 
 	icon = "gfx/interface/icons/event_icons/event_fire.dds"
 
@@ -395,11 +395,11 @@ dvg_gran_colombia.8 = {
 	flavor = dvg_gran_colombia.8.f
 	
 	event_image = {
-		video = "southamerica_aristocrats"
+		video = "unspecific_steam_ship"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
-	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/steam_ship"
 
 	icon = "gfx/interface/icons/event_icons/event_fire.dds"
 
@@ -449,7 +449,7 @@ dvg_gran_colombia.9 = {
 		name = dvg_gran_colombia.9.a
 		default_option = yes
 		
-		trigger_event = { id = dvg_gran_colombia.24 days = 7 }
+		add_primary_culture = cu:caribeno
 		
 		ai_chance = {
 			base = 1
@@ -1244,6 +1244,9 @@ dvg_gran_colombia.18 = {
 		name = dvg_gran_colombia.18.b
 		default_option = yes
 		
+		c:GCO = {
+			set_variable = castro_colombia
+		}
 		trigger_event = { id = dvg_gran_colombia.19 days = 5 }
 		ai_chance = {
 			base = 50
@@ -1455,12 +1458,13 @@ dvg_gran_colombia.22 = {
 		
 		ruler = { 
 			remove_trait = immortal
-			kill_character = yes
+			exile_character = yes
 		}
 		scope:armed_forces_leader = {
 			set_character_as_ruler = yes
 		}
 		
+		remove_variable = castro_colombia
 		ai_chance = {
 			base = 1
 		}
@@ -1492,6 +1496,7 @@ dvg_gran_colombia.23 = {
 		name = dvg_gran_colombia.23.a
 		default_option = yes
 		
+		set_variable = santander_junta
 		trigger_event = { id = dvg_gran_colombia.48 days = 7 }
 		
 		ai_chance = {
@@ -1526,6 +1531,7 @@ dvg_gran_colombia.24 = {
 		default_option = yes
 		
 		activate_law = law_type:law_monarchy
+		activate_law = law_type:law_autocracy
 		create_character = {
 			heir = yes
 			historical = yes
@@ -1533,7 +1539,7 @@ dvg_gran_colombia.24 = {
 			last_name = Castro
 			culture = cu:caribeno
 			birth_date = 1836.05.12
-			ideology = ideology_constitutionalist
+			ideology = ideology_jingoist_leader
 			interest_group = ig_petty_bourgeoisie
 			on_created = {
 				set_variable = is_married
@@ -1543,7 +1549,6 @@ dvg_gran_colombia.24 = {
 			country = c:PLA
 			value = 15
 		}
-		set_variable = castro_empire
 		ai_chance = {
 			base = 1
 		}
@@ -1574,6 +1579,7 @@ dvg_gran_colombia.25 = {
 	trigger = {
 		year = 1855
 		has_law = law_type:law_monarchy
+		exists = { global_var:castro_empire }
 	}
 	
 	option = {
@@ -1620,6 +1626,8 @@ dvg_gran_colombia.26 = {
 	duration = 3
 
 	trigger = {
+		has_law = law_type:law_monarchy
+		exists = { global_var:castro_empire }
 	}
 	
 	option = {
@@ -4046,7 +4054,7 @@ dvg_gran_colombia.63 = {
 	trigger = {
 		year = 1875
 		tag = MEX
-		NOT = { exists = LUS }
+		NOT = { exists = c:LUS }
 		has_variable = santander_junta
 	}
 	
@@ -4081,7 +4089,7 @@ dvg_gran_colombia.64 = {
 	trigger = {
 		year = 1875
 		tag = GCO
-		NOT = { exists = LUS }
+		NOT = { exists = c:LUS }
 		has_variable = santander_junta
 	}
 	
@@ -4353,12 +4361,9 @@ dvg_gran_colombia.70 = {
 		}
 	}
 	trigger = {
-		exists = c:GCO
-		this = c:GCO
 		OR = {
 			has_variable = la_reforma
-			has_variable = castro_empire
-			has_variable = colombian_empire
+			exists = { global_var:castro_empire }
 		}
 		NOT = { has_variable = reforma_war }
 	}
@@ -4369,9 +4374,23 @@ dvg_gran_colombia.70 = {
 		
 		create_diplomatic_play = {
 			name = great_indian_war
+			target = c:OAX
+			add_target_backers = { c:MCO c:OAX }
+			war = no
+			type = dp_annex_war
 			
+			add_war_goal = {
+				holder = c:GCO
+				type = annex_war
+				target_country = c:MCO
+			}
+			add_war_goal = {
+				holder = c:GCO
+				type = annex_war
+				target_country = c:OAX
+			}
 		}
-		
+		set_variable = reforma_war
 		ai_chance = {
 			base = 1
 		}
@@ -4396,12 +4415,57 @@ dvg_gran_colombia.71 = {
 
 	duration = 3
 
+	immediate = {
+		if = {
+			limit = { exists = s:STATE_SAN_SALVADOR.region_state:GCO }
+			create_country = {
+				tag = UCA
+				origin = this
+				state = s:STATE_SAN_SALVADOR.region_state:GCO
+				state = s:STATE_MANAGUA.region_state:GCO
+				state = s:STATE_COSTA_RICA.region_state:GCO
+				state = s:STATE_PANAMA.region_state:GCO
+				on_created = {
+					add_modifier = {
+						name = dvg_revolutionary_militias
+						days = 720
+						is_decaying = yes
+					}
+					add_loyalists = {
+						value = 0.35
+						culture = cu:central_american
+					}
+					warlord_setup_effect = yes
+					set_variable = warlord_state
+				}
+			}
+		}
+	}
 	trigger = {
+		OR = {
+			has_variable = la_reforma
+			exists = { global_var:castro_empire }
+		}
+		NOT = { has_variable = de_marquez_rebellion }
 	}
 	
 	option = {
 		name = dvg_gran_colombia.71.a
 		default_option = yes
+		
+		create_diplomatic_play = {
+			name = de_marquez_rebellion
+			target = c:UCA
+			war = no
+			type = dp_annex_war
+		}
+		c:UCA = {
+			create_diplomatic_pact = {
+				country = c:MAY
+				type = alliance
+			}
+		}
+		set_variable = de_marquez_rebellion
 		ai_chance = {
 			base = 1
 		}
@@ -4427,12 +4491,23 @@ dvg_gran_colombia.72 = {
 	duration = 3
 
 	trigger = {
+		OR = {
+			has_variable = la_reforma
+			exists = { global_var:castro_empire }
+		}
+		NOT = {
+			exists = c:MAY
+			exists = c:MCO
+			exists = c:OAX
+		}
+		has_variable = reforma_war
 	}
 	
 	option = {
 		name = dvg_gran_colombia.72.a
 		default_option = yes
 		
+		remove_variable = reforma_war
 		ai_chance = {
 			base = 1
 		}
@@ -4458,12 +4533,19 @@ dvg_gran_colombia.73 = {
 	duration = 3
 
 	trigger = {
+		OR = {
+			has_variable = la_reforma
+			exists = { global_var:castro_empire }
+		}
+		NOT = { exists = c:UCA }
+		has_variable = de_marquez_rebellion
 	}
 	
 	option = {
 		name = dvg_gran_colombia.73.a
 		default_option = yes
 		
+		remove_variable = de_marquez_rebellion
 		ai_chance = {
 			base = 1
 		}
