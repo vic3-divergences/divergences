@@ -1,5 +1,5 @@
 ﻿je_japan_regency = {
-	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	icon = "gfx/interface/icons/event_icons/event_empty_chair.dds"
 	# note that if you change this, also update the decision
 	
 	group = je_group_internal_affairs
@@ -106,10 +106,10 @@
 				limit = {
 					this = { var:dvg_nippon_var < 4 }
 					NOT = {
-						has_global_variable = angry_mitsuhito
+						has_global_variable = angry_libs
 					}
 				}
-				set_global_variable = angry_mitsuhito
+				set_global_variable = angry_libs
 			}
 			if = {
 				limit = {
@@ -135,7 +135,7 @@
 }
 
 je_unify_japan = {
-	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	icon = "gfx/interface/icons/event_icons/event_empty_chair.dds"
 
 	group = je_group_crises
 
@@ -193,7 +193,7 @@ je_unify_japan = {
 
 	on_complete = {
 		
-		every_character = {
+		every_scope_character = {
 			limit = {
 				has_trait = immortal
 			}
@@ -206,6 +206,7 @@ je_unify_japan = {
 	should_be_pinned_by_default = yes
 	inheritable = no
 }
+
 je_siberia_expedition = {
 
 	group = je_group_expeditions
@@ -405,4 +406,145 @@ je_edo_commune = {
 
 	should_be_pinned_by_default = yes
 	weight = 5000
+}
+
+je_japan_treaty_ports = {
+	icon = "gfx/interface/icons/invention_icons/nationalism.dds"
+
+	group = je_group_foreign_affairs
+
+	immediate = {
+		
+		if = {
+			limit = {
+				s:STATE_KANTO.region_state:JAP = {
+					is_split_state = yes
+					any_neighbouring_state = {
+						owner = {
+							is_country_type = recognized
+						}
+						is_treaty_port = yes
+					}
+				}
+			}
+			s:STATE_KANTO.region_state:JAP = {
+				save_scope_as = scope_kanto
+				random_neighbouring_state = {
+					limit = {
+						owner = {
+							is_country_type = recognized
+						}
+					}
+					owner = {
+						save_scope_as = yokohama_owner
+					}
+					
+				}
+			}
+		}
+		if = {
+			limit = {
+				s:STATE_KYUSHU.region_state:JAP = {
+					is_split_state = yes
+					any_neighbouring_state = {
+						owner = {
+							is_country_type = recognized
+						}
+						is_treaty_port = yes
+					}
+				}
+			}
+			s:STATE_KYUSHU.region_state:JAP = {
+				save_scope_as = scope_kyushu
+				random_neighbouring_state = {
+					limit = {
+						owner = {
+							is_country_type = recognized
+						}
+					}
+					owner = {
+						save_scope_as = nagasaki_owner
+					}
+					
+				}
+			}
+		}
+	}
+
+	is_shown_when_inactive = {
+
+		
+		
+	}
+
+	possible = {
+		
+
+	}
+
+	complete = {
+		is_country_type = recognized
+
+		custom_tooltip = {
+				text = not_capitulate_tt
+				NOT = {
+					has_variable = recent_capitulation
+				}
+				
+
+			}
+		
+		OR = {
+			scope:nagasaki_owner = {
+				has_truce_with = ROOT
+			}
+			scope:yokohama_owner = {
+				has_truce_with = ROOT
+			}
+		}
+		
+		
+	}
+
+	on_complete = {
+		every_scope_state = {
+			limit = {
+				state_region = {
+					is_homeland = japanese
+				}
+				is_treaty_port = yes
+			}
+			set_state_owner = ROOT
+		}
+		every_diplomatic_play = {
+			limit = {
+				initiator_is = c:JAP
+				has_play_goal = force_recognition
+			}
+			end_play = yes
+		}
+		s:STATE_KYUSHU = {
+			set_owner_of_provinces = {
+				country = ROOT
+				provinces = {
+					xAE5874 
+				 }
+			}
+		}
+		s:STATE_KANTO = {
+			set_owner_of_provinces = {
+				country = ROOT
+				provinces = {
+					x7010C0 
+				 }
+			}
+		}
+
+	}
+	invalid = {
+		owns_entire_state_region = STATE_KYUSHU
+		owns_entire_state_region = STATE_KANTO
+	}
+	should_be_pinned_by_default = yes
+	inheritable = no
 }
