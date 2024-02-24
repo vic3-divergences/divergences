@@ -475,7 +475,7 @@ dvg_nominate_mirabal = {
 		exists = c:GCO
 		this = c:GCO
 		is_subject = no
-		exists = { global_var:castro_empire }
+		exists =  global_var:castro_empire
 		NOT = { has_variable = has_mirabal }
 	}
 	when_taken = {
@@ -514,7 +514,8 @@ dvg_marquess_oaxaca = {
 		exists = c:SPA
 		is_subject = no
 		has_law = law_type:law_monarchy
-		exists = { global_var:castro_empire }
+		country_rank >= great_power
+		exists = global_var:castro_empire
 		NOT = { exists = global_var:marquess_oaxaca_employed }
 	}
 	possible = {
@@ -525,8 +526,10 @@ dvg_marquess_oaxaca = {
 			is_ai = yes
 			relations:root >= relations_threshold:amicable
 		}
+		gold_reserves >= 100000
 	}
 	when_taken = {
+		gold_reserves = -100000
 		create_character = {
 			historical = yes
 			first_name = Henrique
@@ -554,7 +557,10 @@ dvg_stabilize_the_peso = {
 		exists = c:GCO
 		this = c:GCO
 		is_subject = no
-		NOT = { exists = global_var:stabilized_peso }
+		NOR = {
+			exists = global_var:stabilized_peso
+			has_modifier = dvg_peso_stabilizing
+		}
 	}
 	possible = {
 		in_default = no
@@ -564,9 +570,9 @@ dvg_stabilize_the_peso = {
 		has_technology_researched = currency_standard
 	}
 	when_taken = {
-		gold_reserves = -750000
+		gold_reserves = -75000
 		add_modifier = {
-			name = peso_stabilizing
+			name = dvg_peso_stabilizing
 			years = 10
 		}
 		trigger_event = { id = dvg_gran_colombia.76 years = 10 }
@@ -597,23 +603,315 @@ dvg_codigo_civil_castro = {
 		this = c:GCO
 		is_subject = no
 	}
+	possible = {
+		
+	}
+	when_taken = {
+		add_modifier = {
+			name = dvg_castro_codigo_civil
+		}
+	}
+}
+dvg_concordat_with_rome = {
+	is_shown = {
+		exists = c:GCO
+		this = c:GCO
+		is_subject = no
+		NOT = { exists = global_var:colombian_concordat }
+	}
+	possible = {
+		OR = {
+			AND = {
+				exists = PAP
+				relations:root >= relations_threshold:amicable
+			}
+			AND = {
+				exists = ITA
+				exists = s:STATE_ROME.region_state:ITA
+				relations:root >= relations_threshold:amicable
+			}
+			AND = {
+				exists = ITC
+				exists = s:STATE_ROME.region_state:ITC
+				relations:root >= relations_threshold:amicable
+			}
+		}
+	}
+	when_taken = {
+		activate_law = law_type:law_freedom_of_conscience
+		set_global_variable = {
+			name = colombian_concordat
+			value = 0
+		}
+	}
+}
+dvg_liceos = {
+	is_shown = {
+		exists = c:GCO
+		this = c:GCO
+		is_subject = no
+		exists = global_var:castro_empire
+	}
+	possible = {
+		gold_reserves >= 200000
+	}
+	when_taken = {
+		if = {
+			limit = {
+				OR = {
+					has_law = law_type:law_no_school
+					has_law = law_type:law_religious_school
+				}
+			}
+			activate_law = law_type:law_private_school
+			set_institution_investment_level = 1
+			else = {
+				limit = {
+					OR = {
+						has_law = law_type:private_school
+						has_law = law_type:public_school
+					}
+				}
+				set_institution_investment_level = 1
+			}
+		}
+		gold_reserves >= -200000
+	}
+}
+dvg_ferrocarril_imperial_colombiano = {
+	is_shown = {
+		exists = c:GCO
+		this = c:GCO
+		is_subject = no
+		exists = global_var:castro_empire
+		NOT = { exists = global_var:FIC_colombia }
+	}
+	possible = {
+		has_technology_researched = railway
+		gold_reserves >= 1000000
+	}
+	when_taken = {
+		gold_reserves = -1000000
+		s:STATE_MEXICO = {
+			region_state.GCO = {
+				create_building = {
+					building = "building_railway"
+					level = 4
+					reserve = 1
+				}
+			}
+		}
+		s:STATE_OAXACA = {
+			region_state.GCO = {
+				create_building = {
+					building = "building_railway"
+					level = 4
+					reserve = 1
+				}
+			}
+		}
+		s:STATE_VERACRUZ = {
+			region_state.GCO = {
+				create_building = {
+					building = "building_railway"
+					level = 4
+					reserve = 1
+				}
+			}
+		}
+		s:STATE_BAJIO = {
+			region_state.GCO = {
+				create_building = {
+					building = "building_railway"
+					level = 4
+					reserve = 1
+				}
+			}
+		}
+		s:STATE_ZACATECAS = {
+			region_state.GCO = {
+				create_building = {
+					building = "building_railway"
+					level = 4
+					reserve = 1
+				}
+			}
+		}
+		s:STATE_GUERRERO = {
+			region_state.GCO = {
+				create_building = {
+					building = "building_railway"
+					level = 4
+					reserve = 1
+				}
+			}
+		}
+		s:STATE_JALISCO = {
+			region_state.GCO = {
+				create_building = {
+					building = "building_railway"
+					level = 4
+					reserve = 1
+				}
+			}
+		}
+		s:STATE_DURANGO = {
+			region_state.GCO = {
+				create_building = {
+					building = "building_railway"
+					level = 4
+					reserve = 1
+				}
+			}
+		}
+		s:STATE_SINALOA = {
+			region_state.GCO = {
+				create_building = {
+					building = "building_railway"
+					level = 4
+					reserve = 1
+				}
+			}
+		}
+		set_global_variable = {
+			name = FIC_colombia
+			value = 0
+		}
+	}
+}
+dvg_ferrocarril_imperial_colombiano_san_salvador = {
+	is_shown = {
+		exists = c:GCO
+		this = c:GCO
+		is_subject = no
+		exists = global_var:castro_empire
+		exists = global_var:FIC_colombia
+		NOT = { exists = global_var:FIC_colombia_SE }
+	}
 	possible = {}
 	when_taken = {}
 }
-dvg_concordat_with_rome = {}
-dvg_liceos = {}
-dvg_ferrocarril_imperial_colombiano = {}
-dvg_ferrocarril_imperial_colombiano_san_salvador = {}
-dvg_ferrocarril_imperial_colombiano_california = {}
-dvg_ferrocarril_imperial_colombiano_lusitania = {}
-dvg_ciudad_victoria = {}
-dvg_puertoriental = {}
-dvg_mexicopolis_caput_novi_mondi = {}
-dvg_confiscation_castro = {}
-dvg_escuela_normal = {}
-dvg_la_reforma = {}
-dvg_nova_lisboa_renovation = {}
-dvg_codigo_civil_vicente = {}
-dvg_fonseca_bay_development = {}
-dvg_galapagos_national_park = {}
-dvg_galapagos_naval_base = {}
+dvg_ferrocarril_imperial_colombiano_california = {
+	is_shown = {
+		exists = c:GCO
+		this = c:GCO
+		is_subject = no
+		exists = global_var:castro_empire
+	}
+	possible = {}
+	when_taken = {}
+}
+dvg_ferrocarril_imperial_colombiano_lusitania = {
+	is_shown = {
+		exists = c:GCO
+		this = c:GCO
+		is_subject = no
+		exists = global_var:castro_empire
+	}
+	possible = {}
+	when_taken = {}
+}
+dvg_ciudad_victoria = {
+	is_shown = {
+		exists = c:GCO
+		this = c:GCO
+		is_subject = no
+		exists = global_var:castro_empire
+	}
+	possible = {}
+	when_taken = {}
+}
+dvg_puertoriental = {
+	is_shown = {
+		exists = c:GCO
+		this = c:GCO
+		is_subject = no
+		exists = global_var:castro_empire
+	}
+	possible = {}
+	when_taken = {}
+}
+dvg_mexicopolis_caput_novi_mondi = {
+	is_shown = {
+		exists = c:GCO
+		this = c:GCO
+		is_subject = no
+		exists = global_var:castro_empire
+	}
+	possible = {}
+	when_taken = {}
+}
+dvg_confiscation_castro = {
+	is_shown = {
+		exists = c:GCO
+		this = c:GCO
+		is_subject = no
+		exists = global_var:castro_empire
+	}
+	possible = {}
+	when_taken = {}
+}
+dvg_escuela_normal = {
+	is_shown = {
+		exists = c:GCO
+		this = c:GCO
+		is_subject = no
+		exists = global_var:castro_empire
+	}
+	possible = {}
+	when_taken = {}
+}
+dvg_la_reforma = {
+	is_shown = {
+		exists = c:GCO
+		this = c:GCO
+		is_subject = no
+	}
+	possible = {}
+	when_taken = {}
+}
+dvg_nova_lisboa_renovation = {
+	is_shown = {
+		exists = c:GCO
+		this = c:GCO
+		is_subject = no
+	}
+	possible = {}
+	when_taken = {}
+}
+dvg_codigo_civil_vicente = {
+	is_shown = {
+		exists = c:GCO
+		this = c:GCO
+		is_subject = no
+	}
+	possible = {}
+	when_taken = {}
+}
+dvg_fonseca_bay_development = {
+	is_shown = {
+		exists = c:GCO
+		this = c:GCO
+		is_subject = no
+	}
+	possible = {}
+	when_taken = {}
+}
+dvg_galapagos_national_park = {
+	is_shown = {
+		exists = c:GCO
+		this = c:GCO
+		is_subject = no
+	}
+	possible = {}
+	when_taken = {}
+}
+dvg_galapagos_naval_base = {
+	is_shown = {
+		exists = c:GCO
+		this = c:GCO
+		is_subject = no
+	}
+	possible = {}
+	when_taken = {}
+}
