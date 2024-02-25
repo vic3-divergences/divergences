@@ -511,21 +511,14 @@ dvg_marquess_oaxaca = {
 	is_shown = {
 		exists = c:GCO
 		this = c:GCO
-		exists = c:SPA
 		is_subject = no
 		has_law = law_type:law_monarchy
-		country_rank >= great_power
+		country_rank >= rank_value:great_power
 		exists = global_var:castro_empire
 		NOT = { exists = global_var:marquess_oaxaca_employed }
 	}
 	possible = {
-		exists = c:SPA
-		c:SPA = {
-			is_at_war = no
-			has_law = law_type:law_monarchy
-			is_ai = yes
-			relations:root >= relations_threshold:amicable
-		}
+		country_rank >= rank_value:great_power
 		gold_reserves >= 100000
 	}
 	when_taken = {
@@ -543,8 +536,15 @@ dvg_marquess_oaxaca = {
 			}
 		}
 		change_relations = {
-			country = c:SPA
+			limit = {
+				country_rank = rank_value:great_power
+				NOT = { country = c:SPA }
+			}
 			value = 100
+		}
+		change_relations = {
+			country = c:PLA
+			value = 50
 		}
 		set_global_variable = {
 			name = marquess_oaxaca_employed
@@ -602,6 +602,11 @@ dvg_codigo_civil_castro = {
 		exists = c:GCO
 		this = c:GCO
 		is_subject = no
+		OR = {
+			has_variable = castro_colombia
+			exists = global_var:castro_empire
+		}
+		NOT = { exists = global_var:codigo_civil_castro }
 	}
 	possible = {
 		
@@ -609,6 +614,11 @@ dvg_codigo_civil_castro = {
 	when_taken = {
 		add_modifier = {
 			name = dvg_castro_codigo_civil
+			days = -1
+		}
+		set_global_variable = {
+			name = codigo_civil_castro
+			value = 0
 		}
 	}
 }
@@ -948,15 +958,55 @@ dvg_ferrocarril_imperial_colombiano_lusitania = {
 		}
 	}
 }
+dvg_mexicopolis_caput_novi_mondi = {
+	is_shown = {
+		exists = c:GCO
+		this = c:GCO
+		is_subject = no
+		exists = global_var:castro_empire
+		NOT = { exists = global_var:renovation_mexico }
+	}
+	possible = {
+		country_rank >= rank_value:great_power
+		owns_entire_state_region = STATE_MEXICO
+		gold_reserves >= 200000
+	}
+	when_taken = {
+		gold_reserves = -200000
+		set_global_variable = {
+			name = renovation_mexico
+			value = 0
+		}
+		s:STATE_MEXICO = {
+			add_modifier = dvg_colonial_recruitment
+			years = 5
+		}
+	}
+}
 dvg_ciudad_victoria = {
 	is_shown = {
 		exists = c:GCO
 		this = c:GCO
 		is_subject = no
 		exists = global_var:castro_empire
+		NOT = { exists = global_var:renovation_veracruz }
 	}
-	possible = {}
-	when_taken = {}
+	possible = {
+		country_rank >= rank_value:great_power
+		owns_entire_state_region = STATE_VERACRUZ
+		gold_reserves >= 200000
+	}
+	when_taken = {
+		gold_reserves = -200000
+		set_global_variable = {
+			name = renovation_veracruz
+			value = 0
+		}
+		s:STATE_VERACRUZ = {
+			add_modifier = dvg_colonial_recruitment
+			years = 5
+		}
+	}
 }
 dvg_puertoriental = {
 	is_shown = {
@@ -964,72 +1014,241 @@ dvg_puertoriental = {
 		this = c:GCO
 		is_subject = no
 		exists = global_var:castro_empire
+		exists = global_var:renovation_mexico
+		exists = global_var:renovation_veracruz
+		NOT = { exists = global_var:renovation_puertoriental }
 	}
-	possible = {}
-	when_taken = {}
-}
-dvg_mexicopolis_caput_novi_mondi = {
-	is_shown = {
-		exists = c:GCO
-		this = c:GCO
-		is_subject = no
-		exists = global_var:castro_empire
+	possible = {
+		country_rank >= rank_value:great_power
+		owns_entire_state_region = STATE_PANAMA
+		gold_reserves >= 200000
 	}
-	possible = {}
-	when_taken = {}
+	when_taken = {
+		gold_reserves = -200000
+		set_global_variable = {
+			name = renovation_puertoriental
+			value = 0
+		}
+		s:STATE_PANAMA = {
+			add_modifier = dvg_colonial_recruitment
+			years = 5
+		}
+	}
 }
 dvg_confiscation_castro = {
 	is_shown = {
 		exists = c:GCO
 		this = c:GCO
 		is_subject = no
-		exists = global_var:castro_empire
+		OR = {
+			has_variable = castro_colombia
+			exists = global_var:castro_empire
+		}
+		NOT = { exists = global_var:la_reforma }
 	}
-	possible = {}
-	when_taken = {}
+	possible = {
+		
+	}
+	when_taken = {
+		set_global_variable = {
+			name = la_reforma
+			value = 0
+		}
+		add_radicals = {
+			value = 0.30
+			culture = cu:zapotec
+		}
+		add_radicals = {
+			value = 0.30
+			culture = cu:mayan
+		}
+		add_radicals = {
+			value = 0.30
+			culture = cu:tarascan
+		}
+		add_radicals = {
+			value = 0.30
+			culture = cu:nahua
+		}
+		activate_law = law_type:law_homesteading
+		add_modifier = {
+			name = dvg_agrarian_reform
+			years = 20
+		}
+	}
 }
 dvg_escuela_normal = {
 	is_shown = {
 		exists = c:GCO
 		this = c:GCO
 		is_subject = no
-		exists = global_var:castro_empire
+		exists = global_var:vicente_colombian_republic
+		NOT = { exists = global_var:escuela_normal }
 	}
-	possible = {}
-	when_taken = {}
+	possible = {
+		NOT = { has_law = law_type:public_school }
+		gold_reserves >=250000
+	}
+	when_taken = {
+		gold_reserves = -250000
+		activate_law = law_type:public_school
+		set_global_variable = {
+			name = escuela_normal
+			value = 0
+		}
+	}
 }
 dvg_la_reforma = {
 	is_shown = {
 		exists = c:GCO
 		this = c:GCO
 		is_subject = no
+		exists = global_var:vicente_colombian_republic
+		NOT = { exists = global_var:la_reforma }
 	}
-	possible = {}
-	when_taken = {}
+	possible = {
+		
+	}
+	when_taken = {
+		set_global_variable = {
+			name = la_reforma
+			value = 0
+		}
+		add_radicals = {
+			value = 0.30
+			culture = cu:zapotec
+		}
+		add_radicals = {
+			value = 0.30
+			culture = cu:mayan
+		}
+		add_radicals = {
+			value = 0.30
+			culture = cu:tarascan
+		}
+		add_radicals = {
+			value = 0.30
+			culture = cu:nahua
+		}
+		add_radicals = {
+			value = 0.30
+			interest_group = ig:ig_devout
+		}
+		change_relations = {
+			country = c:PAP
+			value = -150
+		}
+		activate_law = law_type:law_homesteading
+		activate_law = law_type:law_total_separation
+		add_modifier = {
+			name = dvg_agrarian_reform_vicente
+			days = -1
+		}
+	}
 }
 dvg_nova_lisboa_renovation = {
 	is_shown = {
 		exists = c:GCO
 		this = c:GCO
 		is_subject = no
+		exists = global_var:vicente_colombian_republic
+		NOT = { exists = global_var:renovation_nova_lisboa }
 	}
-	possible = {}
-	when_taken = {}
+	possible = {
+		owns_entire_state_region = STATE_BAHIA
+		gold_reserves >= 150000
+	}
+	when_taken = {
+		gold_reserves = -150000
+		s:STATE_BAHIA = {
+			add_modifier = {
+				name = dvg_colonial_recruitment
+				years = 20
+			}
+		}
+	}
+}
+dvg_porto_novo_renovation = {
+	is_shown = {
+		exists = c:GCO
+		this = c:GCO
+		is_subject = no
+		exists = global_var:vicente_colombian_republic
+		NOT = { exists = global_var:renovation_porto_novo }
+	}
+	possible = {
+		owns_entire_state_region = STATE_BAJA_CALIFORNIA
+		gold_reserves >= 150000
+	}
+	when_taken = {
+		gold_reserves = -150000
+		s:STATE_BAJA_CALIFORNIA = {
+			add_modifier = {
+				name = dvg_colonial_recruitment
+				years = 20
+			}
+		}
+	}
+}
+dvg_san_salvador_renovation = {
+	is_shown = {
+		exists = c:GCO
+		this = c:GCO
+		is_subject = no
+		exists = global_var:vicente_colombian_republic
+		NOT = { exists = global_var:renovation_san_salvador }
+	}
+	possible = {
+		
+		owns_entire_state_region = STATE_GUATEMALA
+		owns_entire_state_region = STATE_SAN_SALVADOR
+		gold_reserves >= 300000
+	}
+	when_taken = {
+		gold_reserves = -300000
+		s:STATE_GUATEMALA = {
+			add_modifier = {
+				name = dvg_colonial_recruitment
+				years = 20
+			}
+		}
+		s:STATE_SAN_SALVADOR = {
+			add_modifier = {
+				name = dvg_colonial_recruitment
+				years = 20
+			}
+		}
+	}
 }
 dvg_codigo_civil_vicente = {
 	is_shown = {
 		exists = c:GCO
 		this = c:GCO
 		is_subject = no
+		exists = global_var:vicente_colombian_republic
+		NOT = { exists = global_var:codigo_civil_vicente }
 	}
-	possible = {}
-	when_taken = {}
+	possible = {
+		exists = global_var:la_reforma
+		NOT = { has_law = law_type:state_religion }
+	}
+	when_taken = {
+		set_global_variable = {
+			name = codigo_civil_vicente
+			value = 0
+		}
+		add_modifier = {
+			name = dvg_codigo_civil_vicente
+			days = -1
+		}
+	}
 }
 dvg_fonseca_bay_development = {
 	is_shown = {
 		exists = c:GCO
 		this = c:GCO
 		is_subject = no
+		NOT = { global_var:fonseca_project }
 	}
 	possible = {}
 	when_taken = {}
