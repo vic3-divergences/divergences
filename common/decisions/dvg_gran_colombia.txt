@@ -550,6 +550,10 @@ dvg_marquess_oaxaca = {
 			name = marquess_oaxaca_employed
 			value = 0
 		}
+		add_modifier = {
+			name = dvg_diplomacy_marquess
+			days = -1
+		}
 	}
 }
 dvg_stabilize_the_peso = {
@@ -1047,7 +1051,7 @@ dvg_confiscation_castro = {
 		NOT = { exists = global_var:la_reforma }
 	}
 	possible = {
-		
+		country_rank >= rank_value:great_power
 	}
 	when_taken = {
 		set_global_variable = {
@@ -1072,7 +1076,7 @@ dvg_confiscation_castro = {
 		}
 		activate_law = law_type:law_homesteading
 		add_modifier = {
-			name = dvg_agrarian_reform
+			name = dvg_agrarian_reform_castro
 			years = 20
 		}
 	}
@@ -1087,7 +1091,7 @@ dvg_escuela_normal = {
 	}
 	possible = {
 		NOT = { has_law = law_type:public_school }
-		gold_reserves >=250000
+		gold_reserves >= 250000
 	}
 	when_taken = {
 		gold_reserves = -250000
@@ -1107,7 +1111,7 @@ dvg_la_reforma = {
 		NOT = { exists = global_var:la_reforma }
 	}
 	possible = {
-		
+		country_rank >= rank_value:great_power
 	}
 	when_taken = {
 		set_global_variable = {
@@ -1238,7 +1242,7 @@ dvg_codigo_civil_vicente = {
 			value = 0
 		}
 		add_modifier = {
-			name = dvg_codigo_civil_vicente
+			name = dvg_vicente_codigo_civil
 			days = -1
 		}
 	}
@@ -1250,24 +1254,129 @@ dvg_fonseca_bay_development = {
 		is_subject = no
 		NOT = { global_var:fonseca_project }
 	}
-	possible = {}
-	when_taken = {}
+	possible = {
+		gold_reserves >= 100000
+		owns_entire_state_region = STATE_MANAGUA
+	}
+	when_taken = {
+		gold_reserves = -100000
+		s:STATE_MANAGUA = {
+			add_modifier = {
+				name = dvg_colonial_recruitment
+				years = 20
+			}
+		}
+	}
+}
+dvg_ciudad_vicente = {
+	is_shown = {
+		exists = c:GCO
+		this = c:GCO
+		is_subject = no
+		exists = global_var:vicente_colombian_republic
+		NOT = { exists = global_var:renovation_veracruz }
+	}
+	possible = {
+		country_rank >= rank_value:great_power
+		owns_entire_state_region = STATE_VERACRUZ
+		gold_reserves >= 200000
+	}
+	when_taken = {
+		gold_reserves = -200000
+		set_global_variable = {
+			name = renovation_veracruz
+			value = 0
+		}
+		set_capital = STATE_VERACRUZ
+		s:STATE_VERACRUZ = {
+			add_modifier = dvg_colonial_recruitment
+			years = 5
+		}
+	}
+}
+dvg_mexico_vicente = {
+	is_shown = {
+		exists = c:GCO
+		this = c:GCO
+		is_subject = no
+		exists = global_var:vicente_colombian_republic
+		NOT = { exists = global_var:renovation_mexico }
+	}
+	possible = {
+		country_rank >= rank_value:great_power
+		owns_entire_state_region = STATE_MEXICO
+		gold_reserves >= 200000
+	}
+	when_taken = {
+		gold_reserves = -200000
+		set_global_variable = {
+			name = renovation_mexico
+			value = 0
+		}
+		s:STATE_MEXICO = {
+			add_modifier = dvg_colonial_recruitment
+			years = 5
+		}
+	}
 }
 dvg_galapagos_national_park = {
 	is_shown = {
 		exists = c:GCO
 		this = c:GCO
 		is_subject = no
+		NOT = { exists = global_var:galapagos_development }
 	}
-	possible = {}
-	when_taken = {}
+	possible = {
+		owns_entire_state_region = STATE_ECUADOR
+	}
+	when_taken = {
+		set_global_variable = {
+			name = galapagos_development
+			value = 0
+		}
+		s:STATE_ECUADOR = {
+			region_state.GCO = {
+				create_building = {
+					building = "building_naval_base"
+					level = -7
+					reserve = 1
+				}
+			}
+		}
+		s:STATE_PANAMA = {
+			region_state.GCO = {
+				create_building = {
+					building = "building_naval_base"
+					level = 3
+					reserve = 1
+				}
+			}
+		}
+	}
 }
 dvg_galapagos_naval_base = {
 	is_shown = {
 		exists = c:GCO
 		this = c:GCO
 		is_subject = no
+		NOT = { exists = global_var:galapagos_development }
 	}
-	possible = {}
-	when_taken = {}
+	possible = {
+		owns_entire_state_region = STATE_ECUADOR
+	}
+	when_taken = {
+		set_global_variable = {
+			name = galapagos_development
+			value = 0
+		}
+		s:STATE_ECUADOR = {
+			region_state.GCO = {
+				create_building = {
+					building = "building_naval_base"
+					level = 7
+					reserve = 1
+				}
+			}
+		}
+	}
 }
