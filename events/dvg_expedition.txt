@@ -1670,4 +1670,112 @@ dvg_expedition.297 = { #cabin fever
         add_small_peril_effect = yes
     }
 }
+dvg_expedition.501 = { #Ill-Intent
+	type = country_event
+    placement = ROOT
+
+    title = dvg_expedition.501.t
+    desc =  dvg_expedition.501.d
+    flavor = dvg_expedition.501.f
+
+    event_image = {
+		video = "europenorthamerica_gold_prospectors"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+    duration = 3
+	
+	trigger = {
+		OR = {
+			has_journal_entry = je_siberia_expedition
+			has_variable = expedition_white_fog
+		}
+	}
+	
+	immediate = {
+		set_variable = guide_advice_var
+		west_america_expedition_location = yes
+	}
+
+	option = { #follow their advice
+		name = dvg_expedition.501.a
+		trigger = {
+			NOT = { has_variable = native_guide_var }
+		}
+		default_option = yes
+		custom_tooltip = expedition_event_delayed_tt
+	}
+	
+	option = { #take the faster route
+		name = dvg_expedition.501.b
+		random_list = {
+			25 = {
+				trigger_event = { id = dvg_expedition.502 days = 15	}
+			}
+			25 = {
+				expedition_minor_progress_effect = yes
+			}
+			25 = {
+				trigger_event = { id = dvg_expedition.230 days = 15	}
+			}
+			25 = {
+				trigger_event = { id = dvg_expedition.280 days = 15	}
+			}
+		}
+	}
+}
+
+dvg_expedition.502 = { #
+    type = country_event
+    placement = scope:current_expedition_location
+	
+    title = dvg_expedition.502.t
+    desc = dvg_expedition.502.d
+    flavor = dvg_expedition.502.f
+	
+    event_image = {
+        video = "europenorthamerica_gold_prospectors"
+    }
+	
+    on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	
+    icon = "gfx/interface/icons/event_icons/event_map.dds"
+	
+    duration = 3
+    
+    trigger = {
+        var:expedition_peril >= 7
+    }
+	
+    immediate = {
+        west_america_expedition_location = yes
+    }
+	
+    option = { #stay the night (but you're paranoid)
+        name = dvg_expedition.502.a
+        default_option = yes
+        custom_tooltip = expedition_event_delayed_tt
+        random_list = {
+            50 = {
+                add_medium_peril_effect = yes
+				expedition_minor_progress_effect = yes
+            }
+            50 = {
+				
+            }
+        }
+    }
+    
+    option = { #leave at once (but it's dangerous)
+        name = dvg_expedition.297.b
+        add_small_peril_effect = yes
+		add_modifier = {
+			name = modifier_small_expedition_cost
+			multiplier = money_amount_multiplier_medium
+		}
+    }
+}
 
