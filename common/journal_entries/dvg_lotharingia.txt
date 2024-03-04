@@ -1,7 +1,7 @@
 ﻿je_lotharian_house_of_cards = {
 	icon = "gfx/interface/icons/event_icons/event_scales.dds"
 
-	
+	group = je_group_internal_affairs
 
 	possible = {
 		ig:ig_armed_forces = {
@@ -12,22 +12,83 @@
 	immediate = {
 		set_variable = {
 			name = aigle_var
-			value = 0
+			value = 20
 		}
 	}
 
 	on_monthly_pulse = {
+		events = {
+			
+		
+		dvg_lotharingia.15
+
+		}
 		effect = {
 			if = {
 				limit = {
 					ig:ig_armed_forces = {
 						is_powerful = yes
 						is_in_government = yes
-					}	
+					}
+					any_interest_group = {
+					count > 1
+					ig_approval < -6
+					}
 				}
 				change_variable = {
 					name = aigle_var
 					add = 1
+				}
+			}
+			if = {
+				limit = {
+					any_interest_group = {
+					count > 3
+					ig_approval < -10
+					}
+					
+				}
+				change_variable = {
+					name = aigle_var
+					add = 20
+				}
+			}
+			if = {
+				limit = {
+					ig:ig_armed_forces = {
+						is_insurrectionary = yes
+					}
+					
+				}
+				change_variable = {
+					name = aigle_var
+					add = 20
+				}
+			}
+			if = {
+				limit = {
+					any_interest_group = {
+						is_insurrectionary = yes
+						ig_clout >= 0.12
+					}
+					
+				}
+				change_variable = {
+					name = aigle_var
+					add = 15
+				}
+			}
+			if = {
+				limit = {
+					ig:ig_armed_forces = {
+						is_powerful = yes
+						is_in_government = yes
+					}
+					root.average_sol > 11
+				}
+				change_variable = {
+					name = aigle_var
+					add = -3
 				}
 			}
 		}
@@ -35,14 +96,22 @@
 
 	complete = {
 		# If-else clause to avoid errors because of missing variable before JE activates
+		
+		
 		trigger_if = {
 			limit = { exists = var:aigle_var }
 			scope:journal_entry = { is_goal_complete = yes }
 		}
 		
+
+		any_interest_group = {
+					count >= 2
+					ig_approval < -6
+					ig_clout >= 0.12
+					}
 		
 		has_law = law_type:law_autocracy
-		root.average_sol <= 12
+		root.average_sol <= 11
 	}
 	
 	on_complete = {
@@ -58,6 +127,9 @@
 				is_powerful = no
 				is_in_government = no
 			}
+			
+			var:aigle_var <= 0
+			
 			NOT = { has_law = law_type:law_presidential_republic
 			        has_law = law_type:law_monarchy
 			}
@@ -65,6 +137,7 @@
 			        has_law = law_type:law_monarchy
 			}
 		}
+		
 	}
 	
 	on_fail = {
@@ -72,6 +145,7 @@
 		trigger_event = {
 			id = dvg_lotharingia.4
 		}
+		
 	}
 	
 	timeout = 9125
@@ -87,7 +161,7 @@
 	}
 
 	goal_add_value = {
-		value = 150
+		value = 200
 	}
 
 	progressbar = yes
@@ -98,6 +172,8 @@
 
 je_reconquering_atlantia = {
 	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	group = je_group_foreign_affairs
 
 	immediate = {
 		hidden_effect = {
@@ -137,7 +213,9 @@ je_reconquering_atlantia = {
 }
 
 je_reuniting_lotharingia = {
-	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	icon = "gfx/interface/icons/invention_icons/nationalism.dds"
+
+	group = je_group_internal_affairs
 
 	is_shown_when_inactive = {
 		exists = c:LOT
@@ -208,9 +286,9 @@ je_reuniting_lotharingia = {
 	timeout = 4380
 
 	on_timeout = {
-		#trigger_event = {
-			# id = dvg_lotharingia.7
-		#}
+		trigger_event = {
+			 id = dvg_lotharingia.7
+		}
 	}
 
 	weight = 10000
@@ -218,11 +296,16 @@ je_reuniting_lotharingia = {
 }
 
 je_odonia_unite = {
-	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	icon = "gfx/interface/icons/invention_icons/democracy.dds"
+
+	group = je_group_internal_affairs
 
 	is_shown_when_inactive = {
 		exists = c:ODO
         exists = c:LOT
+		is_subject = no
+		NOT = {exists = global_var:odonia_puppet}
+		
 		has_state_in_state_region = STATE_BOURGOGNE_DU_SUD
 		has_state_in_state_region = STATE_TRANSFLEUVE
 		any_neighbouring_state = {
@@ -233,6 +316,10 @@ je_odonia_unite = {
     possible = {
 		has_state_in_state_region = STATE_BOURGOGNE_DU_SUD
 		has_state_in_state_region = STATE_TRANSFLEUVE
+		
+		
+		
+		is_subject = no
 	}
 
 	complete = {
@@ -245,6 +332,7 @@ je_odonia_unite = {
 
     on_complete = {
 		trigger_event = { id = dvg_lotharingia.8 popup = yes }
+		trigger_event = {id = dvg_lotharingia.13 popup = yes days = 30}
 		
     }
 
@@ -260,7 +348,9 @@ je_odonia_unite = {
 }
 
 je_guarani_unite = {
-	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	icon = "gfx/interface/icons/invention_icons/pan_nationalism.dds"
+
+	group = je_group_internal_affairs
 
 	is_shown_when_inactive = {
 		exists = c:TGI
@@ -299,7 +389,9 @@ je_guarani_unite = {
 }
 
 je_nouvelle_alsace = {
-	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	icon = "gfx/interface/icons/invention_icons/civilizing_mission.dds"
+
+	group = je_group_internal_affairs
 
 	is_shown_when_inactive = {
 		exists = c:NEA
@@ -328,5 +420,149 @@ je_nouvelle_alsace = {
 		
     }
 
+	should_be_pinned_by_default = yes
+}
+
+je_anglo_lotharingia = {
+	icon = "gfx/interface/icons/event_icons/event_scales.dds"
+
+	group = je_group_foreign_affairs
+
+	possible = {
+		
+	}
+
+	immediate = {
+		set_variable = {
+			name = blt_var
+			value = 0
+		}
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			
+			if = {
+				limit = {
+					any_interest_group = {
+					count > 3
+					ig_approval < -10
+					}
+					
+				}
+				change_variable = {
+					name = blt_var
+					add = 20
+				}
+			}
+			if = {
+				limit = {
+					ig:ig_armed_forces = {
+						is_insurrectionary = yes
+					}
+					
+				}
+				change_variable = {
+					name = blt_var
+					add = 20
+				}
+			}
+			if = {
+				limit = {
+					any_interest_group = {
+						is_insurrectionary = yes
+						ig_clout >= 0.10
+					}
+					
+				}
+				change_variable = {
+					name = blt_var
+					add = 15
+				}
+			}
+			if = {
+				limit = {
+					ig:ig_armed_forces = {
+						is_powerful = yes
+						is_in_government = yes
+					}
+					root.average_sol > 11
+				}
+				change_variable = {
+					name = blt_var
+					add = -3
+				}
+			}
+		}
+	}
+
+	complete = {
+		# If-else clause to avoid errors because of missing variable before JE activates
+		
+		
+		trigger_if = {
+			limit = { exists = var:blt_var }
+			scope:journal_entry = { is_goal_complete = yes }
+		}
+		
+
+		any_interest_group = {
+					count > 2
+					ig_approval < -5
+					ig_clout >= 0.10
+					}
+		
+		root.average_sol <= 11
+	}
+	
+	on_complete = {
+		set_variable = blt_complete
+		trigger_event = {
+			id = dvg_lotharingia.14
+		}
+	}
+	
+	
+	fail = {
+	
+			custom_tooltip = {
+			text = fragile_blt
+			has_variable = stamped_out_monarchy_var
+			}
+			any_scope_state = {
+					count >= 3
+						is_incorporated = yes
+						any_state_region = {
+						is_homeland = cu:lotharian
+						}
+					}
+			any_scope_state = {
+						count >= 3
+						is_incorporated = yes
+						any_state_region = {
+							is_homeland = cu:beornian
+							}
+					}
+			NOT = { has_law = law_type:law_autocracy
+			}
+	}
+
+	invalid = {
+	
+		NOT = {exists = c:BLT}
+	}
+	
+
+	current_value = {
+		value = root.var:blt_var
+	}
+
+	goal_add_value = {
+		value = 150
+	}
+
+	progressbar = yes
+
+	weight = 10000
 	should_be_pinned_by_default = yes
 }

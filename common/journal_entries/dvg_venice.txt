@@ -1,0 +1,201 @@
+﻿#
+je_ven_patricians_success = {
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	group = je_group_internal_affairs
+
+	complete = {
+		scope:journal_entry = {
+			is_goal_complete = yes
+		}
+	}
+
+	is_shown_when_inactive = {
+        exists = c:VEN
+        THIS = c:VEN
+    }
+
+	possible = {
+		any_interest_group = {
+			OR = {
+				is_powerful = yes
+				is_insurrectionary = yes
+			}
+			OR = {
+				leader = { has_ideology = ideology:ideology_radical }
+				leader = { has_ideology = ideology:ideology_reformer }
+				leader = { has_ideology = ideology:ideology_abolitionist }
+				leader = { has_ideology = ideology:ideology_fascist }
+			}
+		}
+		OR = {
+			has_technology_researched = nationalism
+			has_technology_researched = egalitarianism
+		}
+		has_modifier = dvg_ven_patricians
+		custom_tooltip = {
+			text = dvg_ven_has_not_completed_je
+			NOR = { 
+				has_variable = dvg_ven_patricians_victory_var 
+				has_variable = dvg_ven_radicals_victory_var
+			}
+		}
+    }
+
+	on_complete = {
+		if = {
+			limit = {
+				has_variable = dvg_ven_supported_positivist
+			}
+			trigger_event = {
+				id = dvg_ven.102
+				popup = yes
+			}
+			set_variable = dvg_ven_patricians_victory_var
+		}
+		else = {
+			trigger_event = {
+				id = dvg_ven.1021
+				popup = yes
+			}
+			set_variable = dvg_ven_patricians_victory_var
+		}
+	}
+
+	immediate = {
+		trigger_event = {
+			id = dvg_ven.101
+			days = 1 #it needs this one day, otherwise the immediate = {} in the event doesn't work
+			popup = yes
+		}
+	}
+
+	fail = {
+		custom_tooltip = {
+			text = dvg_ven_radicals_fail_tt
+			root.var:ven_patricians_success_count_var < 0 #has to be less than 0 because game checks it too fast and the event needs a day
+		}
+	}
+	on_fail = {
+		trigger_event = {
+			id = dvg_ven.103
+			popup = yes
+		}
+		set_variable = dvg_ven_radicals_victory_var
+		add_modifier = {
+			name = dvg_ven_radicals_victory_modifier
+			months = normal_modifier_time
+		}
+	}
+
+	
+	on_timeout = { }
+	on_weekly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					any_interest_group = {
+						OR = {
+							leader = { has_ideology = ideology:ideology_radical }
+							leader = { has_ideology = ideology:ideology_reformer }
+						}
+						is_in_government = yes
+					}
+				}
+				change_variable = {
+					name = ven_patricians_success_count_var
+					subtract = 0.1
+				}
+			}
+			if = {
+				limit = {
+					OR = {
+						ig:ig_landowners ={
+							is_in_government = yes
+						}
+						ig:ig_petty_bourgeoisie ={
+							is_in_government = yes
+						}
+					}
+				}
+				change_variable = {
+					name = ven_patricians_success_count_var
+					add = 0.1
+				}
+			}
+			if = { 
+				limit = {
+					has_variable = dvg_ven_supported_positivist
+					any_interest_group = {
+						leader = { has_ideology = ideology:ideology_positivist }
+						is_in_government = yes
+					}
+				}
+				change_variable = {
+					name = ven_patricians_success_count_var
+					add = 0.1
+				}
+			}
+		}
+	}
+	on_monthly_pulse = {
+		random_events = {
+			115 = 0
+			750 = dvg_ven.104 # CHOSE YOUR CHARACTER - always fires first and only once
+			10 = dvg_ven.105  # Competing Speaches
+			13 = dvg_ven.106  # Movement Gets Rowdy
+			8 = dvg_ven.107  # Shipyard Sabotage
+			8 = dvg_ven.1071 # factory Sabotage
+			15 = dvg_ven.108  # Class Violence
+			15 = dvg_ven.109 # Nationalists cause aragonese tensions
+			10 = dvg_ven.110  # Question of Class Relations
+			5 = dvg_ven.111  # Capitalists Choose a Side
+			12 = dvg_ven.112  # Greeks Push for Autonomy
+			10 = dvg_ven.113  # Abolitionist
+			5 = dvg_ven.114  # Intelligentsia Choose a Side
+			5 = dvg_ven.115  # Army Chooses a Side
+			15 = dvg_ven.116  # Waning War Support
+			5 = dvg_ven.117  # -2 Radical factions unite
+			5 = dvg_ven.118  # +2 Radical factions suffer infighting
+		}
+	}
+
+	current_value = {
+		value = root.var:ven_patricians_success_count_var
+	}
+
+	goal_add_value = {
+		add = 50
+	}
+
+	progressbar = yes
+
+	#timeout = 2190
+
+	weight = 10000
+	should_be_pinned_by_default = yes
+}
+# je_ven_populists_success = {
+# 	icon = "gfx/interface/icons/event_icons/event_protest.dds"
+
+# 	complete = {
+# 		scope:journal_entry = {
+# 			is_goal_complete = yes
+# 		}
+# 	}
+
+# 	on_complete = {
+# 	}
+
+# 	fail = {
+# 		trigger = {
+# 			var:ven_patricians_success_count_var <= 0
+# 		}
+# 	}
+
+
+# 	current_value = {
+# 		value = root.var:ven_radicals_success_count_var
+# 	}
+
+# }

@@ -14,10 +14,7 @@
 			NOT = { is_country_type = decentralized }
 			NOT = { is_subject_of = root }
 		}
-		custom_tooltip = {
-			text = DIPLO_ACTION_RELATIONS_CORDIAL_OR_GREATER_NOT
-			scope:target_country.relations:root < relations_threshold:cordial
-		}		
+		diplomatic_play_has_no_relations_blockers = yes
 	}
 
 	on_weekly_pulse = {}
@@ -41,10 +38,7 @@ dp_regime_change = {
 		scope:target_country = {
 			NOT = { is_country_type = decentralized }
 		}
-		custom_tooltip = {
-			text = DIPLO_ACTION_RELATIONS_CORDIAL_OR_GREATER_NOT
-			scope:target_country.relations:root < relations_threshold:cordial
-		}			
+		diplomatic_play_has_no_relations_blockers = yes		
 	}
 
 	on_weekly_pulse = {}
@@ -67,10 +61,7 @@ dp_ban_slavery = {
 		scope:target_country = {
 			NOT = { is_country_type = decentralized }
 		}
-		custom_tooltip = {
-			text = DIPLO_ACTION_RELATIONS_CORDIAL_OR_GREATER_NOT
-			scope:target_country.relations:root < relations_threshold:cordial
-		}			
+		diplomatic_play_has_no_relations_blockers = yes		
 	}
 
 	on_weekly_pulse = {}
@@ -95,11 +86,9 @@ dp_conquer_state = {
 			NOT = { has_modifier = neutrality }
 			NOT = { is_country_type = decentralized }
 			NOT = { is_subject_of = root }
+			
 		}	
-		custom_tooltip = {
-			text = DIPLO_ACTION_RELATIONS_CORDIAL_OR_GREATER_NOT
-			scope:target_country.relations:root < relations_threshold:cordial
-		}				
+		diplomatic_play_has_no_relations_blockers = yes			
 	}
 	
 	on_weekly_pulse = {}
@@ -127,10 +116,7 @@ dp_return_state = {
 			NOT = { is_country_type = decentralized }
 			NOT = { is_subject_of = root }
 		}
-		custom_tooltip = {
-			text = DIPLO_ACTION_RELATIONS_CORDIAL_OR_GREATER_NOT
-			scope:target_country.relations:root < relations_threshold:cordial
-		}	
+		diplomatic_play_has_no_relations_blockers = yes
 	}
 	
 	on_weekly_pulse = {}
@@ -157,10 +143,27 @@ dp_liberate_subject = {
 			is_subject = yes
 			NOT = { is_subject_of = root }
 		}
-		custom_tooltip = {
-			text = DIPLO_ACTION_OVERLORD_RELATIONS_CORDIAL_OR_GREATER_NOT
-			scope:target_country.overlord.relations:root < relations_threshold:cordial
-		}			
+		diplomatic_play_has_no_relations_blocker_with_overlord = yes	
+	}
+
+	on_weekly_pulse = {}
+
+	on_war_begins = {}
+
+	on_war_end = {}
+}
+
+dp_liberate_country = {
+	war_goal = liberate_country
+
+	texture = "gfx/interface/icons/war_goals/liberate_country.dds"
+
+	possible = {
+		NOT = { has_modifier = diplomatic_plays_blocked }
+		NOT = { is_country_type = decentralized }
+		aggressive_diplomatic_plays_permitted = yes
+		NOT = { is_subject_of = scope:target_country }	
+		diplomatic_play_has_no_relations_blockers = yes
 	}
 
 	on_weekly_pulse = {}
@@ -205,10 +208,7 @@ dp_take_treaty_port = {
 			NOT = { is_country_type = decentralized }
 			NOT = { is_subject_of = root }
 		}
-		custom_tooltip = {
-			text = DIPLO_ACTION_RELATIONS_CORDIAL_OR_GREATER_NOT
-			scope:target_country.relations:root < relations_threshold:cordial
-		}			
+		diplomatic_play_has_no_relations_blocker_with_overlord = yes	
 	}
 	
 	on_weekly_pulse = {}
@@ -218,23 +218,16 @@ dp_take_treaty_port = {
 	on_war_end = {}
 }
 
-dp_make_dominion = {
+dp_increase_autonomy = {
+	war_goal = increase_autonomy
 	
-	war_goal = make_dominion
+	requires_interest_marker = no
 	
-	texture = "gfx/interface/icons/war_goals/make_dominion.dds"
+	texture = "gfx/interface/icons/war_goals/increase_autonomy.dds"
 	
 	possible = {
+		is_subject = yes
 		NOT = { has_modifier = diplomatic_plays_blocked }
-		NOT = { has_modifier = neutrality }
-		aggressive_diplomatic_plays_permitted = yes
-		scope:target_country = {
-			NOT = { has_modifier = neutrality }
-		}
-		custom_tooltip = {
-			text = DIPLO_ACTION_RELATIONS_CORDIAL_OR_GREATER_NOT
-			scope:target_country.relations:root < relations_threshold:cordial
-		}		
 	}
 	
 	on_weekly_pulse = {}
@@ -244,22 +237,17 @@ dp_make_dominion = {
 	on_war_end = {}
 }
 
-dp_make_vassal = {	
-	war_goal = make_vassal
+dp_reduce_autonomy = {
+	war_goal = reduce_autonomy
 	
-	texture = "gfx/interface/icons/war_goals/make_vassal.dds"
+	requires_interest_marker = no
+	
+	texture = "gfx/interface/icons/war_goals/reduce_autonomy.dds"
 	
 	possible = {
-		NOT = { has_modifier = diplomatic_plays_blocked }
-		NOT = { has_modifier = neutrality }
 		aggressive_diplomatic_plays_permitted = yes
-		scope:target_country = {
-			NOT = { has_modifier = neutrality }
-		}	
-		custom_tooltip = {
-			text = DIPLO_ACTION_RELATIONS_CORDIAL_OR_GREATER_NOT
-			scope:target_country.relations:root < relations_threshold:cordial
-		}		
+		NOT = { has_modifier = diplomatic_plays_blocked }
+		scope:target_country = { is_subject = yes }
 	}
 	
 	on_weekly_pulse = {}
@@ -269,22 +257,33 @@ dp_make_vassal = {
 	on_war_end = {}
 }
 
-dp_make_puppet = {
-	war_goal = make_puppet
+dp_make_tributary = {	
+	war_goal = make_tributary
 	
-	texture = "gfx/interface/icons/war_goals/make_puppet.dds"
+	texture = "gfx/interface/icons/war_goals/make_tributary.dds"
+	
+	possible = {
+		aggressive_diplomatic_plays_permitted = yes	
+		NOT = { has_modifier = diplomatic_plays_blocked }
+		NOT = { has_modifier = neutrality }
+	}
+	
+	on_weekly_pulse = {}
+	
+	on_war_begins = {}
+
+	on_war_end = {}
+}
+
+dp_make_protectorate = {
+	war_goal = make_protectorate
+	
+	texture = "gfx/interface/icons/war_goals/make_protectorate.dds"
 	
 	possible = {	
-		NOT = { has_modifier = diplomatic_plays_blocked }
-		NOT = { has_modifier = neutrality }
 		aggressive_diplomatic_plays_permitted = yes
-		scope:target_country = {
-			NOT = { has_modifier = neutrality }
-		}
-		custom_tooltip = {
-			text = DIPLO_ACTION_RELATIONS_CORDIAL_OR_GREATER_NOT
-			scope:target_country.relations:root < relations_threshold:cordial
-		}			
+		NOT = { has_modifier = diplomatic_plays_blocked }
+		NOT = { has_modifier = neutrality }				
 	}
 	
 	on_weekly_pulse = {}
@@ -312,10 +311,7 @@ dp_transfer_subject = {
 			NOT = { is_subject_of = root }
 			NOT = { is_subject_type = subject_type_personal_union }
 		}	
-		custom_tooltip = {
-			text = DIPLO_ACTION_OVERLORD_RELATIONS_CORDIAL_OR_GREATER_NOT
-			scope:target_country.overlord.relations:root < relations_threshold:cordial
-		}				
+		diplomatic_play_has_no_relations_blocker_with_overlord = yes				
 	}
 	
 	on_weekly_pulse = {}
@@ -369,8 +365,8 @@ dp_force_recognition = {
 		NOT = { has_modifier = diplomatic_plays_blocked }
 		is_country_type = unrecognized
 		aggressive_diplomatic_plays_permitted = yes
-		NOT = { is_subject_of = scope:target_country }
 		scope:target_country = {
+			is_subject = no
 			NOT = { has_modifier = neutrality }
 			OR = {
 				is_country_type = recognized
@@ -378,10 +374,7 @@ dp_force_recognition = {
 			}		
 			NOT = { is_subject_of = root }
 		}	
-		custom_tooltip = {
-			text = DIPLO_ACTION_RELATIONS_CORDIAL_OR_GREATER_NOT
-			scope:target_country.relations:root < relations_threshold:cordial
-		}		
+		diplomatic_play_has_no_relations_blocker_with_target = yes	
 	}
 	
 	on_weekly_pulse = {}
@@ -515,7 +508,10 @@ dp_contain_threat = {
 		}	
 		custom_tooltip = {
 			text = DIPLO_PLAY_GREAT_POWER_TRIGGER
-			country_rank >= rank_value:great_power
+			#OR = {
+			#country_rank >= rank_value:great_power
+			#
+			#}
 		}	
 		custom_tooltip = {
 			text = DIPLO_PLAY_OUTRAGED_TRIGGER
@@ -604,6 +600,31 @@ dp_native_uprising = {
 	on_war_end = {}
 }
 
+dp_native_uprising = {
+	war_goal = colonization_rights
+	
+	requires_interest_marker = no
+	add_infamy_for_starting_initiator_wargoals = no
+	
+	texture = "gfx/interface/icons/war_goals/annex_country.dds"
+	
+	selectable_in_lens = {
+		always = no
+	}
+	
+	possible = {
+		scope:target_country = {
+			is_country_type = decentralized
+		}
+		NOT = { has_modifier = diplomatic_plays_blocked }
+	}
+	
+	on_weekly_pulse = {}
+	
+	on_war_begins = {}
+
+	on_war_end = {}
+}
 
 dp_annex_war = {
 	war_goal = annex_country
@@ -630,6 +651,7 @@ dp_unify_germany = {
 	
 	requires_interest_marker = no
 	blocked_by_diplomatic_status = no
+	add_infamy_for_starting_initiator_wargoals = no
 	
 	texture = "gfx/interface/icons/war_goals/unify_germany.dds"
 	
@@ -655,6 +677,7 @@ dp_unify_italy = {
 	
 	requires_interest_marker = no
 	blocked_by_diplomatic_status = no
+	add_infamy_for_starting_initiator_wargoals = no
 	
 	texture = "gfx/interface/icons/war_goals/unify_italy.dds"
 	
@@ -680,6 +703,7 @@ dp_unify_scandinavia = {
 	
 	requires_interest_marker = no
 	blocked_by_diplomatic_status = no
+	add_infamy_for_starting_initiator_wargoals = no
 	
 	texture = "gfx/interface/icons/war_goals/unification.dds"
 	
@@ -734,16 +758,63 @@ dp_unify_ethiopia = {
 	on_war_end = {}
 }
 
-dp_unify_china = {
+dp_unify_ethiopia = {
 	war_goal = annex_country
 	
 	texture = "gfx/interface/icons/war_goals/annex_country.dds"
 	
 	selectable_in_lens = {
-		OR = {
-			has_government_type = gov_warlord_state
-			has_variable = chinese_central_government
+		can_form_nation = ETH
+	}
+	
+	possible = {
+		NOT = { exists = c:ETH }
+		NOT = { has_modifier = diplomatic_plays_blocked }
+		NOT = { is_country_type = decentralized }
+		is_subject = no
+		custom_tooltip = {
+			text = ETH_tt
+			can_form_nation = ETH
 		}
+		scope:target_country = {
+			NOT = { is_country_type = decentralized }
+			aggressive_diplomatic_plays_permitted = yes
+			custom_tooltip = {
+				text = ETH_tt
+				can_form_nation = ETH
+			}
+		}
+	}
+	
+	on_weekly_pulse = {}
+	
+	on_war_begins = {}
+
+	on_war_end = {}
+}
+
+
+dp_unify_china = {
+	war_goal = annex_country
+	
+	texture = "gfx/interface/icons/war_goals/annex_country.dds"
+
+	add_infamy_for_starting_initiator_wargoals = no
+
+	
+	selectable_in_lens = {
+		custom_tooltip = {
+			text = CHI_tt
+			OR = {
+				has_government_type = gov_warlord_state
+				has_variable = chinese_central_government
+				country_has_primary_culture = cu:han
+				country_has_primary_culture = cu:hakka
+				country_has_primary_culture = cu:yue
+				country_has_primary_culture = cu:zhuang
+			}
+		}
+		
 	}
 	
 	possible = {
@@ -753,15 +824,34 @@ dp_unify_china = {
 		OR = {
 			has_government_type = gov_warlord_state
 			has_variable = chinese_central_government
+			country_has_primary_culture = cu:han
+			country_has_primary_culture = cu:hakka
+			country_has_primary_culture = cu:yue
+			country_has_primary_culture = cu:zhuang
+		}
+		any_scope_state = {
+			is_capital = yes
+			state_region = {
+				is_homeland = cu:han
+			}
 		}
 		
 		scope:target_country = {
+			
 			NOT = { is_country_type = decentralized }
 			aggressive_diplomatic_plays_permitted = yes
 			OR = {
 				has_government_type = gov_warlord_state
 				has_variable = chinese_central_government
+				country_has_primary_culture = cu:han
+				any_scope_state = {
+					is_capital = yes
+					state_region = {
+						is_homeland = cu:han
+					}
+				}
 			}
+			
 		}
 	}
 	

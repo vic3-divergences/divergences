@@ -846,9 +846,7 @@ will_be_accepted_culture = {
 
 # used as a trigger in AI script to ensure the AI won't be mean to a player who's still getting their bearings
 is_still_learning = {
-	is_player = yes
-	has_objective = objective_tutorial
-	NOT = { has_completed_subgoal = sg_start_diplomatic_play }
+	always = no
 }
 
 law_can_hurt_minorities = {
@@ -1831,9 +1829,43 @@ is_active_in_diplomatic_play = {
 }
 
 budget_low_training_rate = {
-	military_wage_level < medium
+	modifier:building_training_rate_mult < 0
 	OR = {
 		is_active_in_diplomatic_play = yes
 		is_at_war = yes
+	}
+}
+
+diplomatic_play_has_no_relations_blockers = {
+	diplomatic_play_has_no_relations_blocker_with_target = yes
+	diplomatic_play_has_no_relations_blocker_with_overlord = yes
+}
+
+diplomatic_play_has_no_relations_blocker_with_target = {
+	custom_tooltip = {
+		text = DIPLO_ACTION_RELATIONS_CORDIAL_OR_GREATER_NOT
+		scope:target_country.relations:root < relations_threshold:cordial
+	}		
+}
+
+diplomatic_play_has_no_relations_blocker_with_overlord = {
+	trigger_if = {
+		limit = { scope:target_country = { is_subject = yes } }
+		custom_tooltip = {
+			text = DIPLO_ACTION_OVERLORD_RELATIONS_CORDIAL_OR_GREATER_NOT
+			scope:target_country.overlord.relations:root < relations_threshold:cordial
+		}	
+	}
+	trigger_if = {
+		limit = { 
+			scope:target_country = { 
+				is_subject = yes 
+				NOT = { overlord = top_overlord }
+			} 		
+		}
+		custom_tooltip = {
+			text = DIPLO_ACTION_TOP_OVERLORD_RELATIONS_CORDIAL_OR_GREATER_NOT
+			scope:target_country.overlord.relations:root < relations_threshold:cordial
+		}	
 	}
 }

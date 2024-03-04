@@ -1,0 +1,147 @@
+﻿je_medici_claim = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	group = je_group_foreign_affairs
+
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					exists = c:TUS
+				}
+				set_secret_goal = {
+					country = c:TUS
+					secret_goal = conquer
+				}
+			}
+		}
+	}
+
+	possible = {
+	  
+		NOT = {
+			owns_entire_state_region = STATE_TUSCANY
+		}
+	}
+
+	complete = {
+		OR = {
+			owns_entire_state_region = STATE_TUSCANY
+		}
+	}
+
+	on_complete = {
+		trigger_event = { id = dvg_provence.10 }
+		
+	}
+	fail = {
+		NOT = { 
+			has_law = law_type:law_monarchy
+	}
+	}
+	
+	should_be_pinned_by_default = yes
+}
+je_valois_claim = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	group = je_group_foreign_affairs
+
+	possible = {
+	    
+         has_law = law_type:law_monarchy
+
+		
+	}
+
+	complete = {
+		AND = {
+			owns_entire_state_region = STATE_ILE_DE_FRANCE
+            any_scope_state = {
+		
+			count >= 5
+				
+			AND = {	
+				region = sr:region_france
+				
+				
+				owner = ROOT
+	
+			}
+			}
+		}
+	}
+
+	on_complete = {
+		trigger_event = { id = dvg_provence.9 }
+		
+	}
+	fail = {
+		NOT = { 
+			has_law = law_type:law_monarchy
+	}
+	}
+	should_be_pinned_by_default = yes
+}
+je_occitan_republic = {
+    icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+
+	group = je_group_foreign_affairs
+
+    is_shown_when_inactive = {
+		exists = c:DUA
+		exists = c:PRO
+
+        OR = {
+            c:PRO = this
+           
+        }
+        NOT = {
+			exists = c:OCC
+            sr:region_occitania = {
+                any_scope_state = {
+                    count = all
+                    owner = root
+                }
+            }
+        }
+    }
+
+    immediate = {
+        cu:occitan = {
+            save_scope_as = occitan_culture_scope
+        }
+    }
+
+    possible = {
+        has_technology_researched = nationalism
+    }
+
+    complete = {
+		has_technology_researched = nationalism
+		owns_entire_state_region = STATE_PROVENCE
+		NOT = { 
+			has_law = law_type:law_monarchy
+	}
+    }
+
+    on_complete = {
+        change_tag = OCC
+		remove_primary_culture = cu:french
+		remove_primary_culture = cu:central_italian
+		every_state_region = {
+			limit = {
+			OR = {
+				is_homeland = cu:occitan
+				}
+			}
+			add_claim = ROOT
+		}
+
+    }
+	invalid = {
+		exists = c:OCC
+
+	}
+    should_be_pinned_by_default = yes
+}

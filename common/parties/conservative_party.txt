@@ -12,6 +12,12 @@ conservative_party = {
 					THIS = c:AUS
 				}
 			}
+			triggered_desc = {
+				desc = party_pungulvics
+				trigger = {
+					country_has_primary_culture = cu:ny_sjaellander
+				}
+			}
 			# triggered_desc = {
 			# 	desc = party_constitutional_party
 			# 	trigger = {
@@ -170,27 +176,59 @@ conservative_party = {
 				}
 			}
 			triggered_desc = {
-				desc = party_hoyre
+				desc = party_lizhuting
 				trigger = {
-					country_has_primary_culture = cu:norwegian
+					country_has_primary_culture = cu:zhourao
+					has_law = law_type:law_monarchy
 				}
 			}
 			triggered_desc = {
-				desc = party_democratic_party
+				desc = party_tongyidang
 				trigger = {
-					country_has_primary_culture = cu:dixie
+					country_has_primary_culture = cu:zhourao
 				}
 			}
+			# triggered_desc = {
+				# desc = party_hoyre
+				# trigger = {
+					# country_has_primary_culture = cu:norwegian
+				# }
+			# }
+			# triggered_desc = {
+				# desc = party_democratic_party
+				# trigger = {
+					# country_has_primary_culture = cu:dixie
+				# }
+			# }
+			#triggered_desc = {
+				#desc = party_hoyre
+				#trigger = {
+				#	country_has_primary_culture = cu:norwegian
+				#}
+			#}
+			#triggered_desc = {
+			#	desc = party_democratic_party
+			#	trigger = {
+			#		country_has_primary_culture = cu:dixie
+			#	}
+			#}
+			#triggered_desc = {
+			#	desc = party_hojre
+			#	trigger = {
+			#		country_has_primary_culture = cu:danish
+			#	}
+			#}
+			#triggered_desc = {
+			#	desc = party_liberal_conservative_party
+			#	trigger = {
+			#		country_has_primary_culture = cu:anglo_canadian
+			#	}
+			#}
 			triggered_desc = {
-				desc = party_hojre
+				desc = party_anglois
 				trigger = {
-					country_has_primary_culture = cu:danish
-				}
-			}
-			triggered_desc = {
-				desc = party_liberal_conservative_party
-				trigger = {
-					country_has_primary_culture = cu:anglo_canadian
+					country_has_primary_culture = cu:anglois
+					has_variable = anglois_path
 				}
 			}
 			triggered_desc = {
@@ -265,6 +303,9 @@ conservative_party = {
 						has_ideology = ideology:ideology_legitimist
 						has_ideology = ideology:ideology_theocrat
 						has_ideology = ideology:ideology_slaver
+						has_ideology = ideology:ideology_anglois
+						has_ideology = ideology:ideology_french
+						has_ideology = ideology:ideology_english
 					}
 				}
 			}
@@ -634,20 +675,6 @@ conservative_party = {
 				desc = "from_influential_supporting_member"
 			}
 		}
-		if = {
-			limit = {
-				owner = {
-	         		has_variable = only_valid_party
-	         	}
-	         	 owner.var:only_valid_party = {
-		        	is_party_type = conservative_party
-		        }
-			}
-			add = {
-				value = 3
-				desc = "from_only_legal_party"
-			}
-		}
 		else_if = {
 			limit = {
 				scope:number = 2
@@ -678,12 +705,17 @@ conservative_party = {
 		if = { # anti-orleanist
 			limit = {
 				leader = {
-					has_ideology = ideology:ideology_bonapartist
-					has_ideology = ideology:ideology_legitimist
+					OR = {
+						has_ideology = ideology:ideology_bonapartist
+						has_ideology = ideology:ideology_legitimist
+					}
 				}
 				owner = {
 					any_interest_group = {
-						is_member_of_party = owner.py:conservative_party
+						has_party = yes
+						party = {
+							is_party_type = conservative_party
+						}
 						is_powerful = yes
 						leader = {
 							has_ideology = ideology:ideology_orleanist
@@ -699,12 +731,17 @@ conservative_party = {
 		if = { # anti-legitimist
 			limit = {
 				leader = {
-					has_ideology = ideology:ideology_bonapartist
-					has_ideology = ideology:ideology_orleanist
+					OR = {
+						has_ideology = ideology:ideology_bonapartist
+						has_ideology = ideology:ideology_orleanist
+					}
 				}
 				owner = {
 					any_interest_group = {
-						is_member_of_party = owner.py:conservative_party
+						has_party = yes
+						party = {
+							is_party_type = conservative_party
+						}
 						is_powerful = yes
 						leader = {
 							has_ideology = ideology:ideology_legitimist
@@ -720,12 +757,17 @@ conservative_party = {
 		if = { # anti-bonapartist
 			limit = {
 				leader = {
-					has_ideology = ideology:ideology_legitimist
-					has_ideology = ideology:ideology_orleanist
+					OR = {
+						has_ideology = ideology:ideology_legitimist
+						has_ideology = ideology:ideology_orleanist
+					}
 				}
 				owner = {
 					any_interest_group = {
-						is_member_of_party = owner.py:conservative_party
+						has_party = yes
+						party = {
+							is_party_type = conservative_party
+						}
 						is_powerful = yes
 						leader = {
 							has_ideology = ideology:ideology_bonapartist
@@ -736,6 +778,32 @@ conservative_party = {
 			add = {
 				value = -5
 				desc = "from_french_monarchist_rival"
+			}
+		}
+		if = { # anti-anglois
+			limit = {
+				leader = {
+					OR = {
+						has_ideology = ideology:ideology_french
+						has_ideology = ideology:ideology_english
+					}
+				}
+				owner = {
+					any_interest_group = {
+						has_party = yes
+						party = {
+							is_party_type = conservative_party
+						}
+						is_powerful = yes
+						leader = {
+							has_ideology = ideology:ideology_anglois
+						}
+					}
+				}
+			}
+			add = {
+				value = -5
+				desc = "from_dua_integration_rival"
 			}
 		}
 		if = {
@@ -761,6 +829,38 @@ conservative_party = {
 			}
 			add = {
 				value = 1000
+				desc = "from_jacksonian_democrat"
+			}
+		}
+		if = {
+			limit = {
+				owner = {
+	         		has_variable = only_valid_party
+	         	}
+				owner.var:only_valid_party = {
+					is_party_type = conservative_party
+				}
+	         	owner.ruler = {
+					this.interest_group = prev
+				}
+			}
+			add = {
+				value = 1000
+				desc = "from_only_legal_party"
+			}
+		}
+		else_if = {
+			limit = {
+				owner = {
+	         		has_variable = only_valid_party
+	         	}
+	         	 owner.var:only_valid_party = {
+		        	is_party_type = conservative_party
+		        }
+			}
+			add = {
+				value = 3
+				desc = "from_only_legal_party"
 			}
 		}
 	}

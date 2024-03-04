@@ -1,0 +1,83 @@
+﻿je_italian_confederation = {
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	group = je_group_foreign_affairs
+
+	is_shown_when_inactive = {
+		NOT = { exists = c:ITC }
+		OR = {
+			country_has_primary_culture = cu:north_italian
+			country_has_primary_culture = cu:central_italian
+		}
+	}
+
+	possible = {
+		has_technology_researched = nationalism
+		country_rank >= rank_value:minor_power
+		is_subject = no
+	}
+
+	complete = {
+		hidden_trigger = {
+			has_variable = je_unification_progress
+		}
+		calc_true_if = {
+			amount > 8
+			owns_entire_state_region = STATE_SAVOY
+			owns_entire_state_region = STATE_PIEDMONT
+			owns_entire_state_region = STATE_EMILIA
+			owns_entire_state_region = STATE_TUSCANY
+			owns_entire_state_region = STATE_ROMAGNA
+			owns_entire_state_region = STATE_LOMBARDY
+			owns_entire_state_region = STATE_UMBRIA
+			owns_entire_state_region = STATE_LAZIO
+			owns_entire_state_region = STATE_CORSICA
+		}
+	}
+
+	immediate = {
+		if = {
+			limit = {
+				exists = c:TUS
+				this = c:TUS
+			}
+			trigger_event = { id = dvg_italian_confederation.2 }
+			set_variable = {
+				name = italian_delay
+				months = 4
+			}
+		}
+
+		set_strategy = ai_strategy_unify_north_italy
+	}
+
+	on_monthly_pulse = {
+		events = {
+			italian_unification.2 # confederation
+			dvg_italian_confederation.4
+			dvg_italian_confederation.5
+		}
+		effect = {
+			if = { 
+				limit = { NOT = { has_variable = je_unification_progress } } 
+				set_variable = je_unification_progress
+			}
+		}
+	}
+
+	on_complete = {
+		trigger_event = { id = dvg_italian_confederation.1 }
+		remove_variable = je_unification_progress
+	}
+
+	status_desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = je_north_italian_status
+			}
+		}
+	}
+
+	weight = 1000
+	should_be_pinned_by_default = yes
+}

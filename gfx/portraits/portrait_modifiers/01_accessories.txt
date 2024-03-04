@@ -30,18 +30,39 @@
             base = 0
             modifier = {
                 add = 10000
+
                 shopkeepers_clothes_pop_trigger = yes
                 OR = {
-                    european_clothes_pop_trigger = yes
+                    AND = {
+                        european_clothes_pop_trigger = yes
+
+                        ## Midsummer clothes exception ##
+                        NAND = {
+                            OR = {
+                                slavic_clothes_pop_trigger = yes
+                                nordic_clothes_pop_trigger = yes
+                            }
+                            scope:pop ?= {
+                                month = 5 # June. The trigger for months is on a 0-11 scale.
+                            }
+                        }
+                        ## Midsummer clothes exception ##
+                    }
                     african_diaspora_pop_clothes_trigger = yes
                     AND = {
                         native_american_clothes_pop_trigger = yes
                         AND = {
-                            exists = scope:pop
-                            scope:pop = {
+                            scope:pop ?= {
                                 NOT = { culture = cu:inuit }
                             }
                         }
+                    }
+                }
+
+                scope:pop ?= {
+                    NAND = {
+                        religion = rel:catholic
+                        month = 1 # Carnival is /usually/ in February
                     }
                 }
             }

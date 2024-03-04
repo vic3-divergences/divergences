@@ -1,0 +1,137 @@
+﻿je_zhourao_migration = {
+	icon = "gfx/interface/icons/event_icons/event_zhourao.dds"
+
+	group = je_group_foreign_affairs
+
+	is_shown_when_inactive = {
+		country_has_primary_culture = cu:zhourao
+	}
+
+	possible = {
+		has_technology_researched = civilizing_mission
+		country_rank > rank_value:insignificant_power
+		average_sol >= 10
+		is_at_war = no
+		is_subject = no
+		OR = {
+			has_law = law_type:law_racial_segregation
+			has_law = law_type:law_cultural_exclusion
+			has_law = law_type:law_multicultural
+		}
+		NOR = {
+			has_law = law_type:law_closed_borders
+			has_law = law_type:law_isolationism
+		}
+	}
+
+	immediate = {
+		set_variable = {
+			name = zhourao_incorporated_population
+			value = 0
+		}
+		set_variable = {
+			name = zhourao_incorporated_states
+			value = 0
+		}
+		every_scope_state = {
+			limit = {
+				is_incorporated = yes
+				state_is_in_zhourao = yes
+			}
+			ROOT = {
+				change_variable = {
+					name = zhourao_incorporated_population
+					add = PREV.state_population
+				}
+				change_variable = {
+					name = zhourao_incorporated_states
+					add = 1
+				}
+			}
+		}
+		set_variable = {
+			name = zhourao_migration_goal
+			value = var:zhourao_incorporated_states
+		}
+		change_variable = {
+			name = zhourao_migration_goal
+			multiply = 1500000
+		}
+		trigger_event = { id = zhr_migration.2 popup = yes }
+	}
+
+	on_weekly_pulse = {
+		effect = {
+			set_variable = {
+				name = zhourao_incorporated_population
+				value = 0
+			}
+			every_scope_state = {
+				limit = {
+					is_incorporated = yes
+					
+				}
+				ROOT = {
+					change_variable = {
+						name = zhourao_incorporated_population
+						add = PREV.state_population
+					}
+				}
+			}
+			set_variable = {
+				name = zhourao_incorporated_states
+				value = 0
+			}
+			every_scope_state = {
+				limit = {
+					is_incorporated = yes
+					state_region = {
+						is_homeland = cu:zhourao
+					}
+				}
+				ROOT = {
+					change_variable = {
+						name = zhourao_incorporated_states
+						add = 1
+					}
+				}
+			}
+			set_variable = {
+				name = zhourao_migration_goal
+				value = var:zhourao_incorporated_states
+			}
+			change_variable = {
+				name = zhourao_migration_goal
+				multiply = 1500000
+			}
+		}
+	}
+
+	complete = {
+		custom_tooltip = {
+			text = zhourao_migration_completion_tt
+			var:zhourao_incorporated_population >= var:zhourao_migration_goal
+			var:zhourao_incorporated_population > 0
+			var:zhourao_migration_goal > 0
+		}
+	}
+
+	on_complete = {
+		trigger_event = { id = zhr_migration.3 popup = yes }
+		show_as_tooltip = {
+			add_modifier = {
+				name = populated_southamerica
+			}
+		}
+	}
+
+	invalid = {
+		#has_variable = cancel_sa_migration_var
+	}
+
+	scripted_button = zhourao_migration_button
+
+	weight = 100
+
+	should_be_pinned_by_default = yes
+}
