@@ -5,7 +5,14 @@ atlantia_subject_button = {
 
 	visible = { 
 		
-		country_has_primary_culture = cu:atlantian
+		any_primary_culture = {
+			has_discrimination_trait = amerigan
+		}
+		
+	}
+
+	possible = {
+
 		any_subject_or_below = {
 
 			any_primary_culture = {
@@ -13,9 +20,6 @@ atlantia_subject_button = {
 			}
 
 		}
-	}
-
-	possible = {
 		any_country = {
 
 			any_primary_culture = {
@@ -25,35 +29,36 @@ atlantia_subject_button = {
 			NOT = {
 				has_truce_with = ROOT
 			}
-			market = {
-				owner = ROOT
-
-			}
-			this.gdp < root.gdp
-
+		
 		}
 		
+		
 	}
-
 	effect = {
 		every_country = {
 			if = {
 				limit = {
 					is_ai = yes			
-					country_has_primary_culture = cu:atlantian
-					has_modifier = dvg_atlantia_support
-				}			
-				root = { annex = prev }
+					any_primary_culture = {
+						has_discrimination_trait = amerigan
+					}
+					owes_obligation_to = ROOT
+
+				}	
+				save_scope_as = atl_subject		
 			}
-			save_scope_as = atlantia_subject
+		}
+		create_diplomatic_pact = {
+			country = scope:atl_subject
+			type = protectorate
+		}
+		remove_diplomatic_pact = {
+			country = scope:atl_investment
+			type = bankroll
 		}
 		create_incident = {
 			country = ROOT
 			value = 6.0
-		}
-		create_diplomatic_pact = {
-			country = scope:atlantia_subject
-			type = protectorate
 		}
 		
 		
@@ -70,54 +75,58 @@ atlantia_investment_button = {
 
 	visible = { 
 		country_has_primary_culture = cu:atlantian
-		any_subject_or_below = {
-			any_primary_culture = {
-				has_discrimination_trait = amerigan
-			}
-
-		}
-		any_country = {
-			
-			market = {
-				owner = ROOT
-			}
-		}
 	}
 
 	possible = {
 		has_technology_researched = railways	
-			
+		has_technology_researched = banking
+		any_neighbouring_state = {
+			owner = {
+				any_primary_culture = {
+					has_discrimination_trait = amerigan
+				}
+				market = {
+					owner = ROOT
+				}
+				NOT = {
+					has_truce_with = ROOT
+				}
+			}
+		}
 	}
 	effect = {
+
+		every_country = {
+			limit = {
+				any_primary_culture = {
+					has_discrimination_trait = amerigan
+				}
+				market = {
+					owner = ROOT
+				}
+			}
+			create_truce = {
+				country = ROOT
+				months = 72
+			}
+			save_scope_as = atl_investment
+		}
 		every_state = {
 			limit = {
 				state_region = {
 					is_homeland = cu:atlantian
 				}
-				owner = {
-					NOT = {
-						has_modifier = dvg_atlantia_support
-					}
-				}
-				
 			}
 			create_building = {
 				building = building_railway
 			}
-			owner = {
-				add_modifier = {
-					name = dvg_atlantia_support
-				}
-				create_truce = {
-					country = c:ATL
-					months = 60
-				}
-				set_owes_obligation_to = {
-					country = c:ATL
-					setting = yes
-				}
-			}
 		}
+		create_diplomatic_pact = {
+			country = scope:atl_investment
+			type = bankroll
+		}
+		
+		
 	}
 
 	ai_chance = {
@@ -132,10 +141,6 @@ atlantia_agitation_button = {
 
 	visible = { 
 		country_has_primary_culture = cu:atlantian
-		OR = {
-			exists = c:AMA
-			exists = c:LOT
-		}
 		
 	}
 
@@ -152,17 +157,13 @@ atlantia_agitation_button = {
 		NOT = {
 			has_modifier = dvg_atlantia_giving_support
 		}
-		NAND = {
-			has_global_variable = lotharingia_shatters
-			has_global_variable = amazonie_shatters
-		}
 			
 	}
 	effect = {
 		add_modifier = {
 			name = dvg_atlantia_giving_support
 		}
-		trigger_event = dvg_atlantia.19
+		trigger_event = dvg_atlantia.18
 	}
 
 	ai_chance = {
@@ -170,356 +171,4 @@ atlantia_agitation_button = {
 		 		 
 	 }	
 }
-je_amerigan_nation_building_integrate_equinoxien = {
-	name = {
-		first_valid = {
-			triggered_desc = {
-				desc = "je_amerigan_nation_building_integrate_equinoxien"
-				trigger = {
-					NOT = { has_variable = equinoxiens_integrated }
-				}
-			}
-			triggered_desc = {
-				desc = "je_amerigan_nation_building_integrate_equinoxien_past_tense"
-				trigger = {
-					has_variable = equinoxiens_integrated
-				}
-			}
-		}
-	}
-	desc = "je_amerigan_nation_building_integrate_equinoxien_desc"
-
-	visible = { always = yes }
-
-	possible = {
-		OR = {
-			has_law = law_type:law_slavery_banned
-			custom_tooltip = {
-				text = je_amerigan_nation_building_amerigan_national_hero_owned
-				has_variable = amerigan_equinoxien_hero_var
-			}
-		}
-		NOR = { 
-			exists = c:EQT 
-			c:EQT ?= {
-				is_country_alive = yes
-			}
-		}
-		any_scope_state = {
-			state_region = {
-				is_homeland = cu:equinoxien
-			}
-		}
-		hidden_trigger = {
-			NOT = {
-				has_variable = equinoxiens_integrated
-			}
-		}
-	}
-
-	effect = {
-		trigger_event = { id = dvg_ameriga.6 }
-		hidden_effect = {
-			if = {
-				limit = {
-					has_variable = amerigan_equinoxien_hero_var
-				}
-				remove_variable = amerigan_equinoxien_hero_var
-			}
-			set_variable = {
-				name = equinoxiens_integrated
-			}			
-		}
-		custom_tooltip = {
-			text = je_amerigan_nation_building_integrate_equinoxien_removal_tt
-			every_scope_state = {
-				limit = {
-					state_region = {
-						is_homeland = cu:equinoxien
-					}
-				}
-				state_region = {
-					remove_homeland = cu:equinoxien
-				}
-			}
-		}
-	}
-
-	ai_chance = {
-		base = 1
-	}
-}
-
-je_amerigan_nation_building_integrate_lotharian = {
-	name = {
-		first_valid = {
-			triggered_desc = {
-				desc = "je_amerigan_nation_building_integrate_lotharian"
-				trigger = {
-					NOT = { has_variable = lotharians_integrated }
-				}
-			}
-			triggered_desc = {
-				desc = "je_amerigan_nation_building_integrate_lotharian_past_tense"
-				trigger = {
-					has_variable = lotharians_integrated
-				}
-			}
-		}
-	}
-	desc = "je_amerigan_nation_building_integrate_lotharian_desc"
-
-	visible = { always = yes }
-
-	possible = {
-		NOR = {
-			exists = c:PNI
-			exists = c:CTR
-			c:PNI ?= {
-				is_country_alive = yes
-			}
-			c:CTR ?= {
-				is_country_alive = yes
-			}
-		}
-
-		any_scope_state = {
-			state_region = {
-				is_homeland = cu:lotharian
-			}
-		}
-		OR = {
-			custom_tooltip = {
-				text = je_amerigan_nation_building_amerigan_national_hero_owned
-				has_variable = amerigan_lotharian_hero_var
-			}
-			custom_tooltip = {
-				text = je_amerigan_nation_building_ragamuffin_war_south
-				has_variable = ragamuffin_war_completed
-				NOT = {
-					any_scope_state = {
-						state_region = {
-							is_homeland = cu:lotharian
-						}
-						radical_fraction = {
-							value >= 0.10
-							culture = cu:lotharian
-						}
-					}
-				}
-			}
-		}
-
-		hidden_trigger = {
-			NOT = {
-				has_variable = lotharians_integrated
-			}
-		}
-	}
-
-	effect = {
-		trigger_event = { id = dvg_ameriga.4 }
-		hidden_effect = {
-			if = {
-				limit = {
-					has_variable = amerigan_lotharian_hero_var
-				}
-				remove_variable = amerigan_lotharian_hero_var
-			}
-			set_variable = {
-				name = lotharians_integrated
-			}
-		}
-		custom_tooltip = {
-			text = je_amerigan_nation_building_integrate_lotharian_removal_tt
-			every_scope_state = {
-				limit = {
-					state_region = {
-						is_homeland = cu:lotharian
-					}
-				}
-				state_region = {
-					remove_homeland = cu:lotharian
-				}
-			}
-		}
-	}
-
-	ai_chance = {
-		base = 1
-	}
-}
-
-je_amerigan_nation_building_integrate_atlantian = {
-	name = {
-		first_valid = {
-			triggered_desc = {
-				desc = "je_amerigan_nation_building_integrate_atlantian"
-				trigger = {
-					NOT = { has_variable = atlantians_integrated }
-				}
-			}
-			triggered_desc = {
-				desc = "je_amerigan_nation_building_integrate_atlantian_past_tense"
-				trigger = {
-					has_variable = atlantians_integrated
-				}
-			}
-		}
-	}
-	desc = "je_amerigan_nation_building_integrate_atlantian_desc"
-
-	visible = { always = yes }
-
-	possible = {
-		NOT = { 
-			exists = c:PAU 
-			c:PAU ?= {
-				is_country_alive = yes
-			}
-		}
-		any_scope_state = {
-			state_region = {
-				is_homeland = cu:atlantian
-			}
-		}
-		OR = {
-			custom_tooltip = {
-				text = je_amerigan_nation_building_amerigan_national_hero_owned
-				has_variable = amerigan_atlantian_hero_var
-			}
-			custom_tooltip = {
-				text = je_amerigan_nation_building_integrate_atlantian_je_tt
-				has_variable = agricultural_dev_done
-			}
-		}
-		hidden_trigger = {
-			NOT = {
-				has_variable = atlantians_integrated
-			}
-		}
-	}
-
-	effect = {
-		trigger_event = { id = dvg_ameriga.3 }
-		hidden_effect = {
-			if = {
-				limit = {
-					has_variable = amerigan_atlantian_hero_var
-				}
-				remove_variable = amerigan_atlantian_hero_var
-			}
-			set_variable = {
-				name = atlantians_integrated
-			}
-		}
-		custom_tooltip = {
-			text = je_amerigan_nation_building_integrate_atlantian_removal_tt
-			every_scope_state = {
-				limit = {
-					state_region = {
-						is_homeland = cu:atlantian
-					}
-				}
-				state_region = {
-					remove_homeland = cu:atlantian
-				}
-			}
-		}
-	}
-
-	ai_chance = {
-		base = 1
-	}
-}
-
-je_amerigan_nation_building_integrate_antarctican = {
-	name = {
-		first_valid = {
-			triggered_desc = {
-				desc = "je_amerigan_nation_building_integrate_antarctican"
-				trigger = {
-					NOT = { has_variable = antarcticans_integrated }
-				}
-			}
-			triggered_desc = {
-				desc = "je_amerigan_nation_building_integrate_antarctican_past_tense"
-				trigger = {
-					has_variable = antarcticans_integrated
-				}
-			}
-		}
-	}
-	desc = "je_amerigan_nation_building_integrate_antarctican_desc"
-
-	visible = { always = yes }
-
-	possible = {
-		NOR = { 
-			exists = c:PRA 
-			c:PRA ?= {
-				is_country_alive = yes
-			}
-		}
-		any_scope_state = {
-			state_region = {
-				is_homeland = cu:antarctican
-			}
-		}
-		OR = {
-			custom_tooltip = {
-				text = je_amerigan_nation_building_amerigan_national_hero_owned
-				has_variable = amerigan_antarctican_hero_var
-			}
-			custom_tooltip = {
-				text = je_amerigan_nation_building_ragamuffin_war_done
-				has_variable = ragamuffin_war_completed
-				NOT = {
-					any_scope_state = {
-						state_region = {
-							is_homeland = cu:antarctican
-						}
-						devastation > 0
-					}
-				}
-			}
-		}
-		hidden_trigger = {
-			NOT = {
-				has_variable = antarcticans_integrated
-			}
-		}
-	}
-
-	effect = {
-		trigger_event = { id = dvg_ameriga.5 }
-		hidden_effect = {
-			if = {
-				limit = {
-					has_variable = amerigan_antarctican_hero_var
-				}
-				remove_variable = amerigan_antarctican_hero_var
-			}
-			set_variable = {
-				name = antarcticans_integrated
-			}
-		}
-		custom_tooltip = {
-			text = je_amerigan_nation_building_integrate_antarctican_removal_tt
-			every_scope_state = {
-				limit = {
-					state_region = {
-						is_homeland = cu:antarctican
-					}
-				}
-				state_region = {
-					remove_homeland = cu:antarctican
-				}
-			}
-		}
-	}
-}
-
-
-
 
