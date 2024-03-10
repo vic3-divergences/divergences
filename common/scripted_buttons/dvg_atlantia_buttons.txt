@@ -20,16 +20,21 @@ atlantia_subject_button = {
 			}
 
 		}
-		any_country = {
+		any_neighbouring_state = {
+			owner = {
+				any_primary_culture = {
+					has_discrimination_trait = amerigan
+				}
+				OR = {
+					market = {
+						owner = ROOT
+					}
+					is_subject_of = ROOT
+				}
+				owes_obligation_to = ROOT
 
-			any_primary_culture = {
-				has_discrimination_trait = amerigan
+				
 			}
-			owes_obligation_to = ROOT
-			NOT = {
-				has_truce_with = ROOT
-			}
-		
 		}
 		
 		
@@ -42,8 +47,29 @@ atlantia_subject_button = {
 					any_primary_culture = {
 						has_discrimination_trait = amerigan
 					}
-					owes_obligation_to = ROOT
-
+					is_subject_of = ROOT
+				}	
+				annex = PREV
+			}
+		}
+		every_country = {
+			if = {
+				limit = {
+					is_ai = yes			
+					any_primary_culture = {
+						has_discrimination_trait = amerigan
+					}
+					OR = {
+						owes_obligation_to = ROOT
+						market = {
+							owner = ROOT
+						}
+					}
+					NOT = {
+						is_subject_of = ROOT
+					}
+					
+					this.gdp < root.gdp
 				}	
 				save_scope_as = atl_subject		
 			}
@@ -80,35 +106,52 @@ atlantia_investment_button = {
 	possible = {
 		has_technology_researched = railways	
 		has_technology_researched = banking
+		NOT = {
+			has_modifier = decision_cooldown
+		}
 		any_neighbouring_state = {
 			owner = {
 				any_primary_culture = {
 					has_discrimination_trait = amerigan
 				}
-				market = {
-					owner = ROOT
+				OR = {
+					market = {
+						owner = ROOT
+					}
+					NOT = {
+						has_law = law_type:law_isolationism
+						has_law = law_type:law_closed_borders
+					}
 				}
 				NOT = {
-					has_truce_with = ROOT
+					has_diplomatic_pact = {
+						who = ROOT
+						type = bankroll
+					}
 				}
+				
 			}
 		}
+		
 	}
 	effect = {
-
+		add_modifier = {
+			name = decision_cooldown
+			months = 60
+		}
 		every_country = {
 			limit = {
 				any_primary_culture = {
 					has_discrimination_trait = amerigan
 				}
-				market = {
-					owner = ROOT
-				}
+				relations:root >= relations_threshold:cordial
+				
 			}
 			create_truce = {
 				country = ROOT
 				months = 72
 			}
+			
 			save_scope_as = atl_investment
 		}
 		every_state = {
@@ -162,8 +205,9 @@ atlantia_agitation_button = {
 	effect = {
 		add_modifier = {
 			name = dvg_atlantia_giving_support
+			months = 66
 		}
-		trigger_event = dvg_atlantia.18
+		trigger_event = dvg_atlantia.19
 	}
 
 	ai_chance = {
