@@ -5,7 +5,14 @@ atlantia_subject_button = {
 
 	visible = { 
 		
-		country_has_primary_culture = cu:atlantian
+		any_primary_culture = {
+			has_discrimination_trait = amerigan
+		}
+		
+	}
+
+	possible = {
+
 		any_subject_or_below = {
 
 			any_primary_culture = {
@@ -13,9 +20,6 @@ atlantia_subject_button = {
 			}
 
 		}
-	}
-
-	possible = {
 		any_country = {
 
 			any_primary_culture = {
@@ -28,32 +32,35 @@ atlantia_subject_button = {
 		
 		}
 		
+		
 	}
-
 	effect = {
 		every_country = {
 			if = {
 				limit = {
 					is_ai = yes			
-					country_has_primary_culture = cu:atlantian
-				}			
-				root = { annex = prev }
+					any_primary_culture = {
+						has_discrimination_trait = amerigan
+					}
+					owes_obligation_to = ROOT
+
+				}	
+				save_scope_as = atl_subject		
 			}
+		}
+		create_diplomatic_pact = {
+			country = scope:atl_subject
+			type = protectorate
+		}
+		remove_diplomatic_pact = {
+			country = scope:atl_investment
+			type = bankroll
 		}
 		create_incident = {
 			country = ROOT
 			value = 6.0
 		}
-		every_state = {
-			limit = {
-				state_region = {
-					is_homeland = cu:atlantian
-				}
-			}
-			create_building = {
-				building = building_railway
-			}
-		}
+		
 		
 	}
 
@@ -68,19 +75,42 @@ atlantia_investment_button = {
 
 	visible = { 
 		country_has_primary_culture = cu:atlantian
-		any_subject_or_below = {
-			country_has_primary_culture = cu:atlantian
-
-		}
 	}
 
 	possible = {
 		has_technology_researched = railways	
-			
+		has_technology_researched = banking
+		any_neighbouring_state = {
+			owner = {
+				any_primary_culture = {
+					has_discrimination_trait = amerigan
+				}
+				market = {
+					owner = ROOT
+				}
+				NOT = {
+					has_truce_with = ROOT
+				}
+			}
+		}
 	}
 	effect = {
 
-		
+		every_country = {
+			limit = {
+				any_primary_culture = {
+					has_discrimination_trait = amerigan
+				}
+				market = {
+					owner = ROOT
+				}
+			}
+			create_truce = {
+				country = ROOT
+				months = 72
+			}
+			save_scope_as = atl_investment
+		}
 		every_state = {
 			limit = {
 				state_region = {
@@ -91,6 +121,12 @@ atlantia_investment_button = {
 				building = building_railway
 			}
 		}
+		create_diplomatic_pact = {
+			country = scope:atl_investment
+			type = bankroll
+		}
+		
+		
 	}
 
 	ai_chance = {
