@@ -1896,7 +1896,7 @@ dvg_amazonie.22 = {
 	
 }
 
-
+#Gouas Oath
 dvg_amazonie.23 = {
 	type = country_event
 	placement = ROOT
@@ -1920,7 +1920,13 @@ dvg_amazonie.23 = {
 		has_variable = equinoxea_var
 		has_journal_entry = je_equinoxea_insurgency
 		NOT = {has_law = law_type:law_oligarchy}
-		this = { var:equinoxea_var >= 20 }
+		OR = {
+			this = { var:equinoxea_var >= 25 }
+			s:STATE_GOUAS.region_state:AMA = {
+				turmoil >= 0.50
+			}
+
+		}
 		NOT = {exists = c:GOU }
 	}
 	immediate = {
@@ -1977,7 +1983,9 @@ dvg_amazonie.24 = {
 	duration = 3
 
 	trigger = {
-	    
+	    NOT = {
+			has_global_variable = amazonie_shatters
+		}
 	}
 	immediate = {
 		if = {
@@ -2100,6 +2108,9 @@ dvg_amazonie.25 = {
 		NOT = {has_law = law_type:law_oligarchy}
 		this = { var:equinoxea_var >= 80 }
 		NOT = {exists = c:GOU }
+		NOT = {
+			has_global_variable = amazonie_shatters
+		}
 	}
 	immediate = {
 	c:EQX = { save_scope_as = scope_EQX }
@@ -2138,7 +2149,12 @@ dvg_amazonie.25 = {
 					set_variable = warlord_state
 				}
 			}
-			c:GOU = { save_scope_as = scope_GOU}
+			c:GOU = { save_scope_as = scope_GOU
+			change_relations = {
+				country = c:ATL
+				value = 50
+			}
+			}
 		}
 		if = {
 			limit = { exists = s:STATE_VAURA.region_state:AMA }
@@ -2156,9 +2172,13 @@ dvg_amazonie.25 = {
 			}
 			c:EQX = { save_scope_as = scope_EQX 
 			activate_law = law_type:law_slavery_banned
+			change_relations = {
+				country = c:ATL
+				value = 20
+			}
 			add_journal_entry = {
 			type = je_amazonie_annex
-		}
+			}
 			}
 			if = {
 				limit = { exists = s:STATE_AMAZONIE_INFERIEURE.region_state:AMA }
@@ -2324,7 +2344,7 @@ dvg_amazonie.27 = {
 	    }
 	}
 }
-
+#Rumblings from Equinoxea
 dvg_amazonie.28 = {
 	type = country_event
 	placement = ROOT
@@ -2348,8 +2368,23 @@ dvg_amazonie.28 = {
 	    has_variable = equinoxea_var
 		has_journal_entry = je_equinoxea_insurgency
 		NOT = {has_law = law_type:law_oligarchy}
-		this = { var:equinoxea_var >= 30 }
 		NOT = {exists = c:GOU }
+		
+		AND = {
+			this = { var:equinoxea_var >= 80 }
+			OR = {
+				s:STATE_CAPPADOCE.region_state:AMA = {
+					turmoil >= 0.55
+				}
+				s:STATE_VAURA.region_state:AMA = {
+					turmoil >= 0.55
+				}
+			}
+			
+		}
+		NOT = {
+			has_global_variable = amazonie_shatters
+		}
 	}
 	immediate = {
 	c:EQX = { save_scope_as = scope_EQX }
@@ -2374,7 +2409,16 @@ dvg_amazonie.28 = {
 	option = {
 		name = dvg_amazonie.28.a
 
-		c:ATL = {trigger_event = { id = dvg_amazonie.30 days = 10} }
+		if = {
+			limit = {
+				c:ATL = {
+					has_law = law_type:law_secret_police
+				}
+			}
+			c:ATL = {trigger_event = { id = dvg_amazonie.30 days = 30} }
+
+		}
+
 
 		
 		add_radicals = {
@@ -2386,7 +2430,7 @@ dvg_amazonie.28 = {
 		}
 	}
 }
-
+#EQX breakaway
 dvg_amazonie.29 = {
 	type = country_event
 	placement = ROOT
@@ -2407,7 +2451,9 @@ dvg_amazonie.29 = {
 	duration = 3
 
 	trigger = {
-	    
+	    NOT = {
+			has_global_variable = amazonie_shatters
+		}
 	}
 	immediate = {
 	c:EQX = { save_scope_as = scope_EQX }
@@ -2476,7 +2522,7 @@ dvg_amazonie.29 = {
 	}
 	}
 }
-
+#Gouas Plan
 dvg_amazonie.30 = {
 	type = country_event
 	placement = ROOT
@@ -2497,6 +2543,16 @@ dvg_amazonie.30 = {
 	duration = 3
 
 	trigger = {
+
+		NOR = {
+			owns_entire_state_region = STATE_GOUAS
+			exists = c:GOU
+		}
+		c:AMA = {
+			owns_entire_state_region = STATE_GOUAS
+		}
+		has_law = law_type:law_secret_police
+		
 	    
 	}
 	immediate = {
@@ -2604,7 +2660,13 @@ dvg_amazonie.31 = {
 					set_variable = warlord_state
 				}
 			}
-			c:GOU = { save_scope_as = scope_GOU}
+			c:GOU = { save_scope_as = scope_GOU
+				change_relations = {
+					country = c:ATL
+					value = 50
+				}
+		
+			}
 		}
 	}
 	
