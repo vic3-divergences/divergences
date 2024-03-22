@@ -57,15 +57,103 @@ je_anism = {
 	}
 
 	complete = {
-		
-		
+		scope:journal_entry = { is_goal_complete = yes }
+
 	}
 
 	on_complete = {
-		
+		#Jeanist Victory
+		trigger_event = {
+			id = dvg_burgundy.34
+		}
+	}
+	fail = {
+		NOT = {
+			has_law = law_type:law_monarchy
+		}
+	}
+	on_fail = {
+		#Palriamentary Victory
+		trigger_event = {
+			id = dvg_burgundy.36
+		}
 	}
 	current_value = {
 		value = var:dvg_je_an_var
+	}
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					ig:ig_landowners = {
+						is_powerful = yes
+						is_in_government = yes
+						ig_approval >= 0 
+					}
+				NOT = {
+					has_variable = happy_landowners
+				}
+				}
+				change_variable = {
+					name = dvg_je_an_var
+					add = 2
+				}
+				set_variable = happy_landowners
+			}
+			if = {
+				limit = {
+					ig:ig_landowners = {
+						is_powerful = no
+						is_in_government = no
+						ig_approval >= 0 
+					}
+				has_variable = happy_landowners
+				
+				}
+				change_variable = {
+					name = dvg_je_an_var
+					subtract = 2
+				}
+				remove_variable = happy_landowners
+			}
+			if = {
+				limit = {
+					ig:ig_intelligentsia = {
+						is_powerful = yes
+						is_in_government = yes
+						ig_approval >= 0 
+					}
+				NOT = {
+					has_variable = happy_intelligentsia
+				}
+				}
+				change_variable = {
+					name = dvg_je_an_var
+					subtract = 2
+				}
+				set_variable = happy_intelligentsia
+			}
+			if = {
+				limit = {
+					ig:ig_intelligentsia = {
+						is_powerful = yes
+						is_in_government = yes
+						ig_approval >= 0 
+					}
+					has_variable = happy_intelligentsia
+
+				}
+				change_variable = {
+					name = dvg_je_an_var
+					add = 2
+				}
+				remove_variable = happy_intelligentsia
+			}
+
+			
+		}
+
+
 	}
 	invalid = {
 		NOT = {
@@ -74,8 +162,20 @@ je_anism = {
 			}
 		}
 	}
+	on_invalid = {
+		trigger_event = {
+			id = dvg_burgundy.36
+		}
+	}
 	goal_add_value = {
 		add = 10
+	}
+	timeout = 3650
+	on_timeout = {
+		trigger_event = {
+			id = dvg_burgundy.35
+		}
+		
 	}
 	progressbar = yes
 
@@ -363,5 +463,159 @@ je_netherlands_burgundy = {
 
 	progressbar = yes
 
+}
+je_unify_brg = {
+	icon = "gfx/interface/icons/event_icons/event_empty_chair.dds"
+
+	group = je_group_crises
+
+	
+
+	is_shown_when_inactive = {
+
+		
+	}
+
+	possible = {	
+		exists = c:BRG
+		exists = c:PBG
+	}
+	immediate = {
+		hidden_effect = {
+			
+			if = {
+				limit = {
+					c:BRG = ROOT
+				}
+				set_secret_goal = {
+					country = c:PBG
+					secret_goal = conquer
+				}
+			}
+		}
+	}
+
+	complete = {
+		
+		
+			custom_tooltip = {
+				text = burgundy_united_tt
+				NOT = {
+					exists = c:PBG
+				}
+			}
+	}
+
+	on_complete = {
+		
+		
+	}
+	timeout = 7300
+
+	on_timeout = {
+		if = {
+			limit = {
+				any_scope_state = {
+					is_capital = yes
+					state_region = {
+						is_homeland = cu:dutch
+					}
+				}
+				NOT = {
+					exists = c:NET
+				}
+			}
+			change_tag = NET
+		}
+		if = {
+			limit = {
+				exists = s:STATE_BURGUNDY.region_state:BRG
+				s:STATE_BURGUNDY.region_state:BRG = {
+					is_capital = yes
+				}
+				NOT = {
+					exists = c:BGY
+				}
+			}
+			change_tag = BGY
+		}
+	}
+	should_be_pinned_by_default = yes
+	inheritable = no
+}
+je_unify_pbg = {
+	icon = "gfx/interface/icons/event_icons/event_empty_chair.dds"
+
+	group = je_group_crises
+
+	
+
+	is_shown_when_inactive = {
+
+		
+	}
+
+	possible = {	
+		exists = c:BRG
+		exists = c:PBG
+	}
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					c:PBG = ROOT
+				}
+				set_secret_goal = {
+					country = c:BRG
+					secret_goal = conquer
+				}
+			}
+		}
+	}
+
+	complete = {
+			custom_tooltip = {
+				text = burgundy_united_tt
+				NOT = {
+					exists = c:PBG
+				}
+			}
+	}
+
+	on_complete = {
+		change_tag = BRG
+	}
+	timeout = 7300
+
+	on_timeout = {
+		if = {
+			limit = {
+				any_scope_state = {
+					is_capital = yes
+					state_region = {
+						is_homeland = cu:dutch
+					}
+				}
+				NOT = {
+					exists = c:NET
+				}
+			}
+			change_tag = NET
+		}
+		if = {
+			limit = {
+				exists = s:STATE_BURGUNDY.region_state:BRG
+				s:STATE_BURGUNDY.region_state:BRG = {
+					is_capital = yes
+				}
+				NOT = {
+					exists = c:BGY
+				}
+			}
+			change_tag = BGY
+		}
+	}
+	should_be_pinned_by_default = yes
+	inheritable = no
 }
 

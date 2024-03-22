@@ -90,10 +90,13 @@ dvg_burgundy.2 = {
 	}
 	immediate = {
 		c:RHI = {
-			save_scope_as = rhi_scope
+			save_scope_as = scope_RHI
+			ruler = {
+				save_scope_as = scope_archbishop
+			}
 		}
 		c:PAP = {
-			save_scope_as = pap_scope
+			save_scope_as = scope_PAP
 		}
 	}
 	
@@ -137,10 +140,10 @@ dvg_burgundy.3 = {
 	}
 	immediate = {
 		c:RHI = {
-			save_scope_as = rhi_scope
+			save_scope_as = scope_RHI
 		}
 		c:PAP = {
-			save_scope_as = pap_scope
+			save_scope_as = scope_PAP
 		}
 	}
 	
@@ -181,7 +184,7 @@ dvg_burgundy.4 = {
 	}
 	immediate = {
 		c:RHI = {
-			save_scope_as = rhi_scope
+			save_scope_as = scope_RHI
 		}
 	}
 	
@@ -223,7 +226,7 @@ dvg_burgundy.5 = {
 	}
 	immediate = {
 		c:RHI = {
-			save_scope_as = rhi_scope
+			save_scope_as = scope_RHI
 		}
 	}
 	
@@ -266,7 +269,13 @@ dvg_burgundy.6 = {
 	}
 	immediate = {
 		c:RHI = {
-			save_scope_as = rhi_scope
+			save_scope_as = scope_RHI
+		}
+		every_scope_character = {
+			limit = {
+				has_variable = jean_var
+			}
+			save_scope_as = scope_jean
 		}
 	}
 	
@@ -327,7 +336,7 @@ dvg_burgundy.7 = {
 	}
 	immediate = {
 		c:RHI = {
-			save_scope_as = rhi_scope
+			save_scope_as = scope_RHI
 		}
 		
 	}
@@ -390,7 +399,7 @@ dvg_burgundy.8 = {
 	}
 	immediate = {
 		c:RHI = {
-			save_scope_as = rhi_scope
+			save_scope_as = scope_RHI
 		}
 	}
 	
@@ -431,7 +440,7 @@ dvg_burgundy.9 = {
 	}
 	immediate = {
 		c:RHI = {
-			save_scope_as = rhi_scope
+			save_scope_as = scope_RHI
 		}
 	}
 	
@@ -476,7 +485,7 @@ dvg_burgundy.10 = {
 	}
 	immediate = {
 		c:RHI = {
-			save_scope_as = rhi_scope
+			save_scope_as = scope_RHI
 		}
 	}
 	
@@ -544,7 +553,7 @@ dvg_burgundy.11 = {
 			}
 		}
 		c:RHI = {
-			save_scope_as = rhi_scope
+			save_scope_as = scope_RHI
 			set_country_type = unrecognized
 		}
 
@@ -621,7 +630,7 @@ dvg_burgundy.12 = {
 	}
 	immediate = {
 		c:RHI = {
-			save_scope_as = rhi_scope
+			save_scope_as = scope_RHI
 		}
 	}
 	
@@ -943,7 +952,9 @@ dvg_burgundy.18 = {
 		name = dvg_burgundy.18.a
 		default_option = yes
 
-		activate_law = law_type:law_parliamentary_republic
+		activate_law = law_type:law_universal_suffrage
+		activate_law = law_type:law_slavery_banned
+
 
 		add_modifier = {
 			name = dvg_approval_buff
@@ -1000,6 +1011,7 @@ dvg_burgundy.19 = {
 		}
 	}
 }
+#Jean's Coronation
 dvg_burgundy.20 = {
 	type = country_event
 	placement = ROOT
@@ -1034,27 +1046,14 @@ dvg_burgundy.20 = {
 
 		
 
-		set_global_variable = jean_time
-
-		set_variable = {
-			name = dvg_je_an_var
-			value = 0
-		}
-		add_journal_entry = {
-			type = je_anism
-		}
-
-		change_variable = {
-			name = dvg_je_an_var
-			add = 5
-		}
+		
 
 		ai_chance = {
 			base = 100
 		}
 	}
 }
-
+#Jean Speech
 dvg_burgundy.21 = {
 	type = country_event
 	placement = ROOT
@@ -1064,7 +1063,7 @@ dvg_burgundy.21 = {
 	flavor = dvg_burgundy.21.f
 	
 	event_image = {
-		video = "gfx/event_pictures/unspecific_sick_in_hospital.bk2"
+		video = "unspecific_politicians_arguing"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
@@ -1087,12 +1086,19 @@ dvg_burgundy.21 = {
 		name = dvg_burgundy.21.a
 		default_option = yes
 
-		
-
-		
-
-		
-
+		add_loyalists = {
+			value = 0.10
+		}
+		if = {
+			limit = {
+				NOT = {
+					exists = c:RHI
+			}
+			}
+			trigger_event = {
+				id = dvg_burgundy.22
+			}
+		}
 		ai_chance = {
 			base = 100
 		}
@@ -1108,7 +1114,7 @@ dvg_burgundy.22 = {
 	flavor = dvg_burgundy.22.f
 	
 	event_image = {
-		video = "gfx/event_pictures/unspecific_sick_in_hospital.bk2"
+		video = "unspecific_politicians_arguing"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
@@ -1133,12 +1139,83 @@ dvg_burgundy.22 = {
 
 		
 
-		
+		trigger_event = {
+			id = dvg_burgundy.23
+
+			days = 60
+		}
+		add_radicals = {
+			religion = rel:jewish
+			value = 0.30
+		}
+		change_relations = {
+			country = c:BIC
+			value = -30
+		}
+		if = {
+			limit = {
+				ig:ig_industrialists = {
+					is_powerful = yes
+				}
+			}
+			change_variable = {
+				name = dvg_je_an_var
+				subtract = 1
+			}
+		}
+		if = {
+			limit = {
+				ig:ig_industrialists = {
+					is_powerful = no
+				}
+			}
+			change_variable = {
+				name = dvg_je_an_var
+				add = 1
+			}
+		}
+		random_country = {
+			limit = {
+				cu:ashkenazi = {
+					NOT = {
+						culture_is_discriminated_in = ROOT
+					}
+				}
+			}
+			
+		}
 
 		
 
 		ai_chance = {
 			base = 100
+		}
+	}
+	option = {
+		name = dvg_burgundy.22.b
+
+		add_modifier = {
+			name = dvg_modifier_industrialists_bolstered
+			months = 12 
+			is_decaying = yes
+		}
+		if = {
+			limit = {
+				ig:ig_industrialists = {
+					is_powerful = yes
+				}
+			}
+			change_variable = {
+				name = dvg_je_an_var
+				add = 1
+			}
+		}
+		
+		
+		
+
+		ai_chance = {
+			base = 1
 		}
 	}
 }
@@ -1152,7 +1229,7 @@ dvg_burgundy.23 = {
 	flavor = dvg_burgundy.23.f
 	
 	event_image = {
-		video = "gfx/event_pictures/unspecific_sick_in_hospital.bk2"
+		video = "unspecific_politicians_arguing"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
@@ -1175,17 +1252,32 @@ dvg_burgundy.23 = {
 		name = dvg_burgundy.23.a
 		default_option = yes
 
-		
+		if = {
+			limit = { 
+				any_scope_character = {
+					has_variable = jean_var
+				}
+			}
+			trigger_event = {
+				id = dvg_burgundy.24
+	
+				days = 30
+	
+			}
+		}
 
 		
-
-		
-
 		ai_chance = {
 			base = 100
 		}
+		
 	}
+
+		
+
+		
 }
+
 
 dvg_burgundy.24 = {
 	type = country_event
@@ -1207,11 +1299,15 @@ dvg_burgundy.24 = {
 	duration = 3
 
 	trigger = { 
-
+		any_scope_character = {
+			has_variable = jean_var
+		}
 
 	}
 	immediate = {
-		
+		ig:ig_industrialists = {
+			save_scope_as = industrialists_ig
+		}
 	}
 	
 	
@@ -1219,10 +1315,34 @@ dvg_burgundy.24 = {
 		name = dvg_burgundy.24.a
 		default_option = yes
 
-		
+		activate_law = law_type:law_autocracy
 
-		
+		set_global_variable = jean_time
 
+		set_variable = {
+			name = dvg_je_an_var
+			value = 0
+		}
+		add_journal_entry = {
+			type = je_anism
+		}
+
+		change_variable = {
+			name = dvg_je_an_var
+			add = 5
+		}
+
+		if = {
+			limit = {
+				ig:ig_intelligentsia = {
+					is_in_government = yes
+				}
+			 }
+			 ig:ig_intelligentsia = {
+				remove_ruling_interest_group = yes
+			 }
+		}
+		
 		
 
 		ai_chance = {
@@ -1240,7 +1360,7 @@ dvg_burgundy.25 = {
 	flavor = dvg_burgundy.25.f
 	
 	event_image = {
-		video = "gfx/event_pictures/unspecific_sick_in_hospital.bk2"
+		video = "gfx/event_pictures/europenorthamerica_political_extremism.bk2"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
@@ -1264,7 +1384,89 @@ dvg_burgundy.25 = {
 		default_option = yes
 
 		
+		add_modifier = {
+			name = dvg_assimilate
+			months = 600
+			is_decaying = yes
+		}
+		add_radicals = {
+			value = 0.15
+			culture = cu:rheinish
+		}
+		add_radicals = {
+			value = 0.15
+			culture = cu:dutch
+		}
+		
 
+		ai_chance = {
+			base = 99
+		}
+	}
+	option = {
+		name = dvg_burgundy.25.b
+
+		
+		add_primary_culture = cu:dutch
+		add_primary_culture = cu:rheinish
+		
+
+		
+
+		ai_chance = {
+			base = 1
+		}
+	}
+	option = {
+		name = dvg_burgundy.25.c
+
+		if = {
+			limit = { 
+			exists = s:STATE_HOLLAND.region_state:BRG
+			NOT = {exists = c:NET}
+			}
+			create_country = { #Tupinamba
+				tag = NET
+				origin = this
+				state = s:STATE_HOLLAND.region_state:BRG
+				state = s:STATE_FRIESLAND.region_state:BRG
+				state = s:STATE_GELRE.region_state:BRG
+			}
+			
+
+			c:BRG = {
+				create_diplomatic_pact = {
+					country = c:NET
+					type = puppet
+				}
+			}
+			
+		}
+		if = {
+			limit = { 
+			exists = s:STATE_RHINELAND.region_state:BRG
+			NOT = {exists = c:RHI}
+			}
+			create_country = { #Rhineland
+				tag = RHI
+				origin = this
+				state = s:STATE_RHINELAND.region_state:BRG
+				state = s:STATE_HESSE.region_state:BRG
+				state = s:STATE_BADEN.region_state:BRG
+				state = s:STATE_WURTTEMBERG.region_state:BRG
+				state = s:STATE_PALATINATE.region_state:BRG
+	
+			}
+			
+
+			c:BRG = {
+				create_diplomatic_pact = {
+					country = c:RHI
+					type = puppet
+				}
+			}
+			
+		}
 		
 
 		
@@ -1273,8 +1475,21 @@ dvg_burgundy.25 = {
 			base = 100
 		}
 	}
-}
+	option = {
+		name = dvg_burgundy.25.e
 
+		
+
+		
+
+		
+
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+#CW Factor
 dvg_burgundy.26 = {
 	type = country_event
 	placement = ROOT
@@ -1296,10 +1511,15 @@ dvg_burgundy.26 = {
 
 	trigger = { 
 
+		has_journal_entry = je_anism
 
 	}
 	immediate = {
-		
+		ig:ig_intelligentsia = {
+			leader = {
+				save_scope_as = johan_scope
+			}
+		}
 	}
 	
 	
@@ -1307,8 +1527,14 @@ dvg_burgundy.26 = {
 		name = dvg_burgundy.26.a
 		default_option = yes
 
-		
 
+
+		
+		change_variable = {
+			name = dvg_je_an_var
+			subtract = 1
+		}
+		
 		
 
 		
@@ -1317,8 +1543,31 @@ dvg_burgundy.26 = {
 			base = 100
 		}
 	}
-}
+	option = {
+		name = dvg_burgundy.26.b
 
+		
+		change_variable = {
+			name = dvg_je_an_var
+			add = 1
+		}
+		add_radicals = {
+			value = 0.05
+		}
+		
+		add_modifier = {
+			name = modifier_imprisoned_republicans
+			months = 120
+			is_decaying = yes
+		}
+		
+
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+#CW Factor
 dvg_burgundy.27 = {
 	type = country_event
 	placement = ROOT
@@ -1352,7 +1601,32 @@ dvg_burgundy.27 = {
 		default_option = yes
 
 		
+		add_radicals = {
+			value = 0.10
+		}
 
+		change_variable = {
+			name = dvg_je_an_var
+			subtract = 1
+		}
+
+		
+
+		ai_chance = {
+			base = 100
+		}
+	}
+	option = {
+		name = dvg_burgundy.27.b
+
+		
+		add_radicals = {
+			value = 0.10
+		}
+		change_variable = {
+			name = dvg_je_an_var
+			add = 1
+		}
 		
 
 		
@@ -1362,7 +1636,7 @@ dvg_burgundy.27 = {
 		}
 	}
 }
-
+#CW Factor
 dvg_burgundy.28 = {
 	type = country_event
 	placement = ROOT
@@ -1395,10 +1669,17 @@ dvg_burgundy.28 = {
 		name = dvg_burgundy.28.a
 		default_option = yes
 
-		
 
 		
 
+		ai_chance = {
+			base = 100
+		}
+	}
+	option = {
+		name = dvg_burgundy.28.b
+
+		
 		
 
 		ai_chance = {
@@ -1613,6 +1894,501 @@ dvg_burgundy.33 = {
 	
 	option = {
 		name = dvg_burgundy.33.a
+		default_option = yes
+
+		
+
+		
+
+		
+
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+
+dvg_burgundy.34 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_burgundy.34.t
+	desc = dvg_burgundy.34.d
+	flavor = dvg_burgundy.34.f
+	
+	event_image = {
+		video = "gfx/event_pictures/unspecific_sick_in_hospital.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = { 
+
+
+	}
+	immediate = {
+		
+	}
+	
+	
+	option = {
+		name = dvg_burgundy.34.a
+		default_option = yes
+
+		
+
+		
+
+		
+
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+
+dvg_burgundy.35 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_burgundy.35.t
+	desc = dvg_burgundy.35.d
+	flavor = dvg_burgundy.35.f
+	
+	event_image = {
+		video = "gfx/event_pictures/unspecific_sick_in_hospital.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = { 
+
+
+	}
+	immediate = {
+		
+	}
+	
+	
+	option = {
+		name = dvg_burgundy.35.a
+		default_option = yes
+
+		
+
+		
+
+		
+
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+
+dvg_burgundy.36 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_burgundy.36.t
+	desc = dvg_burgundy.36.d
+	flavor = dvg_burgundy.36.f
+	
+	event_image = {
+		video = "gfx/event_pictures/unspecific_sick_in_hospital.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = { 
+
+
+	}
+	immediate = {
+		
+	}
+	
+	
+	option = {
+		name = dvg_burgundy.36.a
+		default_option = yes
+
+		
+
+		
+
+		
+
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+
+dvg_burgundy.37 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_burgundy.37.t
+	desc = dvg_burgundy.37.d
+	flavor = dvg_burgundy.37.f
+	
+	event_image = {
+		video = "gfx/event_pictures/unspecific_sick_in_hospital.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = { 
+
+
+	}
+	immediate = {
+		
+	}
+	
+	
+	option = {
+		name = dvg_burgundy.37.a
+		default_option = yes
+
+		
+
+		
+
+		
+
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+
+dvg_burgundy.38 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_burgundy.38.t
+	desc = dvg_burgundy.38.d
+	flavor = dvg_burgundy.38.f
+	
+	event_image = {
+		video = "gfx/event_pictures/unspecific_sick_in_hospital.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = { 
+
+
+	}
+	immediate = {
+		
+	}
+	
+	
+	option = {
+		name = dvg_burgundy.38.a
+		default_option = yes
+
+		
+
+		
+
+		
+
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+
+dvg_burgundy.39 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_burgundy.39.t
+	desc = dvg_burgundy.39.d
+	flavor = dvg_burgundy.39.f
+	
+	event_image = {
+		video = "gfx/event_pictures/unspecific_sick_in_hospital.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = { 
+
+
+	}
+	immediate = {
+		
+	}
+	
+	
+	option = {
+		name = dvg_burgundy.39.a
+		default_option = yes
+
+		
+
+		
+
+		
+
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+
+dvg_burgundy.40 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_burgundy.40.t
+	desc = dvg_burgundy.40.d
+	flavor = dvg_burgundy.40.f
+	
+	event_image = {
+		video = "gfx/event_pictures/unspecific_sick_in_hospital.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = { 
+
+
+	}
+	immediate = {
+		
+	}
+	
+	
+	option = {
+		name = dvg_burgundy.40.a
+		default_option = yes
+
+		
+
+		
+
+		
+
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+
+dvg_burgundy.41 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_burgundy.41.t
+	desc = dvg_burgundy.41.d
+	flavor = dvg_burgundy.41.f
+	
+	event_image = {
+		video = "gfx/event_pictures/unspecific_sick_in_hospital.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = { 
+
+
+	}
+	immediate = {
+		
+	}
+	
+	
+	option = {
+		name = dvg_burgundy.41.a
+		default_option = yes
+
+		
+
+		
+
+		
+
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+
+dvg_burgundy.42 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_burgundy.42.t
+	desc = dvg_burgundy.42.d
+	flavor = dvg_burgundy.42.f
+	
+	event_image = {
+		video = "gfx/event_pictures/unspecific_sick_in_hospital.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = { 
+
+
+	}
+	immediate = {
+		
+	}
+	
+	
+	option = {
+		name = dvg_burgundy.42.a
+		default_option = yes
+
+		
+
+		
+
+		
+
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+
+dvg_burgundy.43 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_burgundy.43.t
+	desc = dvg_burgundy.43.d
+	flavor = dvg_burgundy.43.f
+	
+	event_image = {
+		video = "gfx/event_pictures/unspecific_sick_in_hospital.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = { 
+
+
+	}
+	immediate = {
+		
+	}
+	
+	
+	option = {
+		name = dvg_burgundy.43.a
+		default_option = yes
+
+		
+
+		
+
+		
+
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+
+dvg_burgundy.44 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_burgundy.44.t
+	desc = dvg_burgundy.44.d
+	flavor = dvg_burgundy.44.f
+	
+	event_image = {
+		video = "gfx/event_pictures/unspecific_sick_in_hospital.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = { 
+
+
+	}
+	immediate = {
+		
+	}
+	
+	
+	option = {
+		name = dvg_burgundy.44.a
 		default_option = yes
 
 		
