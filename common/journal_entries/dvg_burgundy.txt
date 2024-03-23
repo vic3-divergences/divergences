@@ -57,7 +57,13 @@ je_anism = {
 	}
 
 	complete = {
-		scope:journal_entry = { is_goal_complete = yes }
+		OR = {
+			scope:journal_entry = { is_goal_complete = yes }
+			var:dvg_je_an_var = {
+				value >= 10
+			}
+		}
+		has_global_variable = jean_coup
 
 	}
 
@@ -71,11 +77,15 @@ je_anism = {
 		NOT = {
 			has_law = law_type:law_monarchy
 		}
+		var:dvg_je_an_var = {
+			value <= 0
+		}
 	}
 	on_fail = {
 		#Palriamentary Victory
+		has_global_variable = jean_coup
 		trigger_event = {
-			id = dvg_burgundy.36
+			id = dvg_burgundy.32
 		}
 	}
 	current_value = {
@@ -149,6 +159,31 @@ je_anism = {
 				}
 				remove_variable = happy_intelligentsia
 			}
+			if = {
+				limit = {
+					NOT = {
+						has_global_variable = jean_coup
+					}
+					year >= 1855 
+					OR = {
+						var:dvg_je_an_var = {
+							value >= 10
+						}
+						var:dvg_je_an_var = {
+							value <= 0
+						}
+						any_interest_group = {
+							is_marginal = no
+							is_insurrectionary = yes
+						}
+					}
+
+				}
+				trigger_event = {
+					id = dvg_burgundy.31
+				}
+				
+			}
 
 			
 		}
@@ -187,11 +222,16 @@ je_rhine_burgundy = {
 	group = je_group_internal_affairs
 
 	is_shown_when_inactive = {
-		exists = c:BRG
-		this = c:BRG
+		country_has_primary_culture = cu:burgundian
+		country_is_in_europe = yes
 	}
 
 	possible = {
+		any_scope_state = {
+			state_region = {
+				is_homeland = cu:rheinish
+			}
+		}
 		OR = {
 			has_technology_researched = nationalism		
 			s:STATE_RHINELAND.region_state:BRG = {
@@ -496,8 +536,6 @@ je_unify_brg = {
 	}
 
 	complete = {
-		
-		
 			custom_tooltip = {
 				text = burgundy_united_tt
 				NOT = {
@@ -507,9 +545,34 @@ je_unify_brg = {
 	}
 
 	on_complete = {
-		
+		ig:ig_petty_bourgeoisie = {
+			remove_ideology = ideology_meritocratic
+			add_ideology = ideology_jeanist
+		} 
+		ig:ig_landowners = {
+			remove_ideology = ideology_stratocratic
+			add_ideology = ideology_jeanist
+		} 
+		add_modifier = {
+			name = dvg_modifier_landowners_bolstered
+			months = 120
+			is_decaying = yes
+		}
+	}
+
+	fail = {
+		NOT = {
+			any_character = {
+				NOT = {
+					has_ideology = ideology:ideology_jeanist_leader
+				}
+			}
+		}
+	}
+	on_fail = {
 		
 	}
+
 	timeout = 7300
 
 	on_timeout = {
@@ -585,6 +648,9 @@ je_unify_pbg = {
 	on_complete = {
 		change_tag = BRG
 	}
+
+
+
 	timeout = 7300
 
 	on_timeout = {
@@ -618,4 +684,6 @@ je_unify_pbg = {
 	should_be_pinned_by_default = yes
 	inheritable = no
 }
+
+
 
