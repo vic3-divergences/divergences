@@ -451,10 +451,17 @@ dvg_gran_colombia.9 = {
 	trigger = {
 	}
 	
-	# This should be enough for now...
+	# At last, the remnant of Spanish colonialism has returned to Colombia!
 	option = {
 		name = dvg_gran_colombia.9.a
 		default_option = yes
+		
+		if = {
+			limit = { has_variable = castro_colombia }
+			c:GCO = {
+				trigger_event = { id = dvg_cuba.25 days = 7 }
+			}
+		}
 		
 		ai_chance = {
 			base = 1
@@ -775,7 +782,7 @@ dvg_gran_colombia.15 = {
 		name = dvg_gran_colombia.15.a
 		default_option = yes
 		
-		trigger_event = { id = dvg_gran_colombia.27 days = 5}
+		trigger_event = { id = dvg_gran_colombia.27 days = 5 }
 		
 		ai_chance = {
 			base = 50
@@ -1594,10 +1601,8 @@ dvg_gran_colombia.25 = {
 		
 	}
 	trigger = {
-		year = 1855
+		year = 1865
 		has_law = law_type:law_monarchy
-		exists = global_var:castro_empire 
-		NOT = { exists = global_var:ernest_i_death }
 	}
 	
 	option = {
@@ -1622,7 +1627,9 @@ dvg_gran_colombia.25 = {
 			name = ernest_i_death
 			value = 0
 		}
-		trigger_event = { id = dvg_gran_colombia.26 }
+		c:GCO = {
+			trigger_event = { id = dvg_gran_colombia.26 days = 7 }
+		}
 		ai_chance = {
 			base = 1
 		}
@@ -1648,16 +1655,17 @@ dvg_gran_colombia.26 = {
 	duration = 3
 
 	trigger = {
-		has_law = law_type:law_monarchy
-		exists = global_var:castro_empire 
-		exists = global_var:ernest_i_death 
 	}
 	
 	option = {
 		name = dvg_gran_colombia.26.a
 		default_option = yes
 		
-		activate_law = law_type = law:law_census_voting
+		c:GCO = {
+			activate_law = law_type:law_census_voting
+			activate_law = law_type:law_right_of_assembly
+		}
+		
 		
 		ai_chance = {
 			base = 1
@@ -3950,6 +3958,35 @@ dvg_gran_colombia.59 = {
 		name = dvg_gran_colombia.59.a
 		default_option = yes
 		
+		if = {
+			limit = { 
+				c:JLS = { is_player = yes }
+			}
+			play_as = c:MEX
+			c:MEX = {
+				annex = c:JLS
+			}
+		}
+		else = {
+			c:MEX = {
+				annex = c:JLS
+			}
+		}
+		create_character = {
+			is_general = yes
+			historical = yes
+			first_name = Jose
+			last_name = de_Puente-Marquez
+			noble = yes
+			culture = cu:central_american
+			ig_leader = yes
+			birth_date = 1820.9.19
+			interest_group = ig_devout
+			ideology = ideology_moderate
+			on_created = {
+				set_character_as_ruler = yes
+			}
+		}
 		trigger_event = { id = dvg_gran_colombia.62 days = 7 }
 		
 		ai_chance = {
@@ -4112,10 +4149,6 @@ dvg_gran_colombia.63 = {
 	duration = 3
 
 	trigger = {
-		year = 1875
-		this = c:MEX
-		NOT = { exists = c:LUS }
-		has_variable = santander_junta
 	}
 	
 	option = {
@@ -4147,10 +4180,6 @@ dvg_gran_colombia.64 = {
 	duration = 3
 
 	trigger = {
-		year = 1875
-		this = c:GCO
-		NOT = { exists = c:LUS }
-		has_variable = santander_junta
 	}
 	
 	option = {
@@ -4277,16 +4306,12 @@ dvg_gran_colombia.68 = {
 	duration = 3
 
 	trigger = {
-		tag = GCO
-		has_variable = dvg_mirabal
-		NOT = { has_variable = dvg_prefectos }
 	}
 	
 	option = {
 		name = dvg_gran_colombia.68.a
 		default_option = yes
 		
-		set_variable = dvg_prefectos
 		every_scope_state = {
 			limit = { 
 				owner = ROOT
@@ -4323,11 +4348,28 @@ dvg_gran_colombia.69 = {
 	duration = 3
 
 	trigger = {
+		year = 1915
+		has_law = law_type:law_monarchy
 	}
 	
 	option = {
 		name = dvg_gran_colombia.69.a
 		default_option = yes
+		
+		if = {
+			limit = {
+				OR = {
+					has_law = law_type:law_no_police
+					has_law = law_type:law_local_police
+				}
+			}
+			activate_law = law_type:law_dedicated_police
+		}
+		else = {
+			limit = { has_law = law_type:law_dedicated_police }
+			activate_law = law_type:law_militarized_police
+		}
+	}
 		
 		ai_chance = {
 			base = 1
@@ -4651,7 +4693,7 @@ dvg_gran_colombia.75 = {
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
-	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/sick_in_hospital"
 
 	icon = "gfx/interface/icons/event_icons/event_fire.dds"
 
