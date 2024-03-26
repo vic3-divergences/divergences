@@ -1,5 +1,5 @@
 ﻿je_queen_anne = {
-	icon = "gfx/interface/icons/invention_icons/pan_nationalism.dds"
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
 	should_be_pinned_by_default = yes
 
 	group = je_group_internal_affairs
@@ -39,6 +39,30 @@
 		trigger_event = {
 			id = dvg_burgundy.18
 		}
+		if = {
+			limit = {
+				ruler = {
+					has_trait = immortal
+				}
+			}
+			ruler = {
+				remove_trait = immortal
+			}
+		}
+		
+	}
+	invalid = {
+		NOT = {
+			has_law = law_type:law_monarchy
+		}
+	}
+	on_invalid = {
+		every_scope_character = {
+			limit = {
+				has_trait = immortal
+			}
+			remove_trait = immortal
+		}
 	}
 
 }
@@ -49,8 +73,18 @@ je_anism = {
 
 	group = je_group_internal_affairs
 
-	possible = {
+	is_shown_when_inactive = {
+		exists = c:BRG
+		c:BRG = ROOT
+		any_scope_character = {
+			has_variable = jean_var
+		}
 	}
+
+	possible = {
+		has_global_variable = jean_time
+	}
+
 
 	immediate = {
 		
@@ -83,7 +117,6 @@ je_anism = {
 	}
 	on_fail = {
 		#Palriamentary Victory
-		has_global_variable = jean_coup
 		trigger_event = {
 			id = dvg_burgundy.32
 		}
@@ -217,32 +250,20 @@ je_anism = {
 }
 je_rhine_burgundy = {
 	icon = "gfx/interface/icons/invention_icons/pan_nationalism.dds"
-	should_be_pinned_by_default = yes
 
 	group = je_group_internal_affairs
 
 	is_shown_when_inactive = {
 		country_has_primary_culture = cu:burgundian
-		country_is_in_europe = yes
-	}
-
-	possible = {
 		any_scope_state = {
 			state_region = {
 				is_homeland = cu:rheinish
 			}
 		}
-		OR = {
-			has_technology_researched = nationalism		
-			s:STATE_RHINELAND.region_state:BRG = {
-				turmoil >= 0.50
-			}
-			c:RHI = {
-				radical_fraction = {
-					value = 0.40
-				}
-			}
-		}
+	}
+
+	possible = {
+		has_technology_researched = nationalism
 	}
 
 	immediate = {
@@ -250,12 +271,12 @@ je_rhine_burgundy = {
 			id = dvg_burgundy.4
 		}
 		set_variable = {
-			name = dvg_burg_rhine_Var
+			name = dvg_burg_rhine_var
 			value = 0
 		}
 	}
 	current_value = {
-		value = var:dvg_burg_rhine_Var
+		value = var:dvg_burg_rhine_var
 	}
 	on_monthly_pulse = {
 		effect = {
@@ -264,7 +285,7 @@ je_rhine_burgundy = {
 					has_technology_researched = nationalism
 				}
 				change_variable = {
-					name = dvg_burg_rhine_Var
+					name = dvg_burg_rhine_var
 					add = 1
 				}
 			}
@@ -275,7 +296,7 @@ je_rhine_burgundy = {
 					}
 				}
 				change_variable = {
-					name = dvg_burg_rhine_Var
+					name = dvg_burg_rhine_var
 					add = 1
 				}
 			}
@@ -289,7 +310,7 @@ je_rhine_burgundy = {
 					}
 				}
 				change_variable = {
-					name = dvg_burg_rhine_Var
+					name = dvg_burg_rhine_var
 					add = 1
 				}
 			}
@@ -301,7 +322,7 @@ je_rhine_burgundy = {
 					id = dvg_burgundy.5
 				}
 				change_variable = {
-					name = dvg_burg_rhine_Var
+					name = dvg_burg_rhine_var
 					add = 1
 				}
 			}
@@ -310,13 +331,13 @@ je_rhine_burgundy = {
 					NOT = {
 						has_global_variable = dvg_cologne_meeting
 					}
-					this = { var:dvg_burg_rhine_Var > 60 }
+					this = { var:dvg_burg_rhine_var > 60 }
 				}
 				trigger_event = {
 					id = dvg_burgundy.10
 				}
 				change_variable = {
-					name = dvg_burg_rhine_Var
+					name = dvg_burg_rhine_var
 					add = 2
 				}
 				set_global_variable = dvg_cologne_meeting
@@ -327,13 +348,7 @@ je_rhine_burgundy = {
 
 
 	complete = {
-		trigger_if = {
-			limit = { 
-				exists = dvg_burg_rhine_Var
-			}
-
-			scope:journal_entry = { is_goal_complete = yes }
-		}
+		scope:journal_entry = { is_goal_complete = yes }
 		
 	}
 
@@ -349,15 +364,7 @@ je_rhine_burgundy = {
 			}
 		}
 		has_law = law_type:law_freedom_of_conscience
-		any_scope_state = {
-			count <= 1
-				is_incorporated = yes
-				turmoil < 0.30
-				
-			state_region = {
-				is_homeland = cu:rheinish
-			}
-		}
+		
 	}
 	on_fail = {
 		trigger_event = {
@@ -377,38 +384,36 @@ je_rhine_burgundy = {
 		}
 	}
 
+	should_be_pinned_by_default = yes
 	progressbar = yes
 
 }
 je_netherlands_burgundy = {
 	icon = "gfx/interface/icons/invention_icons/pan_nationalism.dds"
-	should_be_pinned_by_default = yes
 
 	group = je_group_internal_affairs
 
 	is_shown_when_inactive = {
-		exists = c:BRG
-		this = c:BRG
+		country_has_primary_culture = cu:burgundian
+		any_scope_state = {
+			state_region = {
+				is_homeland = cu:rheinish
+			}
+		}
 	}
 
 	possible = {
-		any_scope_state = {
-			state_region = {
-				is_homeland = cu:dutch
-			}
-		}
 		has_technology_researched = nationalism
 	}
 
 	immediate = {
-		
 		set_variable = {
-			name = dvg_burg_nether_Var
+			name = dvg_burg_nether_var
 			value = 0
 		}
 	}
 	current_value = {
-		value = var:dvg_burg_nether_Var
+		value = var:dvg_burg_nether_var
 	}
 	on_monthly_pulse = {
 		effect = {
@@ -417,7 +422,7 @@ je_netherlands_burgundy = {
 					has_technology_researched = nationalism
 				}
 				change_variable = {
-					name = dvg_burg_nether_Var
+					name = dvg_burg_nether_var
 					add = 1
 				}
 			}
@@ -428,7 +433,7 @@ je_netherlands_burgundy = {
 					}
 				}
 				change_variable = {
-					name = dvg_burg_nether_Var
+					name = dvg_burg_nether_var
 					add = 1
 				}
 			}
@@ -442,35 +447,39 @@ je_netherlands_burgundy = {
 					}
 				}
 				change_variable = {
-					name = dvg_burg_nether_Var
+					name = dvg_burg_nether_var
 					add = 1
 				}
 			}
 			if = {
 				limit = {
-					has_global_variable = dvg_bav_second_german_council
-				}
-				trigger_event = {
-					id = dvg_burgundy.5
+					any_scope_state = {
+						devastation >= 0.15 
+						state_region = {
+							is_homeland = dutch
+						}
+					}
 				}
 				change_variable = {
-					name = dvg_burg_nether_Var
+					name = dvg_burg_nether_var
 					add = 1
+				}
+			}
+			if = {
+				limit = {
+					has_modifier = modifier_reclaiming_land
+				}
+				
+				change_variable = {
+					name = dvg_burg_nether_var
+					subtract = 1
 				}
 			}
 			
 		}
 	}
-
-
 	complete = {
-		trigger_if = {
-			limit = { 
-				exists = dvg_burg_nether_Var
-			}
-
-			scope:journal_entry = { is_goal_complete = yes }
-		}
+		scope:journal_entry = { is_goal_complete = yes }
 		
 	}
 
@@ -500,9 +509,12 @@ je_netherlands_burgundy = {
 	}
 
 	progressbar = yes
+	should_be_pinned_by_default = yes
+
 
 
 }
+
 je_unify_brg = {
 	icon = "gfx/interface/icons/event_icons/event_empty_chair.dds"
 
@@ -511,13 +523,14 @@ je_unify_brg = {
 	
 
 	is_shown_when_inactive = {
-
-		
-	}
-
-	possible = {	
 		exists = c:BRG
 		exists = c:PBG
+		c:BRG = ROOT
+	}
+
+	possible = {
+		is_diplomatic_play_enemy_of = c:PBG	
+		
 	}
 	immediate = {
 		hidden_effect = {
@@ -613,13 +626,15 @@ je_unify_pbg = {
 	
 
 	is_shown_when_inactive = {
-
+		country_has_primary_culture = cu:burgundian
+		exists = c:BRG
+		exists = c:PBG
 		
 	}
 
 	possible = {	
-		exists = c:BRG
-		exists = c:PBG
+		c:PBG = ROOT
+		is_diplomatic_play_enemy_of = c:BRG
 	}
 	immediate = {
 		hidden_effect = {
