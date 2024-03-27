@@ -103,6 +103,15 @@ je_anism = {
 			}
 			trigger_event = dvg_burgundy.6
 		}
+		if = {
+			limit = {
+				NOT = {
+					has_variable = dvg_je_an_var
+				}
+			
+			}
+			set_variable = dvg_je_an_var
+		}
 	}
 
 	complete = {
@@ -357,6 +366,19 @@ je_rhine_burgundy = {
 				}
 				set_global_variable = dvg_cologne_meeting
 			}
+			if = {
+				limit = {
+					NOT = {
+						has_variable = union_bill
+					}
+					this = { var:dvg_burg_rhine_var > 40 }
+				}
+				trigger_event = {
+					id = dvg_burgundy.7
+				}
+				
+				set_variable = union_bill
+			}
 			
 		}
 	}
@@ -504,7 +526,24 @@ je_netherlands_burgundy = {
 		}
 	}
 	fail = {
-		country_has_primary_culture = cu:dutch
+		OR = {
+			country_has_primary_culture = cu:dutch
+			AND = {
+				ig:ig_industrialists = {
+					ig_approval >= 10 
+				}
+				ig:ig_petty_bourgeoisie = {
+					ig_approval >= 10
+				}
+				has_technology_researched = pan-nationalism
+				cu:dutch = {
+					NOT = {
+						culture_is_discriminated_in = ROOT
+					}
+				}
+			}
+
+		}
 	}
 	goal_add_value = {
 		add = 100
@@ -712,6 +751,55 @@ je_unify_pbg = {
 	}
 	should_be_pinned_by_default = yes
 	inheritable = no
+}
+je_reconquer_rhine = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	group = je_group_foreign_affairs
+
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					exists = c:RHI
+				}
+				set_secret_goal = {
+					country = c:RHI
+					secret_goal = conquer
+				}
+			}
+		}
+		s:STATE_RHINELAND = {
+			add_claim = ROOT
+		}
+	}
+
+	possible = {
+		
+	}
+
+	complete = {
+		OR = {
+			owns_entire_state_region = STATE_RHINELAND
+			NOT = {
+				exists = c:RHI
+			}
+		}
+	}
+
+	on_complete = {
+		
+		trigger_event = { id = dvg_burgundy.16 }
+		if = {
+			limit = {
+				NOT = {
+					has_global_variable = pinto_affair
+				}
+			}
+			trigger_event = { id = dvg_burgundy.22 days = 100 }
+		}
+	}
+	should_be_pinned_by_default = yes
 }
 
 
