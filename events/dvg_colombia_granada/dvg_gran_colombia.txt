@@ -1771,7 +1771,20 @@ dvg_gran_colombia.31 = {
 			name = dvg_conservative_anger_var
 			add = 2
 		}
-		activate_law = law_type:law_public_schools
+		if = {
+			limit = {
+				NOT = { has_law = law_type:law_state_religion }
+			}
+			activate_law = law_type:law_public_schools
+		}
+		else = {
+			limit = { has_law = law_type:law_state_religion }
+			activate_law = law_type:law_religious_schools
+			set_institution_investment_level = {
+				institution = institution_schools
+				level = 1
+			}
+		}
 		
 		trigger_event = { id = dvg_gran_colombia.32 days = 7 }
 		
@@ -1787,7 +1800,17 @@ dvg_gran_colombia.31 = {
 			name = dvg_conservative_anger_var
 			add = 1
 		}
-		activate_law = law_type:law_private_schools
+		if = {
+			limit = {
+				NOT = { has_law = law_type:law_state_religion }
+			}
+			activate_law = law_type:law_private_schools
+		}
+		else = {
+			limit = { has_law = law_type:law_state_religion }
+			activate_law = law_type:law_religious_schools
+		}
+		
 		trigger_event = { id = dvg_gran_colombia.32 days = 7 }
 		
 		ai_chance = {
@@ -2757,12 +2780,20 @@ dvg_gran_colombia.42 = {
 		exists = c:GCO
 		this = c:GCO
 		exists = global_var:vicente_colombian_republic
-		NOT = { country_rank >= rank_value:great_power }
+		NOR = {
+			country_rank >= rank_value:great_power
+			exists = global_var:santander_revolt
+		}
 	}
 	
 	option = {
 		name = dvg_gran_colombia.42.a
 		default_option = yes
+		
+		set_global_variable = {
+			name = santander_revolt
+			value = 0
+		}
 		
 		trigger_event = { id = dvg_gran_colombia.43 days = 7 }
 		
@@ -2859,6 +2890,10 @@ dvg_gran_colombia.43 = {
 		name = dvg_gran_colombia.43.b
 		default_option = yes
 		
+		scope:armed_forces_leader = {
+			kill_character = yes
+			remove_trait = immortal
+		}
 		create_diplomatic_play = {
 			name = salvation_war
 			target_country = c:JLS
@@ -2936,16 +2971,17 @@ dvg_gran_colombia.45 = {
 
 	duration = 3
 
+	immediate = {
+		add_journal_entry = {
+			type = je_colombian_civil_war
+		}
+	}
 	trigger = {
 	}
 	
 	option = {
 		name = dvg_gran_colombia.45.a
 		default_option = yes
-		
-		add_journal_entry = {
-			type = je_colombian_civil_war
-		}
 		
 		ai_chance = {
 			base = 1
