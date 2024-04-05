@@ -1,0 +1,932 @@
+﻿namespace = dvg_plantagenia
+
+# Startup event
+dvg_plantagenia.1 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.1.t
+	desc = dvg_plantagenia.1.d
+	flavor = dvg_plantagenia.1.f
+	
+	event_image = {
+		video = "votp_monarch_holding_court"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	#dlc = dlc008
+	
+	trigger = {
+		 # triggered by je_louis_brazil
+		 NOT = { has_variable = louis_startup_var }
+	}
+
+	immediate = {
+		set_variable = louis_startup_var
+		random_scope_character = {
+			limit = {
+				has_variable = is_louis
+			}
+			save_scope_as = louis_scope
+		}
+		ig:ig_landowners = { # old regency
+			save_scope_as = landowners_scope
+			
+		}
+		ig:ig_armed_forces = { # old regency
+			save_scope_as = armed_forces_scope
+		}
+		ig:ig_intelligentsia = { # old regency
+			leader = {
+			save_scope_as = feijo_regent
+			}
+		}
+		
+		
+	}
+
+	option = {
+		name = dvg_plantagenia.1.a
+		default_option = yes
+		custom_tooltip = {
+			text = louis_regency_party_tt
+		}
+		add_modifier = {
+			name = brz_regency
+			months = long_modifier_time
+		}
+		
+		hidden_effect = {
+			trigger_event = {
+				id = dvg_plantagenia.9 days = 365
+			}
+		}
+	}
+}
+
+# Landowners become republicans/ Le Sens Commun
+dvg_plantagenia.2 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.2.t
+	desc = dvg_plantagenia.2.d
+	flavor = dvg_plantagenia.2.f
+
+	
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
+	
+	duration = 3
+
+	#dlc = dlc008
+	
+	trigger = {
+		 # triggered by je_louis_brazil
+		 root.var:plantapoints <= 3
+		 ig:ig_landowners = {
+		 	ig_approval <= unhappy
+		 }
+		 NOT = { has_variable = louis_landowner_republicans }
+	}
+
+	immediate = {
+		set_variable = louis_landowner_republicans
+		ruler = {
+			save_scope_as = louis_scope
+		}
+		ig:ig_landowners = {
+			save_scope_as = landowners_scope
+			leader = {
+				save_scope_as = landowner_leader
+			}
+		}
+		i:ideology_republican_paternalistic = {
+			save_scope_as = elitist_scope
+		}
+	}
+
+	option = {
+		name = dvg_plantagenia.2.a
+		default_option = yes
+		ig:ig_landowners = {
+			add_ideology = ideology_republican_paternalistic
+			remove_ideology = ideology_paternalistic
+		}
+	}
+}
+
+# Louis comes of age
+dvg_plantagenia.3 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.3.t
+	desc = dvg_plantagenia.3.d
+	flavor = dvg_plantagenia.3.f
+	
+	gui_window = event_window_1char_tabloid
+
+	left_icon = root.ruler
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	#dlc = dlc008
+	
+	trigger = {
+		 # triggered by je_louis_brazil
+		 NOT = { has_variable = louis_of_age_var }
+		 ruler = {
+		 	age >= 65
+		 }
+		 heir = {
+			age >= 18
+		 }
+	}
+
+	immediate = {
+		set_variable = louis_of_age_var
+		heir = {
+			save_scope_as = louis_scope
+		}
+		random_interest_group = {
+			limit = {
+				is_in_government = yes
+			}
+			save_scope_as = coronation_ig
+		}
+		ig:ig_landowners = { 
+			save_scope_as = landowners_scope
+			
+		}
+	}
+
+	option = {
+		name = dvg_plantagenia.3.a
+		default_option = yes
+		remove_modifier = brz_regency
+		scope:louis_scope = {
+			remove_trait = trait_child
+			add_trait = charismatic
+			set_character_as_ruler = yes
+		}
+	}
+}
+#King will die soon
+dvg_plantagenia.4 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.4.t
+	desc = dvg_plantagenia.4.d
+	flavor = dvg_plantagenia.4.f
+	
+	gui_window = event_window_1char_tabloid
+
+	left_icon = root.ruler
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	#dlc = dlc008
+	
+	trigger = {
+		
+	}
+
+	immediate = {
+		
+	}
+
+	option = {
+		name = dvg_plantagenia.4.a
+		default_option = yes 
+		
+	}
+}
+#Marginalized Landowners
+dvg_plantagenia.5 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.5.t
+	desc = dvg_plantagenia.5.d
+	flavor = dvg_plantagenia.5.f
+	
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	#dlc = dlc008
+	
+	trigger = {
+		
+	}
+
+	immediate = {
+		ig:ig_landowners = { 
+			save_scope_as = landowners_scope
+			
+		}
+	}
+
+	option = {
+		name = dvg_plantagenia.5.a
+		default_option = yes 
+
+		if = {
+			limit = {
+				NOT = {
+					has_law = law_type:law_census_voting
+				}
+				NOT = {
+					has_law = law_type:law_universal_suffrage
+				}
+			}
+
+			activate_law = law_type:law_census_voting
+		}
+		if = {
+			limit = {
+				has_law = law_type:law_census_voting
+				NOT = {
+					has_law = law_type:law_universal_suffrage
+				}
+			}
+
+			activate_law = law_type:law_universal_suffrage
+		}
+		
+	}
+}
+#Powerfu IG
+dvg_plantagenia.6 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.6.t
+	desc = dvg_plantagenia.6.d
+	flavor = dvg_plantagenia.6.f
+	
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	#dlc = dlc008
+	
+	trigger = {
+		ig:ig_landowners = { 
+			is_powerful = yes
+						
+		}
+		
+	}
+
+	immediate = {
+		random_interest_group = {
+			save_scope_as = powerful_ig_scope
+		}
+	}
+
+	option = {
+		name = dvg_plantagenia.6.a
+		default_option = yes 
+		
+	}
+}
+#Monarchy Survives
+dvg_plantagenia.7 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.7.t
+	desc = dvg_plantagenia.7.d
+	flavor = dvg_plantagenia.7.f
+	
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	#dlc = dlc008
+	
+	trigger = {
+		
+	}
+
+	immediate = {
+		ig:ig_landowners = { 
+			save_scope_as = landowners_scope
+			
+		}
+		heir = {
+			save_scope_as = heir_scope
+		}
+	}
+
+	option = {
+		name = dvg_plantagenia.7.a
+		default_option = yes 
+		
+	}
+}
+#Coup Time
+dvg_plantagenia.8 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.8.t
+	desc = dvg_plantagenia.8.d
+	flavor = dvg_plantagenia.8.f
+	
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	#dlc = dlc008
+	
+	trigger = {
+		
+	}
+
+	immediate = {
+		ig:ig_landowners = { 
+			save_scope_as = landowners_scope
+			
+		}
+		ruler = {
+			save_scope_as = louis_scope
+		}
+		if = {
+			limit = {
+				NOT = {
+					exists = c:OUM
+				}
+				ig:ig_rural_folk = {
+					ig_approval >= 10 
+				} 
+			}
+			
+			create_country = {
+				tag = OUM
+				origin = this
+				state = s:STATE_MONT_AUX_ARCS.region_state:PLA
+				state = s:STATE_LES_PAINS.region_state:PLA
+				state = s:STATE_OUISKONSIN.region_state:PLA
+				state = s:STATE_NEBRASKIER.region_state:PLA
+				state = s:STATE_TERRES_ROUGES.region_state:PLA
+				state = s:STATE_OSAGERIE.region_state:PLA
+				state = s:STATE_AKANSA.region_state:PLA
+				state = s:STATE_AIOUEZ.region_state:PLA
+				state = s:STATE_APACHERIA.region_state:PLA
+				state = s:STATE_COMANCHERIE.region_state:PLA
+			}
+			
+		}
+	}
+
+	option = {
+		name = dvg_plantagenia.8.a
+		default_option = yes 
+
+		activate_law = law_type:law_presidential_republic
+		if = {
+			limit = {
+				exists = c:OUM
+			}
+			scope:louis_scope = {
+				transfer_character = c:OUM
+			}
+		}	
+	}
+}
+
+dvg_plantagenia.9 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.9.t
+	desc = dvg_plantagenia.9.d
+	flavor = dvg_plantagenia.9.f
+	
+	event_image = {
+		video = "unspecific_devastation"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	
+	trigger = {
+		
+	}
+
+	immediate = {
+		ig:ig_landowners = { 
+			save_scope_as = landowners_scope
+			
+		}
+	}
+
+	option = {
+		name = dvg_plantagenia.9.a
+		default_option = yes 
+
+		s:STATE_NOUVELLE_FRANCE = {
+			add_devastation = 0.25
+		}
+		
+	}
+}
+
+dvg_plantagenia.10 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.10.t
+	desc = dvg_plantagenia.10.d
+	flavor = dvg_plantagenia.10.f
+	
+	event_image = {
+		video = "europenorthamerica_native_american"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	
+	trigger = {
+		
+	}
+
+	immediate = {
+		ig:ig_landowners = { 
+			save_scope_as = landowners_scope
+			
+		}
+	}
+
+	option = {
+		name = dvg_plantagenia.10.a
+		default_option = yes 
+		if = {
+			limit = {
+				total_manpower <= 30000
+				 
+			}
+			hidden_effect = {
+				trigger_event = {
+					id = dvg_plantagenia.11 days = 131
+				}
+			}
+			
+		}
+		s:STATE_NOUVELLE_ANGLETERRE.region_state:PLA = {
+			add_modifier = {
+				name = dvg_border_raids
+				months = 3
+				is_decaying = yes
+			}
+		}
+		
+		
+	}
+}
+
+
+dvg_plantagenia.11 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.11.t
+	desc = dvg_plantagenia.11.d
+	flavor = dvg_plantagenia.11.f
+	
+	event_image = {
+		video = "europenorthamerica_native_american"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	
+	trigger = {
+		
+	}
+
+	immediate = {
+		ig:ig_landowners = { 
+			save_scope_as = landowners_scope
+			
+		}
+	}
+
+	option = {
+		name = dvg_plantagenia.11.a
+		default_option = yes 
+
+
+		
+	}
+}
+
+
+dvg_plantagenia.12 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.12.t
+	desc = dvg_plantagenia.12.d
+	flavor = dvg_plantagenia.12.f
+	
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	
+	trigger = {
+		
+	}
+
+	immediate = {
+		ig:ig_landowners = { 
+			save_scope_as = landowners_scope
+			
+		}
+	}
+
+	option = {
+		name = dvg_plantagenia.12.a
+		default_option = yes 
+
+		trigger_event = {
+			id = dvg_plantagenia.13 days = 500
+		}
+
+		
+	}
+}
+
+
+dvg_plantagenia.13 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.13.t
+	desc = dvg_plantagenia.13.d
+	flavor = dvg_plantagenia.13.f
+	
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	
+	trigger = {
+		
+	}
+
+	immediate = {
+		ig:ig_landowners = { 
+			save_scope_as = landowners_scope
+			
+		}
+	}
+
+	option = {
+		name = dvg_plantagenia.13.a
+		default_option = yes 
+		add_loyalists = {
+			value = 0.10
+			pop_type = farmers
+		}
+		add_radicals = {
+			value = 0.10
+			pop_type = aristocrats
+		}
+
+		
+	}
+}
+
+
+dvg_plantagenia.14 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.14.t
+	desc = dvg_plantagenia.14.d
+	flavor = dvg_plantagenia.14.f
+	
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	
+	trigger = {
+		
+	}
+
+	immediate = {
+		ig:ig_landowners = { 
+			save_scope_as = landowners_scope
+			
+		}
+	}
+
+	option = {
+		name = dvg_plantagenia.14.a
+		default_option = yes 
+
+
+		
+	}
+}
+
+
+dvg_plantagenia.15 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.15.t
+	desc = dvg_plantagenia.15.d
+	flavor = dvg_plantagenia.15.f
+	
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	
+	trigger = {
+		
+	}
+
+	immediate = {
+		ig:ig_landowners = { 
+			save_scope_as = landowners_scope
+			
+		}
+	}
+
+	option = {
+		name = dvg_plantagenia.15.a
+		default_option = yes 
+
+		create_character = {
+			first_name = Louis_Lafayette
+			last_name = de_Saint-Georges
+			historical = yes 
+			noble = yes
+			is_general = yes
+			is_agitator = yes
+			interest_group = ig_armed_forces
+			traits = {
+				celebrity_commander
+				firebrand
+				forest_commander
+				tactful
+				immortal
+			}
+			on_created = {
+				set_variable = saint_georges
+			}
+		}
+		
+	}
+}
+
+
+dvg_plantagenia.16 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.16.t
+	desc = dvg_plantagenia.16.d
+	flavor = dvg_plantagenia.16.f
+	
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	
+	trigger = {
+		
+	}
+
+	immediate = {
+		ig:ig_landowners = { 
+			save_scope_as = landowners_scope
+			
+		}
+	}
+
+	option = {
+		name = dvg_plantagenia.16.a
+		default_option = yes 
+
+
+		
+	}
+}
+
+
+dvg_plantagenia.17 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.17.t
+	desc = dvg_plantagenia.17.d
+	flavor = dvg_plantagenia.17.f
+	
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	
+	trigger = {
+		
+	}
+
+	immediate = {
+		ig:ig_landowners = { 
+			save_scope_as = landowners_scope
+			
+		}
+	}
+
+	option = {
+		name = dvg_plantagenia.17.a
+		default_option = yes 
+
+
+		
+	}
+}
+
+
+dvg_plantagenia.18 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.18.t
+	desc = dvg_plantagenia.18.d
+	flavor = dvg_plantagenia.18.f
+	
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	
+	trigger = {
+		
+	}
+
+	immediate = {
+		ig:ig_landowners = { 
+			save_scope_as = landowners_scope
+			
+		}
+	}
+
+	option = {
+		name = dvg_plantagenia.18.a
+		default_option = yes 
+
+
+		
+	}
+}
+
+
+dvg_plantagenia.19 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.19.t
+	desc = dvg_plantagenia.19.d
+	flavor = dvg_plantagenia.19.f
+	
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	
+	trigger = {
+		
+	}
+
+	immediate = {
+		ig:ig_landowners = { 
+			save_scope_as = landowners_scope
+			
+		}
+	}
+
+	option = {
+		name = dvg_plantagenia.19.a
+		default_option = yes 
+
+
+		
+	}
+}
+
+
+
+
