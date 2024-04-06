@@ -35,7 +35,7 @@ dvg_plantagenia.1 = {
 			save_scope_as = louis_scope
 		}
 		ig:ig_landowners = { # old regency
-			save_scope_as = landowners_scope
+			save_scope_as = planteurs_ig
 			
 		}
 		ig:ig_armed_forces = { # old regency
@@ -46,6 +46,16 @@ dvg_plantagenia.1 = {
 			save_scope_as = feijo_regent
 			}
 		}
+		c:GCO = {
+			save_scope_as = scope_GCO
+		}
+		c:CNF = {
+			save_scope_as = scope_CNF
+		}
+		c:SCA = {
+			save_scope_as = scope_SCA
+		}
+		
 		
 		
 	}
@@ -58,7 +68,17 @@ dvg_plantagenia.1 = {
 		}
 		add_modifier = {
 			name = brz_regency
-			months = long_modifier_time
+		}
+		set_variable = {
+			name = plantapoints
+			value = 0
+		}
+		add_journal_entry = {
+			type = je_king_louis
+		}
+		change_variable = {
+			name = plantapoints
+			add = 5
 		}
 		trigger_event = {
 			id = dvg_plantagenia.14 
@@ -109,7 +129,7 @@ dvg_plantagenia.2 = {
 			save_scope_as = louis_scope
 		}
 		ig:ig_landowners = {
-			save_scope_as = landowners_scope
+			save_scope_as = planteurs_ig
 			leader = {
 				save_scope_as = landowner_leader
 			}
@@ -122,10 +142,12 @@ dvg_plantagenia.2 = {
 	option = {
 		name = dvg_plantagenia.2.a
 		default_option = yes
+		
 		ig:ig_landowners = {
 			add_ideology = ideology_republican_paternalistic
 			remove_ideology = ideology_paternalistic
 		}
+		
 	}
 }
 
@@ -173,7 +195,7 @@ dvg_plantagenia.3 = {
 			save_scope_as = coronation_ig
 		}
 		ig:ig_landowners = { 
-			save_scope_as = landowners_scope
+			save_scope_as = planteurs_ig
 			
 		}
 	}
@@ -234,7 +256,8 @@ dvg_plantagenia.5 = {
 	flavor = dvg_plantagenia.5.f
 	
 	event_image = {
-		video = "southamerica_aristocrats"
+		video = "unspecific_signed_contract"
+
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
@@ -251,7 +274,7 @@ dvg_plantagenia.5 = {
 
 	immediate = {
 		ig:ig_landowners = { 
-			save_scope_as = landowners_scope
+			save_scope_as = planteurs_ig
 			
 		}
 	}
@@ -281,6 +304,24 @@ dvg_plantagenia.5 = {
 			}
 
 			activate_law = law_type:law_universal_suffrage
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_law = law_type:law_homesteading
+				}
+				
+			}
+
+			activate_law = law_type:law_homesteading
+		}
+		add_loyalists = {
+			value = 0.25
+			culture = cu:cadien
+		}
+		add_radicals = {
+			value = 0.25
+			culture = cu:afro_arcadian
 		}
 		
 	}
@@ -353,7 +394,7 @@ dvg_plantagenia.7 = {
 
 	immediate = {
 		ig:ig_landowners = { 
-			save_scope_as = landowners_scope
+			save_scope_as = planteurs_ig
 			
 		}
 		heir = {
@@ -394,7 +435,7 @@ dvg_plantagenia.8 = {
 
 	immediate = {
 		ig:ig_landowners = { 
-			save_scope_as = landowners_scope
+			save_scope_as = planteurs_ig
 			
 		}
 		ruler = {
@@ -469,7 +510,7 @@ dvg_plantagenia.9 = {
 
 	immediate = {
 		ig:ig_landowners = { 
-			save_scope_as = landowners_scope
+			save_scope_as = planteurs_ig
 			
 		}
 	}
@@ -479,15 +520,27 @@ dvg_plantagenia.9 = {
 		default_option = yes 
 
 		s:STATE_NOUVELLE_FRANCE = {
-			add_devastation = 0.25
+			add_devastation = 40
+			
 		}
+		add_modifier = {
+			name = modifier_cyclone_relief
+			months = 36
+			is_decaying = yes
+		}
+		add_modifier = {
+			name = modifier_mega_flood_relief
+			months = 36
+			is_decaying = yes
+		}
+		
 		
 	}
 }
 
 dvg_plantagenia.10 = {
 	type = country_event
-	placement = ROOT
+	placement = s:STATE_NOUVELLE_ANGLETERRE.region_state:PLA
 	
 	title = dvg_plantagenia.10.t
 	desc = dvg_plantagenia.10.d
@@ -505,12 +558,12 @@ dvg_plantagenia.10 = {
 
 	
 	trigger = {
-		
+		owns_entire_state_region = STATE_NOUVELLE_ANGLETERRE
 	}
 
 	immediate = {
 		ig:ig_landowners = { 
-			save_scope_as = landowners_scope
+			save_scope_as = planteurs_ig
 			
 		}
 	}
@@ -536,12 +589,7 @@ dvg_plantagenia.10 = {
 				months = 3
 				is_decaying = yes
 			}
-			add_modifier = {
-				name = dvg_village_pillage
-				months = 3
-				is_decaying = yes
-
-			}
+			
 		}
 		
 		
@@ -574,7 +622,7 @@ dvg_plantagenia.11 = {
 
 	immediate = {
 		ig:ig_landowners = { 
-			save_scope_as = landowners_scope
+			save_scope_as = planteurs_ig
 			
 		}
 	}
@@ -582,14 +630,25 @@ dvg_plantagenia.11 = {
 	option = {
 		name = dvg_plantagenia.11.a
 		default_option = yes 
-		set_global_variable = pla_diversion
+		set_variable = diverted_troops_1
+		if = {
+			limit = {
+				has_variable = diverted_troops_1
+			}
+			remove_variable = diverted_troops_1
+			set_variable = diverted_troops_2
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_variable = diverted_troops_1
+				}
+			}
+			set_variable = diverted_troops_1
+		}
 
 		s:STATE_NOUVELLE_ANGLETERRE.region_state:PLA = {
-			add_modifier = {
-				name = dvg_border_raids
-				months = 2
-				is_decaying = yes
-			}
+			
 			add_modifier = {
 				name = dvg_village_pillage
 				months = 2
@@ -610,14 +669,10 @@ dvg_plantagenia.11 = {
 			value = 0.10
 		}
 		s:STATE_NOUVELLE_ANGLETERRE.region_state:PLA = {
-			add_modifier = {
-				name = dvg_border_raids
-				months = 7
-				is_decaying = yes
-			}
+			
 			add_modifier = {
 				name = dvg_village_pillage
-				months = 7
+				months = 12
 				is_decaying = yes
 
 			}
@@ -656,7 +711,7 @@ dvg_plantagenia.12 = {
 
 	immediate = {
 		ig:ig_landowners = { 
-			save_scope_as = landowners_scope
+			save_scope_as = planteurs_ig
 			
 		}
 	}
@@ -699,7 +754,7 @@ dvg_plantagenia.13 = {
 
 	immediate = {
 		ig:ig_landowners = { 
-			save_scope_as = landowners_scope
+			save_scope_as = planteurs_ig
 			
 		}
 	}
@@ -746,7 +801,7 @@ dvg_plantagenia.14 = {
 
 	immediate = {
 		ig:ig_landowners = { 
-			save_scope_as = landowners_scope
+			save_scope_as = planteurs_ig
 			
 		}
 	}
@@ -789,7 +844,7 @@ dvg_plantagenia.15 = {
 
 	immediate = {
 		ig:ig_landowners = { 
-			save_scope_as = landowners_scope
+			save_scope_as = planteurs_ig
 			
 		}
 	}
@@ -846,7 +901,7 @@ dvg_plantagenia.16 = {
 
 	immediate = {
 		ig:ig_landowners = { 
-			save_scope_as = landowners_scope
+			save_scope_as = planteurs_ig
 			
 		}
 	}
@@ -886,13 +941,16 @@ dvg_plantagenia.17 = {
 
 	
 	trigger = {
-		
+		exists = c:SKR
 	}
 
 	immediate = {
 		ig:ig_landowners = { 
-			save_scope_as = landowners_scope
+			save_scope_as = planteurs_ig
 			
+		}
+		c:SKR = {
+			save_scope_as = c:SKR
 		}
 	}
 
@@ -900,7 +958,64 @@ dvg_plantagenia.17 = {
 		name = dvg_plantagenia.17.a
 		default_option = yes 
 
+		if = {
+			limit = {
+				has_variable = diverted_troops_1
+			}
+			remove_variable = diverted_troops_1
+			set_variable = diverted_troops_2
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_variable = diverted_troops_1
+				}
+			}
+			set_variable = diverted_troops_1
+		}
+		change_relations = {
+			country = c:SKR
+			value = -25
+		}
+		change_relations = {
+			country = c:VIN
+			value = -25
+		}
+		if = {
+			limit = {
+				c:SKR = {
+					is_ai = yes
+				}
+			}
+			create_country = {
+				tag = AGQ
+				origin = c:SKR
+				state = s:STATE_COSKAQUIAS.region_state:SKR
+				state = s:STATE_CHAOUENONS.region_state:SKR
+				state = s:STATE_CHAOUENONS.region_state:PLA
+			}
+			
+		}
+		
+	}
+	option = {
+		name = dvg_plantagenia.17.b
 
+		ig:ig_devout = {
+			add_modifier = {
+				name = modifier_ig_dissaproves
+				months = 30
+				is_decaying = yes
+			}
+		}
+		change_relations = {
+			country = c:SKR
+			value = 15
+		}
+		change_relations = {
+			country = c:VIN
+			value = 15
+		}
 		
 	}
 }
@@ -926,12 +1041,19 @@ dvg_plantagenia.18 = {
 
 	
 	trigger = {
-		
+		ig:ig_intelligentsia = {
+			ig_approval <= -10 
+			is_marginal = no
+		}
+		has_journal_entry = je_king_louis
+		has_technology_researched = nationalism
+		has_variable = sons_of_liberty
+		has_law = law_type:law_monarchy
 	}
 
 	immediate = {
 		ig:ig_landowners = { 
-			save_scope_as = landowners_scope
+			save_scope_as = planteurs_ig
 			
 		}
 	}
@@ -939,8 +1061,13 @@ dvg_plantagenia.18 = {
 	option = {
 		name = dvg_plantagenia.18.a
 		default_option = yes 
+		set_variable = sons_of_liberty
 
-
+		add_modifier = {
+			name = dvg_modifier_intelligentsia_bolstered
+			months = 60
+			is_decaying = yes
+		}
 		
 	}
 }
@@ -971,7 +1098,7 @@ dvg_plantagenia.19 = {
 
 	immediate = {
 		ig:ig_landowners = { 
-			save_scope_as = landowners_scope
+			save_scope_as = planteurs_ig
 			
 		}
 	}
