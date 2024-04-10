@@ -9,6 +9,10 @@
 			dvg_plantagenia.2
 			# dvg_plantagenia comes of age
 			dvg_plantagenia.3
+			#Visit La Galette
+			dvg_plantagenia.12
+			#Rebirth of the Fils de Liberte
+			dvg_plantagenia.18
 		
 		}
 		random_events = {
@@ -44,6 +48,7 @@
 				change_variable = { name = plantapoints add = 1 }
 				set_variable = { name = je_dvg_plantagenia_gp_point }
 			}
+			
 		}
 	}
 
@@ -106,6 +111,7 @@
 
 	fail = {
 		OR = {
+				NOT = { has_law = law_type:law_monarchy }
 			AND = {
 				custom_tooltip = {
 					text = je_louis_fail
@@ -190,7 +196,11 @@
 	}
 
 	invalid = {
-		NOT = { has_law = law_type:law_monarchy }
+		any_scope_character = {
+			NOT = {
+				has_variable = is_louis
+			}
+		}
 	}
 
 	on_invalid = {
@@ -226,5 +236,136 @@
 	can_revolution_inherit = no
 	transferable = no
 	should_be_pinned_by_default = yes
+}
+
+je_pla_slavery = {
+
+	group = je_group_internal_affairs
+
+	is_shown_when_inactive = {
+		exists = c:PLA
+		c:PLA = ROOT
+	}
+	possible = {
+		NOT = {
+			has_law = law_type:law_slavery_banned
+		}
+		has_technology_researched = egalitarianism
+
+	}
+
+	immediate = {
+		trigger_event = {
+			id = dvg_plantagenia.15
+		}
+		set_variable = liberien_var
+	}
+	current_value = {
+		value = root.var:liberien_var
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					any_scope_character = {
+						has_variable = saint_georges
+					}
+					NOT = {
+						has_variable = saint_georges_raid
+					}
+				}
+				trigger_event =  dvg_plantagenia.28
+			}
+			if = {
+				limit = {
+					cu:afro_arcadian = {
+						culture_is_discriminated_in = ROOT
+					}
+				}
+				change_variable = {
+					name = liberien_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					has_law = law_type:law_slave_trade
+				}
+				change_variable = {
+					name = liberien_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					has_technology_researched = anarchism
+				}
+				change_variable = {
+					name = liberien_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					has_technology_researched = human_rights
+				}
+				change_variable = {
+					name = liberien_var
+					add = 1
+				}
+			}
+		}
+	}
+
+	complete = {
+		scope:journal_entry = { is_goal_complete = yes }
+	}
+	on_complete = {
+		trigger_event = {
+			id = dvg_plantagenia.31
+		}
+		
+	}
+
+	fail = {
+		has_law = law_type:law_slavery_banned
+	}
+
+	on_fail = {
+		if = {
+			limit = {
+				ruler = {
+					has_variable = is_louis
+				}
+			}
+			trigger_event = {
+				id = dvg_plantagenia.23
+			}
+		}
+		
+	}
+	progressbar = yes
+
+	timeout = 10550
+
+	on_timeout = {
+		trigger_event = {
+			id = dvg_plantagenia.31
+		}
+	}
+	invalid = {
+		NOT = {
+			any_scope_state = {
+				state_region = {
+					is_homeland = cu:afro_arcadian
+				}	
+			}
+		}
+	}
+	goal_add_value = 200
+	scripted_button = golden_law_button
+
+
 }
 
