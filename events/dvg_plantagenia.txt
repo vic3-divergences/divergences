@@ -246,7 +246,7 @@ dvg_plantagenia.4 = {
 		
 	}
 }
-#Marginalized Landowners
+#Reform Act
 dvg_plantagenia.5 = {
 	type = country_event
 	placement = ROOT
@@ -322,6 +322,15 @@ dvg_plantagenia.5 = {
 		add_radicals = {
 			value = 0.25
 			culture = cu:afro_arcadian
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_pla_slavery	
+			}
+			change_variable = {
+				name = liberien_var
+				add = 10
+			}
 		}
 		
 	}
@@ -456,16 +465,15 @@ dvg_plantagenia.8 = {
 				tag = OUM
 				origin = this
 				state = s:STATE_MONT_AUX_ARCS.region_state:PLA
-				state = s:STATE_LES_PAINS.region_state:PLA
-				state = s:STATE_OUISKONSIN.region_state:PLA
-				state = s:STATE_NEBRASKIER.region_state:PLA
-				state = s:STATE_TERRES_ROUGES.region_state:PLA
-				state = s:STATE_OSAGERIE.region_state:PLA
-				state = s:STATE_AKANSA.region_state:PLA
-				state = s:STATE_AIOUEZ.region_state:PLA
-				state = s:STATE_APACHERIA.region_state:PLA
-				state = s:STATE_COMANCHERIE.region_state:PLA
+				
 			}
+			ig:ig_rural_folk = {
+				add_modifier = {
+					name = modifier_ig_dissaproves
+					months = 66
+					is_decaying = yes
+				} 
+			} 
 			
 		}
 	}
@@ -482,6 +490,32 @@ dvg_plantagenia.8 = {
 			scope:louis_scope = {
 				transfer_character = c:OUM
 			}
+		}
+
+		if = {
+			limit = {
+				exists = c:OUM
+			}
+			trigger_event = {
+				id = dvg_plantagenia.24
+			}
+		}
+		
+		every_scope_state = {
+			limit = {
+				owner = c:PLA
+				is_coastal = no
+				state_region = {
+					NOT = {
+						is_homeland = cu:afro_arcadian
+					}
+					NOT = {
+						is_homeland = cu:septiman
+					}
+				}
+				state_is_in_north_america = yes	
+			}
+			set_state_owner = c:OUM
 		}	
 	}
 }
@@ -593,7 +627,37 @@ dvg_plantagenia.10 = {
 			
 		}
 		
+		ai_chance = {
+			base = 100
+		}
+	}
+	option = {
+		name = dvg_plantagenia.10.b
+		if = {
+			limit = {
+				total_manpower <= 30000
+				 
+			}
+			hidden_effect = {
+				trigger_event = {
+					id = dvg_plantagenia.11 days = 131
+				}
+			}
+			
+		}
 		
+		c:COM = {
+			set_country_type = unrecognized
+
+			activate_law = law_type:law_homesteading
+			activate_law = law_type:law_anarchy
+			add_technology_researched = anarchism
+		}
+		play_as = c:COM
+		
+		ai_chance = {
+			base = 1
+		}
 	}
 }
 
@@ -657,6 +721,15 @@ dvg_plantagenia.11 = {
 
 			}
 		}
+		add_modifier = {
+			name = colonial_enthusiasm_settlers
+			months = 60
+			is_decaying = yes
+		}
+		change_relations = {
+			country = c:COM
+			value = -40
+		}
 
 		ai_chance = {
 			base = 100
@@ -685,7 +758,7 @@ dvg_plantagenia.11 = {
 		}
 	}
 }
-#Visiting Missouri
+#Visiting Missouri, La Gallette
 
 dvg_plantagenia.12 = {
 	type = country_event
@@ -707,7 +780,14 @@ dvg_plantagenia.12 = {
 
 	
 	trigger = {
-		
+		owns_entire_state_region = STATE_MONT_AUX_ARCS
+		ruler = {
+			has_variable = is_louis
+		}
+		NOT = {
+			has_variable = cowboy_king
+		}
+		has_technology_researched = romanticism
 	}
 
 	immediate = {
@@ -715,6 +795,7 @@ dvg_plantagenia.12 = {
 			save_scope_as = planteurs_ig
 			
 		}
+		set_variable = cowboy_king
 	}
 
 	option = {
@@ -724,12 +805,19 @@ dvg_plantagenia.12 = {
 		trigger_event = {
 			id = dvg_plantagenia.13 days = 500
 		}
+		ig:ig_rural_folk = {
+			add_modifier = {
+				name = modifier_ig_approves
+				months = 120 
+				is_decaying = yes
+			}
+		}
 
 		
 	}
 }
 
-#Cowboy King
+#Cowboy King/ Lord of the Plains
 
 dvg_plantagenia.13 = {
 	type = country_event
@@ -751,7 +839,10 @@ dvg_plantagenia.13 = {
 
 	
 	trigger = {
-		
+		owns_entire_state_region = STATE_MONT_AUX_ARCS
+		ruler = {
+			has_variable = is_louis
+		}
 	}
 
 	immediate = {
@@ -798,7 +889,9 @@ dvg_plantagenia.14 = {
 
 	
 	trigger = {
-		
+		ruler = {
+			has_variable = is_louis
+		}
 	}
 
 	immediate = {
@@ -815,6 +908,7 @@ dvg_plantagenia.14 = {
 		add_modifier = {
 			name = dvg_modifier_landowners_bolstered
 		}
+	
 
 		
 	}
@@ -1049,7 +1143,10 @@ dvg_plantagenia.18 = {
 		}
 		has_journal_entry = je_king_louis
 		has_technology_researched = nationalism
-		has_variable = sons_of_liberty
+		NOT = {
+			has_variable = sons_of_liberty
+
+		}
 		has_law = law_type:law_monarchy
 	}
 
@@ -1109,9 +1206,1056 @@ dvg_plantagenia.19 = {
 		name = dvg_plantagenia.19.a
 		default_option = yes 
 
+		trigger_event = {
+			id = dvg_plantagenia.20
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_technology_researched = egalitarianism
+				}
+			}
+			add_technology_researched = egalitarianism
+		}
 
 		
 	}
+	option = {
+		name = dvg_plantagenia.19.b
+
+
+		
+	}
+}
+
+
+dvg_plantagenia.20 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.20.t
+	desc = dvg_plantagenia.20.d
+	flavor = dvg_plantagenia.20.f
+	
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	
+	trigger = {
+		
+	}
+
+	immediate = {
+		ig:ig_landowners = { 
+			save_scope_as = planteurs_ig
+			
+		}
+	}
+
+	option = {
+		name = dvg_plantagenia.20.a
+		default_option = yes 
+
+		trigger_event = {
+			id = dvg_plantagenia.21
+		}
+
+		
+	}
+	
+}
+
+
+dvg_plantagenia.21 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.21.t
+	desc = dvg_plantagenia.21.d
+	flavor = dvg_plantagenia.21.f
+	
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	
+	trigger = {
+		
+	}
+
+	immediate = {
+		ig:ig_landowners = { 
+			save_scope_as = planteurs_ig
+			
+		}
+	}
+
+	option = {
+		name = dvg_plantagenia.21.a
+		default_option = yes 
+
+		trigger_event = {
+			id = dvg_plantagenia.22
+		}
+
+		
+	}
+	
+}
+
+dvg_plantagenia.22 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.22.t
+	desc = dvg_plantagenia.22.d
+	flavor = dvg_plantagenia.22.f
+	
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	
+	trigger = {
+		
+		
+	}
+
+	immediate = {
+		ig:ig_landowners = { 
+			save_scope_as = planteurs_ig
+			
+		}
+	}
+
+	option = {
+		name = dvg_plantagenia.22.a
+		default_option = yes 
+
+		add_radicals = {
+			value = 0.10
+			pop_type = aristocrats
+		}
+
+
+		
+	}
+	option = {
+		name = dvg_plantagenia.22.b
+
+		trigger_event = {
+			id = dvg_plantagenia.23
+		}
+
+		
+	}
+	
+}
+
+dvg_plantagenia.23 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.23.t
+	desc = dvg_plantagenia.23.d
+	flavor = dvg_plantagenia.23.f
+	
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	
+	trigger = {
+		
+	}
+
+	immediate = {
+		ig:ig_landowners = { 
+			save_scope_as = planteurs_ig
+			
+		}
+	}
+
+	option = {
+		name = dvg_plantagenia.23.a
+		default_option = yes 
+
+		add_radicals = {
+			value = 0.35
+			pop_type = aristocrats
+		}
+		if = {
+			limit = {
+				ig:ig_landowners = {
+					has_ideology = ideology:ideology_paternalistic
+					NOT = {
+						has_ideology = ideology:ideology_republican_paternalistic
+					}
+				}
+				
+			}
+			ig:ig_landowners = {
+				remove_ideology =  ideology_paternalistic
+				add_ideology =  ideology_republican_paternalistic
+			}
+
+		}
+
+		
+	}
+	
+}
+
+dvg_plantagenia.21 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.21.t
+	desc = dvg_plantagenia.21.d
+	flavor = dvg_plantagenia.21.f
+	
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	
+	trigger = {
+		
+	}
+
+	immediate = {
+		ig:ig_landowners = { 
+			save_scope_as = planteurs_ig
+			
+		}
+	}
+
+	option = {
+		name = dvg_plantagenia.21.a
+		default_option = yes 
+
+		
+
+		
+	}
+	
+}
+
+dvg_plantagenia.24 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.24.t
+	desc = dvg_plantagenia.24.d
+	flavor = dvg_plantagenia.24.f
+	
+	event_image = {
+		video = "europenorthamerica_gold_prospectors"
+
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	
+	trigger = {
+		exists = c:OUM
+	}
+
+	immediate = {
+		ig:ig_landowners = { 
+			save_scope_as = planteurs_ig
+			
+		}
+	}
+
+	option = {
+		name = dvg_plantagenia.24.a
+		default_option = yes 
+
+		create_diplomatic_play = {
+			type = dp_annex_war
+			target_country = c:OUM
+
+			war = no
+
+			add_war_goal = {
+				holder = c:OUM
+				type = independence
+			}
+		}
+
+		play_as = c:OUM
+
+		hidden_effect = {
+			c:PLA = {
+				set_secret_goal = {
+					country = c:OUM
+					secret_goal = conquer
+				}
+			}
+		}
+		if = {
+			limit = { 
+				ig:ig_petty_bourgeoisie = {
+					ig_approval <= -5 
+					is_marginal = no
+				}
+				owns_entire_state_region = STATE_LOUISIANE_ROYALE
+			}
+			trigger_event = {
+				id = dvg_plantagenia.25
+				days = 21
+			}
+		}
+	}
+	option = {
+		name = dvg_plantagenia.24.b
+
+
+		create_diplomatic_play = {
+			type = dp_annex_war
+			target_country = c:OUM
+
+			war = yes
+
+			add_war_goal = {
+				holder = c:OUM
+				type = independence
+			}
+		}
+
+		if = {
+			limit = { 
+				ig:ig_petty_bourgeoisie = {
+					ig_approval <= -5 
+					is_marginal = no
+				}
+				owns_entire_state_region = STATE_LOUISIANE_ROYALE
+			}
+			trigger_event = {
+				id = dvg_plantagenia.25
+				days = 21
+			}
+		}
+		
+	}
+	
+}
+
+#Louisiana Revolts
+dvg_plantagenia.25 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.25.t
+	desc = dvg_plantagenia.25.d
+	flavor = dvg_plantagenia.25.f
+	
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	
+	trigger = {
+		exists = s:STATE_LOUISIANE_ROYALE.region_state:PLA
+	}
+
+	immediate = {
+		ig:ig_landowners = { 
+			save_scope_as = planteurs_ig
+			
+		}
+		create_country = {
+			tag = LOU
+			origin = this
+			state = s:STATE_LOUISIANE_ROYALE.region_state:PLA
+			state = s:STATE_SANACOMIE.region_state:PLA
+			state = s:STATE_CHARLESIE.region_state:PLA
+		
+		}
+	}
+
+	option = {
+		name = dvg_plantagenia.25.a
+		default_option = yes 
+
+		create_diplomatic_play = {
+			type = dp_rebellion_annex
+			target_country = c:LOU
+
+			war = yes
+
+			add_war_goal = {
+				holder = c:LOU
+				type = independence
+			}
+		}
+		hidden_effect = {
+			
+		}
+
+		
+	}
+	option = {
+		name = dvg_plantagenia.25.b
+
+		create_diplomatic_play = {
+			type = dp_rebellion_annex
+			target_country = c:LOU
+
+			war = yes
+
+			add_war_goal = {
+				holder = c:LOU
+				type = independence
+			}
+		}
+		hidden_effect = {
+			
+		}
+
+		play_as = c:LOU
+		
+	}
+	
+}
+#House Divided
+dvg_plantagenia.26 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.26.t
+	desc = dvg_plantagenia.26.d
+	flavor = dvg_plantagenia.26.f
+	
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	
+	trigger = {
+		
+	}
+
+	immediate = {
+		ig:ig_landowners = { 
+			save_scope_as = planteurs_ig
+			leader = {
+				save_scope_as = planteurs_leader
+			}
+		}
+	}
+
+	option = {
+		name = dvg_plantagenia.26.a
+		default_option = yes 
+
+		
+		
+		
+	}
+	
+}
+
+dvg_plantagenia.27 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.27.t
+	desc = dvg_plantagenia.27.d
+	flavor = dvg_plantagenia.27.f
+	
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	
+	trigger = {
+		
+	}
+
+	immediate = {
+		ig:ig_landowners = { 
+			save_scope_as = planteurs_ig
+			
+		}
+	}
+
+	option = {
+		name = dvg_plantagenia.27.a
+		default_option = yes 
+
+		
+
+		
+	}
+	
+}
+
+dvg_plantagenia.28 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.28.t
+	desc = dvg_plantagenia.28.d
+	flavor = dvg_plantagenia.28.f
+	
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	
+	trigger = {
+		
+	}
+
+	immediate = {
+		ig:ig_landowners = { 
+			save_scope_as = planteurs_ig
+			
+		}
+		set_variable = saint_georges_raid
+	}
+
+	option = {
+		name = dvg_plantagenia.28.a
+		default_option = yes 
+
+		add_radicals = {
+			value = 0.10
+		}
+
+		if = {
+			limit = {
+				exists = c:OUM
+			}
+			trigger_event = {
+				id = dvg_plantagenia.29
+				days = 30
+			}
+		}
+
+		
+
+		
+	}
+	
+}
+
+dvg_plantagenia.29 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.29.t
+	desc = dvg_plantagenia.29.d
+	flavor = dvg_plantagenia.29.f
+	
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	
+	trigger = {
+		
+	}
+
+	immediate = {
+		ig:ig_landowners = { 
+			save_scope_as = planteurs_ig
+			
+		}
+	}
+
+	option = {
+		name = dvg_plantagenia.29.a
+		default_option = yes 
+
+		every_diplomatic_play = {
+			limit = {
+				initiator_is = c:PLA
+			}
+			end_play = yes
+		}
+		if = {
+			limit = {
+				exists = c:OUM
+			}
+			c:OUM = {
+				trigger_event = {
+					id = dvg_plantagenia.30
+				}
+			}
+			
+		}
+		ai_chance = {
+			base = 1
+		}
+		
+		
+	}
+	option = {
+		name = dvg_plantagenia.29.b
+
+		add_loyalists = {
+			value = 0.10
+		}
+		
+		if = {
+			limit = {
+				exists = c:OUM
+			}
+			c:OUM = {
+				trigger_event = {
+					id = dvg_plantagenia.32
+				}
+			}
+			
+		}
+
+		ai_chance = {
+			base = 100
+		}
+	}
+	
+}
+
+dvg_plantagenia.30 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.30.t
+	desc = dvg_plantagenia.30.d
+	flavor = dvg_plantagenia.30.f
+	
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	
+	trigger = {
+		
+	}
+
+	immediate = {
+		ig:ig_landowners = { 
+			save_scope_as = planteurs_ig
+			
+		}
+	}
+
+	option = {
+		name = dvg_plantagenia.30.a
+		default_option = yes 
+
+		
+
+		
+	}
+	
+}
+#Liberien Revolution
+dvg_plantagenia.31 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.31.t
+	desc = dvg_plantagenia.31.d
+	flavor = dvg_plantagenia.31.f
+	
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	
+	trigger = {
+		any_scope_state = {
+			state_region = {
+				is_homeland = afro_arcadian
+			}
+			
+		}
+	}
+
+	immediate = {
+		ig:ig_landowners = { 
+			save_scope_as = planteurs_ig
+			
+		}
+		if = {
+			limit = {
+				any_scope_state = {
+					state_region = {
+						is_homeland = afro_arcadian
+					}
+				}
+			}
+			
+			random_scope_state = {
+				limit = {
+					state_region = {
+						is_homeland = afro_arcadian
+					}
+
+				}
+				save_scope_as = lib_state
+			}
+			create_country = {
+			
+				origin = THIS
+				tag = LIB
+				state = s:STATE_CHARLESIE.region_state:PLA
+				state = s:STATE_ALIBAMON.region_state:PLA
+				state = s:STATE_SANACOMIE.region_state:PLA
+				state = s:STATE_LOUISIANE_ROYALE.region_state:PLA
+
+			}
+
+		}
+		
+		
+	}
+
+	option = {
+		name = dvg_plantagenia.31.a
+		default_option = yes 
+
+		every_scope_state = {
+			limit = {
+				is_capital = no
+				state_region = {
+					is_homeland = afro_arcadian
+				}
+				culture_percent_state = {
+					target = cu:afro_arcadian  
+					value >= 0.50
+				}
+				
+			}
+			set_state_owner = c:LIB
+			
+		}
+		create_diplomatic_play = {
+			type = dp_rebellion_annex
+			target_country = c:LIB
+			war = yes
+
+			add_war_goal = {
+				holder = c:LIB
+				type = annex_country
+				target_country = c:PLA
+			}
+		}
+
+	
+		play_as = c:LIB
+		
+		ai_chance = {
+			base = 100
+		}
+		
+	}
+	option = {
+		name = dvg_plantagenia.31.b
+		create_diplomatic_play = {
+			type = dp_rebellion_annex
+			target_country = c:LIB
+			war = yes
+
+			add_war_goal = {
+				holder = c:LIB
+				type = annex_country
+				target_country = c:PLA
+			}
+		}
+	
+		ai_chance = {
+			base = 1
+		}
+		
+	}
+	
+}
+# Plains War, OUM Perspective
+dvg_plantagenia.32 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.32.t
+	desc = dvg_plantagenia.32.d
+	flavor = dvg_plantagenia.32.f
+	
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	
+	trigger = {
+		
+	}
+
+	immediate = {
+		ig:ig_landowners = { 
+			save_scope_as = planteurs_ig
+			
+		}
+	}
+
+	option = {
+		name = dvg_plantagenia.32.a
+		default_option = yes 
+
+		
+
+		
+	}
+	
+}
+# Reform Act Fail
+dvg_plantagenia.33 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.33.t
+	desc = dvg_plantagenia.33.d
+	flavor = dvg_plantagenia.33.f
+	
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	
+	trigger = {
+		
+	}
+
+	immediate = {
+		ig:ig_landowners = { 
+			save_scope_as = planteurs_ig
+			
+		}
+	}
+
+	option = {
+		name = dvg_plantagenia.33.a
+		default_option = yes 
+
+		
+
+		
+	}
+	
+}
+#Liberty Battalions
+dvg_plantagenia.34 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.34.t
+	desc = dvg_plantagenia.34.d
+	flavor = dvg_plantagenia.34.f
+	
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	
+	trigger = {
+		
+	}
+
+	immediate = {
+		ig:ig_landowners = { 
+			save_scope_as = planteurs_ig
+			
+		}
+	}
+
+	option = {
+		name = dvg_plantagenia.34.a
+		default_option = yes 
+
+		
+
+		
+	}
+	
+}
+#Fort Toulouse raid
+dvg_plantagenia.35 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.35.t
+	desc = dvg_plantagenia.35.d
+	flavor = dvg_plantagenia.35.f
+	
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	
+	trigger = {
+		
+	}
+
+	immediate = {
+		ig:ig_landowners = { 
+			save_scope_as = planteurs_ig
+			
+		}
+	}
+
+	option = {
+		name = dvg_plantagenia.35.a
+		default_option = yes 
+
+		
+
+		
+	}
+	
+}
+#Maroon Bands
+dvg_plantagenia.36 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_plantagenia.36.t
+	desc = dvg_plantagenia.36.d
+	flavor = dvg_plantagenia.36.f
+	
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	
+	trigger = {
+		
+	}
+
+	immediate = {
+		ig:ig_landowners = { 
+			save_scope_as = planteurs_ig
+			
+		}
+	}
+
+	option = {
+		name = dvg_plantagenia.36.a
+		default_option = yes 
+
+		
+
+		
+	}
+	
 }
 
 
