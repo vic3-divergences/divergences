@@ -48,6 +48,80 @@
 				change_variable = { name = plantapoints add = 1 }
 				set_variable = { name = je_dvg_plantagenia_gp_point }
 			}
+			if = {
+				limit = {
+					has_law = law_type:law_slavery_banned
+					NOT = { has_variable = pla_slavery_banned }
+				}
+				change_variable = { name = plantapoints subtract = 1 }
+				set_variable = { name = pla_slavery_banned }
+			}
+			if = {
+				limit = {
+					has_variable = recently_lost_war
+				}
+				change_variable = { name = plantapoints subtract = 1 }
+			}
+			if = {
+				limit = {
+					any_interest_group = {
+						is_powerful = yes
+						law_stance = {
+							law = law_type:law_monarchy
+							value <= neutral
+						}
+						ig_approval <= -5
+					}
+					NOT = {
+						has_variable = angry_republicans
+					}
+				}
+				change_variable = { name = plantapoints subtract = 1 }
+				set_variable = angry_republicans
+			}
+			if = {
+				limit = {
+					ig:ig_intelligentsia = {
+						is_powerful = yes
+						ig_approval >= 5
+					}
+					NOT = {
+						has_variable = happy_intelligentsia
+					}
+				}
+				change_variable = { name = plantapoints add = 1 }
+				set_variable = happy_intelligentsia
+			}
+			if = {
+				limit = {
+					any_interest_group = {
+						OR = {
+							is_powerful = no
+							law_stance = {
+							law = law_type:law_monarchy
+							value > neutral
+							}
+							ig_approval > 5
+
+						}
+						
+					}
+					has_variable = angry_republicans
+					
+				}
+				change_variable = { name = plantapoints add = 1 }
+				remove_variable = angry_republicans
+			}
+			if = {
+				limit = {
+					owns_entire_state_region = STATE_SANACOMIE
+					NOT = {
+						has_variable = owns_sanacomie
+					}
+				}
+				change_variable = { name = plantapoints add = 1 }
+				set_variable = owns_sanacomie
+			}
 			
 		}
 	}
@@ -60,10 +134,7 @@
 	}
 
 	immediate = {
-		set_variable = {
-			name = plantapoints
-			value = 0
-		}
+		
 		root = {
 			save_scope_as = plantagenia_scope
 		}
@@ -228,6 +299,7 @@
 	goal_add_value = {
 		add = 10
 	}
+	scripted_button = reform_law_button
 
 	progressbar = yes
 
@@ -239,6 +311,7 @@
 }
 
 je_pla_slavery = {
+	icon = "gfx/interface/icons/law_icons/slave_trade.dds"
 
 	group = je_group_internal_affairs
 
