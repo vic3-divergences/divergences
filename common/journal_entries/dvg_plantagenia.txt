@@ -61,9 +61,19 @@
 			}
 			if = {
 				limit = {
+					OR = {
+						c:BEL = {
+							owns_entire_state_region = STATE_SANACOMIE
+						}
+
+					}
 					has_variable = recently_lost_war
+					NOT = {
+						has_variable = pla_war_loser
+					}
 				}
 				change_variable = { name = plantapoints subtract = 1 }
+				set_variable = pla_war_loser
 			}
 			if = {
 				limit = {
@@ -85,6 +95,19 @@
 			if = {
 				limit = {
 					ig:ig_intelligentsia = {
+						is_powerful = yes
+						ig_approval >= 5
+					}
+					NOT = {
+						has_variable = happy_intelligentsia
+					}
+				}
+				change_variable = { name = plantapoints add = 1 }
+				set_variable = happy_intelligentsia
+			}
+			if = {
+				limit = {
+					ig:ig_rural_folk = {
 						is_powerful = yes
 						ig_approval >= 5
 					}
@@ -133,6 +156,41 @@
 		events = {
 			# startup event
 			dvg_plantagenia.1
+		}
+	}
+	on_yearly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					any_scope_state = {
+						state_region = {
+							state_is_in_north_america = yes
+							NOT = {
+								is_homeland = cu:cadien
+							}
+						}
+
+					}
+				}
+				every_scope_state = {
+					limit = {
+						state_region = {
+							state_is_in_north_america = yes
+							NOT = {
+								is_homeland = cu:cadien
+							}
+						}
+						culture_percent_state = {
+							target = cu:cadien  
+							value >= 0.50
+						}
+					}
+					state_region = {
+						add_homeland = cu:cadien
+					}
+				}
+			}
+
 		}
 	}
 
@@ -194,12 +252,12 @@
 				ig:ig_landowners = {
 					is_marginal = no
 				}
-				AND = {
-					ig:ig_armed_forces = {
-						is_marginal = no
-						leader = {
-							has_ideology = republican_leader
-						}
+				any_interest_group = {
+					is_powerful = yes
+					ig_approval <= -15 
+					law_stance = {
+						law = law_type:law_monarchy
+						value < neutral
 					}
 				}
 				
@@ -260,6 +318,7 @@
 					ig:ig_armed_forces = {
 						is_in_government = no
 						is_marginal = no
+						has_ideology = ideology:ideology_caudillismo
 					}
 				}
 				ig:ig_armed_forces = {
@@ -353,7 +412,11 @@ je_pla_slavery = {
 		trigger_event = {
 			id = dvg_plantagenia.15
 		}
-		set_variable = liberien_var
+		set_variable = {
+			name = liberien_var
+			value = 0
+		}
+		
 	}
 	current_value = {
 		value = root.var:liberien_var
@@ -366,6 +429,7 @@ je_pla_slavery = {
 					any_scope_character = {
 						has_variable = saint_georges
 					}
+					this = { var:liberien_var >= 125 }
 					NOT = {
 						has_variable = saint_georges_raid
 					}
@@ -394,6 +458,15 @@ je_pla_slavery = {
 			}
 			if = {
 				limit = {
+					has_law = law_type:law_legacy_slavery
+				}
+				change_variable = {
+					name = liberien_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
 					has_technology_researched = anarchism
 				}
 				change_variable = {
@@ -412,6 +485,15 @@ je_pla_slavery = {
 			}
 			if = {
 				limit = {
+					has_technology_researched = labor_movement
+				}
+				change_variable = {
+					name = liberien_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
 					ruler = {
 						law_stance = {
 							law = law_type:law_slavery_banned
@@ -422,6 +504,17 @@ je_pla_slavery = {
 				change_variable = {
 					name = liberien_var
 					subtract = 1
+				}
+			}
+			if = {
+				limit = {
+					any_scope_character = {
+						has_variable = saint_georges
+					}
+				}
+				change_variable = {
+					name = liberien_var
+					add = 1
 				}
 			}
 			if = {
@@ -463,6 +556,19 @@ je_pla_slavery = {
 			if = {
 				limit = {
 					this = { var:liberien_var >= 150 }
+					
+				}
+				trigger_event = {
+					id = dvg_plantagenia.36
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						any_scope_character = {
+							has_variable = saint_georges
+						}
+					}
 					
 				}
 				trigger_event = {
@@ -537,10 +643,73 @@ je_liberie_independence = {
 
 	immediate = {
 		set_country_type = unrecognized
+		if = {
+			limit = {
+				NOT = {
+					has_technology_researched = labor_movement
+				}
+			}
+			add_technology_researched = labor_movement
+		}
 	}
 	
 
-	
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					any_scope_character = {
+						has_variable = saint_georges
+					}
+					NOT = {
+						ruler = {
+							has_variable = saint_georges
+						}
+						has_variable = command_chain
+					}
+
+				}
+				trigger_event = {
+					id = dvg_plantagenia.38
+				}
+				set_variable = command_chain
+				
+			}
+			if = {
+				limit = {
+					exists = c:OUM
+					c:OUM = {
+						owns_entire_state_region = STATE_MONT_AUX_ARCS
+					}
+				}
+				
+				random_scope_pop = {
+					limit = {
+						culture = cu:cadien
+					}
+					move_pop = s:STATE_MONT_AUX_ARCS.region_state:OUM
+				}
+				
+			}
+			if = {
+				limit = {
+					exists = c:BLC
+					c:BLC = {
+						owns_entire_state_region = STATE_NOUVELLE_FLANDRE
+					}
+				}
+				
+				random_scope_pop = {
+					limit = {
+						culture = cu:cadien
+					}
+					move_pop = s:STATE_NOUVELLE_FLANDRE.region_state:BLC
+				}
+				
+			}
+		}
+		
+	}
 
 	complete = {
 		is_subject = no
@@ -548,7 +717,22 @@ je_liberie_independence = {
 		is_diplomatic_play_committed_participant = no
 	}
 	on_complete = {
-		set_country_type = recognized
+		if = {
+			limit = {
+				is_country_type = unrecognized
+			}
+			set_country_type = recognized
+
+			
+		}
+		if = {
+			limit = {
+				ruler = {
+					has_variable = saint_georges
+				}
+			}
+			trigger_event = dvg_plantagenia.40
+		}
 		
 	}
 
