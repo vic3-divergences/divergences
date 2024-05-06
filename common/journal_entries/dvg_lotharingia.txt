@@ -10,10 +10,12 @@
 	}
 
 	immediate = {
+
 		set_variable = {
 			name = aigle_var
-			value = 20
+			value = 0
 		}
+
 	}
 
 	on_monthly_pulse = {
@@ -79,11 +81,24 @@
 						is_powerful = yes
 						is_in_government = yes
 					}
+					root.average_sol > 10
+				}
+				change_variable = {
+					name = aigle_var
+					add = -1
+				}
+			}
+			if = {
+				limit = {
+					ig:ig_armed_forces = {
+						is_powerful = yes
+						is_in_government = yes
+					}
 					root.average_sol > 11
 				}
 				change_variable = {
 					name = aigle_var
-					add = -3
+					add = -2
 				}
 			}
 			if = {
@@ -98,6 +113,15 @@
 				}
 				set_variable = aigle_criticized
 			}
+			if = {
+				limit = { 
+					has_modifier = dvg_fragile_country
+				}
+				change_variable = {
+					name = aigle_var
+					add = 6
+				}
+			}
 		}
 	}
 
@@ -109,13 +133,20 @@
 			limit = { exists = var:aigle_var }
 			scope:journal_entry = { is_goal_complete = yes }
 		}
-		
+		OR = {
+			any_interest_group = {
+				count >= 2
+				ig_approval < -6
+				ig_clout >= 0.12
+				}
+			any_interest_group = {
+					is_powerful = yes
+					is_insurrectionary = yes
+				}
 
-		any_interest_group = {
-					count >= 2
-					ig_approval < -6
-					ig_clout >= 0.12
-					}
+		}
+
+		
 		
 		has_law = law_type:law_autocracy
 		root.average_sol <= 11
@@ -134,8 +165,10 @@
 				is_powerful = no
 				is_in_government = no
 			}
-			
-			var:aigle_var <= 0
+			AND = {
+				var:aigle_var <= 0
+				year >= 1846 
+			}
 			
 			NOT = { has_law = law_type:law_presidential_republic
 			        has_law = law_type:law_monarchy
@@ -154,6 +187,18 @@
 		}
 		
 	}
+	invalid = {
+		NOT = {
+			any_scope_character = {
+				has_variable = head_chef_var
+			}
+		}
+	}
+	on_invalid = {
+		trigger_event = {
+			id = dvg_lotharingia.4
+		}
+	}
 	
 	timeout = 9125
 
@@ -162,13 +207,25 @@
 			 id = dvg_lotharingia.2
 		}
 	}
+	invalid = {
+		NOT = {
+			any_scope_character = {
+				has_variable = chef_de_aigle_var
+			}
+		}
+	}
+	on_invalid = {
+		trigger_event = {
+			id = dvg_lotharingia.2
+	   }
+	}
 
 	current_value = {
 		value = root.var:aigle_var
 	}
 
 	goal_add_value = {
-		value = 200
+		value = 250
 	}
 
 	progressbar = yes
