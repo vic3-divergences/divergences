@@ -1,0 +1,152 @@
+je_burgundian_crisis = {
+	icon = "gfx/interface/icons/event_icons/bicorne_hat.dds"
+
+	immediate = {
+		set_variable = { name = brg_parliamentarisation_value value = 20 }
+	
+	}
+
+	complete = {
+		scope:journal_entry = {
+			is_goal_complete = yes
+		}
+	}
+
+	on_complete = {
+	
+	}
+
+	status_desc = {
+		}
+	
+
+	modifiers_while_active = {
+	}
+	
+	on_weekly_pulse = {
+		events = {
+		}
+		effect = {}
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			
+			if = {
+				limit = {
+					BRG:has_ruling_interest_group = ig_devout
+				}
+				set_variable = {
+					name = brg_parliamentarisation_value
+					value = {
+						add = -0.2
+						}
+					}
+				}
+			if = {
+				limit = {
+					BRG:has_ruling_interest_group = ig_industrialists
+				}
+				set_variable = {
+					name = brg_parliamentarisation_value
+					value = {
+						add = 0.2
+						}
+					}
+				}
+			if = {
+				limit = {
+					BRG:has_ruling_interest_group = ig_intelligentsia 
+				}
+				set_variable = {
+					name = brg_parliamentarisation_value
+					value = {
+						add = 0.4
+						}
+					}
+				}
+			if = {
+				limit = {
+					BRG:has_ruling_interest_group = ig_rural_folk  
+				}
+				set_variable = {
+					name = brg_parliamentarisation_value
+					value = {
+						add = -0.2
+						}
+					}
+				}
+		}
+		random_events = {
+			400 = 0
+		}
+	}
+	on_yearly_pulse = {
+		random_events = {
+			
+		}
+	}
+	
+	timeout = 1825
+	
+	on_timeout = { # same as on fail
+	if = {
+		limit = {
+			c:HRE = {
+				is_country_alive = yes
+			}
+		}
+	trigger_event = { id = dvg_burgundy.301 popup = yes }
+	}
+	else = {
+	trigger_event = { id = dvg_burgundy.300 popup = yes }	
+	}
+	}
+
+	fail = { #happens if you start a civil war normally 
+		OR = {
+			radical_fraction = {
+				value >= 0.35
+			}
+			any_civil_war = {
+				civil_war_progress > 0.75
+			}
+		}
+	}
+
+	on_fail = {
+	if = {
+		limit = {
+		is_country_alive = c:HRE
+		}
+	trigger_event = { id = dvg_burgundy.301 popup = yes }
+	}
+	else = 
+	{
+	trigger_event = { id = dvg_burgundy.300 popup = yes }	
+	}
+	}
+
+	invalid = { 
+		NOT = { 
+			has_variable = burgundy_civilwar_began
+		}
+	}
+
+	on_invalid = {
+	}
+
+	weight = 100
+	
+	current_value = {
+		value = root.var:brg_parliamentarisation_value 
+	}
+
+	goal_add_value = {
+		value = 100
+	}
+
+	progressbar = yes
+
+	should_be_pinned_by_default = yes
+}
