@@ -668,7 +668,9 @@ je_song_return = {
 		
 	}
 	on_fail = {
-		
+		add_journal_entry = {
+			type = je_abolish_monarchy
+		}
 	}
 
 
@@ -692,6 +694,7 @@ je_blue_turbans = {
 		
 		
 	}
+	scripted_button = dvg_consolidate_mandate
 
 	on_monthly_pulse = {
 		random_events = {
@@ -788,10 +791,25 @@ je_blue_turbans = {
 
 			}
 			if = {
+				limit = { 
+					any_interest_group = {
+						ig_approval >= 15 
+						is_powerful = yes
+					}
+					
+				}
+	
+				change_variable = {
+					name = dvg_blue_turbans
+					add = 2
+				}
+			}
+			if = {
 				limit = {
 					OR = {
 						sr:region_south_china = {
 							any_scope_state = {
+							count >= 5
 							state_region = {
 							is_homeland = cu:han
 
@@ -802,6 +820,8 @@ je_blue_turbans = {
 						sr:region_north_china = {
 							
 							any_scope_state = {
+							count >= 5
+
 							state_region = {
 							is_homeland = cu:han
 
@@ -820,7 +840,29 @@ je_blue_turbans = {
 
 				
 			}
+			if = {
+				limit = {
+					bureaucracy >= 888
+				 }
+
+				change_variable = {
+					name = dvg_blue_turbans
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					root.average_sol < 8
+				 }
+
+				change_variable = {
+					name = dvg_blue_turbans
+					subtract = 1
+				}
+			}
+			
 		}
+		
 	}
 	
 	current_value = {
@@ -832,7 +874,10 @@ je_blue_turbans = {
 		scope:journal_entry = {
 			is_goal_complete = yes
 		}
-		
+		has_technology_researched = pan-nationalism
+		government_legitimacy >= 88 
+		bureaucracy >= 888	
+		root.average_sol >= 8
 	}
 	on_complete = {
 
@@ -843,6 +888,11 @@ je_blue_turbans = {
 	}
 
 	fail = {
+		any_interest_group = {
+			ig_approval <= -15 
+			is_marginal = no
+		}
+
 		OR = {
 		any_country = {
 			is_revolutionary = yes
@@ -851,6 +901,31 @@ je_blue_turbans = {
 		
 		this = { var:blue_turban_revolt <= 0 }
 	
+		}
+		OR = {
+			sr:region_south_china = {
+				any_scope_state = {
+				count >= 8
+				state_region = {
+				is_homeland = cu:han
+
+					}
+				turmoil > 0.40
+				}
+			}
+			sr:region_north_china = {
+				
+				any_scope_state = {
+				count >= 8
+
+				state_region = {
+				is_homeland = cu:han
+
+					}
+				turmoil > 0.40
+				}
+			}
+
 		}
 		
 	}
