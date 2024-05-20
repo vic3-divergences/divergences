@@ -1,0 +1,367 @@
+﻿namespace = mughal
+
+# Startup event
+mughal.1 = {
+	type = country_event
+	placement = ROOT
+	
+	title = mughal.1.t
+	desc = mughal.1.d
+	flavor = mughal.1.f
+	
+	event_image = {
+		video = "asia_politician_parliament_motion"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	trigger = {
+		c:MUG ?=  this
+		NOT = { has_variable = mughal_salaf_var}
+		any_scope_character = {
+			has_variable = is_salaf
+		}
+	}
+
+	immediate = {
+		set_variable = mughal_salaf_var
+	}
+
+	option = {
+		name = salaf.1.a
+		default_option = yes
+		custom_tooltip = {
+			text = salaf_tt
+		}
+	}
+}
+mughal.2 = {
+	type = country_event
+	placement = ROOT
+	
+	title = mughal.2.t
+	desc = mughal.2.d
+	flavor = mughal.2.f
+	
+	event_image = {
+		video = "middleeast_upperclass_party"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	trigger = {
+		c:MUG ?=  this
+		c:MUG = {
+		has_variable = mughal_salaf_var
+		NOT = {
+		any_scope_character = {
+				has_variable = is_salaf
+			}
+		}
+		NOT = {has_variable = mughal_civil_war_happened}
+		}
+	}
+	
+	immediate = {
+		random_scope_character = {
+			limit = {
+				has_variable = is_qutb
+			}
+			save_scope_as = qutb_scope
+		}
+		random_scope_character = {
+			limit = {
+				has_variable = is_nasir
+			}
+			save_scope_as = nasir_scope
+		}
+	}
+
+	option = {
+		name = mughal.2.a
+		default_option = yes
+		scope:qutb_scope = {
+			set_character_as_ruler = yes
+		}
+		scope:nasir_scope = {
+			set_variable = mah_throne_var
+		}
+	}
+	option = {
+		name = mughal.2.b
+		scope:nasir_scope = {
+			set_character_as_ruler = yes
+		}
+		scope:qutb_scope = {
+			set_variable = mah_throne_var
+		}
+	}
+}
+mughal.3 = {
+	type = country_event
+	placement = ROOT
+	
+	title = mughal.3.t
+	desc = mughal.3.d
+	flavor = mughal.3.f
+	
+	event_image = {
+		video = "asia_sepoy_mutiny"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	trigger = {
+		c:MUG ?=  this
+		any_scope_character = {
+			has_variable = mah_throne_var
+		}
+		NOT = {has_variable = mughal_civil_war_happened}
+	}
+
+	immediate = {
+		set_variable = mughal_civil_war_happened
+		create_country = {
+			tag = MV1
+			origin = c:MUG
+			state = s:STATE_AWADH.region_state:MUG
+			state = s:STATE_BIHAR.region_state:MUG
+			on_created = {
+				set_variable = mughal_civil_war_happened
+				set_variable = mughal_salaf_var
+				set_immune_to_revolutions = yes
+				set_ruling_interest_groups = { ig_zamindars ig_mansabdars }
+				c:MUG = {
+					random_scope_character = {
+						limit = {has_variable = mah_throne_var}
+						transfer_character = c:MV1
+						set_character_as_ruler = yes
+					}
+				}
+				c:MV1 = {
+				change_relations = {
+					country = c:MUG
+					value = -100
+				}
+				}
+			}
+		}
+	}
+
+	option = {
+		name = mughal.3.a
+		default_option = yes
+	}
+}
+
+mughal.4 = {
+	type = country_event
+	placement = ROOT
+	
+	title = mughal.4.t
+	desc = mughal.4.d
+	flavor = mughal.4.f
+	
+	event_image = {
+		video = "africa_leader_arguing"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	trigger = {
+		has_variable = mughal_civil_war_happened
+		NOT = { has_variable =  everyone_leaves_1 }
+		NOT = { c:MV1 ?= this}
+	}
+
+	immediate = {
+		set_variable = everyone_leaves_1
+		c:MUG = {
+			remove_primary_culture = cu:rajput
+		}
+		c:MV1 = {
+			remove_primary_culture = cu:rajput
+		}
+		c:BER = {
+			make_independent = yes
+			change_relations = {
+				country = c:MUG
+				value = -100
+			}
+			change_relations = {
+				country = c:MV1
+				value = -100
+			}
+		}
+		c:MLW = {
+			change_relations = {
+				country = c:MUG
+				value = -50
+			}
+			change_relations = {
+				country = c:MV1
+				value = -100
+			}
+		}
+		c:JAI = {
+			make_independent = yes
+			annex = c:BIK
+			annex = c:JOD
+			annex = c:JAS
+			annex = c:MEW
+			change_tag = RAJ
+			change_relations = {
+				country = c:MUG
+				value = -100
+			}
+			change_relations = {
+				country = c:MV1
+				value = -100
+			}
+		}
+	}
+
+	option = {
+		name = mughal.4.a
+		trigger = {
+			NOT = {has_variable = everyone_leaves_2 }
+		}
+	}
+	option = {
+		name = mughal.4.b
+		trigger = {
+			AND = { has_variable = everyone_leaves_1 has_variable = everyone_leaves_2 }
+		}
+		c:MV1 = {
+			create_diplomatic_play = {
+				name = mughal_civil_war
+				target_country = c:MUG
+				type = dp_mughal_war
+			}
+		}
+	default_option = yes
+	}
+}
+
+mughal.5 = {
+	type = country_event
+	placement = ROOT
+	
+	title = mughal.5.t
+	desc = mughal.5.d
+	flavor = mughal.5.f
+	
+	event_image = {
+		video = "unspecific_factory_closed"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	trigger = {
+		has_variable = mughal_civil_war_happened
+		has_variable = everyone_leaves_1
+		NOT = {has_variable =  everyone_leaves_2}
+		NOT = { c:MV1 ?= this}
+	}
+
+	immediate = {
+		set_variable = everyone_leaves_2
+		c:MUG = {
+			set_country_type = unrecognized
+		}
+	}
+
+	option = {
+		name = mughal.5.a
+	}
+}
+
+mughal.6 = {
+	type = country_event
+	placement = ROOT
+	
+	title = mughal.6.t
+	desc = mughal.6.d
+	flavor = mughal.6.f
+	
+	event_image = {
+		video = "asia_hinduism_sikhism"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	trigger = {
+		has_variable = mughal_civil_war_happened
+		has_variable = mughal_salaf_var
+		OR = {
+			AND = {
+				c:MV1 ?=  this
+				NOT = { exists = c:MUG}
+			}
+			AND = {
+				c:MUG ?=  this
+				NOT = { exists = c:MV1}
+			}
+		}
+	}
+
+	immediate = {
+		remove_variable = mughal_salaf_var
+		s:STATE_AWADH.region_state:MUG = {
+			set_state_type = incorporated
+		}
+		s:STATE_BIHAR.region_state:MUG = {
+			set_state_type = incorporated
+		}
+		s:STATE_DELHI.region_state:MUG = {
+			set_state_type = incorporated
+		}
+	}
+
+	option = {
+		name = mughal.6.a
+		trigger = {
+			c:MV1 ?=  this
+		}
+		c:MV1 = {
+			change_tag = MUG
+		}
+		c:MUG = {
+			remove_primary_culture = cu:rajput
+			set_capital = STATE_DELHI
+		}
+		default_option = yes
+	}
+	option = {
+		trigger = {
+			c:MUG?=  this
+		}
+		name = mughal.6.b
+	}
+}
+
+

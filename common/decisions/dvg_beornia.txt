@@ -100,7 +100,7 @@ dvg_conquer_england = {
 		}
 		s:STATE_YORKSHIRE = { 
 			add_claim = ROOT
-			add_homeland = beornian 
+			add_homeland = cu:beornian 
 		}
 		s:STATE_HOME_COUNTIES = { 
 			add_claim = ROOT
@@ -153,7 +153,15 @@ dvg_anglo_summit = {
 	}
 
     possible = {
+
+		OR = {
 		has_technology_researched = pan-nationalism
+
+		any_neighbouring_state = {
+			owner = c:ENG
+	 	}
+
+		}
 			
 		has_law = law_type:law_monarchy
 		
@@ -300,38 +308,38 @@ dvg_establish_new_mercia = {
     when_taken = {
 		
 		s:STATE_COLLASUYU = { 
-			 add_homeland = beornian
+			 add_homeland = cu:beornian
 		}
 		s:STATE_NEAR_COLLASUYU = { 
-			 add_homeland = beornian
+			 add_homeland = cu:beornian
 		}
 		s:STATE_CATAMARCA = { 
-			 add_homeland = beornian
+			 add_homeland = cu:beornian
 		}
 		s:STATE_KUCHICHAY = { 
-			 add_homeland = beornian
+			 add_homeland = cu:beornian
 		}
 		s:STATE_COLLASUYU.region_state:BEO = {
 			add_modifier = {
-			name = patagonian_settlement
+			name = dvg_patagonian_settlement
 			days = long_modifier_time
 		}
 		}
 		s:STATE_NEAR_COLLASUYU.region_state:BEO = {
 			add_modifier = {
-			name = patagonian_settlement
+			name = dvg_patagonian_settlement
 			days = long_modifier_time
 		}
 		}
 		s:STATE_CATAMARCA.region_state:BEO = {
 			add_modifier = {
-			name = patagonian_settlement
+			name = dvg_patagonian_settlement
 			days = long_modifier_time
 		}
 		}
 		s:STATE_KUCHICHAY.region_state:BEO = {
 			add_modifier = {
-			name = patagonian_settlement
+			name = dvg_patagonian_settlement
 			days = long_modifier_time
 		}
 		}
@@ -475,6 +483,9 @@ dvg_embrace_aimara = {
 	when_taken = {
 		add_primary_culture = cu:aimara
     }
+	ai_chance = {
+		base = 100
+	}
 
 }
 
@@ -505,7 +516,9 @@ dvg_drug_treatment = {
 			remove_cultural_obsession = opium
 		}
     }
-
+	ai_chance = {
+		base = 100
+	}
 }
 
 dvg_beornia_odonia = {
@@ -516,15 +529,13 @@ dvg_beornia_odonia = {
 		exists = c:ODO
 		exists = c:LOT
 		
-		NOT = { exists = global_var:beornia_odonia }
+		NOT = { has_global_variable = beornia_odonia }
 		
 	}
 	
 	possible = {
 	
-	c:LOT = {
-				 relations:root < relations_threshold:cordial
-			}
+	c:LOT = {is_player = no}
 	
 	is_diplomatic_play_committed_participant = no
 	
@@ -532,8 +543,14 @@ dvg_beornia_odonia = {
 	
 	when_taken = {
 		trigger_event = { id = dvg_beornia.8 popup = yes }
+		set_global_variable = {
+			name = beornia_odonia
+			value = 0
+		}
     }
-
+	ai_chance = {
+		base = 100
+	}
 }
 
 dvg_beornia_aigle = {
@@ -565,22 +582,37 @@ dvg_beornia_aigle = {
 		
 		set_global_variable = odonia_puppet
     }
-
+	ai_chance = {
+		base = 100
+	}
 }
 
 dvg_proclaim_hbe = {
 	is_shown = {
 		exists = c:BEO
 		this = c:BEO
-	NOT = { has_game_rule = plausible_formable_nations 
+		NOT = { has_game_rule = plausible_formable_nations 
 			
 		}
+		is_player = yes
 		
 	}
 
     possible = {
 		
+		OR = {
 		country_rank >= rank_value:major_power
+		custom_tooltip = {
+			text = dvg_beornia_primo_tt
+		NOT = {
+		any_country = {
+			country_is_in_south_america = yes 
+
+			country_rank > root.country_rank
+		}
+		}
+		}
+		}
 		has_law = law_type:law_monarchy
 		has_law = law_type:law_autocracy
 		has_law = law_type:law_professional_army
@@ -601,6 +633,18 @@ dvg_proclaim_hbe = {
 		has_journal_entry = je_anglo_summit
 		
 		}
+		custom_tooltip = {
+			text = not_lost_war_tt
+			NOR = {
+				has_variable = recently_lost_war
+				AND = {
+					has_variable = recently_had_war
+					NOT = {
+						has_variable = recently_won_war
+					}
+				}
+			}
+		}
 		
 	
 	}
@@ -615,7 +659,6 @@ dvg_proclaim_hbe = {
 }
 
 dvg_heisenberg = {
-
 	is_shown = {
 		exists = c:HBE
 		this = c:HBE
@@ -652,6 +695,7 @@ dvg_heisenberg = {
 	}
 	
 	when_taken = {
+		
 		trigger_event = { id = dvg_hbe.8 popup = yes } 
 		
 		set_global_variable = {
@@ -659,5 +703,222 @@ dvg_heisenberg = {
 				value = 0
 			}
     }
+	ai_chance = {
+		base = 100
+	}
 
+}
+dvg_demand_transfleuve = {
+	is_shown = {
+		exists = c:BEO
+		this = c:BEO
+		exists = c:LOT
+		
+		NOT = {
+			has_global_variable = transfleuve_demanded
+		}
+		NOT = { owns_entire_state_region = STATE_TRANSFLEUVE }
+		c:LOT = { owns_entire_state_region = STATE_TRANSFLEUVE }
+
+	}
+
+    possible = {
+
+		c:LOT = {owes_obligation_to = c:BEO
+		
+				
+
+				}
+
+
+
+		
+		NOT = {is_diplomatic_play_enemy_of = c:LOT}
+
+		c:BEO = {is_at_war = no}
+
+		c:LOT = {is_at_war = no}
+		
+	
+	}
+
+    when_taken = {
+		c:LOT = {trigger_event = { id = dvg_beornia.23 }
+		post_proposal = proposal_diplomatic_action_call_in_obligation
+				}
+		set_global_variable = {
+			name = transfleuve_demanded
+			value = 0
+		}
+    }
+
+	ai_chance = {
+		base = 100
+	}
+}
+dvg_annex_mapuche = {
+	is_shown = {
+	
+		NOT = { is_country_type = decentralized }
+
+		NOT = { owns_entire_state_region = STATE_LANDS_END }
+
+		NOT = { owns_entire_state_region = STATE_NEW_CORNWALL}
+
+
+		country_has_primary_culture = cu:patagonian
+		
+		
+	}
+
+    possible = {
+
+		OR = {
+			is_player = yes
+			year >= 1865
+			is_country_type = recognized
+		}
+		OR = {
+		has_technology_researched = nationalism
+		is_country_type = recognized
+		}
+		has_technology_researched = colonization
+		NOT = { has_law = law_type:law_no_colonial_affairs }
+	
+	}
+
+    when_taken = {
+		every_country = {
+			if = {
+				limit = {
+					is_ai = yes			
+					country_has_primary_culture = cu:shona
+				}			
+				root = { annex = prev }
+			}
+		}
+		create_incident = {
+			country = ROOT
+			value = 6
+		}
+		
+    }
+	ai_chance = {
+		base = 1
+	}
+	
+}
+
+dvg_cavendish_yorkshire = {
+	is_shown = {
+		exists = c:BEO
+		this = c:BEO
+		exists = c:ENG
+		
+		NOT = { owns_entire_state_region = STATE_YORKSHIRE }
+		c:ENG = { owns_entire_state_region = STATE_YORKSHIRE }
+
+	}
+
+    possible = {
+
+		c:ENG = {owes_obligation_to = c:BEO
+
+				}
+
+
+
+		
+		NOT = {is_diplomatic_play_enemy_of = c:ENG}
+
+		c:BEO = {is_at_war = no}
+
+		c:ENG = {is_at_war = no}
+		
+	
+	}
+
+    when_taken = {
+		c:ENG = {trigger_event = { id = dvg_england.2 }
+		post_proposal = proposal_diplomatic_action_call_in_obligation
+				}
+		set_global_variable = {
+			name = cavendish_yorkshire
+			value = 0
+		}
+    }
+
+	ai_chance = {
+		base = 100
+	}
+}
+
+dvg_beornia_aid = {
+	is_shown = {
+		exists = c:ENG
+		this = c:ENG
+		exists = c:BEO
+
+		c:BEO = {  has_law = law_type:law_monarchy	}
+		
+		NOT = { has_global_variable = beornia_support }
+	}
+
+    possible = {
+		is_diplomatic_play_committed_participant = yes
+
+
+		is_diplomatic_play_enemy_of = c:DUA
+	}
+
+    when_taken = {
+		c:BEO = {
+			trigger_event = { id = dvg_england.1 popup = yes }	
+		}
+		set_global_variable = beornia_support
+
+    }
+
+	ai_chance = {
+		base = 100
+	}
+}
+dvg_attack_gps = {
+	is_shown = {
+		exists = c:HBE
+		this = c:HBE
+		NOT = {
+			has_global_variable = hbe_vs_gps
+		}
+	}
+
+    possible = {
+		is_diplomatic_play_committed_participant = no
+
+	}
+
+    when_taken = {
+		every_country = {
+			limit = { 
+			
+			NOT = { country_has_primary_culture = cu:beornian }
+			OR = {
+			country_rank = rank_value:great_power
+			country_rank = rank_value:major_power
+			}
+						
+			}
+			
+			
+			save_scope_as = hbe_target
+			
+			trigger_event = { id = dvg_hbe.1  }
+			}
+			set_global_variable = hbe_vs_gps
+
+    }
+
+	ai_chance = {
+		base = 100
+	}
 }

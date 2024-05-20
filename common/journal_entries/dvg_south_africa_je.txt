@@ -1,0 +1,605 @@
+﻿je_road_to_rickusdorp = {
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	group = je_group_foreign_affairs
+
+	immediate = {
+		c:LEW = { save_scope_as = scope_LEW }
+		c:BRG = { save_scope_as = scope_BRG }
+		c:OPS = { save_scope_as = scope_OPS }
+		c:NFL = { save_scope_as = scope_NFL }
+	}
+	complete = {
+		owns_entire_state_region = STATE_VRYSTAAT 
+		custom_tooltip = {
+		text = dvg_basuto_no_rickusdorp_tt
+			OR = {
+				c:BST = {
+					NOT = {
+						has_state_in_state_region = STATE_NORTHERN_CAPE
+					}
+				}
+				owns_entire_state_region = STATE_NORTHERN_CAPE
+			}
+			
+		}	
+	}
+
+    on_complete = {
+		trigger_event = { id = dvg_opstalia.4 days = 365 }
+	}
+	
+	weight = 10000
+	should_be_pinned_by_default = yes
+}
+
+je_return_of_hendrik = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	group = je_group_internal_affairs
+
+	complete = {
+		OR = {
+			c:NFL = {
+				NOT = {
+					exists = yes 
+				}
+			}
+			AND = {
+				custom_tooltip = {
+				text = dvg_ready_for_noordveld_war_tt
+				NOT = {
+					c:NFL = {
+						
+			
+						army_size > root.army_size
+					}
+					}
+				}
+				c:OPS = {
+					has_state_in_state_region = STATE_LOURENCO_MARQUES
+				}
+				
+			}
+		}
+		
+	}
+
+	on_complete = {
+		trigger_event = { id = dvg_opstalia.12 popup = yes }
+	}
+
+	fail = {
+		custom_tooltip = {
+		text = dvg_ops_lost_noordveld_war_tt
+			c:OPS = {
+				has_truce_with = c:NFL
+			}
+			c:NFL = {
+				has_state_in_state_region = STATE_LOURENCO_MARQUES
+			}
+		}
+	} 
+
+	on_fail = {
+		trigger_event = { id = dvg_opstalia.9 }
+	}
+
+	invalid = {
+		custom_tooltip = {
+			text = dvg_hendrik_dead
+			ruler = { 
+                not = {
+                	has_variable = is_hendrik
+                }
+            }
+		}
+	}
+
+	weight = 1000
+	should_be_pinned_by_default = yes
+}
+
+je_king_aloysius = {
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	group = je_group_internal_affairs
+
+	immediate = {
+		set_variable = {
+			name = aloysius_legitimacy
+			value = 1
+		}
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					has_law = law_type:law_state_religion
+					has_law = law_type:law_autocracy
+					NOT = {
+						any_civil_war = {
+							civil_war_progress > 50
+						}
+					}
+				}
+				change_variable = {
+					name = aloysius_legitimacy
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					has_state_in_state_region = STATE_VRYSTAAT
+				}
+				change_variable = {
+					name = aloysius_legitimacy
+					add = 0.5
+				}
+			}
+			if = {
+				limit = {
+					has_state_in_state_region = STATE_EASTERN_CAPE
+				}
+				change_variable = {
+					name = aloysius_legitimacy
+					add = 0.5
+				}
+			}
+			if = {
+				limit = {
+					has_state_in_state_region = STATE_ZULULAND
+				}
+				change_variable = {
+					name = aloysius_legitimacy
+					add = 0.5
+				}
+			}
+			if = {
+				limit = {
+					has_state_in_state_region = STATE_TRANSVAAL
+				}
+				change_variable = {
+					name = aloysius_legitimacy
+					add = 0.5
+				}
+			}
+			if = {
+				limit = {
+					has_state_in_state_region = STATE_CAPE_COLONY
+				}
+				change_variable = {
+					name = aloysius_legitimacy
+					add = 0.5
+				}
+			}
+			if = {
+				limit = {
+					has_state_in_state_region = STATE_LOURENCO_MARQUES
+				}
+				change_variable = {
+					name = aloysius_legitimacy
+					add = 0.5
+				}
+			}
+		}
+		random_events = {
+			10 = 0
+			1 = autocracy.2
+			1 = autocracy.3
+		}
+	}
+
+	complete = {
+		scope:journal_entry = {
+			is_goal_complete = yes
+		}
+		NOT = {
+			any_civil_war = {
+				civil_war_progress > 0.5
+			}
+		}
+	}
+
+	on_complete = {
+		trigger_event = {
+			id = dvg_leeuwin.12
+		}
+	}
+
+	fail = {
+		OR = {
+			NOT = { has_law = law_type:law_state_religion }
+			NOT = { has_law = law_type:law_autocracy }
+			is_subject = yes
+			NOT = {
+				has_state_in_state_region = STATE_NORTHERN_CAPE
+			}
+		}
+	}
+
+	current_value = {
+		value = root.var:aloysius_legitimacy
+	}
+
+	goal_add_value = {
+		add = 240
+	}
+
+	progressbar = yes
+
+	weight = 1000
+	should_be_pinned_by_default = yes
+}
+
+je_cap_moderate = {
+	icon = "gfx/interface/icons/event_icons/event_scales.dds"
+
+	group = je_group_internal_affairs
+
+	immediate = {
+		set_variable = {
+			name = geus_agitation_var
+		} 
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			change_variable = {
+				name = geus_agitation_var
+				add = -1
+			}
+			if = {
+				limit = {
+					s:CAPE_COLONY.region_state:CAP = {
+						turmoil.cu:boer > 0.5
+					}
+				}
+				change_variable = {
+					name = geus_agitation_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					s:CAPE_COLONY.region_state:CAP = {
+						turmoil.cu:boer > 0.25
+					}
+				}
+				change_variable = {
+					name = geus_agitation_var
+					add = 1
+				}
+			}
+		}
+		random_events = {
+			12 = 0
+			1 = dvg_cape_colony.100
+			1 = dvg_cape_colony.101
+			1 = dvg_cape_colony.102
+			1 = dvg_cape_colony.103
+		}
+	}
+
+	complete = {
+		AND = {
+			root.var:geus_agitation_var = {
+				value = 0
+			}
+			NOT = {
+				cu:boer = {
+					culture_is_discriminated_in	= c:CAP
+				}
+			}
+			has_variable = moderate_progress_add
+		}
+	}
+
+	on_complete = {
+		trigger_event = {
+			id = dvg_cape_colony.110
+		}
+	}
+
+	fail = {
+		hidden_effect = {
+			c:CAP = {
+				has_variable = moderate_progress_add
+			}
+		}
+		scope:journal_entry = {
+			is_goal_complete = yes
+		}
+	}
+
+	on_fail = {
+		trigger_event = {
+			id = dvg_cape_colony.111
+		}
+	}
+
+	current_value = {
+		value = root.var:geus_agitation_var
+	}
+
+	goal_add_value = {
+		value = 240
+	}
+
+	progressbar = yes
+
+	weight = 10000
+	should_be_pinned_by_default = yes
+}
+
+je_cap_militarist = {
+	icon = "gfx/interface/icons/event_icons/event_skull.dds"
+
+	group = je_group_internal_affairs
+	
+	immediate = {
+		set_variable = {
+			name = geus_supression_var
+			value = 20
+		}
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			change_variable = {
+				name = geus_supression_var
+				add = 1
+			}
+			if = {
+				limit = {
+					authority <= 1
+				}
+				change_variable = {
+					name = geus_supression_var
+					add = -3
+				}
+			}
+			if = { 
+				limit = {
+					authority <= 100
+				}
+				change_variable = {
+					name = geus_supression_var
+					add = -1
+				}
+			}
+			if = {
+				limit = {
+					authority <= 200
+				}
+				change_variable = {
+					name = geus_supression_var
+					add = -1
+				}
+			}
+			if = {
+				limit = {
+					authority >= 300
+				}
+				change_variable = {
+					name = geus_supression_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					authority >= 400
+				}
+				change_variable = {
+					name = geus_supression_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					authority >= 500
+				}
+				change_variable = {
+					name = geus_supression_var
+					add = 2
+				}
+			}
+			if = {
+				limit = {
+					s:STATE_CAPE_COLONY.region_state:CAP = {
+						has_decree = decree_violent_suppression
+					}
+				}
+				change_variable = {
+					name = geus_supression_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					c:CAP = {
+						has_modifier = dvg_finding_snitches
+					}
+				}
+				change_variable = {
+					name = geus_supression_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					c:CAP = {
+						has_modifier = dvg_lacking_patrols
+					}
+				}
+				change_variable = {
+					name = geus_supression_var
+					add = -1
+				}
+			}
+		}
+		random_events = {
+			12 = 0
+			1 = dvg_cape_colony.100
+			1 = dvg_cape_colony.101
+			1 = dvg_cape_colony.102
+			1 = dvg_cape_colony.103
+			1 = dvg_cape_colony.104
+		}
+	}
+
+	complete = {
+		scope:journal_entry = {
+			is_goal_complete = yes
+		}
+	}
+
+	on_complete = {
+		trigger_event = {
+			id = dvg_cape_colony.112
+		}
+	}
+
+	fail = {
+		var:geus_supression_var = {
+			value = 0
+		}
+		has_variable = militarist_progress_add
+	}
+
+	on_fail = {
+		trigger_event = {
+			id = dvg_cape_colony.113
+		}
+	}
+	invalid = {
+		NOT = { country_has_primary_culture = cu:boer }
+	}
+
+	current_value = {
+		value = root.var:autocracy_var
+	}
+
+	goal_add_value = {
+		add = 240
+	}
+
+	progressbar = yes
+
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+
+
+
+je_btv_autocracy = {
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	group = je_group_internal_affairs
+
+	is_shown_when_inactive = {
+		OR = {
+			has_law = law_type:law_monarchy
+		}
+		has_law = law_type:law_state_religion
+		has_law = law_type:law_autocracy
+		country_has_primary_culture = cu:boer
+	}
+
+	possible = {
+		ig:ig_armed_forces = {
+				is_powerful = yes
+			}
+		OR = {
+			ig:ig_landowners = {
+				is_powerful = yes
+			}
+			ig:ig_devout = {
+				is_powerful = yes
+			}
+		}
+	}
+
+	immediate = {
+		set_variable = {
+			name = autocracy_var
+			value = 1
+		}
+	} 
+
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					OR = {
+						has_law = law_type:law_monarchy
+						has_law = law_type:law_theocracy
+					}
+					has_law = law_type:law_state_religion
+					has_law = law_type:law_autocracy
+					NOT = {
+						any_civil_war = {
+							civil_war_progress > 50
+						}
+					}
+				}
+				change_variable = {
+					name = autocracy_var
+					add = 1
+				}
+			}
+		}
+		random_events = {
+			10 = 0
+			1 = autocracy.2
+			1 = autocracy.3
+		}
+	}
+
+	complete = {
+		scope:journal_entry = {
+			is_goal_complete = yes
+		}
+		OR = {
+			has_law = law_type:law_monarchy
+			has_law = law_type:law_theocracy
+		}
+		has_law = law_type:law_state_religion
+		has_law = law_type:law_autocracy
+		NOT = {
+			any_civil_war = {
+				civil_war_progress > 50
+			}
+		}
+	}
+
+	on_complete = {
+		trigger_event = {
+			id = autocracy.1
+		}
+	}
+
+	fail = {
+		OR = {
+			NOT = { has_law = law_type:law_state_religion }
+			NOT = { has_law = law_type:law_autocracy }
+		}
+	}
+	invalid = {
+		NOT = { country_has_primary_culture = cu:boer }
+	}
+
+	current_value = {
+		value = root.var:autocracy_var
+	}
+
+	goal_add_value = {
+		add = 360
+	}
+
+	progressbar = yes
+
+	weight = 100
+	should_be_pinned_by_default = yes
+}
