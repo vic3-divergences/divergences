@@ -17,28 +17,25 @@ je_llapa_succession = {
 	icon = "gfx/interface/icons/invention_icons/joint_stock_companies.dds"
 	
 	group = je_group_internal_affairs
-	
+
+	#Completes just by making Intelligentsia strong enough, Llapa is the designated heir
 	complete = {
-		ig:ig_intelligentsia = {
-						is_powerful = yes
-					}
-		
+		AND = {
+			ig:ig_intelligentsia = { is_powerful = yes }
+			ig:ig_armed_forces = { is_powerful = no }
+		}
 	}
 
     on_complete = {
 		trigger_event = { id = dvg_tawantisuyu_reconquest.6 }
 	}
+
+	#If Intelligentsia haven't managed to gain power by 1838, then Washkar can take over
 	fail = {
 		AND = {
-		ig:ig_armed_forces = {
-						is_powerful = yes
-					}
-		ig:ig_intelligentsia = {
-						is_powerful = no
-					}
-		
+			ig:ig_intelligentsia = { is_powerful = no }
+			game_date >= 1838.1.1
 		}
-		
 	}
 	on_fail = {
 		trigger_event = { id = dvg_tawantisuyu_reconquest.7 }
@@ -82,33 +79,22 @@ je_washkar_succession = {
 	icon = "gfx/interface/icons/invention_icons/artillery.dds"
 	
 	group = je_group_internal_affairs
-	
-	complete = {
-		ig:ig_armed_forces = {
-						is_powerful = yes
-					}
-		OR = {
-		game_date >= 1838.1.1
-		ruler = {
-			NOT = { has_trait = wounded }
-		}
+
+	#Armed Forces need to be powerful until 1838 to overcome Llapa's legitimacy
+	complete = { 
+		AND = {
+			ig:ig_intelligentsia = { is_powerful = no }
+			ig:ig_armed_forces = { is_powerful = yes }
+			game_date >= 1838.1.1
 		}
 	}
 
     on_complete = {
 		trigger_event = { id = dvg_tawantisuyu_reconquest.7 }
 	}
-	fail = {
-		AND = {
-		ig:ig_armed_forces = {
-						is_powerful = no
-					}
-		ig:ig_intelligentsia = {
-						is_powerful = yes
-					}
-		
-		}
-		
+	#Fails if the Intelligentsia is ever powerful
+	fail = { 
+			ig:ig_intelligentsia = { is_powerful = yes }
 	}
 	on_fail = {
 		trigger_event = { id = dvg_tawantisuyu_reconquest.6 }
@@ -278,6 +264,34 @@ je_amachaq = {
 	scripted_button = je_amachaq_integrate_chinchasuyu
 	scripted_button = je_amachaq_integrate_kutamasuyu
 	scripted_button = je_amachaq_integrate_qullauyu
+
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+
+je_llapas_reforms = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	
+	group = je_group_foreign_affairs
+
+	complete = {
+		AND = {
+			has_law = law_type:law_free_trade
+			has_law = law_type:law_workers_protections
+			has_law = law_type:law_compuslsory_primary_school
+			has_law = law_type:law_secret_police
+			has_law = law_type:law_outlawed_dissent
+		}
+	}
+
+	on_complete = {
+		trigger_event = { id = dvg_tawantisuyu_reconquest.14 } #Llapa  consolidates his rule
+	}
+
+	timeout = 3650 #circa 1848
+	on_timeout = {
+		trigger_event = { id = dvg_tawantisuyu_reconquest.15 } #The republican revolutionaries rise up
+	}
 
 	weight = 100
 	should_be_pinned_by_default = yes
