@@ -1,4 +1,66 @@
-﻿je_inca_lotharingia = {
+﻿je_beornia_revolt = {
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	group = je_group_internal_affairs
+
+	immediate = {
+		set_variable = {
+			name = beornia_hope_var
+			value = 0
+		}
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					cu:beornian = {
+					 culture_is_discriminated_in = ROOT 
+					}	
+				}
+				change_variable = {
+					name = armenia_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					cu:beornian = {
+						culture_secession_progress = {
+							target = ROOT
+							value > 0.9
+						}	
+					}
+				}
+				change_variable = {
+					name = armenia_var
+					add = 24
+				}
+			}
+		}
+	}
+
+	complete = {
+		trigger_if = {
+			limit = { exists = var:beornia_hope_var }
+			scope:journal_entry = { is_goal_complete = yes }
+		}
+	}
+
+	goal_add_value = {
+		value = 100
+	}
+
+    on_complete = {
+		trigger_event = { id = dvg_hbe.5 }
+	}
+
+	progressbar = yes
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+
+je_inca_lotharingia = {
 	icon = "gfx/interface/icons/event_icons/event_military.dds"
 
 	group = je_group_foreign_affairs
@@ -6,38 +68,35 @@
 	complete = {
 		is_at_war = no
 		OR = {
-		custom_tooltip = {
+			custom_tooltip = {
 				text = lot_existence_tt
 				NOT = {exists = c:LOT}
-				}
-		
-		AND = {
-			c:LOT = { is_subject_of = ROOT }
-		}
+			}
+			AND = {
+				c:LOT = { is_subject_of = ROOT }
+			}
 		}
 	}
 	
 	on_complete = {
-		trigger_event = {id = dvg_inca_ameriga.5}
-
 		set_country_type = recognized
+		
+		trigger_event = { id = dvg_inca_ameriga.5} 
 
 		set_global_variable = lotharingia_shatters
 	}
+
 	fail = {
 		custom_tooltip = {
-		text = twt_capitulation_tt
-		has_variable = recent_capitulation
-		
+			text = twt_capitulation_tt
+			has_variable = recent_capitulation
 		}
 		has_truce_with = c:LOT
-
 	}
+
 	on_fail = {
-		
 
-		trigger_event = {id = dvg_inca_ameriga.9}
-
+		trigger_event = { id = dvg_inca_ameriga.9 }
 
 		every_diplomatic_play = {
 			limit = {
@@ -46,21 +105,17 @@
 			end_play = yes
 		}
 	}
-	invalid = {
-		AND = {
-			has_global_variable = amazonie_shatters
-			has_global_variable = lotharingia_shatters
-		}
-	}
-	on_invalid = {
-		trigger_event = {
-			id = dvg_inca_ameriga.11
-		}
+
+	timeout = 1095
+
+	on_timeout = {
+		trigger_event = { id = dvg_inca_ameriga.8 }
 	}
 
 	weight = 100
 	should_be_pinned_by_default = yes
 }
+
 je_inca_amazonie = {
 	icon = "gfx/interface/icons/event_icons/event_military.dds"
 
@@ -69,20 +124,21 @@ je_inca_amazonie = {
 	complete = {
 		is_at_war = no
 		OR = {
-		NOT = {exists = c:AMA}
-		AND = {
-		owns_entire_state_region = STATE_VAURA
-		owns_entire_state_region = STATE_CAPPADOCE
-		owns_entire_state_region = STATE_COTE_DU_CAFE
-		owns_entire_state_region = STATE_COTE_DU_SUCRE
-		owns_entire_state_region = STATE_GOUAS
-		}
+			NOT = {exists = c:AMA}
+			AND = {
+				owns_entire_state_region = STATE_VAURA
+				owns_entire_state_region = STATE_CAPPADOCE
+				owns_entire_state_region = STATE_COTE_DU_CAFE
+				owns_entire_state_region = STATE_COTE_DU_SUCRE
+				owns_entire_state_region = STATE_FRANCE_ANTARTIQUE
+			}
 		}
 	}
 	on_complete = {
 		trigger_event = {id = dvg_inca_ameriga.7}
 		set_global_variable = amazonie_shatters
 	}
+
 	fail = {
 		exists = c:AMA
 		has_truce_with = c:AMA
@@ -94,32 +150,8 @@ je_inca_amazonie = {
 			}
 			end_play = yes
 		}
-
 	}
 
 	weight = 100
 	should_be_pinned_by_default = yes
 }
-#je_anti_inka = {
-#	icon = "gfx/interface/icons/event_icons/event_military.dds"
-#
-#	complete = {
-		
-#		c:TWT = {has_variable = recent_capitulation}
-
-#	}
-#	on_complete = {
-#		trigger_event = {id = dvg_inca_ameriga.5}
-#	}
-#	fail = {
-#		exists = c:LOT
-#		has_truce_with = c:LOT
-#	}
-#	on_fail = {
-#		trigger_event = {id = dvg_inca_ameriga.6}
-#
-#	}
-#
-#	weight = 100
-#	should_be_pinned_by_default = yes
-#}
