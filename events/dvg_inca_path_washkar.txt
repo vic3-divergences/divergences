@@ -261,7 +261,7 @@ dvg_inca_path_washkar.6 = { #Cabral
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
 
-	icon = "gfx/interface/icons/event_icons/event_miltary.dds"
+	icon = "gfx/interface/icons/event_icons/event_industry.dds"
 
 	title = dvg_inca_path_washkar.6.t
 	desc = dvg_inca_path_washkar.6.d
@@ -462,8 +462,8 @@ dvg_inca_path_washkar.9 = { #Washkar DIES
 			state = s:STATE_ZULIA.region_state:TWT
 			state = s:STATE_MIRANDA.region_state:TWT
 			state = s:STATE_ANGOSTURA.region_state:TWT
-			state = s:STATE_HERRERIA.region_state:TWT
-			state = s:STATE_GUYANA.region_state:TWT
+			state = s:STATE_BOLIVIA.region_state:TWT
+			state = s:STATE_GUAYANA.region_state:TWT
 		}
 		create_country = {
 			tag = QUL
@@ -499,6 +499,87 @@ dvg_inca_path_washkar.9 = { #Washkar DIES
 			state = s:STATE_MARCHES_OUEST.region_state:TWT
 			state = s:STATE_BRUXELLES_SUR_ODON.region_state:TWT
 			state = s:STATE_SERMOISE_SUR_ODON.region_state:TWT
+		}
+
+		#Modifiers and #IGs
+		remove_modifier = dvg_inca_empowered_merchants
+		remove_modifier = dvg_inca_archaeological_discoveries
+		remove_modifier = dvg_inca_industrial_patronage
+	
+		c:CCS = {
+			activate_law = law_type:law_technocracy
+			activate_law = law_type:law_appointed_bureaucrats
+			set_ruling_interest_groups = {
+				ig_industrialists
+				ig_intelligentsia
+			}
+			add_modifier = {
+				name = dvg_inca_industrial_patronage
+				months = -1
+			}
+			save_scope_as = scope_amachaq_state
+		}
+		c:KYS = {
+			activate_law = law_type:law_interventionism
+			activate_law = law_type:law_free_trade
+			set_ruling_interest_groups = {
+				ig_armed_forces
+				ig_petty_bourgeoisie
+			}
+			add_modifier = {
+				name = dvg_inca_empowered_merchants
+				months = -1
+			}
+			save_scope_as = scope_amachaq_state
+		}
+		c:QUL = {
+			activate_law = law_type:law_collectivized_agriculture
+			activate_law = law_type:law_multiculturalism
+			set_ruling_interest_groups = {
+				ig_rural_folk
+				ig_intelligentsia
+			}
+			add_modifier = {
+				name = dvg_inca_archaeological_discoveries
+				months = -1 
+			}
+			save_scope_as = scope_amachaq_state
+		}
+		c:ASY = {
+			set_ruling_interest_groups = {
+				ig_armed_forces
+			}
+			save_scope_as = scope_amachaq_state
+		}
+
+		scope:scope_amachaq_state = {
+			ig:ig_landowners = {
+				set_interest_group_name = ig_inka
+				remove_ideology = ideology_stratocratic
+				remove_ideology = ideology_paternalistic
+				remove_ideology = ideology_patriarchal
+				add_ideology = ideology_inka_paternalistic
+				add_ideology = ideology_incan_gender
+			}
+			ig:ig_devout = {
+				set_interest_group_name = ig_inkan_priesthood
+				remove_ideology = ideology_patriarchal
+				add_ideology = ideology_incan_gender
+			}
+			ig:ig_intelligentsia = {
+				set_interest_group_name = ig_amauta
+				remove_ideology = ideology_anti_clerical
+				remove_ideology = ideology_liberal
+				remove_ideology = ideology_republican
+				add_ideology = ideology_incan_gender
+				add_ideology = ideology_modernizer
+				set_ig_bolstering = yes
+			}
+			ig:ig_rural_folk = {
+				set_interest_group_name = ig_ayllu
+				remove_ideology = ideology_agrarian
+				add_ideology = ideology_ayllu_collectivism
+			}
 		}
 	}
 
@@ -557,6 +638,11 @@ dvg_inca_path_washkar.10 = { #Integrated all the Amachaqs
 
 	option = {
 		name = dvg_inca_path_washkar.10.a
+
+		custom_tooltip = {
+		text = amachaq_peace_tt
+		
+		#Bring the Amachaq back to TWT
 		c:CCS = {
 			scope:scope_amachaq_cabral = {            
 				transfer_character = c:TWT
@@ -577,18 +663,42 @@ dvg_inca_path_washkar.10 = { #Integrated all the Amachaqs
 				transfer_character = c:TWT
 			}
 		}
+
+		#Annex after transferring the characters
 		annex = c:CCS
 		annex = c:KYS
 		annex = c:ASY
 		annex = c:QUL
+
+		#Save the scopes
 		every_scope_character = {    limit = {     has_variable = amachaq_cabral_var    }    save_scope_as = scope_amachaq_cabral   }
-		scope:scope_amachaq_cabral = { add_character_role = general }
 		every_scope_character = {    limit = {     has_variable = amachaq_fujimori_var    }    save_scope_as = scope_amachaq_fujimori   }
-		scope:scope_amachaq_fujimori = { add_character_role = general }
 		every_scope_character = {    limit = {     has_variable = amachaq_samiri_var    }    save_scope_as = scope_amachaq_samiri   }
-		scope:scope_amachaq_samiri = { add_character_role = general }
 		every_scope_character = {    limit = {     has_variable = kuara_tiarayu_var    }    save_scope_as = scope_kuara_tiarayu   }
-		scope:scope_kuara_tiarayu = { add_character_role = general }
+
+		#Put them back in their places
+		scope:scope_amachaq_cabral = { 
+			add_character_role = general 
+			add_character_role = ig_leader 
+		}
+		scope:scope_amachaq_fujimori = { 
+			add_character_role = admiral 
+			add_character_role = ig_leader 
+		}
+		scope:scope_amachaq_samiri = { 
+			add_character_role = general 
+			add_character_role = ig_leader 
+		}
+		scope:scope_kuara_tiarayu = {
+			add_character_role = general 
+		}
+
+		add_modifier = { name = dvg_inca_empowered_merchants months = -1 }
+		add_modifier = { name = dvg_inca_archaeological_discoveries months = -1 }
+		add_modifier = { name = dvg_inca_industrial_patronage months = -1 }
+	
+		} #End Custom Tooltip
+
 		ig:ig_landowners = { 
 			add_ideology = ideology_constitutionalist
 			add_ideology = ideology_modernizer
@@ -605,7 +715,7 @@ dvg_inca_path_washkar.11 = { #Amachaq JE timed out
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
 
-	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	icon = "gfx/interface/icons/event_icons/event_skull.dds"
 
 	title = dvg_inca_path_washkar.11.t
 	desc = dvg_inca_path_washkar.11.d
@@ -645,6 +755,10 @@ dvg_inca_path_washkar.11 = { #Amachaq JE timed out
 		scope:scope_amachaq_kosciuzko = {
 			kill_character = yes
 		}
+
+		custom_tooltip = {
+		text = sayri_civil_war_tt
+
 		create_diplomatic_play = {
 		
 			target_country = c:CCS
@@ -735,6 +849,8 @@ dvg_inca_path_washkar.11 = { #Amachaq JE timed out
 				}
 			}
 		}
+
+		} # End Custom Tooltip
 	}
 }
 
