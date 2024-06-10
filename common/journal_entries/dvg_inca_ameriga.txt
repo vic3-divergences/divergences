@@ -1,9 +1,14 @@
 ﻿je_beornia_conquer = {
 	icon = "gfx/interface/icons/event_icons/event_map.dds"
 
-	group = je_group_foreign_affairs
+	group = je_group_historical_content
 
-	is_shown_when_inactive = {	
+	is_shown_when_inactive = {
+		exists = c:TWT
+		c:TWT = ROOT
+		c:TWT = { 
+			ruler = { has_ideology = ideology:ideology_jingoist_leader }
+		}
 	}
 
     possible = {
@@ -38,7 +43,7 @@
 je_beornia_revolt = {
 	icon = "gfx/interface/icons/event_icons/event_fire.dds"
 
-	group = je_group_internal_affairs
+	group = je_group_crises
 
 	immediate = {
 		set_variable = {
@@ -52,8 +57,8 @@ je_beornia_revolt = {
 			if = {
 				limit = {
 					cu:beornian = {
-					 culture_is_discriminated_in = ROOT 
-					}	
+						culture_is_discriminated_in = c:TWT
+					}
 				}
 				change_variable = {
 					name = beornia_hope_var
@@ -65,22 +70,24 @@ je_beornia_revolt = {
 					cu:beornian = {
 						culture_secession_progress = {
 							target = ROOT
-							value > 0.9
-						}	
+							value > 0.1
+						}
 					}
 				}
 				change_variable = {
 					name = beornia_hope_var
-					add = 24
+					add = 1
 				}
 			}
 		}
 	}
 
 	complete = {
-		trigger_if = {
-			limit = { exists = var:beornia_hope_var }
-			scope:journal_entry = { is_goal_complete = yes }
+		OR = {
+			trigger_if = {
+				limit = { exists = var:beornia_hope_var }
+				scope:journal_entry = { is_goal_complete = yes }
+			}
 		}
 	}
 
@@ -93,10 +100,7 @@ je_beornia_revolt = {
 	}
 
 	invalid = {
-		OR = {
-			exists = c:BEO
-			exists = c:AVL
-		}
+		exists = c:BEO
 	}
 
 	progressbar = yes
@@ -107,13 +111,21 @@ je_beornia_revolt = {
 je_inca_lotharingia = {
 	icon = "gfx/interface/icons/event_icons/event_military.dds"
 
-	group = je_group_foreign_affairs
+	group = je_group_historical_content
+
+	is_shown_when_inactive = {
+		exists = c:TWT
+		c:TWT = ROOT
+		c:TWT = { 
+			ruler = { has_ideology = ideology:ideology_jingoist_leader }
+		}
+	}
 
 	complete = {
 		is_at_war = no
 		custom_tooltip = {
 			text = lot_existence_tt
-			NOT = {exists = c:LOT}
+			NOT = { exists = c:LOT }
 		}
 	}
 	
@@ -136,7 +148,6 @@ je_inca_lotharingia = {
 	}
 
 	on_fail = {
-
 		trigger_event = { id = dvg_inca_ameriga.9 }
 
 		every_diplomatic_play = {
@@ -147,8 +158,7 @@ je_inca_lotharingia = {
 		}
 	}
 
-	timeout = 1095
-
+	timeout = 800
 	on_timeout = {
 		trigger_event = { id = dvg_inca_ameriga.8 }
 	}
@@ -160,21 +170,27 @@ je_inca_lotharingia = {
 je_inca_amazonie = {
 	icon = "gfx/interface/icons/event_icons/event_military.dds"
 
-	group = je_group_foreign_affairs
+	group = je_group_historical_content
+
+	is_shown_when_inactive = {
+		exists = c:TWT
+		c:TWT = ROOT
+		c:TWT = { 
+			ruler = { has_ideology = ideology:ideology_jingoist_leader }
+		}
+	}
 
 	complete = {
 		is_at_war = no
 		custom_tooltip = {
 		text = ama_existence_tt
 
-		AND = {
 			NOT = {
 				exists = c:AMA
 				exists = c:EQX
 				exists = c:ATL
 				exists = c:GOU
 			}
-		}
 		}
 	}
 	on_complete = {
@@ -186,6 +202,7 @@ je_inca_amazonie = {
 		exists = c:AMA
 		has_truce_with = c:AMA
 	}
+
 	on_fail = {
 		every_diplomatic_play = {
 			limit = {
