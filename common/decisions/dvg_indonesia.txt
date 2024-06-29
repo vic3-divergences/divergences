@@ -13,7 +13,7 @@ dvg_embrace_melanesians = {
 
 	OR = {
 		owns_entire_state_region = STATE_WESTERN_NEW_GUINEA
-		has_technology_researched = pan_nationalism
+		has_technology_researched = pan-nationalism
 		}
 	
 	}
@@ -246,16 +246,14 @@ dvg_indonesia = {
 			c:BEI = ROOT 
 			}
 			
-			}
+		}
 			
 	}
 
     possible = {
 		is_subject = no
 
-		has_technology_researched = pan-nationalism
 
-		owns_entire_state_region = STATE_WEST_JAVA
 	
 	}
 
@@ -434,7 +432,8 @@ dvg_become_java = {
 		exists = c:BEI
 		c:BEI = ROOT
 
-		
+		exists = c:JAV
+
 
 		is_ai = yes
 	}
@@ -443,6 +442,7 @@ dvg_become_java = {
 		c:BEI = {
 			is_subject = no
 		}
+		
 		
 	}
 
@@ -455,19 +455,7 @@ dvg_become_java = {
 				annex = ROOT
 			}
 		}
-		if = {
-			limit = {
-				NOT = {
-					exists = c:JAV
-
-				}
-			}
-			change_tag = JAV
-			remove_primary_culture = cu:burgundian
-			remove_primary_culture = cu:dutch
-			add_primary_culture = cu:javan
-
-		}
+		
     }
 
 	ai_chance = {
@@ -476,6 +464,142 @@ dvg_become_java = {
 }
 
 
+dvg_restore_borobudur = {
+	is_shown = {
+
+		owns_entire_state_region = STATE_CENTRAL_JAVA
+		
+		NOT = {
+			has_global_variable = borobudur_restored
+		}
+		
+	}
+
+    possible = {
+		OR = {
+
+			scope:state_religion_scope = {
+				has_discrimination_trait = buddhist
+			}
+			AND = {
+				scope:state_religion_scope = {
+					has_discrimination_trait = eastern
+				}
+				has_law = law_type:law_freedom_of_conscience
+			}
+			has_law = law_type:law_total_separation
+			has_law = law_type:law_religious_autonomy
+		}
+	}
+
+    when_taken = {
+
+		random_scope_state = {
+			limit = {
+				state_region = s:STATE_CENTRAL_JAVA
+			}
+			save_scope_as = borobudur_state
+		}
+		
+		add_modifier = {
+			name = dvg_monument_restored
+		}
+
+		scope:borobudur_state = {
+			create_building = {
+				building = building_borobudur
+			}
+		}
+		
+		set_global_variable = borobudur_restored
+
+		add_loyalists = {
+			value = 0.35
+			religion = rel:mahayana
+		}
+		add_loyalists = {
+			value = 0.15
+			religion = rel:theravada
+		}
+		add_loyalists = {
+			value = 0.05
+			religion = rel:hindu
+		}
+		add_radicals = {
+			value = 0.15
+			religion = rel:sunni
+		}
+	}
+	ai_chance = {
+		base = 100
+	}
+}
+
+dvg_subject_integrate = {
+	is_shown = {
+		OR = {
+			country_tier = empire
+			country_tier = hegemony
+		}
+		NOT = {
+			has_variable = subjects_integrated
+		}
+	}
+
+    possible = {
+		any_subject_or_below = {
+			any_primary_culture = {
+				NOT = {
+					culture_is_discriminated_in = ROOT
+					
+				}
+
+			}
+		}
+	}
+
+    when_taken = {
+
+		every_subject_or_below = {
+			limit = {
+				any_primary_culture = {
+					NOT = {
+						culture_is_discriminated_in = ROOT
+					}
+				}
+			}
+			save_scope_as = subject_to_annex
+
+			c:NUS = {
+				annex = prev
+			}
+		}
+		if = {
+			limit = {
+				exists = c:NUS
+				c:NUS = ROOT
+			}
+			every_scope_pop = {
+				limit = {
+					culture = {
+						has_discrimination_trait = han_chinese
+					}
+				}
+				change_pop_culture = {
+					target = cu:tionghoa
+					value = 1
+				}
+			}
+		}
+		
+
+		set_variable = subjects_integrated
+    }
+
+	ai_chance = {
+		base = 100
+	}
+}
 
 
 
