@@ -1544,7 +1544,7 @@ dvg_caladero.34 = {
 			add_ideology = ideology_jesuit
 		}
 		set_variable = ads_tupac
-		trigger_event = { id = dvg_caladero.111 days = 90 }
+		trigger_event = { id = dvg_caladero.112 days = 90 }
 		ai_chance = {
 			base = 1
 		}
@@ -3777,7 +3777,7 @@ dvg_caladero.90 = {
 		c:ADS = {
 			create_diplomatic_play = {
 				war = no
-				target_country = WLM
+				target_country = c:WLM
 				target_state = s:STATE_COLLASUYU.region_state:WLM
 				type = dp_return_state
 			}
@@ -4353,13 +4353,86 @@ dvg_caladero.106 = {
 
 	trigger = {
 	}
-	#The flames of the Revolution are growing colder – thankfully.
+	#We will retaliate immediately!
 	option = {
 		name = dvg_caladero.106.a
 		default_option = yes
 		
+		
+		if = {
+			limit = { exists = c:GRA }
+			c:GRA = {
+				create_diplomatic_play = {
+					war = no
+					target_country = c:ADS
+					target_state = STATE_CAUCA
+					type = dp_revoke_claim
+					
+					add_war_goal = {
+						holder = c:GRA
+						target_country = c:ADS
+						target_state = STATE_ANTIOQUIA
+						type = revoke_claim
+					}
+					add_war_goal = {
+						holder = c:ADS
+						target_country = c:GRA
+						target_state = STATE_ANTIOQUIA
+						type = return_state
+					}
+					add_war_goal = {
+						holder = c:ADS
+						target_country = c:GRA
+						target_state = STATE_CAUCA
+						type = return_state
+					}
+				}
+			}
+		}
+		else = {
+			limit = { exists = c:SAN }
+			c:SAN = {
+				create_diplomatic_play = {
+					war = no
+					target_country = c:ADS
+					target_state = STATE_CAUCA
+					type = dp_revoke_claim
+					
+					add_war_goal = {
+						holder = c:SAN
+						target_country = c:ADS
+						target_state = STATE_ANTIOQUIA
+						type = revoke_claim
+					}
+					add_war_goal = {
+						holder = c:ADS
+						target_country = c:GRA
+						type = annex_war
+					}
+				}
+			}
+		}
+		c:ADS = {
+			add_journal_entry = {
+				type = je_conquer_herreria
+			}
+			trigger_event = { id = dvg_caladero.107 }
+		}
 		ai_chance = {
 			base = 1
+		}
+	}
+	#We will retaliate in time!
+	option = {
+		name = dvg_caladero.106.b
+		
+		c:ADS = {
+			add_journal_entry = {
+				type = je_conquer_herreria
+			}
+		}
+		ai_chance = {
+			base = 0
 		}
 	}
 }
@@ -4384,7 +4457,7 @@ dvg_caladero.107 = {
 
 	trigger = {
 	}
-	#The flames of the Revolution are growing colder – thankfully.
+	#We will keep them north of the Angomayo!
 	option = {
 		name = dvg_caladero.107.a
 		default_option = yes
@@ -4415,11 +4488,18 @@ dvg_caladero.108 = {
 
 	trigger = {
 	}
-	#The flames of the Revolution are growing colder – thankfully.
+	#Goodbye, New Granada!
 	option = {
 		name = dvg_caladero.108.a
 		default_option = yes
 		
+		if = {
+			limit = { exists = c:GRA }
+			change_tag = CST
+		}
+		c:ADS = {
+			trigger_event = { id = dvg_caladero.109 }
+		}
 		ai_chance = {
 			base = 1
 		}
@@ -4446,7 +4526,7 @@ dvg_caladero.109 = {
 
 	trigger = {
 	}
-	#The flames of the Revolution are growing colder – thankfully.
+	#A new status-quo in New Granada
 	option = {
 		name = dvg_caladero.109.a
 		default_option = yes
@@ -4477,7 +4557,7 @@ dvg_caladero.110 = {
 
 	trigger = {
 	}
-	#The flames of the Revolution are growing colder – thankfully.
+	#Liberty shines upon the Andes!
 	option = {
 		name = dvg_caladero.110.a
 		default_option = yes
@@ -4508,21 +4588,47 @@ dvg_caladero.111 = {
 
 	trigger = {
 	}
-	#A new Empire will be built under, and according to Tupac's commandments!
+	#Aimless ambitions meet their end.
 	option = {
 		name = dvg_caladero.111.a
 		default_option = yes
 		
-		add_journal_entry = {
-			type = je_the_new_inca_empire
+		if = {
+			limit = { exists = c:GRA }
+			every_diplomatic_play = {
+				limit = {
+					initiator_is = c:GRA
+					target_is = c:ADS
+				}
+				end_play = yes
+			}
+			c:GRA = {
+				create_truce = {
+					country = c:ADS
+					months = 48
+				}
+				change_infamy = -50
+			}
 		}
-		set_variable = {
-			name = dvg_inca_europeanization
-			value = 10
+		if = {
+			limit = { exists = c:SAN }
+			every_diplomatic_play = {
+				limit = {
+					initiator_is = c:SAN
+					target_is = c:ADS
+				}
+				end_play = yes
+			}
+			c:SAN = {
+				create_truce = {
+					country = c:ADS
+					months = 48
+				}
+				change_infamy = -50
+			}
 		}
-		
-		trigger_event = { id = dvg_caladero.112 days = 60 }
-		
+		s:STATE_CAUCA = { revoke_claim = c:ADS }
+		s:STATE_ANTIOQUIA = { revoke_claim = c:ADS }
 		ai_chance = {
 			base = 1
 		}
@@ -4549,71 +4655,23 @@ dvg_caladero.112 = {
 
 	trigger = {
 	}
-	#The old nobility will be purged.
+	#A new Empire will be built under, and according to Tupac's commandments!
 	option = {
 		name = dvg_caladero.112.a
 		default_option = yes
 		
-		change_variable = {
+		add_journal_entry = {
+			type = je_the_new_inca_empire
+		}
+		set_variable = {
 			name = dvg_inca_europeanization
-			add = 2
+			value = 10
 		}
-		kill_population_percent = {
-			percent = 0.55
-			culture = cu:quechua
-			pop_type = aristocrats
-		}
-		kill_population_percent = {
-			percent = 0.55
-			culture = cu:aimara
-			pop_type = aristocrats
-		}
-		add_radicals = {
-			value = 0.1
-			culture = cu:quechua
-		}
-		add_radicals = {
-			value = 0.1
-			culture = cu:aimara
-		}
-		add_loyalists = {
-			value = 0.1
-			culture = cu:chimu
-		}
+		
 		trigger_event = { id = dvg_caladero.113 days = 60 }
 		
 		ai_chance = {
-			base = 0.5
-		}
-	}
-	#Promote lesser nobles to act as a counterbalance!
-	option = {
-		name = dvg_caladero.112.b
-		
-		add_radicals = {
-			value = 0.1
-			culture = cu:chimu
-		}
-		add_loyalists = {
-			value = 0.1
-			culture = cu:quechua
-		}
-		add_loyalists = {
-			value = 0.1
-			culture = cu:aimara
-		}
-		
-		if = {
-			limit = { exists = c:QUL }
-			change_relations = {
-				country = c:QUL
-				value = 50
-			}
-		}
-		trigger_event = { id = dvg_caladero.113 days = 60 }
-		
-		ai_chance = {
-			base = 0.5
+			base = 1
 		}
 	}
 }
@@ -4638,7 +4696,7 @@ dvg_caladero.113 = {
 
 	trigger = {
 	}
-	#Extend the Federal Cortes system of the Andes to the Four Corners of the Empire!
+	#The old nobility will be purged.
 	option = {
 		name = dvg_caladero.113.a
 		default_option = yes
@@ -4647,24 +4705,42 @@ dvg_caladero.113 = {
 			name = dvg_inca_europeanization
 			add = 2
 		}
-		
+		kill_population_percent = {
+			percent = 0.55
+			culture = cu:quechua
+			pop_type = aristocrats
+		}
+		kill_population_percent = {
+			percent = 0.55
+			culture = cu:aimara
+			pop_type = aristocrats
+		}
+		add_radicals = {
+			value = 0.1
+			culture = cu:quechua
+		}
+		add_radicals = {
+			value = 0.1
+			culture = cu:aimara
+		}
 		add_loyalists = {
 			value = 0.1
 			culture = cu:chimu
 		}
-		add_loyalists = {
-			value = 0.1
-			culture = cu:caladeran
-		}
+		trigger_event = { id = dvg_caladero.114 days = 60 }
 		
 		ai_chance = {
 			base = 0.5
 		}
 	}
-	#We will respect the structures of old and those of the nations within ours!
+	#Promote lesser nobles to act as a counterbalance!
 	option = {
 		name = dvg_caladero.113.b
 		
+		add_radicals = {
+			value = 0.1
+			culture = cu:chimu
+		}
 		add_loyalists = {
 			value = 0.1
 			culture = cu:quechua
@@ -4673,6 +4749,16 @@ dvg_caladero.113 = {
 			value = 0.1
 			culture = cu:aimara
 		}
+		
+		if = {
+			limit = { exists = c:QUL }
+			change_relations = {
+				country = c:QUL
+				value = 50
+			}
+		}
+		trigger_event = { id = dvg_caladero.114 days = 60 }
+		
 		ai_chance = {
 			base = 0.5
 		}
@@ -4699,21 +4785,43 @@ dvg_caladero.114 = {
 
 	trigger = {
 	}
-	#Onwards, to the Collao!
+	#Extend the Federal Cortes system of the Andes to the Four Corners of the Empire!
 	option = {
 		name = dvg_caladero.114.a
 		default_option = yes
 		
-		c:ADS = {
-			create_diplomatic_play = {
-				war = no
-				target_country = c:QUL
-				type = dp_annex_war
-			}
+		change_variable = {
+			name = dvg_inca_europeanization
+			add = 2
+		}
+		
+		add_loyalists = {
+			value = 0.1
+			culture = cu:chimu
+		}
+		add_loyalists = {
+			value = 0.1
+			culture = cu:caladeran
 		}
 		
 		ai_chance = {
-			base = 1
+			base = 0.5
+		}
+	}
+	#We will respect the structures of old and those of the nations within ours!
+	option = {
+		name = dvg_caladero.114.b
+		
+		add_loyalists = {
+			value = 0.1
+			culture = cu:quechua
+		}
+		add_loyalists = {
+			value = 0.1
+			culture = cu:aimara
+		}
+		ai_chance = {
+			base = 0.5
 		}
 	}
 }
@@ -4738,13 +4846,17 @@ dvg_caladero.115 = {
 
 	trigger = {
 	}
-	#We will pursue negotiations with Baie d'Argent.
+	#Onwards, to the Collao!
 	option = {
 		name = dvg_caladero.115.a
 		default_option = yes
 		
-		c:BRG = {
-			trigger_event = { id = dvg_caladero.116 }
+		c:ADS = {
+			create_diplomatic_play = {
+				war = no
+				target_country = c:QUL
+				type = dp_annex_war
+			}
 		}
 		
 		ai_chance = {
@@ -4773,29 +4885,17 @@ dvg_caladero.116 = {
 
 	trigger = {
 	}
-	#We are interested in selling Baie d'Argent and retiring from the Qullaw.
+	#We will pursue negotiations with Baie d'Argent.
 	option = {
 		name = dvg_caladero.116.a
 		default_option = yes
 		
-		c:ADS = {
-			trigger_event = { id = dvg_caladero.118 days = 7 }
+		c:BRG = {
+			trigger_event = { id = dvg_caladero.117 }
 		}
 		
 		ai_chance = {
-			base = 0.5
-		}
-	}
-	#We aren't interested in either selling our port of the people of the Qullaw.
-	option = {
-		name = dvg_caladero.116.b
-		
-		c:ADS = {
-			trigger_event = { id = dvg_caladero.117 days = 7 }
-		}
-		
-		ai_chance = {
-			base = 0.5
+			base = 1
 		}
 	}
 }
@@ -4820,21 +4920,29 @@ dvg_caladero.117 = {
 
 	trigger = {
 	}
-	#Their prepotence will be their undoing
+	#We are interested in selling Baie d'Argent and retiring from the Qullaw.
 	option = {
 		name = dvg_caladero.117.a
 		default_option = yes
 		
 		c:ADS = {
-			create_diplomatic_play = {
-				war = no
-				target_country = c:QUL
-				type = dp_annex_war
-			}
+			trigger_event = { id = dvg_caladero.119 days = 7 }
 		}
 		
 		ai_chance = {
-			base = 1
+			base = 0.5
+		}
+	}
+	#We aren't interested in either selling our port of the people of the Qullaw.
+	option = {
+		name = dvg_caladero.117.b
+		
+		c:ADS = {
+			trigger_event = { id = dvg_caladero.118 days = 7 }
+		}
+		
+		ai_chance = {
+			base = 0.5
 		}
 	}
 }
@@ -4859,31 +4967,17 @@ dvg_caladero.118 = {
 
 	trigger = {
 	}
-	#At least no blood was spilled.
+	#Their prepotence will be their undoing
 	option = {
 		name = dvg_caladero.118.a
 		default_option = yes
 		
-		s:STATE_ATACAMA.region_state:BRG = {
-			set_state_owner = c:ADS
-			add_modifier = {
-				name = dvg_inca_special_administrative_region
-				years = 50
-			}
-		}
-		c:BRG = {
-			remove_diplomatic_pact = {
-				country = c:QUL
-				type = alliance
-			}
-			change_relations = {
-				country = c:ADS
-				value = 50
-			}
-		}
-		
 		c:ADS = {
-			trigger_event = { id = dvg_caladero.118 days = 7 }
+			create_diplomatic_play = {
+				war = no
+				target_country = c:QUL
+				type = dp_annex_war
+			}
 		}
 		
 		ai_chance = {
@@ -4912,9 +5006,62 @@ dvg_caladero.119 = {
 
 	trigger = {
 	}
-	#For the Collao!
+	#At least no blood was spilled.
 	option = {
 		name = dvg_caladero.119.a
+		default_option = yes
+		
+		s:STATE_ATACAMA.region_state:BRG = {
+			set_state_owner = c:ADS
+			add_modifier = {
+				name = dvg_inca_special_administrative_region
+				years = 50
+			}
+		}
+		c:BRG = {
+			remove_diplomatic_pact = {
+				country = c:QUL
+				type = alliance
+			}
+			change_relations = {
+				country = c:ADS
+				value = 50
+			}
+		}
+		
+		c:ADS = {
+			trigger_event = { id = dvg_caladero.119 days = 7 }
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.120 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.120.t
+	desc = dvg_caladero.120.d
+	flavor = dvg_caladero.120.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#For the Collao!
+	option = {
+		name = dvg_caladero.120.a
 		default_option = yes
 		
 		c:ADS = {
@@ -4961,47 +5108,6 @@ dvg_caladero.120 = {
 		}
 	}
 }
-dvg_caladero.121 = {
-	type = country_event
-	placement = ROOT
-
-	title = dvg_caladero.121.t
-	desc = dvg_caladero.121.d
-	flavor = dvg_caladero.121.f
-	
-	event_image = {
-		video = "southamerica_war_civilians"
-	}
-
-	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
-	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
-
-	icon = "gfx/interface/icons/event_icons/event_fire.dds"
-
-	duration = 3
-
-	trigger = {
-	}
-	#The flames of the Revolution are growing colder – thankfully.
-	option = {
-		name = dvg_caladero.121.a
-		default_option = yes
-		
-		c:SPA = {
-			trigger_event = { id = dvg_caladero.122 }
-		}
-		ai_chance = {
-			base = 0.5
-		}
-	}
-	option = {
-		name = dvg_caladero.121.b
-		
-		ai_chance = {
-			base = 0.5
-		}
-	}
-}
 dvg_caladero.122 = {
 	type = country_event
 	placement = ROOT
@@ -5028,11 +5134,13 @@ dvg_caladero.122 = {
 		name = dvg_caladero.122.a
 		default_option = yes
 		
+		c:SPA = {
+			trigger_event = { id = dvg_caladero.123 }
+		}
 		ai_chance = {
 			base = 0.5
 		}
 	}
-	#The flames of the Revolution are growing colder – thankfully.
 	option = {
 		name = dvg_caladero.122.b
 		
@@ -5068,7 +5176,15 @@ dvg_caladero.123 = {
 		default_option = yes
 		
 		ai_chance = {
-			base = 1
+			base = 0.5
+		}
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.123.b
+		
+		ai_chance = {
+			base = 0.5
 		}
 	}
 }
@@ -5155,14 +5271,10 @@ dvg_caladero.126 = {
 
 	trigger = {
 	}
-	#To Ragga!
+	#The flames of the Revolution are growing colder – thankfully.
 	option = {
 		name = dvg_caladero.126.a
 		default_option = yes
-		
-		c:SCA = {
-			trigger_event = { id = dvg_caladero.127 }
-		}
 		
 		ai_chance = {
 			base = 1
@@ -5190,29 +5302,17 @@ dvg_caladero.127 = {
 
 	trigger = {
 	}
-	#A reasonable request for them.
+	#To Ragga!
 	option = {
 		name = dvg_caladero.127.a
 		default_option = yes
 		
-		c:ADS = {
-			trigger_event = { id = dvg_caladero.128 days = 14 }
+		c:SCA = {
+			trigger_event = { id = dvg_caladero.128 }
 		}
 		
 		ai_chance = {
-			base = 0.5
-		}
-	}
-	#We're not going to sell such a valuable colony to an upstart Empire.
-	option = {
-		name = dvg_caladero.127.b
-		
-		c:ADS = {
-			trigger_event = { id = dvg_caladero.128 days = 14 }
-		}
-		
-		ai_chance = {
-			base = 0.5
+			base = 1
 		}
 	}
 }
@@ -5237,20 +5337,29 @@ dvg_caladero.128 = {
 
 	trigger = {
 	}
-	#Ragga shall fall!
+	#A reasonable request for them.
 	option = {
 		name = dvg_caladero.128.a
 		default_option = yes
 		
-		create_diplomatic_play = {
-			war = no
-			target_country = c:SCA
-			target_state = s:STATE_NEAR_COLLASUYU.region_state:SCA
-			type = dp_return_state
+		c:ADS = {
+			trigger_event = { id = dvg_caladero.129 days = 14 }
 		}
 		
 		ai_chance = {
-			base = 1
+			base = 0.5
+		}
+	}
+	#We're not going to sell such a valuable colony to an upstart Empire.
+	option = {
+		name = dvg_caladero.128.b
+		
+		c:ADS = {
+			trigger_event = { id = dvg_caladero.129 days = 14 }
+		}
+		
+		ai_chance = {
+			base = 0.5
 		}
 	}
 }
@@ -5275,9 +5384,47 @@ dvg_caladero.129 = {
 
 	trigger = {
 	}
-	#The flames of the Revolution are growing colder – thankfully.
+	#Ragga shall fall!
 	option = {
 		name = dvg_caladero.129.a
+		default_option = yes
+		
+		create_diplomatic_play = {
+			war = no
+			target_country = c:SCA
+			target_state = s:STATE_NEAR_COLLASUYU.region_state:SCA
+			type = dp_return_state
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.130 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.130.t
+	desc = dvg_caladero.130.d
+	flavor = dvg_caladero.130.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.130.a
 		default_option = yes
 		
 		c:SCA = {
@@ -5329,39 +5476,8 @@ dvg_caladero.130 = {
 			add_treasury = 100000
 		}
 		c:ADS = {
-			trigger_event = { id = dvg_caladero.131 }
+			trigger_event = { id = dvg_caladero.132 }
 		}
-		
-		ai_chance = {
-			base = 1
-		}
-	}
-}
-dvg_caladero.131 = {
-	type = country_event
-	placement = ROOT
-
-	title = dvg_caladero.131.t
-	desc = dvg_caladero.131.d
-	flavor = dvg_caladero.131.f
-	
-	event_image = {
-		video = "southamerica_war_civilians"
-	}
-
-	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
-	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
-
-	icon = "gfx/interface/icons/event_icons/event_fire.dds"
-
-	duration = 3
-
-	trigger = {
-	}
-	#The flames of the Revolution are growing colder – thankfully.
-	option = {
-		name = dvg_caladero.131.a
-		default_option = yes
 		
 		ai_chance = {
 			base = 1
@@ -5947,49 +6063,13 @@ dvg_caladero.150 = {
 
 	trigger = {
 	}
-	#We will seek to settle and bring the light of both God and Europe to these lands!
+	#The flames of the Revolution are growing colder – thankfully.
 	option = {
 		name = dvg_caladero.150.a
 		default_option = yes
 		
-		change_variable = {
-			name = dvg_inca_europeanization
-			add = 2
-		}
-		add_loyalists = {
-			value = 0.1
-			culture = cu:chimu
-		}
-		add_loyalists = {
-			value = 0.1
-			culture = cu:caladeran
-		}
-		activate_law = law_type:law_frontier_colonization
-		trigger_event = { id = dvg_caladero.151 days = 60 }
-		
 		ai_chance = {
-			base = 0.5
-		}
-	}
-	#The flames of the Revolution are growing colder – thankfully.
-	option = {
-		name = dvg_caladero.150.b
-		
-		activate_law = law_type:law_colonial_exploitation
-		
-		add_loyalists = {
-			value = 0.1
-			culture = cu:quechua
-		}
-		add_loyalists = {
-			value = 0.1
-			culture = cu:aimara
-		}
-		
-		trigger_event = { id = dvg_caladero.151 days = 60 }
-		
-		ai_chance = {
-			base = 0.5
+			base = 1
 		}
 	}
 }
@@ -6014,13 +6094,15 @@ dvg_caladero.151 = {
 
 	trigger = {
 	}
-	#We will seek to standardize our Army
+	#We will seek to settle and bring the light of both God and Europe to these lands!
 	option = {
 		name = dvg_caladero.151.a
 		default_option = yes
 		
-		activate_law = law_type:law_professional_army
-		
+		change_variable = {
+			name = dvg_inca_europeanization
+			add = 2
+		}
 		add_loyalists = {
 			value = 0.1
 			culture = cu:chimu
@@ -6029,16 +6111,18 @@ dvg_caladero.151 = {
 			value = 0.1
 			culture = cu:caladeran
 		}
-		
-		set_variable = dvg_tupac_empire_defined
+		activate_law = law_type:law_frontier_colonization
+		trigger_event = { id = dvg_caladero.152 days = 60 }
 		
 		ai_chance = {
 			base = 0.5
 		}
 	}
-	#We will maintain a semi-traditional structure
+	#The flames of the Revolution are growing colder – thankfully.
 	option = {
 		name = dvg_caladero.151.b
+		
+		activate_law = law_type:law_colonial_exploitation
 		
 		add_loyalists = {
 			value = 0.1
@@ -6048,10 +6132,11 @@ dvg_caladero.151 = {
 			value = 0.1
 			culture = cu:aimara
 		}
-		set_variable = dvg_tupac_empire_defined
+		
+		trigger_event = { id = dvg_caladero.152 days = 60 }
 		
 		ai_chance = {
-			base = 1
+			base = 0.5
 		}
 	}
 }
@@ -6076,10 +6161,41 @@ dvg_caladero.152 = {
 
 	trigger = {
 	}
-	#Didn't Tupac promise change?
+	#We will seek to standardize our Army
 	option = {
 		name = dvg_caladero.152.a
 		default_option = yes
+		
+		activate_law = law_type:law_professional_army
+		
+		add_loyalists = {
+			value = 0.1
+			culture = cu:chimu
+		}
+		add_loyalists = {
+			value = 0.1
+			culture = cu:caladeran
+		}
+		
+		set_variable = dvg_tupac_empire_defined
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+	#We will maintain a semi-traditional structure
+	option = {
+		name = dvg_caladero.152.b
+		
+		add_loyalists = {
+			value = 0.1
+			culture = cu:quechua
+		}
+		add_loyalists = {
+			value = 0.1
+			culture = cu:aimara
+		}
+		set_variable = dvg_tupac_empire_defined
 		
 		ai_chance = {
 			base = 1
@@ -6107,9 +6223,40 @@ dvg_caladero.153 = {
 
 	trigger = {
 	}
-	#Change at last?
+	#Didn't Tupac promise change?
 	option = {
 		name = dvg_caladero.153.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.154 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.154.t
+	desc = dvg_caladero.154.d
+	flavor = dvg_caladero.154.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#Change at last?
+	option = {
+		name = dvg_caladero.154.a
 		default_option = yes
 		
 		ai_chance = {
