@@ -1205,14 +1205,14 @@ dvg_caladero.26 = {
 		
 		s:STATE_CUZCO.region_state:ADS = {
 			kill_population_percent_in_state = {
-				percent = 0.7
+				percent = 0.85
 				culture = cu:quechua
 				pop_type = aristocrats
 			}
 		}
 		s:STATE_CUZCO.region_state:ADS = {
 			kill_population_percent_in_state = {
-				percent = 0.7
+				percent = 0.85
 				culture = cu:quechua
 				pop_type = soldiers
 			}
@@ -1225,6 +1225,11 @@ dvg_caladero.26 = {
 		add_primary_culture = cu:quechua
 		
 		activate_law = law_type:law_appointed_bureaucrats
+		
+		add_modifier = {
+			type = dvg_romantico_rule
+			days = -1
+		}
 		ai_chance = {
 			base = 1
 		}
@@ -1258,14 +1263,14 @@ dvg_caladero.27 = {
 		
 		s:STATE_CUZCO.region_state:ADS = {
 			kill_population_percent_in_state = {
-				percent = 0.85
+				percent = 0.7
 				culture = cu:quechua
 				pop_type = aristocrats
 			}
 		}
 		s:STATE_CUZCO.region_state:ADS = {
 			kill_population_percent_in_state = {
-				percent = 0.85
+				percent = 0.7
 				culture = cu:quechua
 				pop_type = soldiers
 			}
@@ -1276,6 +1281,11 @@ dvg_caladero.27 = {
 		change_tag = ADS
 		add_primary_culture = cu:chimu
 		add_primary_culture = cu:quechua
+		
+		add_modifier = {
+			type = dvg_romantico_rule_terror
+			days = -1
+		}
 		
 		activate_law = law_type:law_appointed_bureaucrats
 		
@@ -1304,12 +1314,31 @@ dvg_caladero.28 = {
 	duration = 3
 
 	trigger = {
+		exists = c:ADS
+		this = c:ADS
+		OR = {
+			has_modifier = dvg_romantico_rule
+			has_modifier = dvg_romantico_rule_terror
+		}
+		ig:ig_landowners = {
+			is_in_government = yes
+		}
+		NOT = { has_variable = Pragmatist_QUI }
 	}
 	#The flames of the Revolution are growing colder – thankfully.
 	option = {
 		name = dvg_caladero.28.a
 		default_option = yes
 		
+		if = {
+			limit = { has_modifier = dvg_romantico_rule }
+			remove_modifier = dvg_romantico_rule
+		}
+		else = {
+			limit = { has_modifier = dvg_romantico_rule_terror }
+			remove_modifier = dvg_romantico_rule_terror
+		}
+		set_variable = Pragmatist_QUI
 		ai_chance = {
 			base = 1
 		}
@@ -3721,11 +3750,18 @@ dvg_caladero.88 = {
 	duration = 3
 
 	trigger = {
+		exists = c:ADS
+		this = c:ADS
+		has_variable = ads_muyuroney_triumphant
+		NOT = { has_variable = ads_el_infante }
+		year = 1856
 	}
 	#Good luck, Francisco Atanasio!
 	option = {
 		name = dvg_caladero.88.a
 		default_option = yes
+		
+		ruler = { kill_character = yes }
 		
 		set_variable = ads_el_infante
 		
