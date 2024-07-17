@@ -1418,8 +1418,10 @@ dvg_caladero.30 = {
 		default_option = yes
 		
 		s:STATE_NEAR_COLLASUYU.region_state:ADS = {
-			name = dvg_colonial_recruitment
-			year = 10
+			add_modifier = {
+				name = dvg_colonial_recruitment
+				years = 10
+			}
 		}
 		set_global_variable = ads_uraycusta
 		ai_chance = {
@@ -4559,65 +4561,26 @@ dvg_caladero.106 = {
 		
 		if = {
 			limit = { exists = c:GRA }
-			c:GRA = {
-				create_diplomatic_play = {
-					war = no
-					target_country = c:ADS
-					type = dp_contain_threat
-					
-					add_war_goal = {
-						holder = c:GRA
-						target_country = c:ADS
-						target_state = STATE_ANTIOQUIA
-						type = revoke_claim
-					}
-					add_war_goal = {
-						holder = c:GRA
-						target_country = c:ADS
-						target_state = STATE_CAUCA
-						type = revoke_claim
-					}
-					add_war_goal = {
-						holder = c:ADS
-						target_country = c:GRA
-						target_state = STATE_ANTIOQUIA
-						type = return_state
-					}
-					add_war_goal = {
-						holder = c:ADS
-						target_country = c:GRA
-						target_state = STATE_CAUCA
-						type = return_state
-					}
+			create_diplomatic_play = {
+				war = no
+				target_country = c:GRA
+				target_state = s:STATE_ANTIOQUIA.region_state:GRA
+				type = dp_return_state
+				
+				add_war_goal = {
+					holder = c:ADS
+					target_country = c:GRA
+					target_state = s:STATE_CAUCA.region_state:GRA
+					type = return_state
 				}
 			}
 		}
 		else = {
 			limit = { exists = c:SAN }
-			c:SAN = {
-				create_diplomatic_play = {
-					war = no
-					target_country = c:ADS
-					type = dp_contain_threat
-					
-					add_war_goal = {
-						holder = c:SAN
-						target_country = c:ADS
-						target_state = STATE_ANTIOQUIA
-						type = revoke_claim
-					}
-					add_war_goal = {
-						holder = c:SAN
-						target_country = c:ADS
-						target_state = STATE_CAUCA
-						type = revoke_claim
-					}
-					add_war_goal = {
-						holder = c:ADS
-						target_country = c:SAN
-						type = annex_country
-					}
-				}
+			create_diplomatic_play = {
+				war = no
+				target_country = c:SAN
+				type = dp_annex_war
 			}
 		}
 		c:ADS = {
@@ -4811,7 +4774,7 @@ dvg_caladero.111 = {
 				end_play = yes
 			}
 			c:GRA = {
-				create_truce = {
+				create_bidirectional_truce = {
 					country = c:ADS
 					months = 48
 				}
@@ -4828,15 +4791,15 @@ dvg_caladero.111 = {
 				end_play = yes
 			}
 			c:SAN = {
-				create_truce = {
+				create_bidirectional_truce = {
 					country = c:ADS
 					months = 48
 				}
 				change_infamy = -50
 			}
 		}
-		s:STATE_CAUCA = { revoke_claim = c:ADS }
-		s:STATE_ANTIOQUIA = { revoke_claim = c:ADS }
+		s:STATE_CAUCA = { remove_claim = c:ADS }
+		s:STATE_ANTIOQUIA = { remove_claim = c:ADS }
 		ai_chance = {
 			base = 1
 		}
@@ -6256,7 +6219,7 @@ dvg_caladero.149 = {
 		name = dvg_caladero.149.a
 		default_option = yes
 		
-		trigger_event = { id = dvg_caladero.150 days 120 }
+		trigger_event = { id = dvg_caladero.150 days = 120 }
 		
 		ai_chance = {
 			base = 1
@@ -6306,8 +6269,13 @@ dvg_caladero.150 = {
 	option = {
 		name = dvg_caladero.150.b
 		
-		every_scope_state = {
-			limit = { is_homeland = cu:beornian }
+		s:STATE_NEAR_COLLASUYU = {
+			remove_homeland = cu:beornian
+		}
+		s:STATE_KUCHICHAY = {
+			remove_homeland = cu:beornian
+		}
+		s:STATE_CATAMARCA = {
 			remove_homeland = cu:beornian
 		}
 		
