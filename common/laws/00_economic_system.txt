@@ -1,4 +1,8 @@
-﻿
+﻿# group = this is the law_group a law belongs to
+# icon = graphical icon shown in-game
+# modifier = {} modifier on country for having adopted this law
+# cultural_acceptance_rule and religious_acceptance_rule are triggers in the pop scope used to check if a pop should be accepted or discriminated against
+
 law_traditionalism = {
 	group = lawgroup_economic_system
 	
@@ -72,16 +76,22 @@ law_bureaucratic_economy = {
 	disallowing_laws = {
 		law_anarchy
 	}
-	
-	modifier = {
-		country_disable_investment_pool_bool = yes
-		country_disable_privatization_bool = yes
 
-		country_authority_mult = 0.25
+	unlocking_technologies = {
+		bureaucracy
+	}
+
+	modifier = {
+		state_capitalists_investment_pool_efficiency_mult = -1
+		country_private_construction_allocation_mult = 0.1
+
+		country_authority_mult = 0.1
 		country_bureaucrats_pol_str_mult = 0.25
 
-		country_leverage_resistance_mult = 0.25
+		building_nationalization_cost_mult = -0.25
+		building_nationalization_radicals_mult = -0.25
 
+		country_leverage_resistance_mult = 0.25
 	}
 	
 	possible_political_movements = {
@@ -101,6 +111,15 @@ law_bureaucratic_economy = {
 				}
 				value = 0.2
 			}
+		}
+	}
+
+	ai_enact_weight_modifier = { #Petitions
+		value = 0
+		
+		if = {
+			limit = { ai_has_enact_weight_modifier_journal_entries = yes }
+			add = 750
 		}
 	}
 }
@@ -134,10 +153,11 @@ law_interventionism = {
 	}
 	
 	possible_political_movements = {
-		law_interventionism
 		law_command_economy
 		law_agrarianism
 		law_laissez_faire
+		law_cooperative_ownership
+		law_industry_banned
 	}
 
 	pop_support = {
@@ -158,6 +178,31 @@ law_interventionism = {
 				value = 0.33
 			}
 		}
+		
+		# Literate pops support getting out of Traditionalism once you have Empiricism
+		add = {
+			desc = "empiricism"
+			
+			if = {
+				limit = { 
+					owner = { 
+						has_technology_researched = empiricism 
+						has_law = law_type:law_traditionalism
+					}
+					
+					# Aristocrats/Farmers/Peasants want agrarianism instead
+					NOR = { 
+						is_pop_type = aristocrats 
+						is_pop_type = farmers 
+						is_pop_type = peasants
+					}
+				}
+				add = {
+					value = literacy_rate
+					divide = 2
+				}
+			}
+		}		
 	}
 
 	ai_enact_weight_modifier = { #Petitions
@@ -166,6 +211,19 @@ law_interventionism = {
 		if = {
 			limit = { ai_has_enact_weight_modifier_journal_entries = yes }
 			add = 750
+		}
+
+		# AI should really try to get out of Traditionalism under the right circumstances
+		if = {
+			limit = {
+				has_law = law_type:law_traditionalism
+				NOT = { has_strategy = ai_strategy_reactionary_agenda }
+				OR = {
+					NOT = { has_strategy = ai_strategy_conservative_agenda }
+					any_political_movement = { desired_law = law_type:law_interventionism }				
+				}	
+			}
+			add = 1000
 		}
 	}
 }
@@ -241,6 +299,29 @@ law_agrarianism = {
 				value = 0.33
 			}
 		}
+		
+		# Literate pops support getting out of Traditionalism once you have Empiricism
+		add = {
+			desc = "empiricism"
+			
+			if = {
+				limit = { 
+					owner = { 
+						has_technology_researched = empiricism 
+						has_law = law_type:law_traditionalism
+					}				
+					OR = { 
+						is_pop_type = aristocrats
+						is_pop_type = farmers
+						is_pop_type = peasants
+					} 
+				}
+				add = {
+					value = literacy_rate
+					divide = 2
+				}
+			}
+		}			
 	}
 		
 	ai_will_do = {
@@ -257,6 +338,19 @@ law_agrarianism = {
 			limit = { ai_has_enact_weight_modifier_journal_entries = yes }
 			add = 750
 		}
+
+		# AI should really try to get out of Traditionalism under the right circumstances
+		if = {
+			limit = {
+				has_law = law_type:law_traditionalism
+				NOT = { has_strategy = ai_strategy_reactionary_agenda }
+				OR = {
+					NOT = { has_strategy = ai_strategy_conservative_agenda }
+					any_political_movement = { desired_law = law_type:law_agrarianism }				
+				}	
+			}
+			add = 1000
+		}		
 	}
 }
 
@@ -393,6 +487,7 @@ law_laissez_faire = {
 		law_serfdom
 		law_isolationism
 		law_anarchy
+		law_traditional_welfare
 	}
 	
 	unlocking_technologies = {
@@ -439,6 +534,31 @@ law_laissez_faire = {
 				value = 0.5
 			}
 		}
+		
+		# Literate pops support getting out of Traditionalism once you have Empiricism
+		add = {
+			desc = "empiricism"
+			
+			if = {
+				limit = { 
+					owner = { 
+						has_technology_researched = empiricism
+						has_law = law_type:law_traditionalism
+					}
+					
+					# Aristocrats/Farmers/Peasants want agrarianism instead
+					NOR = { 
+						is_pop_type = aristocrats 
+						is_pop_type = farmers 
+						is_pop_type = peasants
+					}
+				}
+				add = {
+					value = literacy_rate
+					divide = 2
+				}
+			}
+		}			
 	}
 
 	ai_enact_weight_modifier = { #Petitions
@@ -448,6 +568,19 @@ law_laissez_faire = {
 			limit = { ai_has_enact_weight_modifier_journal_entries = yes }
 			add = 750
 		}
+
+		# AI should really try to get out of Traditionalism under the right circumstances
+		if = {
+			limit = {
+				has_law = law_type:law_traditionalism
+				NOT = { has_strategy = ai_strategy_reactionary_agenda }
+				OR = {
+					NOT = { has_strategy = ai_strategy_conservative_agenda }
+					any_political_movement = { desired_law = law_type:law_laissez_faire }				
+				}	
+			}
+			add = 1000
+		}		
 	}	
 }
 
@@ -479,6 +612,7 @@ law_cooperative_ownership = {
 		country_government_dividends_reinvestment_add = 1.0
 
 		country_force_collectivization_bool = yes
+		country_disable_privatization_bool = yes
 	}
 	
 	possible_political_movements = {

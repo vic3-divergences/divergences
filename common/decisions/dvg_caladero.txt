@@ -1,28 +1,4 @@
-﻿# ccs_annex_into_inca = {
-	# is_shown = {
-		# exists = c:CCS
-		# exists = c:TWT
-		# root = c:CCS
-	# }
-
-	# possible = {
-		# root = {
-			# is_at_war = no
-		# }
-	# }
-	
-    # when_taken = {
-		# play_as = c:TWT
-		# c:TWT = {
-			# annex = c:CCS
-		# }
-    # }
-
-	# ai_chance = {
-		# base = 100
-	# }
-# }
-tupac_qullaw = {
+﻿tupac_qullaw = {
 	is_shown = {
 		exists = c:ADS
 		this = c:ADS
@@ -58,6 +34,21 @@ tupac_qullaw = {
 		base = 100
 	}
 }
+tupac_claim_beornia = {
+	is_shown = {
+		exists = c:ADS
+		this = c:ADS
+		has_variable = ads_tupac
+		NOT = { has_variable = beornia_claimed }
+	}
+	possible = {
+		is_at_war = no
+	}
+	when_taken = {
+		trigger_event = { id = dvg_caladero.53 }
+		set_variable = beornia_claimed
+	}
+}
 tupac_chiri = {
 	is_shown = {
 		exists = c:ADS
@@ -70,13 +61,24 @@ tupac_chiri = {
 	}
 	when_taken = {
 		if = {
-			limit = { exists = s:STATE_NEAR_COLLASUYU.region_state:NME }
+			limit = { 
+				exists = s:STATE_NEAR_COLLASUYU.region_state:NME
+				c:NME = { is_subject = no }
+			}
 			trigger_event = { id = dvg_caladero.133 }
 		}
-		else = {
+		else_if = {
 			limit = { exists = s:STATE_NEAR_COLLASUYU.region_state:SCA }
 			trigger_event = { id = dvg_caladero.127 }
 		}
+		else = {
+			limit = {
+				exists = s:STATE_NEAR_COLLASUYU.region_state:NME
+				c:NME = { is_subject_of = c:SCA }
+			}
+			trigger_event = { id = dvg_caladero.141 }
+		}
+		
 		set_variable = chiri_dealings
 	}
 	ai_chance = {
@@ -737,10 +739,11 @@ land_reform_act = {
 		NOT = { has_variable = land_reform_passed }
 	}
 	possible = {
-		NOT = { exists = c:INC }
+		NOT = { exists = c:TWT }
 		owns_entire_state_region = STATE_CUZCO
 	}
 	when_taken = {
 		trigger_event = { id = dvg_caladero.29 }
+		set_variable = land_reform_passed
 	}
 }
