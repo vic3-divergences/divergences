@@ -1,0 +1,167 @@
+﻿je_mahdist_revolt = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	group = je_group_historical_content
+
+	immediate = {
+		set_variable = {
+			name = mahdi_var
+			value = 0
+		}
+	}
+
+	fail = {
+		scope:journal_entry = {
+			is_goal_complete = yes
+		}
+	}
+
+	on_fail = {
+		create_country = {
+			tag = SUD
+			origin = this
+
+			state = s:STATE_BLUE_NILE.region_state:ETH
+			state = s:STATE_DONGOLA.region_state:ETH
+			state = s:STATE_KORDOFAN.region_state:ETH
+		}
+		hidden_effect = {
+		c:SUD = {
+			activate_law = law_type:law_theocracy
+			create_character = {
+				historical = yes
+				first_name = Mehmet
+				last_name = al_Mahdi
+				ruler = yes
+				is_general = yes
+				age = 42
+				interest_group = ig_devout
+				ig_leader = yes
+				ideology = ideology_theocrat
+				traits = {
+					arrogant
+					imperious
+					popular_commander
+				}
+			}
+		}
+		create_diplomatic_play = {
+			target_country = c:SUD
+			
+			war = yes
+			
+			type = dp_annex_war
+			
+			add_war_goal = {
+				holder = c:SUD
+				type = humiliation
+				target_country = c:ETH
+			}
+		}
+		}
+	}
+
+	complete = {
+		has_law = law_type:law_freedom_of_conscience
+	}
+	
+    invalid = {
+		NOT = { owns_entire_state_region = STATE_BLUE_NILE }
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					any_scope_state = {
+						radical_fraction = { 
+							value >= 0.25
+							culture = cu:sudanese
+						}
+					}
+				}
+				change_variable = {
+					name = mahdi_var
+					add = 10
+				}
+			}
+			if = {
+				limit = {
+					any_scope_state = {
+						radical_fraction = { 
+							value >= 0.50
+							culture = cu:sudanese
+						}
+					}
+				}
+				change_variable = {
+					name = mahdi_var
+					add = 10
+				}
+			}
+
+			clamp_variable = { name = mahdi_var max = 100 min = 0 }
+		}
+	}
+
+	current_value = {
+		value = root.var:mahdi_var
+	}
+
+	goal_add_value = {
+		value = 100
+	}
+	
+	progressbar = yes
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+
+je_religion_ethiopia = {
+	icon = "gfx/interface/icons/event_icons/event_morocco_independence.dds"
+
+	group = je_group_historical_content
+
+	immediate = {
+	}
+
+	complete = {
+		owns_entire_state_region = STATE_ERITREA
+	}
+
+	on_complete = {
+
+	}
+
+	timeout = 3500
+
+	on_timeout = {
+		ruler = { kill_character = yes }
+		set_state_religion = rel:oriental_orthodox
+		add_radicals = {
+			value = 0.5
+			culture = cu:sudanese
+		}
+		create_country = {
+			tag = AMT 
+			origin = THIS 
+
+			state = s:STATE_ERITREA.region_state:ETH
+			state = s:STATE_GONDER.region_state:ETH
+		}
+		create_diplomatic_play = {
+			target_country = c:AMT
+			
+			type = dp_annex_war
+			
+			add_war_goal = {
+				holder = c:AMT
+				type = humiliation
+				target_country = c:ETH
+			}
+		}
+	}
+
+	weight = 100
+	should_be_pinned_by_default = yes
+}
