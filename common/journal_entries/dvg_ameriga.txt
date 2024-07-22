@@ -119,6 +119,9 @@ je_ameriga_unite = {
 	trigger_event = { id = dvg_ameriga.4 popup = yes }
 		
 	}
+	invalid = {
+		has_global_variable = amerigan_culture
+	}
 	should_be_pinned_by_default = yes
 
 }
@@ -262,66 +265,104 @@ je_south_america_migration = {
 	should_be_pinned_by_default = yes
 }
 
-je_ameriga_atlantia = {
-    icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+je_amerigan_nation_building = {
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
 
-	group = je_group_foreign_affairs
-    
-    is_shown_when_inactive = {
-        OR = {
-            country_has_primary_culture = cu:atlantian
-            country_has_primary_culture = cu:lotharian
+	group = je_group_historical_content
+
+	is_shown_when_inactive = {
+		NOT = {
 			country_has_primary_culture = cu:amazonien
-			country_has_primary_culture = cu:antarctican
-        }
-		has_technology_researched = nationalism
-        
-		
-    }
-    possible = {
+		}
+		exists = c:AME
+		c:AME = ROOT
+	}
+	possible = {
+		has_technology_researched = pan-nationalism
 		OR = {
-        has_technology_researched = pan-nationalism
+			NOT = {
+				exists = c:AMA
+			}
+			NOT = {
+				exists = c:LOT
+			}
+			NOT = {
+				exists = c:ATL
+			}
+			NOT = {
+				exists = c:EQX
+			}
+		}
+	}
+
+	immediate = {
+		
+		cu:lotharian = {
+			save_scope_as = atlantian_culture
+		}
+		cu:atlantian = {
+			save_scope_as = lotharian_culture
+		}
+		cu:equinoxien = {
+			save_scope_as = equinoxien_culture
+		}
+		cu:antarctican = {
+			save_scope_as = antarctican_culture
+		}
+		cu:amerigan = {
+			save_scope_as = amerigan_culture
+		}
+	}
+
+	complete = {
+		has_technology_researched = pan-nationalism
+		custom_tooltip = {
+			text = je_amerigan_nation_building_integrate_equinoxien_complete_tt
+			has_variable = equinoxiens_integrated
+		}
+		custom_tooltip = {
+			text = je_amerigan_nation_building_integrate_lotharian_complete_tt
+			has_variable = lotharians_integrated
+		}
+		custom_tooltip = {
+			text = je_amerigan_nation_building_integrate_atlantian_complete_tt
+			has_variable = atlantians_integrated
+		}
+		custom_tooltip = {
+			text = je_amerigan_nation_building_integrate_antarctican_complete_tt
+			has_variable = antarcticans_integrated
+		}
+	}
+
+	on_complete = {
+		trigger_event = { id = dvg_ameriga.7 }
+		set_global_variable = amerigan_culture
+		add_loyalists = {
+			value = 0.20
+		}
+		add_modifier = {
+			name = dvg_nation_built
+		}
+	}
+
+	fail = {
 		AND = {
-			has_technology_researched = nationalism
-			country_has_primary_culture = cu:atlantian
-			owns_entire_state_region = STATE_COTE_DU_CAFE
+			exists = c:AMA
+			exists = c:LOT
+			exists = c:ATL
+			exists = c:EQX
 		}
-		}
-        OR = {
-            country_has_primary_culture = cu:lotharian
-			country_has_primary_culture = cu:amazonien
-			country_has_primary_culture = cu:antarctican
-        }
-       
-    }
-    immediate = {
-        trigger_event = { id = dvg_atlantia.16 popup = yes }
-    }
-    complete = {
-        custom_tooltip = {
-            text = formed_amerigan_federation_tt
-            c:AME ?= this
-        }
-    }
-    on_complete = {
-        #trigger_event = { id = andean_federation.2 popup = yes }
-       
-    }
-    fail = {
-        OR = {
-            NOT = {
-                country_has_primary_culture = cu:atlantian
-                country_has_primary_culture = cu:lotharian
-				country_has_primary_culture = cu:antarctican
-            }
-            #custom_tooltip = {
-                #text = has_rejected_andean_federation_tt
-                #has_variable = rejected_andean_federation
-            #}
-        }
-    }
 
-    weight = 1000
+	}
 
-    should_be_pinned_by_default = yes
+	
+
+	scripted_button = je_amerigan_nation_building_integrate_equinoxien
+	scripted_button = je_amerigan_nation_building_integrate_lotharian
+	scripted_button = je_amerigan_nation_building_integrate_atlantian
+	scripted_button = je_amerigan_nation_building_integrate_antarctican
+
+	weight = 100
+
+	should_be_pinned_by_default = yes
 }

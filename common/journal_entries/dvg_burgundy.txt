@@ -1,0 +1,1278 @@
+﻿je_queen_anne = {
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	should_be_pinned_by_default = yes
+
+	group = je_group_internal_affairs
+
+	possible = {
+	}
+
+	immediate = {
+		
+	}
+
+	complete = {
+		
+		NOT = {
+			ruler = {
+				has_variable = queen_anne_var
+			}
+		}
+	}
+
+	on_complete = {
+		trigger_event = {
+			id = dvg_burgundy.19
+		}
+	}
+	fail = {
+		any_interest_group = {
+			has_ideology = ideology:ideology_liberal
+			is_powerful = yes
+			ig_approval <= -20
+			is_insurrectionary = yes 
+		}
+		
+		revolution_progress_high = yes
+	}
+	on_fail = {
+		trigger_event = {
+			id = dvg_burgundy.18
+		}
+		if = {
+			limit = {
+				ruler = {
+					has_trait = immortal
+				}
+			}
+			ruler = {
+				remove_trait = immortal
+			}
+		}
+		
+	}
+	invalid = {
+		NOT = {
+			has_law = law_type:law_monarchy
+		}
+	}
+	on_invalid = {
+		every_scope_character = {
+			limit = {
+				has_trait = immortal
+			}
+			remove_trait = immortal
+		}
+	}
+
+}
+
+je_anism = {
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	should_be_pinned_by_default = yes
+
+	group = je_group_internal_affairs
+
+	is_shown_when_inactive = {
+		exists = c:BRG
+		c:BRG = ROOT
+		any_scope_character = {
+			has_variable = jean_var
+		}
+	}
+
+	possible = {
+		OR = {
+			has_global_variable = jean_time
+			AND = {
+				year > 1843
+				ruler = {
+					has_variable = jean_var
+				}
+			}
+		}
+	}
+
+
+	immediate = {
+		if = {
+			limit = {
+				NOT = {
+					has_global_variable = jean_time
+				}
+			}
+			trigger_event = dvg_burgundy.6
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_variable = dvg_je_an_var
+				}
+			
+			}
+			set_variable = dvg_je_an_var
+		}
+	}
+
+	complete = {
+		OR = {
+			scope:journal_entry = { is_goal_complete = yes }
+			var:dvg_je_an_var = {
+				value >= 10
+			}
+		}
+		has_global_variable = jean_coup
+
+	}
+
+	on_complete = {
+		#Jeanist Victory
+		trigger_event = {
+			id = dvg_burgundy.34
+		}
+		if = {
+			limit = {
+				any_scope_character = {
+					has_trait = immortal
+				}
+			}
+			every_scope_character = {
+				remove_trait = immortal
+
+			}			
+		}
+	}
+	fail = {
+		OR = {
+			NOT = {
+				has_law = law_type:law_monarchy
+			}
+			AND = {
+				var:dvg_je_an_var = {
+					value <= 2
+				}
+				has_global_variable = jean_coup
+
+			}
+			
+
+		}
+		
+	}
+	on_fail = {
+		#Palriamentary Victory
+		trigger_event = {
+			id = dvg_burgundy.32
+		}
+		if = {
+			limit = {
+				any_scope_character = {
+					has_trait = immortal
+				}
+			}
+			every_scope_character = {
+				remove_trait = immortal
+
+			}			
+		}
+	}
+	current_value = {
+		value = var:dvg_je_an_var
+	}
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					ig:ig_landowners = {
+						is_powerful = yes
+						is_in_government = yes
+						ig_approval >= 0 
+					}
+				NOT = {
+					has_variable = happy_landowners
+				}
+				}
+				change_variable = {
+					name = dvg_je_an_var
+					add = 2
+				}
+				set_variable = happy_landowners
+			}
+			if = {
+				NOT = {
+					
+				}
+				limit = {
+					ig:ig_landowners = {
+							is_powerful = no
+							is_in_government = no
+							ig_approval >= 0 
+						}
+					
+				
+					has_variable = happy_landowners
+				
+				}
+				change_variable = {
+					name = dvg_je_an_var
+					subtract = 2
+				}
+				remove_variable = happy_landowners
+			}
+			if = {
+				limit = {
+					ig:ig_petty_bourgeoisie = {
+						is_marginal = no
+						is_in_government = yes
+						ig_approval >= 0 
+					}
+				NOT = {
+					has_variable = happy_bougie
+				}
+				}
+				change_variable = {
+					name = dvg_je_an_var
+					add = 1
+				}
+				set_variable = happy_bougie
+			}
+			if = {
+				NOT = {
+					
+				}
+				limit = {
+					ig:ig_petty_bourgeoisie = {
+							is_marginal = yes
+							is_in_government = no
+							ig_approval >= 0 
+						}
+					
+				
+					has_variable = happy_bougie
+				
+				}
+				change_variable = {
+					name = dvg_je_an_var
+					subtract = 1
+				}
+				remove_variable = happy_bougie
+			}
+			if = {
+				limit = {
+					ig:ig_landowners = {
+						is_powerful = yes
+						ig_approval <= 0 
+					}
+				NOT = {
+					has_variable = angry_industrialists
+				}
+				}
+				change_variable = {
+					name = dvg_je_an_var
+					subtract = 2
+				}
+				set_variable = angry_industrialists
+			}
+			if = {
+				
+				limit = {
+					OR = {
+						ig:ig_industrialists = {
+							is_powerful = no
+						}
+						ig:ig_industrialists = {
+							ig_approval >= 0 
+						}
+					}
+					
+					
+				
+					has_variable = angry_industrialists
+				
+				}
+				change_variable = {
+					name = dvg_je_an_var
+					add = 2
+				}
+				remove_variable = angry_industrialists
+			}
+			
+			if = {
+				limit = {
+					NOT = {
+						has_global_variable = jean_coup
+					}
+					year >= 1853
+					OR = {
+						var:dvg_je_an_var = {
+							value >= 10
+						}
+						var:dvg_je_an_var = {
+							value <= 0
+						}
+						any_interest_group = {
+							is_marginal = no
+							is_insurrectionary = yes
+						}
+					}
+
+				}
+				trigger_event = {
+					id = dvg_burgundy.31
+				}
+				
+			}
+			if = {
+				limit = {
+					ig:ig_intelligentsia = {
+						is_marginal = no
+						ig_approval <= -10
+					}
+				NOT = {
+					has_variable = angry_intelligentsia
+				}
+				}
+				change_variable = {
+					name = dvg_je_an_var
+					add = 1
+				}
+				set_variable = angry_intelligentsia
+			}
+			if = {
+				NOT = {
+					
+				}
+				limit = {
+					OR = {
+						ig:ig_intelligentsia = {
+							is_marginal = yes
+						}
+						ig:ig_intelligentsia = {
+							ig_approval >=10
+						}
+					}
+					
+					
+				
+					has_variable = angry_intelligentsia
+				
+				}
+				change_variable = {
+					name = dvg_je_an_var
+					subtract = 1
+				}
+				remove_variable = angry_intelligentsia
+			}
+			if = {
+				limit = {
+					exists = c:HRE
+					NOT = {
+						has_variable = hre_exists
+					}
+				}
+				change_variable = {
+					name = dvg_je_an_var
+					add = 1
+				}
+				set_variable = hre_exists
+			}
+			if = {
+				limit = {
+					has_law = law_type:law_autocracy
+					NOT = {
+					has_variable = brg_autocracy
+					any_interest_group = {
+						is_insurrectionary = yes
+					}
+					}
+				}
+				change_variable = {
+					name = dvg_je_an_var
+					add = 4
+				}
+				set_variable = brg_autocracy
+			}
+			if = {
+				limit = {
+					has_law = law_type:law_national_supremacy
+					NOT = {
+					has_variable = brg_nationality
+
+					}
+				}
+				change_variable = {
+					name = dvg_je_an_var
+					add = 2
+				}
+				set_variable = brg_nationality
+			}
+			if = {
+				limit = {
+					has_law = law_type:law_ethnostate
+					NOT = {
+					has_variable = brg_nationality
+
+					}
+				}
+				change_variable = {
+					name = dvg_je_an_var
+					add = 2
+				}
+				set_variable = brg_nationality
+			}
+			
+		}
+
+
+	}
+	on_yearly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					is_player = yes
+					any_interest_group = {
+						leader = {
+							has_ideology = ideology:ideology_republican_leader
+						}
+						is_powerful = yes
+					}
+				}
+				change_variable = {
+					name = dvg_je_an_var
+					subtract = 1
+				}
+				set_variable = brg_republican
+			}
+			if = {
+				limit = {
+					is_player = yes
+					any_interest_group = {
+						leader = {
+							has_ideology = ideology:ideology_royalist
+						}
+						is_powerful = yes
+					}
+				}
+				change_variable = {
+					name = dvg_je_an_var
+					add = 1
+				}
+				set_variable = brg_monarchist
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_global_variable = pinto_affair
+						has_global_variable = jean_time
+						exists = c:RHI
+					}
+				}
+				trigger_event = {
+					id = dvg_burgundy.24
+				}
+			}
+		}
+	}
+	invalid = {
+		NOT = {
+			any_scope_character = {
+				has_ideology = ideology:ideology_jeanist_leader
+			}
+		}
+	}
+	
+	on_invalid = {
+		trigger_event = {
+			id = dvg_burgundy.36
+		}
+		if = {
+			limit = {
+				any_scope_character = {
+					has_trait = immortal
+				}
+			}
+			every_scope_character = {
+				remove_trait = immortal
+
+			}			
+		}
+	}
+	goal_add_value = {
+		add = 10
+	}
+	timeout = 3850
+	on_timeout = {
+		trigger_event = {
+			id = dvg_burgundy.31
+		}
+		if = {
+			limit = {
+				any_scope_character = {
+					has_trait = immortal
+				}
+			}
+			every_scope_character = {
+				remove_trait = immortal
+
+			}			
+		}
+	}
+	progressbar = yes
+
+}
+je_rhine_burgundy = {
+	icon = "gfx/interface/icons/invention_icons/nationalism.dds"
+
+	group = je_group_internal_affairs
+
+	is_shown_when_inactive = {
+		country_has_primary_culture = cu:burgundian
+		any_scope_state = {
+			state_region = {
+				is_homeland = cu:rheinish
+			}
+		}
+	}
+
+	possible = {
+		has_technology_researched = nationalism
+	}
+
+	immediate = {
+		set_variable = {
+			name = dvg_burg_rhine_var
+			value = 0
+		}
+	}
+	current_value = {
+		value = var:dvg_burg_rhine_var
+	}
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					has_technology_researched = nationalism
+				}
+				change_variable = {
+					name = dvg_burg_rhine_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					cu:rheinish = {
+						culture_is_discriminated_in = ROOT
+					}
+				}
+				change_variable = {
+					name = dvg_burg_rhine_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					any_scope_state = {
+						has_modifier = great_famine_modifier
+						state_region = {
+							is_homeland = rheinish
+						}
+					}
+				}
+				change_variable = {
+					name = dvg_burg_rhine_var
+					add = 2
+				}
+			}
+			if = {
+				limit = {
+					is_ai = yes 
+				}
+				change_variable = {
+					name = dvg_burg_rhine_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					has_global_variable = dvg_bav_second_german_council
+				}
+				trigger_event = {
+					id = dvg_burgundy.5
+				}
+				change_variable = {
+					name = dvg_burg_rhine_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_global_variable = dvg_cologne_meeting
+					}
+					this = { var:dvg_burg_rhine_var > 60 }
+				}
+				trigger_event = {
+					id = dvg_burgundy.10
+				}
+				change_variable = {
+					name = dvg_burg_rhine_var
+					add = 2
+				}
+				set_global_variable = dvg_cologne_meeting
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_variable = union_bill
+					}
+					this = { var:dvg_burg_rhine_var > 40 }
+				}
+				trigger_event = {
+					id = dvg_burgundy.7
+				}
+				
+				set_variable = union_bill
+			}
+			
+		}
+	}
+
+
+	complete = {
+		scope:journal_entry = { is_goal_complete = yes }
+		
+	}
+
+	on_complete = {
+		trigger_event = {
+			id = dvg_burgundy.11
+		}
+	}
+	fail = {
+		cu:rheinish = {
+			NOT = {
+				culture_is_discriminated_in = ROOT
+			}
+		}
+		has_law = law_type:law_freedom_of_conscience
+		
+	}
+	on_fail = {
+		trigger_event = {
+			id = dvg_burgundy.17
+		}
+		
+	}
+	goal_add_value = {
+		add = 100
+	}
+	invalid = {
+		NOT = {
+			any_scope_state = {
+				state_region = {
+					is_homeland = rheinish
+				}
+			}
+		}
+	}
+
+	should_be_pinned_by_default = yes
+	progressbar = yes
+
+}
+je_netherlands_burgundy = {
+	icon = "gfx/interface/icons/invention_icons/pan_nationalism.dds"
+
+	group = je_group_internal_affairs
+
+	is_shown_when_inactive = {
+		country_has_primary_culture = cu:burgundian
+		any_scope_state = {
+			state_region = {
+				is_homeland = cu:rheinish
+			}
+		}
+	}
+
+	possible = {
+		has_technology_researched = nationalism
+	}
+
+	immediate = {
+		set_variable = {
+			name = dvg_burg_nether_var
+			value = 0
+		}
+	}
+	current_value = {
+		value = var:dvg_burg_nether_var
+	}
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					has_technology_researched = nationalism
+				}
+				change_variable = {
+					name = dvg_burg_nether_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					cu:dutch = {
+						culture_is_discriminated_in = ROOT
+					}
+				}
+				change_variable = {
+					name = dvg_burg_nether_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					is_ai = yes 
+				}
+				change_variable = {
+					name = dvg_burg_nether_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					any_scope_state = {
+						has_modifier = great_famine_modifier
+						state_region = {
+							is_homeland = dutch
+						}
+					}
+				}
+				change_variable = {
+					name = dvg_burg_nether_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					any_scope_state = {
+						devastation >= 0.15 
+						state_region = {
+							is_homeland = dutch
+						}
+					}
+				}
+				change_variable = {
+					name = dvg_burg_nether_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					has_modifier = modifier_reclaiming_land
+				}
+				
+				change_variable = {
+					name = dvg_burg_nether_var
+					subtract = 1
+				}
+			}
+			if = {
+				limit = {
+					ig:ig_industrialists = {
+						ig_approval >= 10 
+					}
+					
+				}
+				
+				change_variable = {
+					name = dvg_burg_nether_var
+					subtract = 1
+				}
+			}
+			if = {
+				limit = {
+					ig:ig_industrialists = {
+						ig_approval <= -10 
+					}
+					
+				}
+				
+				change_variable = {
+					name = dvg_burg_nether_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					
+					NOT = {
+						has_variable = state_language_act
+						has_law = law_type:law_ethnostate
+						cu:dutch = {
+							culture_is_discriminated_in = ROOT
+						}
+						cu:rheinish = {
+							culture_is_discriminated_in = ROOT
+						}
+						exists = c:RHI
+						exists = c:NET
+					}
+					has_technology_researched = pan-nationalism
+					
+				}
+				set_variable = state_language_act
+				trigger_event = {
+					id = dvg_burgundy.25
+				}
+			}
+			
+			
+		}
+	}
+	complete = {
+		scope:journal_entry = { is_goal_complete = yes }
+		NOT = {
+			any_scope_state = {
+				devastation >= 0.15 
+				state_region = {
+					is_homeland = dutch
+				}
+			}
+			any_scope_state = {
+				has_modifier = great_famine_modifier
+				state_region = {
+					is_homeland = dutch
+				}
+			}
+			cu:dutch = {
+				NOT = {
+					culture_is_discriminated_in = ROOT
+				}
+			}
+		}
+		
+	}
+
+	on_complete = {
+		trigger_event = {
+			id = dvg_burgundy.43
+		}
+	}
+	fail = {
+		OR = {
+			
+			AND = {
+				ig:ig_industrialists = {
+					ig_approval >= 10 
+				}
+				ig:ig_petty_bourgeoisie = {
+					ig_approval >= 10
+				}
+				has_technology_researched = pan-nationalism
+				cu:dutch = {
+					NOT = {
+						culture_is_discriminated_in = ROOT
+					}
+				}
+			}
+
+		}
+	}
+	on_fail = {
+		if = {
+			limit = {
+				
+				NOT = {
+					has_variable = state_language_act
+					has_law = law_type:law_ethnostate
+					cu:dutch = {
+						culture_is_discriminated_in = ROOT
+					}
+					cu:rheinish = {
+						culture_is_discriminated_in = ROOT
+					}
+					exists = c:RHI
+					exists = c:NET
+				}
+				has_technology_researched = pan-nationalism
+				
+			}
+			set_variable = state_language_act
+			trigger_event = {
+				id = dvg_burgundy.25
+			}
+		}
+		
+	}
+	goal_add_value = {
+		add = 100
+	}
+	invalid = {
+		OR = {
+			NOT = {
+				any_scope_state = {
+					state_region = {
+						is_homeland = dutch
+					}
+				}
+			}
+			exists = c:NET
+		}
+		
+	}
+
+	progressbar = yes
+	should_be_pinned_by_default = yes
+
+
+
+}
+
+je_unify_brg = {
+	icon = "gfx/interface/icons/event_icons/event_empty_chair.dds"
+
+	group = je_group_crises
+
+	
+
+	is_shown_when_inactive = {
+		exists = c:BRG
+		exists = c:PBG
+		c:BRG = ROOT
+	}
+
+	possible = {
+		is_diplomatic_play_enemy_of = PBG	
+		exists = c:PBG
+		PBG = ROOT
+	}
+	immediate = {
+		hidden_effect = {
+			
+			if = {
+				limit = {
+					c:BRG = ROOT
+				}
+				set_secret_goal = {
+					country = c:PBG
+					secret_goal = conquer
+				}
+			}
+		}
+	}
+
+	complete = {
+			custom_tooltip = {
+				text = burgundy_united_tt
+				NOT = {
+					exists = c:PBG
+				}
+			}
+	}
+
+	on_complete = {
+		ig:ig_petty_bourgeoisie = {
+			remove_ideology = ideology_meritocratic
+			add_ideology = ideology_jeanist
+		} 
+		ig:ig_landowners = {
+			remove_ideology = ideology_stratocratic
+			add_ideology = ideology_jeanist
+		} 
+		add_modifier = {
+			name = dvg_modifier_landowners_bolstered
+			months = 120
+			is_decaying = yes
+		}
+	}
+	on_yearly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					owns_entire_state_region = STATE_PICARDY
+					exists = c:DUA
+					exists = s:STATE_PICARDY.region_state:BRG
+					government_legitimacy <= 70 
+					s:STATE_PICARDY.region_state:BRG = {
+						turmoil >= 0.50 
+					}
+				}
+				s:STATE_PICARDY.region_state:BRG = {
+					set_state_owner = c:DUA
+				}
+			}
+		}
+	}
+
+	fail = {
+		NOT = {
+			any_character = {
+				NOT = {
+					has_ideology = ideology:ideology_jeanist_leader
+				}
+			}
+		}
+	}
+	on_fail = {
+		
+	}
+
+	timeout = 7300
+
+	on_timeout = {
+		if = {
+			limit = {
+				any_scope_state = {
+					is_capital = yes
+					state_region = {
+						is_homeland = cu:dutch
+					}
+				}
+				NOT = {
+					exists = c:NET
+				}
+			}
+			change_tag = NET
+		}
+		if = {
+			limit = {
+				exists = s:STATE_BURGUNDY.region_state:BRG
+				s:STATE_BURGUNDY.region_state:BRG = {
+					is_capital = yes
+				}
+				NOT = {
+					exists = c:BGY
+				}
+			}
+			change_tag = BGY
+		}
+	}
+	should_be_pinned_by_default = yes
+	inheritable = no
+}
+je_unify_pbg = {
+	icon = "gfx/interface/icons/event_icons/event_empty_chair.dds"
+
+	group = je_group_crises
+
+	
+
+	is_shown_when_inactive = {
+		country_has_primary_culture = cu:burgundian
+		exists = c:BRG
+		exists = c:PBG
+		
+	}
+
+	possible = {	
+		exists = c:PBG
+		c:PBG = ROOT
+		is_diplomatic_play_enemy_of = c:BRG
+	}
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					c:PBG = ROOT
+				}
+				set_secret_goal = {
+					country = c:BRG
+					secret_goal = conquer
+				}
+			}
+		}
+	}
+	on_yearly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					owns_entire_state_region = STATE_PICARDY
+					exists = c:DUA
+					exists = s:STATE_PICARDY.region_state:BRG
+					government_legitimacy <= 70 
+					s:STATE_PICARDY.region_state:BRG = {
+						turmoil >= 0.50 
+					}
+				}
+				trigger_event = {
+					id = dvg_burgundy.44
+				}
+			}
+		}
+	}
+
+	complete = {
+			custom_tooltip = {
+				text = burgundy_united_tt
+				NOT = {
+					exists = c:PBG
+				}
+			}
+	}
+
+	on_complete = {
+		change_tag = BRG
+	}
+
+
+
+	timeout = 7300
+
+	on_timeout = {
+		if = {
+			limit = {
+				any_scope_state = {
+					is_capital = yes
+					state_region = {
+						is_homeland = cu:dutch
+					}
+				}
+				NOT = {
+					exists = c:NET
+				}
+			}
+			change_tag = NET
+		}
+		if = {
+			limit = {
+				exists = s:STATE_BURGUNDY.region_state:BRG
+				s:STATE_BURGUNDY.region_state:BRG = {
+					is_capital = yes
+				}
+				NOT = {
+					exists = c:BGY
+				}
+			}
+			change_tag = BGY
+		}
+	}
+	should_be_pinned_by_default = yes
+	inheritable = no
+}
+je_reconquer_rhine = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	group = je_group_foreign_affairs
+
+	is_shown_when_inactive = {
+		exists = c:BRG
+		c:BRG = ROOT
+		NOT = {
+			owns_entire_state_region = STATE_RHINELAND
+		}
+	}
+	possible = {
+		OR = {
+			AND = {
+				exists = c:RHI
+				c:RHI = {
+					is_diplomatic_play_enemy_of = c:BRG
+				}
+			}
+			owns_entire_state_region = STATE_RHINELAND
+			NOT = {
+				exists = c:RHI
+			}
+		}
+	}
+
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					exists = c:RHI
+				}
+				set_secret_goal = {
+					country = c:RHI
+					secret_goal = conquer
+				}
+			}
+		}
+		s:STATE_RHINELAND = {
+			add_claim = ROOT
+		}
+	}
+
+	
+
+	complete = {
+		OR = {
+			owns_entire_state_region = STATE_RHINELAND
+			NOT = {
+				exists = c:RHI
+			}
+		}
+	}
+
+	on_complete = {
+		
+		trigger_event = { id = dvg_burgundy.16 }
+		if = {
+			limit = {
+				NOT = {
+					has_global_variable = pinto_affair
+				}
+			}
+			trigger_event = { id = dvg_burgundy.22 days = 100 }
+		}
+	}
+	should_be_pinned_by_default = yes
+}
+
+je_rhine_independence = {
+	icon = "gfx/interface/icons/invention_icons/nationalism.dds"
+
+
+	group = je_group_foreign_affairs
+
+	is_shown_when_inactive = {
+		is_subject = yes
+		exists = c:RHI
+		c:RHI = ROOT
+	}
+	possible = {
+		OR = {
+			is_diplomatic_play_committed_participant = yes
+			has_technology_researched = nationalism
+		}
+		
+	}
+
+	immediate = {
+		trigger_event = {
+			id = dvg_burgundy.14
+		}
+	}
+
+	
+
+	complete = {
+		is_subject = no
+		is_at_war = no
+		is_diplomatic_play_committed_participant = no
+	}
+
+	on_complete = {
+
+		
+		if = {
+			limit = {
+				is_country_type = unrecognized
+			}
+			set_country_type = recognized
+		}
+		
+		trigger_event = {
+			id = dvg_burgundy.15
+		}
+
+		
+		
+
+		
+	}
+	should_be_pinned_by_default = yes
+}
+
+
+

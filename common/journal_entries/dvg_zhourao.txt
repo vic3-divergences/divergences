@@ -4,11 +4,10 @@
 	group = je_group_internal_affairs
 
 	complete = {
-		OR = {
-		
 		custom_tooltip = {
 			text =  dvg_yaluo_reform_tt
 			OR = {
+			scope:journal_entry = { is_goal_complete = yes }
 			has_variable = dvg_among_kongsus
 			has_war_with = c:MJN
 			any_country = {
@@ -18,22 +17,38 @@
 			}
 			}
 		}
-		}
+		
 	}
 
 	fail = {
+		
 	}
 	
 	on_monthly_pulse = {
-		dvg_zhourao.6 # The Northern Hui Defect!
-		dvg_zhourao.8 # good tidings
+		
 	}
 
 	on_complete = {
 		set_global_variable = hui_defected
+		trigger_event = {
+			id = dvg_zhourao.6 # The Northern Hui Defect!
+		}
+		every_country = {
+			limit = {
+			is_revolutionary = yes
+			country_definition = root.country_definition
+			owns_entire_state_region = STATE_XINXIANG
+			country_has_primary_culture = cu:zhourao
+			}
+			c:MJN = { annex = prev }
+		}
+
 	}
 
 	on_fail = {
+		trigger_event = {
+			id = dvg_zhourao.8 #Good Tidings
+		}
 	}
 
 	current_value = {
@@ -42,6 +57,11 @@
 
 	goal_add_value = {
 		add = 8
+	}
+	invalid = {
+		NOT = {
+			exists = c:MJN
+		}
 	}
 
 	progressbar = yes
@@ -144,7 +164,7 @@ je_red_sultan = {
 			OR = {
 			has_variable = dvg_sultan_can_die
 			ruler = {
-				age > 70
+				age >= 70
 			}
 			
 			}
@@ -257,22 +277,61 @@ je_red_sultan = {
 				}
 				set_variable = zsa_jap_subject
 			}
+			if = {
+				limit = {
+					ruler = {
+						age >= 65
+						has_trait = immortal
+					}
+				}
+				ruler = {
+					remove_trait = immortal
+				}
+			}
 			
 		}
 	}
 	on_complete = {
 		trigger_event = { id = dvg_zhourao.704 popup = yes }
+		every_scope_character = {
+			limit = {
+				has_trait = immortal
+			}
+			remove_trait = immortal
+		}
 	}
 	
     on_fail = {
 		trigger_event = { id = dvg_zhourao.705 popup = yes }
+		every_scope_character = {
+			limit = {
+				has_trait = immortal
+			}
+			remove_trait = immortal
+		}
 	}
 
 	invalid = {
 		NOT = {  has_law = law_type:law_monarchy  }
 	}
 	on_invalid = {
-		
+		every_scope_character = {
+			limit = {
+				has_trait = immortal
+			}
+			remove_trait = immortal
+		}
+	}
+	timeout = 7300
+
+	on_timeout = {
+		trigger_event = { id = dvg_zhourao.705 popup = yes }
+		every_scope_character = {
+			limit = {
+				has_trait = immortal
+			}
+			remove_trait = immortal
+		}
 	}
 
 	current_value = {
@@ -918,3 +977,93 @@ je_zhrzsa_indonesia_final_step = {
 }
 
 
+je_pillager_prince_zhourao = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	group = je_group_internal_affairs
+
+	scripted_button = dvg_pillger_prince_button
+
+	is_shown_when_inactive = {
+		any_character = {
+			has_variable = pillager_prince
+		}
+		country_has_primary_culture = cu:zhourao
+	}
+	possible = {
+		any_scope_character = {
+			has_variable = pillager_prince
+		}
+	}
+
+	immediate = {
+
+		if = {
+			limit = {
+				NOT = {
+					any_scope_character = {
+						has_variable = pillager_prince
+					}
+				}
+			}
+			random_character = {
+				limit = {
+					has_variable = pillager_prince
+				}
+				transfer_character = ROOT
+			}
+		}
+		
+	}
+	
+
+
+	on_monthly_pulse = {
+
+		random_events = {
+
+			
+			25 =  dvg_zhourao.1201
+
+		}
+	}
+
+	complete = {
+		custom_tooltip = {
+			text = pillager_prince_zhourao_tt
+			NOT = {
+				any_character = {
+					has_variable = pillager_prince
+				}
+			}
+		}
+		
+		
+	}
+	on_complete = {
+		trigger_event = {
+			id = dvg_zhourao.1202
+		}
+	}
+
+	fail = {
+		any_scope_state = {
+			is_capital = yes
+			turmoil >= 0.75  
+		}
+		revolution_progress_high = yes
+		
+	}
+
+	on_fail = {
+		trigger_event = {
+			id = dvg_zhourao.1203
+		}
+	}
+
+
+	#inheritable = no
+
+	weight = 5000
+	should_be_pinned_by_default = yes
+}

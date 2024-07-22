@@ -58,9 +58,7 @@ dvg_dzungaria.1 = {  #Dzungar intro
 		add_journal_entry = {
 			type = je_dzungar_europe
 		}
-		add_journal_entry = {
-			type = je_dzungar_society_pn
-		}
+		
 		add_modifier = {
 			name = realpolitik
 			days = 5475
@@ -109,10 +107,10 @@ dvg_dzungaria.2 = { #Split Dzungaria up into warlord states
 		s:STATE_ULIASTAI = {
 					add_claim = c:DZU
 				}
-		s:STATE_SEMIRECHE = {
+		s:STATE_DVG_SEMIRECHE = {
 					add_claim = c:DZU
 				}
-		s:STATE_AKMOLINSK = {
+		s:STATE_DVG_AKMOLINSK = {
 					add_claim = c:DZU
 				}
 		s:STATE_UZBEKIA = {
@@ -124,13 +122,13 @@ dvg_dzungaria.2 = { #Split Dzungaria up into warlord states
 				}
 	
 		if = {
-			limit = { exists = s:STATE_SEMIRECHE.region_state:DZU }
+			limit = { exists = s:STATE_DVG_SEMIRECHE.region_state:DZU }
 			create_country = { #Kazakhstan
 				tag = KAZ
 				origin = this
-				state = s:STATE_SEMIRECHE.region_state:DZU
-				state = s:STATE_AKMOLINSK.region_state:DZU
-				state = s:STATE_URALSK.region_state:DZU
+				state = s:STATE_DVG_SEMIRECHE.region_state:DZU
+				state = s:STATE_DVG_AKMOLINSK.region_state:DZU
+				state = s:STATE_DVG_URALSK.region_state:DZU
 				state = s:STATE_ASTRAKHAN.region_state:DZU
 				state = s:STATE_IDEL.region_state:DZU
 				state = s:STATE_BASHKORTOSTAN.region_state:DZU
@@ -141,12 +139,12 @@ dvg_dzungaria.2 = { #Split Dzungaria up into warlord states
 			}
 			c:KAZ = { save_scope_as = scope_KAZ }
 			if = {
-				limit = { exists = s:STATE_SEMIRECHE.region_state:DZU }
-				s:STATE_SEMIRECHE.region_state:DZU = { set_state_owner = c:KAZ }
+				limit = { exists = s:STATE_DVG_SEMIRECHE.region_state:DZU }
+				s:STATE_DVG_SEMIRECHE.region_state:DZU = { set_state_owner = c:KAZ }
 			}
 			if = {
-				limit = { exists = s:STATE_AKMOLINSK.region_state:DZU }
-				s:STATE_AKMOLINSK.region_state:DZU = { set_state_owner = c:KAZ }
+				limit = { exists = s:STATE_DVG_AKMOLINSK.region_state:DZU }
+				s:STATE_DVG_AKMOLINSK.region_state:DZU = { set_state_owner = c:KAZ }
 			}
 		}
 
@@ -776,7 +774,7 @@ dvg_dzungaria.4 = {  #Dzungar Religion?
 			religion = rel:sunni
 		}
 		ai_chance = {
-			base = 50
+			base = 99
 		}
 		
 	}
@@ -809,8 +807,12 @@ dvg_dzungaria.4 = {  #Dzungar Religion?
 			country = c:TIB
 			value = -35
 		}
+		change_relations = {
+			country = c:XIB
+			value = 15
+		}
 		ai_chance = {
-			base = 50
+			base = 1
 		}
 		
 	}
@@ -855,6 +857,13 @@ dvg_dzungaria.5 = {  #Dzungar conquer China
 		set_capital = STATE_BEIJING
 		custom_tooltip = {
 		text = claim_china_tt
+		set_variable = china_unifer
+		if = {
+			limit = {
+				is_ai = yes
+			}
+			set_strategy = ai_strategy_unify_china
+		}
 		every_state_region = {
 			limit = {
 			OR = {
@@ -894,7 +903,7 @@ dvg_dzungaria.5 = {  #Dzungar conquer China
 		
 	}
 }
-
+#West Expansion?
 dvg_dzungaria.6 = {
 	type = country_event
 	placement = ROOT
@@ -933,7 +942,7 @@ dvg_dzungaria.6 = {
 		default_option = yes
 		
 		if = {
-			limit = {owns_entire_state_region = STATE_CRIMEA }
+			limit = {owns_entire_state_region = STATE_DVG_CRIMEA }
 
 			add_primary_culture = cu:kirim
 		}
@@ -957,6 +966,12 @@ dvg_dzungaria.6 = {
 				add_homeland = cu:kalmyk
 			}
 		}
+		if = {
+			limit = {
+				is_ai = yes
+			}
+			set_strategy = ai_strategy_unify_russia
+		}
 		
 		
 		
@@ -975,9 +990,6 @@ dvg_dzungaria.6 = {
 			
 			save_scope_as = dzu_target
 			
-			
-				
-			
 			scope:dzu_scope = { create_diplomatic_play = {
 			
 				target_country = scope:dzu_target
@@ -993,10 +1005,6 @@ dvg_dzungaria.6 = {
 			}
 
 			}
-			
-			
-			
-			
 			
 	    }
 		ai_chance = {
@@ -1024,7 +1032,7 @@ dvg_dzungaria.6 = {
 		}
 		
 		if = {
-			limit = {owns_entire_state_region = STATE_CRIMEA }
+			limit = {owns_entire_state_region = STATE_DVG_CRIMEA }
 
 			add_primary_culture = cu:kirim
 		}
@@ -1111,5 +1119,231 @@ dvg_dzungaria.7 = {  #Dzungar Tibet Union
 		annex = c:TIB	
 		
 		
+	}
+}
+dvg_dzungaria.8 = {  #Tibet Dzungar Union
+	type = country_event
+	placement = ROOT
+
+	title = dvg_dzungaria.8.t
+	desc = dvg_dzungaria.8.d
+	flavor = dvg_dzungaria.8.f
+	
+	event_image = {
+		video = "gfx/event_pictures/asia_buddhism.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+	    
+	}
+	immediate = {
+		c:TIB = { save_scope_as = scope_TIB
+		
+		}
+		c:DZU = { save_scope_as = scope_DZU
+		ruler = {
+			save_scope_as = lama_scope
+		}
+		}
+
+		
+	}
+	
+	
+	
+	option = {
+		name = dvg_dzungaria.8.a
+		default_option = yes
+
+		scope:lama_scope = {
+			transfer_character = c:TIB
+			set_as_interest_group_leader = yes
+		}
+		
+
+		add_primary_culture = cu:mongol
+		every_country = {
+			if = {
+				limit = {
+					is_ai = yes			
+					OR = {
+					country_has_primary_culture = cu:mongol
+					country_has_primary_culture = cu:kalmyk
+					country_has_primary_culture = cu:tuvan
+					}
+					country_has_state_religion = rel:gelugpa
+					market = {
+						owner = ROOT
+					}
+				}			
+				root = { annex = prev }
+			}
+		}
+		add_loyalists = {
+			value = 0.30
+			religion = rel:gelugpa
+		}
+	}
+}
+
+dvg_dzungaria.9 = {  #Support Ma Separatism?
+	type = country_event
+	placement = ROOT
+
+	title = dvg_dzungaria.9.t
+	desc = dvg_dzungaria.9.d
+	flavor = dvg_dzungaria.9.f
+	
+	event_image = {
+		video = "gfx/event_pictures/asia_buddhism.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+	    
+	}
+	immediate = {
+		c:XIB = { save_scope_as = scope_XIB
+		
+		}
+		c:SHU = { save_scope_as = scope_SHU
+		
+		}
+		c:DZU = { save_scope_as = scope_SHU
+		
+		}
+
+		
+	}
+	
+	
+	
+	option = {
+		name = dvg_dzungaria.8.a
+		default_option = yes
+
+		c:XIB = {
+			trigger_event = {
+				id = dvg_dzungaria.10 days = 10
+			}
+		}
+	}
+	option = {
+		name = dvg_dzungaria.8.b
+
+		
+	}
+}
+
+dvg_dzungaria.10 = {  #Support Ma Separatism?
+	type = country_event
+	placement = ROOT
+
+	title = dvg_dzungaria.10.t
+	desc = dvg_dzungaria.10.d
+	flavor = dvg_dzungaria.10.f
+	
+	event_image = {
+		video = "gfx/event_pictures/asia_buddhism.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+	    
+	}
+	immediate = {
+		c:XIB = { save_scope_as = scope_XIB
+		
+		}
+		c:SHU = { save_scope_as = scope_SHU
+		
+		}
+		c:DZU = { save_scope_as = scope_SHU
+		
+		}
+
+
+
+		
+	}
+	
+	
+	
+	option = {
+		name = dvg_dzungaria.10.a
+		default_option = yes
+
+		make_independent = yes
+
+		c:DZU = {
+			create_diplomatic_pact = {
+				country = XIB
+				type = protectorate
+			}
+		}
+
+		create_diplomatic_play = {
+			type = dp_independence
+			target_country = c:SHU
+			
+		}
+		change_relations = {
+			country = c:DZU
+			value = 30
+		}
+		
+		
+
+		ai_chance = {
+			base = 100
+		}
+	}
+	option = {
+		name = dvg_dzungaria.10.b
+
+		create_diplomatic_play = {
+			type = dp_independence
+			target_country = c:SHU
+			
+		}
+		change_relations = {
+			country = c:DZU
+			value = 15
+		}
+
+		ai_chance = {
+			base = 1
+		}
+	}
+	option = {
+		name = dvg_dzungaria.10.c
+
+		change_relations = {
+			country = c:DZU
+			value = -15
+		}
+
+		ai_chance = {
+			base = 1
+		}
 	}
 }

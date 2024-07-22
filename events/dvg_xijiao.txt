@@ -1,0 +1,1244 @@
+﻿namespace = dvg_xijiao
+
+dvg_xijiao.1 = {
+	type = country_event
+	placement = scope:missionary_state
+
+	title = dvg_xijiao.1.t
+	desc = dvg_xijiao.1.d
+	flavor = dvg_xijiao.1.f
+
+	event_image = {
+		video = "southamerica_christianity"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_scales.dds"
+
+	duration = 3
+
+	trigger = {
+		# Fired by journal entry
+	}
+	immediate = {
+		set_variable = { name = missionary_works_counter value = 1 }
+		random_scope_state = {
+			limit = { 
+				is_incorporated = yes
+				any_scope_pop = {
+					NOT = {
+						religion = rel:taiping
+					}
+				}
+				any_neighbouring_state = {
+					state_region = {
+						OR = {
+							is_homeland = cu:han 
+							is_homeland = cu:hakka
+						}
+					}
+					
+				}
+			}
+			save_scope_as = missionary_state
+			
+			random_neighbouring_state = {
+				limit = {
+					state_region = {
+						OR = {
+							is_homeland = cu:han 
+							is_homeland = cu:hakka
+						}
+					}
+					owner = {
+						religion = {
+							has_discrimination_trait = christian
+						}
+					}
+				}
+				save_scope_as = treaty_port_scope
+				owner = {
+					save_scope_as = treaty_port_owner
+				}
+			}
+		}
+	}
+
+	option = {
+		name = dvg_xijiao.1.a
+		default_option = yes
+		scope:missionary_state = {
+			add_modifier = {
+				name = missionary_schools_hospitals
+				months = normal_modifier_time
+			}
+			
+			convert_population = {
+				target = rel:protestant
+				value = 0.05
+			}
+		}
+	}
+	option = {
+		name = dvg_xijiao.1.b
+		
+		add_loyalists = {
+			value = 0.10
+		}
+	}
+	
+}
+
+# The God Worshipping Society
+dvg_xijiao.2 = {
+	type = country_event
+	placement = scope:cult_state
+
+	title = dvg_xijiao.2.t
+	desc = dvg_xijiao.2.d
+	flavor = dvg_xijiao.2.f
+
+	event_image = {
+		video = "asia_union_leader"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
+
+	duration = 3
+	
+	cooldown = { months = very_long_modifier_time }
+
+	trigger = {
+	}
+
+	immediate = {
+		random_scope_state = {
+			limit = {
+				owner = ROOT
+			}
+			save_scope_as = cult_state
+			set_variable = {
+				name = cult_center
+			}
+		}
+	}
+	option = {
+		name = dvg_xijiao.2.a
+		scope:cult_state = {
+			# Already added when the Journal Entry activated, but we're going to remove it and add it again to make it visible to the player
+			hidden_effect = {
+				remove_modifier = god_worshippers
+			}
+			add_modifier = {
+				name = god_worshippers
+				months = short_modifier_time
+			}
+			add_modifier = {
+				name = dvg_xijao_missions
+			}
+			convert_population = {
+				target = rel:taiping value = 0.1
+			}
+			
+		}
+		if = {
+			limit = {
+				NOT = {has_journal_entry = je_xijao_missions_receive}
+			}
+			add_journal_entry = {
+				type = je_xijao_missions_receive
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_technology_researched = mass_communication
+				}
+			}
+			add_technology_researched = mass_communication
+		}
+		create_character = {
+			culture = cu:han
+			religion = rel:taiping
+			interest_group = ig_devout
+			ideology = ideology_xijiao_leader
+			is_agitator = yes
+			on_created = {
+				add_modifier = {
+					name = modifier_brother_of_christ
+					months = long_modifier_time
+				}
+			}
+		}
+	}
+}
+
+# Cult Grows
+# Repeatable
+dvg_xijiao.3 = {
+	type = country_event
+	placement = scope:cult_growth_state
+
+	title = dvg_xijiao.3.t
+	desc = dvg_xijiao.3.d
+	flavor = dvg_xijiao.3.f
+
+	event_image = {
+		video = "asia_union_leader"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
+
+	duration = 3
+
+	cooldown = { months = 6 }
+
+	trigger = {
+		any_scope_state = {
+			has_variable = cult_center
+			any_scope_pop = {
+				has_pop_religion = taiping
+			}
+			any_neighbouring_state = {
+				owner = ROOT
+				NOT = {
+					has_variable = cult_center
+				}
+				NOT = { is_capital = yes }
+				state_region = { 
+					OR = {
+						is_homeland = cu:han 
+						is_homeland = cu:hakka 
+					}
+				}
+			}
+		}
+	}
+	immediate = {
+		random_scope_state = {
+			limit = {
+				has_variable = cult_center
+				any_scope_pop = {
+					has_pop_religion = taiping
+				}
+				any_neighbouring_state = {
+					owner = ROOT
+					NOT = {
+						has_variable = cult_center
+					}
+					state_region = { 
+						OR = {
+							is_homeland = cu:han 
+							is_homeland = cu:hakka
+						}
+					}
+					NOT = { is_capital = yes }
+				}
+			}
+			save_scope_as = cult_center
+			random_neighbouring_state = {
+				limit = {
+					owner = ROOT
+					NOT = {
+						has_variable = cult_center
+					}
+					state_region = { 
+						OR = {
+							is_homeland = cu:han 
+							is_homeland = cu:hakka 
+						}
+					}
+					NOT = { is_capital = yes }
+				}
+				save_scope_as = cult_growth_state
+				set_variable = {
+					name = cult_center
+				}
+			}
+		}
+	}
+	option = {
+		name = dvg_xijiao.3.a
+		scope:cult_growth_state = {
+			add_modifier = {
+				name = god_worshippers
+				months = normal_modifier_time
+			}
+			add_modifier = {
+				name = dvg_xijao_missions
+			}
+			convert_population = {
+				target = rel:taiping value = 0.1
+			}
+		}
+		
+	}
+}
+
+# dvg_xijao Kingdom spawn
+dvg_xijiao.4 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_xijiao.4.t
+	desc = dvg_xijiao.4.d
+	flavor = dvg_xijiao.4.f
+
+	event_image = {
+		video = "asia_union_leader"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		NOT = {
+
+			is_diplomatic_play_enemy_of = c:TPG
+		}
+	}
+	immediate = {
+		hidden_effect = {
+			
+		}
+		random_scope_state = {
+			
+			limit = {
+				state_region = {
+					is_homeland = cu:han
+					
+				}
+				OR = {
+				has_variable = cult_center
+				has_modifier = dvg_xijao_missions
+				has_modifier = god_worshippers
+				any_neighbouring_state = {
+					owner = c:TPG
+				}
+				
+				turmoil >= .33
+				}
+				owner = ROOT
+				is_capital = no
+				any_scope_pop = {
+					has_pop_religion = taiping
+				}
+				
+			
+			}
+		
+		set_state_owner = c:TPG
+
+
+		c:TPG = { 
+			save_scope_as = dvg_xijao_kingdom_scope
+			set_variable = { name = gold_transfer value = ROOT.gold_reserves } #This shouldn't be in the immediate, but it will throw a million errors if you put it somewhere else. DO NOT TOUCH.
+			change_variable = { name = gold_transfer divide = 3 }
+			set_variable = { name = gold_transfer_nil value = var:gold_transfer }
+			change_variable = { name = gold_transfer_nil divide = -1 }
+		}
+		
+	}
+	every_scope_state = {
+		
+		limit = {
+			OR = {
+			state_region = {
+				
+				is_homeland = cu:hakka
+				
+				
+			}
+			religion_percent_state = {
+				target = rel:taiping
+				value >= 0.5
+			}
+			}
+		}
+		set_state_owner = c:TPG
+
+	}
+	}
+
+	option = {
+		name = dvg_xijiao.4.a
+		default_option = yes
+		
+		
+		every_country = {
+			limit = { country_has_state_religion = rel:taiping }
+			save_scope_as = tpg_revolt
+		}
+		add_journal_entry = {
+			type = je_xijiao_conquer
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_technology_researched = nationalism
+				}
+			}
+			add_technology_researched = nationalism
+		}
+		
+		
+		create_diplomatic_play = {
+			
+			target_country = scope:tpg_revolt
+			
+			war = no
+			
+			type = dp_rebellion_annex
+
+			add_war_goal = {
+				holder = scope:tpg_revolt
+				type = annex_country
+				target_country = ROOT
+			}
+
+			
+		}
+		
+	
+		ai_chance = { base = 100 }	
+	}
+	
+}
+
+# Aftermath event
+dvg_xijiao.5 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_xijiao.5.t
+	desc = dvg_xijiao.5.d
+	flavor = dvg_xijiao.5.f
+
+	event_image = {
+		video = "asia_union_leader"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
+
+	duration = 3
+
+	trigger = {
+		# triggered by journal entry
+	}
+
+	immediate = {
+		every_scope_state = {
+			limit = {
+				owner = ROOT
+				has_variable = saved_incorporated_state
+			}
+			set_state_owner = ROOT #Just in case.
+			set_state_type = incorporated
+			remove_variable = saved_incorporated_state
+		}
+		root.religion = {
+			save_scope_as = state_religion_scope
+		}
+		root = {
+			save_scope_as = china_scope
+		}
+	}
+
+	option = { # mass re-conversions
+		name = dvg_xijiao.5.a
+		default_option = yes
+		custom_tooltip = {
+			text = xijiao_flee
+			every_scope_state = {
+				limit = {
+					any_scope_pop = {
+						religion = rel:taiping
+					}
+				}
+				add_religion_standard_of_living_modifier = {
+					religion = rel:taiping
+					multiplier = -3
+				}
+				convert_population = {
+					target = rel:mahayana value = 0.1
+				}
+			}
+			random_scope_pop = {
+				limit = {
+				religion = rel:taiping
+					
+				exists = c:MJN
+				}
+				move_pop = s:STATE_WEIHUAI.region_state:MJN
+			}
+			random_scope_pop = {
+				limit = {
+				religion = rel:taiping
+					
+				exists = c:QQQ
+				}
+				move_pop = s:STATE_SANBAO.region_state:QQQ
+			}
+		}
+		
+		ai_chance = { base = 01 }	
+
+		
+	}
+	option = { # mercy and pardons
+		name = dvg_xijiao.5.b
+		add_loyalists = {
+			value = 0.2
+			religion = rel:taiping
+		}
+		ai_chance = { base = 01 }	
+
+	}
+	option = { #unify China
+		name = dvg_xijiao.5.c
+		random_country = {
+			limit = {
+				country_has_primary_culture = cu:han
+				is_adjacent_to_country = ROOT
+			}
+			save_scope_as = chi_target
+		}
+		create_diplomatic_play = {
+			type = dp_unify_china
+
+			war = no
+
+			target_country = scope:chi_target
+
+			add_war_goal = {
+				holder = scope:chi_target
+				type = annex_country
+			}
+		}
+		ai_chance = { base = 100 }	
+
+	}
+}
+
+
+# Aftermath event - TPG
+dvg_xijiao.6 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_xijiao.6.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				trigger = {
+					exists = ROOT
+				}
+				desc = dvg_xijiao.6.d1
+			}
+			triggered_desc = {
+				trigger = {
+					always = yes
+				}
+				desc = dvg_xijiao.6.d
+			}
+		}
+	}
+	flavor = dvg_xijiao.6.f
+
+	event_image = {
+		video = "asia_politician_parliament_motion"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	duration = 3
+
+	trigger = {
+		# triggered by journal entry
+	}
+
+	immediate = {
+		if = {
+			limit = {
+				exists = ROOT
+			}
+			ROOT = {
+				save_scope_as = china_scope
+			}
+		}
+		if = {
+			limit = {
+				ig:ig_intelligentsia = {
+					leader = {
+						OR = {
+							has_ideology = ideology:ideology_reformer
+							has_ideology = ideology:ideology_market_liberal
+						}
+					}
+				}
+			}
+			ig:ig_intelligentsia = {
+				leader = {
+					save_scope_as = hong_rengan_scope
+				}
+			}
+		}
+		cu:manchu = {
+			save_scope_as = manchu_culture
+		}
+	}
+
+	option = {
+		name = dvg_xijiao.6.a
+		default_option = yes
+		add_modifier = {
+			name = modifier_conversion_of_china
+			months = long_modifier_time
+		}
+	}
+	option = {
+		name = dvg_xijiao.6.b
+		trigger = {
+			NOT = {
+				ig:ig_intelligentsia = {
+					leader = {
+						OR = {
+							has_ideology = ideology:ideology_reformer
+							has_ideology = ideology:ideology_market_liberal
+						}
+					}
+				}
+			}
+		}
+		ig:ig_intelligentsia = {
+			add_modifier = {
+				name = modifier_accepted_new_treatise
+				months = normal_modifier_time
+			}
+		}
+		add_modifier = {
+			name = modifier_new_treatise_on_administration
+			months = long_modifier_time
+		}
+	}
+	option = {
+		name = dvg_xijiao.6.b1
+		trigger = {
+			ig:ig_intelligentsia = {
+				leader = {
+					OR = {
+						has_ideology = ideology:ideology_reformer
+						has_ideology = ideology:ideology_market_liberal
+					}
+				}
+			}
+		}
+		ig:ig_intelligentsia = {
+			add_modifier = {
+				name = modifier_accepted_new_treatise
+				months = normal_modifier_time
+			}
+		}
+		add_modifier = {
+			name = modifier_new_treatise_on_administration
+			months = long_modifier_time
+		}
+	}
+	option = {
+		name = dvg_xijiao.6.c
+		trigger = {
+			exists = ROOT
+		}
+		ig:ig_armed_forces = {
+			leader = {
+				set_ideology = ideology:ideology_jingoist
+			}
+			add_modifier = {
+				name = hawkish_neighbor_relations
+				months = normal_modifier_time
+			}
+		}
+		add_modifier = {
+			name = modifier_second_crusade_against_manchu
+			months = long_modifier_time
+		}
+	}
+	option = {
+		name = dvg_xijiao.6.e
+		every_country = {
+			limit = {
+				country_rank >= rank_value:great_power
+				religion = {
+					has_discrimination_trait = christian
+				}
+			}
+			change_relations = {
+				country = c:TPG
+				value = 10
+			}
+		}
+		add_modifier = {
+			name = modifier_relations_with_west
+			months = long_modifier_time
+		}
+	}
+}
+dvg_xijiao.7 = {
+	type = country_event
+	placement = root
+	title = dvg_xijiao.7.t
+	desc = dvg_xijiao.7.d
+	flavor = dvg_xijiao.7.f
+
+	duration = 3
+
+	event_image = {
+		video = "gfx/event_pictures/asia_westerners_arriving.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/europenorthamerica_rich_and_poor"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	trigger = {
+	}
+
+	immediate = {
+		
+	}
+
+	option = {
+		name = dvg_xijiao.7.a
+		default_option = yes
+
+		add_journal_entry = {
+			type = je_xijiao_missions_send
+		}
+		
+	}
+}
+dvg_xijiao.8 = {
+	type = country_event
+	placement = root
+	title = dvg_xijiao.8.t
+	desc = dvg_xijiao.8.d
+	flavor = dvg_xijiao.8.f
+
+	duration = 3
+
+	event_image = {
+		video = "gfx/event_pictures/asia_westerners_arriving.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/europenorthamerica_rich_and_poor"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	trigger = {
+	}
+
+	immediate = {
+		random_country = {
+			limit = {
+			has_variable = xijiao_expeller 
+			}
+			save_scope_as = xijiao_ex_scope
+		}
+		
+	}
+
+	option = {
+		name = dvg_xijiao.8.a
+		default_option = yes
+		trigger = {
+			any_neighbouring_state = {
+				owner = {
+					has_variable = xijiao_expeller 
+				}
+			}
+		}
+		
+		create_diplomatic_play = {
+			type = dp_annex_war
+
+			target_country = scope:xijiao_ex_scope
+
+			
+		}
+		
+	}
+	option = {
+		name = dvg_xijiao.8.b
+
+		create_incident = {
+			country = THIS
+			value = 4.0
+		}
+		scope:xijiao_ex_scope = {trigger_event = { id = dvg_xijiao.13 days = 30 }}
+
+		
+	}
+	option = {
+		name = dvg_xijiao.8.c
+		change_relations = {
+			country = scope:xijiao_ex_scope
+			value = 15
+		}
+	}
+}
+dvg_xijiao.9 = {
+	type = country_event
+	placement = root
+	title = dvg_xijiao.9.t
+	desc = dvg_xijiao.9.d
+	flavor = dvg_xijiao.9.f
+
+	duration = 3
+
+	event_image = {
+		video = "gfx/event_pictures/asia_politician_parliament_motion.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/europenorthamerica_rich_and_poor"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	trigger = {
+	}
+
+	immediate = {
+		every_country = {
+			limit = { 
+			 country_has_primary_culture = cu:han 
+			 NOT = {country_has_state_religion = rel:taiping}
+			}
+			
+			save_scope_as = tpg_target	
+			change_relations = {
+					country = ROOT
+					value = -30
+				}
+			
+	    }
+	}
+
+	option = {
+		name = dvg_xijiao.9.a
+		default_option = yes
+		every_country = {
+			limit = {
+				country_has_primary_culture = cu:han
+				NOT = {  country_has_state_religion = rel:taiping }
+			}
+			
+		}
+		change_infamy = -1000
+		change_infamy = 50
+		
+		
+	}
+	
+}
+dvg_xijiao.10 = {
+	type = country_event
+	placement = root
+	title = dvg_xijiao.10.t
+	desc = dvg_xijiao.10.d
+	flavor = dvg_xijiao.10.f
+
+	duration = 3
+
+	event_image = {
+		video = "gfx/event_pictures/asia_westerners_arriving.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/europenorthamerica_rich_and_poor"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	trigger = {
+	}
+
+	immediate = {
+		
+	}
+
+	option = {
+		name = dvg_xijiao.10.a
+		default_option = yes
+
+		create_character = {
+			culture = cu:han
+			religion = rel:taiping
+			interest_group = ig_devout
+			ideology = ideology_xijiao_leader
+			is_agitator = yes
+			on_created = {
+				add_modifier = {
+					name = modifier_brother_of_christ
+					months = long_modifier_time
+				}
+			}
+		}
+		create_character = {
+			culture = cu:han
+			religion = rel:taiping
+			interest_group = ig_petty_bourgeoisie
+			ideology = ideology_xijiao_leader
+			ig_leader = yes
+			on_created = {
+				add_modifier = {
+					name = modifier_brother_of_christ
+					months = long_modifier_time
+				}
+			}
+		}
+		
+		
+	}
+	option = {
+		name = dvg_xijiao.10.b
+	
+		set_variable = no_xijiao		
+	}
+}
+#Mianjin embraces Xijiao
+dvg_xijiao.11 = {
+	type = country_event
+	placement = root
+	title = dvg_xijiao.11.t
+	desc = dvg_xijiao.11.d
+	flavor = dvg_xijiao.11.f
+
+	duration = 3
+
+	event_image = {
+		video = "southamerica_christianity"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/europenorthamerica_rich_and_poor"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	trigger = {
+	}
+
+	immediate = {
+		
+	}
+
+	option = {
+		name = dvg_xijiao.11.a
+		default_option = yes
+
+		ig:ig_devout = {
+			set_interest_group_name = ig_taiping_god_worshippers
+			remove_ideology = ideology_moralist
+			add_ideology = ideology_heavenly_kingdom_theocratic
+			add_modifier = {
+				name = taiping_god_worshippers
+				months = very_long_modifier_time
+				is_decaying = yes
+			}
+			
+			
+		}
+		set_state_religion = rel:taiping
+		
+		s:STATE_WEIHUAI.region_state:MJN = {
+			convert_population = {
+				target = rel:taiping value = 0.10
+			}
+		}
+		
+		
+	}
+	
+}
+
+dvg_xijiao.12 = {
+	type = country_event
+	placement = root
+	title = dvg_xijiao.12.t
+	desc = dvg_xijiao.12.d
+	flavor = dvg_xijiao.12.f
+
+	duration = 3
+
+	event_image = {
+		video = "gfx/event_pictures/asia_westerners_arriving.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/europenorthamerica_rich_and_poor"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	trigger = {
+	}
+
+	immediate = {
+		
+	}
+	option = {
+		name = dvg_xijiao.12.a
+		default_option = yes
+
+		ruler = {
+			kill_character = yes
+		}
+		create_taiping_characters = yes
+
+		create_character = {
+			first_name = "Rong"
+			last_name = "Rengan"
+			culture = cu:hakka
+			religion = rel:taiping
+			interest_group = ig_devout
+			ideology = ideology_xijiao_leader
+			ruler = yes
+			on_created = {
+				add_modifier = {
+					name = modifier_brother_of_christ
+					months = long_modifier_time
+				}
+			}
+			traits = {
+				firebrand 
+				pious
+			}
+		}
+		
+
+		create_incident = {
+			country = ROOT
+			value = 4.0
+		}
+		
+		
+	}
+
+	option = {
+		name = dvg_xijiao.12.b
+
+		ruler = {
+			kill_character = yes
+		}
+		create_character = {
+			first_name = "Zhang"
+			last_name = "Dakai"
+			culture = cu:hakka
+			religion = rel:mahayana
+			interest_group = ig_devout
+			ideology = ideology_pacifist
+			ruler = yes
+			on_created = {
+				add_modifier = {
+					name = modifier_brother_of_christ
+					months = long_modifier_time
+				}
+			}
+			traits = {
+				firebrand 
+				pious
+			}
+		}
+
+		ig:ig_devout = {
+			set_interest_group_name = ig_mahayana_monks
+			remove_ideology = ideology_heavenly_kingdom_theocratic
+			add_ideology = ideology_buddhist_moralist
+		}
+		set_state_religion = rel:mahayana
+		
+		every_scope_state = {
+			limit = {
+				owner = ROOT
+			}
+			convert_population = {
+				target = rel:mahayana
+				value = 0.15
+			}
+		}
+		
+	}
+	
+}
+
+dvg_xijiao.13 = {
+	type = country_event
+	placement = root
+	title = dvg_xijiao.13.t
+	desc = dvg_xijiao.13.d
+	flavor = dvg_xijiao.13.f
+
+	duration = 3
+
+	event_image = {
+		video = "gfx/event_pictures/asia_westerners_arriving.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/europenorthamerica_rich_and_poor"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	trigger = {
+	}
+
+	immediate = {
+		
+	}
+	option = {
+		name = dvg_xijiao.13.a
+		default_option = yes
+		
+		c:JIA = {trigger_event = { id = dvg_xijiao.12 days = 30 }}
+
+		create_incident = {
+			country = ROOT
+			value = 8.0
+		}
+	}
+
+	option = {
+		name = dvg_xijiao.13.b
+
+		
+		
+	}
+	option = {
+		name = dvg_xijiao.13.b
+		trigger = {
+			any_neighbouring_state = {
+				owner = c:JIA
+			}
+
+		}
+		create_diplomatic_play = {
+			type = dp_unify_china
+
+			target_country = c:JIA
+
+			war = no
+
+			
+		}
+	}
+	
+}
+dvg_xijiao.14 = {
+	type = country_event
+	placement = root
+	title = dvg_xijiao.14.t
+	desc = dvg_xijiao.14.d
+	flavor = dvg_xijiao.14.f
+
+	duration = 3
+
+	event_image = {
+		video = "gfx/event_pictures/africa_public_protest.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/europenorthamerica_rich_and_poor"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	trigger = {
+
+		country_has_state_religion = rel:taiping
+
+		NOT = {  
+			has_law = law_type:law_no_police
+		}
+		NOT = {
+			has_modifier = dvg_protest_suppression
+		}
+		NOT = {
+			has_modifier = dvg_civilians_killed
+		}
+		institution_investment_level = {
+				institution = institution_police
+				value >= 2
+			}
+		
+	}
+	immediate = {
+		
+		random_scope_state = {
+			limit = {
+				is_capital = yes
+			}
+			save_scope_as = capital_state
+		}
+
+		
+	}
+	option = {
+		name = dvg_xijiao.14.a
+		default_option = yes
+		
+		scope:capital_state = {
+			add_modifier = {
+				name = dvg_protest_suppression
+				months = 3
+				is_decaying = yes
+			}
+		}
+		
+	}
+
+	option = {
+		name = dvg_xijiao.14.b
+
+		add_radicals = {
+			value = 0.05
+		}
+		
+		
+	}
+	option = {
+		name = dvg_xijiao.14.c
+
+		add_loyalists = {
+			value = 0.05
+		}
+		change_institution_investment_level = {
+			institution = institution_police
+			investment = -1
+		}
+		
+	}
+	option = {
+		name = dvg_xijiao.14.d
+		default_option = yes
+		
+		scope:capital_state = {
+			add_modifier = {
+				name = dvg_civilians_killed
+				months = 3
+				is_decaying = yes
+			}
+		}
+		
+	}
+	
+}

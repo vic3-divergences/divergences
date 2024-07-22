@@ -257,6 +257,11 @@ je_reform_indies = {
 		#set_variable = reformed_indies
 	}
 
+	fail = {
+	}
+	on_fail = {
+	}
+
 	current_value = {
 		value = root.gdp
 	}
@@ -304,6 +309,7 @@ je_retaking_java = {
 	on_complete = {
 		trigger_event = { id = dvg_bali.2 }
 	}
+	
 
 	invalid = {
 		custom_tooltip = {
@@ -466,9 +472,14 @@ je_tionghoa_culture = {
 	}
 	is_shown_when_inactive = {
 
-		exists = c:LAN
-
-		c:LAN = ROOT
+		any_primary_culture = {
+			has_discrimination_trait = malay_culture
+		}
+		any_primary_culture = {
+			has_discrimination_trait = han_chinese
+		}
+		
+		
 	}
 
 	immediate = {
@@ -487,9 +498,9 @@ je_tionghoa_culture = {
 				value = 20
 			}
 			
-		
-	}
-	trigger_event = {id = dvg_lanfang.1}
+			
+		}
+		trigger_event = {id = dvg_lanfang.1}
 	}
 	possible = {
 		is_subject = no
@@ -527,13 +538,22 @@ je_tionghoa_culture = {
 	}
 
 	on_complete = {
-		trigger_event = {
-			id = dvg_lanfang.2
+		if = {
+			limit = {
+				exists = c:LAN
+				c:LAN = ROOT
+			}
+			trigger_event = {
+				id = dvg_lanfang.2
+			}
 		}
+	
 		add_loyalists = {
 			value = large_radicals
 			culture = scope:new_national_culture
 		}
+
+		
 	}
 	progressbar = yes
 
@@ -546,4 +566,113 @@ je_tionghoa_culture = {
 	weight = 100
 
 	should_be_pinned_by_default = yes
+}
+
+
+je_pillager_prince_lanfang = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	group = je_group_foreign_affairs
+
+	is_shown_when_inactive = {
+		any_character = {
+			has_variable = pillager_prince
+		}
+		exists = c:LAN
+		c:LAN = ROOT
+	}
+	possible = {
+		any_character_in_exile_pool = {
+			has_variable = pillager_prince
+			
+		}
+		NOT = {
+				has_global_variable = pillager_prince_lanfanged
+		}
+	}
+	immediate = {
+		trigger_event = {id = dvg_lanfang.7}
+	
+		set_global_variable = pillager_prince_lanfanged
+	}
+
+	complete = {
+		NOT = {
+			any_character = {
+				has_variable = pillager_prince
+			}
+		}
+	}
+	scripted_button = dvg_pillger_prince_button
+
+	#inheritable = no
+
+	weight = 5000
+	should_be_pinned_by_default = yes
+}
+
+je_nusantara = {
+	icon = "gfx/interface/icons/event_icons/event_industry.dds"
+
+	group = je_group_foreign_affairs
+
+	is_shown_when_inactive = {
+		
+		any_primary_culture = {
+			has_discrimination_trait = malay_culture
+		}		
+	}
+
+	possible = {
+		has_technology_researched = pan-nationalism
+
+	}
+
+	complete = {
+		exists = c:NUS
+		c:NUS = ROOT
+		
+	}
+
+	on_complete = {
+		every_subject_or_below = {
+			limit = {
+				any_primary_culture = {
+					has_discrimination_trait = malay_culture
+				}
+			}
+			annex = prev
+		}
+		every_scope_pop = {
+			limit = {
+				culture = {
+					has_discrimination_trait = han_chinese
+				}
+			}
+			change_pop_culture = {
+				target = cu:tionghoa
+				value = 1
+			}
+		}
+		set_global_variable = nusantara_integrate
+	}
+
+	fail = {
+
+	}
+	on_fail = {
+	}
+
+	current_value = {
+		value = root.gdp
+	}
+
+	goal_add_value = {
+		value = root.gdp
+		multiply = 0.5
+	}
+
+	progressbar = yes
+
+	weight = 100
 }

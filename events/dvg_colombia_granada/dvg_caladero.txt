@@ -1,6 +1,6 @@
 ﻿namespace = dvg_caladero
 
-# Integration of New Toledo
+# The Situation of Quito
 dvg_caladero.1 = {
 	type = country_event
 	placement = ROOT
@@ -15,39 +15,47 @@ dvg_caladero.1 = {
 	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
 	icon = "gfx/interface/icons/event_icons/event_fire.dds"
 	duration = 3
+	
+	immediate = {
+		c:TWT = {
+			save_scope_as = scope_TWT
+			ig:ig_armed_forces = {
+				leader = { save_scope_as = scope_washkar }
+			}
+		}
+		c:QUI = { save_scope_as = quito_scope }
+		c:GRA = {
+			ig:ig_petty_bourgeoisie = {
+				leader = { save_scope_as = scope_ballivian }
+			}
+		}
+	}
+	
 	trigger = {
 	}
 	
-	# This is unacceptable, we shall have freedom!
+	# Dreaming of riches, not in a position to make a difference…
 	option = {
 		name = dvg_caladero.1.a
 		default_option = yes
-		add_journal_entry = {
-			type = je_colombian_war_of_independence_QUI
-		}
+		
 		add_loyalists = {
 			value = 0.3
 			culture = cu:caladeran
 		}
-		add_modifier = {
-			name = dvg_spanish_independence_fighters
-		}
-		set_capital = STATE_LIMA
-		hidden_effect = {
-			if = {
-				limit = {
-					NOT = { has_law = law_type:law_presidential_republic }
-				}
-				activate_law = law_type:law_presidential_republic
-			}
-		}
+		
+		trigger_event = { id = dvg_caladero.2 days = 180 }
+		trigger_event = { id = dvg_caladero.3 days = 360 }
+		
+		set_variable = QUI_neutrality
+		
 		ai_chance = {
 			base = 1
 		}
 	}
 }
 
-# War of Independence Succeeds!
+# The House of Tupac
 dvg_caladero.2 = {
 	type = country_event
 	placement = ROOT
@@ -63,32 +71,42 @@ dvg_caladero.2 = {
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
 	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
 
-	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
 
 	duration = 3
 
 	trigger = {
 	}
 	
+	immediate = {
+		c:TWT = {
+			save_scope_as = scope_TWT
+		}
+		c:SPA = {
+			save_scope_as = scope_SPA
+		}
+		c:ATL = {
+			save_scope_as = scope_ATL
+		}
+	}
 	
-	# Vive!
+	# Back to the West Coast!
 	option = {
 		name = dvg_caladero.2.a
+		default_option = yes
+		
 		add_loyalists = {
-			value = 0.1
+			value = 0.3
+			culture = cu:chimu
 		}
-		add_journal_entry = {
-			type = je_caladeran_pacify_quechua
-		}
-		remove_modifier = dvg_spanish_independence_fighters
-		set_capital = STATE_ECUADOR
+		
 		ai_chance = {
 			base = 1
 		}
 	}
 }
 
-# War of Independence Fails!
+# La Sociedad de Carmelistas
 dvg_caladero.3 = {
 	type = country_event
 	placement = ROOT
@@ -98,47 +116,40 @@ dvg_caladero.3 = {
 	flavor = dvg_caladero.3.f
 	
 	event_image = {
-		video = "southamerica_war_civilians"
+		video = "europenorthamerica_political_extremism"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
 	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
 
-	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+	icon = "gfx/interface/icons/event_icons/event_protest.dds"
 
 	duration = 3
 
 	trigger = {
 	}
 	
-	
-	# Morir...
+	immediate = {
+		every_scope_character = {
+			limit = { has_variable = is_sandino }
+			save_scope_as = scope_sandino
+		}
+	}
+
+	# How bizarre.
 	option = {
 		name = dvg_caladero.3.a
-		add_radicals = {
-			value = 0.1
-		}
-		add_radicals = {
-			value = 0.4
-			culture = cu:caladeran
-		}
-		remove_modifier = dvg_spanish_independence_fighters
-		set_capital = STATE_ECUADOR
-		hidden_effect = {
-			if = {
-				limit = {
-					NOT = { has_law = law_type:law_monarchy }
-				}
-				activate_law = law_type:law_monarchy
-			}
-		}
+		default_option = yes
+		
+		trigger_event = { id = dvg_caladero.4 days = 360 }
+		
 		ai_chance = {
 			base = 1
 		}
 	}
 }
 
-# Quechua Land Rights?
+# El Amigo del Pueblo
 dvg_caladero.4 = {
 	type = country_event
 	placement = ROOT
@@ -154,50 +165,36 @@ dvg_caladero.4 = {
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
 	on_opened_soundeffect = "event:/SFX/Events/unspecific/signed_contract"
 
-	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
 
 	duration = 3
 
-	cooldown = { months = 4 }
-
 	trigger = {
-		cu:quechua = {
-			culture_is_discriminated_in = ROOT
-		}
-		NOT = { has_modifier = dvg_quechua_land_rights }
-		NOT = { has_modifier = dvg_quechua_no_land_rights }
 	}
 
-	option = { #no rights f**k you
-		name = dvg_caladero.4.a
-		add_radicals = {
-			value = 0.6
-			culture = cu:quechua
-		}
-		add_modifier = {
-			name = dvg_quechua_no_land_rights
-		}
-		ai_chance = {
-			base = 0.25
+	immediate = {
+		every_scope_character = {
+			limit = {
+				has_variable = is_muyuroney
+			}
+			save_scope_as = scope_muyuroney
 		}
 	}
-	option = { #give rights
-		name = dvg_caladero.4.b
+
+	#Will those liars see the penitentiary, or will they stay free?
+	option = { 
+		name = dvg_caladero.4.a
 		default_option = yes
-		add_loyalists = {
-			value = 0.2
-			culture = cu:quechua
-		}
-		add_modifier = {
-			name = dvg_quechua_land_rights
-		}
+		
+		trigger_event = { id = dvg_caladero.6 days = 30 }
+		
 		ai_chance = {
 			base = 1
-		}	
+		}
 	}
 }
 		
-# Quechua Rally
+# Rumors About Muyuroney
 dvg_caladero.5 = {
 	type = country_event
 	placement = ROOT
@@ -207,37 +204,43 @@ dvg_caladero.5 = {
 	flavor = dvg_caladero.5.f
 	
 	event_image = {
-		video = "southamerica_war_civilians"
+		video = "unspecific_ruler_speaking_to_people"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
 	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
 
-	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+	icon = "gfx/interface/icons/event_icons/event_protest.dds"
 
 	duration = 3
 	
-	cooldown = { months = 18 }
-
-	trigger = {
+	immediate = {
+		every_scope_character = {
+			limit = {
+				has_variable = is_muyuroney
+			}
+			save_scope_as = scope_muyuroney
+		}
+		every_scope_character = {
+			limit = {
+				has_variable = is_sandino
+			}
+			save_scope_as = scope_sandino
+		}
 	}
 	
-	
-	# Oh dear
+	# Just more gossip
 	option = {
 		name = dvg_caladero.5.a
 		default_option = yes
-		add_radicals = {
-			value = 0.05
-			culture = cu:quechua
-		}
+		
 		ai_chance = {
 			base = 1
 		}
 	}
 }
 
-# QUECHUA PACIFIED
+# An Open Letter to the Carmelist Gentlemen
 dvg_caladero.6 = {
 	type = country_event
 	placement = ROOT
@@ -253,7 +256,7 @@ dvg_caladero.6 = {
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
 	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
 
-	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
 
 	duration = 3
 
@@ -261,20 +264,21 @@ dvg_caladero.6 = {
 	}
 	
 	
-	#The issue is dealt with, for now.
+	#Well, then, let the Duke’s loyalists be true realists - Los Realistas!
 	option = {
 		name = dvg_caladero.6.a
-		add_radicals = {
-			value = 0.2
-			culture = cu:quechua
-		}
+		default_option = yes
+		
+		trigger_event = { id = dvg_caladero.5 days = 50 }
+		trigger_event = { id = dvg_caladero.7 days = 340 }
+		
 		ai_chance = {
 			base = 1
 		}
 	}
 }
 
-# The Chinchasuyuan Revolt!
+# The Duke visits Chan Chan
 dvg_caladero.7 = {
 	type = country_event
 	placement = ROOT
@@ -297,69 +301,21 @@ dvg_caladero.7 = {
 	trigger = {
 	}
 	
-	immediate = {
-		create_country = {
-			tag = CCS
-			origin = this
-			state = s:STATE_CUZCO.region_state:QUI
-			state = s:STATE_CUNTISUYU.region_state:QUI
-			state = s:STATE_TIWANAKU.region_state:QUI
-			state = s:STATE_NEAR_ANTISUYU.region_state:QUI
-			state = s:STATE_ANTISUYU.region_state:QUI
-			state = s:STATE_CHARCAS.region_state:QUI
-			state = s:STATE_ATACAMA.region_state:QUI
-			state = s:STATE_TILCARA.region_state:QUI
-			state = s:STATE_NEW_CORNWALL.region_state:QUI
-			state = s:STATE_STATE_COLLASUYU.region_state:QUI
-		}
-		random_country = {
-			limit = {
-				any_neighbouring_state = {
-					owner = ROOT
-				}
-				country_has_primary_culture = cu:quechua
-				is_country_type = unrecognized
-			}
-			save_scope_as = quechua_revolt_scope
-		}
-#		set_global_variable = {
-#			name = dvg_quechua_revolt
-#			value = yes
-#		}
-	}
 	
-	#This means war!
+	#The Duke needs all of the friends that he can find, these days.
 	option = {
 		name = dvg_caladero.7.a
 		default_option = yes
-		create_diplomatic_play = {
-			target_country = scope:quechua_revolt_scope
-			war = yes
-			type = dp_annex_war
-		}
-		add_radicals = {
-			value = 0.2
-			culture = cu:quechua
-		}
+		
+		trigger_event = { id = dvg_caladero.16 days = 31 }
+		
 		ai_chance = {
 			base = 1
 		}
 	}
-	
-	#We have to accept this.
-	option = {
-		name = dvg_caladero.7.b
-		add_radicals = {
-			value = 0.2
-			culture = cu:quechua
-		}
-		ai_chance = {
-			base = 0
-		}
-	}
 }
 
-# The Southern Conquest!
+# The United Front
 dvg_caladero.8 = {
 	type = country_event
 	placement = ROOT
@@ -382,48 +338,24 @@ dvg_caladero.8 = {
 	trigger = {
 	}
 	
-	#Glorious!
+	#¡Por Unidad!
 	option = {
 		name = dvg_caladero.8.a
 		default_option = yes
-		add_radicals = {
-			value = 0.2
-			culture = cu:quechua
-		}
-		s:STATE_CUZCO = { 
-			add_homeland = cu:caladeran
-		}
-		s:STATE_CUNTISUYU = { 
-			add_homeland = cu:caladeran
-		}
-		s:STATE_NEAR_ANTISUYU = { 
-			add_homeland = cu:caladeran
-		}
-		s:STATE_TIWANAKU = { 
-			add_homeland = cu:caladeran
-		}
-		s:STATE_ANTISUYU = { 
-			add_homeland = cu:caladeran
-		}
-        s:STATE_CHARCAS = { 
-			add_homeland = cu:caladeran
-		}
-        s:STATE_ATACAMA = { 
-			add_homeland = cu:caladeran
-		}
-        s:STATE_TILCARA = { 
-			add_homeland = cu:caladeran
-		}
+		
 		add_journal_entry = {
-			type = je_eliminate_inca
+			type = je_romanticos_realistas_power_struggle
 		}
+		
+		trigger_event = { id = dvg_caladero.9 days = 15 }
+		
 		ai_chance = {
 			base = 1
 		}
 	}
 }
 
-# La Destrucción
+# Choosing a Generalissimo
 dvg_caladero.9 = {
 	type = country_event
 	placement = ROOT
@@ -446,52 +378,36 @@ dvg_caladero.9 = {
 	trigger = {
 	}
 	
-	#Glorious!
+	#Tupac
 	option = {
 		name = dvg_caladero.9.a
-		add_radicals = {
-			value = 0.4
-			culture = cu:quechua
-		}
-		change_infamy = 30
-		add_radicals = {
-			value = 0.05
-			culture = cu:caladeran
-		}
-		s:STATE_LIMA = { 
-			remove_homeland = cu:quechua
-		}
-        s:STATE_CAJAMARCA = { 
-			remove_homeland = cu:quechua
-		}
-        s:STATE_ECUADOR = { 
-			remove_homeland = cu:quechua
-		}
-        s:STATE_PASTAZA = { 
-			remove_homeland = cu:quechua
-		}
-        s:STATE_CAUCA = { 
-			remove_homeland = cu:quechua
-		}
+		
+		trigger_event = { id = dvg_caladero.10 days = 25 }
+		
 		ai_chance = {
-			base = 3
+			base = 0.5
 		}
 	}
 	
+	#Muyuroney
 	option = {
 		name = dvg_caladero.9.b
 		default_option = yes
-		add_radicals = {
-			value = 0.2
-			culture = cu:quechua
-		}	
+		
+		change_variable = {
+			name = dvg_romanticos_influence
+			add = 1
+		}
+		
+		trigger_event = { id = dvg_caladero.10 days = 25 }
+		
 		ai_chance = {
-			base = 7
-		}		
+			base = 0.5
+		}
 	}
 }
 
-# The Fate of New Toledo
+# The Manner of Promotion
 dvg_caladero.10 = {
 	type = country_event
 	placement = ROOT
@@ -514,38 +430,34 @@ dvg_caladero.10 = {
 	trigger = {
 	}
 	
-	#As Is
+	#Fortune favors the bold and so shall we
 	option = {
 		name = dvg_caladero.10.a
 		default_option = yes
-		custom_tooltip = {
-			text = dvg_caladero_as_is
-			add_journal_entry = {
-				type = je_caladeran_strike_southwards
-			}
-			set_variable = dvg_puna
-			trigger_event = { id = dvg_caladero.12 days = 30 }
+		
+		change_variable = {
+			name = dvg_romanticos_influence
+			add = 1
 		}
+		
+		trigger_event = { id = dvg_caladero.11 days = 25 }
 		ai_chance = {
 			base = 0.5
 		}
 	}
 	
-	#Manuel
+	#We cannot risk any Caesars.
 	option = {
 		name = dvg_caladero.10.b
-		custom_tooltip = {
-			text = dvg_caladero_manuel
-			trigger_event = { id = dvg_caladero.11 days = 30 }
-			set_variable = dvg_quito
-		}
+		
+		trigger_event = { id = dvg_caladero.11 days = 25 }
 		ai_chance = {
 			base = 0.5
 		}
 	}
 }
 
-# The Army Revolts
+# The Situation of the Local Nobility
 dvg_caladero.11 = {
 	type = country_event
 	placement = ROOT
@@ -568,113 +480,36 @@ dvg_caladero.11 = {
 	trigger = {
 	}
 	
-	#As Is
+	#Welcome these honorable men into our ranks!
 	option = {
 		name = dvg_caladero.11.a
 		default_option = yes
-		custom_tooltip = {
-			text = dvg_caladero_keep_manuel
-			if = {
-				limit = {
-					NOT = { has_law = law_type:law_presidential_republic }
-				}
-				activate_law = law_type:law_presidential_republic
-			}
-			if = {
-				limit = {
-					NOT = { has_law = law_type:law_professional_army }
-				}
-				activate_law = law_type:law_professional_army
-			}
-			if = {
-				limit = {
-					NOT = { has_law = law_type:law_landed_voting }
-				}
-				activate_law = law_type:law_landed_voting
-			}
-			if = {
-				limit = {
-					NOT = { has_law = law_type:law_right_of_assembly }
-				}
-				activate_law = law_type:law_right_of_assembly
-			}
-			if = {
-				limit = {
-					NOT = { has_law = law_type:law_per_capita_based_taxation }
-				}
-				activate_law = law_type:law_per_capita_based_taxation
-			}
-			if = {
-				limit = {
-					NOT = { has_law = law_type:law_freedom_of_conscience }
-				}
-				activate_law = law_type:law_freedom_of_conscience
-			}
-			if = {
-				limit = {
-					NOT = { has_law = law_type:law_religious_schools }
-				}
-				activate_law = law_type:law_religious_schools
-			}
-			if = {
-				limit = {
-					NOT = { has_law = law_type:law_elected_bureaucrats }
-				}
-				activate_law = law_type:law_elected_bureaucrats
-			}
-			ig:ig_landowners = {
-				remove_ideology = ideology_patriarchal
-				add_ideology = ideology_republican_paternalistic
-			}
-			trigger_event = { id = dvg_caladero.14 days = 45 }
-		}
-		add_journal_entry = {
-			type = je_caladeran_strike_southwards
-		}
+		
+		trigger_event = { id = dvg_caladero.12 days = 25 }
+		
 		ai_chance = {
-			base = 1
+			base = 0.5
 		}
 	}
 	
-	#Martin
+	#Liberty, not aristocracy, must animate the army.
 	option = {
 		name = dvg_caladero.11.b
-		custom_tooltip = {
-			text = dvg_caladero_martin
-			create_character = {
-				first_name = "Martin"
-				last_name = "Ballivian"
-				birth_date = 1795.10.24
-				culture = cu:portuguese
-				ruler = yes
-				religion = catholic
-				noble = yes
-				interest_group = ig_landowners
-				ideology = ideology_ethno_nationalist
-				traits = { 
-					bigoted 
-					wrathful 
-					ambitious
-				}
-			}
-			if = {
-				limit = {
-					NOT = { has_law = law_type:law_autocracy }
-				}
-				activate_law = law_type:law_autocracy
-			}
-			add_journal_entry = {
-				type = je_unite_caladero_with_granada
-			}
-			remove_variable = dvg_quito
+		
+		change_variable = {
+			name = dvg_romanticos_influence
+			add = 1
 		}
+		
+		trigger_event = { id = dvg_caladero.12 days = 25 }
+		
 		ai_chance = {
-			base = 0
+			base = 0.5
 		}
 	}
 }
 
-# Liberal Revolution!
+# The Coalition Dissolves
 dvg_caladero.12 = {
 	type = country_event
 	placement = ROOT
@@ -697,89 +532,20 @@ dvg_caladero.12 = {
 	trigger = {
 	}
 	
-	#As Is
+	#To the victor the spoils!
 	option = {
 		name = dvg_caladero.12.a
 		default_option = yes
+		
+		set_variable = QUI_coalition_ended
+		
 		ai_chance = {
-			base = 0.5
-		}
-	}
-	
-	#Clodio!
-	option = {
-		name = dvg_caladero.12.b
-		custom_tooltip = {
-			text = dvg_caladero_clodio
-			set_variable = dvg_quito
-			remove_variable = dvg_puna
-			ig:ig_landowners = {
-				remove_ideology = ideology_patriarchal
-				add_ideology = ideology_republican_paternalistic
-			}
-			if = {
-				limit = {
-					NOT = { has_law = law_type:law_parliamentary_republic }
-				}
-				activate_law = law_type:law_presidential_republic
-			}
-			if = {
-				limit = {
-					NOT = { has_law = law_type:law_national_militia }
-				}
-				activate_law = law_type:law_national_militia
-			}
-			if = {
-				limit = {
-					NOT = { has_law = law_type:law_census_voting }
-				}
-				activate_law = law_type:law_census_voting
-			}
-			if = {
-				limit = {
-					NOT = { has_law = law_type:law_right_of_assembly }
-				}
-				activate_law = law_type:law_right_of_assembly
-			}
-			if = {
-				limit = {
-					NOT = { has_law = law_type:law_per_capita_based_taxation }
-				}
-				activate_law = law_type:law_per_capita_based_taxation
-			}
-			if = {
-				limit = {
-					NOT = { has_law = law_type:law_freedom_of_conscience }
-				}
-				activate_law = law_type:law_freedom_of_conscience
-			}
-			if = {
-				limit = {
-					NOT = { has_law = law_type:law_public_schools }
-				}
-				activate_law = law_type:law_public_schools
-			}
-			if = {
-				limit = {
-					NOT = { has_law = law_type:law_elected_bureaucrats }
-				}
-				activate_law = law_type:law_elected_bureaucrats
-			}
-			if = {
-				limit = {
-					NOT = { has_law = law_type:law_interventionism}
-				}
-				activate_law = law_type:law_interventionism
-			}
-			trigger_event = { id = dvg_caladero.15 days = 45 }
-		}
-		ai_chance = {
-			base = 0.5
+			base = 1
 		}
 	}
 }
 
-# Caladero and Granada United!
+# The End of the Quitenese Assembly
 dvg_caladero.13 = {
 	type = country_event
 	placement = ROOT
@@ -799,28 +565,50 @@ dvg_caladero.13 = {
 
 	duration = 3
 
+	immediate = {
+		every_scope_character = {
+			limit = { has_variable = is_sandino }
+			save_scope_as = scope_sandino
+		}
+		every_scope_character = {
+			limit = { has_variable = is_willka }
+			save_scope_as = scope_willka
+		}
+		every_scope_character = {
+			limit = { has_variable = is_muyuroney }
+			save_scope_as = scope_muyuroney
+		}
+		scope:scope_sandino = { kill_character = yes }
+		scope:scope_willka = { kill_character = yes }
+		scope:scope_muyuroney = { kill_character = yes }
+	}
 	trigger = {
 	}
 	
-	#Glorious! later put in event 14, which would bea  council between GCO and QUI
+	#¡Viva el Presidente!
 	option = {
 		name = dvg_caladero.13.a
 		default_option = yes
-		add_journal_entry = {
-			type = je_caladeran_strike_southwards
-		}
-		add_primary_culture = cu:granadan
+		
 		custom_tooltip = {
-			text = dvg_martin_is_super_glad_tt
-			set_variable = dvg_martin_is_super_glad
+			text = romanticos_expelled
+			ig:ig_intelligentsia = {
+				set_interest_group_name = ig_intelligentsia
+			}
 		}
+		
+		
+		add_journal_entry = {
+			type = je_incan_war_tupac
+		}
+		
 		ai_chance = {
 			base = 1
 		}
 	}
 }
 
-# Manuel Assumes Office
+# A Truly Romantic Republic
 dvg_caladero.14 = {
 	type = country_event
 	placement = ROOT
@@ -840,38 +628,56 @@ dvg_caladero.14 = {
 
 	duration = 3
 
+	immediate = {
+		ruler = {
+			kill_character = yes
+		}
+		every_scope_character = {
+			limit = { has_variable = is_sandino }
+			save_scope_as = scope_sandino
+		}
+		every_scope_character = {
+			limit = { has_variable = is_juan_pablo }
+			save_scope_as = scope_juan_pablo
+		}
+		scope:scope_juan_pablo = { kill_character = yes }
+		scope:scope_sandino = {
+			set_character_as_ruler = yes
+			remove_as_interest_group_leader = yes
+		}
+	}
 	trigger = {
 	}
 	
-	#Manuel
+	#It soon will enlighten the world!
 	option = {
 		name = dvg_caladero.14.a
 		default_option = yes
+		
 		custom_tooltip = {
-			text = dvg_caladero_manuel_direct_tt
-			create_character = {
-				first_name = "Manuel"
-				last_name = "Sadino"
-				birth_date = 1802.11.13
-				culture = cu:portuguese
-				ruler = yes
-				religion = catholic
-				interest_group = ig_petty_bourgeoisie
-				ideology = ideology_republican_leader
-				traits = { 
-					innovative
-					charismatic
-					ambitious
-				}
+			text = realistas_expelled
+			ig:ig_landowners = {
+				set_interest_group_name = ig_landowners
+				remove_ruling_interest_group = yes
 			}
 		}
+		
+		ig:ig_intelligentsia = {
+			set_interest_group_name = ig_intelligentsia
+			add_ruling_interest_group = yes
+		}
+		add_journal_entry = {
+			type = je_incan_war_romanticos
+		}
+		trigger_event = { id = dvg_caladero.15 days = 45 }
+		
 		ai_chance = {
 			base = 1
 		}
 	}
 }
 
-# Clodio Assumes Office
+# The Power Struggle
 dvg_caladero.15 = {
 	type = country_event
 	placement = ROOT
@@ -894,35 +700,30 @@ dvg_caladero.15 = {
 	trigger = {
 	}
 	
-	#Clodio
+	#Wilka should become President
 	option = {
 		name = dvg_caladero.15.a
 		default_option = yes
-		custom_tooltip = {
-			text = dvg_caladero_clodio_direct_tt
-			create_character = {
-				first_name = "Clodio"
-				last_name = "Magno_Puma_Muyuroney"
-				birth_date = 1801.12.23
-				culture = cu:caladeran
-				ruler = yes
-				religion = catholic
-				noble = yes
-				interest_group = ig_intelligentsia  
-				ideology = ideology_despotic_utopian
-				traits = { 
-					innovative
-					charismatic
-					ambitious
-				}
-			}
-		}
+		
+		trigger_event = { id = dvg_caladero.62 days = 45 }
+		
 		ai_chance = {
-			base = 1
+			base = 0.8
+		}
+	}
+	#The Comité carries the day
+	option = {
+		name = dvg_caladero.15.b
+		
+		trigger_event = { id = dvg_caladero.69 days = 45 }
+		
+		ai_chance = {
+			base = 0.2
 		}
 	}
 }
 
+#A Meeting with the Romanticos
 dvg_caladero.16 = {
 	type = country_event
 	placement = ROOT
@@ -943,14 +744,5837 @@ dvg_caladero.16 = {
 	duration = 3
 
 	trigger = {
-		#Triggered by failing the Quechua tensions JE
 	}
-	
+	#The Duke of Tupac swallowing his pride and negotiating with them.
 	option = {
-		add_modifier = {
-			name = dvg_quechua_open_revolt
-			months = 121
-		}
 		name = dvg_caladero.16.a
+		default_option = yes
+		
+		set_variable = romanticos_accepted
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+	#The Duke storming out of the room!
+	option = {
+		name = dvg_caladero.16.b
+		
+		set_variable = romanticos_rejected
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+}
+dvg_caladero.17 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.17.t
+	desc = dvg_caladero.17.d
+	flavor = dvg_caladero.17.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	immediate = {
+		c:GRA = {
+			every_scope_character = {
+				limit = { has_variable = is_ballivian }
+				save_scope_as = scope_ballivian
+			}
+		}
+		every_scope_character = {
+			limit = { has_variable = is_tupac }
+			save_scope_as = scope_tupac
+		}
+	}
+	trigger = {
+	}
+	#Viva el Presidente!
+	option = {
+		name = dvg_caladero.17.a
+		default_option = yes
+		
+		scope:scope_ballivian = {
+			set_home_country = c:QUI
+			transfer_character = c:QUI
+			set_character_as_ruler = yes
+		}
+		scope:scope_tupac = {
+			set_character_as_ruler = no
+			add_character_role = general
+		}
+		
+		trigger_event = { id = dvg_caladero.18 days = 7 }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.18 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.18.t
+	desc = dvg_caladero.18.d
+	flavor = dvg_caladero.18.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	immediate = {
+		every_scope_character = {
+			limit = { has_variable = is_ballivian }
+			save_scope_as = scope_ballivian
+		}
+		every_scope_character = {
+			limit = { has_variable = is_tupac }
+			save_scope_as = scope_tupac
+		}
+	}
+	trigger = {
+	}
+	#Ballivián Wins
+	option = {
+		name = dvg_caladero.18.a
+		
+		if = {
+			limit = { has_variable = romanticos_accepted }
+			trigger_event = { id = dvg_caladero.19 days = 7 }
+		}
+		else = {
+			limit = { has_variable = romanticos_rejected }
+			set_variable = dvg_martin_is_super_glad
+			trigger_event = { id = dvg_caladero.25 days = 7 }
+		}
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+	#Countercoup
+	option = {
+		name = dvg_caladero.18.a
+		default_option = yes
+		
+		scope:scope_ballivian = { kill_character = yes }
+		scope:scope_tupac = {
+			set_character_as_ruler = yes
+		}
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+}
+#The Second Army of the Volunteers
+dvg_caladero.19 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.19.t
+	desc = dvg_caladero.19.d
+	flavor = dvg_caladero.19.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	immediate = {
+		every_scope_character = {
+			limit = { has_variable = is_ballivian }
+			save_scope_as = scope_ballivian
+		}
+		every_scope_character = {
+			limit = { has_variable = is_tupac }
+			save_scope_as = scope_tupac
+		}
+	}
+	trigger = {
+	}
+	#May the Revolution burn eternal!
+	option = {
+		name = dvg_caladero.19.a
+		default_option = yes
+		
+		scope:scope_ballivian = { kill_character = yes }
+		scope:scope_tupac = {
+			set_character_as_ruler = yes
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.20 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.20.t
+	desc = dvg_caladero.20.d
+	flavor = dvg_caladero.20.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#All we can do is tend our gardens beneath the Spanish flag."
+	option = {
+		name = dvg_caladero.20.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 0.9
+		}
+	}
+	#We must dare to dream the impossible dream!
+	option = {
+		name = dvg_caladero.20.b
+		
+		trigger_event = { id = dvg_caladero.25 }
+		c:SPA = {
+			trigger_event = { id = dvg_caladero.21 }
+		}
+		ai_chance = {
+			base = 0.1
+		}
+	}
+}
+dvg_caladero.21 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.21.t
+	desc = dvg_caladero.21.d
+	flavor = dvg_caladero.21.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#Deus vult!
+	option = {
+		name = dvg_caladero.21.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.22 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.22.t
+	desc = dvg_caladero.22.d
+	flavor = dvg_caladero.22.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#As if we needed more trouble…
+	option = {
+		name = dvg_caladero.22.a
+		default_option = yes
+		
+		trigger_event = { id = dvg_caladero.23 days = 7 }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.23 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.23.t
+	desc = dvg_caladero.23.d
+	flavor = dvg_caladero.23.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#Reprimand Tupac, he must remember his place and his oath.
+	option = {
+		name = dvg_caladero.23.a
+		
+		ai_chance = {
+			base = 0
+		}
+	}
+	#Demand that Tupac arrest all radicals within the colony!
+	option = {
+		name = dvg_caladero.23.b
+		default_option = yes
+		
+		trigger_event = { id = dvg_caladero.24 days = 7 }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.24 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.24.t
+	desc = dvg_caladero.24.d
+	flavor = dvg_caladero.24.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#Send a sharper reprimand to the Duke.
+	option = {
+		name = dvg_caladero.24.a
+		
+		ai_chance = {
+			base = 0
+		}
+	}
+	#Order the Land Army to remove the Viceroy by force!
+	option = {
+		name = dvg_caladero.24.b
+		default_option = yes
+		
+		trigger_event = { id = dvg_caladero.25 days = 7 }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.25 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.25.t
+	desc = dvg_caladero.25.d
+	flavor = dvg_caladero.25.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	immediate = {
+		c:QUI = {
+			save_scope_as = quito_scope
+		}
+	}
+	trigger = {
+	}
+	#It’s just me against the world.
+	option = {
+		name = dvg_caladero.25.a
+		default_option = yes
+		
+		c:QUI = {
+			create_diplomatic_play = {
+				name = caladeran_war_of_independence
+				target_country = c:SPA
+				war = yes
+				type = dp_independence
+				
+				add_war_goal = {
+					holder = c:SPA
+					type = reduce_autonomy
+					target_country = c:QUI
+				}
+			}
+		}
+		c:QUI = {
+			add_journal_entry = {
+				type = je_caladeran_war_of_independence_QUI
+			}
+			remove_variable = QUI_neutrality
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.26 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.26.t
+	desc = dvg_caladero.26.d
+	flavor = dvg_caladero.26.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#And prune we shall.
+	option = {
+		name = dvg_caladero.26.a
+		default_option = yes
+		
+		s:STATE_CUZCO.region_state:ADS = {
+			kill_population_percent_in_state = {
+				percent = 0.85
+				culture = cu:quechua
+				pop_type = aristocrats
+			}
+		}
+		s:STATE_CUZCO.region_state:ADS = {
+			kill_population_percent_in_state = {
+				percent = 0.85
+				culture = cu:quechua
+				pop_type = soldiers
+			}
+		}
+		s:STATE_CUZCO = {
+			add_devastation = 30
+		}
+		change_tag = ADS
+		add_primary_culture = cu:chimu
+		add_primary_culture = cu:quechua
+		
+		activate_law = law_type:law_appointed_bureaucrats
+		
+		add_modifier = {
+			name = dvg_romantico_rule
+			days = -1
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.27 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.27.t
+	desc = dvg_caladero.27.d
+	flavor = dvg_caladero.27.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#Revolutionary justice is justice perfected.
+	option = {
+		name = dvg_caladero.27.a
+		default_option = yes
+		
+		s:STATE_CUZCO.region_state:ADS = {
+			kill_population_percent_in_state = {
+				percent = 0.7
+				culture = cu:quechua
+				pop_type = aristocrats
+			}
+		}
+		s:STATE_CUZCO.region_state:ADS = {
+			kill_population_percent_in_state = {
+				percent = 0.7
+				culture = cu:quechua
+				pop_type = soldiers
+			}
+		}
+		s:STATE_CUZCO = {
+			add_devastation = 40
+		}
+		change_tag = ADS
+		add_primary_culture = cu:chimu
+		add_primary_culture = cu:quechua
+		
+		add_modifier = {
+			name = dvg_romantico_rule_terror
+			days = -1
+		}
+		
+		activate_law = law_type:law_appointed_bureaucrats
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.28 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.28.t
+	desc = dvg_caladero.28.d
+	flavor = dvg_caladero.28.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		exists = c:ADS
+		this = c:ADS
+		OR = {
+			has_modifier = dvg_romantico_rule
+			has_modifier = dvg_romantico_rule_terror
+		}
+		ig:ig_landowners = {
+			is_in_government = yes
+		}
+		NOT = { has_variable = Pragmatist_QUI }
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.28.a
+		default_option = yes
+		
+		if = {
+			limit = { has_modifier = dvg_romantico_rule }
+			remove_modifier = dvg_romantico_rule
+		}
+		else = {
+			limit = { has_modifier = dvg_romantico_rule_terror }
+			remove_modifier = dvg_romantico_rule_terror
+		}
+		set_variable = Pragmatist_QUI
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.29 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.29.t
+	desc = dvg_caladero.29.d
+	flavor = dvg_caladero.29.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#This land was made for you and me.
+	option = {
+		name = dvg_caladero.29.a
+		default_option = yes
+		
+		add_radicals = {
+			pop_type = aristocrats
+			value = 0.3
+		}
+		add_loyalists = {
+			pop_type = farmers
+			value = 0.3
+		}
+		activate_law = law_type:law_homesteading
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.30 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.30.t
+	desc = dvg_caladero.30.d
+	flavor = dvg_caladero.30.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		exists = c:ADS
+		this = c:ADS
+		owns_entire_state_region = STATE_NEAR_COLLASUYU
+		year = 1855
+		NOT = { has_global_variable = ads_uraycusta}
+	}
+	#Hail the Jewel of the Pacific!
+	option = {
+		name = dvg_caladero.30.a
+		default_option = yes
+		
+		s:STATE_NEAR_COLLASUYU.region_state:ADS = {
+			add_modifier = {
+				name = dvg_colonial_recruitment
+				years = 10
+			}
+		}
+		set_global_variable = ads_uraycusta
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.31 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.31.t
+	desc = dvg_caladero.31.d
+	flavor = dvg_caladero.31.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#Capital!
+	option = {
+		name = dvg_caladero.31.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.32 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.32.t
+	desc = dvg_caladero.32.d
+	flavor = dvg_caladero.32.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#Capital!
+	option = {
+		name = dvg_caladero.32.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.33 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.33.t
+	desc = dvg_caladero.33.d
+	flavor = dvg_caladero.33.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#We’d best get to work…
+	option = {
+		name = dvg_caladero.33.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.34 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.34.t
+	desc = dvg_caladero.34.d
+	flavor = dvg_caladero.34.f
+	
+	event_image = {
+		video = "votp_monarch_holding_court"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/votp/monarch_holding_court"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#And thus dawns the Tupac era.
+	option = {
+		name = dvg_caladero.34.a
+		default_option = yes
+
+		custom_tooltip = {
+			text = dvg_ADS_creation
+			change_tag = ADS
+			add_primary_culture = cu:chimu
+			add_primary_culture = cu:quechua
+			activate_law = law_type:law_monarchy
+			activate_law = law_type:law_autocracy
+			add_journal_entry = {
+				type = je_colonization_of_tierra_del_fuego
+			}
+			add_journal_entry = {
+				type = je_colonization_of_the_pampas
+			}
+			add_journal_entry = {
+				type = je_colonization_of_granada
+			}
+			add_journal_entry = {
+				type = je_colonization_of_the_amazons
+			}
+			add_journal_entry = {
+				type = je_colonization_of_ava
+			}
+			add_journal_entry = {
+				type = je_tupac_reign
+			}
+			set_variable = {
+				name = dvg_tupac_reign
+				value = 10
+			}
+			add_journal_entry = {
+				type = je_master_of_ameriga
+			}
+			ig:ig_landowners = {
+				remove_ideology = ideology_caudillismo
+				add_ideology = ideology_paternalistic
+			}
+		}
+		custom_tooltip = {
+			text = dvg_tupac_jesuits
+			ig:ig_devout = {
+				set_interest_group_name = ig_jesuits
+			}
+		}
+		ig:ig_devout = {
+			remove_ideology = ideology_moralist
+			add_ideology = ideology_jesuit
+		}
+		set_variable = ads_tupac
+		trigger_event = { id = dvg_caladero.112 days = 90 }
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.35 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.35.t
+	desc = dvg_caladero.35.d
+	flavor = dvg_caladero.35.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		exists = c:ADS
+		this = c:ADS
+		year = 1855
+		NOT = { has_variable = dona_maria }
+	}
+	#She has his eyes!
+	option = {
+		name = dvg_caladero.35.a
+		default_option = yes
+		
+		create_character = {
+			first_name = "Maria"
+			last_name = "de_Ingapirca_y_Alfaoes"
+			female = yes
+			heir = yes
+			historical = yes
+			culture = cu:caladeran
+			religion = catholic
+			noble = yes
+			birth_date = 1855.1.1
+			interest_group = ig_intelligentsia
+			ideology = ideology_liberal_leader
+		}
+		set_variable = dona_maria
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.36 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.36.t
+	desc = dvg_caladero.36.d
+	flavor = dvg_caladero.36.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		exists = c:ADS
+		this = c:ADS
+		year = 1867
+		has_variable = dona_maria
+		NOT = { has_variable = maria_ready_to_rule }
+	}
+	#Why can’t they write about something nice, like how good my daughter is?
+	option = {
+		name = dvg_caladero.36.a
+		default_option = yes
+		
+		add_radicals = {
+			value = 0.5
+			interest_group = ig:ig_landowners
+		}
+		
+		set_variable = maria_ready_to_rule
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.37 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.37.t
+	desc = dvg_caladero.37.d
+	flavor = dvg_caladero.37.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		exists = c:ADS
+		this = c:ADS
+		year = 1872
+		has_variable = ads_tupac
+		NOT = { has_variable = ads_tupac_retirement }
+	
+	}
+	#¡Viva la Emperatriz!
+	option = {
+		name = dvg_caladero.37.a
+		default_option = yes
+		ruler = { kill_character = yes }
+		if = {
+			limit = {
+				OR = {
+					has_law = law_type:law_autocracy
+					has_law = law_type:law_oligarchy
+					has_law = law_type:law_landed_voting
+				}
+			}
+			activate_law = law_type:law_wealth_voting
+		}
+		else = {
+			limit = {
+				OR = {
+					has_law = law_type:law_wealth_voting
+					has_law = law_type:law_census_voting
+				}
+			}
+			activate_law = law_type:law_universal_suffrage
+		}
+		ig:ig_landowners = {
+			remove_ideology = ideology_paternalistic
+			add_ideology = ideology_constitutionalist
+		}
+		ig:ig_intelligentsia = {
+			remove_ideology = ideology_republican
+			add_ideology = ideology_constitutionalist
+		}
+		set_variable = ads_tupac_retirement
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.38 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.38.t
+	desc = dvg_caladero.38.d
+	flavor = dvg_caladero.38.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		exists = c:ADS
+		this = c:ADS
+		year = 1872
+		has_variable = ads_tupac
+		has_variable = maria_ready_to_rule
+	}
+	#Surely he will recover soon…
+	option = {
+		name = dvg_caladero.38.a
+		default_option = yes
+		
+		add_modifier = {
+			name = dvg_regency_government
+			days = 3650
+		}
+		
+		trigger_event = { id = dvg_caladero.39 days = 365 }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.39 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.39.t
+	desc = dvg_caladero.39.d
+	flavor = dvg_caladero.39.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#¡Dios nos ayuda a todos!
+	option = {
+		name = dvg_caladero.39.a
+		default_option = yes 
+		random_list = {
+			60 = {
+				trigger_event = { id = dvg_caladero.40 }
+			}
+			40 = {
+				trigger_event = { id = dvg_caladero.41 }
+			}
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.40 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.40.t
+	desc = dvg_caladero.40.d
+	flavor = dvg_caladero.40.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	immediate = {
+		heir = { kill_character = yes }
+	}
+	trigger = {
+	}
+	#Long live the Emperor...?
+	option = {
+		name = dvg_caladero.40.a
+		default_option = yes
+		
+		ruler = { kill_character = yes }
+		activate_law = law_type:law_theocracy
+		activate_law = law_type:law_slavery_banned
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.41 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.41.t
+	desc = dvg_caladero.41.d
+	flavor = dvg_caladero.41.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#
+	option = {
+		name = dvg_caladero.41.a
+		default_option = yes
+		
+		ruler = { kill_character = yes }
+		if = {
+			limit = {
+				OR = {
+					has_law = law_type:law_autocracy
+					has_law = law_type:law_landed_voting
+				}
+			}
+			activate_law = law_type:law_wealth_voting
+		}
+		else = {
+			limit = {
+				OR = {
+					has_law = law_type:law_wealth_voting
+					has_law = law_type:law_census_voting
+				}
+			}
+			activate_law = law_type:law_universal_suffrage
+		}
+		ig:ig_landowners = {
+			remove_ideology = ideology_paternalistic
+			add_ideology = ideology_constitutionalist
+		}
+		ig:ig_intelligentsia = {
+			remove_ideology = ideology_republican
+			add_ideology = ideology_constitutionalist
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.42 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.42.t
+	desc = dvg_caladero.42.d
+	flavor = dvg_caladero.42.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		exists = c:ADS
+		this = c:ADS
+		year = 1880
+		has_variable = ads_tupac_retirement
+	}
+	#From the Sun, he descended : to the Sun, he returned.
+	option = {
+		name = dvg_caladero.42.a
+		default_option = yes
+		
+		add_radicals = {
+			value = 0.4
+			pop_type = aristocrats
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.43 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.43.t
+	desc = dvg_caladero.43.d
+	flavor = dvg_caladero.43.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#May it never be lowered!
+	option = {
+		name = dvg_caladero.43.a
+		default_option = yes
+		
+		change_variable = {
+			name = dvg_tupac_reign
+			add = 1
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.44 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.44.t
+	desc = dvg_caladero.44.d
+	flavor = dvg_caladero.44.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#May it never be lowered!
+	option = {
+		name = dvg_caladero.44.a
+		default_option = yes
+		
+		change_variable = {
+			name = dvg_tupac_reign
+			add = 1
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.45 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.45.t
+	desc = dvg_caladero.45.d
+	flavor = dvg_caladero.45.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#May it never be lowered!
+	option = {
+		name = dvg_caladero.45.a
+		default_option = yes
+		
+		change_variable = {
+			name = dvg_tupac_reign
+			add = 1
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.46 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.46.t
+	desc = dvg_caladero.46.d
+	flavor = dvg_caladero.46.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#May it never be lowered!
+	option = {
+		name = dvg_caladero.46.a
+		default_option = yes
+		
+		change_variable = {
+			name = dvg_tupac_reign
+			add = 1
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.47 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.47.t
+	desc = dvg_caladero.47.d
+	flavor = dvg_caladero.47.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#May it never be lowered!
+	option = {
+		name = dvg_caladero.47.a
+		default_option = yes
+		
+		change_variable = {
+			name = dvg_tupac_reign
+			add = 1
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.48 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.48.t
+	desc = dvg_caladero.48.d
+	flavor = dvg_caladero.48.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		exists = c:ADS
+		this = c:ADS
+		has_variable = ads_tupac
+		NOT = { has_variable = ads_tupac_end_rule }
+		NOT = { has_variable = ads_tupac_great_power }
+	}
+	#A radiant sovereign is he!
+	option = {
+		name = dvg_caladero.48.a
+		default_option = yes
+		
+		change_variable = {
+			name = dvg_tupac_reign
+			add = 1
+		}
+		add_loyalist = {
+			value = 0.1
+		}
+		set_variable = ads_tupac_great_power
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.49 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.49.t
+	desc = dvg_caladero.49.d
+	flavor = dvg_caladero.49.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#We are the Protector of Ameriga!
+	option = {
+		name = dvg_caladero.49.a
+		default_option = yes
+		
+		change_variable = {
+			name = dvg_tupac_reign
+			add = 1
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.50 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.50.t
+	desc = dvg_caladero.50.d
+	flavor = dvg_caladero.50.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		exists = c:ADS
+		this = c:ADS
+		has_variable = ads_tupac
+		has_government_type = gov_empire
+		NOT = { has_variable = ads_constitution }
+	}
+	#He is still great regardless!
+	option = {
+		name = dvg_caladero.50.a
+		default_option = yes
+		
+		change_variable = {
+			name = dvg_tupac_reign
+			add = -1
+		}
+		set_variable = ads_constitution
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.51 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.51.t
+	desc = dvg_caladero.51.d
+	flavor = dvg_caladero.51.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		exists = c:ADS
+		this = c:ADS
+		has_government_type = gov_constitutional_empire
+		has_variable = ads_tupac
+		NOT = { has_variable = ads_constitution }
+	}
+	#Yet his brilliance still cannot be denied.
+	option = {
+		name = dvg_caladero.51.a
+		default_option = yes
+		
+		change_variable = {
+			name = dvg_tupac_reign
+			add = -2
+		}
+		set_variable = ads_constitution
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.52 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.52.t
+	desc = dvg_caladero.52.d
+	flavor = dvg_caladero.52.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		exists = c:ADS
+		this = c:ADS
+		has_variable = ads_tupac
+		NOT = { has_variable = ads_tupac_end_rule }
+		NOR = {
+			has_government_type = gov_empire
+			has_government_type = gov_constitutional_empire
+		}
+	}
+	#Freedom delayed and denied no longer!
+	option = {
+		name = dvg_caladero.52.a
+		default_option = yes
+		
+		set_variable = ads_tupac_end_rule
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.53 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.53.t
+	desc = dvg_caladero.53.d
+	flavor = dvg_caladero.53.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#Camelot shall fall!
+	option = {
+		name = dvg_caladero.53.a
+		default_option = yes
+		
+		s:STATE_WESSEX = { add_claim = c:ADS }
+		s:STATE_NORTHUMBRIA = { add_claim = c:ADS }
+		s:STATE_GODWINSON = { add_claim = c:ADS }
+		
+		c:ADS = {
+			create_diplomatic_play = {
+				war = no
+				target_country = c:BEO
+				target_state = s:STATE_WESSEX.region_state:BEO
+				type = dp_return_state
+				
+				add_war_goal = {
+					holder = c:ADS
+					target_country = c:BEO
+					target_state = s:STATE_NORTHUMBRIA.region_state:BEO
+					type = return_state
+				}
+				add_war_goal = {
+					holder = c:ADS
+					target_country = c:BEO
+					target_state = s:STATE_GODWINSON.region_state:BEO
+					type = return_state
+				}
+				add_war_goal = {
+					holder = c:BEO
+					target_country = c:ADS
+					target_state = s:STATE_NEAR_COLLASUYU.region_state:ADS
+					type = return_state
+				}
+				add_war_goal = {
+					holder = c:BEO
+					target_country = c:ADS
+					target_state = s:STATE_CATAMARCA.region_state:ADS
+					type = return_state
+				}
+				add_war_goal = {
+					holder = c:BEO
+					target_country = c:ADS
+					target_state = s:STATE_KUCHICHAY.region_state:ADS
+					type = return_state
+				}
+			}
+		}
+		
+		add_journal_entry = {
+			type = je_beornian_war
+		}
+		c:BEO = {
+			trigger_event = { id = dvg_caladero.54 }
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.54 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.54.t
+	desc = dvg_caladero.54.d
+	flavor = dvg_caladero.54.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#For king and country!
+	option = {
+		name = dvg_caladero.54.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.55 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.55.t
+	desc = dvg_caladero.55.d
+	flavor = dvg_caladero.55.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The Sapa Inca turns to the sky for answers but receives only rain.
+	option = {
+		name = dvg_caladero.55.a
+		default_option = yes
+		
+		c:BEO = {
+			trigger_event = { id = dvg_caladero.56 }
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.56 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.56.t
+	desc = dvg_caladero.56.d
+	flavor = dvg_caladero.56.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#Beornia acted in self-defense!
+	option = {
+		name = dvg_caladero.56.a
+		default_option = yes
+		
+		random_list = {
+			34 = {
+				s:STATE_NEAR_COLLASUYU.region_state:BEO = {
+					kill_population_percent_in_state = {
+						percent = 0.5
+					}
+				}
+				s:STATE_COLLASUYU.region_state:BEO = {
+					kill_population_percent_in_state = {
+						percent = 0.5
+					}
+				}
+				s:STATE_KUCHICHAY.region_state:BEO = {
+					kill_population_percent_in_state = {
+						percent = 0.5
+					}
+				}
+				s:STATE_CATAMARCA.region_state:BEO = {
+					kill_population_percent_in_state = {
+						percent = 0.5
+					}
+				}
+			}
+			33 = {
+				s:STATE_NEAR_COLLASUYU.region_state:BEO = {
+					kill_population_percent_in_state = {
+						percent = 0.45
+					}
+				}
+				s:STATE_COLLASUYU.region_state:BEO = {
+					kill_population_percent_in_state = {
+						percent = 0.45
+					}
+				}
+				s:STATE_KUCHICHAY.region_state:BEO = {
+					kill_population_percent_in_state = {
+						percent = 0.45
+					}
+				}
+				s:STATE_CATAMARCA.region_state:BEO = {
+					kill_population_percent_in_state = {
+						percent = 0.45
+					}
+				}
+			}
+			33 = {
+				s:STATE_NEAR_COLLASUYU.region_state:BEO = {
+					kill_population_percent_in_state = {
+						percent = 0.4
+					}
+				}
+				s:STATE_COLLASUYU.region_state:BEO = {
+					kill_population_percent_in_state = {
+						percent = 0.4
+					}
+				}
+				s:STATE_KUCHICHAY.region_state:BEO = {
+					kill_population_percent_in_state = {
+						percent = 0.4
+					}
+				}
+				s:STATE_CATAMARCA.region_state:BEO = {
+					kill_population_percent_in_state = {
+						percent = 0.4
+					}
+				}
+			}
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.57 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.57.t
+	desc = dvg_caladero.57.d
+	flavor = dvg_caladero.57.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#God be praised!
+	option = {
+		name = dvg_caladero.57.a
+		default_option = yes
+		
+		s:STATE_WESSEX = { remove_claim = c:ADS }
+		s:STATE_NORTHUMBRIA = { remove_claim = c:ADS }
+		s:STATE_GODWINSON = { remove_claim = c:ADS }
+		
+		s:STATE_NEAR_COLLASUYU = { remove_claim = c:BEO }
+		s:STATE_COLLASUYU = { remove_claim = c:BEO }
+		s:STATE_CATAMARCA = { remove_claim = c:BEO }
+		s:STATE_KUCHICHAY = { remove_claim = c:BEO }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.58 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.58.t
+	desc = dvg_caladero.58.d
+	flavor = dvg_caladero.58.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#My God, my God, why has Thou forsaken me?
+	option = {
+		name = dvg_caladero.58.a
+		default_option = yes
+		
+		c:ADS = {
+			trigger_event = { id = dvg_caladero.59 }
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.59 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.59.t
+	desc = dvg_caladero.59.d
+	flavor = dvg_caladero.59.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#And if they don’t, we have ways of disciplining them.
+	option = {
+		name = dvg_caladero.59.a
+		default_option = yes
+		
+		s:STATE_GODWINSON.region_state:ADS = {
+			add_modifier = {
+				name = dvg_nationalist_agitation
+				years = 3
+			}
+		}
+		s:STATE_NORTHUMBRIA.region_state:ADS = {
+			add_modifier = {
+				name = dvg_nationalist_agitation
+				years = 3
+			}
+		}
+		s:STATE_WESSEX.region_state:ADS = {
+			add_modifier = {
+				name = dvg_nationalist_agitation
+				years = 3
+			}
+		}
+		
+		add_radicals = {
+			value = 0.35
+			culture = cu:beornian
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.60 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.60.t
+	desc = dvg_caladero.60.d
+	flavor = dvg_caladero.60.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		exists = c:ADS
+		this = c:ADS
+		has_variable = ads_tupac
+		NOT = { has_variable = ads_catholic }
+	}
+	#In the beginning was the Word…
+	option = {
+		name = dvg_caladero.60.a
+		default_option = yes
+		
+		activate_law = law_type:law_freedom_of_conscience
+		set_variable = ads_catholic
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.61 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.61.t
+	desc = dvg_caladero.61.d
+	flavor = dvg_caladero.61.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		exists = c:ADS
+		this = c:ADS
+		OR = {
+			has_variable = dvg_romantico_rule
+			has_variable = dvg_romantico_rule_terror
+		}
+		NOT = { has_variable = ads_catholic }
+	}
+	#Emancipation of the mind at last!
+	option = {
+		name = dvg_caladero.61.a
+		default_option = yes
+		
+		activate_law = law_type:law_total_separation
+		set_variable = ads_catholic
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.62 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.62.t
+	desc = dvg_caladero.62.d
+	flavor = dvg_caladero.62.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	immediate = {
+		ruler = { kill_character = yes }
+		ig:ig_armed_forces = {
+			leader = { set_character_as_ruler = yes }
+		}
+	}
+	trigger = {
+	}
+	#Wilka new Republic - oligarchy
+	option = {
+		name = dvg_caladero.62.a
+		default_option = yes
+		
+		ig:ig_intelligentsia = {
+			leader = { kill_character = yes }
+		}
+		activate_law = law_type:law_landed_voting
+		
+		set_variable = ads_willka
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.63 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.63.t
+	desc = dvg_caladero.63.d
+	flavor = dvg_caladero.63.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.63.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.64 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.64.t
+	desc = dvg_caladero.64.d
+	flavor = dvg_caladero.64.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.64.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.65 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.65.t
+	desc = dvg_caladero.65.d
+	flavor = dvg_caladero.65.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.65.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.66 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.66.t
+	desc = dvg_caladero.66.d
+	flavor = dvg_caladero.66.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.66.a
+		default_option = yes
+		
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.67 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.67.t
+	desc = dvg_caladero.67.d
+	flavor = dvg_caladero.67.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.67.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.68 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.68.t
+	desc = dvg_caladero.68.d
+	flavor = dvg_caladero.68.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.68.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+#A truly revolutionary Republic
+dvg_caladero.69 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.69.t
+	desc = dvg_caladero.69.d
+	flavor = dvg_caladero.69.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	immediate = {
+		ruler = { kill_character = yes }
+		ig:ig_intelligentsia = {
+			leader = {
+				set_character_as_ruler = yes
+				remove_as_interest_group_leader = yes
+			}
+		}
+	}
+	trigger = {
+	}
+	#No mercy for the enemies of liberty! ¡Viva la revolucion!
+	option = {
+		name = dvg_caladero.69.a
+		default_option = yes
+		
+		ig:ig_armed_forces = {
+			leader = { kill_character = yes }
+		}
+		activate_law = law_type:law_slavery_banned
+		if = {
+			limit = {
+				NOT = { owns_entire_state_region = STATE_CUZCO }
+			}
+			add_journal_entry = {
+				type = je_incan_war_muyuroney
+			}
+		}
+		set_variable = ads_comite
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.70 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.70.t
+	desc = dvg_caladero.70.d
+	flavor = dvg_caladero.70.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#It is satisfying to be able to announce to a free people that the fatherland is going be saved.
+	option = {
+		name = dvg_caladero.70.a
+		default_option = yes
+		
+		set_variable = dvg_ads_terror
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.71 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.71.t
+	desc = dvg_caladero.71.d
+	flavor = dvg_caladero.71.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#As long as the King is removed!
+	option = {
+		name = dvg_caladero.71.a
+		default_option = yes
+		
+		c:QUL = {
+			trigger_event = { id = dvg_caladero.72 days = 45 }
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.72 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.72.t
+	desc = dvg_caladero.72.d
+	flavor = dvg_caladero.72.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	immediate = {
+		if = {
+			limit = { exists = s:STATE_ATACAMA.region_state:BRG }
+			s:STATE_ATACAMA.region_state:BRG = {
+				set_state_owner = c:QUL
+			}
+		}
+		create_character = {
+			first_name = Tupac
+			last_name = Katari
+			culture = cu:aimara
+			historical = yes
+			is_general = yes
+			interest_group = ig_landowners
+			ideology = ideology_despotic_utopian
+		}
+		activate_law = law_type:law_presidential_republic
+	}
+	trigger = {
+	}
+	#A good development for the Qullaw
+	option = {
+		name = dvg_caladero.72.a
+		default_option = yes
+		
+		s:STATE_ATACAMA.region_state:QUL = {
+			kill_population_percent_in_state = {
+				percent = 0.1
+				culture = cu:burgundian
+			}
+		}
+		create_diplomatic_pact = {
+			country = c:ADS
+			type = alliance
+		}
+		change_relations = {
+			country = c:ADS
+			value = 100
+		}
+		change_relations = {
+			country = c:BRG
+			value = -100
+		}
+		c:BRG = {
+			trigger_event = { id = dvg_caladero.73 days = 7 }
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.73 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.73.t
+	desc = dvg_caladero.73.d
+	flavor = dvg_caladero.73.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#Ask only for compensation
+	option = {
+		name = dvg_caladero.73.a
+		default_option = yes
+		
+		trigger_event = { id = dvg_caladero.74 days = 7 }
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+	#Civis Burgundio sum
+	option = {
+		name = dvg_caladero.73.b
+		
+		c:BRG = {
+			create_diplomatic_play = {
+				war = no
+				target_country = c:ADS
+				type = dp_make_protectorate
+			}
+		}
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+}
+dvg_caladero.74 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.74.t
+	desc = dvg_caladero.74.d
+	flavor = dvg_caladero.74.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#We will compensate the Burgundians
+	option = {
+		name = dvg_caladero.74.a
+		default_option = yes
+		
+		c:BRG = {
+			trigger_event = { id = dvg_caladero.75 days = 7 }
+		}
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+	#We do not bow to foreigners!
+	option = {
+		name = dvg_caladero.74.b
+		
+		c:BRG = {
+			trigger_event = { id = dvg_caladero.76 days = 7 }
+		}
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+}
+dvg_caladero.75 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.75.t
+	desc = dvg_caladero.75.d
+	flavor = dvg_caladero.75.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#Burgundian might solves all problems
+	option = {
+		name = dvg_caladero.75.a
+		default_option = yes
+		
+		change_relations = {
+			country = c:ADS
+			value = 100
+		}
+		add_treasury = 60000
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.76 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.76.t
+	desc = dvg_caladero.76.d
+	flavor = dvg_caladero.76.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#An embargo will destroy them more effectively than military intervention.
+	option = {
+		name = dvg_caladero.76.a
+		default_option = yes
+		
+		c:ADS = {
+			trigger_event = { id = dvg_caladero.77 days = 7 }
+		}
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+	#”Civis Burgundio sum”, we should have listened to that the first time…
+	option = {
+		name = dvg_caladero.76.b
+		c:BRG = {
+			create_diplomatic_play = {
+				war = no
+				target_country = c:ADS
+				type = dp_make_protectorate
+			}
+		}
+		c:ADS = {
+			trigger_event = { id = dvg_caladero.105 days = 180 }
+		}
+		ai_chance = {
+			base = 0.5
+		}
+	}
+}
+dvg_caladero.77 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.77.t
+	desc = dvg_caladero.77.d
+	flavor = dvg_caladero.77.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#There is no price for freedom!
+	option = {
+		name = dvg_caladero.77.a
+		default_option = yes
+		
+		c:BRG = {
+			create_diplomatic_pact = {
+				country = c:ADS
+				type = embargo
+			}
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.78 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.78.t
+	desc = dvg_caladero.78.d
+	flavor = dvg_caladero.78.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#Peace and Freedom in the Andes!
+	option = {
+		name = dvg_caladero.78.a
+		default_option = yes
+		
+		create_diplomatic_pact = {
+			country = c:QUL
+			type = puppet
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.79 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.79.t
+	desc = dvg_caladero.79.d
+	flavor = dvg_caladero.79.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#Shinkillaqta will be under our wing soon!
+	option = {
+		name = dvg_caladero.79.a
+		default_option = yes
+		
+		c:ADS = {
+			create_diplomatic_play = {
+				war = no
+				target_country = c:QUL
+				type = dp_make_protectorate
+			}
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.80 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.80.t
+	desc = dvg_caladero.80.d
+	flavor = dvg_caladero.80.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		exists = c:ADS
+		this = c:ADS
+		has_variable = ads_comite
+		has_variable = dvg_ads_terror
+		NOT = { has_variable = choice_muyuroney }
+	}
+	#Muyuroney is arrested at the behest of the Assembly!
+	option = {
+		name = dvg_caladero.80.a
+		default_option = yes
+		
+		trigger_event = { id = dvg_caladero.81 days = 7 }
+		set_variable = choice_muyuroney
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+	#Muyuroney rallies his supporters in the Capital!
+	option = {
+		name = dvg_caladero.80.b
+		
+		trigger_event = { id = dvg_caladero.83 days = 7 }
+		set_variable = choice_muyuroney
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+}
+dvg_caladero.81 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.81.t
+	desc = dvg_caladero.81.d
+	flavor = dvg_caladero.81.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#Sic semper tyrannis
+	option = {
+		name = dvg_caladero.81.a
+		default_option = yes
+		
+		ruler = { kill_character = yes }
+		trigger_event = { id = dvg_caladero.82 days = 60 }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.82 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.82.t
+	desc = dvg_caladero.82.d
+	flavor = dvg_caladero.82.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#It is time to restore order in the Andes
+	option = {
+		name = dvg_caladero.82.a
+		default_option = yes
+		
+		activate_law = law_type:law_wealth_voting
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+	#The ideals of the Revolution shall endure
+	option = {
+		name = dvg_caladero.82.b
+		
+		activate_law = law_type:law_universal_suffrage
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+}
+dvg_caladero.83 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.83.t
+	desc = dvg_caladero.83.d
+	flavor = dvg_caladero.83.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	immediate = {
+		if = {
+			limit = { exists = s:STATE_CAJAMARCA.region_state:ADS }
+			create_country = {
+				tag = CHM
+				origin = this
+				state = s:STATE_CAJAMARCA.region_state:ADS
+				state = s:STATE_LIMA.region_state:ADS
+				on_created = {
+					add_modifier = {
+						name = dvg_revolutionary_militias
+						days = 720
+						is_decaying = yes
+					}
+					add_loyalists = {
+						value = 0.35
+						culture = cu:chimu
+					}
+					warlord_setup_effect = yes
+					set_variable = warlord_state
+				}
+			}
+		}
+	}
+	trigger = {
+	}
+	#Only strong men are able to steer the ship of state!
+	option = {
+		name = dvg_caladero.83.a
+		default_option = yes
+		
+		trigger_event = { id = dvg_caladero.85 }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+	#Liberty or death (Play as Qullaw)!
+	option = {
+		name = dvg_caladero.83.b
+		
+		change_tag = QUL
+		trigger_event = { id = dvg_caladero.84 }
+		c:ADS = {
+			trigger_event = { id = dvg_caladero.85 }
+		}
+		
+		ai_chance = {
+			base = 0
+		}
+	}
+	#Liberty or death (Play as Chimor)!
+	option = {
+		name = dvg_caladero.83.c
+		
+		change_tag = QUL
+		trigger_event = { id = dvg_caladero.84 }
+		c:ADS = {
+			trigger_event = { id = dvg_caladero.85 }
+		}
+		
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+dvg_caladero.84 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.84.t
+	desc = dvg_caladero.84.d
+	flavor = dvg_caladero.84.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#To Arms!
+	option = {
+		name = dvg_caladero.84.a
+		default_option = yes
+		
+		add_loyalists = {
+			value = 0.3
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.85 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.85.t
+	desc = dvg_caladero.85.d
+	flavor = dvg_caladero.85.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#We march to Chan Chan!
+	option = {
+		name = dvg_caladero.85.a
+		default_option = yes
+		
+		create_diplomatic_play = {
+			war = no
+			target_country = c:CHM
+			add_target_backers = { c:QUL }
+			type = dp_annex_war
+			
+			add_war_goal = {
+				holder = c:ADS
+				target_country = c:QUL
+				type = annex_country
+			}
+		}
+		add_journal_entry = {
+			type = je_federalist_war
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.86 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.86.t
+	desc = dvg_caladero.86.d
+	flavor = dvg_caladero.86.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#Goodbye, Muyuroney!
+	option = {
+		name = dvg_caladero.86.a
+		default_option = yes
+		
+		ruler = { kill_character = yes }
+		change_tag = QUI
+		remove_primary_culture = cu:chimu
+		remove_primary_culture = cu:quechua
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.87 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.87.t
+	desc = dvg_caladero.87.d
+	flavor = dvg_caladero.87.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#Praise our Jefe!
+	option = {
+		name = dvg_caladero.87.a
+		default_option = yes
+		
+		add_journal_entry = {
+			type = je_the_andesian_project
+		}
+		
+		set_variable = ads_muyuroney_triumphant
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.88 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.88.t
+	desc = dvg_caladero.88.d
+	flavor = dvg_caladero.88.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		exists = c:ADS
+		this = c:ADS
+		has_variable = ads_muyuroney_triumphant
+		NOT = { has_variable = ads_el_infante }
+		year = 1856
+	}
+	#Good luck, Francisco Atanasio!
+	option = {
+		name = dvg_caladero.88.a
+		default_option = yes
+		
+		ruler = { kill_character = yes }
+		activate_law = law_type:law_universal_suffrage
+		
+		set_variable = ads_el_infante
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.89 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.89.t
+	desc = dvg_caladero.89.d
+	flavor = dvg_caladero.89.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#We will march upon the Valleys!
+	option = {
+		name = dvg_caladero.89.a
+		default_option = yes
+		
+		c:WLM = {
+			trigger_event = { id = dvg_caladero.90 }
+		}
+		s:STATE_COLLASUYU = { add_claim = c:ADS }
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.90 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.90.t
+	desc = dvg_caladero.90.d
+	flavor = dvg_caladero.90.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#We will push them back across the mountains!
+	option = {
+		name = dvg_caladero.90.a
+		default_option = yes
+		
+		c:ADS = {
+			create_diplomatic_play = {
+				war = no
+				target_country = c:WLM
+				target_state = s:STATE_COLLASUYU.region_state:WLM
+				type = dp_return_state
+			}
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.91 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.91.t
+	desc = dvg_caladero.91.d
+	flavor = dvg_caladero.91.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#We will march upon the Valleys!
+	option = {
+		name = dvg_caladero.91.a
+		default_option = yes
+		
+		c:NME = {
+			trigger_event = { id = dvg_caladero.93 }
+		}
+		s:STATE_COLLASUYU = { add_claim = ROOT }
+		s:STATE_NEAR_COLLASUYU = { add_claim = ROOT }
+		s:STATE_KUCHICHAY = { add_claim = ROOT }
+		s:STATE_CATAMARCA = { add_claim = ROOT }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.92 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.92.t
+	desc = dvg_caladero.92.d
+	flavor = dvg_caladero.92.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#We will march upon the Valleys!
+	option = {
+		name = dvg_caladero.92.a
+		default_option = yes
+		
+		c:SCA = {
+			trigger_event = { id = dvg_caladero.93 }
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.93 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.93.t
+	desc = dvg_caladero.93.d
+	flavor = dvg_caladero.93.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#We will defeat them!
+	option = {
+		name = dvg_caladero.93.a
+		default_option = yes
+		
+		if = {
+			limit = { exists = s:STATE_COLLASUYU.region_state:NME }
+			c:ADS = {
+				create_diplomatic_play = {
+					war = no
+					target_country = c:NME
+					target_state = s:STATE_COLLASUYU.region_state:NME
+					type = dp_return_state
+					
+					add_war_goal = {
+						holder = c:ADS
+						target_country = c:NME
+						target_state = s:STATE_NEAR_COLLASUYU.region_state:NME
+						type = return_state
+					}
+					add_war_goal = {
+						holder = c:ADS
+						target_country = c:NME
+						target_state = s:STATE_KUCHICHAY.region_state:NME
+						type = return_state
+					}
+					add_war_goal = {
+						holder = c:ADS
+						target_country = c:NME
+						target_state = s:STATE_CATAMARCA.region_state:NME
+						type = return_state
+					}
+					add_war_goal = {
+						holder = c:NME
+						target_country = c:ADS
+						type = contain_threat
+					}
+				}
+			}
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.94 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.94.t
+	desc = dvg_caladero.94.d
+	flavor = dvg_caladero.94.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.94.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.95 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.95.t
+	desc = dvg_caladero.95.d
+	flavor = dvg_caladero.95.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.95.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.96 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.96.t
+	desc = dvg_caladero.96.d
+	flavor = dvg_caladero.96.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.96.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.97 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.97.t
+	desc = dvg_caladero.97.d
+	flavor = dvg_caladero.97.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.97.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.98 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.98.t
+	desc = dvg_caladero.98.d
+	flavor = dvg_caladero.98.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.98.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.99 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.99.t
+	desc = dvg_caladero.99.d
+	flavor = dvg_caladero.99.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.99.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.100 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.100.t
+	desc = dvg_caladero.100.d
+	flavor = dvg_caladero.100.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.100.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.101 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.101.t
+	desc = dvg_caladero.101.d
+	flavor = dvg_caladero.101.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.101.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.102 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.102.t
+	desc = dvg_caladero.102.d
+	flavor = dvg_caladero.102.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	immediate = {
+		activate_law = law_type:law_monarchy
+		create_character = {
+			first_name = Frances_Ferran
+			last_name = de_Salina_Lampedusa
+			culture = cu:navarragon
+			religion = catholic
+			birth_date = 1820.10.21
+			noble = yes
+			ideology = ideology_moderate
+			interest_group = ig_landowners
+			on_created = {
+				set_character_as_ruler = yes
+			}
+		}
+	}
+	trigger = {
+	}
+	#An Aragonese Inca? What is this madness.
+	option = {
+		name = dvg_caladero.102.a
+		default_option = yes
+		
+		trigger_event = { id = dvg_caladero.104 days = 7 }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.103 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.103.t
+	desc = dvg_caladero.103.d
+	flavor = dvg_caladero.103.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#A Burgundian shall feel confident that Burgundy will protect him against injustice and wrong, in whatever land he may be.
+	option = {
+		name = dvg_caladero.103.a
+		default_option = yes
+		
+		add_loyalists = {
+			culture = cu:burgundian
+			value = 0.3
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.104 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.104.t
+	desc = dvg_caladero.104.d
+	flavor = dvg_caladero.104.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#He still likes his home country!
+	option = {
+		name = dvg_caladero.104.a
+		default_option = yes
+		
+		add_radicals = {
+			value = 0.3
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.105 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.105.t
+	desc = dvg_caladero.105.d
+	flavor = dvg_caladero.105.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.105.a
+		default_option = yes
+		
+		add_journal_entry = {
+			type = je_burgundian_war
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.106 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.106.t
+	desc = dvg_caladero.106.d
+	flavor = dvg_caladero.106.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#We will retaliate immediately!
+	option = {
+		name = dvg_caladero.106.a
+		default_option = yes
+		
+		if = {
+			limit = { exists = c:GRA }
+			create_diplomatic_play = {
+				war = no
+				target_country = c:GRA
+				target_state = s:STATE_ANTIOQUIA.region_state:GRA
+				type = dp_return_state
+				
+				add_war_goal = {
+					holder = c:ADS
+					target_country = c:GRA
+					target_state = s:STATE_CAUCA.region_state:GRA
+					type = return_state
+				}
+			}
+		}
+		else = {
+			limit = { exists = c:SAN }
+			create_diplomatic_play = {
+				war = no
+				target_country = c:SAN
+				type = dp_annex_war
+			}
+		}
+		c:ADS = {
+			add_journal_entry = {
+				type = je_conquer_herreria
+			}
+			trigger_event = { id = dvg_caladero.107 }
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+	#We will retaliate in time!
+	option = {
+		name = dvg_caladero.106.b
+		
+		c:ADS = {
+			add_journal_entry = {
+				type = je_conquer_herreria
+			}
+		}
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+dvg_caladero.107 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.107.t
+	desc = dvg_caladero.107.d
+	flavor = dvg_caladero.107.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#We will keep them north of the Angomayo!
+	option = {
+		name = dvg_caladero.107.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.108 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.108.t
+	desc = dvg_caladero.108.d
+	flavor = dvg_caladero.108.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#Goodbye, New Granada!
+	option = {
+		name = dvg_caladero.108.a
+		default_option = yes
+		
+		if = {
+			limit = { exists = c:GRA }
+			change_tag = CST
+		}
+		c:ADS = {
+			trigger_event = { id = dvg_caladero.109 }
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.109 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.109.t
+	desc = dvg_caladero.109.d
+	flavor = dvg_caladero.109.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#A new status-quo in New Granada
+	option = {
+		name = dvg_caladero.109.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.110 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.110.t
+	desc = dvg_caladero.110.d
+	flavor = dvg_caladero.110.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#Liberty shines upon the Andes!
+	option = {
+		name = dvg_caladero.110.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.111 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.111.t
+	desc = dvg_caladero.111.d
+	flavor = dvg_caladero.111.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#Aimless ambitions meet their end.
+	option = {
+		name = dvg_caladero.111.a
+		default_option = yes
+		
+		if = {
+			limit = { exists = c:GRA }
+			every_diplomatic_play = {
+				limit = {
+					initiator_is = c:GRA
+					target_is = c:ADS
+				}
+				end_play = yes
+			}
+			c:GRA = {
+				create_bidirectional_truce = {
+					country = c:ADS
+					months = 48
+				}
+				change_infamy = -50
+			}
+		}
+		if = {
+			limit = { exists = c:SAN }
+			every_diplomatic_play = {
+				limit = {
+					initiator_is = c:SAN
+					target_is = c:ADS
+				}
+				end_play = yes
+			}
+			c:SAN = {
+				create_bidirectional_truce = {
+					country = c:ADS
+					months = 48
+				}
+				change_infamy = -50
+			}
+		}
+		s:STATE_CAUCA = { remove_claim = c:ADS }
+		s:STATE_ANTIOQUIA = { remove_claim = c:ADS }
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.112 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.112.t
+	desc = dvg_caladero.112.d
+	flavor = dvg_caladero.112.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#A new Empire will be built under, and according to Tupac's commandments!
+	option = {
+		name = dvg_caladero.112.a
+		default_option = yes
+		
+		add_journal_entry = {
+			type = je_the_new_inca_empire
+		}
+		set_variable = {
+			name = dvg_inca_europeanization
+			value = 10
+		}
+		
+		trigger_event = { id = dvg_caladero.113 days = 60 }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.113 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.113.t
+	desc = dvg_caladero.113.d
+	flavor = dvg_caladero.113.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The old nobility will be purged.
+	option = {
+		name = dvg_caladero.113.a
+		default_option = yes
+		
+		change_variable = {
+			name = dvg_inca_europeanization
+			add = 2
+		}
+		kill_population_percent = {
+			percent = 0.55
+			culture = cu:quechua
+			pop_type = aristocrats
+		}
+		kill_population_percent = {
+			percent = 0.55
+			culture = cu:aimara
+			pop_type = aristocrats
+		}
+		add_radicals = {
+			value = 0.1
+			culture = cu:quechua
+		}
+		add_radicals = {
+			value = 0.1
+			culture = cu:aimara
+		}
+		add_loyalists = {
+			value = 0.1
+			culture = cu:chimu
+		}
+		trigger_event = { id = dvg_caladero.114 days = 60 }
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+	#Promote lesser nobles to act as a counterbalance!
+	option = {
+		name = dvg_caladero.113.b
+		
+		add_radicals = {
+			value = 0.1
+			culture = cu:chimu
+		}
+		add_loyalists = {
+			value = 0.1
+			culture = cu:quechua
+		}
+		add_loyalists = {
+			value = 0.1
+			culture = cu:aimara
+		}
+		
+		if = {
+			limit = { exists = c:QUL }
+			change_relations = {
+				country = c:QUL
+				value = 50
+			}
+		}
+		trigger_event = { id = dvg_caladero.114 days = 60 }
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+}
+dvg_caladero.114 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.114.t
+	desc = dvg_caladero.114.d
+	flavor = dvg_caladero.114.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#Extend the Federal Cortes system of the Andes to the Four Corners of the Empire!
+	option = {
+		name = dvg_caladero.114.a
+		default_option = yes
+		
+		change_variable = {
+			name = dvg_inca_europeanization
+			add = 2
+		}
+		
+		add_loyalists = {
+			value = 0.1
+			culture = cu:chimu
+		}
+		add_loyalists = {
+			value = 0.1
+			culture = cu:caladeran
+		}
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+	#We will respect the structures of old and those of the nations within ours!
+	option = {
+		name = dvg_caladero.114.b
+		
+		add_loyalists = {
+			value = 0.1
+			culture = cu:quechua
+		}
+		add_loyalists = {
+			value = 0.1
+			culture = cu:aimara
+		}
+		ai_chance = {
+			base = 0.5
+		}
+	}
+}
+dvg_caladero.115 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.115.t
+	desc = dvg_caladero.115.d
+	flavor = dvg_caladero.115.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#Onwards, to the Collao!
+	option = {
+		name = dvg_caladero.115.a
+		default_option = yes
+		
+		c:ADS = {
+			create_diplomatic_play = {
+				war = no
+				target_country = c:QUL
+				type = dp_annex_war
+			}
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.116 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.116.t
+	desc = dvg_caladero.116.d
+	flavor = dvg_caladero.116.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#We will pursue negotiations with Baie d'Argent.
+	option = {
+		name = dvg_caladero.116.a
+		default_option = yes
+		
+		c:BRG = {
+			trigger_event = { id = dvg_caladero.117 }
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.117 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.117.t
+	desc = dvg_caladero.117.d
+	flavor = dvg_caladero.117.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#We are interested in selling Baie d'Argent and retiring from the Qullaw.
+	option = {
+		name = dvg_caladero.117.a
+		default_option = yes
+		
+		c:ADS = {
+			trigger_event = { id = dvg_caladero.119 days = 7 }
+		}
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+	#We aren't interested in either selling our port of the people of the Qullaw.
+	option = {
+		name = dvg_caladero.117.b
+		
+		c:ADS = {
+			trigger_event = { id = dvg_caladero.118 days = 7 }
+		}
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+}
+dvg_caladero.118 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.118.t
+	desc = dvg_caladero.118.d
+	flavor = dvg_caladero.118.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#Their prepotence will be their undoing
+	option = {
+		name = dvg_caladero.118.a
+		default_option = yes
+		
+		c:ADS = {
+			create_diplomatic_play = {
+				war = no
+				target_country = c:QUL
+				type = dp_annex_war
+			}
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.119 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.119.t
+	desc = dvg_caladero.119.d
+	flavor = dvg_caladero.119.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#At least no blood was spilled.
+	option = {
+		name = dvg_caladero.119.a
+		default_option = yes
+		
+		s:STATE_ATACAMA.region_state:BRG = {
+			set_state_owner = c:ADS
+			add_modifier = {
+				name = dvg_inca_special_administrative_region
+				years = 50
+			}
+		}
+		c:BRG = {
+			remove_diplomatic_pact = {
+				country = c:QUL
+				type = alliance
+			}
+			change_relations = {
+				country = c:ADS
+				value = 50
+			}
+		}
+		
+		c:ADS = {
+			trigger_event = { id = dvg_caladero.119 days = 7 }
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.120 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.120.t
+	desc = dvg_caladero.120.d
+	flavor = dvg_caladero.120.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#For the Collao!
+	option = {
+		name = dvg_caladero.120.a
+		default_option = yes
+		
+		c:ADS = {
+			create_diplomatic_play = {
+				war = no
+				target_country = c:QUL
+				type = dp_make_protectorate
+			}
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.121 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.121.t
+	desc = dvg_caladero.121.d
+	flavor = dvg_caladero.121.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	immediate = {
+		every_scope_character = {
+			limit = { has_variable = is_juan_pablo }
+			save_scope_as = scope_juan_pablo
+		}
+	}
+	trigger = {
+	}
+	#Make haste, Juan Pablo!
+	option = {
+		name = dvg_caladero.121.a
+		default_option = yes
+		
+		scope:scope_juan_pablo = {
+			transfer_character = c:QUI
+			set_character_as_ruler = yes
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.122 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.122.t
+	desc = dvg_caladero.122.d
+	flavor = dvg_caladero.122.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.122.a
+		default_option = yes
+		
+		c:SPA = {
+			trigger_event = { id = dvg_caladero.123 }
+		}
+		ai_chance = {
+			base = 0.5
+		}
+	}
+	option = {
+		name = dvg_caladero.122.b
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+}
+dvg_caladero.123 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.123.t
+	desc = dvg_caladero.123.d
+	flavor = dvg_caladero.123.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.123.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.123.b
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+}
+dvg_caladero.124 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.124.t
+	desc = dvg_caladero.124.d
+	flavor = dvg_caladero.124.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.124.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.125 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.125.t
+	desc = dvg_caladero.125.d
+	flavor = dvg_caladero.125.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.125.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.126 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.126.t
+	desc = dvg_caladero.126.d
+	flavor = dvg_caladero.126.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.126.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.127 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.127.t
+	desc = dvg_caladero.127.d
+	flavor = dvg_caladero.127.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#To Ragga!
+	option = {
+		name = dvg_caladero.127.a
+		default_option = yes
+		
+		c:SCA = {
+			trigger_event = { id = dvg_caladero.128 }
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.128 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.128.t
+	desc = dvg_caladero.128.d
+	flavor = dvg_caladero.128.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#A reasonable request for them.
+	option = {
+		name = dvg_caladero.128.a
+		default_option = yes
+		
+		c:ADS = {
+			trigger_event = { id = dvg_caladero.129 days = 14 }
+		}
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+	#We're not going to sell such a valuable colony to an upstart Empire.
+	option = {
+		name = dvg_caladero.128.b
+		
+		c:ADS = {
+			trigger_event = { id = dvg_caladero.129 days = 14 }
+		}
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+}
+dvg_caladero.129 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.129.t
+	desc = dvg_caladero.129.d
+	flavor = dvg_caladero.129.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#Ragga shall fall!
+	option = {
+		name = dvg_caladero.129.a
+		default_option = yes
+		
+		create_diplomatic_play = {
+			war = no
+			target_country = c:SCA
+			target_state = s:STATE_NEAR_COLLASUYU.region_state:SCA
+			type = dp_return_state
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.130 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.130.t
+	desc = dvg_caladero.130.d
+	flavor = dvg_caladero.130.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.130.a
+		default_option = yes
+		
+		c:SCA = {
+			trigger_event = { id = dvg_caladero.130 days = 14 }
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.131 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.131.t
+	desc = dvg_caladero.131.d
+	flavor = dvg_caladero.131.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#Goodbye, Chiri!
+	option = {
+		name = dvg_caladero.131.a
+		default_option = yes
+		
+		if = {
+			limit = { exists = s:STATE_NEAR_COLLASUYU.region_state:SCA }
+			s:STATE_NEAR_COLLASUYU.region_state:SCA = {
+				set_state_owner = c:ADS
+					add_modifier = {
+					name = dvg_inca_special_administrative_region
+					years = 50
+				}
+			}
+		}
+		c:SCA = {
+			add_treasury = 100000
+		}
+		c:ADS = {
+			trigger_event = { id = dvg_caladero.132 }
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.132 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.132.t
+	desc = dvg_caladero.132.d
+	flavor = dvg_caladero.132.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.132.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.133 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.133.t
+	desc = dvg_caladero.133.d
+	flavor = dvg_caladero.133.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.133.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.134 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.134.t
+	desc = dvg_caladero.134.d
+	flavor = dvg_caladero.134.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.134.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.135 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.135.t
+	desc = dvg_caladero.135.d
+	flavor = dvg_caladero.135.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.135.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.136 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.136.t
+	desc = dvg_caladero.136.d
+	flavor = dvg_caladero.136.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.136.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.137 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.137.t
+	desc = dvg_caladero.137.d
+	flavor = dvg_caladero.137.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.137.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.138 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.138.t
+	desc = dvg_caladero.138.d
+	flavor = dvg_caladero.138.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.138.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.139 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.139.t
+	desc = dvg_caladero.139.d
+	flavor = dvg_caladero.139.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.139.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.140 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.140.t
+	desc = dvg_caladero.140.d
+	flavor = dvg_caladero.140.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.140.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.141 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.141.t
+	desc = dvg_caladero.141.d
+	flavor = dvg_caladero.141.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#Chiri is nobody's promised land but ours.
+	option = {
+		name = dvg_caladero.141.a
+		default_option = yes
+		
+		c:SCA = {
+			trigger_event = { id = dvg_caladero.142 days = 25 }
+		}
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+	#Any second we waste is another life lost.
+	option = {
+		name = dvg_caladero.141.b
+		default_option = yes
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+}
+dvg_caladero.142 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.142.t
+	desc = dvg_caladero.142.d
+	flavor = dvg_caladero.142.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#We will seek to sell the colony to them.
+	option = {
+		name = dvg_caladero.142.a
+		default_option = yes
+		
+		c:ADS = {
+			trigger_event = { id = dvg_caladero.144 }
+		}
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+	#So what? It is our colony.
+	option = {
+		name = dvg_caladero.142.b
+		
+		c:ADS = {
+			trigger_event = { id = dvg_caladero.143 }
+		}
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+}
+dvg_caladero.143 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.143.t
+	desc = dvg_caladero.143.d
+	flavor = dvg_caladero.143.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#We will rid Ameriga of Scandinavian rule.
+	option = {
+		name = dvg_caladero.143.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.144 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.144.t
+	desc = dvg_caladero.144.d
+	flavor = dvg_caladero.144.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#We will rid Chiri of savages.
+	option = {
+		name = dvg_caladero.144.a
+		default_option = yes
+		
+		c:SCA = {
+			trigger_event = { id = dvg_caladero.145 }
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.145 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.145.t
+	desc = dvg_caladero.145.d
+	flavor = dvg_caladero.145.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.145.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.146 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.146.t
+	desc = dvg_caladero.146.d
+	flavor = dvg_caladero.146.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.146.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.147 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.147.t
+	desc = dvg_caladero.147.d
+	flavor = dvg_caladero.147.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.147.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.148 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.148.t
+	desc = dvg_caladero.148.d
+	flavor = dvg_caladero.148.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#The flames of the Revolution are growing colder – thankfully.
+	option = {
+		name = dvg_caladero.148.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.149 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.149.t
+	desc = dvg_caladero.149.d
+	flavor = dvg_caladero.149.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#Such damage can't be undone.
+	option = {
+		name = dvg_caladero.149.a
+		default_option = yes
+		
+		trigger_event = { id = dvg_caladero.150 days = 120 }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.150 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.150.t
+	desc = dvg_caladero.150.d
+	flavor = dvg_caladero.150.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#We will try to cooperate with them.
+	option = {
+		name = dvg_caladero.150.a
+		default_option = yes
+		
+		add_radicals = {
+			value = 0.2
+			culture = cu:aimara
+		}
+		add_radicals = {
+			value = 0.2
+			culture = cu:patagonian
+		}
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+	#We will seek to fully integrate them, no matter the cost.
+	option = {
+		name = dvg_caladero.150.b
+		
+		s:STATE_NEAR_COLLASUYU = {
+			remove_homeland = cu:beornian
+		}
+		s:STATE_KUCHICHAY = {
+			remove_homeland = cu:beornian
+		}
+		s:STATE_CATAMARCA = {
+			remove_homeland = cu:beornian
+		}
+		
+		if = {
+			limit = { exists = s:STATE_NEAR_COLLASUYU.region_state:ADS }
+			create_country = {
+				tag = QUL
+				origin = this
+				state = s:STATE_CATAMARCA.region_state:ADS
+				state = s:STATE_NEAR_COLLASUYU.region_state:ADS
+				state = s:STATE_ANTISUYU.region_state:ADS
+				state = s:STATE_KUCHICHAY.region_state:ADS
+				state = s:STATE_TILCARA.region_state:ADS
+				state = s:STATE_CHARCAS.region_state:ADS
+				state = s:STATE_TIWANAKU.region_state:ADS
+				state = s:STATE_ATACAMA.region_state:ADS
+				on_created = {
+					add_primary_culture = cu:caladeran
+				}
+			}
+		}
+		
+		hidden_effect = {
+			c:ADS = {
+				create_diplomatic_pact = {
+					country = c:QUL
+					type = puppet
+				}
+			}
+		}
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+}
+dvg_caladero.151 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.151.t
+	desc = dvg_caladero.151.d
+	flavor = dvg_caladero.151.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#We will seek to settle and bring the light of both God and Europe to these lands!
+	option = {
+		name = dvg_caladero.151.a
+		default_option = yes
+		
+		change_variable = {
+			name = dvg_inca_europeanization
+			add = 2
+		}
+		add_loyalists = {
+			value = 0.1
+			culture = cu:chimu
+		}
+		add_loyalists = {
+			value = 0.1
+			culture = cu:caladeran
+		}
+		activate_law = law_type:law_frontier_colonization
+		trigger_event = { id = dvg_caladero.152 days = 60 }
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+	#The light of God shines equally unto all!
+	option = {
+		name = dvg_caladero.151.b
+		
+		activate_law = law_type:law_colonial_exploitation
+		
+		add_loyalists = {
+			value = 0.1
+			culture = cu:quechua
+		}
+		add_loyalists = {
+			value = 0.1
+			culture = cu:aimara
+		}
+		
+		trigger_event = { id = dvg_caladero.152 days = 60 }
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+}
+dvg_caladero.152 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.152.t
+	desc = dvg_caladero.152.d
+	flavor = dvg_caladero.152.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#We will seek to standardize our Army
+	option = {
+		name = dvg_caladero.152.a
+		default_option = yes
+		
+		activate_law = law_type:law_professional_army
+		
+		add_loyalists = {
+			value = 0.1
+			culture = cu:chimu
+		}
+		add_loyalists = {
+			value = 0.1
+			culture = cu:caladeran
+		}
+		
+		set_variable = dvg_tupac_empire_defined
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+	#We will maintain a semi-traditional structure
+	option = {
+		name = dvg_caladero.152.b
+		
+		add_loyalists = {
+			value = 0.1
+			culture = cu:quechua
+		}
+		add_loyalists = {
+			value = 0.1
+			culture = cu:aimara
+		}
+		set_variable = dvg_tupac_empire_defined
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.153 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.153.t
+	desc = dvg_caladero.153.d
+	flavor = dvg_caladero.153.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#Didn't Tupac promise change?
+	option = {
+		name = dvg_caladero.153.a
+		default_option = yes
+		
+		set_variable = dvg_tupac_europeanized
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_caladero.154 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_caladero.154.t
+	desc = dvg_caladero.154.d
+	flavor = dvg_caladero.154.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	#Change at last?
+	option = {
+		name = dvg_caladero.154.a
+		default_option = yes
+		
+		set_variable = dvg_tupac_inca
+		
+		ai_chance = {
+			base = 1
+		}
 	}
 }
