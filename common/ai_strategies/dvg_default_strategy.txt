@@ -2,6 +2,10 @@
 	icon = "gfx/interface/icons/ai_strategy_icons/placate_population.dds" # Never shown
 
 
+	# If this trigger evaluates to true for any active strategy, the AI will try to form a power bloc
+	# Empty trigger counts as evaluating false in this specific case
+	will_form_power_bloc = {}
+
 	# These are the tax levels the AI will try to stay within, though it can go above max tax level if in a financial emergency
 	# Using a different value in a strategy will override these values
 	desired_tax_level = medium
@@ -29,7 +33,7 @@
 	# Chance each day that the AI will stop enacting a law that is going to spark a civil war (1 aversion should translate into ~25% chance of avoiding a civil war)
 	# Using a different value in a strategy will override this value
 	revolution_aversion = {
-		value = 5 
+		value = 5
 	}
 	
 	# If base chance for law to pass is below this, don't enact it
@@ -50,17 +54,7 @@
 		value = 25 
 	}
 	
-	# Added to base neutrality in diplomatic plays	
-	# Using this value in other strategies will function additively
-	diplomatic_play_neutrality = {
-		value = 50 
-	}
 
-	# Added to base boldness in diplomatic plays	
-	# Using this value in other strategies will function additively
-	diplomatic_play_boldness = {
-		value = 50
-	}
 
 	# How many maneuvers are we OK with using up in the initial phase to add more wargoals
 	# Using this value in other strategies will function additively (values below 0 or above 1 have no further effect)
@@ -217,23 +211,7 @@
 				}			
 			}
 			add = 5
-		}			
-		
-		# Countries with Economic Imperialism is always looking to bring more countries into their market
-		if = {
-			limit = {
-				has_strategy = ai_strategy_economic_imperialism
-				scope:target_country.country_rank < country_rank
-				NOR = {
-					scope:target_country = { is_subject = yes }
-					has_diplomatic_pact = {
-						who = scope:target_country
-						type = customs_union
-					}					
-				}
-			}		
-			add = 5
-		}				
+		}						
 	
 		multiply = {
 			value = "scope:target_country.relations:root"
@@ -796,16 +774,6 @@
 				min = -30
 			}					
 		}			
-
-		if = {
-			limit = {
-				has_diplomatic_pact = {
-					who = scope:overlord
-					type = customs_union
-				}					
-			}
-			add = 10
-		}					
 		
 		add = {
 			if = {
@@ -1114,7 +1082,6 @@
 					has_strategy = ai_strategy_territorial_expansion 
 					has_strategy = ai_strategy_unify_germany
 					has_strategy = ai_strategy_unify_italy
-					has_strategy = ai_strategy_unify_ethiopia
 					has_strategy = ai_strategy_unify_china
 				}
 			}
@@ -2065,17 +2032,7 @@
 						}			
 					}
 					multiply = 0.5
-				}				
-
-				if = {
-					limit = {
-						has_diplomatic_pact = {
-							who = scope:target_country
-							type = customs_union
-						}								
-					}
-					multiply = 0.25
-				}				
+				}								
 			}				
 			
 			if = {
@@ -2245,17 +2202,7 @@
 						}			
 					}
 					multiply = 0.5
-				}				
-
-				if = {
-					limit = {
-						has_diplomatic_pact = {
-							who = scope:target_country
-							type = customs_union
-						}								
-					}
-					multiply = 0.25
-				}				
+				}								
 			}
 
 			if = {
@@ -2439,17 +2386,7 @@
 						}			
 					}
 					multiply = 0.5
-				}				
-
-				if = {
-					limit = {
-						has_diplomatic_pact = {
-							who = scope:target_country
-							type = customs_union
-						}								
-					}
-					multiply = 0.25
-				}				
+				}							
 			}			
 
 			if = {
@@ -2998,5 +2935,16 @@
 	weight = {
 		value = 0		
 	}
-
+	
+	# Added to base neutrality in diplomatic plays	
+	# Using this value in other strategies will function additively
+	diplomatic_play_neutrality = {
+		value = 50 
+	}
+	
+	# Added to base boldness in diplomatic plays	
+	# Using this value in other strategies will function additively
+	diplomatic_play_boldness = {
+		value = 50
+	}
 }
