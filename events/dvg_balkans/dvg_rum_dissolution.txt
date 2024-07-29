@@ -236,15 +236,6 @@ dvg_rum_dissolution.1 = {
 		### Set Constantinople as capital of ERE
 		set_capital = STATE_WESTERN_THRACE
 		
-		###Claiming Thrace
-		if = {
-			limit = {
-				exists = c:ERE
-			}
-			s:STATE_EASTERN_THRACE = {
-				add_claim = c:ERE
-			}
-		}
 
 		### Creation of Rumelia
 		create_country = {
@@ -256,6 +247,20 @@ dvg_rum_dissolution.1 = {
 			state = s:STATE_NORTHERN_THRACE.region_state:WRE
 			state = s:STATE_BULGARIA.region_state:WRE
 			state = s:STATE_NORTHERN_SERBIA.region_state:WRE
+		}
+
+		###Claiming Thrace
+		if = {
+			limit = {
+				exists = c:RUM
+				exists = c:ERE
+			}
+			s:STATE_EASTERN_THRACE = {
+				add_claim = c:ERE
+			}
+			c:RUM = {
+				trigger_event = { id = dvg_rum_dissolution.2 days = 7 }
+			}
 		}
 
 		### Creation of Macedonia
@@ -335,10 +340,74 @@ dvg_rum_dissolution.1 = {
 			}
 		}
 
-
 		ai_chance = {
 			base = 1
 		}	
 	}
+}
 
+dvg_rum_dissolution.2 = { #Bulgarian revolt
+
+	event_image = {
+		video = "gfx/event_pictures/southamerica_slaves_night.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+	
+	duration = 3
+
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_rum_dissolution.2.t
+	desc = dvg_rum_dissolution.2.d
+	flavor = dvg_rum_dissolution.2.f
+	
+	option = { #Remain as Rumelia
+		ai_chance = {
+			base = 1
+		}
+		add_radicals = {
+			value = 0.66
+			culture = cu:bulgarian
+		}	
+		name = dvg_rum_dissolution.2.a
+	}
+	
+	option = { #idk man im feeling kinda Bulgarian
+		change_tag = BUL
+		ai_chance = {
+			base = 3
+		}
+		add_radicals = {
+			value = 0.33
+			culture = cu:turkish
+		}		
+		add_loyalists = {
+			value = 0.5
+			culture = cu:bulgarian
+		}
+		set_state_religion = rel:orthodox
+		remove_primary_culture = cu:turkish
+		add_primary_culture = cu:bulgarian
+		IF = {
+			limit = {
+				NOT = {
+					has_law = law_type:law_slavery_banned
+				}
+			}
+			activate_law = law_type:law_slavery_banned
+		}
+		c:BUL = {
+			every_scope_character = {
+				limit = {
+					culture = cu:turkish
+				}
+				kill_character = yes
+			}
+		}
+		name = dvg_rum_dissolution.2.b
+	}
 }
