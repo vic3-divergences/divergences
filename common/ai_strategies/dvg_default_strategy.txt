@@ -389,7 +389,7 @@
 						OR = {
 							scope:target_state = { 
 								is_split_state = yes 
-								region = { 
+								state_region = { 
 									any_scope_state = { owner = ROOT }
 								}
 							}
@@ -438,6 +438,50 @@
 					multiply = 1.5
 				}				
 			}
+		
+			###USE THESE AS EXAMPLES###
+		
+			#if = {
+			#	limit = {
+			#		has_journal_entry = je_boxer_rebellion
+			#		scope:target_state.state_region = { is_homeland = cu:han }
+			#	}
+			#	add = 50
+			#}
+
+			#if = {
+			#	limit = {
+			#		has_journal_entry = je_consolidate_colonial_rule
+			#		scope:target_country = {
+			#			is_country_type = unrecognized
+			#			target_is_our_or_fellow_subject = no						
+			#			any_scope_state = {
+			#				OR = {
+			#					region = sr:region_north_india
+			#					region = sr:region_south_india
+			#					state_region = s:STATE_HIMALAYAS
+			#					state_region = s:STATE_BURMA
+			#					state_region = s:STATE_KACHIN
+			#					state_region = s:STATE_SHAN_STATES
+			#					state_region = s:STATE_PEGU
+			#				}
+			#			}
+			#		}
+			#	}
+			#	add = 50
+			#}
+
+			#if = {
+			#	limit = {
+			#		has_journal_entry = je_expanding_qingqiu
+			#		scope:target_country = {
+			#			any_scope_state = {
+			#				state_region = s:STATE_BAHIA
+			#			}
+			#		}
+			#	}
+			#	add = 50
+			#}
 			
 			if = {
 				limit = {
@@ -445,6 +489,57 @@
 					scope:target_state = { is_homeland_of_country_cultures = scope:target_country }
 				}
 				multiply = 0.0
+			}
+			
+			if = {
+				limit = { 
+					has_strategy = ai_strategy_armed_isolationism 
+					scope:target_state = { 
+						NOR = {
+							owner = root
+							has_claim_by = root
+						}
+					}
+				}
+				multiply = 0
+			}
+			
+			if = { #Do Not Take Chinese States In Full, unless another power has already done so
+				limit = {
+					country_rank >= rank_value:major_power
+					scope:target_state = {
+						OR = {
+							region = sr:region_north_china
+							region = sr:region_south_china
+							region = sr:region_manchuria
+						}
+					}				
+					OR = {
+						country_is_in_north_america = yes
+						country_is_in_europe = yes
+						country_is_in_south_america = yes
+					}					
+					NOT = {
+						any_country = {
+							NOT = { THIS = ROOT }
+							country_rank >= rank_value:major_power
+							OR = {
+								country_is_in_north_america = yes
+								country_is_in_europe = yes
+								country_is_in_south_america = yes
+							}
+							any_scope_state = {
+								NOT = { is_treaty_port = yes }
+								OR = {
+									region = sr:region_north_china
+									region = sr:region_south_china
+									region = sr:region_manchuria
+								}
+							}
+						}					
+					}
+				}
+				multiply = 0
 			}
 		}
 		
