@@ -4,167 +4,846 @@
 	group = je_group_foreign_affairs
 	
 	complete = {
+		is_at_war = no
+		c:GCO = {
+			NOT = {
+				is_subject_of = c:SPA
+			}
+		}
+		OR = {
+			NOT = { exists = c:GCO }
+			c:SPA = {
+				has_truce_with = c:GCO
+			}
+		}
+	}
+	
+	fail = {
+		is_at_war = no
+		c:GCO = {
+			is_subject_of = c:SPA
+		}
+		OR = {
+			NOT = { exists = c:GCO }
+			c:SPA = {
+				has_truce_with = c:GCO
+			}
+		}
+		
+	}
+
+	on_complete = {
+		c:SPA = {
+			trigger_event = { id = dvg_caladero.22 }
+		}
+	}
+	
+	on_fail = {
+		trigger_event = { id = dvg_caladero.20 }
+	}
+	
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+je_caladeran_war_of_independence_QUI = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	
+	group = je_group_foreign_affairs
+	
+	complete = {
 		is_subject = no
 		is_at_war = no
-		
-		c:GCO = {
-			is_subject = no
-			is_at_war = no
-			NOT = { has_modifier = dvg_war_preparation }
+		c:SPA = {
+			has_truce_with = c:QUI
 		}
 	}
 	
 	fail = {
 		is_subject = yes
 		is_at_war = no
-		c:GCO = {
-			is_subject = yes
-			is_at_war = no
-			NOT = { has_modifier = dvg_war_preparation }
+		c:SPA = {
+			has_truce_with = c:QUI
 		}
 	}
 
-    on_complete = {
-		trigger_event = { id = dvg_caladero.2 }
-		trigger_event = { id = dvg_caladero.10 days = 30 }
-	}
-	
-    on_fail = {
-		trigger_event = { id = dvg_caladero.3 }
+	on_complete = {
+		c:QUI = {
+			trigger_event = { id = dvg_caladero.8 }
+		}
 	}
 	
 	weight = 100
 	should_be_pinned_by_default = yes
 }
-
-je_unite_caladero_with_granada = {
-	icon = "gfx/interface/icons/event_icons/event_military.dds"
-	
-	group = je_group_foreign_affairs
-	
-	complete = {
-		owns_entire_state_region = STATE_ANGOSTURA
-		owns_entire_state_region = STATE_BOLIVAR
-		owns_entire_state_region = STATE_MIRANDA
-		owns_entire_state_region = STATE_GUAVIARE
-		owns_entire_state_region = STATE_ZULIA
-		owns_entire_state_region = STATE_ANTIOQUIA
-		owns_entire_state_region = STATE_CUNDINAMARCA
-		owns_entire_state_region = STATE_CAUCA
-	}
-	
-	invalid = {
-		is_subject = yes
-		has_variable = dvg_martin_is_super_glad
-	}
-
-    on_complete = {
-		trigger_event = { id = dvg_caladero.13 }
-	}
-	
-    on_fail = {
-	}
-	
-	weight = 100
-	should_be_pinned_by_default = yes
-}
-
-je_caladeran_pacify_quechua = {
-	icon = "gfx/interface/icons/event_icons/event_military.dds"
+je_romanticos_realistas_power_struggle = {
+	icon = "gfx/interface/icons/event_icons/event_scales.dds"
 	
 	group = je_group_internal_affairs
 	
-	complete = {
-		OR = {
-			cu:quechua = {
-				NOT = { culture_is_discriminated_in = ROOT }
-			}
-			NOT = {
-				exists = c:TWT
-			}
+	immediate = {
+		set_variable = {
+			name = dvg_romanticos_influence
+			value = 0
 		}
 	}
+	current_value = {
+		value = var:dvg_romanticos_influence
+	}
+
+	goal_add_value = {
+		value = 2
+	}
+
+	progressbar = yes
 	
-	on_yearly_pulse = {
-		events = {
-			dvg_caladero.4
-			dvg_caladero.5
+	complete = {
+		custom_tooltip = {
+			text = dvg_QUI_coalition_ended
+			has_variable = QUI_coalition_ended
 		}
+		custom_tooltip = {
+			text = romanticos_influence_low
+			this = { var:dvg_romanticos_influence < 2 }
+		}
+		
 	}
 	
 	fail = {
-		OR = {
-			cu:quechua = {
-				culture_secession_progress = {
-					target = ROOT
-					value > 0.5
-				}
-			}
-			radical_fraction = { value = 0.7 culture = cu:quechua }
+		custom_tooltip = {
+			text = dvg_QUI_coalition_ended
+			has_variable = QUI_coalition_ended
 		}
-	}
-
-    on_complete = {
-		trigger_event = { id = dvg_caladero.6 }
-	}
-	
-    on_fail = {
-		#trigger_event = { id = dvg_caladero.7 }
-		trigger_event = { id = dvg_caladero.16 }
+		custom_tooltip = {
+			text = romanticos_influence_high
+			this = { var:dvg_romanticos_influence >= 2 }
+		}
+		
 	}
 	
+	on_complete = {
+		trigger_event = { id = dvg_caladero.13 } #Tupac and the Realistas win
+	}
+	
+	on_fail = {
+		trigger_event = { id = dvg_caladero.14 } #Muyuroney and the Romanticos win
+	}
 	weight = 100
 	should_be_pinned_by_default = yes
 }
-
-je_caladeran_strike_southwards = {
+je_beornian_war = {
 	icon = "gfx/interface/icons/event_icons/event_military.dds"
 	
 	group = je_group_foreign_affairs
 	
 	complete = {
-		owns_entire_state_region = STATE_TIWANAKU
+		AND = {
+			country_or_subject_owns_entire_state_region = STATE_GODWINSON
+			country_or_subject_owns_entire_state_region = STATE_WESSEX
+			country_or_subject_owns_entire_state_region = STATE_NORTHUMBRIA
+		}
+	}
+	fail = {
+		exists = c:BEO
+		NOR = {
+			c:BEO = {
+				is_subject_of = c:ADS
+				is_at_war = no
+				is_diplomatic_play_target = c:ADS
+			}
+		}
+		NAND = {
+			owns_entire_state_region = STATE_NEAR_COLLASUYU
+			owns_entire_state_region = STATE_KUCHICHAY
+			owns_entire_state_region = STATE_CATAMARCA
+		}
+		c:BEO = { has_truce_with = c:ADS }
+	}
+	timeout = 9125
+	on_complete = {
+		c:BEO = {
+			trigger_event = { id = dvg_caladero.58 }
+		}
+	}
+	on_fail = {
+		trigger_event = { id = dvg_caladero.55 }
+	}
+	on_timeout = {
+		c:BEO = {
+			trigger_event = { id = dvg_caladero.57 }
+		}
+	}
+	
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+je_colonization_of_tierra_del_fuego = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	
+	group = je_group_foreign_affairs
+	
+	complete = {
+		country_or_subject_owns_entire_state_region = STATE_COLLASUYU
+		country_or_subject_owns_entire_state_region = STATE_NEW_CORNWALL
+		country_or_subject_owns_entire_state_region = STATE_LANDS_END
+	}
+	on_complete = {
+		trigger_event = { id = dvg_caladero.43 }
+	}
+	
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+je_colonization_of_the_pampas = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	
+	group = je_group_foreign_affairs
+	
+	complete = {
+		country_or_subject_owns_entire_state_region = STATE_AVALON
+		country_or_subject_owns_entire_state_region = STATE_EOFERWIC
+		country_or_subject_owns_entire_state_region = STATE_LORRAINE_ATLANTIQUE
+		country_or_subject_owns_entire_state_region = STATE_BOURGOGNE_DU_SUD
+		country_or_subject_owns_entire_state_region = STATE_TRANSFLEUVE
+		country_or_subject_owns_entire_state_region = STATE_BRUXELLES_SUR_ODON
+	}
+	on_complete = {
+		trigger_event = { id = dvg_caladero.44 }
+	}
+	
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+je_colonization_of_granada = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	
+	group = je_group_foreign_affairs
+	
+	complete = {
+		country_or_subject_owns_entire_state_region = STATE_ANGOSTURA
+		country_or_subject_owns_entire_state_region = STATE_BOLIVAR
+		country_or_subject_owns_entire_state_region = STATE_MIRANDA
+		country_or_subject_owns_entire_state_region = STATE_GUAVIARE
+		country_or_subject_owns_entire_state_region = STATE_ZULIA
+		country_or_subject_owns_entire_state_region = STATE_ANTIOQUIA
+		country_or_subject_owns_entire_state_region = STATE_CUNDINAMARCA
+		country_or_subject_owns_entire_state_region = STATE_CAUCA
+	}
+	on_complete = {
+		trigger_event = { id = dvg_caladero.45 }
+	}
+	
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+je_colonization_of_the_amazons = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	
+	group = je_group_foreign_affairs
+	
+	complete = {
+		country_or_subject_owns_entire_state_region = STATE_AMAZONIE_PROFONDE
+		country_or_subject_owns_entire_state_region = STATE_AMAZONIE_INFERIEURE
+		country_or_subject_owns_entire_state_region = STATE_PROCHE_AMAZONIE
+	}
+	on_complete = {
+		trigger_event = { id = dvg_caladero.46 }
+	}
+	
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+je_colonization_of_ava = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	
+	group = je_group_foreign_affairs
+	
+	complete = {
+		country_or_subject_owns_entire_state_region = STATE_CHACO_BOREAL
+		country_or_subject_owns_entire_state_region = STATE_MARCHES_OUEST
+		country_or_subject_owns_entire_state_region = STATE_GRAND_CHACO
+	}
+	on_complete = {
+		trigger_event = { id = dvg_caladero.47 }
+	}
+	
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+je_master_of_ameriga = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	
+	group = je_group_foreign_affairs
+	
+	complete = {
+		custom_tooltip = {
+			text = dvg_ADS_inca_proper_controlled
+			AND = {
+				country_or_subject_owns_entire_state_region = STATE_ECUADOR
+				country_or_subject_owns_entire_state_region = STATE_PASTAZA
+				country_or_subject_owns_entire_state_region = STATE_CAJAMARCA
+				country_or_subject_owns_entire_state_region = STATE_LIMA
+				country_or_subject_owns_entire_state_region = STATE_NEAR_ANTISUYU
+				country_or_subject_owns_entire_state_region = STATE_CUZCO
+				country_or_subject_owns_entire_state_region = STATE_CUNTISUYU
+				country_or_subject_owns_entire_state_region = STATE_TIWANAKU
+				country_or_subject_owns_entire_state_region = STATE_ANTISUYU
+				country_or_subject_owns_entire_state_region = STATE_ATACAMA
+				country_or_subject_owns_entire_state_region = STATE_CHARCAS
+				country_or_subject_owns_entire_state_region = STATE_TILCARA
+				country_or_subject_owns_entire_state_region = STATE_NEAR_COLLASUYU
+				country_or_subject_owns_entire_state_region = STATE_CATAMARCA
+				country_or_subject_owns_entire_state_region = STATE_KUCHICHAY
+			}
+		}
+		custom_tooltip = {
+			text = dvg_ADS_ava_colonized
+			AND = {
+				country_or_subject_owns_entire_state_region = STATE_CHACO_BOREAL
+				country_or_subject_owns_entire_state_region = STATE_MARCHES_OUEST
+				country_or_subject_owns_entire_state_region = STATE_GRAND_CHACO
+			}
+		}
+		custom_tooltip = {
+			text = dvg_ADS_amazon_colonized
+			AND = {
+				country_or_subject_owns_entire_state_region = STATE_AMAZONIE_PROFONDE
+				country_or_subject_owns_entire_state_region = STATE_AMAZONIE_INFERIEURE
+				country_or_subject_owns_entire_state_region = STATE_PROCHE_AMAZONIE
+			}
+		}
+		custom_tooltip = {
+			text = dvg_ADS_tierra_del_fuego_colonized
+			AND = {
+				country_or_subject_owns_entire_state_region = STATE_COLLASUYU
+				country_or_subject_owns_entire_state_region = STATE_NEW_CORNWALL
+				country_or_subject_owns_entire_state_region = STATE_LANDS_END
+			}
+		}
+		custom_tooltip = {
+			text = dvg_ADS_granada_colonized
+			AND = {
+				country_or_subject_owns_entire_state_region = STATE_ANGOSTURA
+				country_or_subject_owns_entire_state_region = STATE_BOLIVAR
+				country_or_subject_owns_entire_state_region = STATE_MIRANDA
+				country_or_subject_owns_entire_state_region = STATE_GUAVIARE
+				country_or_subject_owns_entire_state_region = STATE_ZULIA
+				country_or_subject_owns_entire_state_region = STATE_ANTIOQUIA
+				country_or_subject_owns_entire_state_region = STATE_CUNDINAMARCA
+				country_or_subject_owns_entire_state_region = STATE_CAUCA
+				country_or_subject_owns_entire_state_region = STATE_GUAYANA
+			}
+		}
+		custom_tooltip = {
+			text = dvg_ADS_beornia_colonized
+			AND = {
+				country_or_subject_owns_entire_state_region = STATE_AVALON
+				country_or_subject_owns_entire_state_region = STATE_EOFERWIC
+				country_or_subject_owns_entire_state_region = STATE_NEW_LONDON
+				country_or_subject_owns_entire_state_region = STATE_GODWINSON
+				country_or_subject_owns_entire_state_region = STATE_WESSEX
+				country_or_subject_owns_entire_state_region = STATE_NORTHUMBRIA
+			}
+		}
+		custom_tooltip = {
+			text = dvg_ADS_ameriga_colonized
+			AND = {
+				country_or_subject_owns_entire_state_region = STATE_LORRAINE_ATLANTIQUE
+				country_or_subject_owns_entire_state_region = STATE_BOURGOGNE_DU_SUD
+				country_or_subject_owns_entire_state_region = STATE_TRANSFLEUVE
+				country_or_subject_owns_entire_state_region = STATE_BRUXELLES_SUR_ODON
+				country_or_subject_owns_entire_state_region = STATE_NOUVELLE_ALSACE
+				country_or_subject_owns_entire_state_region = STATE_LIBREVILLE
+				country_or_subject_owns_entire_state_region = STATE_PARA
+				country_or_subject_owns_entire_state_region = STATE_VAURA
+				country_or_subject_owns_entire_state_region = STATE_CAPPADOCE
+				country_or_subject_owns_entire_state_region = STATE_GOUAS
+				country_or_subject_owns_entire_state_region = STATE_MONTS_DIAMANTS
+				country_or_subject_owns_entire_state_region = STATE_FRANCE_ANTARTIQUE
+				country_or_subject_owns_entire_state_region = STATE_COTE_DU_CAFE
+			}
+		}
+	}
+	on_complete = {
+		trigger_event = { id = dvg_caladero.49 }
+	}
+	
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+je_burgundian_war = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	
+	group = je_group_foreign_affairs
+	
+	complete = {
+		is_at_war = no
+		is_subject = no
+	}
+	fail = {
+		is_at_war = no
+		is_subject_of = c:BRG
+	}
+	on_complete = {
+		trigger_event = { id = dvg_caladero.101 }
+	}
+	on_fail = {
+		trigger_event = { id = dvg_caladero.102 }
+		c:BRG = {
+			trigger_event = { id = dvg_caladero.103 }
+		}
+	}
+	
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+je_incan_war_tupac = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	
+	group = je_group_foreign_affairs
+	
+	complete = {
+		is_at_war = no
+		is_subject = no
+		owns_entire_state_region = STATE_NEAR_ANTISUYU
+		owns_entire_state_region = STATE_CUZCO
+		owns_entire_state_region = STATE_CUNTISUYU
+	}
+	on_complete = {
+		trigger_event = { id = dvg_caladero.34 }
+	}
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+je_incan_war_romanticos = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	
+	group = je_group_foreign_affairs
+	
+	complete = {
+		is_at_war = no
+		is_subject = no
+		owns_entire_state_region = STATE_NEAR_ANTISUYU
+		owns_entire_state_region = STATE_CUZCO
+		owns_entire_state_region = STATE_CUNTISUYU
+	}
+	invalid = {
+		custom_tooltip = { #Switches to Muyuroney's version of JE if QUI fails to take Cuzco before the coup
+			text = muyuroney_won
+			has_variable = ads_comite
+		}
+	}
+	on_complete = {
+		trigger_event = { id = dvg_caladero.26 }
+	}
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+je_incan_war_muyuroney = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	
+	group = je_group_foreign_affairs
+	
+	complete = {
+		is_at_war = no
+		is_subject = no
+		owns_entire_state_region = STATE_NEAR_ANTISUYU
+		owns_entire_state_region = STATE_CUZCO
+		owns_entire_state_region = STATE_CUNTISUYU
+	}
+	on_complete = {
+		trigger_event = { id = dvg_caladero.27 } #Gamer Muyuroney
+	}
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+je_tupac_reign = {
+	icon = "gfx/interface/icons/event_icons/event_scales.dds"
+	
+	group = je_group_internal_affairs
+	
+	immediate = {
+		set_variable = {
+			name = dvg_tupac_reign
+			value = 0
+		}
+	}
+	current_value = {
+		value = var:dvg_tupac_reign
+	}
+
+	goal_add_value = {
+		value = 16
+	}
+
+	progressbar = yes
+	complete = {
+		custom_tooltip = {
+			text = dvg_tupac_magnificent
+			this = { var:dvg_tupac_reign >= 16 }
+		}
+	}
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+je_the_new_inca_empire = {
+	icon = "gfx/interface/icons/event_icons/event_scales.dds"
+	
+	group = je_group_internal_affairs
+	
+	immediate = {
+		set_variable = {
+			name = dvg_inca_europeanization
+			value = 0
+		}
+	}
+	current_value = {
+		value = var:dvg_inca_europeanization
+	}
+
+	goal_add_value = {
+		value = 18
+	}
+
+	progressbar = yes
+	complete = {
+		custom_tooltip = {
+			text = dvg_tupac_europeanized
+			this = { var:dvg_inca_europeanization >= 16 }
+		}
+		custom_tooltip = {
+			text = tupac_empire_defined
+			has_variable = dvg_tupac_empire_defined
+		}
+	}
+	fail = {
+		custom_tooltip = {
+			text = dvg_tupac_inca
+			this = { var:dvg_inca_europeanization < 16 }
+		}
+		custom_tooltip = {
+			text = tupac_empire_defined
+			has_variable = dvg_tupac_empire_defined
+		}
+	}
+	on_complete = {
+		trigger_event = { id = dvg_caladero.153 }
+	}
+	on_fail = {
+		trigger_event = { id = dvg_caladero.154 }
+	}
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+je_federalist_war = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	group = je_group_historical_content
+	
+	complete = {
+		owns_entire_state_region = STATE_CAJAMARCA
+		owns_entire_state_region = STATE_LIMA
 		owns_entire_state_region = STATE_ANTISUYU
-		owns_entire_state_region = STATE_CHARCAS
 		owns_entire_state_region = STATE_ATACAMA
+		owns_entire_state_region = STATE_CATAMARCA
+		owns_entire_state_region = STATE_CHARCAS
+		owns_entire_state_region = STATE_KUCHICHAY
+		owns_entire_state_region = STATE_NEAR_COLLASUYU
 		owns_entire_state_region = STATE_TILCARA
+		owns_entire_state_region = STATE_TIWANAKU
 	}
-
 	fail = {
+		exists = c:QUL
+		exists = c:CHM
+		NAND = {
+			owns_entire_state_region = STATE_CAJAMARCA
+			owns_entire_state_region = STATE_LIMA
+			owns_entire_state_region = STATE_ANTISUYU
+			owns_entire_state_region = STATE_ATACAMA
+			owns_entire_state_region = STATE_CATAMARCA
+			owns_entire_state_region = STATE_CHARCAS
+			owns_entire_state_region = STATE_KUCHICHAY
+			owns_entire_state_region = STATE_NEAR_COLLASUYU
+			owns_entire_state_region = STATE_TILCARA
+			owns_entire_state_region = STATE_TIWANAKU
+		}
 	}
-
-    on_complete = {
-		trigger_event = { id = dvg_caladero.8 }
+	on_complete = {
+		trigger_event = { id = dvg_caladero.87 }
 	}
+	on_fail = {
+		trigger_event = { id = dvg_caladero.86 }
+	}
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+je_the_andesian_project = {
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+	group = je_group_historical_content
 	
-    on_fail = {
+	immediate = {
+		cu:chimu = {
+			save_scope_as = chimu_culture
+		}
+		cu:caladeran = {
+			save_scope_as = andino_culture
+		}
+		cu:quechua = {
+			save_scope_as = quechua_culture
+		}
+		cu:aimara = {
+			save_scope_as = aimara_culture
+		}
+		cu:andesian = {
+			save_scope_as = andesian_culture
+		}
 	}
+	complete = {
+		has_technology_researched = pan-nationalism
+		custom_tooltip = {
+			text = je_andesian_nation_building_integrate_chimu_complete_tt
+			has_variable = chimu_integrated
+		}
+		custom_tooltip = {
+			text = je_andesian_nation_building_integrate_andino_complete_tt
+			has_variable = andino_integrated
+		}
+		custom_tooltip = {
+			text = je_andesian_nation_building_integrate_quechua_complete_tt
+			has_variable = quechua_integrated
+		}
+		custom_tooltip = {
+			text = je_andesian_nation_building_integrate_aimara_complete_tt
+			has_variable = aimara_integrated
+		}
+	}
+	on_complete = {
+		set_global_variable = andine_culture
+		add_loyalists = {
+			value = 0.20
+		}
+		add_modifier = {
+			name = dvg_nation_built
+		}
+		add_primary_culture = cu:andesian
+		remove_primary_culture = cu:chimu
+		remove_primary_culture = cu:caladeran
+		remove_primary_culture = cu:quechua
+		remove_primary_culture = cu:aimara
+	}
+	scripted_button = je_andesian_nation_building_integrate_chimu
+	scripted_button = je_andesian_nation_building_integrate_andino
+	scripted_button = je_andesian_nation_building_integrate_quechua
+	scripted_button = je_andesian_nation_building_integrate_aimara
 	
 	weight = 100
 	should_be_pinned_by_default = yes
 }
-
-je_eliminate_inca = {
+je_conquer_herreria = {
 	icon = "gfx/interface/icons/event_icons/event_military.dds"
 	
 	group = je_group_foreign_affairs
 	
 	complete = {
-		NOT = {
-			exists = c:TWT
+		owns_entire_state_region = STATE_ANTIOQUIA
+		owns_entire_state_region = STATE_CAUCA
+	}
+	fail = {
+		NAND = {
+			owns_entire_state_region = STATE_ANTIOQUIA
+			owns_entire_state_region = STATE_CAUCA
+		}
+		has_truce_with = c:GRA
+	}
+	timeout = 9125
+	on_complete = {
+		c:GRA = {
+			trigger_event = { id = dvg_caladero.108 }
 		}
 	}
-	
-	fail = {
+	on_timeout = {
+		trigger_event = { id = dvg_caladero.111 }
 	}
-
-    on_complete = {
-		trigger_event = { id = dvg_caladero.9 }
+	on_fail = {
+		trigger_event = { id = dvg_caladero.110 }
 	}
-	
-    on_fail = {
-	}
-	
 	weight = 100
 	should_be_pinned_by_default = yes
 }
+je_conquer_andagoya = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	
+	group = je_group_foreign_affairs
+	
+	complete = {
+		owns_entire_state_region = STATE_PANAMA
+	}
+	fail = {
+		NOT = {
+			owns_entire_state_region = STATE_PANAMA
+		}
+		OR = {
+			has_truce_with = c:UCA
+			has_truce_with = c:GCO
+			has_truce_with = c:PNM
+		}
+	}
+	on_fail = {
+		trigger_event = { id = dvg_caladero.108 }
+	}
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+je_conquer_cuba = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	
+	group = je_group_foreign_affairs
+	
+	complete = {
+		owns_entire_state_region = STATE_CUBA
+	}
+	fail = {
+		NOT = {
+			owns_entire_state_region = STATE_CUBA
+		}
+		OR = {
+			has_truce_with = c:CUB
+			has_truce_with = c:GCO
+			has_truce_with = c:SPA
+		}
+	}
+	on_fail = {
+		trigger_event = { id = dvg_caladero.100 }
+	}
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+# je_unite_caladero_with_granada = {
+	# icon = "gfx/interface/icons/event_icons/event_military.dds"
+	
+	# group = je_group_foreign_affairs
+	
+	# complete = {
+		# owns_entire_state_region = STATE_ANGOSTURA
+		# owns_entire_state_region = STATE_BOLIVAR
+		# owns_entire_state_region = STATE_MIRANDA
+		# owns_entire_state_region = STATE_GUAVIARE
+		# owns_entire_state_region = STATE_ZULIA
+		# owns_entire_state_region = STATE_ANTIOQUIA
+		# owns_entire_state_region = STATE_CUNDINAMARCA
+		# owns_entire_state_region = STATE_CAUCA
+	# }
+	
+	# invalid = {
+		# is_subject = yes
+		# has_variable = dvg_martin_is_super_glad
+	# }
+
+    # on_complete = {
+		# trigger_event = { id = dvg_caladero.13 }
+	# }
+	
+    # on_fail = {
+	# }
+	
+	# weight = 100
+	# should_be_pinned_by_default = yes
+# }
+
+# je_caladeran_pacify_quechua = {
+	# icon = "gfx/interface/icons/event_icons/event_military.dds"
+	
+	# group = je_group_internal_affairs
+	
+	# complete = {
+		# OR = {
+			# cu:quechua = {
+				# NOT = { culture_is_discriminated_in = ROOT }
+			# }
+			# NOT = {
+				# exists = c:TWT
+			# }
+		# }
+	# }
+	
+	# on_yearly_pulse = {
+		# events = {
+			# dvg_caladero.4
+			# dvg_caladero.5
+		# }
+	# }
+	
+	# fail = {
+		# OR = {
+			# cu:quechua = {
+				# culture_secession_progress = {
+					# target = ROOT
+					# value > 0.5
+				# }
+			# }
+			# radical_fraction = { value = 0.7 culture = cu:quechua }
+		# }
+	# }
+
+    # on_complete = {
+		# trigger_event = { id = dvg_caladero.6 }
+	# }
+	
+    # on_fail = {
+		# #trigger_event = { id = dvg_caladero.7 }
+		# trigger_event = { id = dvg_caladero.16 }
+	# }
+	
+	# weight = 100
+	# should_be_pinned_by_default = yes
+# }
+
+# je_caladeran_strike_southwards = {
+	# icon = "gfx/interface/icons/event_icons/event_military.dds"
+	
+	# group = je_group_foreign_affairs
+	
+	# complete = {
+		# owns_entire_state_region = STATE_TIWANAKU
+		# owns_entire_state_region = STATE_ANTISUYU
+		# owns_entire_state_region = STATE_CHARCAS
+		# owns_entire_state_region = STATE_ATACAMA
+		# owns_entire_state_region = STATE_TILCARA
+	# }
+
+	# fail = {
+	# }
+
+    # on_complete = {
+		# trigger_event = { id = dvg_caladero.8 }
+	# }
+	
+    # on_fail = {
+	# }
+	
+	# weight = 100
+	# should_be_pinned_by_default = yes
+# }
+
+# je_eliminate_inca = {
+	# icon = "gfx/interface/icons/event_icons/event_military.dds"
+	
+	# group = je_group_foreign_affairs
+	
+	# complete = {
+		# NOT = {
+			# exists = c:TWT
+		# }
+	# }
+	
+	# fail = {
+	# }
+
+    # on_complete = {
+		# trigger_event = { id = dvg_caladero.9 }
+	# }
+	
+    # on_fail = {
+	# }
+	
+	# weight = 100
+	# should_be_pinned_by_default = yes
+# }

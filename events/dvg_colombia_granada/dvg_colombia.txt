@@ -1,0 +1,801 @@
+﻿namespace = dvg_colombia
+
+dvg_colombia.1 = {
+	type = country_event
+	placement = scope:state
+	
+	title = dvg_colombia.1.t
+	desc = dvg_colombia.1.d
+	flavor = dvg_colombia.1.f
+	
+	gui_window = event_window_1char_tabloid
+
+	left_icon = scope:colombian_national_hero
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/misc/1Character_Banner"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	
+	duration = 3
+
+	#dlc = dlc008
+
+	cooldown = { months = normal_modifier_time }
+	
+	trigger = {
+		# triggered by on_action on_battle_won pulse
+		has_journal_entry = je_building_the_colombian_identity
+		OR = { 
+			AND = {
+				NOT = { has_variable = colombian_mexican_hero_var }
+				NOT = { has_variable = mexicans_integrated }
+			}
+			AND = {
+				NOT = { has_variable = colombian_central_american_hero_var }
+				NOT = { has_variable = central_americans_integrated }
+			}
+			AND = {
+				NOT = { has_variable = colombian_lusitanian_hero_var }
+				NOT = { has_variable = lusitanians_integrated }
+			}
+			AND = {
+				NOT = { has_variable = colombian_caribeno_hero_var }
+				NOT = { has_variable = caribenos_integrated }
+			}
+			AND = {
+				NOT = { has_variable = colombian_granadan_hero_var }
+				NOT = { has_variable = granadans_integrated }
+			}
+			AND = {
+				NOT = { has_variable = colombian_caladeran_hero_var }
+				NOT = { has_variable = caladerans_integrated }
+			}
+		}
+		# there exists a commander on the root side to be the national hero
+		OR = {
+			scope:attacker = {
+				owner = ROOT
+			}
+			scope:defender ?= {
+				owner = ROOT
+			}
+		}
+		scope:enemy_country = {
+			NOR = {
+				country_has_primary_culture = cu:colombian
+				country_has_primary_culture = cu:mexican
+				country_has_primary_culture = cu:central_american
+				country_has_primary_culture = cu:lusitanian
+				country_has_primary_culture = cu:caribeno
+				country_has_primary_culture = cu:granadan
+				country_has_primary_culture = cu:caladeran
+			}
+		}
+	}
+
+	immediate = {
+		if = {
+			limit = {
+				scope:attacker = {
+					owner = ROOT
+				}
+			}
+			scope:attacker = {
+				save_scope_as = colombian_national_hero
+			}
+		}
+		else = {
+			scope:defender = {
+				save_scope_as = colombian_national_hero
+			}
+		}
+		random_list = {
+			1 = {
+				trigger = { 
+				 	AND = {
+				 		NOT = { has_variable = colombian_mexican_hero_var }
+				 		NOT = { has_variable = mexicans_integrated }
+				 	}
+				}
+				create_character = {
+					ig_leader = no
+					female = no
+					is_general = yes
+					culture = cu:mexican
+					on_created = {
+						set_variable = {
+							name = colombian_hero_scope
+						}
+					}
+				}
+			}
+			1 = {
+				trigger = {  
+				 	AND = {
+				 		NOT = { has_variable = colombian_caribeno_hero_var }
+				 		NOT = { has_variable = caribenos_integrated }
+				 	}
+				}
+				create_character = {
+					ig_leader = no
+					female = no
+					is_general = yes
+					culture = cu:caribeno
+					on_created = {
+						set_variable = {
+							name = colombian_hero_scope
+						}
+					}
+				}
+			}
+			1 = {
+				trigger = {  
+				 	AND = {
+				 		NOT = { has_variable = colombian_central_american_hero_var }
+				 		NOT = { has_variable = central_americans_integrated }
+				 	}
+				}
+				create_character = {
+					ig_leader = no
+					female = no
+					is_general = yes
+					culture = cu:central_american
+					on_created = {
+						set_variable = {
+							name = colombian_hero_scope
+						}
+					}
+				}
+			}
+			1 = {
+				trigger = { 
+				 	AND = {
+				 		NOT = { has_variable = colombian_lusitanian_hero_var }
+				 		NOT = { has_variable = lusitanians_integrated }
+				 	}
+		 		}
+				create_character = {
+					ig_leader = no
+					female = no
+					is_general = yes
+					culture = cu:lusitanian
+					on_created = {
+						set_variable = {
+							name = colombian_hero_scope
+						}
+					}
+				}
+			}
+			1 = {
+				trigger = { 
+				 	AND = {
+				 		NOT = { has_variable = colombian_lusitanian_hero_var }
+				 		NOT = { has_variable = granadans_integrated }
+				 	}
+		 		}
+				create_character = {
+					ig_leader = no
+					female = no
+					is_general = yes
+					culture = cu:granadan
+					on_created = {
+						set_variable = {
+							name = colombian_hero_scope
+						}
+					}
+				}
+			}
+			1 = {
+				trigger = { 
+				 	AND = {
+				 		NOT = { has_variable = colombian_lusitanian_hero_var }
+				 		NOT = { has_variable = caladerans_integrated }
+				 	}
+		 		}
+				create_character = {
+					ig_leader = no
+					female = no
+					is_general = yes
+					culture = cu:caladeran
+					on_created = {
+						set_variable = {
+							name = colombian_hero_scope
+						}
+					}
+				}
+			}
+		}
+
+		random_scope_character = { 
+			limit = { has_variable = colombian_hero_scope }
+			save_scope_as = colombian_national_hero
+			culture = {
+				save_scope_as = colombian_national_hero_culture
+			}
+		}
+	}
+
+	option = {
+		name = dvg_colombia.1.a
+		default_option = yes
+
+		custom_tooltip = dvg_colombia.1.hero_clarification
+
+		if = {
+			limit = {
+				scope:colombian_national_hero = {
+					culture = {
+						cu:mexican = this
+					}
+				}
+			}
+			set_variable = colombian_mexican_hero_var
+		}
+		else_if = {
+			limit = {
+				scope:colombian_national_hero = {
+					culture = {
+						cu:central_american = this
+					}
+				}
+			}
+			set_variable = colombian_central_american_hero_var
+		}
+		else_if = {
+			limit = {
+				scope:colombian_national_hero = {
+					culture = {
+						cu:lusitanian = this
+					}
+				}
+			}
+			set_variable = colombian_lusitanian_hero_var
+		}
+		else_if = {
+			limit = {
+				scope:colombian_national_hero = {
+					culture = {
+						cu:caribeno = this
+					}
+				}
+			}
+			set_variable = colombian_caribeno_hero_var
+		}	
+		else_if = {
+			limit = {
+				scope:colombian_national_hero = {
+					culture = {
+						cu:granadan = this
+					}
+				}
+			}
+			set_variable = colombian_granadan_hero_var
+		}	
+		else_if = {
+			limit = {
+				scope:colombian_national_hero = {
+					culture = {
+						cu:caladeran = this
+					}
+				}
+			}
+			set_variable = colombian_caladeran_hero_var
+		}	
+
+		scope:colombian_national_hero = {
+			if = {
+				limit = {
+					NOR = {
+						has_trait = traditionalist_commander
+						has_trait = popular_commander
+						has_trait = celebrity_commander
+					}
+				}
+				add_trait = traditionalist_commander
+			}
+			else_if = {
+				limit = {
+					has_trait = traditionalist_commander
+				}
+				remove_trait = traditionalist_commander
+				add_trait = popular_commander
+			}
+			else_if = {
+				limit = {
+					has_trait = popular_commander
+				}
+				remove_trait = popular_commander
+				add_trait = celebrity_commander
+			}
+		}
+	}
+
+
+	option = {
+		name = dvg_colombia.1.b
+
+		scope:colombian_national_hero = {
+			kill_character = yes
+		}
+	}
+}
+dvg_colombia.2 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_colombia.2.t
+	desc = dvg_colombia.2.d
+	flavor = dvg_colombia.2.f
+	
+	event_image = {
+		video = "rp1_brazilian_city"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
+	
+	duration = 3
+
+	#dlc = dlc008
+	
+	trigger = {
+		 # triggered by completing JE
+	}
+
+	immediate = {
+		ROOT = {
+			save_scope_as = brazil_scope
+		}
+		cu:colombian = {
+			save_scope_as = colombian_culture_scope
+		}
+	}
+
+	option = {
+		name = dvg_colombia.2.a
+		default_option = yes
+
+		add_modifier = {
+			name = brz_brasil_brasileiro
+			months = long_modifier_time
+		}
+		
+		every_country = {
+			limit = {
+				NOT = {
+					THIS = ROOT
+				}
+				has_interest_marker_in_region = region_brazil
+			}
+			post_notification = brz_cultural_unification
+		}
+	}
+}
+dvg_colombia.3 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_colombia.3.t
+	desc = dvg_colombia.3.d
+	flavor = dvg_colombia.3.f
+	
+	event_image = {
+		video = "southamerica_factory_opening"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
+	
+	duration = 3
+
+	#dlc = dlc008
+	
+	trigger = {
+		 # triggered by clicking JE button
+	}
+
+	option = {
+		name = dvg_colombia.3.a
+		default_option = yes
+
+		custom_tooltip = {
+			text = je_colombian_nation_building_integrate_caribeno_tt
+			every_country = {
+				every_scope_pop = {
+					limit = { culture = cu:caribeno }
+					change_pop_culture = { target = cu:colombian value = 1 }
+				}
+			}
+		}
+	}
+}
+dvg_colombia.4 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_colombia.4.t
+	desc = dvg_colombia.4.d
+	flavor = dvg_colombia.4.f
+	
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
+	
+	duration = 3
+
+	#dlc = dlc008
+	
+	trigger = {
+		 # triggered by clicking JE button
+	}
+
+	option = {
+		name = dvg_colombia.4.a
+		default_option = yes
+
+		custom_tooltip = {
+			text = je_colombian_nation_building_integrate_mexican_tt
+			every_country = {
+				every_scope_pop = {
+					limit = { culture = cu:mexican }
+					change_pop_culture = { target = cu:colombian value = 1 }
+				}
+			}
+		}
+	}
+}
+dvg_colombia.5 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_colombia.5.t
+	desc = dvg_colombia.5.d
+	flavor = dvg_colombia.5.f
+	
+	event_image = {
+		video = "unspecific_ruler_speaking_to_people"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
+	
+	duration = 3
+
+	#dlc = dlc008
+	
+	trigger = {
+		 # triggered by clicking JE button
+	}
+
+	option = {
+		name = dvg_colombia.5.a
+		default_option = yes
+
+		custom_tooltip = {
+			text = je_colombian_nation_building_integrate_central_american_tt
+			every_country = {
+				every_scope_pop = {
+					limit = { culture = cu:central_american }
+					change_pop_culture = { target = cu:colombian value = 1 }
+				}
+			}
+		}
+	}
+}
+dvg_colombia.6 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_colombia.6.t
+	desc = dvg_colombia.6.d
+	flavor = dvg_colombia.6.f
+	
+	event_image = {
+		video = "unspecific_ruler_speaking_to_people"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
+	
+	duration = 3
+
+	#dlc = dlc008
+	
+	trigger = {
+		 # triggered by clicking JE button
+	}
+
+	option = {
+		name = dvg_colombia.6.a
+		default_option = yes
+
+		custom_tooltip = {
+			text = je_colombian_nation_building_integrate_lusitanian_tt
+			every_country = {
+				every_scope_pop = {
+					limit = { culture = cu:lusitanian }
+					change_pop_culture = { target = cu:colombian value = 1 }
+				}
+			}
+		}
+	}
+}
+dvg_colombia.7 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_colombia.7.t
+	desc = dvg_colombia.7.d
+	flavor = dvg_colombia.7.f
+	
+	event_image = {
+		video = "unspecific_ruler_speaking_to_people"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
+	
+	duration = 3
+
+	#dlc = dlc008
+	
+	trigger = {
+		 # triggered by clicking JE button
+	}
+
+	option = {
+		name = dvg_colombia.7.a
+		default_option = yes
+
+		custom_tooltip = {
+			text = je_colombian_nation_building_integrate_granadan_tt
+			every_country = {
+				every_scope_pop = {
+					limit = { culture = cu:granadan }
+					change_pop_culture = { target = cu:colombian value = 1 }
+				}
+			}
+		}
+	}
+}
+dvg_colombia.8 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_colombia.8.t
+	desc = dvg_colombia.8.d
+	flavor = dvg_colombia.8.f
+	
+	event_image = {
+		video = "unspecific_ruler_speaking_to_people"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
+	
+	duration = 3
+
+	#dlc = dlc008
+	
+	trigger = {
+		 # triggered by clicking JE button
+	}
+
+	option = {
+		name = dvg_colombia.8.a
+		default_option = yes
+
+		custom_tooltip = {
+			text = je_colombian_nation_building_integrate_caladeran_tt
+			every_country = {
+				every_scope_pop = {
+					limit = { culture = cu:caladeran }
+					change_pop_culture = { target = cu:colombian value = 1 }
+				}
+			}
+		}
+	}
+}
+dvg_colombia.9 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_colombia.9.t
+	desc = dvg_colombia.9.d
+	flavor = dvg_colombia.9.f
+	
+	event_image = {
+		video = "votp_agitator_speaking"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
+	
+	duration = 3
+
+	#dlc = dlc008
+
+	immediate = {
+		cu:caribeno = {
+			save_scope_as = caribeno_scope
+		}
+		cu:mexican = {
+			save_scope_as = mexican_scope
+		}
+		cu:central_american = {
+			save_scope_as = central_american_scope
+		}
+		cu:lusitanian = {
+			save_scope_as = lusitanian_scope
+		}
+		cu:granadan = {
+			save_scope_as = granadan_scope
+		}
+		cu:caladeran = {
+			save_scope_as = caladeran_scope
+		}
+	}
+	
+	trigger = {
+		 # triggered by je_amerigan_nation_building timeout
+	}
+
+	option = {
+		name = dvg_colombia.9.a
+		default_option = yes
+		
+		if = {
+			limit = {
+				any_scope_state = {
+					state_region = {
+						is_homeland = caribeno
+					}
+				}
+			}
+			custom_tooltip = {
+				text = radicalise_caribenos_tt
+				every_scope_state = {
+					limit = {
+						state_region = {
+							is_homeland = caribeno
+						}
+					}
+					add_radicals_in_state = {
+						value = 0.6
+						culture = cu:caribeno
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				any_scope_state = {
+					state_region = {
+						is_homeland = mexican
+					}
+				}
+			}
+			custom_tooltip = {
+				text = radicalise_mexicans_tt
+				every_scope_state = {
+					limit = {
+						state_region = {
+							is_homeland = mexican
+						}
+					}
+					add_radicals_in_state = {
+						value = 0.6
+						culture = cu:mexican
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				any_scope_state = {
+					state_region = {
+						is_homeland = central_american
+					}
+				}
+			}
+			custom_tooltip = {
+				text = radicalise_central_americans_tt
+				every_scope_state = {
+					limit = {
+						state_region = {
+							is_homeland = central_american
+						}
+					}
+					add_radicals_in_state = {
+						value = 0.6
+						culture = cu:central_american
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				any_scope_state = {
+					state_region = {
+						is_homeland = lusitanian
+					}
+				}
+			}
+			
+			custom_tooltip = {
+				text = radicalise_lusitanians_tt
+				every_scope_state = {
+					limit = {
+						state_region = {
+							is_homeland = lusitanian
+						}
+					}
+					add_radicals_in_state = {
+						value = 0.6
+						culture = cu:lusitanian
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				any_scope_state = {
+					state_region = {
+						is_homeland = granadan
+					}
+				}
+			}
+			
+			custom_tooltip = {
+				text = radicalise_granadans_tt
+				every_scope_state = {
+					limit = {
+						state_region = {
+							is_homeland = granadan
+						}
+					}
+					add_radicals_in_state = {
+						value = 0.6
+						culture = cu:granadan
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				any_scope_state = {
+					state_region = {
+						is_homeland = caladeran
+					}
+				}
+			}
+			
+			custom_tooltip = {
+				text = radicalise_caladerans_tt
+				every_scope_state = {
+					limit = {
+						state_region = {
+							is_homeland = caladeran
+						}
+					}
+					add_radicals_in_state = {
+						value = 0.6
+						culture = cu:caladeran
+					}
+				}
+			}
+		}
+	}
+}

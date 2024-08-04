@@ -1,6 +1,6 @@
 ﻿namespace = dvg_inca_ameriga
 
-dvg_inca_ameriga.1 = {
+dvg_inca_ameriga.1 = { #Lotharingia hears of Beornia
 	type = country_event
 	placement = ROOT
 
@@ -13,7 +13,7 @@ dvg_inca_ameriga.1 = {
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
-	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
 
 	icon = "gfx/interface/icons/event_icons/event_fire.dds"
 
@@ -21,31 +21,91 @@ dvg_inca_ameriga.1 = {
 
 	trigger = {
 	}
-	immediate = {
 
-	c:TWT = { save_scope_as = scope_TWT }
-	
-	c:LOT = { save_scope_as = scope_LOT }
-	
+	immediate = {
+		c:TWT = { 
+			save_scope_as = scope_TWT
+			trigger_event = { id = dvg_inca_ameriga.20 }
+		}
+		c:LOT = { save_scope_as = scope_LOT }
 	}
-	# A New Neighbor In The West?
-	option = {
+
+	option = { #Form the Coalition
 		name = dvg_inca_ameriga.1.a
 		default_option = yes
 
+		set_global_variable = anti_inca_coalition
+		
+		if = {
+			limit = {
+				exists = c:AMA
+			}
+			c:AMA = {
+				trigger_event = { id = dvg_inca_ameriga.3 days = 180 }
+			}
+		}
+
+		if = {
+			limit = {
+				exists = c:EQX
+			}
+			c:EQX = {
+				trigger_event = { id = dvg_inca_ameriga.3 days = 180  }
+			}
+		}
+
+		if = {
+			limit = {
+				exists = c:GOU
+			}
+			c:GOU = {
+				trigger_event = { id = dvg_inca_ameriga.3 days = 180  }
+			}
+		}
+
+		if = {
+			limit = {
+				exists = c:ATL
+			}
+			c:ATL = {
+				trigger_event = { id = dvg_inca_ameriga.3 days = 180  }
+			}
+		}
+
+		if = {
+			limit = {
+				exists = c:SPA
+			}
+			c:SPA = {
+				trigger_event = { id = dvg_inca_ameriga.3 days = 180  }
+			}
+		}
+
+		c:SCA = { 
+			trigger_event = { id = dvg_inca_ameriga.3 days = 180 }
+		}
+
+		c:TWT = {
+			trigger_event = { id = dvg_inca_ameriga.2 days = 180 }
+		}
+		
+		ai_chance = {
+			base = 100
+		}
+	}
+
+	option = { #Lotharingia fights the Inca by themselves
+		name = dvg_inca_ameriga.1.b
+
 		every_state_region = {
 			limit = {
-			OR = {
 				is_homeland = cu:beornian
-				}
-			state_is_in_south_america = yes
+				state_is_in_south_america = yes
 			}
 			add_claim = ROOT
 		}
 		
 		create_diplomatic_play = {
-
-
 
 			target_country = c:TWT
 				
@@ -85,613 +145,418 @@ dvg_inca_ameriga.1 = {
 				target_state = s:STATE_GODWINSON.region_state:TWT
 				target_country = c:TWT
 			}
-
-		}
-		
-		ai_chance = {
-			base = 50
 		}
 	}
-	option = {
-		name = dvg_inca_ameriga.1.b
-		default_option = yes
-		
-		every_country = {
-			limit = { 
-				
-			
-				any_primary_culture = {
-					has_discrimination_trait = european_heritage
-				}
-				OR = {
-				has_interest_marker_in_region = sr:region_brazil
-				has_interest_marker_in_region = sr:region_la_plata
-				}
-				is_diplomatic_play_committed_participant = no
 
-				
-
-			}
-			
-			save_scope_as = inka_target
-			
-			trigger_event = { id = dvg_inca_ameriga.3}
-		}
-		c:TWT = {
-			trigger_event = { id = dvg_inca_ameriga.2}
-		}
-		
-		ai_chance = {
-			base = 40
-		}
-	}
-	option = {
+	option = { #Diplomatic Solution
 		name = dvg_inca_ameriga.1.c
-		default_option = yes
 		
 		change_relations = {
 			country = c:TWT
 			value = 20
 		}
-		
-		ai_chance = {
-			base = 10
-		}
 	}
 }
-dvg_inca_ameriga.2 = {
+
+dvg_inca_ameriga.20 = { #Washkar and the Mapuche
 	type = country_event
 	placement = ROOT
 	event_image = {
-		video = "gfx/event_pictures/southamerica_christianity.bk2"
+		video = "middleeast_battlefield_trenches"
+	}
+	
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	title = dvg_inca_ameriga.20.t
+	desc = dvg_inca_ameriga.20.d
+	flavor = dvg_inca_ameriga.20.f
+
+	duration = 3
+
+	immediate = {
+		c:WLM = {
+			save_scope_as = scope_WLM
+			ruler = { save_scope_as = scope_mapuche_toki }
+		}
+		s:STATE_AVALON = {
+			add_homeland = cu:patagonian
+		}
+		s:STATE_WESSEX = {
+			add_homeland = cu:patagonian
+		}
 	}
 
-	on_created_soundeffect = "event:/SFX/Events/europenorthamerica/capitalists_meeting"
-	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/capitalists_meeting"
+	option = {
+		name = dvg_inca_ameriga.20.a
 
-	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+		add_loyalists = {
+			value = 0.1
+			culture = cu:patagonian
+		}
+		s:STATE_COLLASUYU.region_state:TWT = {
+			set_state_owner = c:WLM
+		}
+		s:STATE_NEW_CORNWALL.region_state:TWT = {
+			set_state_owner = c:WLM
+		}
+		s:STATE_NEW_CORNWALL.region_state:PAT = {
+			set_state_owner = c:WLM
+		}
+		change_relations = {
+			country = c:WLM
+			value = 50
+		}
+		trigger_event = { id = dvg_inca_ameriga.21 days = 90 }
+	}
+}
+
+dvg_inca_ameriga.21 = { #The Clémenceau Affair
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = "unspecific_temperance_movement"
+	}
+	
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_skull.dds"
+
+	title = dvg_inca_ameriga.21.t
+	desc = dvg_inca_ameriga.21.d
+	flavor = dvg_inca_ameriga.21.f
+
+	duration = 3
+
+	option = {
+		name = dvg_inca_ameriga.21.a
+
+		add_radicals = {
+			value = 0.1
+			culture = cu:beornian
+		}
+	}
+}
+
+dvg_inca_ameriga.2 = { #Tawantinsuyu and the Anti-Inka Coalition
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = "gfx/event_pictures/southamerica_aristocrats.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_protest.dds"
 
 	title = dvg_inca_ameriga.2.t
 	desc = dvg_inca_ameriga.2.d
 	flavor = dvg_inca_ameriga.2.f
 
-	duration = 1
+	duration = 3
 
 	trigger = {
 	}
 
 	immediate = {
-		
+		c:LOT = { save_scope_as = scope_LOT }
 	}
 
 	option = {
 		name = dvg_inca_ameriga.2.a
 		
-		
 		default_option = yes
 		
-		trigger_event = { id = dvg_inca_ameriga.4 popup = yes}
-	
+		trigger_event = { id = dvg_inca_ameriga.4 days = 360}
 	}
 }
 
-dvg_inca_ameriga.3 = {
+dvg_inca_ameriga.3 = { #Invitation to Grand Rivière
 	type = country_event
 	placement = ROOT
 	event_image = {
-		video = "gfx/event_pictures/southamerica_christianity.bk2"
+		video = "gfx/event_pictures/southamerica_aristocrats.bk2"
 	}
 
-	on_created_soundeffect = "event:/SFX/Events/europenorthamerica/capitalists_meeting"
-	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/capitalists_meeting"
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
 
-	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
 
 	title = dvg_inca_ameriga.3.t
 	desc = dvg_inca_ameriga.3.d
 	flavor = dvg_inca_ameriga.3.f
 
-	duration = 1
+	duration = 3
 
 	trigger = {
-
-		NOT = {ROOT = c:LOT}
+		NOT = { ROOT = c:LOT }
 	}
 
 	immediate = {
-		
+		c:LOT = { save_scope_as = scope_LOT }
 	}
 
 	option = {
 		name = dvg_inca_ameriga.3.a
-		
+
+		default_option = yes
 		
 		create_diplomatic_pact = {
 			country = c:LOT
 			type = defensive_pact
 		}
 		change_relations = {
-			country = c:TWT
-			value = -30
+			country = c:LOT
+			value = 100
 		}
 		change_relations = {
-			country = c:LOT
-			value = 20
+			country = c:TWT
+			value = -100
 		}
+
 		add_technology_researched = nationalism
-		
 
 		add_technology_progress = {
 			technology = pan-nationalism
 			progress = 1000
 		}
-
 		
 		ai_chance = {
-			base = 60
+			base = 100
 		}
-		
-		default_option = yes
-	
+		set_variable = anti_inca
 	}
+
 	option = {
 		name = dvg_inca_ameriga.3.b
-		
 		
 		change_relations = {
 			country = c:TWT
 			value = 30
 		}
-		
-		
-	
-		
-		ai_chance = {
-			base = 40
-		}
 	}
 }
 
-dvg_inca_ameriga.4 = {
+dvg_inca_ameriga.4 = { #The Great Amerigan War TWT
 	type = country_event
 	placement = ROOT
 	event_image = {
-		video = "gfx/event_pictures/southamerica_christianity.bk2"
+		video = "votp_agitator_speaking"
 	}
 
-	on_created_soundeffect = "event:/SFX/Events/europenorthamerica/capitalists_meeting"
-	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/capitalists_meeting"
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/military_parade"
 
-	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
 
 	title = dvg_inca_ameriga.4.t
 	desc = dvg_inca_ameriga.4.d
 	flavor = dvg_inca_ameriga.4.f
 
-	duration = 1
-
-	trigger = {
-	}
+	duration = 3
 
 	immediate = {
-		
-		c:TWT = {save_scope_as = twt_scope
-		
-		
-		
+		every_country = {
+			limit = {
+				has_variable = anti_inca
+			}
+			save_scope_as = anti_inca_scope
 		}
+		if = {
+			limit = {
+				has_variable = recent_capitulation
+			}
+			remove_variable = recent_capitulation
 
+		}
+		if = {
+			limit = {
+				has_variable = recently_lost_war
+			}
+			remove_variable = recently_lost_war
+
+		}
 	}
 
 	option = {
 		name = dvg_inca_ameriga.4.a
-		
-	
+
 		default_option = yes
-		
-		add_journal_entry = {
-			type = je_inca_lotharingia
-		}
+
 		add_journal_entry = {
 			type = je_inca_amazonie
 		}
-				
-		c:TWT = {save_scope_as = twt_scope
-		
-		
-		
-		
-		
+		add_journal_entry = {
+			type = je_inca_lotharingia
 		}
-		
-		every_country = {
-			limit = { 
-			
-			NOT = { country_has_primary_culture = cu:quechua }
-			any_primary_culture = {
-				has_discrimination_trait = amerigan
-			}
-			country_is_in_south_america = yes
+		remove_diplomatic_pact = {
+			country = THIS
+			type = truce
+		}
 
-			c:TWT = {
-				relations:root <= relations_threshold:cordial
-			}
-						
-			}
-			
-			save_scope_as = twt_target
-			
-			
-				
-			
-			scope:twt_scope = { create_diplomatic_play = {
-			
-				target_country = scope:twt_target
-				
-				
-				type = dp_annex_war
+		c:LOT = { 
+			create_diplomatic_play = {
+				target_country = c:TWT
+				type = dp_contain_threat
+				war = yes
 
 				add_war_goal = {
-				holder = scope:twt_target
-				type = contain_threat
-				target_country = c:TWT
+					holder = c:TWT
+					type = annex_country
+					target_country = c:LOT
+				}
+
+				add_initiator_backers = {
+					c:ATL
+					c:AMA
+					c:EQX
 				}
 			}
+		}
 
+		c:AMA = { 
+			create_diplomatic_play = {
+				target_country = c:TWT
+				type = dp_contain_threat
+				war = yes
+
+				add_war_goal = {
+					holder = c:TWT
+					type = annex_country
+					target_country = c:AMA
+				}
+				add_war_goal = {
+					holder = c:TWT
+					type = annex_country
+					target_country = c:EQX
+				}
+				add_war_goal = {
+					holder = c:TWT
+					type = annex_country
+					target_country = c:ATL
+				}
+
+				add_initiator_backers = {
+					c:ATL
+					c:EQX
+					c:LOT
+				}
 			}
-			
-			
-			
-			
-			
-	    }
-	
-	}
-	option = {
-		name = dvg_inca_ameriga.4.b
-		
+		}
 
-		
+
+		hidden_effect = { 
+			every_country = {
+				limit = { 
+					NOT = { country_has_primary_culture = cu:quechua }
+					is_player = yes
+				}			
+				trigger_event = { id = dvg_inca_ameriga.100 }
+			}
+			C:TWT = { 
+				change_infamy = -100
+			}
+		}
+
 		ai_chance = {
-			base = 15
+			base = 100
 		}
 	}
 }
-dvg_inca_ameriga.5 = {
+
+dvg_inca_ameriga.100 = { #The Great Amerigan War GLOBAL
 	type = country_event
 	placement = ROOT
 	event_image = {
 		video = "gfx/event_pictures/southamerica_war_civilians.bk2"
 	}
 
-	on_created_soundeffect = "event:/SFX/Events/europenorthamerica/capitalists_meeting"
-	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/capitalists_meeting"
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
 
-	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	title = dvg_inca_ameriga.100.t
+	desc = dvg_inca_ameriga.100.d
+	flavor = dvg_inca_ameriga.100.f
+
+	duration = 3
+
+	immediate = {
+	}
+
+	option = {
+		name = dvg_inca_ameriga.100.a
+	}
+}
+
+dvg_inca_ameriga.5 = { #Sacking of Fort Lothère
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = "gfx/event_pictures/unspecific_vandalized_storefront.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_skull.dds"
 
 	title = dvg_inca_ameriga.5.t
 	desc = dvg_inca_ameriga.5.d
 	flavor = dvg_inca_ameriga.5.f
 
-	duration = 1
-
-	trigger = {
-	}
+	duration = 3
 
 	immediate = {
-		
-	}
-
-	option = {
-
-		
-		name = dvg_inca_ameriga.5.a
-		
-
-		add_loyalists = {
-			value = 0.3
-			culture = cu:quechua
-		}
-		
 		random_scope_pop = {
 			limit = {
 				culture = cu:lotharian
-				
-			exists = c:ATL
+				exists = c:BRG
 			}
-			move_pop = s:STATE_COTE_DU_CAFE.region_state:ATL
+			move_pop = s:STATE_FLANDERS.region_state:BRG
 		}
+
 		random_scope_pop = {
 			limit = {
 				culture = cu:lotharian
-				
-			exists = c:PLA
+				exists = c:PLA
 			}
 			move_pop = s:STATE_ALIBAMON.region_state:PLA
 		}
+	}
 
-		default_option = yes
-		
-		trigger_event = { id = dvg_inca_ameriga.6 popup = yes}
+	option = {
+		name = dvg_inca_ameriga.5.a
 	
+		add_loyalists = {
+			value = 0.1
+		}
+		
+		trigger_event = { id = dvg_inca_ameriga.6 days = 30 }
 	}
 }
-dvg_inca_ameriga.6 = {
+
+dvg_inca_ameriga.6 = { #Question of Lotharian Lands
 	type = country_event
 	placement = ROOT
 	event_image = {
 		video = "gfx/event_pictures/europenorthamerica_native_american.bk2"
 	}
 
-	on_created_soundeffect = "event:/SFX/Events/europenorthamerica/capitalists_meeting"
-	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/capitalists_meeting"
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
 
-	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
 
 	title = dvg_inca_ameriga.6.t
 	desc = dvg_inca_ameriga.6.d
 	flavor = dvg_inca_ameriga.6.f
 
-	duration = 1
-
-	trigger = {
-	}
-
-	immediate = {
-
-
-		s:STATE_GRAND_CHACO.region_state:GNI = {
-			set_state_owner = c:TWT
-		}
-
-		every_scope_state = {
-			limit = {
-				state_region = {
-					is_homeland = cu:lotharian
-				}
-			}
-			
-			state_region = {
-				add_homeland = cu:guarani
-			}
-		}
-
-		
-		
-		random_scope_pop = {
-			limit = {
-				culture = cu:lotharian
-				
-			exists = c:ATL
-			}
-			move_pop = s:STATE_COTE_DU_CAFE.region_state:ATL
-		}
-		random_scope_pop = {
-			limit = {
-				culture = cu:lotharian
-				
-			exists = c:PLA
-			}
-			move_pop = s:STATE_ALIBAMON.region_state:PLA
-		}
-	}
-
-	option = {
-		name = dvg_inca_ameriga.6.a
-		
-		
-		default_option = yes
-
-		custom_tooltip = { 
-			text = tgi_existence_tt
-		
-		if = {
-			limit = { exists = s:STATE_MARCHES_OUEST.region_state:TWT }
-			create_country = { #Taragui
-				tag = TGI
-				origin = this
-				state = s:STATE_CHACO_BOREAL.region_state:TWT
-				state = s:STATE_MARCHES_OUEST.region_state:TWT
-				state = s:STATE_GRAND_CHACO.region_state:TWT
-				state = s:STATE_LORRAINE_ATLANTIQUE.region_state:TWT
-				state = s:STATE_SERMOISE_SUR_ODON.region_state:TWT
-				state = s:STATE_LIBREVILLE.region_state:TWT
-				state = s:STATE_BOURGOGNE_DU_SUD.region_state:TWT
-				state = s:STATE_BRUXELLES_SUR_ODON.region_state:TWT
-				state = s:STATE_NOUVELLE_ALSACE.region_state:TWT
-
-				on_created = {
-					warlord_setup_effect = yes
-					set_variable = warlord_state
-				}
-			}
-			c:TGI = { save_scope_as = scope_TGI
-		
-			set_country_type = recognized
-			}
-
-			c:TWT = {
-				create_diplomatic_pact = {
-					country = c:TGI
-					type = puppet
-				}
-			}
-			
-		}
-		}
-
-		change_infamy = -5
-
-		ai_chance = {
-			base = 85
-		}
-	
-	}
-	option = {
-		name = dvg_inca_ameriga.6.b
-		
-
-		
-		ai_chance = {
-			base = 15
-		}
-	}
-	option = {
-		name = dvg_inca_ameriga.6.c
-		
-		custom_tooltip = { 
-			text = lot_split_tt
-
-		if = {
-			limit = { exists = s:STATE_BOURGOGNE_DU_SUD.region_state:TWT }
-			create_country = { #Odonia
-				tag = ODO
-				origin = this
-				state = s:STATE_BOURGOGNE_DU_SUD.region_state:TWT
-				state = s:STATE_TRANSFLEUVE.region_state:TWT
-				state = s:STATE_LORRAINE_ATLANTIQUE.region_state:TWT
-
-				on_created = {
-					warlord_setup_effect = yes
-					set_variable = warlord_state
-				}
-			}
-			c:ODO = { save_scope_as = scope_ODO }
-			if = {
-				limit = { exists = s:STATE_BOURGOGNE_DU_SUD.region_state:TWT }
-				s:STATE_BOURGOGNE_DU_SUD.region_state:TWT = { set_state_owner = c:ODO }
-			}
-			if = {
-				limit = { exists = s:STATE_TRANSFLEUVE.region_state:TWT }
-				s:STATE_TRANSFLEUVE.region_state:TWT = { set_state_owner = c:ODO }
-			}
-			c:TWT = {
-				create_diplomatic_pact = {
-					country = c:ODO
-					type = puppet
-				}
-			}
-		}
-
-		if = {
-			limit = { exists = s:STATE_NOUVELLE_ALSACE.region_state:TWT }
-			create_country = { #Nouvelle Alsace
-				tag = NEA
-				origin = this
-				state = s:STATE_NOUVELLE_ALSACE.region_state:TWT
-
-				on_created = {
-					warlord_setup_effect = yes
-					set_variable = warlord_state
-				}
-			}
-			c:NEA = { save_scope_as = scope_NEA}
-
-			c:TWT = {
-				create_diplomatic_pact = {
-					country = c:NEA
-					type = puppet
-				}
-			}
-		}
-		if = {
-			limit = { exists = s:STATE_LIBREVILLE.region_state:TWT }
-			create_country = { #Nouvelle Mali
-				tag = NVM
-				origin = this
-				state = s:STATE_LIBREVILLE.region_state:TWT
-
-				on_created = {
-					warlord_setup_effect = yes
-					set_variable = warlord_state
-				}
-			}
-			c:NVM = { save_scope_as = scope_NVM}
-
-			c:TWT = {
-				create_diplomatic_pact = {
-					country = c:NVM
-					type = puppet
-				}
-			}
-		}
-
-		if = {
-			limit = { exists = s:STATE_COTE_DU_CAFE.region_state:TWT }
-			create_country = { #Atlantia
-				tag = ATL 
-				origin = this
-				state = s:STATE_COTE_DU_CAFE.region_state:TWT
-
-				
-			}
-			c:ATL = { save_scope_as = scope_ATL }
-			
-			c:TWT = {
-				create_diplomatic_pact = {
-					country = c:ATL
-					type = puppet
-				}
-			}
-		}
-
-		if = {
-			limit = { exists = s:STATE_MARCHES_OUEST.region_state:TWT }
-			create_country = { #Taragui
-				tag = TGI
-				origin = this
-				state = s:STATE_CHACO_BOREAL.region_state:TWT
-				state = s:STATE_MARCHES_OUEST.region_state:TWT
-				state = s:STATE_GRAND_CHACO.region_state:TWT
-				state = s:STATE_SERMOISE_SUR_ODON.region_state:TWT
-				state = s:STATE_BRUXELLES_SUR_ODON.region_state:TWT
-				
-			}
-			c:TGI = { save_scope_as = scope_TGI }
-
-			c:TWT = {
-				create_diplomatic_pact = {
-					country = c:TGI
-					type = puppet
-				}
-			}
-		}
-		}
-		every_subject_or_below = {
-			limit = {
-				NOT = {
-					country_has_primary_culture = cu:quechua
-				}
-			}
-			add_primary_culture = cu:quechua 
-
-		}
-
-		change_infamy = -15
-		
-		ai_chance = {
-			base = 15
-		}
-	}
-	
-}
-dvg_inca_ameriga.7 = {
-	type = country_event
-	placement = ROOT
-	event_image = {
-		video = "gfx/event_pictures/southamerica_slaves_night.bk2"
-	}
-
-	on_created_soundeffect = "event:/SFX/Events/europenorthamerica/capitalists_meeting"
-	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/capitalists_meeting"
-
-	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
-
-	title = dvg_inca_ameriga.7.t
-	desc = dvg_inca_ameriga.7.d
-	flavor = dvg_inca_ameriga.7.f
-
-	duration = 1
+	duration = 3
 
 	trigger = {
 	}
@@ -700,359 +565,565 @@ dvg_inca_ameriga.7 = {
 		every_scope_state = {
 			limit = {
 				OR = {
-				state_region = {
-					is_homeland = cu:antarctican
-				}
-				state_region = {
-					is_homeland = cu:equinoxien
-				}
+					state_region = {
+						is_homeland = cu:lotharian
+					}
+					state_region = {
+						is_homeland = cu:atlantian
+					}
 				}
 			}
 			state_region = {
-			add_homeland = cu:tupinamba
-			remove_homeland = cu:amazonien
+				add_homeland = cu:guarani
 			}
 		}
-		s:STATE_AMAZONIE_INFERIEURE.region_state:TUP = {
+
+		s:STATE_GRAND_CHACO.region_state:GNI = {
 			set_state_owner = c:TWT
 		}
-
-
-		s:STATE_PROCHE_AMAZONIE.region_state:TUP = {
+		s:STATE_NORTHUMBRIA.region_state:GNI = {
 			set_state_owner = c:TWT
 		}
-		
 	}
 
 	option = {
-		name = dvg_inca_ameriga.7.a
-		
+		name = dvg_inca_ameriga.6.a
 		
 		default_option = yes
 
 		custom_tooltip = { 
-		text = tup_existence_tt
-
+			text = tgi_existence_tt
 		
-		if = {
-			limit = { exists = s:STATE_VAURA.region_state:TWT }
-			create_country = { #Tupinamba
-				tag = TUP
-				origin = this
-				state = s:STATE_COTE_DU_CAFE.region_state:TWT
-				state = s:STATE_CAPPADOCE.region_state:TWT
-				state = s:STATE_VAURA.region_state:TWT
-				state = s:STATE_COTE_DU_SUCRE.region_state:TWT
-				state = s:STATE_MONTS_DIAMANTS.region_state:TWT
-				state = s:STATE_GOUAS.region_state:TWT
-				state = s:STATE_FRANCE_ANTARTIQUE.region_state:TWT
-				state = s:STATE_PARA.region_state:TWT
-				state = s:STATE_PROCHE_AMAZONIE.region_state:TWT
-				state = s:STATE_AMAZONIE_INFERIEURE.region_state:TWT
-
-				
-			}
-			c:TUP = { save_scope_as = scope_TUP
-			set_country_type = recognized
-			}
-
-			c:TWT = {
-				create_diplomatic_pact = {
-					country = c:TUP
-					type = puppet
+			if = {
+				limit = { exists = s:STATE_MARCHES_OUEST.region_state:TWT }
+				create_country = { #Mangurujupe
+					tag = TGI
+					origin = this
+					state = s:STATE_CHACO_BOREAL.region_state:TWT
+					state = s:STATE_MARCHES_OUEST.region_state:TWT
+					state = s:STATE_LORRAINE_ATLANTIQUE.region_state:TWT
+					state = s:STATE_SERMOISE_SUR_ODON.region_state:TWT
+					state = s:STATE_LIBREVILLE.region_state:TWT
+					state = s:STATE_BOURGOGNE_DU_SUD.region_state:TWT
+					state = s:STATE_BRUXELLES_SUR_ODON.region_state:TWT
+					state = s:STATE_NOUVELLE_ALSACE.region_state:TWT
+					state = s:STATE_TRANSFLEUVE.region_state:TWT
+					state = s:STATE_COTE_DU_CAFE.region_state:TWT
+					on_created = {
+						warlord_setup_effect = yes
+						set_variable = warlord_state
+					}
+				}
+				c:TGI = { 
+					save_scope_as = scope_TGI
+					set_country_type = recognized
+				}
+				c:TWT = {
+					create_diplomatic_pact = {
+						country = c:TGI
+						type = protectorate
+					}
 				}
 			}
-			
 		}
-		}
-		change_infamy = -1000
 
-		change_infamy = 25
-		
-		ai_chance = {
-			base = 50
-		}
-	
+		change_infamy = -25
 	}
+
 	option = {
-		name = dvg_inca_ameriga.7.b
+		name = dvg_inca_ameriga.6.b
 		
-		change_infamy = -1000
-
-		change_infamy = 45
-
-
-		ai_chance = {
-			base = 15
-		}
-	}
-	option = {
-		name = dvg_inca_ameriga.7.c
-		
-		change_infamy = -1000
-		
-		change_infamy = 15
-
-
 		custom_tooltip = {
+			text = lot_split_tt
 
-		text = ama_split_tt
-		if = {
-			limit = { exists = s:STATE_CAPPADOCE.region_state:TWT }
-			create_country = { #Equinoxea
-				tag = EQX
-				origin = this
-				state = s:STATE_CAPPADOCE.region_state:TWT
-				state = s:STATE_VAURA.region_state:TWT
+			if = {
+				limit = { exists = s:STATE_BOURGOGNE_DU_SUD.region_state:TWT }
+				create_country = { #Odonia
+					tag = ODO
+					origin = this
+					state = s:STATE_BOURGOGNE_DU_SUD.region_state:TWT
+					state = s:STATE_LORRAINE_ATLANTIQUE.region_state:TWT
+					on_created = {
+						warlord_setup_effect = yes
+						set_variable = warlord_state
+					}
+				}
 
-				on_created = {
-					warlord_setup_effect = yes
-					set_variable = warlord_state
+				c:ODO = { save_scope_as = scope_ODO }
+
+				c:TWT = {
+					create_diplomatic_pact = {
+						country = c:ODO
+						type = puppet
+					}
 				}
 			}
-			
-			c:TUP = { save_scope_as = scope_TUP
-			set_country_type = recognized
-			}
 
-			c:TWT = {
-				create_diplomatic_pact = {
-					country = c:EQX
-					type = puppet
+			if = {
+				limit = { exists = s:STATE_NOUVELLE_ALSACE.region_state:TWT }
+				create_country = { #Nouvelle Alsace
+					tag = NEA
+					origin = this
+					state = s:STATE_NOUVELLE_ALSACE.region_state:TWT
+					state = s:STATE_LIBREVILLE.region_state:TWT
+					on_created = {
+						warlord_setup_effect = yes
+						set_variable = warlord_state
+					}
 				}
-			}
-			
-		}
-		if = {
-			limit = { exists = s:STATE_GOUAS.region_state:TWT }
-			create_country = { #Gouas
-				tag = GOU
-				origin = this
-				state = s:STATE_GOUAS.region_state:TWT
-
 				
-			}
-			
-			c:GOU = { save_scope_as = scope_GOU
-			}
+				c:NEA = { save_scope_as = scope_NEA}
 
-			c:TWT = {
-				create_diplomatic_pact = {
-					country = c:GOU
-					type = puppet
+				c:TWT = {
+					create_diplomatic_pact = {
+						country = c:NEA
+						type = puppet
+					}
 				}
 			}
-			
-		}
-		if = {
-			limit = { exists = s:STATE_COTE_DU_SUCRE.region_state:TWT }
-			create_country = { #Antarctica
-				tag = ANT
-				origin = this
-				state = s:STATE_COTE_DU_SUCRE.region_state:TWT
 
-				
-			}
-			
-			c:ANT = { save_scope_as = scope_ANT
-			}
+			if = {
+				limit = { exists = s:STATE_COTE_DU_CAFE.region_state:TWT }
+				create_country = { #Atlantia
+					tag = ATL 
+					origin = this
+					state = s:STATE_COTE_DU_CAFE.region_state:TWT
+				}
 
-			c:TWT = {
-				create_diplomatic_pact = {
-					country = c:ANT
-					type = puppet
+				c:ATL = { 
+					save_scope_as = scope_ATL 
+				}
+			
+				c:TWT = {
+					create_diplomatic_pact = {
+						country = c:ATL
+						type = puppet
+					}
 				}
 			}
-			
 		}
-		if = {
-			limit = { exists = s:STATE_COTE_DU_CAFE.region_state:TWT }
-			create_country = { #Atlantia
-				tag = ATL
-				origin = this
-				state = s:STATE_COTE_DU_CAFE.region_state:TWT
 
-				
-			}
-			
-			c:ATL = { save_scope_as = scope_ATL
-			}
-
-			c:TWT = {
-				create_diplomatic_pact = {
-					country = c:ATL
-					type = puppet
-				}
-			}
-			
-		}
-		if = {
-			limit = { exists = s:STATE_MONTS_DIAMANTS.region_state:TWT }
-			create_country = { #Bresil
-				tag = BRS
-				origin = this
-				state = s:STATE_MONTS_DIAMANTS.region_state:TWT
-				state = s:STATE_FRANCE_ANTARTIQUE.region_state:TWT
-				
-			}
-			
-			c:BRS = { save_scope_as = scope_BRS
-			}
-
-			c:TWT = {
-				create_diplomatic_pact = {
-					country = c:BRS
-					type = puppet
-				}
-			}
-			
-			
-		}
-		if = {
-			limit = { exists = s:STATE_PROCHE_AMAZONIE.region_state:TWT }
-			create_country = { #Tupia
-				tag = TUP
-				origin = this
-				state = s:STATE_PROCHE_AMAZONIE.region_state:TWT
-				state = s:STATE_AMAZONIE_INFERIEURE.region_state:TWT
-				
-			}
-			
-			c:TUP = { save_scope_as = scope_TUP
-			set_country_type = recognized
-			}
-
-			c:TWT = {
-				create_diplomatic_pact = {
-					country = c:TUP
-					type = puppet
-				}
-			}
-			
-			
-		}
-		}
-		every_subject_or_below = {
-			limit = {
-				NOT = {
-					country_has_primary_culture = cu:quechua
-				}
-			}
-			add_primary_culture = cu:quechua 
-
-		}
+		change_infamy = -50
+		
 		ai_chance = {
-			base = 15
+			base = 100
 		}
 	}
-	
 }
 
-dvg_inca_ameriga.9 = {
+dvg_inca_ameriga.7 = { #End of Amazonie
 	type = country_event
 	placement = ROOT
 	event_image = {
-		video = "gfx/event_pictures/southamerica_war_civilians.bk2"
+		video = "gfx/event_pictures/southamerica_slave_chains.bk2"
 	}
 
-	on_created_soundeffect = "event:/SFX/Events/europenorthamerica/capitalists_meeting"
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	title = dvg_inca_ameriga.7.t
+	desc = dvg_inca_ameriga.7.d
+	flavor = dvg_inca_ameriga.7.f
+
+	duration = 3
+
+	immediate = {
+		every_scope_state = {
+			limit = {
+				OR = {
+					state_region = {
+						is_homeland = cu:antarctican
+					}
+					state_region = {
+						is_homeland = cu:equinoxien
+					}
+					state_region = {
+						is_homeland = cu:atlantian
+					}
+				}
+			}
+			state_region = {
+				add_homeland = cu:tupinamba
+			}
+		}
+
+		s:STATE_AMAZONIE_INFERIEURE.region_state:TUP = {
+			set_state_owner = c:TWT
+		}
+
+		s:STATE_PROCHE_AMAZONIE.region_state:TUP = {
+			set_state_owner = c:TWT
+		}
+
+		s:STATE_AMAZONIE_INFERIEURE.region_state:AMA = {
+			set_state_owner = c:TWT
+		}
+
+		s:STATE_PROCHE_AMAZONIE.region_state:AMA = {
+			set_state_owner = c:TWT
+		}
+
+		s:STATE_AMAZONIE_INFERIEURE.region_state:EQX = {
+			set_state_owner = c:TWT
+		}
+
+		s:STATE_PROCHE_AMAZONIE.region_state:EQX = {
+			set_state_owner = c:TWT
+		}
+		set_global_variable = antisuyu_expanded
+	}
+
+	option = {
+
+		name = dvg_inca_ameriga.7.a
+		
+		default_option = yes
+
+		custom_tooltip = { 
+			text = tup_existence_tt
+
+			if = {
+				limit = { exists = s:STATE_VAURA.region_state:TWT }
+				create_country = { #Pindorama
+					tag = PDR
+					origin = this
+					state = s:STATE_COTE_DU_CAFE.region_state:TWT
+					state = s:STATE_CAPPADOCE.region_state:TWT
+					state = s:STATE_VAURA.region_state:TWT
+					state = s:STATE_COTE_DU_SUCRE.region_state:TWT
+					state = s:STATE_MONTS_DIAMANTS.region_state:TWT
+					state = s:STATE_GOUAS.region_state:TWT
+					state = s:STATE_FRANCE_ANTARTIQUE.region_state:TWT
+				}
+				c:PDR = {
+					save_scope_as = scope_PDR
+					set_country_type = recognized
+				}
+				c:TWT = {
+					create_diplomatic_pact = {
+						country = c:PDR
+						type = protectorate
+					}
+				}
+			}
+		}
+		change_infamy = -25
+	}
+	option = {
+
+		name = dvg_inca_ameriga.7.b
+
+		custom_tooltip = {
+			text = ama_split_tt
+
+			if = {
+				limit = { exists = s:STATE_COTE_DU_SUCRE.region_state:TWT }
+				create_country = { #Antarctica
+					tag = ANT
+					origin = this
+					state = s:STATE_MONTS_DIAMANTS.region_state:TWT
+					state = s:STATE_FRANCE_ANTARTIQUE.region_state:TWT
+					state = s:STATE_COTE_DU_SUCRE.region_state:TWT
+				}
+			
+				c:ANT = {
+					save_scope_as = scope_ANT
+				}
+
+				c:TWT = {
+					create_diplomatic_pact = {
+						country = c:ANT
+						type = puppet
+					}
+				}	
+			}
+
+			if = {
+				limit = { exists = s:STATE_GOUAS.region_state:TWT }
+					create_country = { #Gouas
+					tag = GOU
+					origin = this
+					state = s:STATE_GOUAS.region_state:TWT
+				}
+			
+				c:GOU = { 
+					save_scope_as = scope_GOU 
+				}
+
+				c:TWT = {
+					create_diplomatic_pact = {
+						country = c:GOU
+						type = puppet
+					}
+				}	
+			}
+
+			if = {
+				limit = { exists = s:STATE_COTE_DU_CAFE.region_state:TWT }
+					create_country = { #Atlantia
+					tag = ATL
+					origin = this
+					state = s:STATE_COTE_DU_CAFE.region_state:TWT
+				}
+			
+				c:ATL = { 
+					save_scope_as = scope_ATL 
+				}
+
+				c:TWT = {
+					create_diplomatic_pact = {
+						country = c:ATL
+						type = puppet
+					}
+				}	
+			}
+		}
+
+		change_infamy = -50
+
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+dvg_inca_ameriga.8 = { #Peace of Hullaqa
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = "gfx/event_pictures/unspecific_signed_contract.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
 	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/capitalists_meeting"
 
-	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
 
-	title = dvg_inca_ameriga.9.t
-	desc = dvg_inca_ameriga.9.d
-	flavor = dvg_inca_ameriga.9.f
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
 
-	duration = 1
+	title = dvg_inca_ameriga.8.t
+	desc = dvg_inca_ameriga.8.d
+	flavor = dvg_inca_ameriga.8.f
+
+	duration = 3
 
 	trigger = {
 	}
 
 	immediate = {
-		
+		c:TWT = {
+			save_scope_as = scope_TWT
+			ruler = { save_scope_as = scope_washkar }
+		}
+		c:LOT = { save_scope_as = scope_LOT }
+
+		every_diplomatic_play = {
+			limit = {
+				initiator_is = c:TWT
+			}
+			end_play = yes
+		}
+
+		s:STATE_AMAZONIE_INFERIEURE.region_state:TUP = {
+			set_state_owner = c:TWT
+		}
+		s:STATE_PROCHE_AMAZONIE.region_state:TUP = {
+			set_state_owner = c:TWT
+		}
+		s:STATE_NORTHUMBRIA.region_state:GNI = {
+			set_state_owner = c:TWT
+		}
+		s:STATE_GRAND_CHACO.region_state:GNI = {
+			set_state_owner = c:TWT
+		}
+		s:STATE_GRAND_CHACO.region_state:LOT = {
+			set_state_owner = c:TWT
+		}
+		set_global_variable = antisuyu_expanded
 	}
 
 	option = {
+		name = dvg_inca_ameriga.8.a
+		
+		default_option = yes
 
+		s:STATE_MARCHES_OUEST.region_state:LOT = {
+			set_state_owner = c:TWT
+		}
+		s:STATE_CHACO_BOREAL.region_state:LOT = {
+			set_state_owner = c:TWT
+		}
+		s:STATE_BRUXELLES_SUR_ODON.region_state:LOT = {
+			set_state_owner = c:TWT
+		}
+		s:STATE_TRANSFLEUVE.region_state:LOT  = {
+			set_state_owner = c:TWT
+		}
+
+		trigger_event = { id = dvg_inca_path_washkar.7 days = 300 } #Antisuyu Expedition
+
+		hidden_effect = {
+			C:TWT = { 
+				change_infamy = -100
+			}
+		}
+	}
+}
+
+dvg_inca_ameriga.9 = { #Coalition Triumphant
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = "gfx/event_pictures/unspecific_military_parade.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/military_parade"
+
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	title = dvg_inca_ameriga.9.t
+	desc = dvg_inca_ameriga.9.d
+	flavor = dvg_inca_ameriga.9.f
+
+	duration = 3
+
+	trigger = {
+	}
+
+	immediate = {
+		c:TWT = { ruler = { save_scope_as = scope_washkar } }
+	}
+
+	option = {
 		trigger = {
 			exists = c:BEO
-			
 		}
+
 		name = dvg_inca_ameriga.9.a
 		
 		ruler = { kill_character = yes }
 
-		s:STATE_COLLASUYU.region_state:TWT = {
+		custom_tooltip = {
+		text =  twt_partition_tt
+
+		s:STATE_GRAND_CHACO.region_state:TWT = {
+			set_state_owner = c:LOT
+		}
+		s:STATE_AVALON.region_state:TWT = {
 			set_state_owner = c:BEO
 		}
-		s:STATE_NEAR_COLLASUYU.region_state:TWT = {
+		s:STATE_NEW_LONDON.region_state:TWT = {
+			set_state_owner = c:BEO
+		}
+		s:STATE_WESSEX.region_state:TWT = {
+			set_state_owner = c:BEO
+		}
+		s:STATE_GODWINSON.region_state:TWT = {
+			set_state_owner = c:BEO
+		}
+		s:STATE_NORTHUMBRIA.region_state:TWT = {
+			set_state_owner = c:BEO
+		}
+		s:STATE_EOFERWIC.region_state:TWT = {
 			set_state_owner = c:BEO
 		}
 		s:STATE_KUCHICHAY.region_state:TWT = {
 			set_state_owner = c:BEO
 		}
-		s:STATE_TILCARA.region_state:TWT = {
-			set_state_owner = c:BEO
-		}
 		s:STATE_CATAMARCA.region_state:TWT = {
 			set_state_owner = c:BEO
 		}
-		s:STATE_AVALON.region_state:TWT = {
-			set_state_owner = c:BEO
-		}
-		s:STATE_WESSEX.region_state:TWT = {
-			set_state_owner = c:BEO
-		}
-		s:STATE_GODWINSON.region_state:TWT = {
-			set_state_owner = c:BEO
-		}
-		s:STATE_NORTHUMBRIA.region_state:TWT = {
-			set_state_owner = c:BEO
-		}
-		s:STATE_EOFERWIC.region_state:TWT = {
-			set_state_owner = c:BEO
-		}
-		s:STATE_CHARCAS.region_state:TWT = {
-			set_state_owner = c:BEO
-		}
 		s:STATE_NEW_CORNWALL.region_state:TWT = {
+			set_state_owner = c:BEO
+		}
+		s:STATE_NEW_CORNWALL.region_state:WLM = {
+			set_state_owner = c:BEO
+		}
+		s:STATE_NEAR_COLLASUYU.region_state:TWT = {
 			set_state_owner = c:SCA
 		}
-		s:STATE_CUNTISUYU.region_state:TWT = {
-			set_state_owner = c:QUI
+		s:STATE_COLLASUYU.region_state:TWT = {
+			set_state_owner = c:SCA
 		}
-		s:STATE_ATACAMA.region_state:TWT = {
-			set_state_owner = c:QUI
+		s:STATE_COLLASUYU.region_state:WLM = {
+			set_state_owner = c:SCA
 		}
-		
-		s:STATE_GRAND_CHACO.region_state:TWT = {
-			set_state_owner = c:LOT
+
+		if = {
+			limit = { exists = s:STATE_ATACAMA.region_state:TWT }
+			create_country = { #QUL
+				tag = QUL
+				origin = this
+				state = s:STATE_ATACAMA.region_state:TWT
+				state = s:STATE_CHARCAS.region_state:TWT
+				state = s:STATE_TILCARA.region_state:TWT
+				state = s:STATE_TIWANAKU.region_state:TWT
+				state = s:STATE_ANTISUYU.region_state:TWT
+			}
+
+			c:SCA = {
+				create_diplomatic_pact = {
+					country = c:QUL
+					type = protectorate
+				}
+			}
 		}
-		
-		
-		
+
 		change_tag = CZC
 
-		default_option = yes
-		
-		
-	
+		c:CZC = { 
+			ig:ig_landowners = {
+				set_interest_group_name = ig_inka
+				remove_ideology = ideology_stratocratic
+				remove_ideology = ideology_paternalistic
+				remove_ideology = ideology_patriarchal
+				add_ideology = ideology_inka_paternalistic
+				add_ideology = ideology_incan_gender
+			}
+			ig:ig_devout = {
+				set_interest_group_name = ig_inkan_priesthood
+				remove_ideology = ideology_patriarchal
+				add_ideology = ideology_incan_gender
+			}
+			ig:ig_intelligentsia = {
+				set_interest_group_name = ig_amauta
+				remove_ideology = ideology_anti_clerical
+				remove_ideology = ideology_liberal
+				remove_ideology = ideology_republican
+				add_ideology = ideology_incan_gender
+				add_ideology = ideology_modernizer
+			}
+			ig:ig_rural_folk = {
+				set_interest_group_name = ig_ayllu
+				remove_ideology = ideology_agrarian
+				add_ideology = ideology_ayllu_collectivism
+			}
+		}
+		}
 	}
+
 	option = {
 
 		trigger = {
 			NOT = {exists = c:BEO}
 		}
+
 		name = dvg_inca_ameriga.9.b
 		
 		ruler = { kill_character = yes }
 
-		s:STATE_COLLASUYU.region_state:TWT = {
-			set_state_owner = c:WLM
+		custom_tooltip = {
+		text = twt_partition_tt
+
+		s:STATE_GRAND_CHACO.region_state:TWT = {
+			set_state_owner = c:LOT
 		}
-		
 		s:STATE_AVALON.region_state:TWT = {
+			set_state_owner = c:LOT
+		}
+		s:STATE_NEW_LONDON.region_state:TWT = {
 			set_state_owner = c:LOT
 		}
 		s:STATE_WESSEX.region_state:TWT = {
@@ -1067,31 +1138,26 @@ dvg_inca_ameriga.9 = {
 		s:STATE_EOFERWIC.region_state:TWT = {
 			set_state_owner = c:LOT
 		}
-		s:STATE_NEW_LONDON.region_state:TWT = {
+		s:STATE_NEW_CORNWALL.region_state:TWT = {
 			set_state_owner = c:LOT
 		}
-		s:STATE_NEW_CORNWALL.region_state:TWT = {
-			set_state_owner = c:SCA
-		}
-		s:STATE_CUNTISUYU.region_state:TWT = {
-			set_state_owner = c:QUI
-		}
+
 		if = {
-			limit = { exists = s:STATE_NEAR_COLLASUYU.region_state:TWT }
+			limit = { exists = s:STATE_ATACAMA.region_state:TWT }
 			create_country = { #QUL
 				tag = QUL
 				origin = this
-				state = s:STATE_NEAR_COLLASUYU.region_state:TWT
 				state = s:STATE_ATACAMA.region_state:TWT
 				state = s:STATE_CHARCAS.region_state:TWT
-				state = s:STATE_KUCHICHAY.region_state:TWT
 				state = s:STATE_TILCARA.region_state:TWT
+				state = s:STATE_TIWANAKU.region_state:TWT
+				state = s:STATE_ANTISUYU.region_state:TWT
 				state = s:STATE_CATAMARCA.region_state:TWT
+				state = s:STATE_KUCHICHAY.region_state:TWT
+				state = s:STATE_NEAR_COLLASUYU.region_state:TWT
 			}
-			c:QUL = { save_scope_as = scope_QUL}
-
-			
 		}
+
 		c:LOT = {
 			create_diplomatic_pact = {
 				country = c:QUL
@@ -1103,20 +1169,42 @@ dvg_inca_ameriga.9 = {
 			}
 		}
 
-		s:STATE_GRAND_CHACO.region_state:TWT = {
-			set_state_owner = c:LOT
-		}
-		
 		change_tag = CZC
-		
-		
 
-		
-		
-	
+		c:CZC = { 
+			ig:ig_landowners = {
+				set_interest_group_name = ig_inka
+				remove_ideology = ideology_stratocratic
+				remove_ideology = ideology_paternalistic
+				remove_ideology = ideology_patriarchal
+				add_ideology = ideology_inka_paternalistic
+				add_ideology = ideology_incan_gender
+			}
+			ig:ig_devout = {
+				set_interest_group_name = ig_inkan_priesthood
+				remove_ideology = ideology_patriarchal
+				add_ideology = ideology_incan_gender
+			}
+			ig:ig_intelligentsia = {
+				set_interest_group_name = ig_amauta
+				remove_ideology = ideology_anti_clerical
+				remove_ideology = ideology_liberal
+				remove_ideology = ideology_republican
+				add_ideology = ideology_incan_gender
+				add_ideology = ideology_modernizer
+			}
+			ig:ig_rural_folk = {
+				set_interest_group_name = ig_ayllu
+				remove_ideology = ideology_agrarian
+				add_ideology = ideology_ayllu_collectivism
+			}
+		}
+		}
 	}
 }
 
+
+#Andesia 10 - 12
 dvg_inca_ameriga.10 = {
 	type = country_event
 	placement = ROOT
@@ -1139,7 +1227,6 @@ dvg_inca_ameriga.10 = {
 	}
 
 	immediate = {
-		
 	}
 
 	option = {
@@ -1151,7 +1238,6 @@ dvg_inca_ameriga.10 = {
 		ai_chance = {
 			base = 100
 		}
-	
 	}
 	option = {
 		name = dvg_inca_ameriga.10.b
@@ -1161,9 +1247,9 @@ dvg_inca_ameriga.10 = {
 		ai_chance = {
 			base = 1
 		}
-	
 	}
 }
+
 dvg_inca_ameriga.11 = {
 	type = country_event
 	placement = ROOT
@@ -1187,7 +1273,6 @@ dvg_inca_ameriga.11 = {
 	}
 
 	immediate = {
-		
 	}
 
 	option = {
@@ -1199,35 +1284,32 @@ dvg_inca_ameriga.11 = {
 		ai_chance = {
 			base = 1
 		}
-	
 	}
+
 	option = {
 		name = dvg_inca_ameriga.11.b
 		
 		every_country = {
 			limit = {
 				any_primary_culture = {
-					has_discrimination_trait = amerigan
+					has_discrimination_trait = amerigan_group
 				}
 				country_is_in_south_america = yes 
 			}
-			trigger_event = {
-				id = dvg_inca_ameriga.12
-			}
+			trigger_event = { id = dvg_inca_ameriga.12 }
 		}
 	
 		ai_chance = {
 			base = 100
 		}
-	
 	}
 }
+
 dvg_inca_ameriga.12 = {
 	type = country_event
 	placement = ROOT
 	event_image = {
 		video = "europenorthamerica_political_extremism"
-
 	}
 
 	on_created_soundeffect = "event:/SFX/Events/europenorthamerica/capitalists_meeting"
@@ -1245,7 +1327,6 @@ dvg_inca_ameriga.12 = {
 	}
 
 	immediate = {
-		
 	}
 
 	option = {
@@ -1264,13 +1345,13 @@ dvg_inca_ameriga.12 = {
 		ai_chance = {
 			base = 100
 		}
-	
 	}
+
 	option = {
-		name = dvg_inca_ameriga.11.b
+		name = dvg_inca_ameriga.12.b
 		
 		change_relations = {
-			country = TWT
+			country = c:TWT
 			value = -15
 		}
 	
@@ -1281,3 +1362,153 @@ dvg_inca_ameriga.12 = {
 	}
 }
 
+
+#Communist Party of the Quechua People 14 - 15
+dvg_inca_ameriga.14 = { #Communists in the Highlands
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = "gfx/event_pictures/asia_union_leader.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_protest.dds"
+
+	title = dvg_inca_ameriga.14.t
+	desc = dvg_inca_ameriga.14.d
+	flavor = dvg_inca_ameriga.14.f
+
+	duration = 3
+
+	option = {
+		name = dvg_inca_ameriga.14.a
+
+		add_radicals = {
+			value = large_radicals
+			culture = cu:quechua
+		}
+	}
+}
+
+dvg_inca_ameriga.15 = { #The Akhciq Ñan
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = "unspecific_fire"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	title = dvg_inca_ameriga.15.t
+	desc = dvg_inca_ameriga.15.d
+	flavor = dvg_inca_ameriga.15.f
+
+	duration = 3
+
+	immediate = {
+		create_country = {	
+			origin = THIS
+
+			tag = TWT
+
+			state = s:STATE_CUZCO.region_state:QUI
+			state = s:STATE_NEAR_ANTISUYU.region_state:QUI
+			state = s:STATE_ANTISUYU.region_state:QUI
+			state = s:STATE_TIWANAKU.region_state:QUI
+			state = s:STATE_CHARCAS.region_state:QUI
+			state = s:STATE_TILCARA.region_state:QUI
+			state = s:STATE_NEAR_ANTISUYU.region_state:ADS
+			state = s:STATE_ANTISUYU.region_state:ADS
+			state = s:STATE_TIWANAKU.region_state:ADS
+			state = s:STATE_CHARCAS.region_state:ADS
+			state = s:STATE_TILCARA.region_state:ADS	
+		}
+
+		c:TWT = {
+			activate_law = law_type:law_council_republic
+			activate_law = law_type:law_oligarchy
+			activate_law = law_type:law_command_economy
+			activate_law = law_type:law_collectivized_agriculture
+
+			create_character = {
+				historical = yes
+				first_name = Sayri
+				last_name = Sumac
+				culture = cu:quechua
+				birth_date = 1820.02.23
+				ruler = yes
+				ig_leader = yes
+				is_general = yes
+				interest_group = ig_rural_folk
+				ideology = ideology_vanguardist
+				traits = {
+					firebrand
+					wrathful
+					cruel
+				}
+				on_created = { 
+					set_variable = chairman_sumac_var
+				}
+			}
+
+			every_scope_character = {
+				limit = {
+					has_variable = chairman_sumac_var
+				}
+				save_scope_as = scope_chairman_sumac
+			}
+
+			ig:ig_rural_folk = {
+				set_interest_group_name = ig_ayllu
+				remove_ideology = ideology_agrarian
+				add_ideology = ideology_ayllu_collectivism
+			}
+
+			set_ruling_interest_groups = {
+				ig_rural_folk
+				ig_trade_unions
+			}
+		}
+	}
+
+	option = {
+		name = dvg_inca_ameriga.15.a
+
+		create_diplomatic_play = {
+			type = dp_rebellion_annex
+			target_country = c:TWT
+			war = yes
+
+			add_war_goal = {
+				holder = c:TWT
+				type = annex_country
+				target_country = c:TWT
+			}
+		}
+	}
+
+	option = {
+		name = dvg_inca_ameriga.15.b
+
+		create_diplomatic_play = {
+			type = dp_rebellion_annex
+			target_country = c:TWT
+			war = yes
+
+			add_war_goal = {
+				holder = c:TWT
+				type = annex_country
+				target_country = c:TWT
+			}
+		}
+	
+		play_as = c:TWT
+		
+		ai_chance = {
+			base = 100
+		}
+	}
+}
