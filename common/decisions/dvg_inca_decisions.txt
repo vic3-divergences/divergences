@@ -23,7 +23,12 @@ dvg_inca_language_reform = {
 	is_shown = {
 		exists = c:TWT
 		ROOT = c:TWT
-		ruler = { has_variable = is_llapa_inka }
+		OR = { 
+			ruler = { has_variable = is_llapa_inka }
+			ruler = { has_variable = prince_hurhi_var }
+			ruler = { has_variable = prince_sinchi_var }
+			has_global_variable = qoya_kantu_decisions
+		}
    		NOT = { has_modifier = dvg_inca_language_good_modifier }
 	}
 	possible = {
@@ -50,6 +55,8 @@ dvg_inca_province_reform = {
 		ROOT = c:TWT
 		OR = { 
 			ruler = { has_variable = is_llapa_inka }
+			ruler = { has_variable = prince_hurhi_var }
+			ruler = { has_variable = prince_sinchi_var }
 			has_global_variable = qoya_kantu_decisions
 		}
     		NOT = { has_modifier = dvg_inca_province_good_modifier }
@@ -363,13 +370,17 @@ dvg_inca_port_negotiations = {
 		c:SCA = { add_treasury = 75000 }
 		s:STATE_ATACAMA.region_state:BRG = {
 			set_state_owner = c:TWT
+		}
+		s:STATE_NEAR_COLLASUYU.region_state:SCA = {
+			set_state_owner = c:TWT
+		}
+		s:STATE_ATACAMA.region_state:TWT = {
 			add_modifier = {
 				name = dvg_inca_special_administrative_region
 				years = 50
 			}
 		}
-		s:STATE_NEAR_COLLASUYU.region_state:SCA = {
-			set_state_owner = c:TWT
+		s:STATE_NEAR_COLLASUYU.region_state:TWT = {
 			add_modifier = {
 				name = dvg_inca_special_administrative_region
 				years = 50
@@ -454,5 +465,54 @@ dvg_inca_form_abya_yala = {
 				type = puppet
 			}
 		}
+	}
+}
+
+dvg_inca_convert_northern_quechua = {
+	is_shown = {
+		exists = c:TWT
+		ROOT = c:TWT
+		has_journal_entry = je_imperial_identity
+		has_variable = quechua_integrated
+		any_scope_state = {
+			state_region = {
+				is_homeland = cu:quechua
+			}
+		}
+	}
+
+	possible = {
+		any_scope_state = {
+			state_region = {
+				is_homeland = cu:quechua
+			}
+		}
+	}
+
+	when_taken = {
+		every_scope_state = {
+			limit = {
+				AND = {
+					OR = { 
+						state_region = s:STATE_LIMA
+						state_region = s:STATE_CAJAMARCA
+						state_region = s:STATE_ECUADOR
+						state_region = s:STATE_NEAR_ANTISUYU
+						state_region = s:STATE_PASTAZA
+					}
+					state_region = {
+						is_homeland = cu:quechua
+					}
+				}
+			}
+			state_region = {
+				remove_homeland = cu:quechua
+				add_homeland = cu:runasimi
+			}
+		}
+	}
+
+	ai_chance = {
+		base = 100
 	}
 }
