@@ -23,6 +23,13 @@ dvg_greece.1 = {
 	trigger = {
 		exists = c:GRE
 		c:GRE = ROOT
+		exists = c:VEN
+		c:VEN = {
+			any_scope_character = {
+				has_variable = zimisces_var
+			}
+		}
+		
 	}
 	immediate = {
 		c:VEN = {
@@ -30,6 +37,12 @@ dvg_greece.1 = {
 		}
 		c:GRE = {
 			save_scope_as = scope_GRE
+		}
+		random_character = {
+			limit = {
+				has_variable = zimisces_var
+			}
+			save_scope_as = zimisces_scope
 		}
 	}
 
@@ -137,6 +150,11 @@ dvg_greece.2 = {
 		trigger = {
 		}
 		name = dvg_greece.2.b
+
+		change_relations = {
+			country = c:GRE
+			value = 20
+		}
 
 		c:GRE = {
 			trigger_event = {
@@ -369,14 +387,43 @@ dvg_greece.201 = {
 			}
 			save_scope_as = zimisces_scope
 		}
+		c:VEN = {
+			save_scope_as = scope_VEN
+		}
+		if = {
+			limit = {
+				exists = c:GRE
+			}
+			
+			c:GRE = {
+				save_scope_as = scope_GRE
+			}
+		}
 	}
-	option = {	#Let's liberate Greece, together
+	option = {	#No council
 		name = dvg_greece.201.a
 		default_option = yes
 		
 		add_radicals = {
 			value = 0.30
 			culture = cu:greek
+		}
+		if = {
+			limit = {
+				exists = c:GRE
+			}
+			change_relations = {
+				country = c:GRE
+				value = -25
+			}
+			c:GRE = {
+				add_liberty_desire = {
+					value = 20
+				}
+			}
+		}
+		scope:zimisces_scope = {
+			exile_character = yes
 		}
 
 		ai_chance = {
@@ -455,17 +502,23 @@ dvg_greece.202 = {
 			save_scope_as = zimisces_scope
 		}
 	}
-	option = {	#He can get limited autonomy for now
+	option = {	#Let it begin
 		name = dvg_greece.202.a
 		default_option = yes
 
-		create_country = {
-			
+		if = {
+			limit = {
+				has_journal_entry = je_dvg_greek_nationalism
+			}
+			change_variable = {
+				name = greece_var
+				add = 10
+			}
 		}
 
 
 		ai_chance = {
-			base = 25
+			base = 75
 		}
 	}
 	option = {	#He needs to stfu
@@ -473,22 +526,10 @@ dvg_greece.202 = {
 
 
 		ai_chance = {
-			base = 50
+			base = 20
 		}
 	}
-	option = {	#If he loves Greece so much, let's send him there instead!
-		name = dvg_greece.202.c
-		trigger = {
-			exists = c:GRE
-		}
-		scope:zimisces_scope = {
-			transfer_character = c:GRE
-		}
-
-		ai_chance = {
-			base = 25
-		}
-	}
+	
 
 }
 
@@ -573,7 +614,7 @@ dvg_greece.203 = {
 	
 }
 
-#Liberate Greece?
+#Citizenship
 dvg_greece.210 = { 
 	type = country_event
 	placement = ROOT
@@ -594,6 +635,9 @@ dvg_greece.210 = {
 	trigger = { 
 		any_scope_character = {
 			has_variable = zimisces_var
+		}
+		cu:greek = {
+			culture_is_discriminated_in = ROOT
 		}
 	}
 	immediate = {
