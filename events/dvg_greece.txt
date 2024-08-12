@@ -344,10 +344,10 @@ dvg_greece.200 = { #
 
 	icon = "gfx/interface/icons/event_icons/event_protest.dds"
 	trigger = { 
-		NOT = { has_variable = dvg_greece_radical_org }
+		NOT = { }
 	}
 	immediate = {
-		set_variable = dvg_greece_radical_org
+		
 	}
 	option = {	#Let's libera
 		name = dvg_greece.200.a
@@ -651,6 +651,9 @@ dvg_greece.203 = {
 				set_state_owner = c:GRE
 				
 			}
+			scope:zimisces_scope = {
+				transfer_character = c:GRE
+			}
 			
 			create_diplomatic_play = {
 				type = dp_rebellion_annex
@@ -681,12 +684,14 @@ dvg_greece.203 = {
 		default_option = yes
 
 		hidden_effect = {
-			scope:greek_revolt_country_scope = {
+			c:GRE = {
 				trigger_event = {
-					id = dvg_greece.213 days = 10
+					id = dvg_greece.213 days = 3
 				}
 			}
 		}
+
+		
 
 		add_loyalists = {
 			value = 0.10
@@ -701,17 +706,15 @@ dvg_greece.203 = {
 
 		play_as = scope:greek_revolt_country_scope
 
-		create_diplomatic_play = {
-			type = dp_rebellion_annex
-			target_country = scope:greek_revolt_country_scope
-		}
+		
 		hidden_effect = {
-			scope:greek_revolt_country_scope = {
+			c:GRE = {
 				trigger_event = {
-					id = dvg_greece.213 days = 10
+					id = dvg_greece.213 days = 3
 				}
 			}
 		}
+		
 
 
 		ai_chance = {
@@ -719,6 +722,34 @@ dvg_greece.203 = {
 		}
 	}
 	
+}
+dvg_greece.209 = { # 
+	type = country_event
+	placement = ROOT
+
+	title = dvg_greece.209.t
+	desc = dvg_greece.200.d
+	flavor = dvg_greece.209.f
+
+	duration = 3
+	cooldown = { months = 6 }
+	event_image = {
+		video = "votp_garibaldi"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_protest.dds"
+	trigger = { 
+	}
+	immediate = {
+	}
+	option = {	#Let's libera
+		name = dvg_greece.200.a
+		default_option = yes
+
+		
+	}
 }
 
 #Citizenship
@@ -1009,7 +1040,7 @@ dvg_greece.212 = { #
 
 	icon = "gfx/interface/icons/event_icons/event_protest.dds"
 	trigger = { 
-		NOT = { has_variable = dvg_greece_radical_org 
+		NOT = { 
 		cu:greek = {
 			culture_is_discriminated_in = ROOT
 		}
@@ -1018,7 +1049,7 @@ dvg_greece.212 = { #
 		
 	}
 	immediate = {
-		set_variable = dvg_greece_radical_org
+		
 	}
 	option = {	#
 		name = dvg_greece.212.a
@@ -1092,7 +1123,6 @@ dvg_greece.213 = { #
 
 	icon = "gfx/interface/icons/event_icons/event_protest.dds"
 	trigger = { 
-		NOT = { has_variable = dvg_greece_radical_org }
 		exists = c:MCD
 		any_scope_character = {
 			has_variable = zimisces_var 
@@ -1100,20 +1130,42 @@ dvg_greece.213 = { #
 		}
 	}
 	immediate = {
-		set_variable = dvg_greece_radical_org
 		random_scope_character = {
 			limit = {
 				has_variable = zimisces_var 
 			}
 			save_scope_as = zimisces_scope
 		}
+		c:MCD = {
+			ruler = {
+				save_scope_as = MCD_ruler_scope
+			}
+			save_scope_as = scope_MCD
+		}
 	}
-	option = {	#Make Zimisces King
-		name = dvg_greece.200.a
+	option = {	#Make Zimisces ruler
+		name = dvg_greece.213.a
 		default_option = yes
+
+		random_scope_character = {
+			limit = {
+				has_ideology = ideology:ideology_royalist
+			}
+			set_as_interest_group_leader = yes
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_law = law_type:law_monarchy
+				}
+			}
+			activate_law = law_type:law_monarchy
+		}
 		
 		scope:zimisces_scope = {
 			set_character_as_ruler = yes
+
+			
 		}
 		
 		ai_chance = {
@@ -1121,11 +1173,19 @@ dvg_greece.213 = { #
 		}
 	}
 	option = {	#Merge with Macedonia
-		name = dvg_greece.200.b
+		name = dvg_greece.213.b
 		trigger = {
 			c:MCD = {
 				is_ai = yes
 			}
+		}
+		add_radicals = {
+			value = 0.20
+			pop_type = peasants
+		}
+		add_loyalists = {
+			value = 0.20
+			pop_type = aristocrats
 		}
 		every_diplomatic_play = {
 			limit = {
@@ -1159,7 +1219,14 @@ dvg_greece.213 = { #
 		}
 	}
 	option = {	#Become a Republic
-		name = dvg_greece.200.c
+		name = dvg_greece.213.c
+
+		if = {
+			limit = {
+				has_law = law_type:law_monarchy
+			}
+			activate_law = law_type:law_presidential_republic
+		}
 
 		if = {
 			limit = {
@@ -1183,6 +1250,203 @@ dvg_greece.213 = { #
 		
 
 
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+#Victory Against Venice
+dvg_greece.214 = { # 
+	type = country_event
+	placement = ROOT
+
+	title = dvg_greece.214.t
+	desc = dvg_greece.214.d
+	flavor = dvg_greece.214.f
+
+	duration = 3
+	cooldown = { months = 6 }
+	event_image = {
+		video = "unspecific_military_parade"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_protest.dds"
+	trigger = { 
+		
+	}
+	immediate = {
+		random_character = {
+			limit = {
+				has_variable = zimisces_var
+			}
+			save_scope_as = zimisces_scope
+		}
+		c:VEN = {
+			save_scope_as = scope_VEN
+		}
+	}
+	option = {	
+		name = dvg_greece.214.a
+		default_option = yes
+
+		add_loyalists = {
+			value = 0.50
+		}
+		scope:zimisces_scope = {
+			add_modifier = {
+				name = dvg_lionslayer
+			}
+		}
+
+		hidden_effect = {
+			if = {
+				limit = {
+					ruler = {
+						NOT = {
+							has_variable = zimisces_var
+						}
+						popularity < 45
+					}
+					
+					c:GRE = {
+						is_subject_of = c:MCD
+						ig:ig_armed_forces = {
+							is_marginal = no
+						}
+					}
+				}
+				trigger_event = {
+					id = dvg_greece.215 days = 100
+				}
+				c:MCD = {
+					trigger_event = {
+						id = dvg_greece.215 days = 100
+					}
+				}
+			}
+		}
+	}
+}
+
+#Zimisces Coup
+dvg_greece.215 = { # 
+	type = country_event
+	placement = ROOT
+
+	title = dvg_greece.215.t
+	desc = dvg_greece.215.d
+	flavor = dvg_greece.215.f
+
+	duration = 3
+	cooldown = { months = 6 }
+	event_image = {
+		video = "votp_garibaldi"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_protest.dds"
+	trigger = { 
+		ruler = {
+			NOT = {
+				has_variable = zimisces_var
+			}
+			popularity < 30
+		}
+		ig:ig_armed_forces = {
+			is_marginal = no
+		}
+		is_player = yes
+	}
+	immediate = {
+		c:GRE = {
+			save_scope_as = scope_GRE
+		}
+		c:MCD = {
+			save_scope_as = scope_MCD
+		}
+		c:VEN = {
+			save_scope_as = scope_VEN
+		}
+		random_character = {
+			limit = {
+				has_variable = zimisces_var
+			}
+			save_scope_as = zimisces_scope
+		}
+	}
+	option = {	
+		name = dvg_greece.215.a
+		default_option = yes
+
+		if = {
+			limit = {
+				NOT = {
+					c:GRE = {
+						ruler = {
+							has_variable = zimisces_var
+						}
+					}
+				}
+			}
+			c:GRE = {
+				scope:zimisces_scope = {
+					set_character_as_ruler = yes
+
+					add_trait = grifter
+		
+				}
+			}
+		}
+
+	
+		if = {
+			limit = {
+				exists = c:MCD
+				c:MCD = {
+					is_ai = yes
+				}
+			}
+			play_as = c:MCD
+			c:MCD = {
+				create_diplomatic_play = {
+					type = dp_rebellion_annex
+					target_country = c:GRE
+				}
+			}
+		}
+		if = {
+			limit = {
+				exists = c:MCD
+				c:MCD = {
+					is_player = yes
+				}
+			}
+			create_diplomatic_play = {
+				type = dp_rebellion_annex
+				target_country = c:GRE
+			}
+		}
+		ai_chance = {
+			base = 100
+		}
+	}
+	option = {	
+		name = dvg_greece.215.b
+
+		
+
+		c:GRE = {
+			scope:zimisces_scope = {
+				set_character_as_ruler = yes
+				add_trait = grifter
+
+			}
+		}
+	
 		ai_chance = {
 			base = 100
 		}
