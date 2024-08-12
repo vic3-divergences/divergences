@@ -482,7 +482,7 @@ dvg_greece.202 = {
 	duration = 3
 	cooldown = { months = 6 }
 	event_image = {
-		video = "votp_garibaldi"
+		video = "gfx/event_pictures/unspecific_politicians_arguing.bk2"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
@@ -572,7 +572,7 @@ dvg_greece.202 = {
 }
 
 
-#Zimisces leads Greek Revolt Against Venice...from Cyprus
+#Zimisces leads Greek Revolt Against Venice
 dvg_greece.203 = { 
 	type = country_event
 	placement = ROOT
@@ -680,7 +680,14 @@ dvg_greece.203 = {
 		name = dvg_greece.203.a
 		default_option = yes
 
-		
+		hidden_effect = {
+			scope:greek_revolt_country_scope = {
+				trigger_event = {
+					id = dvg_greece.213 days = 10
+				}
+			}
+		}
+
 		add_loyalists = {
 			value = 0.10
 		}
@@ -697,6 +704,13 @@ dvg_greece.203 = {
 		create_diplomatic_play = {
 			type = dp_rebellion_annex
 			target_country = scope:greek_revolt_country_scope
+		}
+		hidden_effect = {
+			scope:greek_revolt_country_scope = {
+				trigger_event = {
+					id = dvg_greece.213 days = 10
+				}
+			}
 		}
 
 
@@ -719,7 +733,7 @@ dvg_greece.210 = {
 	duration = 3
 	cooldown = { months = 6 }
 	event_image = {
-		video = "votp_garibaldi"
+		video = "gfx/event_pictures/europenorthamerica_rich_and_poor.bk2"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
@@ -807,7 +821,7 @@ dvg_greece.211 = {
 	duration = 3
 	cooldown = { months = 6 }
 	event_image = {
-		video = "votp_garibaldi"
+		video = "gfx/event_pictures/southamerica_election.bk2"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
@@ -988,7 +1002,7 @@ dvg_greece.212 = { #
 	duration = 3
 	cooldown = { months = 6 }
 	event_image = {
-		video = "votp_garibaldi"
+		video = "unspecific_signed_contract"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
@@ -1055,6 +1069,122 @@ dvg_greece.212 = { #
 
 		ai_chance = {
 			base = 25
+		}
+	}
+}
+
+#A New Greece/ Delphi Council
+dvg_greece.213 = { # 
+	type = country_event
+	placement = ROOT
+
+	title = dvg_greece.213.t
+	desc = dvg_greece.213.d
+	flavor = dvg_greece.213.f
+
+	duration = 3
+	cooldown = { months = 6 }
+	event_image = {
+		video = "gfx/event_pictures/unspecific_politicians_arguing.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_protest.dds"
+	trigger = { 
+		NOT = { has_variable = dvg_greece_radical_org }
+		exists = c:MCD
+		any_scope_character = {
+			has_variable = zimisces_var 
+
+		}
+	}
+	immediate = {
+		set_variable = dvg_greece_radical_org
+		random_scope_character = {
+			limit = {
+				has_variable = zimisces_var 
+			}
+			save_scope_as = zimisces_scope
+		}
+	}
+	option = {	#Make Zimisces King
+		name = dvg_greece.200.a
+		default_option = yes
+		
+		scope:zimisces_scope = {
+			set_character_as_ruler = yes
+		}
+		
+		ai_chance = {
+			base = 100
+		}
+	}
+	option = {	#Merge with Macedonia
+		name = dvg_greece.200.b
+		trigger = {
+			c:MCD = {
+				is_ai = yes
+			}
+		}
+		every_diplomatic_play = {
+			limit = {
+				target_is = c:GRE
+			}
+			add_target_backers = {
+				c:MCD
+			}
+		}
+		every_diplomatic_play = {
+			limit = {
+				initiator_is = c:GRE
+			}
+			add_initiator_backers = {
+				c:MCD
+			}
+		}
+
+		change_relations = {
+			country = c:MCD
+			value = 30
+		}
+		create_diplomatic_pact = {
+			country = c:MCD
+			type = personal_union
+		}
+		
+
+		ai_chance = {
+			base = 10
+		}
+	}
+	option = {	#Become a Republic
+		name = dvg_greece.200.c
+
+		if = {
+			limit = {
+				has_law = law_type:law_presidential_republic
+			}
+			activate_law = law_type:law_parliamentary_republic
+		}
+		if = {
+			limit = {
+				country_has_voting_franchise = no
+			}
+			activate_law = law_type:law_census_voting
+		}
+		if = {
+			limit = {
+				has_law = law_type:law_census_voting
+
+			}
+			activate_law = law_type:law_universal_suffrage
+		}
+		
+
+
+		ai_chance = {
+			base = 100
 		}
 	}
 }
