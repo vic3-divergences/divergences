@@ -515,14 +515,52 @@ dvg_greece.202 = {
 				add = 10
 			}
 		}
+		c:GRE = {
+			add_liberty_desire = 5
+
+		}
+
+		set_variable = council_start
+
+
+		trigger_event = {
+			id = dvg_greece.210
+		}
 
 
 		ai_chance = {
 			base = 75
 		}
 	}
-	option = {	#He needs to stfu
+	option = {	#Let it stop
 		name = dvg_greece.202.b
+
+		add_radicals = {
+			value = 0.35
+			culture = cu:greek
+		}
+		set_variable = council_concluded
+		if = {
+			limit = {
+				exists = c:GRE
+			}
+			change_relations = {
+				country = c:GRE
+				value = -15
+			}
+		}
+		if = {
+			limit = {
+				exists = c:GRE
+				c:GRE = {
+					is_subject_of = ROOT
+				}
+			}
+			c:GRE = {
+				add_liberty_desire = 15
+
+			}
+		}
 
 
 		ai_chance = {
@@ -539,9 +577,9 @@ dvg_greece.203 = {
 	type = country_event
 	placement = ROOT
 
-	title = dvg_greece.201.t
-	desc = dvg_greece.201.d
-	flavor = dvg_greece.201.f
+	title = dvg_greece.203.t
+	desc = dvg_greece.203.d
+	flavor = dvg_greece.203.f
 
 	duration = 3
 	event_image = {
@@ -555,23 +593,32 @@ dvg_greece.203 = {
 		
 	}
 	immediate = {
-		create_country = {
-			tag = CYP
-			origin = this
-			state = s:STATE_CYPRUS.region_state:VEN
-			state = s:STATE_CRETE.region_state:VEN
-			state = s:STATE_IONIAN_ISLANDS.region_state:VEN
-			on_created = {
-				set_variable = greek_revolt
-				save_scope_as = greek_revolt_country_scope
+		random_character = {
+			limit = {
+				has_variable = zimisces_var
 			}
-		}
-		scope:zimisces_scope = {
-			transfer_character = c:CYP
+			save_scope_as = zimisces_scope
 		}
 		if = {
 			limit = {
-				exists = c:GRE
+				NOT = {
+					exists = c:GRE
+				}
+				
+			}
+			create_country = {
+				tag = CYP
+				origin = this
+				state = s:STATE_CYPRUS.region_state:VEN
+				state = s:STATE_CRETE.region_state:VEN
+				state = s:STATE_IONIAN_ISLANDS.region_state:VEN
+				on_created = {
+					set_variable = greek_revolt
+					save_scope_as = greek_revolt_country_scope
+				}
+			}
+			scope:zimisces_scope = {
+				transfer_character = c:CYP
 			}
 			c:CYP = {
 				add_change_relations_progress = {
@@ -579,6 +626,53 @@ dvg_greece.203 = {
 					value = 80
 				}
 			}
+			create_diplomatic_play = {
+				type = dp_rebellion_annex
+				target_country = scope:greek_revolt_country_scope
+			}
+		}
+	
+		if = {
+			limit = {
+				exists = c:GRE
+				
+			}
+			c:GRE = {
+				save_scope_as = greek_revolt_country_scope
+
+			}
+			every_scope_state = {
+				limit = {
+					turmoil > 0.2
+					state_region = {
+						is_homeland = cu:greek
+					}
+				}
+				set_state_owner = c:GRE
+				
+			}
+			
+			create_diplomatic_play = {
+				type = dp_rebellion_annex
+				target_country = c:GRE
+				war = no
+
+				add_war_goal = {
+					holder = c:GRE
+					type = independence
+				}
+			}
+		}
+		
+		if = {
+			limit = {
+				has_variable = council_start
+			}
+			remove_variable = council_start
+			remove_variable = greece_citizen_var
+			remove_variable = greece_voting_var
+			set_variable = council_concluded
+			
 		}
 		
 	}
@@ -586,11 +680,10 @@ dvg_greece.203 = {
 		name = dvg_greece.203.a
 		default_option = yes
 
-		create_diplomatic_play = {
-			type = dp_rebellion_annex
-			target_country = scope:greek_revolt_country_scope
-		}
 		
+		add_loyalists = {
+			value = 0.10
+		}
 
 		ai_chance = {
 			base = 33
@@ -653,6 +746,19 @@ dvg_greece.210 = {
 
 		activate_law = law_type:law_racial_segregation
 
+		if = {
+			limit = {
+				exists = c:GRE
+				c:GRE = {
+					is_subject_of = ROOT
+				}
+			}
+			c:GRE = {
+				add_liberty_desire = -20
+
+			}
+		}
+
 
 		ai_chance = {
 			base = 25
@@ -660,6 +766,27 @@ dvg_greece.210 = {
 	}
 	option = {	#Greeks are NOT equal citizens
 		name = dvg_greece.210.b
+
+		add_radicals = {
+			value = 0.20
+			culture = cu:greek
+		}
+		add_loyalists = {
+			value = 0.20
+			culture = cu:venetian
+		}
+		if = {
+			limit = {
+				exists = c:GRE
+				c:GRE = {
+					is_subject_of = ROOT
+				}
+			}
+			c:GRE = {
+				add_liberty_desire = 15
+
+			}
+		}
 
 		ai_chance = {
 			base = 50
@@ -669,13 +796,13 @@ dvg_greece.210 = {
 }
 
 #Voting Rights
-dvg_greece.210 = { 
+dvg_greece.211 = { 
 	type = country_event
 	placement = ROOT
 
-	title = dvg_greece.210.t
-	desc = dvg_greece.210.d
-	flavor = dvg_greece.210.f
+	title = dvg_greece.211.t
+	desc = dvg_greece.211.d
+	flavor = dvg_greece.211.f
 
 	duration = 3
 	cooldown = { months = 6 }
@@ -700,7 +827,7 @@ dvg_greece.210 = {
 	
 	}
 	option = {	#Status Quo
-		name = dvg_greece.210.a
+		name = dvg_greece.211.a
 		default_option = yes
 
 		add_loyalists = {
@@ -729,7 +856,7 @@ dvg_greece.210 = {
 		}
 	}
 	option = {	#Enable wealth voting
-		name = dvg_greece.210.b
+		name = dvg_greece.211.b
 
 		activate_law = law_type:law_wealth_voting
 
@@ -760,9 +887,19 @@ dvg_greece.210 = {
 		}
 	}
 	option = {	#Census Suffrage
-		name = dvg_greece.210.c
+		name = dvg_greece.211.c
 
 		activate_law = law_type:law_census_voting
+
+		trigger = {
+			any_interest_group = {
+				law_stance = {
+					law = law_type:law_census_voting
+					value >= approve
+				}
+				is_marginal = no
+			}
+		}
 
 		add_loyalists = {
 			value = 0.15
@@ -792,7 +929,18 @@ dvg_greece.210 = {
 		}
 	}
 	option = {	#
-		name = dvg_greece.210.d
+		name = dvg_greece.211.e
+
+		trigger = {
+			any_interest_group = {
+				law_stance = {
+					law = law_type:law_universal_suffrage
+					value >= approve
+				}
+				is_powerful = yes
+				is_in_government = yes
+			}
+		}
 
 		
 		add_loyalists = {
@@ -825,4 +973,88 @@ dvg_greece.210 = {
 		}
 	}
 	
+}
+
+
+#Greece Integration?
+dvg_greece.212 = { # 
+	type = country_event
+	placement = ROOT
+
+	title = dvg_greece.212.t
+	desc = dvg_greece.212.d
+	flavor = dvg_greece.212.f
+
+	duration = 3
+	cooldown = { months = 6 }
+	event_image = {
+		video = "votp_garibaldi"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_protest.dds"
+	trigger = { 
+		NOT = { has_variable = dvg_greece_radical_org 
+		cu:greek = {
+			culture_is_discriminated_in = ROOT
+		}
+		}
+		country_has_voting_franchise = yes
+		
+	}
+	immediate = {
+		set_variable = dvg_greece_radical_org
+	}
+	option = {	#
+		name = dvg_greece.212.a
+		default_option = yes
+
+
+		add_primary_culture = cu:greek
+
+		if = {
+			limit = {
+				exists = c:GRE
+				c:GRE = {
+					is_subject_of = ROOT
+				}
+			}
+			annex = c:GRE
+		}
+		set_variable = council_concluded
+		ai_chance = {
+			base = 25
+		}
+	}
+	option = {	#
+		name = dvg_greece.212.b
+		default_option = yes
+
+
+
+		if = {
+			limit = {
+				exists = c:GRE
+				c:GRE = {
+					is_subject_of = ROOT
+				}
+			}
+			annex = c:GRE
+		}
+		add_modifier = {
+			name = dvg_assimilate
+			months = 12
+			is_decaying = yes
+		}
+		add_radicals = {
+			value = 0.25
+			culture = cu:greek
+		}
+		set_variable = council_concluded
+
+		ai_chance = {
+			base = 25
+		}
+	}
 }
