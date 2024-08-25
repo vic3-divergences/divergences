@@ -1,0 +1,295 @@
+﻿je_ari_unification = {
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	group = je_group_foreign_affairs
+
+	is_shown_when_inactive = {
+		country_has_primary_culture = cu:catalan
+	}
+
+	possible = {
+		country_rank >= rank_value:major_power
+		has_technology_researched = pan-nationalism
+		is_subject = no
+	}
+
+	complete = {
+		hidden_trigger = {
+			has_variable = je_unification_progress
+		}
+		calc_true_if = {
+			amount >= 19
+			owns_entire_state_region = STATE_CATALONIA
+			owns_entire_state_region = STATE_ARAGON
+			owns_entire_state_region = STATE_VALENCIA
+			owns_entire_state_region = STATE_BALEARES
+			owns_entire_state_region = STATE_SARDINIA
+			owns_entire_state_region = STATE_CORSICA
+			owns_entire_state_region = STATE_MALTA
+			owns_entire_state_region = STATE_SICILY
+			owns_entire_state_region = STATE_CALABRIA
+			owns_entire_state_region = STATE_CAMPANIA
+			owns_entire_state_region = STATE_APULIA
+			owns_entire_state_region = STATE_ABRUZZO
+			owns_entire_state_region = STATE_LAZIO
+			owns_entire_state_region = STATE_UMBRIA
+			owns_entire_state_region = STATE_TUSCANY
+			owns_entire_state_region = STATE_ROMAGNA
+			owns_entire_state_region = STATE_EMILIA
+			owns_entire_state_region = STATE_PIEDMONT
+			owns_entire_state_region = STATE_LOMBARDY
+			owns_entire_state_region = STATE_SAVOY
+			owns_entire_state_region = STATE_VENETIA
+			owns_entire_state_region = STATE_ISTRIA
+			owns_entire_state_region = STATE_DALMATIA
+			owns_entire_state_region = STATE_MALTA
+		}
+	}
+
+	on_monthly_pulse = {
+		events = {
+			dvg_ari_unification.2
+		}
+		effect = {
+			if = { 
+				limit = { NOT = { has_variable = je_unification_progress } } 
+				set_variable = je_unification_progress
+			}
+		}
+	}
+
+	on_complete = {
+		trigger_event = { id = dvg_ari_unification.4 }
+		remove_variable = je_unification_progress
+	}
+
+	weight = 100
+}
+
+je_conquest_of_algeria = {
+	icon = "gfx/interface/icons/event_icons/bicorne_hat.dds"
+
+	group = je_group_historical_content
+
+	complete = {
+		country_or_subject_owns_entire_state_region = STATE_TLEMCEN
+		country_or_subject_owns_entire_state_region = STATE_ALGIERS
+		country_or_subject_owns_entire_state_region = STATE_CONSTANTINE
+	}
+
+	on_complete = {
+		custom_tooltip = je_conquest_of_algeria_tt
+		trigger_event = algeria_events.1
+	}
+
+	fail = {
+		NOT = { has_state_in_state_region = STATE_TLEMCEN }
+		NOT = { has_state_in_state_region = STATE_ALGIERS }
+		NOT = { has_state_in_state_region = STATE_CONSTANTINE }
+	}
+
+	on_fail = {
+		trigger_event = algeria_events.3
+	}
+
+	on_monthly_pulse = {
+		random_events = {
+			90 = 0
+			10 = algeria_events.5 # Raid Event
+		}
+	}
+
+	transferable = no
+
+	should_be_pinned_by_default = yes
+
+	weight = 5000
+}
+
+je_the_african_departements = {
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+
+	group = je_group_historical_content
+
+	immediate = {
+		random_scope_state = {
+			limit = {
+				state_region = s:STATE_ALGIERS
+			}
+			save_scope_as = je_algiers_state_scope
+		}
+		random_scope_state = {
+			limit = {
+				state_region = s:STATE_TLEMCEN
+			}
+			save_scope_as = je_oran_state_scope
+		}
+		random_scope_state = {
+			limit = {
+				state_region = s:STATE_CONSTANTINE
+			}
+			save_scope_as = je_constantine_state_scope
+		}
+		cu:berber = {
+			save_scope_as = berber_culture_scope
+		}
+		cu:maghrebi = {
+			save_scope_as = maghrebi_culture_scope
+		}
+		cu:catalan = {
+			save_scope_as = catalan_culture_scope
+		}
+	}
+	complete = {
+		custom_tooltip = {
+			text = je_the_algerian_departements_tt_1
+			any_scope_state = {
+				state_region = s:STATE_ALGIERS
+				is_incorporated = yes
+				is_split_state = no
+				turmoil < 0.1
+			}
+			any_scope_state = {
+				state_region = s:STATE_TLEMCEN
+				is_incorporated = yes
+				is_split_state = no
+				turmoil < 0.1
+			}
+			any_scope_state = {
+				state_region = s:STATE_CONSTANTINE
+				is_incorporated = yes
+				is_split_state = no
+				turmoil < 0.1
+			}
+		}
+		OR = {
+			custom_tooltip = {
+				text = je_the_algerian_departements_tt_3
+				any_scope_state = {
+					state_region = s:STATE_ALGIERS
+					culture_percent_state = {
+						target = cu:catalan
+					    value >= 0.2
+					}
+				}
+				any_scope_state = {
+					state_region = s:STATE_TLEMCEN
+					culture_percent_state = {
+						target = cu:catalan
+					    value >= 0.2
+					}
+				}
+				any_scope_state = {
+					state_region = s:STATE_CONSTANTINE
+					culture_percent_state = {
+						target = cu:catalan
+					    value >= 0.2
+					}
+				}
+			}
+			custom_tooltip = {
+				text = je_the_algerian_departements_tt_2
+				cu:maghrebi = {
+					NOT = { culture_is_discriminated_in = ROOT }
+				}
+				cu:berber = {
+					NOT = { culture_is_discriminated_in = ROOT }
+				}
+			}
+		}
+	}
+
+	on_complete = {
+		trigger_event = algeria_events.4
+	}
+
+	fail = {
+		NOT = { has_state_in_state_region = STATE_TLEMCEN }
+		NOT = { has_state_in_state_region = STATE_ALGIERS }
+		NOT = { has_state_in_state_region = STATE_CONSTANTINE }
+	}
+
+	on_fail = {
+		trigger_event = algeria_events.3
+	}
+
+	on_monthly_pulse = {
+		random_events = {
+			90 = 0 
+			10 = algeria_events.6
+		}
+	}
+
+	transferable = no
+
+	should_be_pinned_by_default = yes
+
+	weight = 5000
+}
+
+je_reconquest_of_algeria = {
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+
+	group = je_group_historical_content
+
+	complete = {
+		custom_tooltip = {
+			text = je_reconquest_of_algeria_tt
+			exists = c:ALD
+			this = c:ALD
+		}
+		owns_entire_state_region = STATE_TLEMCEN
+		owns_entire_state_region = STATE_ALGIERS
+		owns_entire_state_region = STATE_CONSTANTINE
+	}
+
+	on_complete = {
+		trigger_event = algeria_events.8
+	}
+
+	fail = {
+		NOT = { has_state_in_state_region = STATE_TLEMCEN }
+		NOT = { has_state_in_state_region = STATE_ALGIERS }
+		NOT = { has_state_in_state_region = STATE_CONSTANTINE }
+	}
+
+	transferable = yes
+
+	should_be_pinned_by_default = yes
+
+	weight = 5000
+}
+
+je_african_legion = {
+	icon = "gfx/interface/icons/event_icons/bicorne_hat.dds"
+
+	group = je_group_historical_content
+
+	complete = {
+		any_scope_state = {
+			region = sr:region_north_africa
+			any_scope_building = {
+				is_building_type = building_barracks
+				level >= 20
+				occupancy >= 0.5
+			}
+			count >= 3
+		}
+	}
+
+	on_complete = {
+		trigger_event = { id = algeria_events.9 }
+	}
+
+	fail = {
+		NOT = { has_state_in_state_region = STATE_TLEMCEN }
+		NOT = { has_state_in_state_region = STATE_ALGIERS }
+		NOT = { has_state_in_state_region = STATE_CONSTANTINE }
+	}
+
+	transferable = yes
+
+	should_be_pinned_by_default = yes
+
+	weight = 5000
+}
