@@ -1123,7 +1123,62 @@ on_diplomatic_pact_third_party_auto_break = {
 # scope:target = Released Country
 on_country_released_as_independent = {
 	effect = {
-		
+		if = {
+			limit = {
+				scope:target = {
+					country_has_primary_culture = cu:ashkenazi
+				}
+				NOT = {
+					s:STATE_PALESTINE = {
+						is_homeland = cu:ashkenazi
+					}
+				}
+			}
+			s:STATE_PALESTINE = {
+				add_homeland = cu:sephardic
+				add_homeland = cu:ashkenazi
+			}
+		}
+		if = {
+			limit = {
+				scope:target = {
+					country_has_primary_culture = cu:peuvermhels
+				}
+				NOT = {
+					s:STATE_ALGIERS = {
+						is_homeland = cu:peuvermhels
+					}
+					s:STATE_TLEMCEN = {
+						is_homeland = cu:peuvermhels
+					}
+				}
+			}
+			s:STATE_TLEMCEN = {
+				add_homeland = cu:peuvermhels
+			}
+			s:STATE_ALGIERS = {
+				add_homeland = cu:peuvermhels
+			}
+		}
+		if = {
+			limit = {
+				scope:target = {
+					country_has_primary_culture = cu:orano
+				}
+				NOT = {
+					s:STATE_TERRA_DORO = {
+						is_homeland = cu:orano
+					}
+				
+				}
+			}
+			scope:target = {
+				trigger_event = {
+					id = dvg_ven.2
+				}
+			}
+			
+		}
 	}
 }
 
@@ -2042,13 +2097,168 @@ on_political_movement_supported_law_cancelled = {
 # Root = Country
 on_wargoal_enforced = {
 	effect = {
+		if = {
+			limit = {
+				OR = {
+					AND = {
+						has_journal_entry = je_anti_lobby_demand
+						var:anti_lobby_demand_target ?= scope:target
+					}
+					AND = {
+						has_journal_entry = je_pro_lobby_demand
+						var:pro_lobby_demand_target ?= scope:target
+					}
+				}
+			}
+			set_variable = { name = enforced_wargoal_on_enemy days = 90 }
+		}
 		set_variable = {
             name = recently_won_war
             days = 1825
             value = yes
         }
-        
-	}	
+        if = {
+        	limit = {
+        		c:PRC ?= root
+        		NOT = {
+        			exists = c:FRA
+        		}
+        	}
+        	c:PRC = {
+				set_immune_to_revolutions = no
+				change_tag = FRA
+				every_scope_state = {
+					limit = {
+						state_region = {
+							is_homeland = cu:french
+						}
+					}
+					set_state_type = incorporated
+				}
+        	}
+        }
+		if = {
+			limit = {
+				c:FRA ?= root
+				NOT = {
+					exists = c:PRC
+				}
+			}
+			if = {
+				limit = {
+					c:FRA = {
+						is_immune_to_revolutions = yes
+					}
+				}
+				set_immune_to_revolutions = no
+			}
+		}
+        if = {
+        	limit = {
+        		owner = {
+	        		c:PNI ?= this
+	        		has_variable = ragamuffin_nation_var
+	        		NOT = { has_variable = won_ragamuffin_war_var }
+					owns_entire_state_region = STATE_RIO_GRANDE_DO_SUL
+					owns_entire_state_region = STATE_SANTA_CATARINA
+				}
+        	}
+        	owner = {
+        		set_variable = won_ragamuffin_war_var
+        		trigger_event = { id = brazilian_minors.1 days = 0 popup = yes }
+        	}
+        }
+        if = {
+        	limit = {
+        		owner = {
+        			game_date < 1850.1.1 # Just in case.
+        			NOT = {
+        				has_variable = cabanagem_defeat_var
+        				exists = c:PRA
+        			}
+	        		c:BRZ ?= this
+					owns_entire_state_region = STATE_PARA
+					any_scope_state = { state_region = s:STATE_AMAZONAS }
+				}
+        	}
+        	owner = {
+        		set_variable = cabanagem_defeat_var
+        		trigger_event = { id = brazilian_minors.2 days = 0 popup = yes }
+        	}
+        }
+        if = {
+        	limit = {
+        		owner = {
+        			game_date < 1850.1.1 # Just in case.
+        			NOT = {
+        				has_variable = ragamuffin_defeat_var
+        				exists = c:PNI
+        			}
+	        		c:BRZ ?= this
+					owns_entire_state_region = STATE_RIO_GRANDE_DO_SUL
+				}
+        	}
+        	owner = {
+        		set_variable = ragamuffin_defeat_var
+        		trigger_event = { id = brazilian_minors.3 days = 0 popup = yes }
+        	}
+        }
+        if = {
+        	limit = {
+        		owner = {
+	        		c:PER ?= this
+					NOT = {
+						any_scope_state = {
+							state_region = s:STATE_HERAT
+						}
+					}
+					has_modifier = modifier_herat_inspiration
+				}
+        	}
+        	owner = {
+        		remove_modifier = modifier_herat_inspiration
+        	}
+        }
+		if = {
+			limit = {
+				scope:target = {
+					has_journal_entry = je_earn_recognition
+				}
+			}
+			scope:target = {
+				change_variable = {
+					name = recognition_progress_var
+					add = {
+						add = scope:wargoal_impact
+						multiply = -4
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				owner = {
+					has_journal_entry = je_earn_recognition
+				}
+				scope:target = {
+					OR = {
+						is_country_type = recognized
+						is_country_type = colonial
+					}
+					country_rank >= rank_value:major_power
+				}
+			}
+			owner = {
+				change_variable = {
+					name = recognition_progress_var
+					add = {
+						add = scope:wargoal_impact
+						multiply = 4
+					}
+				}
+			}
+		}
+	}
 }
 
 # Root = Interest Group
