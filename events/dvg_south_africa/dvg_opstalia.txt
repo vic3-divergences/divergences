@@ -90,13 +90,14 @@ dvg_opstalia.2 = {
 				save_scope_as = scope_diereckx
 			}
 		}
-	}
-	ig:ig_landowners = {
-		save_scope_as = grondraad_ig
-		leader = {
-			save_scope_as = landowners_leader
+		ig:ig_landowners = {
+			save_scope_as = grondraad_ig
+			leader = {
+				save_scope_as = landowners_leader
+			}
 		}
 	}
+
 	option = {
 		name = dvg_opstalia.2.a
 		hidden_effect = { 
@@ -243,10 +244,17 @@ dvg_opstalia.4 = {
 		c:LEW = {
 			trigger_event = {id = dvg_leeuwin.2 days = 90}
 		}
-		s:STATE_TRANS_ORANJE.region_state:VRY = {
-			add_radicals = { 
-				value = 0.1 
-				culture = cu:boer 
+		c:VRY = {
+			every_scope_state = {
+				limit = {
+					state_region = { 
+						is_homeland = cu:boer
+					}
+				}
+				add_radicals_in_state = {
+					value = 0.1
+					culture = cu:boer
+				}
 			}
 		}
 		add_modifier = {
@@ -411,12 +419,14 @@ dvg_opstalia.7 = {
 	duration = 1
 
 	trigger = {
+		root = c:OPS
 		NOT = {
 			exists = c:VRY
 		}
 		c:OPS = {
 			owns_entire_state_region = STATE_NOORDLAND
 			owns_entire_state_region = STATE_BOTSWANA
+			is_subject = no
 		} 
 	}
 
@@ -429,16 +439,34 @@ dvg_opstalia.7 = {
 
     option = { #puppet them
 	name = dvg_opstalia.7.b
-		s:STATE_NOORDLAND.region_state:OPS = { #try adding vryland as releasable, syntax works for set state owner
-			set_state_owner = c:VRY
-        }
-        s:STATE_BOTSWANA.region_state:OPS = {
-			set_state_owner = c:VRY
-        }
-        create_diplomatic_pact = {
-        	target_country = c:VRY
-        	type = puppet
-        }
+		if = {
+			limit = { 
+				AND = {
+					exists = s:STATE_NOORDLAND.region_state:OPS 
+					exists = s:STATE_BOTSWANA.region_state:OPS 
+				}
+			}
+			create_country = { #Vryland
+				tag = VRY
+				origin = this
+				state = s:STATE_NOORDLAND.region_state:OPS
+				state = s:STATE_BOTSWANA.region_state:OPS
+				state = s:STATE_NAMAQUALAND.region_state:OPS
+				state = s:STATE_HEREROLAND.region_state:OPS
+			}
+
+			c:VRY = { 
+				save_scope_as = scope_VRY 
+				set_country_type = recognized
+			}
+
+			c:OPS = {
+				create_diplomatic_pact = {
+					country = c:VRY
+					type = puppet
+				}
+			}
+		}
         ai_chance = {
 			base = 2
 		}
@@ -469,6 +497,9 @@ dvg_opstalia.8 = {
 		root = {
 			army_size >= c:NFL.army_size
 		}
+		NOT = {
+			has_variable = dvg_noordveld_war_triggered_var
+		}
 	}
 
 	option = { #go get it
@@ -476,32 +507,30 @@ dvg_opstalia.8 = {
 	name = dvg_opstalia.8.a
 		create_diplomatic_play = {
 			name = noordveld_war
-			
-			escalation = 50
-
+		
 			target_country = c:NFL
-			war = no
+			
+			war = yes
+			
 			type = dp_annex_war
-			#add_war_goal = {
-			#	holder = c:OPS
-			#	type = annex_country
-			#	target_country = c:NFL
-			#}
+			
 			add_war_goal = {
 				holder = c:NFL
-				type = annex
+				type = annex_country
 				target_country = c:OPS
 			}
 		}
 		ai_chance = {
 			base = 10
 		}
+		set_variable = dvg_noordveld_war_triggered_var
     }
     option = { #pussy
 	name = dvg_opstalia.8.b
 	    ai_chance = {
 			base = 1
 		}
+		set_variable = dvg_noordveld_war_triggered_var
 	}
 }
 
@@ -611,6 +640,9 @@ dvg_opstalia.10 = {
 				}
 			}
 		}
+		NOT = {
+			has_variable = dvg_hendrik_dead_var
+		}
 	}
 
 	immediate = {
@@ -627,6 +659,7 @@ dvg_opstalia.10 = {
 				save_scope_as = kommandos_leader
 			}
 		}
+		set_variable = dvg_hendrik_dead_var
 	}
 
 	option = {
@@ -732,8 +765,8 @@ dvg_opstalia.11 = {
 			days = 3650
 			is_decaying = yes
 		}
-		set_relations = {
-			target_country = c:NFL
+		change_relations = {
+			country = c:NFL
 			value = 20
 		}
         ai_chance = {
