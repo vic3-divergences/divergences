@@ -81,16 +81,55 @@ je_one_kongsi = {
 	icon = "gfx/interface/icons/event_icons/event_zhourao.dds"
 	
 	group = je_group_foreign_affairs
+
+	is_shown_when_inactive = {
+		country_has_primary_culture = cu:zhourao
+	}
+
+	possible = {
+		has_technology_researched = nationalism
+	}
+
+	immediate = {
+		set_variable = {
+			name = zhourao_var
+			value = 0
+		}
+	}
 	
 	complete = {
-		owns_entire_state_region = STATE_QINGSHUI
-		owns_entire_state_region = STATE_GUANSHAN
-		owns_entire_state_region = STATE_XINXIANG
-		owns_entire_state_region = STATE_YONGLING
-		owns_entire_state_region = STATE_ZHENG_HE
-		owns_entire_state_region = STATE_WEIHUAI
-		owns_entire_state_region = STATE_TAITUNG
+		OR = {
+			AND = {
+				
+				scope:journal_entry = { is_goal_complete = yes
+				
+				}
+				NOT = {
+					
+					any_country = {
+						AND = {
+							relations:root < relations_threshold:amicable
+							country_has_primary_culture = cu:zhourao
+
+						}
+					}
+				}
+				
+				
+			}
+			AND = {
+			owns_entire_state_region = STATE_QINGSHUI
+			owns_entire_state_region = STATE_GUANSHAN
+			owns_entire_state_region = STATE_XINXIANG
+			owns_entire_state_region = STATE_YONGLING
+			owns_entire_state_region = STATE_ZHENG_HE
+			owns_entire_state_region = STATE_WEIHUAI
+			owns_entire_state_region = STATE_TAITUNG
+			}
+		}
+		
 	}
+	
 	
 	fail = {
 	}
@@ -101,6 +140,36 @@ je_one_kongsi = {
 	
     on_fail = {
 	}
+
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					NOT = {
+						any_country = {
+							relations:root < relations_threshold:amicable
+							country_has_primary_culture = cu:zhourao
+						}
+					}
+				}
+				change_variable = {
+					name = zhourao_var
+					add = 1
+				}
+			}
+			
+		}
+	}
+
+	
+
+	current_value = {
+		value = root.var:zhourao_var
+	}
+
+
+	progressbar = yes
+	goal_add_value = 100
 	
 	weight = 100
 	should_be_pinned_by_default = yes
@@ -1002,6 +1071,7 @@ je_pillager_prince_zhourao = {
 	}
 
 	immediate = {
+
 		if = {
 			limit = {
 				NOT = {
@@ -1017,11 +1087,20 @@ je_pillager_prince_zhourao = {
 				transfer_character = ROOT
 			}
 		}
+		
 	}
 	
+
+
 	on_monthly_pulse = {
+
 		random_events = {
+
+			
 			25 =  dvg_zhourao.1201
+
+			25 =  dvg_zhourao.1206
+
 		}
 	}
 
@@ -1034,6 +1113,8 @@ je_pillager_prince_zhourao = {
 				}
 			}
 		}
+		
+		
 	}
 	on_complete = {
 		trigger_event = {
@@ -1056,6 +1137,7 @@ je_pillager_prince_zhourao = {
 		}
 	}
 
+
 	#inheritable = no
 
 	weight = 5000
@@ -1066,6 +1148,22 @@ je_zhourao_truce = {
 	icon = "gfx/interface/icons/event_icons/event_zhourao.dds"
 	
 	group = je_group_foreign_affairs
+
+	is_shown_when_inactive = {
+		country_has_primary_culture = cu:zhourao
+	}
+	possible = {
+		has_variable = dvg_zhourao_convention_held
+	}
+
+	on_monthly_pulse = {
+		random_events = {
+			20 = dvg_zhourao.16
+			20 = dvg_zhourao.14
+
+		}
+		
+	}
 	
 	complete = {
 		NOR = {
@@ -1075,13 +1173,14 @@ je_zhourao_truce = {
 		}
 	}
 	
+	
+
     on_complete = {
 		
 	}
 	fail = {
 		any_country = {
 			country_has_primary_culture = cu:zhourao
-			is_at_war = yes
 			OR = {
 				is_diplomatic_play_enemy_of = c:BRG
 				is_diplomatic_play_enemy_of = c:DUA
@@ -1090,12 +1189,13 @@ je_zhourao_truce = {
 		}
 	}
 	
-    #on_fail = {
-	#	trigger_event = {
-	#		
-	#	}
-	#}
+    on_fail = {
+		trigger_event = {
+			id = dvg_zhourao.15
+		}
+	}
 	
 	weight = 100
 	should_be_pinned_by_default = yes
 }
+
