@@ -1,6 +1,6 @@
 ﻿namespace = dvg_spain
 
-# Calm before the storm
+# The Revolution of 1808 and its Consequences
 dvg_spain.1 = {
 	type = country_event
 	placement = ROOT
@@ -10,11 +10,11 @@ dvg_spain.1 = {
 	flavor = dvg_spain.1.f
 	
 	event_image = {
-		video = "southamerica_aristocrats"
+		video = "southamerica_war_civilians"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
-	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
 
 	icon = "gfx/interface/icons/event_icons/event_fire.dds"
 
@@ -23,6 +23,39 @@ dvg_spain.1 = {
 	trigger = {
 	}
 	
+	
+	# Vive!
+	option = {
+		name = dvg_spain.1.a
+		default_option = yes
+		
+		trigger_event = { id = dvg_spain.2 days = 31 }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+# The Nova Reconquista
+dvg_spain.2 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.2.t
+	desc = dvg_spain.2.d
+	flavor = dvg_spain.2.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
 	immediate = {
 		set_variable = {
 			name = dvg_castillian_tensions_var
@@ -35,11 +68,38 @@ dvg_spain.1 = {
 			type = je_keep_castillian_tensions_low
 		}
 	}
+	trigger = {
+	}
 	
-	# Vive!
+	# For God, for King, for Country, destroy Colombia!
 	option = {
-		name = dvg_spain.1.a
+		name = dvg_spain.2.a
 		default_option = yes
+		
+		c:SPA = {
+			create_diplomatic_play = {
+				name = colombian_war_of_independence
+				target_country = c:GCO
+				war = yes
+				type = dp_make_protectorate
+				
+				add_war_goal = {
+					holder = c:SPA
+					type = revoke_claim
+					target_state = s:STATE_CUBA.region_state:CUB
+					target_country = c:GCO
+				}
+			}
+			trigger_event = { id = dvg_spain.3 }
+		}
+		c:GCO = { 
+			trigger_event = { id = dvg_gran_colombia.2 }
+		}
+		c:QUI = {
+			add_journal_entry = {
+				type = je_colombian_war_of_independence_QUI
+			}
+		}
 		add_journal_entry = {
 			type = je_colombian_war_of_independence_SPA
 		}
@@ -49,98 +109,43 @@ dvg_spain.1 = {
 		ai_chance = {
 			base = 1
 		}
-		trigger_event = { id = dvg_spain.2 days = 31 }
 	}
-}
-
-dvg_spain.2 = {
-	type = country_event
-	placement = ROOT
-
-	title = dvg_spain.2.t
-	desc = dvg_spain.2.d
-	flavor = dvg_spain.2.f
-	
-	event_image = {
-		video = "southamerica_aristocrats"
-	}
-
-	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
-	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
-
-	icon = "gfx/interface/icons/event_icons/event_fire.dds"
-
-	duration = 3
-
-	trigger = {
-	}
-	
-	
-	# War with GCO + QUI
-	option = {
-		name = dvg_spain.2.a
-		default_option = yes
-		
-		create_diplomatic_play = {
-			name = colombian_war_of_independence
-			target_country = c:GCO
-			war = yes
-			add_target_backers = { c:QUI }
-			type = dp_reduce_autonomy
-			
-			add_war_goal = {
-				holder = c:SPA
-				type = revoke_claim
-				target_state = s:STATE_CUBA.region_state:CUB
-				target_country = c:GCO
-			}
-			
-			add_war_goal = {
-				holder = c:GCO
-				type = independence
-				target_country = c:SPA
-			}
-			add_war_goal = {
-				holder = c:QUI
-				type = independence
-				target_country = c:SPA
-			}
-		}
-		c:GCO = {
-			trigger_event = { id = dvg_gran_colombia.2 }
-		}
-		c:SPA = {
-			trigger_event = { id = dvg_spain.3 }
-		}
-		ai_chance = {
-			base = 1
-		}
-	}
-	#SPA says bye-bye to colonies
+	#We must end the carnage and preserve what we have left.
 	option = {
 		name = dvg_spain.2.b
 		
 		c:SPA = {
 			remove_diplomatic_pact = {
-				country = c:QUI
+				country = c:GRA
 				type = puppet
 			}
 			remove_diplomatic_pact = {
-				country = c:GCO
-				type = dominion
+				country = c:QUI
+				type = protectorate
+			}
+			add_journal_entry = {
+				type = je_rebuild_spain
+			}
+			add_journal_entry = {
+				type = je_army_reform_spain
 			}
 		}
-		c:GCO = {
-			remove_modifier = dvg_war_preparation
+		
+		c:GCO = { 
+			trigger_event = { id = dvg_gran_colombia.3 }
+		}
+		c:QUI = {
+			trigger_event = { id = dvg_caladero.8 }
+		}
+		add_radicals = {
+			value = 0.1
 		}
 		ai_chance = {
 			base = 0
 		}
 	}
 }
-
-#War of Independence
-
+# The Nova Reconquista
 dvg_spain.3 = {
 	type = country_event
 	placement = ROOT
@@ -159,7 +164,7 @@ dvg_spain.3 = {
 	icon = "gfx/interface/icons/event_icons/event_fire.dds"
 
 	duration = 3
-
+	
 	trigger = {
 	}
 	
@@ -194,8 +199,8 @@ dvg_spain.4 = {
 	duration = 3
 
 	trigger = {
-		year = 1838
-		this = c:SPA
+		year = 1840
+		c:SPA = ROOT
 		exists = c:GCO
 		c:SPA = {
 			has_war_with = c:GCO
@@ -222,7 +227,7 @@ dvg_spain.4 = {
 			end_play = yes
 		}
 		c:SPA = {
-			create_truce = {
+			create_bidirectional_truce = {
 				country = c:GCO
 				months = 48
 			}
@@ -232,9 +237,6 @@ dvg_spain.4 = {
 			trigger_event = { id = dvg_granada.8 days = 365 }	# Siege of Cartagena countryside
 		}	
 		c:GCO = {
-			trigger_event = { id = dvg_gran_colombia.5 }	# Notif about the truce
-		}
-		c:QUI = {
 			trigger_event = { id = dvg_gran_colombia.5 }	# Notif about the truce
 		}
 		ai_chance = {
@@ -279,7 +281,7 @@ dvg_spain.5 = {
 	
 	immediate = {
 		c:SPA = {
-			create_truce = {
+			create_bidirectional_truce = {
 				country = c:GRA
 				months = 48
 			}
@@ -295,12 +297,16 @@ dvg_spain.5 = {
 			country = c:GRA
 			value = -50
 		}
+		remove_diplomatic_pact = {
+			country = c:GRA
+			type = puppet
+		}
 		ai_chance = {
 			base = 1
 		}
 	}
 }
-# Colombian Alliance is defeated
+# The Treaty of Lisbon
 dvg_spain.6 = {
 	type = country_event
 	placement = ROOT
@@ -324,20 +330,24 @@ dvg_spain.6 = {
 	}
 	
 	
-	# Viceroy time
+	# Meu Deus, meu Deus, por que me abandonaste?
 	option = {
 		name = dvg_spain.6.a
 		default_option = yes
-		add_loyalists = {
-			value = 0.4
+		c:SPA = {
+			create_bidirectional_truce = {
+				country = c:GRA
+				months = 48
+			}
+			change_infamy = -50
 		}
-		add_journal_entry = {
-			type = je_reconquer_new_spain
+		remove_diplomatic_pact = {
+			country = c:GRA
+			type = puppet
 		}
-		add_journal_entry = {
-			type = je_army_reform_spain
+		c:GCO = {
+			trigger_event = { id = dvg_gran_colombia.15 }
 		}
-		trigger_event = { id = dvg_spain.19 days = 365 }
 		ai_chance = {
 			base = 1
 		}
@@ -399,8 +409,7 @@ dvg_spain.7 = {
 		}
 	}
 }
-
-# Reconquered New Spain note that unless something weird af happens, ai spain shouldn't really be doing this path
+#Reconquered New Spain note that unless something weird af happens, ai spain shouldn't really be doing this path
 dvg_spain.8 = {
 	type = country_event
 	placement = ROOT
@@ -431,6 +440,13 @@ dvg_spain.8 = {
 		add_loyalists = {
 			value = 0.25
 		}
+		add_journal_entry = {
+			type = je_reconquer_new_spain
+		}
+		add_journal_entry = {
+			type = je_army_reform_spain
+		}
+		trigger_event = { id = dvg_spain.19 days = 365 }
 #		add_journal_entry = {
 #			type = je_spanish_china
 #		}
@@ -556,6 +572,9 @@ dvg_spain.10 = {
 		ig:ig_landowners = {
 			remove_ideology = ideology_patriarchal
 			add_ideology = ideology_republican_paternalistic
+		}
+		c:CUB = {
+			trigger_event = { id = dvg_cuba.2 days = 7 }
 		}
 		hidden_effect = {
 			remove_modifier = dvg_army_reform_spain
@@ -736,43 +755,40 @@ dvg_spain.13 = {
 	option = {
 		name = dvg_spain.13.a
 		default_option = yes
-		create_diplomatic_play = {
-			target_country = scope:dvg_morocco_scope
-			war = yes
-			type = dp_annex_war
-			
-			add_war_goal = {
-				holder = c:MOR
-				type = conquer_state
-				target_state = s:STATE_AL_RIF.region_state:SPA
-			}
-			add_war_goal = {
-				holder = c:MOR
-				type = conquer_state
-				target_state = s:STATE_MARRAKECH.region_state:SPA
-			}
+		
+		c:SPA = {
+			create_diplomatic_play = {
+				target_country = scope:dvg_morocco_scope
+				war = yes
+				type = dp_annex_war
+				
 				add_war_goal = {
-				holder = c:MOR
-				type = conquer_state
-				target_state = s:STATE_INNER_MOROCCO.region_state:SPA
-			}
-		}
-		hidden_effect = {
-			c:SPA = {
-				remove_diplomatic_pact = {
-					country = c:MOR
-					type = puppet
+					holder = c:MOR
+					type = conquer_state
+					target_state = s:STATE_AL_RIF.region_state:SPA
+				}
+				add_war_goal = {
+					holder = c:MOR
+					type = conquer_state
+					target_state = s:STATE_MARRAKECH.region_state:SPA
+				}
+					add_war_goal = {
+					holder = c:MOR
+					type = conquer_state
+					target_state = s:STATE_INNER_MOROCCO.region_state:SPA
 				}
 			}
 		}
-		add_radicals = {
-			value = 0.5
-			culture = cu:maghrebi
+		
+		hidden_effect = {
+			add_radicals = {
+				value = 0.5
+				culture = cu:maghrebi
+			}
+			c:MOR = {
+				trigger_event = { id = dvg_morocco.5 }
+			}
 		}
-		c:MOR = {
-			trigger_event = { id = dvg_morocco.5 }
-		}
-
 		ai_chance = {
 			base = 0.99
 		}
@@ -1016,6 +1032,84 @@ dvg_spain.15 = {
 			base = 1
 		}
 	}
+	# Yes, give them the go ahead.
+	option = {
+		name = dvg_spain.15.b
+		default_option = yes
+		add_radicals = {
+			value = 0.1
+			culture = cu:spanish
+		}
+		custom_tooltip = {
+			text = dvg_spain_end_castile_tt
+			s:STATE_TOLEDO = { 
+				remove_homeland = cu:spanish
+			}
+			scope:dvg_toledo = {
+				add_modifier = {
+					name = dvg_assimilate_mega
+					months = 60
+				}
+			}
+			s:STATE_CASTILE = { 
+				remove_homeland = cu:spanish
+			}
+			scope:dvg_castilee = {
+				add_modifier = {
+					name = dvg_assimilate_mega
+					months = 60
+				}
+			}
+			s:STATE_ASTURIAS = {
+				remove_homeland = cu:spanish
+			}
+			scope:dvg_asturias = {
+				add_modifier = {
+					name = dvg_assimilate_mega
+					months = 60
+				}
+			}
+			s:STATE_CARTAGENA = {
+				remove_homeland = cu:spanish
+			}
+			scope:dvg_cartagena = {
+				add_modifier = {
+					name = dvg_assimilate_mega
+					months = 60
+				}
+			}
+			s:STATE_GRANADA = {
+				remove_homeland = cu:spanish
+			}
+			scope:dvg_granada = {
+				add_modifier = {
+					name = dvg_assimilate_mega
+					months = 60
+				}
+			}
+			s:STATE_BADAJOZ = {
+				remove_homeland = cu:spanish
+			}
+			scope:dvg_badajoz = {
+				add_modifier = {
+					name = dvg_assimilate_mega
+					months = 60
+				}
+			}
+			s:STATE_ANDALUSIA = {
+				remove_homeland = cu:spanish
+			}
+			scope:dvg_andalusia = {
+				add_modifier = {
+					name = dvg_assimilate_mega
+					months = 60
+				}
+			}
+		}
+		ai_chance = {
+			base = 0
+		}
+	}
 }
 
 # Castillians Rise up due to Tension
@@ -1070,7 +1164,7 @@ dvg_spain.16 = {
 				target_state = s:STATE_GRANADA.region_state:SPA
 			}
 		}
-		#trigger_event = { id = dvg_spain.17 days = 180 } trigger galician revolt?
+		#trigger_event = { id = dvg_spain.14 days = 180 } trigger galician revolt?
 		hidden_effect = {
 			set_variable = dvg_spain_castille
 		}
@@ -1398,6 +1492,7 @@ dvg_spain.22 = {
 	duration = 3
 
 	trigger = {
+		exists = c:SPA
 		c:SPA = ROOT
 		c:SPA = {
 			has_journal_entry = je_castillian_tensions
@@ -1451,166 +1546,14 @@ dvg_spain.22 = {
 	}
 }
 
-#End of Castillian Nationalism mega
+# Dilemma, status of the Crown of Castile
 dvg_spain.23 = {
 	type = country_event
 	placement = ROOT
 
-	title = dvg_spain.15.t
-	desc = dvg_spain.15.d
-	flavor = dvg_spain.15.f
-
-	event_image = {
-		video = "southamerica_war_civilians"
-	}
-
-	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
-	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
-
-	icon = "gfx/interface/icons/event_icons/event_fire.dds"
-
-	duration = 3
-
-	trigger = {
-	}
-	
-	immediate = {
-
-		c:SPA = {
-			random_scope_state = {
-				limit = {
-					state_region = s:STATE_CARTAGENA
-				}
-				save_scope_as = dvg_cartagena
-			}
-			random_scope_state = {
-				limit = {
-					state_region = s:STATE_GRANADA
-				}
-				save_scope_as = dvg_granada
-			}
-			random_scope_state = {
-				limit = {
-					state_region = s:STATE_ASTURIAS
-				}
-				save_scope_as = dvg_asturias
-			}
-			random_scope_state = {
-				limit = {
-					state_region = s:STATE_CASTILE
-				}
-				save_scope_as = dvg_castilee
-			}
-			random_scope_state = {
-				limit = {
-					state_region = s:STATE_BADAJOZ
-				}
-				save_scope_as = dvg_badajoz
-			}
-			random_scope_state = {
-				limit = {
-					state_region = s:STATE_TOLEDO
-				}
-				save_scope_as = dvg_toledo
-			}
-			random_scope_state = {
-				limit = {
-					state_region = s:STATE_ANDALUSIA
-				}
-				save_scope_as = dvg_andalusia
-			}
-		}
-	}
-	
-	
-	# Yes, give them the go ahead.
-	option = {
-		name = dvg_spain.15.a
-		default_option = yes
-		add_radicals = {
-			value = 0.1
-			culture = cu:spanish
-		}
-		custom_tooltip = {
-			text = dvg_spain_end_castile_tt
-			s:STATE_TOLEDO = { 
-				remove_homeland = cu:spanish
-			}
-			scope:dvg_toledo = {
-				add_modifier = {
-					name = dvg_assimilate_mega
-					months = 60
-				}
-			}
-			s:STATE_CASTILE = { 
-				remove_homeland = cu:spanish
-			}
-			scope:dvg_castilee = {
-				add_modifier = {
-					name = dvg_assimilate_mega
-					months = 60
-				}
-			}
-			s:STATE_ASTURIAS = {
-				remove_homeland = cu:spanish
-			}
-			scope:dvg_asturias = {
-				add_modifier = {
-					name = dvg_assimilate_mega
-					months = 60
-				}
-			}
-			s:STATE_CARTAGENA = {
-				remove_homeland = cu:spanish
-			}
-			scope:dvg_cartagena = {
-				add_modifier = {
-					name = dvg_assimilate_mega
-					months = 60
-				}
-			}
-			s:STATE_GRANADA = {
-				remove_homeland = cu:spanish
-			}
-			scope:dvg_granada = {
-				add_modifier = {
-					name = dvg_assimilate_mega
-					months = 60
-				}
-			}
-			s:STATE_BADAJOZ = {
-				remove_homeland = cu:spanish
-			}
-			scope:dvg_badajoz = {
-				add_modifier = {
-					name = dvg_assimilate_mega
-					months = 60
-				}
-			}
-			s:STATE_ANDALUSIA = {
-				remove_homeland = cu:spanish
-			}
-			scope:dvg_andalusia = {
-				add_modifier = {
-					name = dvg_assimilate_mega
-					months = 60
-				}
-			}
-		}
-		ai_chance = {
-			base = 1
-		}
-	}
-}
-
-# Dilemma, status of the Crown of Castile
-dvg_spain.24 = {
-	type = country_event
-	placement = ROOT
-
-	title = dvg_spain.24.t
-	desc = dvg_spain.24.d
-	flavor = dvg_spain.24.f
+	title = dvg_spain.23.t
+	desc = dvg_spain.23.d
+	flavor = dvg_spain.23.f
 
 	event_image = {
 		video = "southamerica_aristocrats"
@@ -1624,6 +1567,7 @@ dvg_spain.24 = {
 	duration = 3
 
 	trigger = {
+		exists = c:SPA
 		c:SPA = ROOT
 		c:SPA = {
 			has_journal_entry = je_castillian_tensions
@@ -1680,7 +1624,7 @@ dvg_spain.24 = {
 	
 	# It is equal
 	option = {
-		name = dvg_spain.24.a
+		name = dvg_spain.23.a
 		default_option = yes
 		custom_tooltip = {
 			text = dvg_lower_by_one_tt
@@ -1752,7 +1696,7 @@ dvg_spain.24 = {
 	
 	# It is of course, lower
 	option = {
-		name = dvg_spain.24.b
+		name = dvg_spain.23.b
 		add_radicals = {
 			value = 0.1
 			culture = cu:spanish
@@ -1778,13 +1722,13 @@ dvg_spain.24 = {
 }
 
 # Generic Tensions
-dvg_spain.25 = {
+dvg_spain.24 = {
 	type = country_event
 	placement = ROOT
 
-	title = dvg_spain.25.t
-	desc = dvg_spain.25.d
-	flavor = dvg_spain.25.f
+	title = dvg_spain.24.t
+	desc = dvg_spain.24.d
+	flavor = dvg_spain.24.f
 
 	event_image = {
 		video = "europenorthamerica_springtime_of_nations"
@@ -1798,6 +1742,7 @@ dvg_spain.25 = {
 	duration = 3
 
 	trigger = {
+		exists = c:SPA
 		c:SPA = ROOT
 		c:SPA = {
 			has_journal_entry = je_castillian_tensions
@@ -1810,7 +1755,7 @@ dvg_spain.25 = {
 	
 	# Spain
 	option = {
-		name = dvg_spain.25.a
+		name = dvg_spain.24.a
 		default_option = yes
 		add_loyalists = {
 			value = 0.1
@@ -1830,7 +1775,7 @@ dvg_spain.25 = {
 	
 	# Castile
 	option = {
-		name = dvg_spain.25.b
+		name = dvg_spain.24.b
 		add_radicals = {
 			value = 0.25
 			culture = cu:portuguese
@@ -1845,13 +1790,13 @@ dvg_spain.25 = {
 }
 
 # Mateo
-dvg_spain.26 = {
+dvg_spain.25 = {
 	type = country_event
 	placement = ROOT
 
-	title = dvg_spain.26.t
-	desc = dvg_spain.26.d
-	flavor = dvg_spain.26.f
+	title = dvg_spain.25.t
+	desc = dvg_spain.25.d
+	flavor = dvg_spain.25.f
 
 	event_image = {
 		video = "southamerica_aristocrats"
@@ -1865,6 +1810,7 @@ dvg_spain.26 = {
 	duration = 3
 
 	trigger = {
+		exists = c:SPA
 		c:SPA = ROOT
 		c:SPA = {
 			has_journal_entry = je_castillian_tensions
@@ -1877,7 +1823,7 @@ dvg_spain.26 = {
 	
 	# Unfortunate
 	option = {
-		name = dvg_spain.26.a
+		name = dvg_spain.25.a
 		default_option = yes
 		hidden_effect = {
 			set_variable = dvg_mateo
@@ -1900,13 +1846,13 @@ dvg_spain.26 = {
 }
 
 # Other Uprising
-dvg_spain.27 = {
+dvg_spain.26 = {
 	type = country_event
 	placement = ROOT
 
-	title = dvg_spain.27.t
-	desc = dvg_spain.27.d
-	flavor = dvg_spain.27.f
+	title = dvg_spain.26.t
+	desc = dvg_spain.26.d
+	flavor = dvg_spain.26.f
 
 	event_image = {
 		video = "southamerica_aristocrats"
@@ -1920,6 +1866,7 @@ dvg_spain.27 = {
 	duration = 3
 
 	trigger = {
+		exists = c:SPA
 		c:SPA = ROOT
 		c:SPA = {
 			has_journal_entry = je_castillian_tensions
@@ -1942,7 +1889,7 @@ dvg_spain.27 = {
 	
 	# castile oofed
 	option = {
-		name = dvg_spain.27.a
+		name = dvg_spain.26.a
 		default_option = yes
 		hidden_effect = {
 			set_variable = dvg_spain_castille
@@ -1959,13 +1906,13 @@ dvg_spain.27 = {
 }
 
 # Change to viceroyalty
-dvg_spain.28 = {
+dvg_spain.27 = {
 	type = country_event
 	placement = ROOT
 
-	title = dvg_spain.28.t
-	desc = dvg_spain.28.d
-	flavor = dvg_spain.28.f
+	title = dvg_spain.27.t
+	desc = dvg_spain.27.d
+	flavor = dvg_spain.27.f
 
 	event_image = {
 		video = "southamerica_aristocrats"
@@ -1991,14 +1938,29 @@ dvg_spain.28 = {
 			AND = {
 				exists = c:GCO
 				c:GCO = ROOT
+				NOT = {
+					c:GCO = { has_journal_entry = je_colombian_war_of_independence_GCO }
+				}
 			}
 			AND = {
 				exists = c:GRA
 				c:GRA = ROOT
+				NOT = {
+					c:GRA = { has_journal_entry = je_colombian_war_of_independence_GRA }
+				}
 			}
 			AND = {
 				exists = c:QUI
 				c:QUI = ROOT
+				NOT = {
+					c:QUI = { 
+						OR = {
+							has_journal_entry = je_colombian_war_of_independence_QUI
+							has_journal_entry = je_caladeran_war_of_independence_QUI
+							has_variable = QUI_neutrality
+						}
+					}
+				}
 			}
 			AND = {
 				exists = c:LUS
@@ -2016,7 +1978,7 @@ dvg_spain.28 = {
 	
 	# we oofed
 	option = {
-		name = dvg_spain.28.a
+		name = dvg_spain.27.a
 		default_option = yes
 		hidden_effect = {
 			if = {
@@ -2033,13 +1995,13 @@ dvg_spain.28 = {
 }
 
 # Castilexit
-dvg_spain.29 = {
+dvg_spain.28 = {
 	type = country_event
 	placement = ROOT
 
-	title = dvg_spain.29.t
-	desc = dvg_spain.29.d
-	flavor = dvg_spain.29.f
+	title = dvg_spain.28.t
+	desc = dvg_spain.28.d
+	flavor = dvg_spain.28.f
 
 	event_image = {
 		video = "southamerica_aristocrats"
@@ -2160,11 +2122,9 @@ dvg_spain.29 = {
 		}
 		every_scope_pop = {
 			limit = {
-				NOT = {
-					OR = {
-						has_pop_culture = galician
-						has_pop_culture = portuguese
-					}
+				NOR = {
+					has_pop_culture = galician
+					has_pop_culture = portuguese
 				}
 			}
 			add_radicals = { 
@@ -2224,7 +2184,7 @@ dvg_spain.29 = {
 	
 	# we oofed
 	option = {
-		name = dvg_spain.29.a
+		name = dvg_spain.28.a
 		default_option = yes
 		custom_tooltip = dvg_spain_is_no_more
 		change_tag = POR

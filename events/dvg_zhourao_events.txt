@@ -39,6 +39,12 @@ dvg_zhourao.1 = {
 			name = dvg_yaluo_reform_variable_var
 			add = 6
 		}
+		c:MJN = {
+			save_scope_as = scope_MJN
+		}
+		c:GLI = {
+			save_scope_as = scope_GLI
+		}
 	}
 	
 	# I see
@@ -48,14 +54,17 @@ dvg_zhourao.1 = {
 		trigger_event = { id = dvg_zhourao.2 days = 1825 }
 		add_modifier = {
 			name = dvg_populist_republic
-			days = 3650
-			is_decaying = yes
+			days = -1
 		}
-		add_modifier = {
-			name = dvg_intelligentsia
-			days = 3650
-			is_decaying = yes
+
+		hidden_effect = {
+			add_modifier = {
+				name = dvg_intelligentsia
+				days = 3650
+				is_decaying = yes
+			}
 		}
+		
 		ai_chance = {
 			base = 1
 		}
@@ -447,16 +456,14 @@ dvg_zhourao.5 = {
 			root = c:YLO
 			root = c:MJN
 		}
-		year >= 1854
 		NOT = {
-			has_journal_entry = je_one_kongsi
+			has_variable = dvg_one_kongsi
 		}
+		
 	}
 	
 	immediate = {
-		add_journal_entry = {
-			type = je_one_kongsi
-		}
+		
 	}
 	
 	# The truce is almost over, we can fight, so can they
@@ -493,19 +500,36 @@ dvg_zhourao.6 = {
 	duration = 3
 
 	trigger = {
-		has_variable = dvg_yaluo_reform_variable_var_2
-		this = { var:dvg_yaluo_reform_variable_var_2 >= 8 }
-		has_variable = dvg_one_kongsi
-		NOT = {
-			has_variable = dvg_northern_hui
-		}
+		#has_variable = dvg_yaluo_reform_variable_var_2
+		#this = { var:dvg_yaluo_reform_variable_var_2 >= 8 }
+		#has_variable = dvg_one_kongsi
+		#NOT = {
+		#	has_variable = dvg_northern_hui
+		#}
+		exists = c:MJN
 	}
 	
 	immediate = {
 		set_variable = dvg_northern_hui
-		s:STATE_XINXIANG.region_state:YLO = {
-			set_state_owner = c:MJN
+		if = {
+			limit = {
+				s:STATE_XINXIANG.region_state:YLO = {
+					scope:landowner_ig = {
+						is_powerful = yes
+					}
+				}
+			}
+			s:STATE_XINXIANG.region_state:YLO = {
+				set_state_owner = c:MJN
+			}
 		}
+		random_state = {
+			limit = {
+				owner = c:MJN
+			}
+			save_scope_as = MJN_state
+		}
+		
 	}
 	
 	# Oh dear
@@ -522,6 +546,33 @@ dvg_zhourao.6 = {
 				country = c:MJN
 				value = -50
 			}
+		}
+		if = {
+			limit = {
+				ig:ig_landowners = {
+					is_marginal = no
+					
+				}
+			}
+			random_scope_pop = {
+				limit = {
+					is_pop_type = capitalists
+				}
+				move_pop = scope:MJN_state
+			}
+			random_scope_pop = {
+				limit = {
+					is_pop_type = farmers
+				}
+				move_pop = scope:MJN_state
+			}
+		}
+		
+
+		add_modifier = {
+			name = dvg_modifier_landowners_purged
+			months = 60
+			is_decaying = yes
 		}
 		ai_chance = {
 			base = 1
@@ -891,7 +942,7 @@ dvg_zhourao.12 = {
 				
 				war = yes
 				
-				type = dp_annex_war
+				type = dp_rebellion_annex
 				
 				add_war_goal = {
 					holder = c:YLO
@@ -944,7 +995,7 @@ dvg_zhourao.13 = {
 				
 				war = yes
 				
-				type = dp_annex_war
+				type = dp_rebellion_annex
 				
 				add_war_goal = {
 					holder = c:MJN
@@ -980,20 +1031,352 @@ dvg_zhourao.14 = {
 	duration = 3
 
 	trigger = {
+		NOT = {
+			has_variable = euro_neighbor
+		}
+		OR = {
+			any_neighbouring_state = {
+				owner = c:BRG
+			}
+			any_neighbouring_state = {
+				owner = c:BEI
+			}
+			any_neighbouring_state = {
+				owner = c:DUA
+			}
+			any_neighbouring_state = {
+				owner = c:SCA
+			}
+		}
 	}
 	
 	immediate = {
+		set_variable = euro_neighbor
 	}
 	
 	# Reunification is complete!(for real this time)
 	option = {
 		name = dvg_zhourao.14.a
 		add_loyalists = {
-			value = 0.25
+			value = 0.05
 		}
+		if = {
+			limit = {
+				has_technology_researched = mass_communication
+				NOT = {
+					has_technology_researched = nationalism
+				}
+			}
+			add_technology_progress = {
+				technology = nationalism
+				progress = 3000
+			}
+		}
+		every_country = {
+			limit = {
+				country_has_primary_culture = cu:zhourao
+			}
+			change_relations = {
+				country = ROOT
+				value = 15
+			}
+		}
+		
+
 		ai_chance = {
 			base = 1
 		}
+	}
+	option = {
+		name = dvg_zhourao.14.b
+
+		if = {
+			limit = {
+				has_technology_researched = mass_communication
+				NOT = {
+					has_technology_researched = egalitarianism
+				}
+			}
+			add_technology_progress = {
+				technology = egalitarianism
+				progress = 2500
+			}
+		}
+		every_country = {
+			limit = {
+				any_primary_culture = {
+					has_discrimination_trait = european_heritage
+				}
+				has_interest_marker_in_region = sr:region_oceania
+			}
+			change_relations = {
+				country = ROOT
+				value = 15
+			}
+		}
+		
+
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+dvg_zhourao.15 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_zhourao.15.t
+	desc = dvg_zhourao.15.d
+	flavor = dvg_zhourao.15.f
+
+	event_image = {
+		video = "gfx/event_pictures/unspecific_naval_battle.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		
+	}
+	
+	immediate = {
+	}
+	
+	option = {
+		name = dvg_zhourao.15.a
+		default_option = yes
+
+
+		if = {
+			limit = {
+				has_technology_researched = mass_communication
+				NOT = {
+					has_technology_researched = nationalism
+				}
+			}
+			add_technology_progress = {
+				technology = nationalism
+				progress = 2500
+			}
+		}
+		every_country = {
+			limit = {
+				any_primary_culture = {
+					has_discrimination_trait = european_heritage
+				}
+				has_interest_marker_in_region = sr:region_oceania
+			}
+			change_relations = {
+				country = ROOT
+				value = 25
+			}
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+	option = {
+		name = dvg_zhourao.15.b
+		default_option = yes
+
+
+		if = {
+			limit = {
+				has_technology_researched = mass_communication
+				NOT = {
+					has_technology_researched = nationalism
+				}
+			}
+			add_technology_progress = {
+				technology = nationalism
+				progress = 2500
+			}
+		}
+		add_loyalists = {
+			value = 0.20
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+#Australian Wildlife
+dvg_zhourao.16 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_zhourao.16.t
+	desc = dvg_zhourao.16.d
+	flavor = dvg_zhourao.16.f
+
+	event_image = {
+		video = "gfx/event_pictures/asia_dead_cattle_poor_harvest.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		any_scope_state = {
+			state_region = {
+				is_homeland = cu:aborigine
+			}
+		}
+		NOT = {
+			has_modifier = dvg_australian_wildlife
+			has_variable = dingo_fence
+		}
+	}
+	
+	immediate = {
+	}
+	
+	option = {
+		name = dvg_zhourao.16.a
+		default_option = yes
+
+		if = {
+			limit = {
+				has_technology_researched = mass_communication
+				NOT = {
+					has_technology_researched = nationalism
+				}
+			}
+			add_technology_progress = {
+				technology = nationalism
+				progress = 2500
+			}
+		}
+		add_modifier = {
+			name = dvg_australian_wildlife
+			months = 3
+			is_decaying = yes
+		}
+		every_country = {
+			limit = {
+				any_scope_state = {
+					state_region = {
+						is_homeland = cu:aborigine
+					}
+					is_capital = yes
+					
+				}
+				any_neighbouring_state = {
+					owner = ROOT
+				}
+			}
+			change_relations = {
+				country = ROOT
+				value = 15
+			}
+		}
+		
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+	option = {
+		name = dvg_zhourao.16.b
+
+		if = {
+			limit = {
+				has_technology_researched = mass_communication
+				NOT = {
+					has_technology_researched = nationalism
+				}
+			}
+			add_technology_progress = {
+				technology = nationalism
+				progress = 2500
+			}
+		}
+		add_modifier = {
+			name = dvg_australian_wildlife
+			months = 5
+			is_decaying = yes
+		}
+		
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+# Zhourao country absorbs weaker ally
+dvg_zhourao.17 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_zhourao.17.t
+	desc = dvg_zhourao.17.d
+	flavor = dvg_zhourao.17.f
+
+	event_image = {
+		video = "ep1_transfer_of_authority"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+
+	immediate = {
+		random_neighbouring_state = {
+			limit = {
+				owner = {
+					is_ai = yes
+					relations:root >= relations_threshold:amicable
+					OR = {
+						country_has_primary_culture = cu:australian
+						country_has_primary_culture = cu:maori
+						country_has_primary_culture = cu:aborigine
+					}
+					is_subject = yes
+					NOT = { THIS = ROOT }
+					top_overlord = {
+						THIS = root.top_overlord
+					}
+					this.gdp < root.gdp
+				}
+			}
+			owner = { save_scope_as = canada_annex_scope }
+		}
+		if = {
+			limit = {
+				is_subject = yes
+			}
+			top_overlord = {
+				save_scope_as = canada_overlord_country
+				ruler = {
+					save_scope_as = canada_overlord_ruler
+				}
+			}
+		}
+		
+	}
+
+	option = {
+		name = dvg_zhourao.17.a
+		default_option = yes
+		annex_with_incorporation = scope:canada_annex_scope
 	}
 }
 
@@ -2207,6 +2590,12 @@ dvg_zhourao.712 = {
 	}
 	
 	immediate = {
+		random_scope_pop = {
+			change_pop_religion = {
+				target = rel:confucian
+				value = 0.10
+			}
+		}
 	}
 	
 	# Lushou Reform
@@ -2219,6 +2608,18 @@ dvg_zhourao.712 = {
 				name = dvg_zhusha_stability_of_succession_variable_var
 				add = -1
 			}
+		}
+		add_loyalists = {
+			value = 0.10
+			religion = rel:sunni
+		}
+		add_radicals = {
+			value = 0.10
+			religion = rel:confucian
+		}
+		add_radicals = {
+			value = 0.10
+			religion = rel:mahayana
 		}
 		ai_chance = {
 			base = 1
@@ -2234,6 +2635,18 @@ dvg_zhourao.712 = {
 				name = dvg_zhusha_stability_of_succession_variable_var
 				add = 1
 			}
+		}
+		add_radicals = {
+			value = 0.10
+			religion = rel:sunni
+		}
+		add_loyalists = {
+			value = 0.10
+			religion = rel:confucian
+		}
+		add_loyalists = {
+			value = 0.10
+			religion = rel:mahayana
 		}
 		ai_chance = {
 			base = 1
@@ -2463,6 +2876,13 @@ dvg_zhourao.716 = {
 	}
 	
 	immediate = {
+		
+		random_scope_pop = {
+			change_pop_religion = {
+				target = rel:confucian
+				value = 0.10
+			}
+		}
 	}
 	
 	# The teachings of the Sages of East and West, today as in ancient times, are one
@@ -2500,6 +2920,9 @@ dvg_zhourao.717 = {
 	}
 	
 	immediate = {
+		c:JAP = {
+			save_scope_as = scope_JAP
+		}
 	}
 	
 	# His obsession with Rìběn will eventually pass...
@@ -2609,6 +3032,18 @@ dvg_zhourao.719 = {
 					NOT = { has_law = law_type:law_oligarchy }
 				}
 				activate_law = law_type:law_oligarchy
+			}
+			every_country = {
+				limit = {
+					country_has_primary_culture = cu:zhourao
+					NOT = {
+						has_law = law_type:law_monarchy
+					}
+				}
+				change_relations = {
+					country = ROOT
+					value = 15
+				}
 			}
 		}
 		ai_chance = {
@@ -2809,5 +3244,449 @@ dvg_zhourao.1100 = {
 			}
 			add_homeland = cu:zhourao
 		}
+	}
+}
+
+# The Pillager Arrives
+dvg_zhourao.1200 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_zhourao.1200.t
+	desc = dvg_zhourao.1200.d
+	flavor = dvg_zhourao.1200.f
+
+	event_image = {
+		video = "asia_westerners_arriving"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	
+	}
+	
+	immediate = {
+		
+	}
+	
+	# Reports
+	option = {
+		name = dvg_zhourao.1200.a
+		if = {
+			limit = {
+				NOT = {
+					any_scope_character = {
+						has_variable = pillager_prince
+					}
+				}
+			}
+			random_character = {
+				limit = {
+					has_variable = pillager_prince
+				}
+				transfer_character = ROOT
+			}
+		}
+		add_journal_entry = {
+			type = je_pillager_prince_zhourao
+		}
+	}
+}
+
+# The Pillager Prince Pillages
+dvg_zhourao.1201 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_zhourao.1201.t
+	desc = dvg_zhourao.1201.d
+	flavor = dvg_zhourao.1201.f
+
+	event_image = {
+		video = "gfx/event_pictures/unspecific_fire.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		OR = {	
+			institution_investment_level = {
+				institution = institution_police
+				value < 3
+			}
+			institution_investment_level = {
+				institution = institution_home_affairs
+				value < 3
+			}
+			has_law = law_type:law_guaranteed_liberties
+		}
+		NOT = {
+			any_scope_state = {
+				has_modifier = dvg_village_pillage
+			}
+		}
+		any_scope_pop = {
+			standard_of_living <= 6.5 
+		}
+	}
+	
+	immediate = {
+		random_scope_character = {
+			limit = {
+				has_variable = pillager_prince
+			}
+			save_scope_as = pillager_scope
+		}
+	}
+	
+	# Reports of pillages
+	option = {
+		name = dvg_zhourao.1201.a
+		
+		random_scope_state = {
+			add_modifier = {
+				name = dvg_village_pillage
+				months = 2
+				is_decaying = yes
+			}
+		}
+	}
+}
+
+# The Pillager Prince Defeated!
+dvg_zhourao.1202 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_zhourao.1202.t
+	desc = dvg_zhourao.1202.d
+	flavor = dvg_zhourao.1202.f
+
+	event_image = {
+		video = "gfx/event_pictures/unspecific_fire.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		NOT = {	
+			institution_investment_level = {
+				institution = institution_police
+				value < 3
+			}
+			institution_investment_level = {
+				institution = institution_home_affairs
+				value < 3
+			}
+			has_law = law_type:law_guaranteed_liberties
+		}
+		
+	}
+	
+	immediate = {
+		random_scope_character = {
+			limit = {
+				has_variable = pillager_prince
+			}
+			save_scope_as = pillager_scope
+		}
+	}
+	
+	# Reports of pillages
+	option = {
+		name = dvg_zhourao.1202.a
+		
+		if = {
+			limit = {
+				any_scope_state = {
+					has_modifier = dvg_village_pillage
+				}
+			}
+			every_scope_state = {
+				limit = {
+					has_modifier = dvg_village_pillage
+				}
+				remove_modifier = dvg_village_pillage
+			}
+		}
+		add_loyalists = {
+			value = 0.33
+		}
+		every_scope_character = {
+			limit = {
+				has_variable = pillager_prince
+			}
+			kill_character = yes
+		}
+	}
+}
+
+dvg_zhourao.1203 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_zhourao.1203.t
+	desc = dvg_zhourao.1203.d
+	flavor = dvg_zhourao.1203.f
+
+	event_image = {
+		video = "gfx/event_pictures/unspecific_fire.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	
+	}
+	
+	immediate = {
+		random_scope_character = {
+			limit = {
+				has_variable = pillager_prince
+			}
+			save_scope_as = pillager_scope
+		}
+	}
+	
+	# Reports
+	option = {
+		name = dvg_zhourao.1203.a
+		
+		random_scope_character = {
+			limit = {
+				has_variable = pillager_prince
+			}
+			set_character_as_ruler = yes
+			if = {
+				limit = {
+					has_trait = immortal
+				}
+				remove_trait = immortal
+			}
+		}
+		ig:ig_armed_forces = {
+			set_interest_group_name = ig_xiangma
+		}
+		add_modifier = {
+			name = dvg_modifier_armed_forces_bolstered
+			months = 30
+			is_decaying = yes
+		}
+	}
+}
+
+dvg_zhourao.1204 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_zhourao.1203.t
+	desc = dvg_zhourao.1203.d
+	flavor = dvg_zhourao.1203.f
+
+	event_image = {
+		video = "gfx/event_pictures/unspecific_fire.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	
+	}
+	
+	immediate = {
+		random_scope_character = {
+			limit = {
+				has_variable = pillager_prince
+			}
+			save_scope_as = pillager_scope
+		}
+		random_scope_state = {
+			save_scope_as = pillaged_state
+		}
+	}
+	
+	# Reports
+	option = {
+		name = dvg_zhourao.1204.a
+		
+	}
+}
+#Pillager Prince on the run
+dvg_zhourao.1205 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_zhourao.1205.t
+	desc = dvg_zhourao.1205.d
+	flavor = dvg_zhourao.1205.f
+
+	event_image = {
+		video = "gfx/event_pictures/unspecific_fire.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	
+	}
+	
+	immediate = {
+		random_scope_character = {
+			limit = {
+				has_variable = pillager_prince
+			}
+			save_scope_as = pillager_scope
+		}
+		random_scope_state = {
+			save_scope_as = pillaged_state
+		}
+	}
+	
+	# Reports
+	option = {
+		name = dvg_zhourao.1205.a
+		
+		scope:pillager_scope = {
+			add_modifier = {
+				name = on_the_run
+				months = 1
+			}
+		}
+	}
+}
+#Law Enforcement Collaboration?
+dvg_zhourao.1206 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_zhourao.1206.t
+	desc = dvg_zhourao.1206.d
+	flavor = dvg_zhourao.1206.f
+
+	event_image = {
+		video = "asia_union_leader"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		NOT = {
+			has_law = law_type:law_no_police
+			ruler = {
+				has_variable = pillager_prince
+			}
+		}
+	}
+	
+	immediate = {
+		random_country = {
+			limit = {
+				has_variable = pillager_prince
+			}
+			save_scope_as = pillager_scope
+		}
+		random_scope_state = {
+			save_scope_as = pillaged_state
+		}
+	}
+	
+	# Reports
+	option = {
+		name = dvg_zhourao.1206.a
+		every_country = {
+			limit = {
+				country_has_primary_culture = cu:zhourao
+				NOT = {
+					has_law = law_type:law_no_police
+					ruler = {
+						has_variable = pillager_prince
+					}
+				}
+			}
+			change_relations = {
+				country = ROOT
+				value = -10
+			}
+		}
+	}
+	option = {
+		name = dvg_zhourao.1206.b
+		default_option = yes
+
+		if = {
+			limit = {
+				NOT = {
+					has_technology_researched = nationalism
+				}
+				has_technology_researched = mass_communication
+			}
+			add_technology_progress = {
+				technology = nationalism
+				progress = 2000
+			}
+		}
+		every_country = {
+			limit = {
+				country_has_primary_culture = cu:zhourao
+				NOT = {
+					has_law = law_type:law_no_police
+					ruler = {
+						has_variable = pillager_prince
+					}
+				}
+			}
+			change_relations = {
+				country = ROOT
+				value = 10
+			}
+		}
+		if = {
+			limit = {
+				has_technology_researched = nationalism
+				has_journal_entry = je_one_kongsi
+			}
+		
+			change_variable = {
+				name = zhourao_var
+				add = 10
+			}
+		}
+		
 	}
 }

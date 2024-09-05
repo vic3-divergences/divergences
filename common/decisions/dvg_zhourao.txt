@@ -1,4 +1,74 @@
-﻿dvg_noongar_colony = {
+﻿dvg_zhourao_unite = {
+	is_shown = {
+		country_has_primary_culture = cu:zhourao
+
+		is_subject = yes
+		OR = {
+			AND = {
+				is_subject = yes
+				top_overlord = {
+					THIS = root.top_overlord
+				}
+			}
+			AND = {
+				is_subject = no
+				any_neighbouring_state = {
+					owner = {
+						country_has_primary_culture = cu:zhourao
+						is_ai = yes
+						NOT = { THIS = ROOT }
+						
+					}
+				}
+			}
+			
+		}
+		
+	}
+
+	possible = {
+		is_at_war = no
+		has_technology_researched = nationalism
+		
+		NOT = { has_modifier = australia_test_modifier }
+		any_neighbouring_state = {
+			owner = {
+				relations:root >= relations_threshold:amicable
+				OR = {
+					country_has_primary_culture = cu:zhourao
+
+				}
+				is_ai = yes
+				NOT = { THIS = ROOT }
+				
+				this.gdp < root.gdp
+			}
+		}
+		#custom_tooltip = {
+			#text = unite_australia_je_aus_tt
+			
+		#}
+	}
+	when_taken = {
+		hidden_effect = {
+			trigger_event = { id = dvg_zhourao.17 popup = yes }
+		}
+		add_modifier = {
+			name = australia_test_modifier
+			months = short_modifier_time
+		}
+	}
+
+	ai_chance = {
+		base = 0
+		modifier = {
+			#has_technology_researched = pan-nationalism
+			add = 100
+		}		
+	}
+}
+
+dvg_noongar_colony = {
 	is_shown = {
 		has_game_rule = australia_railroaded
 		exists = c:NNG
@@ -35,51 +105,9 @@ dvg_pitjantjajara_colony = {
 		has_game_rule = australia_railroaded
 		exists = c:PJT
 		OR = {
-			AND = {
-				root = {
-					has_state_in_state_region = STATE_COOMALONG
-					has_state_in_state_region = STATE_NOONGAR
-				}
-				NOT = {
-					OR = {
-						exists = c:NNG
-						exists = c:YMT
-						root = c:PJT
-					}
-				}
-			}
-			AND = {
-				exists = c:NNG
-				OR = {
-					AND = {
-						c:BEI = {
-							has_state_in_state_region = STATE_COOMALONG
-							is_subject_of = c:BRG
-						}
-						root = c:BRG
-					}
-					AND = {
-						root = {
-							has_state_in_state_region = STATE_COOMALONG
-						}
-						NOT = {
-							root = c:BEI
-							root = c:BRG
-						}
-					}
-					AND = {
-						root = {
-							has_state_in_state_region = STATE_COOMALONG
-						}
-						NOT = {
-							c:BEI = {
-								is_subject_of = c:BRG
-							}
-						}
-						root = c:BRG
-					}
-				}	
-			}
+			has_state_in_state_region = STATE_PITJANTJAJARA
+			owns_entire_state_region = STATE_YOLNGU
+			owns_entire_state_region = STATE_NOONGAR
 		}
 		NOT = {
 			has_variable = dvg_colony_pjt
@@ -87,7 +115,17 @@ dvg_pitjantjajara_colony = {
 	}
 
     possible = {
-		year >= 1850
+		NOT = {
+			has_law = law_type:law_no_colonial_affairs
+		}
+		OR = {
+			has_technology_researched = civilizing_mission
+			has_state_in_state_region = STATE_PITJANTJAJARA
+			AND = {
+				country_has_primary_culture = cu:aborigine
+				has_technology_researched = nationalism
+			}
+		}
 	}
 
     when_taken = {
@@ -398,7 +436,7 @@ dvg_yamatji_colony = {
 	}
 
     possible = {
-		year >= 1845
+		has_technology_researched = quinine
 	}
 
     when_taken = {
@@ -948,7 +986,10 @@ dvg_declare_war_on_yaluo = {
 	}
 
     possible = {
-		year >= 1855
+		OR = {
+			year >= 1855
+			has_technology_researched = nationalism
+		}
 	}
 
     when_taken = {
@@ -989,7 +1030,10 @@ dvg_declare_war_on_mianjin = {
 	}
 
     possible = {
-		year >= 1855
+		OR = {
+			year >= 1855
+			has_technology_researched = nationalism
+		}
 	}
 
     when_taken = {
@@ -1344,6 +1388,9 @@ dvg_press_west_zhourao = {
 			owns_entire_state_region = STATE_JINZHOU
 			owns_entire_state_region = STATE_WENCHENG
 			#owns_entire_state_region = STATE_PARLEVAR
+		}
+		NOT = {
+			has_global_variable = dvg_zhr_begun_press_west
 		}
 		OR = {
 			NOT = {
@@ -1756,4 +1803,156 @@ dvg_pitjantjajara_colony = {
 		base = 100
 	}
 }
+#For Australie 
 
+dvg_embrace_aboriginal = {
+	is_shown = {
+		any_scope_state = {
+			state_region = {
+				is_homeland = cu:aborigine
+			}
+			is_capital = yes
+		}
+		has_game_rule = breakaway
+		NOT = {
+			country_has_primary_culture = cu:aborigine_french
+		}
+		any_primary_culture = {
+			has_discrimination_trait = francophone
+		}
+	}
+
+    possible = {
+		has_technology_researched = civilizing_mission
+		has_technology_researched = human_rights
+		OR = {
+			has_law = law_type:law_cultural_exclusion
+
+		}
+	}
+
+    when_taken = {
+		add_primary_culture = cu:aborigine_french
+		every_scope_pop = {
+			limit = {
+				culture = cu:aborigine
+				religion = rel:protestant
+			}
+			change_pop_culture = { target = cu:aborigine_french value = 1 }
+		}
+		every_scope_pop = {
+			limit = {
+				culture = cu:aborigine
+				religion = rel:catholic
+			}
+			change_pop_culture = { target = cu:aborigine_french value = 1 }
+		}
+    }
+
+	ai_chance = {
+		base = 100
+	}
+}
+australia_unite_aus = {
+	is_shown = {
+		any_primary_culture = {
+			has_discrimination_trait = francophone
+		}
+		any_scope_state = {
+			state_region = {
+				is_homeland = cu:verlander
+			}
+			is_capital = yes
+		}
+
+		is_subject = yes
+		any_neighbouring_state = {
+			owner = {
+				any_primary_culture = {
+					has_discrimination_trait = francophone
+				}
+				is_ai = yes
+				is_subject = yes
+				NOT = { THIS = ROOT }
+				top_overlord = {
+					THIS = root.top_overlord
+				}
+			}
+		}
+	}
+
+	possible = {
+		is_at_war = no
+		has_technology_researched = nationalism
+		top_overlord = {
+			relations:root >= relations_threshold:amicable
+		}
+		NOT = { has_modifier = australia_test_modifier }
+		custom_tooltip = {
+			text = unite_australia_je_aus_tt
+			any_neighbouring_state = {
+				owner = {
+					relations:root >= relations_threshold:amicable
+					OR = {
+						country_has_primary_culture = cu:verlander
+						country_has_primary_culture = cu:burgundian
+						country_has_primary_culture = cu:anglois
+						country_has_primary_culture = cu:french
+					}
+					is_ai = yes
+					is_subject = yes
+					NOT = { THIS = ROOT }
+					top_overlord = {
+						THIS = root.top_overlord
+					}
+					this.gdp < root.gdp
+				}
+			}
+		}
+	}
+	when_taken = {
+		custom_tooltip = unite_australia_tt
+		hidden_effect = {
+			#trigger_event = { id = can_aus.3 popup = yes }
+		}
+		add_modifier = {
+			name = australia_test_modifier
+			months = short_modifier_time
+		}
+	}
+
+	ai_chance = {
+		base = 0
+		modifier = {
+			#has_technology_researched = pan-nationalism
+			add = 100
+		}		
+	}
+}
+
+dvg_build_fence = {
+	is_shown = {
+		any_scope_state = {
+			state_region = {
+				is_homeland = cu:aborigine
+			}
+		}
+	}
+
+    possible = {
+		has_technology_researched = field_works
+	}
+
+    when_taken = { #change event number
+		set_variable = dingo_fence
+		add_modifier = {
+			name = highest_standards_construction
+			months = 12
+			is_decaying = yes
+		}
+    }
+
+	ai_chance = {
+		base = 100
+	}
+}

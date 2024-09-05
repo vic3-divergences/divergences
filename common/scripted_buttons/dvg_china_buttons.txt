@@ -269,15 +269,118 @@ annex_chinese_subjects = {
 				limit = {
 					is_ai = yes			
 					country_is_in_china = yes
-					
+					is_subject_of = ROOT
 				}			
 				root = { annex = prev }
 			}
-			
 		}
 	}
 
 	ai_chance = {
 		base = 100
 	 }	
+}
+
+china_unify_play = {
+	name = "china_unify_play"
+	desc = "china_unify_play_desc"
+
+	visible = { 
+		any_country = {
+			country_has_primary_culture = cu:han
+			any_neighbouring_state = {
+				owner = ROOT
+			}
+			is_ai = yes
+		}
+		NOT = {
+			exists = c:CHI
+		}
+	}
+
+	possible = {
+		
+		NOT = {
+			has_modifier = questioned_mandate
+			has_modifier = decision_cooldown
+			has_journal_entry = je_decline_of_great_shun_main
+			has_journal_entry = je_tungning_start
+			has_journal_entry = je_xijiao_missions_send
+		}
+		is_diplomatic_play_committed_participant = no
+		has_technology_researched = nationalism
+		
+		
+
+	}
+
+	effect = {
+		add_modifier = {
+			name = decision_cooldown
+			months = 30
+		}
+		random_country = {
+			limit = {
+				country_is_in_china = yes
+				any_neighbouring_state = {
+					owner = ROOT
+				}
+				is_ai = yes
+			}
+			save_scope_as = china_target
+		}
+		create_diplomatic_play = {
+			type = dp_unify_china
+			target_country = scope:china_target
+			war = no 
+			add_war_goal = {
+				holder = scope:china_target
+				type = annex_country
+				target_country = ROOT
+			}
+		}
+	}
+
+	ai_chance = {
+		base = 100
+	 }	
+}
+
+dvg_consolidate_mandate = {
+	name = "CHI_mandate_button"
+	desc = "CHI_mandate_button_desc"
+
+	visible = { always = yes }
+
+	possible = {
+	  authority >= 888 
+	  NOT = {
+		has_modifier = consolidating_mandate
+	  }
+	  in_default = no
+	  NOR = {
+		has_law = law_type:law_no_schools
+		has_law = law_type:law_no_home_affairs
+	  }
+	  standard_of_living >= 10 
+	  has_technology_researched = mass_communication
+	}
+	effect = {
+		if = {
+			limit = {
+				has_modifier = questioned_mandate
+			}
+			remove_modifier = questioned_mandate
+		}
+		add_modifier = {
+			name = consolidating_mandate
+			months = 12
+		}
+		every_scope_state = {
+			add_modifier = {
+				name = dvg_assimilate
+				months = 12
+			}
+		}
+	}
 }

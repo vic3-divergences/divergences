@@ -6,7 +6,7 @@
 
 	immediate = {
 		set_variable = {
-			name = nippon_var
+			name = dvg_nippon_var
 			value = 0
 		}
 	}
@@ -348,14 +348,14 @@ je_siberia_expedition = {
 			30 = dvg_expedition.297 #cabin fever
 			
 			#From Antarctic Expedition
-			#10 = cold.8 #Pack of Ice
+			10 = cold.8 #Pack of Ice
 
 			#New Events
 			15 = dvg_expedition.501 #Ill-Intent?
 			
 			#Events shared with the Africa expeditions
-			#5 = expedition_events.140 #leader's breakdown
-			#5 = expedition_events.560 #commander vice
+			5 = expedition_events.140 #leader's breakdown
+			5 = expedition_events.560 #commander vice
 		}
 		
 	}
@@ -375,7 +375,10 @@ je_siberia_expedition = {
 					NOT = {has_variable = baikal_owned}
 
 				}
-				expedition_minor_progress_effect = yes
+				change_variable = {
+					name = expedition_progress
+					add = 1
+				}
 				set_variable = baikal_owned
 			}
 			if = {
@@ -384,7 +387,10 @@ je_siberia_expedition = {
 					NOT = {has_variable = tomsk_owned}
 
 				}
-				expedition_minor_progress_effect = yes
+				change_variable = {
+					name = expedition_progress
+					add = 1
+				}
 				set_variable = tomsk_owned
 			}
 			if = {
@@ -393,7 +399,10 @@ je_siberia_expedition = {
 					NOT = {has_variable = tobolsk_owned}
 
 				}
-				expedition_minor_progress_effect = yes
+				change_variable = {
+					name = expedition_progress
+					add = 1
+				}
 				set_variable = tobolsk_owned
 			}
 			if = {
@@ -402,7 +411,10 @@ je_siberia_expedition = {
 					NOT = {has_variable = ural_owned}
 
 				}
-				expedition_minor_progress_effect = yes
+				change_variable = {
+					name = expedition_progress
+					add = 1
+				}
 				set_variable = ural_owned
 			}
 			if = {
@@ -411,8 +423,23 @@ je_siberia_expedition = {
 					NOT = {has_variable = buryat_owned}
 
 				}
-				expedition_minor_progress_effect = yes
+				change_variable = {
+					name = expedition_progress
+					add = 1
+				}
 				set_variable = buryat_owned
+			}
+			if = {
+				limit = {
+					OR = {
+						has_modifier = expedition_extra_expenses_modifier
+						has_modifier = expedition_taxes_modifier
+					}
+				}
+				change_variable = {
+					name = expedition_progress
+					add = 1
+				}
 			}
 		}
 	}
@@ -459,6 +486,13 @@ je_siberia_expedition = {
 	}
 	
 	on_complete = {
+		if = {
+			limit = {
+				has_game_rule = siberia_railroaded
+			}
+			trigger_event = { id = dvg_expedition.301 }
+
+		}
 		random_list = {
 			33 = {
 				trigger = { NOT = { has_global_variable = buenaventura_river_disproven } }
@@ -472,10 +506,17 @@ je_siberia_expedition = {
 				trigger = { NOT = { has_global_variable = great_salt_lake_mapped } }
 				trigger_event = { id = dvg_expedition.302 }
 			}
+			
 		}
 		remove_variable = on_expedition
 		remove_variable = congo_river_expedition_var
 		remove_modifier = modifier_large_expedition_cost
+		remove_expedition_events_effect = yes
+		remove_modifier = modifier_small_expedition_cost
+		remove_dvg_expedition_effect = yes
+		remove_variable = AI_EXPEDITION_NASIA
+		ai_expedition_simulator_start = no
+		ai_expedition_simulator_end = yes
 		set_variable = west_america_expedition_success_var #grand exhibition check
 
 		
@@ -501,6 +542,13 @@ je_siberia_expedition = {
 		remove_variable = on_expedition
 		remove_variable = west_america_expedition_var
 		remove_modifier = modifier_large_expedition_cost
+		remove_expedition_events_effect = yes
+		remove_modifier = modifier_small_expedition_cost
+		remove_dvg_expedition_effect = yes
+		remove_variable = AI_EXPEDITION_NASIA
+		ai_expedition_simulator_start = no
+		ai_expedition_simulator_end = yes
+
 		random_scope_character = {
 			limit = {
 				has_variable = expedition_leader_var
@@ -518,6 +566,10 @@ je_siberia_expedition = {
 	}
 	
 	progressbar = yes
+	
+	invalid = {
+		has_variable = expedition_cancelled
+	}
 	
     weight = 200
     transferable = no
@@ -782,8 +834,8 @@ je_kaigan_railway = {
 	}
 	
 	on_complete = {
-		set_global_variable = kaigan_railway
-		trigger_event = { id = dvg_japan_railways.1 }
+		#set_global_variable = kaigan_railway
+		#trigger_event = { id = dvg_japan_railways.1 } #This event does not exist
 	}
 	
 	weight = 50
@@ -869,7 +921,7 @@ je_japan_railway = {
 	
 	on_complete = {
 		set_global_variable = japan_railways_built
-		trigger_event = { id = dvg_japan_railways.2 }
+		#trigger_event = { id = dvg_japan_railways.2 } #this event does not exist
 	}
 	
 	weight = 50
@@ -970,7 +1022,7 @@ je_japan_asia_railway = {
 	
 	on_complete = {
 		set_global_variable = japan_asia_railway_done
-		trigger_event = { id = dvg_japan_railways.3 }
+		#trigger_event = { id = dvg_japan_railways.3 } #This event does not exist
 	}
 	
 	weight = 50

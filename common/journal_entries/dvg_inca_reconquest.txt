@@ -1,0 +1,512 @@
+﻿je_inca_reconquer_the_empire = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	group = je_group_historical_content
+
+	
+	complete = {
+		owns_entire_state_region = STATE_LIMA
+		owns_entire_state_region = STATE_CAJAMARCA
+		owns_entire_state_region = STATE_ECUADOR
+		owns_entire_state_region = STATE_PASTAZA
+		owns_entire_state_region = STATE_NEAR_ANTISUYU
+	}
+
+    on_complete = {
+		set_country_type = recognized
+		trigger_event = { id = dvg_inca_reconquest.10 }
+	}
+
+	fail = {
+		NOT = {owns_entire_state_region = STATE_CUZCO}
+	}
+
+	on_fail = {
+		every_scope_character = {
+			limit = { has_variable = amachaq_samiri_var }
+			save_scope_as = scope_amachaq_samiri
+		}
+		ruler = { kill_character = yes }
+		scope:scope_amachaq_samiri = { 
+			set_character_as_ruler = yes
+			hidden_effect = { set_character_immortal = no }
+		}
+		change_tag = QUL
+	}
+
+	scripted_button = je_inca_reconquer_the_empire_raid_the_border
+	scripted_button = je_inca_reconquer_the_empire_sponsor_separatists
+
+	invalid = {
+		NOT = { has_law = law_type:law_monarchy }
+	}
+	
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+
+je_mapuche_war = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	group = je_group_foreign_affairs
+
+	
+	complete = {
+		OR = {
+			owns_entire_state_region = STATE_COLLASUYU
+			AND = {
+				exists = c:WLM
+				c:TWT = { has_truce_with = c:WLM }
+			}
+		}
+	}
+
+    on_complete = {
+		trigger_event = { id = dvg_inca_reconquest.5 }
+	}
+	
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+
+je_llapa_succession = {
+	icon = "gfx/interface/icons/event_icons/event_scales.dds"
+
+	complete = {
+		AND = {
+			ig:ig_intelligentsia = { is_powerful = yes }
+			ig:ig_armed_forces = { is_powerful = no }
+			game_date >= 1838.1.1
+		}
+	}
+
+    on_complete = {
+		trigger_event = { id = dvg_inca_path_llapa.1 }
+	}
+
+	timeout = 750
+
+	on_timeout = {
+		trigger_event = { id = dvg_inca_path_washkar.1 }
+	}
+	
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+
+je_washkar_succession = {
+	icon = "gfx/interface/icons/invention_icons/artillery.dds"
+
+	group = je_group_internal_affairs
+
+
+	complete = { 
+		AND = {
+			ig:ig_intelligentsia = { is_powerful = no }
+			ig:ig_armed_forces = { is_powerful = yes }
+			game_date >= 1838.1.1
+		}
+	}
+
+    on_complete = {
+		trigger_event = { id = dvg_inca_path_washkar.1 }
+	}
+
+	timeout = 750
+
+	on_timeout = {
+		trigger_event = { id = dvg_inca_path_llapa.1 }
+	}
+
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+
+je_llapas_reforms = {
+	icon = "gfx/interface/icons/event_icons/event_scales.dds"
+
+	group = je_group_historical_content
+
+	complete = {
+		AND = {
+			is_country_type = recognized
+			has_law = law_type:law_protectionism
+			has_law = law_type:law_regulatory_bodies
+			has_law = law_type:law_restricted_child_labor
+			has_law = law_type:law_wage_subsidies
+			has_modifier = dvg_inca_language_good_modifier
+		}
+	}
+
+	on_complete = {
+		trigger_event = { id = dvg_inca_path_llapa.10 } #Llapa consolidates his rule
+	}
+
+	timeout = 11000
+	on_timeout = {
+		trigger_event = { id = dvg_inca_path_llapa.11 } #The republican revolutionaries rise up
+	}
+
+	invalid = {
+		NOT = { has_law = law_type:law_monarchy }
+	}
+
+	weight = 1000
+	should_be_pinned_by_default = yes
+}
+
+je_inca_railroad = {
+	icon = "gfx/interface/icons/event_icons/event_industry.dds"
+
+	group = je_group_historical_content
+
+	is_shown_when_inactive = {
+		exists = c:TWT
+		c:TWT = ROOT
+		c:TWT = { 
+			ruler = { has_ideology = ideology:ideology_llapa }
+		}
+	}
+
+	possible = { 
+		has_technology_researched = railways
+	}
+
+	immediate = { trigger_event = { id = dvg_inca_path_llapa.3 } }
+
+	complete = {
+		any_scope_state = {
+			count >= 12
+			AND = {	
+				region = sr:region_andes		
+				any_scope_building = {
+					is_building_type = building_railway
+					occupancy > 0.9
+					level >= 2
+				}
+			}
+		}
+	}
+
+	on_complete = {
+		add_modifier = {
+			name = dvg_inca_railroad_modifier
+			months = -1
+		}
+		trigger_event = { id = dvg_inca_path_llapa.7 }
+	}
+
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+
+je_imperial_identity = {
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	group = je_group_historical_content
+
+	is_shown_when_inactive = {
+		exists = c:TWT
+		c:TWT = ROOT
+		c:TWT = { 
+			ruler = { has_ideology = ideology:ideology_llapa }
+		}
+	}
+
+	possible = { 
+		has_technology_researched = nationalism
+	}
+
+	immediate = {
+		cu:quechua = {
+			save_scope_as = quechua_culture
+		}
+		cu:aimara = {
+			save_scope_as = aimara_culture
+		}
+		cu:chimu = {
+			save_scope_as = chimu_culture
+		}
+		cu:caladeran = {
+			save_scope_as = andino_culture
+		}
+		cu:runasimi = {
+			save_scope_as = runasimi_culture
+		}
+		trigger_event = { id = dvg_inca_path_llapa.8 }
+	}
+
+	complete = {
+		has_technology_researched = pan-nationalism
+		custom_tooltip = {
+			text = je_imperial_identity_integrate_quechua_complete_tt
+			has_variable = quechua_integrated
+		}
+		custom_tooltip = {
+			text = je_imperial_identity_integrate_aimara_complete_tt
+			has_variable = aimara_integrated
+		}
+		custom_tooltip = {
+			text = je_imperial_identity_integrate_chimu_complete_tt
+			has_variable = chimu_integrated
+		}
+		custom_tooltip = {
+			text = je_imperial_identity_integrate_andino_complete_tt
+			has_variable = andino_integrated
+		}
+	}
+
+	on_complete = {
+		add_modifier = {
+			name = dvg_nation_built
+		}
+		remove_primary_culture = cu:quechua
+		remove_primary_culture = cu:aimara
+	}
+
+	scripted_button = je_imperial_identity_integrate_quechua
+	scripted_button = je_imperial_identity_integrate_aimara
+	scripted_button = je_imperial_identity_integrate_chimu
+	scripted_button = je_imperial_identity_integrate_andino
+
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+
+je_washkars_reforms = {
+	icon = "gfx/interface/icons/invention_icons/artillery.dds"
+
+	group = je_group_internal_affairs
+
+	complete = {
+		AND = {
+			army_size >= 50
+			has_law = law_type:law_professional_army
+			has_technology_researched = general_staff
+			has_technology_researched = logistics
+		}
+	}
+	on_complete = {
+		c:TWT = { 
+			remove_modifier = dvg_inca_army_bad_modifier
+			add_modifier = {  
+				name = dvg_inca_army_good_modifier
+				months = -1
+			}
+		}
+	}
+
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+
+je_washkars_conquests = {
+	icon = "gfx/interface/icons/event_icons/event_scales.dds"
+
+	group = je_group_external_affairs
+
+	complete = {
+		AND = {
+			has_modifier = dvg_inca_army_good_modifier
+			country_or_subject_owns_entire_state_region = STATE_ANTIOQUIA
+			country_or_subject_owns_entire_state_region = STATE_AVALON
+			country_or_subject_owns_entire_state_region = STATE_COTE_DU_CAFE
+			country_or_subject_owns_entire_state_region = STATE_FRANCE_ANTARTIQUE
+		}
+	}
+	invalid = {
+		ruler = {
+			NOT = { has_ideology = ideology:ideology_jingoist_leader }
+		}
+	}
+	on_complete = {
+		trigger_event = { id = dvg_inca_path_washkar.12 }
+	}
+
+	timeout = 7300
+	on_timeout = {
+		trigger_event = { id = dvg_inca_path_washkar.9 }
+	}
+
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+
+je_amachaq = {
+	icon = "gfx/interface/icons/event_icons/event_scales.dds"
+
+	group = je_group_crises
+
+	complete = {
+		AND = {
+			ig:ig_armed_forces = { is_powerful = yes }
+			ig:ig_landowners = { is_powerful = no }
+			has_law = law_type:law_right_of_assembly
+			has_law = law_type:law_interventionism
+			has_law = law_type:law_collectivized_agriculture
+			has_law = law_type:law_appointed_bureaucrats
+		}
+	}
+
+	on_complete = {
+		trigger_event = { id = dvg_inca_path_washkar.10 }
+	}
+
+	timeout = 1350
+	on_timeout = {
+		trigger_event = { id = dvg_inca_path_washkar.11 }
+	}
+
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+
+je_succession_wars_generic = {
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	group = je_group_crises
+
+	complete = {
+		is_at_war = no
+		owns_entire_state_region = STATE_CUZCO
+		custom_tooltip = {
+		text = roqa_reunified_tt
+
+		NOT = { exists = c:CCS }
+		NOT = { exists = c:KYS }
+		NOT = { exists = c:QUL }
+		}
+	}
+	on_complete = {
+			trigger_event = { id = dvg_inca_path_washkar.20 }
+	}
+
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+
+
+je_succession_wars_cabral = {
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	group = je_group_crises
+
+	complete = {
+		is_at_war = no
+		owns_entire_state_region = STATE_CUZCO
+	}
+	on_complete = {
+		trigger_event = { id = dvg_inca_path_washkar.21 }
+	}
+
+	timeout = 750
+	on_timeout = {
+		custom_tooltip = {
+		text = amachaq_uprising_tt
+
+		trigger_event = { id = dvg_inca_path_washkar.22 }
+		}
+	}
+
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+
+je_succession_wars_fujimori = {
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	group = je_group_crises
+
+	complete = {
+		is_at_war = no
+		owns_entire_state_region = STATE_CUZCO
+	}
+	on_complete = {
+		trigger_event = { id = dvg_inca_path_washkar.23 }
+		set_global_variable = sapa_inka_fujimori
+	}
+
+	timeout = 750
+	on_timeout = {
+		custom_tooltip = {
+		text = amachaq_uprising_tt
+
+
+		create_country = {
+			tag = WLM
+			origin = this
+
+			state = s:STATE_COLLASUYU.region_state:KYS
+		}
+		create_diplomatic_play = {
+			target_country = c:WLM
+			
+			war = yes
+			
+			type = dp_annex_war
+			
+			add_war_goal = {
+				holder = c:WLM
+				type = humiliation
+				target_country = c:KYS
+			}
+		}
+
+		}
+	}
+
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+
+je_succession_wars_samiri = {
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	group = je_group_crises
+
+	complete = {
+		is_at_war = no
+		owns_entire_state_region = STATE_CUZCO
+	}
+	on_complete = {
+		trigger_event = { id = dvg_inca_path_washkar.25 }
+		set_global_variable = sapa_inka_samiri
+	}
+
+	timeout = 750
+	on_timeout = {
+		custom_tooltip = {
+		text = amachaq_uprising_tt
+
+		create_country = {
+			tag = BEO
+			origin = this
+
+			state = s:STATE_AVALON.region_state:QUL
+			state = s:STATE_NEW_LONDON.region_state:QUL
+			state = s:STATE_WESSEX.region_state:QUL
+			state = s:STATE_GODWINSON.region_state:QUL
+			state = s:STATE_NORTHUMBRIA.region_state:QUL
+			state = s:STATE_EOFERWIC.region_state:QUL
+			state = s:STATE_NEW_CORNWALL.region_state:QUL
+		}
+		create_diplomatic_play = {
+			target_country = c:BEO
+			
+			war = yes
+			
+			type = dp_annex_war
+			
+			add_war_goal = {
+				holder = c:BEO
+				type = humiliation
+				target_country = c:QUL
+			}
+		}
+
+		}
+	}
+
+	weight = 100
+	should_be_pinned_by_default = yes
+}
