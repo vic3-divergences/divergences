@@ -36,12 +36,16 @@
 				relations:root >= relations_threshold:amicable
 				OR = {
 					country_has_primary_culture = cu:zhourao
+					NOT = {
+						has_law = law_type:law_monarchy
+					}
 
 				}
 				is_ai = yes
 				NOT = { THIS = ROOT }
 				
 				this.gdp < root.gdp
+				
 			}
 		}
 		#custom_tooltip = {
@@ -1954,5 +1958,83 @@ dvg_build_fence = {
 
 	ai_chance = {
 		base = 100
+	}
+}
+
+dvg_zhourao_protection = {
+	is_shown = {
+		country_has_primary_culture = cu:zhourao
+
+		OR = {
+			has_variable = recently_lost_war
+			has_variable = recent_capitulation
+			revolution_progress_high = yes
+		}
+		any_neighbouring_state = {
+			owner = {
+				country_has_primary_culture = cu:zhourao
+			}
+			
+		}		
+		NOT = {
+			has_variable = zhourao_protectee
+		}
+		is_subject = no
+		
+	}
+
+	possible = {
+		is_at_war = no
+		has_technology_researched = nationalism
+		
+		NOT = { has_modifier = australia_test_modifier }
+		any_neighbouring_state = {
+			state_region = {
+				is_homeland = cu:zhourao
+			}
+			owner = {
+				relations:root >= relations_threshold:cordial
+				country_has_primary_culture = cu:zhourao
+				NOT = { THIS = ROOT }
+				OR = {
+					this.gdp > root.gdp
+					country_rank > root.country_rank
+					naval_power_projection > root.naval_power_projection
+					total_manpower > root.total_manpower
+				}
+				
+			}
+		}
+		#custom_tooltip = {
+			#text = unite_australia_je_aus_tt
+			
+		#}
+	}
+	when_taken = {
+		set_variable = zhourao_protectee
+
+		random_country = {
+			limit = {
+				relations:root >= relations_threshold:cordial
+				country_has_primary_culture = cu:zhourao
+				OR = {
+					this.gdp > root.gdp
+					country_rank > root.country_rank
+					naval_power_projection > root.naval_power_projection
+					total_manpower > root.total_manpower
+				}
+			}
+			trigger_event = { id = dvg_zhourao.18 popup = yes }
+		}	
+		
+		
+	}
+
+	ai_chance = {
+		base = 0
+		modifier = {
+			#has_technology_researched = pan-nationalism
+			add = 100
+		}		
 	}
 }
