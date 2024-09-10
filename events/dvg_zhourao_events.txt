@@ -788,6 +788,7 @@ dvg_zhourao.10 = {
 	duration = 3
 
 	trigger = {
+		exists = c:ZSA
 	}
 	
 	immediate = {
@@ -805,9 +806,22 @@ dvg_zhourao.10 = {
 				was_formed_from = YLO
 			}
 		}
-		add_journal_entry = {
-			type = je_invade_zhusha
+		if = {
+			limit = {
+				exists = c:ZSA
+				NOT = {
+					c:ZSA = {
+						is_subject_of = ROOT
+					}
+				}
+				
+			}
+			add_journal_entry = {
+				type = je_invade_zhusha
+
+			}
 		}
+		
 		hidden_effect = {
 			set_global_variable = dvg_zhourao_yaluo
 		}
@@ -1380,6 +1394,92 @@ dvg_zhourao.17 = {
 	}
 }
 
+
+dvg_zhourao.18 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_zhourao.18.t
+	desc = dvg_zhourao.18.d
+	flavor = dvg_zhourao.18.f
+
+	event_image = {
+		video = "ep1_transfer_of_authority"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+
+	}
+
+	immediate = {
+		random_country = {
+			limit = {
+				has_variable = zhourao_protectee
+			}
+			save_scope_as = scope_ZHR
+		}
+	}
+
+	option = {
+		name = dvg_zhourao.18.a
+		default_option = yes
+		if = {
+			limit = {
+				is_country_type = recognized
+			}
+			create_diplomatic_pact = {
+				country = scope:scope_ZHR
+				type = protectorate
+			}
+		}
+		if = {
+			limit = {
+				is_country_type = unrecognized
+			}
+			create_diplomatic_pact = {
+				country = scope:scope_ZHR
+				type = tributary
+			}
+		}
+
+		change_relations = {
+			country = scope:scope_ZHR
+			value = 20
+		}
+		scope:scope_ZHR = {
+			remove_variable = zhourao_protectee
+		}
+		add_modifier = {
+			name = australia_test_modifier
+			months = 6 
+			is_decaying = yes
+		}
+
+		ai_chance = {
+			base = 100
+		}
+	}
+	option = {
+		name = dvg_zhourao.18.b
+		change_relations = {
+			country = scope:scope_ZHR
+			value = -20
+		}
+		scope:scope_ZHR = {
+			remove_variable = zhourao_protectee
+		}
+
+
+	}
+}
+
 #dvg_zhourao.1001 = {
 #	type = country_event
 #	placement = ROOT
@@ -1656,6 +1756,53 @@ dvg_zhourao.505 = {
 	
 }
 
+
+#Zhusha Intro Event
+dvg_zhourao.700 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_zhourao.700.t
+	desc = dvg_zhourao.700.d
+	flavor = dvg_zhourao.700.f
+
+	event_image = {
+		video = "gfx/event_pictures/asia_dead_cattle_poor_harvest.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+		rel:confucian = {
+				save_scope_as = scope_confucian
+		}
+	}
+	
+	# We must ensure our survival by claiming the desert!
+	option = {
+		name = dvg_zhourao.700.a
+		default_option = yes
+
+
+		
+		hidden_effect = {
+			set_variable = dvg_southern_push_variable
+		}
+
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
 #Southern Push ZHUSHA events are 7XY-800
 dvg_zhourao.701 = {
 	type = country_event
@@ -1737,6 +1884,21 @@ dvg_zhourao.702 = {
 	}
 	
 	immediate = {
+		random_scope_character = {
+			limit = {
+				has_variable = is_luoxi
+			}
+			save_scope_as = leader_luoxi
+		}
+		random_scope_character = {
+			limit = {
+				has_variable = is_lushou
+			}
+			save_scope_as = leader_lushou
+		}
+		c:YAL = {
+			save_scope_as = scope_YAL
+		}
 	}
 	
 	 #We will make war with them!
@@ -1845,6 +2007,18 @@ dvg_zhourao.703 = {
 			name = dvg_zhusha_stability_of_succession_variable_var
 			value = 0
 		}
+		random_scope_character = {
+			limit = {
+				has_variable = is_luoxi
+			}
+			save_scope_as = leader_luoxi
+		}
+		random_scope_character = {
+			limit = {
+				has_variable = is_lushou
+			}
+			save_scope_as = leader_lushou
+		}
 	}
 	
 	 #Interesting?
@@ -1900,17 +2074,17 @@ dvg_zhourao.704 = {
 	}
 	
 	immediate = {
-		ig:ig_armed_forces = {
-			save_scope_as = armed_forces_ig
-			leader = {
-				save_scope_as = leader_luoxi
+		random_scope_character = {
+			limit = {
+				has_variable = is_luoxi
 			}
+			save_scope_as = leader_luoxi
 		}
-		ig:ig_landowners = {
-			save_scope_as = landowners_ig
-			leader = {
-				save_scope_as = leader_lushou
+		random_scope_character = {
+			limit = {
+				has_variable = is_lushou
 			}
+			save_scope_as = leader_lushou
 		}
 	}
 	
@@ -2012,6 +2186,18 @@ dvg_zhourao.705 = {
 				name = dvg_zhusha_red_prince_events_var
 				value = 0
 			}
+		}
+		random_scope_character = {
+			limit = {
+				has_variable = is_luoxi
+			}
+			save_scope_as = leader_luoxi
+		}
+		random_scope_character = {
+			limit = {
+				has_variable = is_lushou
+			}
+			save_scope_as = leader_lushou
 		}
 	}
 	
@@ -2118,6 +2304,27 @@ dvg_zhourao.706 = {
 	}
 	
 	immediate = {
+		c:ZSA = {
+			save_scope_as = scope_ZSA
+		}
+		c:JAP = {
+			save_scope_as = scope_JAP
+		}
+		c:DUA = {
+			save_scope_as = scope_DUA
+		}
+		random_scope_character = {
+			limit = {
+				has_variable = is_luoxi
+			}
+			save_scope_as = leader_luoxi
+		}
+		random_scope_character = {
+			limit = {
+				has_variable = is_lushou
+			}
+			save_scope_as = leader_lushou
+		}
 	}
 	
 	# We will ensure Ma Lushou wins
@@ -2199,6 +2406,21 @@ dvg_zhourao.707 = {
 	}
 	
 	immediate = {
+		random_scope_character = {
+			limit = {
+				has_variable = is_luoxi
+			}
+			save_scope_as = leader_luoxi
+		}
+		random_scope_character = {
+			limit = {
+				has_variable = is_lushou
+			}
+			save_scope_as = leader_lushou
+		}
+		c:YAL = {
+			save_scope_as = scope_YAL
+		}
 	}
 	
 	# Lushou
@@ -2384,6 +2606,19 @@ dvg_zhourao.709 = {
 	
 	immediate = {
 		set_variable = dvg_skirmish_over_capital
+
+		random_scope_character = {
+			limit = {
+				has_variable = is_luoxi
+			}
+			save_scope_as = leader_luoxi
+		}
+		random_scope_character = {
+			limit = {
+				has_variable = is_lushou
+			}
+			save_scope_as = leader_lushou
+		}
 	}
 	
 	# Lushou
@@ -2465,6 +2700,18 @@ dvg_zhourao.710 = {
 	
 	immediate = {
 		set_variable = dvg_hongshan_side_with_lushou
+		random_scope_character = {
+			limit = {
+				has_variable = is_luoxi
+			}
+			save_scope_as = leader_luoxi
+		}
+		random_scope_character = {
+			limit = {
+				has_variable = is_lushou
+			}
+			save_scope_as = leader_lushou
+		}
 	}
 	
 	 #Lushou
@@ -2523,6 +2770,18 @@ dvg_zhourao.711 = {
 			}
 		}
 		set_variable = dvg_princes_openly_war
+		random_scope_character = {
+			limit = {
+				has_variable = is_luoxi
+			}
+			save_scope_as = leader_luoxi
+		}
+		random_scope_character = {
+			limit = {
+				has_variable = is_lushou
+			}
+			save_scope_as = leader_lushou
+		}
 	}
 	
 	# Lushou
@@ -2883,12 +3142,28 @@ dvg_zhourao.716 = {
 				value = 0.10
 			}
 		}
+		random_scope_character = {
+			limit = {
+				has_variable = is_luoxi
+			}
+			save_scope_as = leader_luoxi
+		}
+		random_scope_character = {
+			limit = {
+				has_variable = is_lushou
+			}
+			save_scope_as = leader_lushou
+		}
 	}
 	
 	# The teachings of the Sages of East and West, today as in ancient times, are one
 	option = {
 		name = dvg_zhourao.716.a
 		default_option = yes
+
+		add_loyalists = {
+			value = 0.10
+		}
 		ai_chance = {
 			base = 1
 		}
@@ -2962,6 +3237,9 @@ dvg_zhourao.718 = {
 	}
 	
 	immediate = {
+		c:ZSA = {
+			save_scope_as = scope_ZSA
+		}
 	}
 	
 	# Zhusha might just be the missing piece in our empire.
@@ -3010,6 +3288,26 @@ dvg_zhourao.719 = {
 	option = {
 		name = dvg_zhourao.719.a
 		default_option = yes
+
+		if = {
+			limit = {
+				NOT = {
+					country_has_state_religion = rel:mahayana
+				}
+			}
+			set_state_religion = rel:mahayana
+		}
+
+		if = {
+			limit = {
+				NOT = {
+					has_law = law_type:law_total_separation
+				}
+			}
+			activate_law = law_type:law_total_separation
+		}
+
+		
 		
 		custom_tooltip = {
 			text = dvg_the_end_tt
