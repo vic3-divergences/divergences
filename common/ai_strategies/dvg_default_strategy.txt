@@ -2,6 +2,10 @@
 	icon = "gfx/interface/icons/ai_strategy_icons/placate_population.dds" # Never shown
 
 
+	# If this trigger evaluates to true for any active strategy, the AI will try to form a power bloc
+	# Empty trigger counts as evaluating false in this specific case
+	will_form_power_bloc = {}
+
 	# These are the tax levels the AI will try to stay within, though it can go above max tax level if in a financial emergency
 	# Using a different value in a strategy will override these values
 	desired_tax_level = medium
@@ -29,7 +33,7 @@
 	# Chance each day that the AI will stop enacting a law that is going to spark a civil war (1 aversion should translate into ~25% chance of avoiding a civil war)
 	# Using a different value in a strategy will override this value
 	revolution_aversion = {
-		value = 5 
+		value = 5
 	}
 	
 	# If base chance for law to pass is below this, don't enact it
@@ -50,17 +54,7 @@
 		value = 25 
 	}
 	
-	# Added to base neutrality in diplomatic plays	
-	# Using this value in other strategies will function additively
-	diplomatic_play_neutrality = {
-		value = 50 
-	}
 
-	# Added to base boldness in diplomatic plays	
-	# Using this value in other strategies will function additively
-	diplomatic_play_boldness = {
-		value = 50
-	}
 
 	# How many maneuvers are we OK with using up in the initial phase to add more wargoals
 	# Using this value in other strategies will function additively (values below 0 or above 1 have no further effect)
@@ -217,23 +211,7 @@
 				}			
 			}
 			add = 5
-		}			
-		
-		# Countries with Economic Imperialism is always looking to bring more countries into their market
-		if = {
-			limit = {
-				has_strategy = ai_strategy_economic_imperialism
-				scope:target_country.country_rank < country_rank
-				NOR = {
-					scope:target_country = { is_subject = yes }
-					has_diplomatic_pact = {
-						who = scope:target_country
-						type = customs_union
-					}					
-				}
-			}		
-			add = 5
-		}				
+		}						
 	
 		multiply = {
 			value = "scope:target_country.relations:root"
@@ -411,7 +389,7 @@
 						OR = {
 							scope:target_state = { 
 								is_split_state = yes 
-								region = { 
+								state_region = { 
 									any_scope_state = { owner = ROOT }
 								}
 							}
@@ -460,6 +438,93 @@
 					multiply = 1.5
 				}				
 			}
+		
+			###USE THESE AS EXAMPLES###
+		
+			#if = {
+			#	limit = {
+			#		has_journal_entry = je_boxer_rebellion
+			#		scope:target_state.state_region = { is_homeland = cu:han }
+			#	}
+			#	add = 50
+			#}
+
+			#if = {
+			#	limit = {
+			#		has_journal_entry = je_consolidate_colonial_rule
+			#		scope:target_country = {
+			#			is_country_type = unrecognized
+			#			target_is_our_or_fellow_subject = no						
+			#			any_scope_state = {
+			#				OR = {
+			#					region = sr:region_north_india
+			#					region = sr:region_south_india
+			#					state_region = s:STATE_HIMALAYAS
+			#					state_region = s:STATE_BURMA
+			#					state_region = s:STATE_KACHIN
+			#					state_region = s:STATE_SHAN_STATES
+			#					state_region = s:STATE_PEGU
+			#				}
+			#			}
+			#		}
+			#	}
+			#	add = 50
+			#}
+
+			#if = {
+			#	limit = {
+			#		has_journal_entry = je_expanding_qingqiu
+			#		scope:target_country = {
+			#			any_scope_state = {
+			#				state_region = s:STATE_BAHIA
+			#			}
+			#		}
+			#	}
+			#	add = 50
+			#}
+			
+			if = {
+				limit = {
+					has_journal_entry = je_reclaiming_pannonia
+					scope:target_country = {
+						any_scope_state = {
+							OR = {
+								state_region = s:STATE_TRANSDANUBIA
+								state_region = s:STATE_CENTRAL_HUNGARY
+								state_region = s:STATE_BEKES
+								state_region = s:STATE_VOJVODINA
+								state_region = s:STATE_BANAT
+								state_region = s:STATE_WEST_SLOVAKIA
+								state_region = s:STATE_NORTHERN_TRANSYLVANIA
+								state_region = s:STATE_SOUTHERN_TRANSYLVANIA
+							}
+						}
+					}
+				}
+				add = 200
+			}
+			
+			if = {
+				limit = {
+					has_journal_entry = je_romanian_unification
+					scope:target_country = {
+						any_scope_state = {
+							OR = {
+								state_region = s:STATE_BANAT
+								state_region = s:STATE_WALLACHIA
+								state_region = s:STATE_DOBRUDJA
+								state_region = s:STATE_MOLDAVIA
+								state_region = s:STATE_BESSARABIA
+								state_region = s:STATE_NORTHERN_TRANSYLVANIA
+								state_region = s:STATE_SOUTHERN_TRANSYLVANIA
+								state_region = s:STATE_EAST_SLOVAKIA 
+								state_region = s:STATE_BEKES
+							}
+						}
+					}
+				}
+				add = 200
+			}
 			
 			if = {
 				limit = {
@@ -467,6 +532,57 @@
 					scope:target_state = { is_homeland_of_country_cultures = scope:target_country }
 				}
 				multiply = 0.0
+			}
+			
+			if = {
+				limit = { 
+					has_strategy = ai_strategy_armed_isolationism 
+					scope:target_state = { 
+						NOR = {
+							owner = root
+							has_claim_by = root
+						}
+					}
+				}
+				multiply = 0
+			}
+			
+			if = { #Do Not Take Chinese States In Full, unless another power has already done so
+				limit = {
+					country_rank >= rank_value:major_power
+					scope:target_state = {
+						OR = {
+							region = sr:region_north_china
+							region = sr:region_south_china
+							region = sr:region_manchuria
+						}
+					}				
+					OR = {
+						country_is_in_north_america = yes
+						country_is_in_europe = yes
+						country_is_in_south_america = yes
+					}					
+					NOT = {
+						any_country = {
+							NOT = { THIS = ROOT }
+							country_rank >= rank_value:major_power
+							OR = {
+								country_is_in_north_america = yes
+								country_is_in_europe = yes
+								country_is_in_south_america = yes
+							}
+							any_scope_state = {
+								NOT = { is_treaty_port = yes }
+								OR = {
+									region = sr:region_north_china
+									region = sr:region_south_china
+									region = sr:region_manchuria
+								}
+							}
+						}					
+					}
+				}
+				multiply = 0
 			}
 		}
 		
@@ -796,16 +912,6 @@
 				min = -30
 			}					
 		}			
-
-		if = {
-			limit = {
-				has_diplomatic_pact = {
-					who = scope:overlord
-					type = customs_union
-				}					
-			}
-			add = 10
-		}					
 		
 		add = {
 			if = {
@@ -1114,7 +1220,6 @@
 					has_strategy = ai_strategy_territorial_expansion 
 					has_strategy = ai_strategy_unify_germany
 					has_strategy = ai_strategy_unify_italy
-					has_strategy = ai_strategy_unify_ethiopia
 					has_strategy = ai_strategy_unify_china
 				}
 			}
@@ -2065,17 +2170,7 @@
 						}			
 					}
 					multiply = 0.5
-				}				
-
-				if = {
-					limit = {
-						has_diplomatic_pact = {
-							who = scope:target_country
-							type = customs_union
-						}								
-					}
-					multiply = 0.25
-				}				
+				}								
 			}				
 			
 			if = {
@@ -2245,17 +2340,7 @@
 						}			
 					}
 					multiply = 0.5
-				}				
-
-				if = {
-					limit = {
-						has_diplomatic_pact = {
-							who = scope:target_country
-							type = customs_union
-						}								
-					}
-					multiply = 0.25
-				}				
+				}								
 			}
 
 			if = {
@@ -2439,17 +2524,7 @@
 						}			
 					}
 					multiply = 0.5
-				}				
-
-				if = {
-					limit = {
-						has_diplomatic_pact = {
-							who = scope:target_country
-							type = customs_union
-						}								
-					}
-					multiply = 0.25
-				}				
+				}							
 			}			
 
 			if = {
@@ -2998,5 +3073,16 @@
 	weight = {
 		value = 0		
 	}
-
+	
+	# Added to base neutrality in diplomatic plays	
+	# Using this value in other strategies will function additively
+	diplomatic_play_neutrality = {
+		value = 50 
+	}
+	
+	# Added to base boldness in diplomatic plays	
+	# Using this value in other strategies will function additively
+	diplomatic_play_boldness = {
+		value = 50
+	}
 }
