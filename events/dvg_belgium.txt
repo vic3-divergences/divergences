@@ -123,6 +123,10 @@ dvg_belgium.3 = {
 		trigger_event = {
 			id = dvg_belgium.4 days = 30
 		}
+
+		add_journal_entry = {
+			type = je_sanacomie
+		}
 		
 		ai_chance = {
 			base = 1
@@ -206,6 +210,71 @@ dvg_belgium.5 = {
 		add_loyalists = {
 			value = 0.15
 		}
+		if = {
+			limit = {
+				NOT = {
+					has_technology_researched = nationalism
+				}
+			}
+			add_technology_progress = {
+				technology = nationalism
+				progress = 7000
+			}
+		}
+		add_modifier = {
+			name = dvg_modifier_armed_forces_bolstered
+			months = 30
+			is_decaying = yes
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+	option = {
+		name = dvg_belgium.5.b
+		add_loyalists = {
+			value = 0.15
+		}
+		if = {
+			limit = {
+				any_subject_or_below = {
+					country_has_primary_culture = cu:septiman
+				}
+			}
+			every_country = {
+				limit = {
+					country_has_primary_culture = cu:septiman
+					is_subject = yes
+				}
+				change_relations = {
+					country = THIS
+					value = 20
+				}
+				add_liberty_desire = 25
+				
+			}
+		}
+
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+	option = {
+		name = dvg_belgium.5.c
+		add_loyalists = {
+			value = 0.15
+		}
+		if = {
+			limit = {
+				exists = c:PLA
+			}
+			change_relations = {
+				country = c:PLA
+				value = 25
+			}
+		}
 		
 		ai_chance = {
 			base = 1
@@ -234,6 +303,12 @@ dvg_belgium.6 = {
 	duration = 3
 
 	trigger = {
+		exists = c:PLA
+		NOR = {
+			has_modifier = modifier_widespread_protests
+			has_modifier = modifier_repressing_protests
+
+		}
 	}
 	immediate = {
 		c:PLA = {
@@ -247,6 +322,57 @@ dvg_belgium.6 = {
 		default_option = yes
 		add_loyalists = {
 			value = 0.15
+		}
+		change_relations = {
+			country = c:PLA
+			value = -5
+		}
+		add_modifier = {
+			name = modifier_widespread_protests
+			months = 3
+			is_decaying = yes
+		}
+		random_country = {
+			limit = {
+				country_has_primary_culture = cu:septiman
+				has_truce_with = c:PLA
+			}
+			change_relations = {
+				country = THIS
+				value = 5
+			}
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+	option = {
+		name = dvg_belgium.6.b
+		default_option = yes
+		add_radicals = {
+			value = 0.15
+		}
+		add_modifier = {
+			name = modifier_repressing_protests
+			months = 3
+			is_decaying = yes
+		}
+		random_country = {
+			limit = {
+				country_has_primary_culture = cu:septiman
+				has_truce_with = c:PLA
+				is_subject = yes
+				liberty_desire > 25
+			}
+			change_relations = {
+				country = THIS
+				value = -5
+			}
+		}
+		change_relations = {
+			country = c:PLA
+			value = 5
 		}
 		
 		ai_chance = {
@@ -290,6 +416,14 @@ dvg_belgium.7 = {
 		add_loyalists = {
 			value = 0.15
 		}
+		every_country = {
+			limit = {
+				country_has_primary_culture = cu:septiman
+			}
+			trigger_event = {
+				id = dvg_belgium.8
+			}
+		}
 		
 		ai_chance = {
 			base = 1
@@ -322,6 +456,12 @@ dvg_belgium.8 = {
 		c:PLA = {
 			save_scope_as = scope_PLA
 		}
+		if = {
+			limit = {
+				exists = overlord
+			}
+			save_scope_as = overlord_scope
+		}
 	}
 
 
@@ -334,6 +474,32 @@ dvg_belgium.8 = {
 		
 		ai_chance = {
 			base = 1
+		}
+	}
+	option = {
+		name = dvg_belgium.8.b
+		trigger = {
+			OR = {
+				is_player = yes
+				liberty_desire >= 50
+			}
+		}
+		create_diplomatic_play = {
+			type = dp_independence
+			target_country = scope:overlord_scope
+			war = no
+
+			add_war_goal = {
+				holder = scope:overlord_scope
+				type = annex_country
+			}
+		}
+		add_loyalists = {
+			value = 0.15
+		}
+		
+		ai_chance = {
+			base = 10
 		}
 	}
 }
