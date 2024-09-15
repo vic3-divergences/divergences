@@ -55,89 +55,75 @@
 			value = 0
 		}
 	}
+	on_weekly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					exists = c:GRE
+					
+					c:GRE = {
+						ruler = {
+							NOT = {
+								has_variable = zimisces_var
+							}
+						}
+						any_scope_character = {
+							has_variable = zimisces_var
+						}
+					}
+				}
+				c:GRE = {
+					random_scope_character = {
+						limit = {
+							has_variable = zimisces_var
+						}
+						set_character_as_ruler = yes
+					}
+				}
+			}
+		}
+		
+	}
 	on_monthly_pulse = {
 		effect = {
 			if = {
 				limit = {
 					cu:greek = {
-			 culture_is_discriminated_in = ROOT
+					 culture_is_discriminated_in = ROOT
 					
-			}	
+					}	
+					exists = c:GRE
 				}
-				change_variable = {
-					name = greece_var
-					add = 1
-				}
-			}
-			if = {
-				limit = {
-					any_scope_state = {
-						state_region = {
-							is_homeland = cu:greek
-						}
-						turmoil >= .30 
-					}
-					
-				}
-				change_variable = {
-					name = greece_var
-					add = 1
+				c:GRE = {
+					add_liberty_desire = 0.10
 				}
 			}
 			if = {
 				limit = {
 					NOT = {
-						any_country = {
-							country_has_primary_culture = cu:greek
-						}
+						cu:greek = {
+							culture_is_discriminated_in = ROOT
+						   
+						   }	
 					}
 					
+					exists = c:GRE
 				}
-				change_variable = {
-					name = greece_var
-					add = 1
-				}
-			}
-			if = {
-				limit = {
-					any_subject_or_below = {
-						country_has_primary_culture = cu:greek
-						liberty_desire > 30
-
-					}
-				}
-				change_variable = {
-					name = greece_var
-					add = 1
+				c:GRE = {
+					add_liberty_desire = -0.20
 				}
 			}
 			if = {
 				limit = {
-					any_subject_or_below = {
-						country_has_primary_culture = cu:greek
-						liberty_desire > 50
-					}
+					country_has_voting_franchise = yes
+					
+					exists = c:GRE
 				}
-				change_variable = {
-					name = greece_var
-					add = 1
+				c:GRE = {
+					add_liberty_desire = -0.20
 				}
 			}
-			if = {
-				limit = {
-					cu:greek = {
-				culture_secession_progress = {
-					target = ROOT
-					value > 0.5
-				}	
-				}
-				
-						}
-				change_variable = {
-					name = greece_var
-					add = 24
-				}
-			}
+			
 			if = {
 				limit = {
 					NOT = {
@@ -197,32 +183,18 @@
 				}
 			}
 			#Greek Revolt
-			if = {
-				limit = {
-					has_variable = council_start
-					has_variable = greece_voting_var
-					has_variable= greece_citizen_var
-					OR = {
-						cu:greek = {
-							culture_is_discriminated_in = ROOT
-						}
-						country_has_voting_franchise = no
-						
-					}
-					any_subject_or_below = {
-						country_has_primary_culture = cu:greek
-						liberty_desire > 65
-					}	
-				}
-				trigger_event = {
-					id = dvg_greece.203
-				}
-			}
+			
 		}
 	}
 	
 
 	complete = {
+		c:GRE = {
+			liberty_desire > 90
+		}
+		has_variable = council_start
+		has_variable = greece_voting_var
+		has_variable= greece_citizen_var
 		
 	}
 
@@ -237,9 +209,28 @@
 			}
 		}
 	}
+	fail = {
+		NOT = {
+			cu:greek = {
+				culture_is_discriminated_in = ROOT
+			}
+			
+			has_law = law_type:law_oligarchy
+			has_law = law_type:law_autocracy
+		}
+		c:GRE = {
+			liberty_desire < 25
+		}
+
+	}
 	invalid = {
 		OR = {
-			NAND = {
+			has_variable = council_cancelled
+			AND = {
+				exists = c:GRE
+				is_diplomatic_play_enemy_of = c:GRE
+			}
+			NOT = {
 				any_scope_state = {
 					state_region = {
 						is_homeland = cu:greek
@@ -249,21 +240,17 @@
 					country_has_primary_culture = cu:greek
 				}
 			}
-			has_variable = council_concluded
-			is_diplomatic_play_enemy_of = c:GRE
-
 		}
 		
-	
-
+		
 	}
 	fail = {
+
 		
 	}
 
 	weight = 500
 	should_be_pinned_by_default = yes
-	progressbar = yes
 	goal_add_value = {
 		value = 48
 	}
@@ -425,10 +412,11 @@ je_zimisces_revolt = {
 			}
 		}
 		NOT = {
-			owns_entire_state_region = s:STATE_PELOPONNESE
-			owns_entire_state_region = s:STATE_THESSALIA
-			owns_entire_state_region = s:STATE_CYPRUS
-			owns_entire_state_region = s:STATE_ATTICA
+			any_scope_state = {
+				state_region = {
+					is_homeland = cu:greek
+				}
+			}
 		}
 	}
 	on_fail = {
