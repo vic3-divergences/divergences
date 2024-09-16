@@ -39,12 +39,24 @@ dvg_leeuwin.1 = {
 
 	option = {
 		name = dvg_leeuwin.1.a
+		set_variable = {
+			name = aloysius_legitimacy
+			value = 0
+		}
         hidden_effect = { 
         	remove_modifier = dvg_aloysius_clique
         }
         add_modifier = {
             name = dvg_aloysius_clique
         }	
+
+		add_journal_entry = {
+			type = je_king_aloysius
+		}
+		change_variable = {
+			name = aloysius_legitimacy
+			add = 12
+		}
 	}
 }
 
@@ -89,8 +101,18 @@ dvg_leeuwin.2 = { #opstalia ignores trans oranje
     }
 	option = { #ignore it
 	name = dvg_leeuwin.2.b
-		s:STATE_TRANS_ORANJE.region_state:VRY = {
-			add_radicals = { value = 0.1  culture = cu:boer }
+		c:VRY = {
+			every_scope_state = {
+				limit = {
+					state_region = { 
+						is_homeland = cu:boer
+					}
+				}
+				add_radicals_in_state = {
+					value = 0.1
+					culture = cu:boer
+				}
+			}
 		}
 		add_modifier = {
 			name = dvg_ignored_trans_oranje_settlers
@@ -127,10 +149,13 @@ dvg_leeuwin.3 = { #the rickusdorp settlement
 		c:BST = {
 			has_state_in_state_region = STATE_NORTHERN_CAPE
 		}
-
     	s:STATE_NORTHERN_CAPE.region_state:LEW = {
-			has_building = b:logging_camps
+			has_building = building_logging_camp
         }
+		NOT = {
+			has_variable = dvg_rickusdorp_settlement_triggered_var
+		}
+		c:LEW ?= this
 	}
 	immediate = {
 		c:LEW = { save_scope_as = scope_LEW }
@@ -156,6 +181,7 @@ dvg_leeuwin.3 = { #the rickusdorp settlement
 		ai_chance = {
 			base = 2
 		}
+		set_variable = dvg_rickusdorp_settlement_triggered_var
     }
 	option = { #audience with basuto
 	name = dvg_leeuwin.3.b
@@ -165,12 +191,14 @@ dvg_leeuwin.3 = { #the rickusdorp settlement
 		ai_chance = {
 		base = 2
 		}
+		set_variable = dvg_rickusdorp_settlement_triggered_var
     }
 	option = { #leave them
 	name = dvg_leeuwin.3.c
 		ai_chance = {
 		base = 1
 		}
+		set_variable = dvg_rickusdorp_settlement_triggered_var
 	} 
 }
 
@@ -365,9 +393,6 @@ dvg_leeuwin.7 = { #basuto allows it
 
 	duration = 1
 
-	trigger = {
-	}
-
 	immediate = {
 		c:LEW = { save_scope_as = scope_LEW }
 		c:BRG = { save_scope_as = scope_BRG }
@@ -407,9 +432,6 @@ dvg_leeuwin.8 = {
 
 	duration = 1
 
-	trigger = {
-	}
-
 	immediate = {
 		c:LEW = { save_scope_as = scope_LEW }
 		c:BRG = { save_scope_as = scope_BRG }
@@ -448,9 +470,6 @@ dvg_leeuwin.9 = {
 	icon = "gfx/interface/icons/event_icons/event_map.dds"
 
 	duration = 1
-
-	trigger = {
-	}
 
 	immediate = {
 		c:LEW = { save_scope_as = scope_LEW }
@@ -494,9 +513,6 @@ dvg_leeuwin.10 = {
 
 	duration = 1
 
-	trigger = {
-	}
-
 	immediate = {
 		c:LEW = { save_scope_as = scope_LEW }
 		c:BRG = { save_scope_as = scope_BRG }
@@ -516,7 +532,7 @@ dvg_leeuwin.10 = {
 			add_claim = c:LEW
         }
         custom_tooltip = {
-			text = dvg_opstalia_take_trans_oranje_tt
+			text = dvg_leeuwin_take_trans_oranje_tt
 			create_diplomatic_play = {
 				name = oranje_river_war
 			
@@ -541,8 +557,18 @@ dvg_leeuwin.10 = {
 	}
 	option = { #drop it
 		name = dvg_leeuwin.10.b
-		s:STATE_TRANS_ORANJE.region_state:VRY = {
-			add_radicals = { value = 0.1 culture = cu:boer }
+		c:VRY = {
+			every_scope_state = {
+				limit = {
+					state_region = { 
+						is_homeland = cu:boer
+					}
+				}
+				add_radicals_in_state = {
+					value = 0.1
+					culture = cu:boer
+				}
+			}
 		}
 		add_modifier = {
 			name = dvg_ignored_trans_oranje_settlers
@@ -573,9 +599,6 @@ dvg_leeuwin.11 = {
 	icon = "gfx/interface/icons/event_icons/event_map.dds"
 
 	duration = 1
-
-	trigger = {
-	}
 
 	immediate = {
 		c:LEW = { save_scope_as = scope_LEW }
@@ -618,9 +641,6 @@ dvg_leeuwin.12 = { #The Coronation
 	icon = "gfx/interface/icons/event_icons/event_map.dds"
 
 	duration = 1
-
-	trigger = {
-	}
 
 	immediate = {
 		c:LEW = { save_scope_as = scope_LEW }
@@ -686,10 +706,16 @@ dvg_leeuwin.13 = {
 	duration = 1
 
 	trigger = {
+		exists = c:LEW
+		c:LEW ?= this
 		c:LEW = {
+			has_law = law_type:law_monarchy
 			ruler = {
 				NOT = { has_variable = is_aloysius }
 			}
+		}
+		NOT = {
+			has_variable = dvg_king_aloysius_dead_var
 		}
 	}
 
@@ -707,30 +733,20 @@ dvg_leeuwin.13 = {
 
 	option = {
 	name = dvg_leeuwin.13.a
-		hidden_effect = { 
-			ruler = { 
-				kill_character = yes
-			}
-		}
-		create_character = {
-			first_name = Aloysius
-			last_name = van_Afrika
-			ruler = yes
-			is_general = yes
-			birth_date = 1810.5.19
-			dna = dna_aloysius_van_afrika_king
-			interest_group = ig_armed_forces
-			ideology = ideology_jingoist_leader
-			traits = {
-				imperious
-				charismatic
-				experienced_offensive_planner
-				celebrity_commander	
-				experienced_political_operator	
-			}
-		}
         ai_chance = {
 			base = 1
 		}
+		default_option = yes
+		set_variable = dvg_king_aloysius_dead_var
+		remove_modifier = dvg_aloysius_clique
+    } 
+	
+	option = {
+	name = dvg_leeuwin.13.b
+        ai_chance = {
+			base = 1
+		}
+		set_variable = dvg_king_aloysius_dead_var
+		remove_modifier = dvg_aloysius_clique
     } 
 }

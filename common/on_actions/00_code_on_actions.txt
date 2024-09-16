@@ -33,8 +33,8 @@ on_monthly_pulse_country = {
 		dvg_spain.28 #Spain collapses
 		#dvg_zhourao.6 # The Northern Hui Defect!
 		#dvg_zhourao.8 # good tidings
-		dvg_zhourao.5 # One Kongsi
-		dvg_oceania.2 #Australia Gamerule, if in the future there is an ability to add state traits or even just a better way someone finds, please change this.
+		#dvg_zhourao.5 # One Kongsi
+		#dvg_oceania.2 #Australia Gamerule, if in the future there is an ability to add state traits or even just a better way someone finds, please change this.
 		dvg_oceania.50 #Convention of Zhourao
 		dvg_cossacks.2 # End of Cossack Neutrality
 		dvg_gran_colombia.25 #Death of Emperor Ernesto I
@@ -77,6 +77,14 @@ on_monthly_pulse_country = {
 		mughal.5
 		mughal.6
 		
+		#Gues events
+		dvg_leeuwin.3 #rickusdorp settlement
+		dvg_leeuwin.13 #death of King Aloysuis
+		dvg_opstalia.7 #fate of the bastaard
+		dvg_opstalia.8 #noordveld war
+		dvg_opstalia.10 #death of hendrik
+		dvg_nuweflander.2 #opstalia moves on reurveld
+		dvg_batavia.1 #batavia primer
 		
 	}
 	effect = {
@@ -86,6 +94,16 @@ on_monthly_pulse_country = {
 			}
 			kill_character = yes
 		}
+	}
+	#standalone flavour events - test these above to make sure they actually fire
+	random_events = {
+		99 = 0
+		1 = dvg_standalone_flavour.1 #walter's deer	
+	}
+	random_events = {
+		28 = 0
+		1 = dvg_standalone_flavour.2 #popularisation of the mayo (sandwich)
+		1 = dvg_standalone_flavour.3 #spread of Mulberry trees in QQ and Arcadia
 	}
 	# Election Events
 	random_events = {
@@ -201,6 +219,9 @@ on_yearly_pulse_country = { #Krakatoa special pulse
 	random_events = {
 		11 = 0
 		1 = tunguska.1
+	}
+	random_events = {
+		25 = dvg_bali.3
 	}
 }
 
@@ -1123,7 +1144,62 @@ on_diplomatic_pact_third_party_auto_break = {
 # scope:target = Released Country
 on_country_released_as_independent = {
 	effect = {
-		
+		if = {
+			limit = {
+				scope:target = {
+					country_has_primary_culture = cu:ashkenazi
+				}
+				NOT = {
+					s:STATE_PALESTINE = {
+						is_homeland = cu:ashkenazi
+					}
+				}
+			}
+			s:STATE_PALESTINE = {
+				add_homeland = cu:sephardic
+				add_homeland = cu:ashkenazi
+			}
+		}
+		if = {
+			limit = {
+				scope:target = {
+					country_has_primary_culture = cu:peuvermhels
+				}
+				NOT = {
+					s:STATE_ALGIERS = {
+						is_homeland = cu:peuvermhels
+					}
+					s:STATE_TLEMCEN = {
+						is_homeland = cu:peuvermhels
+					}
+				}
+			}
+			s:STATE_TLEMCEN = {
+				add_homeland = cu:peuvermhels
+			}
+			s:STATE_ALGIERS = {
+				add_homeland = cu:peuvermhels
+			}
+		}
+		if = {
+			limit = {
+				scope:target = {
+					country_has_primary_culture = cu:orano
+				}
+				NOT = {
+					s:STATE_TERRA_DORO = {
+						is_homeland = cu:orano
+					}
+				
+				}
+			}
+			scope:target = {
+				trigger_event = {
+					id = dvg_ven.2
+				}
+			}
+			
+		}
 	}
 }
 
@@ -2042,13 +2118,66 @@ on_political_movement_supported_law_cancelled = {
 # Root = Country
 on_wargoal_enforced = {
 	effect = {
+		if = {
+			limit = {
+				OR = {
+					AND = {
+						has_journal_entry = je_anti_lobby_demand
+						var:anti_lobby_demand_target ?= scope:target
+					}
+					AND = {
+						has_journal_entry = je_pro_lobby_demand
+						var:pro_lobby_demand_target ?= scope:target
+					}
+				}
+			}
+			set_variable = { name = enforced_wargoal_on_enemy days = 90 }
+		}
 		set_variable = {
             name = recently_won_war
             days = 1825
             value = yes
         }
-        
-	}	
+		if = {
+			limit = {
+				scope:target = {
+					has_journal_entry = je_earn_recognition
+				}
+			}
+			scope:target = {
+				change_variable = {
+					name = recognition_progress_var
+					add = {
+						add = scope:wargoal_impact
+						multiply = -4
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				owner = {
+					has_journal_entry = je_earn_recognition
+				}
+				scope:target = {
+					OR = {
+						is_country_type = recognized
+						is_country_type = colonial
+					}
+					country_rank >= rank_value:major_power
+				}
+			}
+			owner = {
+				change_variable = {
+					name = recognition_progress_var
+					add = {
+						add = scope:wargoal_impact
+						multiply = 4
+					}
+				}
+			}
+		}
+	}
 }
 
 # Root = Interest Group
