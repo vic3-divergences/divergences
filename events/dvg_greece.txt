@@ -399,6 +399,23 @@ dvg_greece.201 = {
 				save_scope_as = scope_GRE
 			}
 		}
+		if = {
+			limit = {
+				NOT = {
+					exists = c:GRE
+				}
+			}
+			random_scope_state = {
+				limit = {
+					state_region = {
+						is_homeland = cu:greek
+					}
+				}
+				save_scope_as = scope_greek_state
+
+			}
+			
+		}
 	}
 	option = {	#No council
 		name = dvg_greece.201.a
@@ -425,9 +442,10 @@ dvg_greece.201 = {
 		scope:zimisces_scope = {
 			exile_character = yes
 		}
+		set_variable = council_cancelled
 
 		ai_chance = {
-			base = 33
+			base = 01
 		}
 	}
 	option = {	
@@ -435,6 +453,42 @@ dvg_greece.201 = {
 
 		trigger_event = {
 			id = dvg_greece.202 days = 30
+		}
+		if = {
+			limit = {
+				NOT = {
+					exists = c:GRE
+				}
+				
+			}
+			create_country = {
+				tag = GRE
+				origin = this
+				state = s:STATE_ATTICA.region_state:VEN
+				state = s:STATE_PELOPONNESE.region_state:VEN	
+				state = s:STATE_THESSALIA.region_state:VEN				
+			
+			}
+			create_diplomatic_pact = {
+				country = c:GRE
+				type = puppet
+			}
+			c:GRE = {
+				activate_law = law_type:law_autocracy
+			}
+			
+			
+
+			random_scope_character = {
+				limit = {
+					has_variable = zimisces_var
+				}
+				transfer_character = c:GRE
+				add_trait = immortal
+				
+			}
+			
+			
 		}
 
 		ai_chance = {
@@ -501,6 +555,7 @@ dvg_greece.202 = {
 			}
 			save_scope_as = zimisces_scope
 		}
+		
 	}
 	option = {	#Let it begin
 		name = dvg_greece.202.a
@@ -515,10 +570,19 @@ dvg_greece.202 = {
 				add = 10
 			}
 		}
-		c:GRE = {
-			add_liberty_desire = 5
-
+		if = {
+			limit = {
+				exists = c:GRE
+				c:GRE = {
+					is_subject_of = ROOT
+				}
+			}
+			c:GRE = {
+				add_liberty_desire = 5
+	
+			}
 		}
+		
 
 		set_variable = council_start
 
@@ -590,82 +654,31 @@ dvg_greece.203 = {
 
 	icon = "gfx/interface/icons/event_icons/event_protest.dds"
 	trigger = { 
-		
+		exists = c:GRE
+		c:GRE = {
+			is_ai = yes
+		}
 	}
 	immediate = {
+
 		random_character = {
 			limit = {
 				has_variable = zimisces_var
 			}
 			save_scope_as = zimisces_scope
 		}
-		if = {
-			limit = {
-				NOT = {
-					exists = c:GRE
-				}
-				
-			}
-			create_country = {
-				tag = CYP
-				origin = this
-				state = s:STATE_CYPRUS.region_state:VEN
-				state = s:STATE_CRETE.region_state:VEN
-				state = s:STATE_IONIAN_ISLANDS.region_state:VEN
-				on_created = {
-					set_variable = greek_revolt
-					save_scope_as = greek_revolt_country_scope
-				}
-			}
-			scope:zimisces_scope = {
-				transfer_character = c:CYP
-			}
-			c:CYP = {
-				add_change_relations_progress = {
-					country = c:GRE
-					value = 80
-				}
-			}
+		c:GRE = {
+			save_scope_as = greek_revolt_country_scope
 			create_diplomatic_play = {
-				type = dp_rebellion_annex
-				target_country = scope:greek_revolt_country_scope
-			}
-		}
-	
-		if = {
-			limit = {
-				exists = c:GRE
-				
-			}
-			c:GRE = {
-				save_scope_as = greek_revolt_country_scope
-
-			}
-			every_scope_state = {
-				limit = {
-					turmoil > 0.2
-					state_region = {
-						is_homeland = cu:greek
-					}
-				}
-				set_state_owner = c:GRE
-				
-			}
-			scope:zimisces_scope = {
-				transfer_character = c:GRE
-			}
-			
-			create_diplomatic_play = {
-				type = dp_rebellion_annex
-				target_country = c:GRE
+				type = dp_independence
+				target_country = c:VEN
 				war = no
-
-				add_war_goal = {
-					holder = c:GRE
-					type = independence
-				}
 			}
 		}
+		
+		
+	
+		
 		
 		if = {
 			limit = {
@@ -676,6 +689,18 @@ dvg_greece.203 = {
 			remove_variable = greece_voting_var
 			set_variable = council_concluded
 			
+		}
+		every_scope_state = {
+			limit = {
+				state_region = {
+					is_homeland = cu:greek
+				}
+				culture_percent_state = {
+					culture = cu:greek
+					value >= 0.40
+				}
+			}
+			set_state_owner = c:GRE
 		}
 		
 	}
@@ -688,6 +713,17 @@ dvg_greece.203 = {
 				trigger_event = {
 					id = dvg_greece.213 days = 3
 				}
+			}
+		}
+		every_diplomatic_play = {
+			limit = {
+				initiator_is = c:GRE
+				target_is = c:VEN
+			}
+			add_war_goal = {
+				holder = c:VEN
+				type = annex_country
+				target_country = c:GRE
 			}
 		}
 
@@ -705,6 +741,18 @@ dvg_greece.203 = {
 		name = dvg_greece.203.b
 
 		play_as = scope:greek_revolt_country_scope
+
+		every_diplomatic_play = {
+			limit = {
+				initiator_is = c:GRE
+				target_is = c:VEN
+			}
+			add_war_goal = {
+				holder = c:VEN
+				type = annex_country
+				target_country = c:GRE
+			}
+		}
 
 		
 		hidden_effect = {
@@ -771,9 +819,7 @@ dvg_greece.210 = {
 
 	icon = "gfx/interface/icons/event_icons/event_protest.dds"
 	trigger = { 
-		any_scope_character = {
-			has_variable = zimisces_var
-		}
+		
 		cu:greek = {
 			culture_is_discriminated_in = ROOT
 		}
@@ -869,7 +915,6 @@ dvg_greece.211 = {
 	}
 	immediate = {
 		set_variable = greece_voting_var
-	
 	}
 	option = {	#Status Quo
 		name = dvg_greece.211.a
@@ -967,6 +1012,7 @@ dvg_greece.211 = {
 				add_liberty_desire = -10
 			}
 		}
+		
 
 
 		ai_chance = {
@@ -1049,7 +1095,16 @@ dvg_greece.212 = { #
 		
 	}
 	immediate = {
-		
+		c:GRE = {
+			every_scope_character = {
+				limit = {
+					has_variable = zimisces_var
+					has_trait = immortal
+				}
+				remove_trait = immortal
+				exile_character = yes
+			}
+		}
 	}
 	option = {	#
 		name = dvg_greece.212.a
@@ -1286,6 +1341,12 @@ dvg_greece.214 = { #
 		}
 		c:VEN = {
 			save_scope_as = scope_VEN
+		}
+		every_scope_character = {
+			limit = {
+				has_trait = immortal
+			}
+			remove_trait = immortal
 		}
 	}
 	option = {	
