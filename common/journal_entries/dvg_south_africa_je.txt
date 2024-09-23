@@ -106,10 +106,7 @@ je_king_aloysius = {
 	group = je_group_internal_affairs
 
 	immediate = {
-		set_variable = {
-			name = aloysius_legitimacy
-			value = 1
-		}
+		
 	}
 
 	on_monthly_pulse = {
@@ -122,6 +119,31 @@ je_king_aloysius = {
 						any_civil_war = {
 							civil_war_progress > 50
 						}
+					}
+				}
+				change_variable = {
+					name = aloysius_legitimacy
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+				
+					NOT = {
+						exists = c:NFL
+						exists = c:OPS
+					}
+				}
+				change_variable = {
+					name = aloysius_legitimacy
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+				
+					NOT = {
+						exists = c:CAP
 					}
 				}
 				change_variable = {
@@ -183,11 +205,57 @@ je_king_aloysius = {
 					add = 0.5
 				}
 			}
+			if = {
+				limit = {
+					is_at_war = yes
+				}
+				change_variable = {
+					name = aloysius_legitimacy
+					add = 0.5
+				}
+			}
+			if = {
+				limit = {
+					government_legitimacy <= 50 
+				}
+				change_variable = {
+					name = aloysius_legitimacy
+					add = -1.0
+				}
+			}
+			if = {
+				limit = {
+					has_variable = recent_capitulation
+				}
+				change_variable = {
+					name = aloysius_legitimacy
+					add = -1.0
+				}
+			}
+			if = {
+				limit = {
+					in_default = yes
+				}
+				change_variable = {
+					name = aloysius_legitimacy
+					add = -1.0
+				}
+			}
+			if = {
+				limit = {
+					root.average_sol < 5
+				}
+				change_variable = {
+					name = aloysius_legitimacy
+					add = -1.0
+				}
+			}
+			
 		}
 		random_events = {
 			10 = 0
-			1 = autocracy.2
-			1 = autocracy.3
+			10 = autocracy.2
+			10 = autocracy.3
 		}
 	}
 
@@ -200,6 +268,9 @@ je_king_aloysius = {
 				civil_war_progress > 0.5
 			}
 		}
+		root.average_sol > 5
+		in_default = no
+		government_legitimacy > 49 
 	}
 
 	on_complete = {
@@ -216,6 +287,8 @@ je_king_aloysius = {
 			NOT = {
 				has_state_in_state_region = STATE_NORTHERN_CAPE
 			}
+			this = { var:aloysius_legitimacy <= 0 }
+
 		}
 	}
 
@@ -225,6 +298,16 @@ je_king_aloysius = {
 
 	goal_add_value = {
 		add = 240
+	}
+	invalid = {
+		NOT = {
+			any_scope_character = {
+				has_variable = is_aloysius
+			}
+		}
+	}
+	on_invalid = {
+		
 	}
 
 	progressbar = yes

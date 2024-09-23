@@ -32,7 +32,55 @@
 	weight = 100
 	should_be_pinned_by_default = yes
 }
-
+je_herrerian_revolution_GCO = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	
+	group = je_group_historical_content
+	
+	complete = {
+		c:GCO = {
+			is_at_war = no
+			has_truce_with = c:SPA
+		}
+		c:SPA = { has_truce_with = c:GCO }
+		AND = {
+			exists = c:SAN
+			NOR = {
+				exists = c:GRA
+				exists = c:CST
+			}
+		}
+	}
+	invalid = {
+		exists = c:SAN
+		exists = c:GRA
+		
+		c:SAN = {
+			has_truce_with = c:GRA
+		}
+		c:GRA = {
+			has_truce_with = c:SAN
+		}
+	}
+	fail = {
+		c:GRA = {
+			has_truce_with = c:SPA
+			is_subject_of = c:SPA
+		}
+		c:SPA = { has_truce_with = c:GCO }
+	}
+	on_complete = { #You helped Herreria
+		trigger_event = { id = dvg_gran_colombia.15 }
+	}
+	on_invalid = { #White peace
+		trigger_event = { id = dvg_gran_colombia.15 }
+	}
+	on_fail = { #You fucked up and Santander coups you
+		trigger_event = { id = dvg_gran_colombia.7 }
+	}
+	weight = 100
+	should_be_pinned_by_default = yes
+}
 je_build_a_navy_gran_colombia = {
 	icon = "gfx/interface/icons/event_icons/event_military.dds"
 	
@@ -251,10 +299,6 @@ je_conquer_new_spain_gran_colombia = { #Ai should NOT have strategies for this, 
 		owns_entire_state_region = STATE_DONGHAI
 		owns_entire_state_region = STATE_JINSHAN
 		owns_entire_state_region = STATE_YICHENG
-	}
-
-    on_complete = {
-		trigger_event = { id = dvg_gran_colombia.13 }
 	}
 	
 	weight = 100
@@ -525,10 +569,11 @@ je_building_the_colombian_identity = {
 
 	is_shown_when_inactive = {
 		NOT = {
-			country_has_primary_culture = cu:colombian
+			has_global_variable = colombian_culture
 		}
 		exists = c:GCO
 		c:GCO = ROOT
+		NOT = { is_subject = yes }
 	}
 	possible = {
 		OR = {
@@ -555,6 +600,7 @@ je_building_the_colombian_identity = {
 			NOT = {
 				exists = c:QUI
 			}
+			NOT = { is_subject = yes }
 		}
 	}
 
@@ -620,7 +666,6 @@ je_building_the_colombian_identity = {
 		add_modifier = {
 			name = dvg_nation_built
 		}
-		add_primary_culture = cu:colombian
 		remove_primary_culture = cu:lusitanian
 		remove_primary_culture = cu:central_american
 		remove_primary_culture = cu:mexican
@@ -628,14 +673,28 @@ je_building_the_colombian_identity = {
 		remove_primary_culture = cu:granadan
 		remove_primary_culture = cu:caladeran
 	}
+	invalid = { 
+		is_subject = yes
+	}
 
 	fail = {
 		AND = {
-			exists = c:MEX
+			OR = {
+				exists = c:MEX
+				exists = c:JLS
+			}
 			exists = c:LUS
-			exists = c:UCA
+			OR = {
+				exists = c:UCA
+				exists = c:ELS
+				exists = c:NIC
+				exists = c:PNM
+			}
 			exists = c:CUB
-			exists = c:GRA
+			OR = {
+				exists = c:GRA
+				exists = c:SAN
+			}
 			exists = c:QUI
 		}
 

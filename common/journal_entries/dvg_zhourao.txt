@@ -7,10 +7,13 @@
 		custom_tooltip = {
 			text =  dvg_yaluo_reform_tt
 			OR = {
-			scope:journal_entry = { is_goal_complete = yes }
-			has_variable = dvg_among_kongsus
-			has_war_with = c:MJN
-			any_country = {
+				AND = {	
+					scope:journal_entry = { is_goal_complete = yes }
+					has_technology_researched = nationalism
+				}
+				
+				has_war_with = c:MJN
+				any_country = {
 				is_revolutionary = yes
 				country_definition = root.country_definition
 				owns_entire_state_region = STATE_XINXIANG	
@@ -21,7 +24,7 @@
 	}
 
 	fail = {
-		
+		var:dvg_yaluo_reform_variable_var = 0
 	}
 	
 	on_monthly_pulse = {
@@ -29,7 +32,9 @@
 	}
 
 	on_complete = {
-		set_global_variable = hui_defected
+		#set_global_variable = hui_defected
+
+		
 		trigger_event = {
 			id = dvg_zhourao.6 # The Northern Hui Defect!
 		}
@@ -70,20 +75,61 @@
 	should_be_pinned_by_default = yes
 }
 
+
+
 je_one_kongsi = {
 	icon = "gfx/interface/icons/event_icons/event_zhourao.dds"
 	
 	group = je_group_foreign_affairs
+
+	is_shown_when_inactive = {
+		country_has_primary_culture = cu:zhourao
+	}
+
+	possible = {
+		has_technology_researched = nationalism
+	}
+
+	immediate = {
+		set_variable = {
+			name = zhourao_var
+			value = 0
+		}
+	}
 	
 	complete = {
-		owns_entire_state_region = STATE_QINGSHUI
-		owns_entire_state_region = STATE_GUANSHAN
-		owns_entire_state_region = STATE_XINXIANG
-		owns_entire_state_region = STATE_YONGLING
-		owns_entire_state_region = STATE_ZHENG_HE
-		owns_entire_state_region = STATE_WEIHUAI
-		owns_entire_state_region = STATE_TAITUNG
+		OR = {
+			AND = {
+				
+				scope:journal_entry = { is_goal_complete = yes
+				
+				}
+				NOT = {
+					
+					any_country = {
+						AND = {
+							relations:root < relations_threshold:amicable
+							country_has_primary_culture = cu:zhourao
+
+						}
+					}
+				}
+				
+				
+			}
+			AND = {
+			owns_entire_state_region = STATE_QINGSHUI
+			owns_entire_state_region = STATE_GUANSHAN
+			owns_entire_state_region = STATE_XINXIANG
+			owns_entire_state_region = STATE_YONGLING
+			owns_entire_state_region = STATE_ZHENG_HE
+			owns_entire_state_region = STATE_WEIHUAI
+			owns_entire_state_region = STATE_TAITUNG
+			}
+		}
+		
 	}
+	
 	
 	fail = {
 	}
@@ -94,6 +140,36 @@ je_one_kongsi = {
 	
     on_fail = {
 	}
+
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					NOT = {
+						any_country = {
+							relations:root < relations_threshold:amicable
+							country_has_primary_culture = cu:zhourao
+						}
+					}
+				}
+				change_variable = {
+					name = zhourao_var
+					add = 1
+				}
+			}
+			
+		}
+	}
+
+	
+
+	current_value = {
+		value = root.var:zhourao_var
+	}
+
+
+	progressbar = yes
+	goal_add_value = 100
 	
 	weight = 100
 	should_be_pinned_by_default = yes
@@ -613,7 +689,13 @@ je_red_prince = {
 	fail = {
 		custom_tooltip = {
 			text = dvg_songyan_tt
-			has_variable = dvg_songyan_society_zsa
+			OR = {
+				has_variable = dvg_songyan_society_zsa
+				NOT = {
+					has_law = law_type:law_monarchy
+				}
+			}
+			
 		}
 	}	
 	
@@ -701,6 +783,15 @@ je_red_prince = {
 	goal_add_value = {
 		add = 8
 	}
+
+	timeout = 89
+
+	on_timeout = {
+		trigger_event = {
+			id = dvg_zhourao.719
+		}
+	}
+
 
 	progressbar = yes
 
@@ -1023,6 +1114,8 @@ je_pillager_prince_zhourao = {
 			
 			25 =  dvg_zhourao.1201
 
+			25 =  dvg_zhourao.1206
+
 		}
 	}
 
@@ -1065,3 +1158,148 @@ je_pillager_prince_zhourao = {
 	weight = 5000
 	should_be_pinned_by_default = yes
 }
+
+je_zhourao_truce = {
+	icon = "gfx/interface/icons/event_icons/event_zhourao.dds"
+	
+	group = je_group_foreign_affairs
+
+	is_shown_when_inactive = {
+		country_has_primary_culture = cu:zhourao
+	}
+	possible = {
+		has_variable = dvg_zhourao_convention_held
+	}
+
+	on_monthly_pulse = {
+		random_events = {
+			15 = dvg_zhourao.16
+			15 = dvg_zhourao.14
+
+		}
+		
+	}
+	
+	complete = {
+		NOR = {
+			has_truce_with = c:BRG
+			has_truce_with = c:DUA
+			has_truce_with = c:SCA
+		}
+	}
+	
+	
+
+    on_complete = {
+		
+	}
+	fail = {
+		any_country = {
+			country_has_primary_culture = cu:zhourao
+			OR = {
+				is_diplomatic_play_enemy_of = c:BRG
+				is_diplomatic_play_enemy_of = c:DUA
+				is_diplomatic_play_enemy_of = c:SCA
+			}
+		}
+	}
+	
+    on_fail = {
+		trigger_event = {
+			id = dvg_zhourao.15
+		}
+	}
+	
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+
+<<<<<<< Updated upstream
+je_xijiao_takoever = {
+	icon = "gfx/interface/icons/event_icons/event_zhourao.dds"
+
+	group = je_group_internal_affairs
+
+	is_shown_when_inactive = {
+		OR = {
+			country_has_state_religion = rel:catholic
+			country_has_state_religion = rel:protestant
+		}
+		country_has_primary_culture = cu:zhourao
+	}
+	possible = {
+		custom_tooltip = {
+			text = xijiao_infiltration_tt
+			any_scope_pop = {
+				religion = rel:taiping
+			}
+		}
+		
+	}
+	immediate = {
+		trigger_event = {
+			id = dvg_xijiao.10
+		}
+	}
+
+	complete = {
+		OR = {
+		any_interest_group = {
+			leader = {
+				has_ideology = ideology:ideology_xijiao_leader
+			}
+			is_powerful = yes
+		}
+		AND = {
+			has_law = law_type:law_theocracy
+			any_scope_state = {
+				is_capital = yes
+				religion_percent_state = {
+					target = rel:taiping
+					value >= 0.5
+				}
+			}
+		}
+		}
+		
+	}
+
+	fail = {
+		OR = {
+		has_variable = no_xijiao
+
+		NOT = {
+			any_scope_pop = {
+				religion = rel:taiping
+			}
+
+		}
+		any_interest_group = {
+			leader = {
+				has_ideology = ideology:ideology_xijiao_leader
+			}
+			is_marginal = yes
+		}
+		}
+	}
+
+    on_complete = {
+		trigger_event = { id = dvg_xijiao.11 popup = yes }
+	}
+	
+    on_fail = {
+	}
+	on_monthly_pulse = {
+		random_events = {
+			15 = dvg_xijiao.15
+			15 = dvg_xijiao.3
+		}
+	}
+	
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+=======
+
+
+>>>>>>> Stashed changes
