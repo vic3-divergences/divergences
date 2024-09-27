@@ -54,18 +54,15 @@
 	}
 
 	complete = {
-		OR = {
-
+		custom_tooltip = {
+			text = belgian_formed_tt
 			AND = {
-			owns_entire_state_region = STATE_CAROLINE
-			owns_entire_state_region = STATE_PHILIPPA
-			owns_entire_state_region = STATE_NOUVELLE_LORRAINE
-			owns_entire_state_region = STATE_NOUVELLE_FLANDRE 
-			owns_entire_state_region = STATE_HAUTE_VALOISIE
-			owns_entire_state_region = STATE_BASSE_VALOISIE
-			owns_entire_state_region = STATE_FLANDRE_SUPERIEURE
+				exists = c:BLC
+				c:BLC = ROOT
 			}
+
 		}
+		
 		
 	}
 
@@ -198,7 +195,6 @@ je_belgian_confederacy = {
 	group = je_group_internal_affairs
 
 	immediate = {
-		
 	}
 
 	is_shown_when_inactive = {
@@ -222,7 +218,56 @@ je_belgian_confederacy = {
 	}
 	on_weekly_pulse = {
 		effect = {
-			
+			if = {
+				limit = {
+					has_variable = recently_lost_war
+					
+				}
+				change_variable = {
+					name = dvg_belgian_var
+					subtract = 1
+				}
+			}
+			if = {
+				limit = {
+					has_modifier = declared_bankruptcy
+				}
+				change_variable = {
+					name = dvg_belgian_var
+					subtract = 1
+				}
+			}
+			if = {
+				limit = {
+					any_interest_group = {
+						is_insurrectionary = yes
+					}
+				}
+				change_variable = {
+					name = dvg_belgian_var
+					subtract = 1
+				}
+			}
+			if = {
+				limit = {
+					every_scope_state = {
+						turmoil < 0.50
+					}
+				}
+				change_variable = {
+					name = dvg_belgian_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					owns_entire_state_region = STATE_SANACOMIE
+				}
+				change_variable = {
+					name = dvg_belgian_var
+					add = 1
+				}
+			}
 		}
 		
 	}
@@ -236,10 +281,16 @@ je_belgian_confederacy = {
 						exists = c:CHV
 						exists = c:CFS
 					}
-					is_enacting_law = yes
-					s:STATE_HAUTE_VALOISE.region_state:BLC = {
-						turmoil >= 0.50
+					OR = {
+						s:STATE_HAUTE_VALOISE.region_state:BLC = {
+							turmoil > 0.50
+						}
+						s:STATE_FLANDRE_SUPERIEURE.region_state:BLC = {
+							turmoil > 0.50
+						}
 					}
+					
+					
 				}
 			}
 		}
@@ -248,16 +299,42 @@ je_belgian_confederacy = {
 
 
 	fail = {
-		this = { var:dvg_shun_var <= 0 }
+		this = { var:dvg_belgian_var <= 0 }
 	}
 
 	on_fail = {
+		if = {
+			limit = {
+				NOT = {
+					exists = c:CNF
+				}
+				any_scope_state = {
+					state_region = STATE_NOUVELLE_FLANDRE
+					is_capital = yes
+				}
+			}
+			change_tag = CNF
+		}
+		if = {
+			limit = {
+				exists = c:CNF
+				c:CNF = {
+					is_ai = yes
+				}
+			}
+			annex_country = c:CNF
+			change_tag = CNF
+		}
 		
 	}
 
 	invalid = {
 		
 	}
+	current_value = {
+		value = var:dvg_belgian_var
+	}
+
 	progressbar = yes
 	goal_add_value = 700
 
