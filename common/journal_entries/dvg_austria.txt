@@ -1,0 +1,153 @@
+﻿je_south_german_confederation_aus = {
+	icon = "gfx/interface/icons/invention_icons/pan_nationalism.dds"
+	should_be_pinned_by_default = yes
+
+	group = je_group_foreign_affairs
+
+	immediate = {
+		c:AUS = {
+			save_scope_as = scope_AUS
+		}
+		c:BAV = {
+			save_scope_as = scope_BAV
+		}
+		
+	}
+
+	complete = {
+		custom_tooltip = {
+			text = je_carinthian_seperatism_complete_tooltip
+			has_variable = je_carinthian_seperatism_complete
+		}
+		OR = {
+			
+			AND = {
+				custom_tooltip = {
+					text = je_south_german_confederation_aus_bavaria_defeated_tooltip
+					NOT = { exists = c:BAV }
+				}
+				owns_entire_state_region = STATE_BAVARIA
+				owns_entire_state_region = STATE_TYROL
+			}
+			
+			c:BAV = { is_subject_of = root}	
+
+		}
+
+		
+	}
+
+	on_complete = {
+		if = {
+			limit = { 
+				exists = c:AGR
+
+				c:AGR = { is_subject_of = c:BAV}
+				c:AGR = { is_subject_of = root}	
+			}
+			annex = c:AGR
+		}
+
+		if = {
+			limit = { 
+				exists = c:SLZ
+				c:SLZ = { is_subject_of = c:BAV}
+				c:SLZ = { is_subject_of = root}	
+			}
+			annex = c:SLZ
+		}
+
+		if = {
+			limit = { 
+				exists = c:TRT
+				c:TRT = { is_subject_of = c:BAV}
+				c:TRT = { is_subject_of = root}	
+			}
+			annex = c:TRT
+		}
+
+		if = {
+			limit = { 
+				exists = c:BAV
+				c:BAV = { is_subject_of = c:BAV}
+				c:BAV = { is_subject_of = root}	
+			}
+			annex = c:BAV
+		}
+
+		change_tag = SGF
+
+		trigger_event = dvg_sgf.1
+	}
+
+}
+
+
+je_carinthian_seperatism = {
+	icon = "gfx/interface/icons/invention_icons/pan_nationalism.dds"
+	should_be_pinned_by_default = yes
+
+	group = je_group_internal_affairs
+
+
+	complete = {
+		custom_tooltip = {
+			text = je_carinthian_seperatism_complete_tooltip
+			has_variable = je_carinthian_seperatism_complete
+		}
+	}
+
+	fail = {
+		OR = {
+
+			s:STATE_SLOVENIA = {
+				region_state:AUS ?= {
+					radical_fraction = {
+						value >= 60
+					}
+				}
+			}
+
+			NOT = { owns_entire_state_region = STATE_SLOVENIA }
+		}
+		
+	}
+
+	on_fail = {
+		#trigger_event = dvg_austria.  ### Slovene uprising
+	}
+
+	on_complete = {
+		#trigger_event = dvg_austria.  ### Habsburg Splendor
+	}
+
+}
+
+je_habsburg_monarchy = {
+	icon = "gfx/interface/icons/invention_icons/pan_nationalism.dds"
+	should_be_pinned_by_default = yes
+
+	group = je_group_internal_affairs
+
+
+	immediate = {
+		trigger_event = { id = dvg_austria.3 days = 60 }
+	}
+
+	complete = {
+		custom_tooltip = {
+			text = je_habsburg_monarchy_complete_tooltip
+			always = no
+		}
+	}
+
+	fail = {
+		NOT = {
+			has_law = law_type:law_monarchy
+		}
+	}
+
+	on_fail = {
+		#trigger_event = dvg_austria.  ### The last of the Habsburgs
+	}
+}
