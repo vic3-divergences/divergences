@@ -636,10 +636,6 @@ dvg_bavaria.30 = {
 	desc = dvg_bavaria.30.d
 	flavor = dvg_bavaria.30.f
 
-	immediate = {
-		set_variable = dvg_bavarian_constitution_complete
-	}
-
 	option = { 
 		name = dvg_bavaria.30.a
 		default_option = yes
@@ -679,10 +675,6 @@ dvg_bavaria.31 = {
 	title = dvg_bavaria.31.t
 	desc = dvg_bavaria.31.d
 	flavor = dvg_bavaria.31.f
-
-	immediate = {
-		set_variable = dvg_bavarian_constitution_complete
-	}
 
 	option = { 
 		name = dvg_bavaria.31.a
@@ -733,6 +725,22 @@ dvg_bavaria.31 = {
 		}
 	}
 
+	### special case if bavaria ahs no monarchy
+
+	option = { 
+		name = dvg_bavaria.31.e
+		
+		trigger = {
+			has_variable = dvg_bav_aus_diplomatic
+			c:BAV = {NOT = { has_law = law_type:law_monarchy }}
+			c:AUS = { has_law = law_type:law_monarchy }
+		}
+
+		c:BAV = {
+			trigger_event = { id = dvg_bavaria.33 days = 6 }
+		}
+	}
+
 }
 
 ### Der Donau Bruderkrieg
@@ -749,10 +757,6 @@ dvg_bavaria.32 = {
 	title = dvg_bavaria.32.t
 	desc = dvg_bavaria.32.d
 	flavor = dvg_bavaria.32.f
-
-	immediate = {
-		set_variable = dvg_bavarian_constitution_complete
-	}
 
 	option = { 
 		name = dvg_bavaria.32.a
@@ -799,5 +803,61 @@ dvg_bavaria.32 = {
 			this = c:AUS
 		}
 	}
+
+}
+
+dvg_bavaria.33 = {
+
+	event_image = { video = "unspecific_military_parade" }
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+	duration = 1
+
+	placement = ROOT
+	type = country_event
+	
+	title = dvg_bavaria.33.t
+	desc = dvg_bavaria.33.d
+	flavor = dvg_bavaria.33.f
+
+	option = { 
+		name = dvg_bavaria.33.a
+		default_option = yes
+		
+		activate_law = law_type:law_monarchy
+
+		add_radicals = {
+			value = 0.6
+		}
+
+		if = {
+			limit = { player = c:AUS  }
+			c:AUS = {
+				create_diplomatic_pact = {
+					country = c:BAV
+					type = puppet
+				}
+			}
+		}
+		else = {
+			c:BAV = {
+				create_diplomatic_pact = {
+					country = c:AUS
+					type = puppet
+				}
+			}
+		}
+
+		
+
+		
+	}
+
+	option = { 
+		name = dvg_bavaria.33.b
+		
+		trigger_event = { id = dvg_bavaria.32 days = 6 }
+	}
+
 
 }
