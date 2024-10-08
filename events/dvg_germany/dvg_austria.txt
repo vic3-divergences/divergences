@@ -33,7 +33,7 @@ dvg_austria.1 = {
 
 
 
-#### Trouble in the House of Hapsburg ####
+#### Trouble in the House of Habsburg ####
 dvg_austria.3 = {
 
 	event_image = { video = "unspecific_military_parade" }
@@ -158,7 +158,7 @@ dvg_austria.31 = {
 
 
 ### The Petition from Klagenfurt
-dvg_austria.10 = {
+dvg_austria.40 = {
 
 	event_image = { video = "unspecific_military_parade" }
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
@@ -168,31 +168,28 @@ dvg_austria.10 = {
 	type = country_event
 	placement = ROOT
 	
-	title = dvg_austria.10.t
-	desc = dvg_austria.10.d
-	flavor = dvg_austria.10.f
+	title = dvg_austria.40.t
+	desc = dvg_austria.40.d
+	flavor = dvg_austria.40.f
 
 	### Uprising path
 	option = {
-		name = dvg_austria.10.a
+		name = dvg_austria.40.a
 		default_option = yes
 		
-		hidden_effect = {
-			trigger_event = { id = dvg_austria.11 days = 7 }
-		}
+		trigger_event = { id = dvg_austria.41 days = 7 }
 	}
 
 	option = {
-		name = dvg_austria.10.b
-		default_option = yes
+		name = dvg_austria.40.b
 		
-		trigger_event = { id = dvg_austria.12 days = 5 }
+		trigger_event = { id = dvg_austria.43 days = 7 }
 	}
 
 }
 
 ### The Carinthian War of Independence
-dvg_austria.11 = {
+dvg_austria.41 = {
 
 	event_image = { video = "unspecific_military_parade" }
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
@@ -202,38 +199,195 @@ dvg_austria.11 = {
 	type = country_event
 	placement = ROOT
 	
-	title = dvg_austria.11.t
-	desc = dvg_austria.11.d
-	flavor = dvg_austria.11.f
+	title = dvg_austria.41.t
+	desc = dvg_austria.41.d
+	flavor = dvg_austria.41.f
 
-	### Uprising path
 	option = {
-		name = dvg_austria.11.a
+		name = dvg_austria.41.a
 		default_option = yes
 
 		create_country = {
-			tag = CRN
+			tag = SLO
 			origin = this
-			state = s:STATE_STYRIA.region_state:AUS
+			state = s:STATE_SLOVENIA.region_state:AUS
 		}
 
 		create_diplomatic_play = {
 				
 			
-			target_country = c:CRN
+			target_country = c:SLO
 			type = dp_rebellion_annex
 			
 			add_war_goal = {
-				holder = c:AUS
-				type = annex_country
-				target_country = c:CRN
+				holder = c:SLO
+				type = independence
+				target_country = c:AUS
 			}
+
+			 
 			
 		}
+
+		random_diplomatic_play = {
+			limit = {
+				initiator = c:AUS
+				target = c:SLO
+			}
+			save_scope_as = dvg_aus_slovene_revolt
+		}
+
+		s:STATE_SLOVENIA.region_state:SLO = {
+			create_building={
+				building="building_barracks"
+				add_ownership={
+					country={
+						country="c:SLO"
+						levels=15
+					}
+				}
+				reserves=1
+				activate_production_methods={ "pm_no_organization" }
+			}
+		}
+
+		c:SLO = {
+			add_modifier = {
+				name = dvg_slovenia_revolt
+				days = 500
+			}
+		}
+
+		if = {
+			limit = {
+				exists = c:CRO
+			}
+
+			c:CRO = {
+				trigger_event = {
+					id = dvg_austria.42
+				}
+			}
+
+		}
+		
 		
 		
 	}
 
+
+}
+
+### Slovenes seek Help
+dvg_austria.42 = {
+
+	event_image = { video = "unspecific_military_parade" }
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+	duration = 1
+
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_austria.42.t
+	desc = dvg_austria.42.d
+	flavor = dvg_austria.42.f
+
+	### Help them
+	option = {
+		name = dvg_austria.42.a
+		default_option = yes
+		
+		scope:dvg_aus_slovene_revolt = {
+			add_target_backers = {
+				c:CRO
+			}
+		}
+
+		create_diplomatic_pact = {
+			country = c:SLO
+			type = puppet
+		}
+
+		c:AUS = {
+			trigger_event = { id = dvg_austria.43 }
+		}
+	}
+
+	option = { ### Decline
+		name = dvg_austria.42.b
+		
+		
+	}
+
+}
+
+### Croats rally for Slovenia
+dvg_austria.43 = {
+
+	event_image = { video = "unspecific_military_parade" }
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+	duration = 1
+
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_austria.43.t
+	desc = dvg_austria.43.d
+	flavor = dvg_austria.43.f
+
+	
+	option = { ### Request Bavarian Help
+		name = dvg_austria.43.a
+		default_option = yes
+		
+		c:BAV = {
+			trigger_event = { id = dvg_austria.44 }
+		}
+	}
+
+	option = { ### We can do this on our own
+		name = dvg_austria.43.b
+		
+		
+	}
+
+}
+
+### Slovenes seek Help
+dvg_austria.44 = {
+
+	event_image = { video = "unspecific_military_parade" }
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+	duration = 1
+
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_austria.44.t
+	desc = dvg_austria.44.d
+	flavor = dvg_austria.44.f
+
+	
+	option = { ### Help them
+		name = dvg_austria.44.a
+		default_option = yes
+		
+		scope:dvg_aus_slovene_revolt = {
+			add_initiator_backers = {
+				c:BAV
+			}
+		}
+
+	}
+
+	option = { ### Decline
+		name = dvg_austria.44.b
+		
+		
+	}
 
 }
 
