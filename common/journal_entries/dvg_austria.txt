@@ -16,8 +16,8 @@
 
 	complete = {
 		custom_tooltip = {
-			text = je_carinthian_seperatism_complete_tooltip
-			has_variable = je_carinthian_seperatism_complete
+			text = je_slovene_seperatism_complete_tooltip
+			has_variable = je_slovene_seperatism_complete
 		}
 		OR = {
 			
@@ -90,7 +90,7 @@
 }
 
 
-je_carinthian_seperatism = {
+je_slovene_seperatism = {
 	icon = "gfx/interface/icons/invention_icons/pan_nationalism.dds"
 	should_be_pinned_by_default = yes
 
@@ -98,10 +98,14 @@ je_carinthian_seperatism = {
 
 
 	complete = {
-		custom_tooltip = {
-			text = je_carinthian_seperatism_complete_tooltip
-			has_variable = je_carinthian_seperatism_complete
+		OR = {
+			custom_tooltip = {
+				text = je_slovene_seperatism_complete_tooltip
+				has_variable = je_slovene_seperatism_complete
+			}
+			game_date >= 1840.10.17
 		}
+		
 	}
 
 	fail = {
@@ -124,15 +128,27 @@ je_carinthian_seperatism = {
 		random_events = {
 			100 = 0
 			10 = dvg_austria.31
+			10 = dvg_austria.32
+			10 = dvg_austria.33
+			10 = dvg_austria.34
 		}
 	}
 
 	on_fail = {
-		#trigger_event = dvg_austria.  ### Slovene uprising
+
+		if = {
+			limit = { 
+				c:AUS = { 
+					NOT = { has_variable = dvg_austria_slovene_war }
+				} 	
+			}
+			trigger_event = dvg_austria.41  ### Slovene uprising
+		}
+		
 	}
 
 	on_complete = {
-		#trigger_event = dvg_austria.  ### Habsburg Splendor
+		trigger_event = dvg_austria.50  ### The Ausgleich
 	}
 
 }
@@ -157,4 +173,160 @@ je_habsburg_monarchy = {
 	on_fail = {
 		#trigger_event = dvg_austria.  ### The last of the Habsburgs
 	}
+}
+
+
+je_austrian_yugoslavia = {
+	icon = "gfx/interface/icons/invention_icons/pan_nationalism.dds"
+	should_be_pinned_by_default = yes
+
+	group = je_group_internal_affairs
+
+
+	immediate = {
+		s:STATE_CROATIA = {
+			save_scope_as = dvg_croatia_scope
+		}
+
+		c:SLO ?= {
+			save_scope_as = dvg_SLO_scope
+		}
+				
+	}
+
+	fail = {
+		custom_tooltip = {
+			text = dvg_free_yugoslavia_exists
+			c:YUG ?= {
+				exists = yes
+				NOT = { is_subject_of = c:AUS } 
+			}
+		}
+
+		custom_tooltip = {
+			text = dvg_free_slovenia_exists
+			c:SLO ?= {
+				exists = yes
+				NOT = { is_subject_of = c:AUS } 
+			}
+		}
+
+		custom_tooltip = {
+			text = dvg_no_slovenia
+			OR = {
+				c:SLO ?= {
+					NOT = { exists = yes } 
+				}
+				NOT = {
+					country_or_subject_owns_entire_state_region = STATE_SLOVENIA
+				}
+			}
+			
+		}
+		
+
+		
+	}
+
+	complete = {
+		has_technology_researched = nationalism
+
+
+		custom_tooltip = {
+			text = dvg_austria_owns_croatia
+			country_or_subject_owns_entire_state_region = STATE_CROATIA
+		}
+
+		any_state = {
+			filter = {
+				region = sr:region_balkans
+				state_region = {
+					OR = {
+						is_homeland = cu:serb
+						is_homeland = cu:slovene
+						is_homeland = cu:croat
+						#is_homeland = cu:albanian
+					}
+					
+				}
+			}
+			custom_tooltip = {
+				text = owned_by_this_country_or_subjects_tt
+				OR = {
+					owner = ROOT
+					owner = {
+						is_subject_of = ROOT
+					}
+				}
+			}
+			percent >= 0.6
+		}
+	}
+
+
+	on_complete = {
+
+		if = {
+			limit = { exists = c:SLO }
+
+			c:SLO = {
+				add_primary_culture = cu:serb
+				add_primary_culture = cu:croat
+			}
+
+			custom_tooltip = {
+				text = dvg_austrian_yuoslavia
+				every_state = {
+					limit = {
+						region = sr:region_balkans
+						state_region = {
+							OR = {
+								is_homeland = cu:serb
+								is_homeland = cu:slovene
+								is_homeland = cu:croat
+								#is_homeland = cu:albanian
+							}
+							
+						}
+						OR = {
+							owner = ROOT
+							owner = {
+								is_subject_of = ROOT
+							}
+						}
+					}
+		
+					set_state_owner = c:SLO
+				}
+			}
+
+			c:SLO = {
+				change_tag = YUG
+			}
+			
+			
+
+			hidden_effect = {
+				if = {
+					limit = { owns_entire_state_region = STATE_ISTRIA }
+
+					random_scope_state = {
+						limit = {
+							state_region = s:STATE_ISTRIA
+						}
+						set_state_owner = c:YUG
+					}
+				}
+			}
+
+			
+		}
+		
+
+	
+
+	}
+
+
+
 }
