@@ -1,0 +1,117 @@
+je_hungarian_crisis = {
+    icon = "gfx/interface/icons/invention_icons/pan_nationalism.dds"
+	should_be_pinned_by_default = yes
+
+	group = je_group_crises
+
+    scripted_button = je_hungarian_crisis_vote_BOH
+	scripted_button = je_hungarian_crisis_vote_BRG
+
+    immediate = {
+
+        if = {
+            limit = {
+                this = c:BOH
+            }
+
+            set_global_variable = {
+                name = je_hungarian_crisis_vote_hun_independence_var
+                value = 0
+            }
+
+            set_global_variable = {
+                name = je_hungarian_crisis_vote_hun_puppet_var
+                value = 0
+            }
+
+            set_global_variable = {
+                name = je_hungarian_crisis_months_to_go
+                value = 6
+            }
+
+            c:BRG = { add_journal_entry = { type = je_hungarian_crisis} }
+            c:SCA = { add_journal_entry = { type = je_hungarian_crisis} }
+            c:DUA = { add_journal_entry = { type = je_hungarian_crisis} }
+            c:POL = { add_journal_entry = { type = je_hungarian_crisis} }
+            c:BAV = { add_journal_entry = { type = je_hungarian_crisis} }
+            c:AUS = { add_journal_entry = { type = je_hungarian_crisis} }
+            c:TUR = { add_journal_entry = { type = je_hungarian_crisis} }
+            c:HUN = { add_journal_entry = { type = je_hungarian_crisis} }
+
+        }
+
+        
+
+        
+    }
+
+    on_monthly_pulse = {
+        effect = {
+            if = {
+                limit = { 
+                    global_var:je_hungarian_crisis_months_to_go > 0 
+                    this = c:BOH
+                    } 
+
+                change_global_variable = { name = je_hungarian_crisis_months_to_go subtract = 1 }
+            }
+
+
+            if = {
+                limit = {  global_var:je_hungarian_crisis_months_to_go = 0 } 
+
+                set_global_variable = je_hungarian_crisis_vote_complete
+            }
+        }
+    }
+    
+
+    complete = {
+		custom_tooltip = {
+			text = je_hungarian_crisis_vote_complete_tooltip
+			has_global_variable = je_hungarian_crisis_vote_complete
+		}
+
+        custom_tooltip = {
+			text = je_hungarian_crisis_vote_BRG_accepted_tooltip
+			has_global_variable = je_hungarian_crisis_vote_BRG_accepted
+		}
+
+        custom_tooltip = {
+			text = je_hungarian_crisis_vote_BOH_accepted_tooltip
+			has_global_variable = je_hungarian_crisis_vote_BOH_accepted
+		}
+	}
+
+    on_complete = {
+        
+        if = {
+            limit = {
+                global_var:je_hungarian_crisis_vote_hun_independence_var > global_var:je_hungarian_crisis_vote_hun_puppet_var
+            }
+
+            trigger_event = dvg_hungary.72
+        }
+        else = {
+            trigger_event = dvg_hungary.71
+        }
+
+    }
+
+    fail = {
+        OR = { 
+            custom_tooltip = {
+                text = je_hungarian_crisis_vote_rejected_tooltip
+                has_global_variable = je_hungarian_crisis_vote_rejected
+            }
+
+            custom_tooltip = {
+                text = je_hungarian_crisis_war_outcome_tooltip
+                has_global_variable = je_hungarian_crisis_war_outcome
+            }
+        }
+        
+
+    }
+    
+}
