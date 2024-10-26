@@ -97,7 +97,7 @@ dvg_hungary.4 = {
 
 }
 
-### The Looming Disaster - Bohemia
+### The Hungarian Crisis - Bohemia
 dvg_hungary.5 = {
 
 	event_image = { video = "votp_cops_march" }
@@ -116,7 +116,9 @@ dvg_hungary.5 = {
 		name = dvg_hungary.5.a
 		default_option = yes
 		
-		trigger_event = {id = dvg_hungary.6 days = 30 }	
+		trigger_event = { id = dvg_hungary.7 days = 30 }
+
+		c_HUN = { trigger_event = {id = dvg_hungary.6 days = 30 }}
 	}
 }
 
@@ -139,17 +141,16 @@ dvg_hungary.6 = {
 		name = dvg_hungary.6.a
 		default_option = yes
 		
-		
-		trigger_event = {id = dvg_hungary.7 days = 30 } 
+	
 	}
 }
 
-### A Dangerous Crown
+### The Prague conference
 dvg_hungary.7 = {
 
-	event_image = { video = "votp_agitator_speaking" }
+	event_image = { video = "europenorthamerica_capitalists_meeting" }
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
-	icon = "gfx/interface/icons/event_icons/protest.dds"
+	icon = "gfx/interface/icons/event_icons/newspaper.dds"
 	duration = 3
 
 	type = country_event
@@ -162,12 +163,36 @@ dvg_hungary.7 = {
 	option = {
 		name = dvg_hungary.7.a
 		default_option = yes
+		
 
-		trigger_event = {id = dvg_hungary.8 days = 30 }
+		if = {
+			limit = {
+				this = c:BOH
+			}
+
+			add_journal_entry = { 
+				type = je_hungarian_crisis
+			}
+
+			c:BRG = { trigger_event = {id = dvg_hungary.7 }}
+			c:SCA = { trigger_event = {id = dvg_hungary.7 }}
+			c:DUA = { trigger_event = {id = dvg_hungary.7 }}
+			c:POL = { trigger_event = {id = dvg_hungary.7 }}
+			c:BAV = { trigger_event = {id = dvg_hungary.7 }}
+			c:AUS = { trigger_event = {id = dvg_hungary.7 }}
+			c:TUR = { trigger_event = {id = dvg_hungary.7 }}
+			c:HUN = { trigger_event = {id = dvg_hungary.7 }}
+
+		}
+		
+		
+		
+
 	}
+
 }
 
-### Scandinavia Catches Wind of the Crisis
+### The Prague conference - Hungarian Independence - Bohemia has to accept
 dvg_hungary.8 = {
 
 	event_image = { video = "europenorthamerica_capitalists_meeting" }
@@ -185,14 +210,82 @@ dvg_hungary.8 = {
 	option = {
 		name = dvg_hungary.8.a
 		default_option = yes
+
+		set_global_variable = je_hungarian_crisis_vote_BOH_accepted
+
+		c:BRG = { trigger_event = dvg_hungary.9 }
+	}
+
+	option = {
+		name = dvg_hungary.8.b
+
+		set_global_variable = je_hungarian_crisis_vote_rejected
+		set_global_variable = je_hungarian_crisis_war_outcome
+
+		c:BOH = {
+            create_diplomatic_pact = {
+                country = c:HUN
+                type = puppet
+            }
+        }
+
+		create_diplomatic_play = {
+            type = dp_humiliation
+            target_country = c:HUN
+
+			add_war_goal = { holder = c:BOH target_country = c:BRG type = humiliation }
+            add_war_goal = { holder = c:HUN target_country = c:BOH type = independence }
+			
+        }
+
 		
-		c:SCA = { trigger_event = {id = dvg_hungary.9 days = 30 } }
+
+		random_diplomatic_play = {
+            limit = {
+                initiator = c:BOH
+                target = c:HUN
+            }
+            save_scope_as = dvg_hungarian_crisis_war
+        }
+
+		every_country = {
+			limit = {
+				has_variable = je_hungarian_crisis_voted_BOH
+				NOT = { this = c:BRG }
+				NOT = { this = c:HUN }
+				NOT = { this = c:BOH }
+			}
+
+			scope:dvg_hungarian_crisis_war = {
+				add_initiator_backers = {
+					prev
+				}
+        	}
+
+		}
+
+		every_country = {
+			limit = {
+				has_variable = je_hungarian_crisis_voted_BRG
+				NOT = { this = c:HUN }
+				NOT = { this = c:BOH }
+			}
+
+			scope:dvg_hungarian_crisis_war = {
+				add_target_backers = {
+					prev
+				}
+        	}
+
+		}
+
+		
+
 	}
 
 }
 
-
-### Bohemian Perfidy - Scandinavia
+### The Prague conference - Hungarian Independence - Burgundy has to accept
 dvg_hungary.9 = {
 
 	event_image = { video = "europenorthamerica_capitalists_meeting" }
@@ -210,12 +303,13 @@ dvg_hungary.9 = {
 	option = {
 		name = dvg_hungary.9.a
 		default_option = yes
-		
-		c:BRG = { trigger_event = {id = dvg_hungary.10 days = 30 } }
+
+		set_global_variable = je_hungarian_crisis_vote_BRG_accepted
 	}
+
 }
 
-### Scandinavia Warns of a Crisis in Hungary - Burgundy
+### The Prague conference - Hungarian Vassal - Bohemia has to accept
 dvg_hungary.10 = {
 
 	event_image = { video = "europenorthamerica_capitalists_meeting" }
@@ -233,13 +327,15 @@ dvg_hungary.10 = {
 	option = {
 		name = dvg_hungary.10.a
 		default_option = yes
-		
-		c:BOH = { trigger_event = {id = dvg_hungary.11 days = 30 } }
+
+		set_global_variable = je_hungarian_crisis_vote_BOH_accepted
+
+		c:BRG = { trigger_event = dvg_hungary.11 }
 	}
 
 }
 
-### Our Friends in Paris - Bohemia
+### The Prague conference - Hungarian Vassal - Burgundy has to accept
 dvg_hungary.11 = {
 
 	event_image = { video = "europenorthamerica_capitalists_meeting" }
@@ -257,16 +353,81 @@ dvg_hungary.11 = {
 	option = {
 		name = dvg_hungary.11.a
 		default_option = yes
+
+		set_global_variable = je_hungarian_crisis_vote_BOH_accepted
+	}
+
+	option = {
+		name = dvg_hungary.11.b
+
+		set_global_variable = je_hungarian_crisis_vote_rejected
+		set_global_variable = je_hungarian_crisis_war_outcome
+
+		c:BOH = {
+            create_diplomatic_pact = {
+                country = c:HUN
+                type = puppet
+            }
+        }
+
+		create_diplomatic_play = {
+            type = dp_liberate_subject
+            target_country = c:HUN
+
+			
+			add_war_goal = { holder = c:BOH target_country = c:BRG type = humiliation }
+        }
+
+		random_diplomatic_play = {
+            limit = {
+                initiator = c:BRG
+                target = c:BOH
+            }
+            save_scope_as = dvg_hungarian_crisis_war
+        }
+
+		every_country = {
+			limit = {
+				has_variable = je_hungarian_crisis_voted_BOH
+				NOT = { this = c:BRG }
+				NOT = { this = c:HUN }
+				NOT = { this = c:BOH }
+			}
+
+			scope:dvg_hungarian_crisis_war = {
+				add_target_backers = {
+					prev
+				}
+        	}
+
+		}
+
+		every_country = {
+			limit = {
+				has_variable = je_hungarian_crisis_voted_BRG
+				NOT = { this = c:BRG }
+				NOT = { this = c:HUN }
+				NOT = { this = c:BOH }
+			}
+
+			scope:dvg_hungarian_crisis_war = {
+				add_initiator_backers = {
+					prev
+				}
+        	}
+
+		}
+
 		
-		c:DUA = { trigger_event = {id = dvg_hungary.12 days = 30 } }
+
 	}
 
 }
 
-### The Hungarian Crisis
+### Jagiellon Hungary
 dvg_hungary.12 = {
 
-	event_image = { video = "europenorthamerica_political_extremism" }
+	event_image = { video = "europenorthamerica_capitalists_meeting" }
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
 	icon = "gfx/interface/icons/event_icons/newspaper.dds"
 	duration = 3
@@ -281,25 +442,28 @@ dvg_hungary.12 = {
 	option = {
 		name = dvg_hungary.12.a
 		default_option = yes
+
+		if = {
+			limit = { c:BOH ?= this }
+			c:BOH = {
+				create_diplomatic_pact = {
+					country = c:HUN
+					type = puppet
+				}
+			}
+		}
 		
-
-
-		c:SCA = { trigger_event = {id = dvg_hungary.13 days = 30 } }
-		c:BRG = { trigger_event = {id = dvg_hungary.13 days = 30 } }
-		c:BOH = { trigger_event = {id = dvg_hungary.13 days = 30 } }
-
-
-
-		
+		set_global_variable = je_hungarian_instability_complete 
 	}
+
 }
 
-### Paris Demands Restraint!
+### Magyar Independence
 dvg_hungary.13 = {
 
-	event_image = { video = "unspecific_ruler_speaking_to_people" }
+	event_image = { video = "europenorthamerica_capitalists_meeting" }
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
-	icon = "gfx/interface/icons/event_icons/scales.dds"
+	icon = "gfx/interface/icons/event_icons/newspaper.dds"
 	duration = 3
 
 	type = country_event
@@ -312,101 +476,32 @@ dvg_hungary.13 = {
 	option = {
 		name = dvg_hungary.13.a
 		default_option = yes
-		
 
-		if = {
-			limit = {
-				this = c:BOH
-			}
-			add_journal_entry = {
-				type = je_hungarian_crisis
-			}
-		}
-
-
-
-		
-
-		### Conference begins
-		#trigger_event = { id = dvg_hungary.21 months = 2 }
+		set_global_variable = je_hungarian_instability_complete 
 	}
 
 }
 
+### War for Hungary
+dvg_hungary.14 = {
 
-
-### Hungary decision
-### Jagiellon Hungary
-dvg_hungary.71 = {
-
-	event_image = { video = "unspecific_signed_contract" }
+	event_image = { video = "europenorthamerica_capitalists_meeting" }
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
-	icon = "gfx/interface/icons/event_icons/scales.dds"
+	icon = "gfx/interface/icons/event_icons/newspaper.dds"
 	duration = 3
 
 	type = country_event
 	placement = ROOT
 	
-	title = dvg_hungary.71.t
-	desc = dvg_hungary.71.d
-	flavor = dvg_hungary.71.f
-
-
+	title = dvg_hungary.14.t
+	desc = dvg_hungary.14.d
+	flavor = dvg_hungary.14.f
 
 	option = {
-		name = dvg_hungary.71.a
+		name = dvg_hungary.14.a
 		default_option = yes
 
-		if = {
-			limit = {
-				this = c:BOH
-			}
-
-			c:BOH = {
-				create_diplomatic_pact = {
-					country = c:HUN
-					type = puppet
-				}
-			}
-			
-	
-		}
-
-		
-		
-		
+		set_global_variable = { je_hungarian_instability_complete }
 	}
 
-}
-
-###  Magyar Independence
-dvg_hungary.72 = {
-
-	event_image = { video = "unspecific_signed_contract" }
-	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
-	icon = "gfx/interface/icons/event_icons/scales.dds"
-	duration = 3
-
-	type = country_event
-	placement = ROOT
-	
-	title = dvg_hungary.72.t
-	desc = dvg_hungary.72.d
-	flavor = dvg_hungary.72.f
-
-
-
-	option = {
-		name = dvg_hungary.72.a
-		default_option = yes
-
-		if = {
-			limit = {
-				this = c:BOH
-			}
-
-			
-			### TODO: Add Effects
-		}
-	}
 }
