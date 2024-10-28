@@ -1,0 +1,206 @@
+﻿namespace = dvg_hre
+
+### Holy Roman Empire
+### Imperial incidents
+### First Imperial Incident: Bayreuth Constitution
+dvg_hre.1 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_hre.1.t
+	desc = dvg_hre.1.d
+	flavor = dvg_hre.1.f
+
+	event_image = {video = "unspecific_military_parade"}
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
+	duration = 1
+
+	option = {
+		name = dvg_hre.1.a
+
+		c:FRE ?= {
+			activate_law = law_type:law_census_voting
+			activate_law = law_type:law_freedom_of_conscience
+			activate_law = law_type:law_right_of_assembly
+		}
+
+		add_journal_entry = { type = je_hre_bayreuth_constitution }
+
+	}
+}
+
+### Nürnberg Fire
+dvg_hre.2 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_hre.2.t
+	desc = dvg_hre.2.d
+	flavor = dvg_hre.2.f
+
+	event_image = {video = "unspecific_military_parade"}
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
+	duration = 1
+
+	option = {
+		name = dvg_hre.2.a
+
+		decrease_hre_stability = yes
+
+		every_country = {
+			limit = {
+				OR = {
+					country_has_primary_culture = cu:north_german
+					country_has_primary_culture = cu:south_german
+					country_has_primary_culture = cu:rheinish
+				}
+			}
+
+			trigger_event = dvg_hre.3
+		}
+
+		set_global_variable = dvg_nuernberg_fire
+
+	}
+}
+
+### Nürnberglied
+dvg_hre.3 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_hre.3.t
+	desc = dvg_hre.3.d
+	flavor = dvg_hre.3.f
+
+	event_image = {video = "unspecific_military_parade"}
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
+	duration = 1
+
+	option = {
+		name = dvg_hre.2.a
+
+
+		change_relations = { country = c:BOH value = -30 }	
+
+		if = {
+			limit = {
+				has_modifier = dvg_zeal_oath
+			}
+			remove_modifier = dvg_zeal_oath
+		}
+
+		add_modifier = {
+			name = dvg_nuernberglied
+		}
+
+	}
+}
+
+
+### Imperial Incident: Bayreuth Electorate
+### Triggered if Bayreuth is a subject
+dvg_hre.4 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_hre.4.t
+	desc = dvg_hre.4.d
+	flavor = dvg_hre.4.f
+
+	event_image = {video = "unspecific_military_parade"}
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
+	duration = 1
+
+	trigger = {
+		exists = c:FRE
+		c:FRE = { is_subject = yes }
+	}
+
+	option = {
+		name = dvg_hre.4.a
+
+		every_country = {
+			limit = {
+				has_subject_relation_with = c:FRE	
+			}
+			save_scope_as = dvg_bayreuth_overlord
+		}
+
+		add_journal_entry = { type = je_hre_bayreuth_electorate }
+
+	}
+}
+
+### Electorate of Baden
+dvg_hre.5 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_hre.5.t
+	desc = dvg_hre.5.d
+	flavor = dvg_hre.5.f
+
+	event_image = {video = "unspecific_military_parade"}
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
+	duration = 1
+
+	option = {
+		name = dvg_hre.5.a
+	
+		add_modifier = dvg_electorate_baden
+
+		c:BOH.power_bloc = {
+			add_leverage = { target = c:BAD value = 1000 }
+		}
+
+	}
+}
+
+### Bohemia demands independence of Bayreuth
+dvg_hre.6 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_hre.6.t
+	desc = dvg_hre.6.d
+	flavor = dvg_hre.6.f
+
+	event_image = {video = "unspecific_military_parade"}
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
+	duration = 1
+
+	option = { ## accept
+		name = dvg_hre.6.a
+
+		remove_diplomatic_pact = {
+			country = c:FRE
+			type = puppet
+		}
+
+		increase_hre_stability = yes
+
+		ai_chance = {
+			base = 100 ### AI should fear Bohemia and "return Bayreuth"
+		}
+	}
+
+	decline = {
+		name = dvg_hre.6.b
+
+		c:BOH = {
+			create_diplomatic_play = {
+				type = dp_liberate_subject
+				target_country = c:FRE
+			}
+		}
+		
+	}
+}
+
