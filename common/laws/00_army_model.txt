@@ -9,6 +9,7 @@
 		unit_experience_gain_mult = -0.25
 		state_conscription_rate_add = 0.04
 		country_aristocrats_pol_str_mult = 0.25
+		country_officers_pol_str_mult = 1
 		country_military_goods_cost_mult = -0.1
 		#state_building_barracks_max_level_add = 25
 		#state_building_conscription_center_max_level_add = 25
@@ -45,26 +46,6 @@
 			custom_tooltip = non_military_pops_af_ig_shift_effect_negative_tt
 		}
 	}
-	
-	possible_political_movements = {
-		law_professional_army
-		law_mass_conscription
-		law_national_militia
-	}
-
-	pop_support = {
-		value = 0
-		# Aristocrats like feudalism
-		add = {
-			desc = "POP_ARISTOCRATS"			
-			if = {
-				limit = { 
-					is_pop_type = aristocrats
-				}
-				value = 0.33
-			}
-		}
-	}
 
 	# AI will never return to peasant levies
 	ai_will_do = {
@@ -92,14 +73,11 @@ law_professional_army = {
 	modifier = {
 		unit_morale_loss_mult = -0.1
 		state_conscription_rate_add = 0.01
-		interest_group_ig_armed_forces_pol_str_mult = 0.25
+		country_officers_pol_str_mult = 2
+		country_soldiers_pol_str_mult = 0.50
 		#state_building_barracks_max_level_add = 100
 		#state_building_conscription_center_max_level_add = 50
-		unit_experience_gain_mult = 0.25
-	}
-	
-	possible_political_movements = {
-		law_mass_conscription
+		unit_experience_gain_mult = 1.0
 	}
 
 	can_impose = {
@@ -133,44 +111,12 @@ law_professional_army = {
 		}
 	}
 
-	pop_support = {
-		value = 0
-		# Officers like professionalism
-		add = {
-			desc = "POP_OFFICERS"			
-			if = {
-				limit = { 
-					is_pop_type = officers
-				}
-				value = 0.5
-			}
-		}
-		# soldiers are broadly in favor of this also
-		add = {
-			desc = "POP_SOLDIERS"		
-			if = {
-				limit = { 
-					is_pop_type = soldiers
-				}
-				value = 0.25
-			}
-		}
-	}
-
 	ai_enact_weight_modifier = { #Petitions
 		value = 0
 		
 		if = {
 			limit = { ai_has_enact_weight_modifier_journal_entries = yes }
 			add = 750
-		}
-		
-		if = {
-			limit = { 
-				has_journal_entry = je_sick_man_army
-				has_law = law_type:law_peasant_levies
-			}
-			add = 1000
 		}			
 		
 		# AI should really try to get out of Peasant Levies under the right circumstances
@@ -180,7 +126,13 @@ law_professional_army = {
 				NOT = { has_strategy = ai_strategy_reactionary_agenda }
 				OR = {
 					NOT = { has_strategy = ai_strategy_conservative_agenda }
-					any_political_movement = { desired_law = law_type:law_professional_army }	
+					any_political_movement = {
+						law_stance = {
+							law = law_type:law_professional_army 
+							value > neutral
+						}	
+						political_movement_support >= 0.10
+					}
 					has_technology_researched = napoleonic_warfare
 				}	
 			}
@@ -200,17 +152,13 @@ law_national_militia = {
 	modifier = {
 		unit_morale_loss_mult = -0.05
 		state_conscription_rate_add = 0.05
-		interest_group_ig_armed_forces_pol_str_mult = -0.25
+		country_officers_pol_str_mult = 1
+		country_soldiers_pol_str_mult = 1
 		country_leverage_resistance_mult = 0.5
 		#state_building_barracks_max_level_add = 5
 		#state_building_conscription_center_max_level_add = 100
 	}
 	
-	possible_political_movements = {
-		law_professional_army
-		law_mass_conscription
-	}
-
 	can_enact = {
 		OR = {
 			is_power_bloc_leader = no
@@ -233,20 +181,6 @@ law_national_militia = {
 			}
 			custom_tooltip = military_pops_af_ig_shift_effect_negative_tt
 			custom_tooltip = non_military_pops_af_ig_shift_effect_negative_tt
-		}
-	}
-
-	pop_support = {
-		value = 0
-		# Farmers like waving a rifle around and telling people to get off their land
-		add = {
-			desc = "POP_FARMERS"			
-			if = {
-				limit = { 
-					is_pop_type = farmers
-				}
-				value = 0.25
-			}
 		}
 	}
 	
@@ -279,7 +213,9 @@ law_mass_conscription = {
 		unit_morale_loss_mult = 0.05
 		state_conscription_rate_add = 0.03
 		building_training_rate_mult = 1
-		state_building_barracks_max_level_add = 100
+		country_officers_pol_str_mult = 1.5
+		country_soldiers_pol_str_mult = 1
+		#state_building_barracks_max_level_add = 100
 		#state_building_conscription_center_max_level_add = 100
 	}
 
@@ -311,14 +247,6 @@ law_mass_conscription = {
 			custom_tooltip = non_military_pops_af_ig_shift_effect_negative_tt
 		}
 	}
-	
-	possible_political_movements = {
-		law_mass_conscription
-	}
-
-	pop_support = {
-		value = 0
-	}
 
 	ai_enact_weight_modifier = { #Petitions
 		value = 0
@@ -327,14 +255,7 @@ law_mass_conscription = {
 			limit = { ai_has_enact_weight_modifier_journal_entries = yes }
 			add = 750
 		}
-		
-		if = {
-			limit = { 
-				has_journal_entry = je_sick_man_army
-				has_law = law_type:law_peasant_levies
-			}
-			add = 1000
-		}			
+			
 		
 		# AI should really try to get out of Peasant Levies under the right circumstances
 		if = {
@@ -343,7 +264,13 @@ law_mass_conscription = {
 				NOT = { has_strategy = ai_strategy_reactionary_agenda }
 				OR = {
 					NOT = { has_strategy = ai_strategy_conservative_agenda }
-					any_political_movement = { desired_law = law_type:law_professional_army }	
+					any_political_movement = {
+						law_stance = {
+							law = law_type:law_mass_conscription
+							value > neutral
+						}	
+						political_movement_support >= 0.10
+					}
 					has_technology_researched = napoleonic_warfare
 				}	
 			}
