@@ -85,12 +85,41 @@ on_monthly_pulse_country = {
 		dvg_opstalia.10 #death of hendrik
 		dvg_nuweflander.2 #opstalia moves on reurveld
 		dvg_batavia.1 #batavia primer
+
+
+
+		#### From Vanilla
+
+		every_character_in_jail = { # Music too loud? Right to jail. Right away. Driving too fast? Jail. Slow? Jail. You undercook fish? Believe it or not, jail.
+			save_scope_as = prisoner_scope
+			change_variable = { name = prison_time_var subtract = 1 }
+			if = {
+				limit = {
+					NOT = {
+						exists = var:prison_country
+					}
+				}
+				kill_character = yes
+			}
+			else_if = {
+				limit = {
+					exists = var:prison_country
+					var:prison_time_var <= 0
+				}
+				free_character_from_void = yes
+				owner ?= {
+					post_notification = prisoner_out_of_jail
+				}
+				remove_variable = prison_country
+				remove_variable = prison_time_var
+			}
+		}
 		
 	}
 	effect = {
 		every_character_in_exile_pool = {
 			limit = {
-				popularity <= 15
+				popularity <= -100
 			}
 			kill_character = yes
 		}
@@ -223,6 +252,11 @@ on_yearly_pulse_country = { #Krakatoa special pulse
 	}
 	random_events = {
 		25 = dvg_bali.3
+	}
+
+	on_actions = {
+		vanilla_lobby_yearly_events
+		delay = { days = 30 }
 	}
 }
 
