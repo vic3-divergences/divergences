@@ -55,6 +55,10 @@
 	# scope:religion = The religious identity of the movement, if any
 	character_support_weight = {}
 	
+	# Trigger that must evaluate true for a movement to be able to pressure an Interest Group (this is in addition to the required supporting clout)
+	# Root = interest group
+	can_pressure_interest_group = {}
+	
 	# Trigger that must evaluate true for individuals in a pop to be able to support movements of this type
 	# Root = pop
 	# scope:culture = The cultural identity of the movement, if any
@@ -121,6 +125,9 @@
 	
 	# Multiplies the impact law enactment has on the activism of this movement type
 	law_enactment_radicalism_multiplier = x
+	
+	# Multiplies the impact active laws have on the activism of this movement type
+	active_law_radicalism_multiplier = x
 	
 	# Bespoke factors for increasing/decreasing the activism of movements of this type
 	additional_radicalism_factors = {}	
