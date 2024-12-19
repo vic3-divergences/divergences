@@ -290,6 +290,12 @@ dvg_belgium.5 = {
 				progress = 7000
 			}
 		}
+		every_subject_or_below = {
+			limit = {
+				country_has_primary_culture = cu:septiman
+			}
+			add_liberty_desire = -20
+		}
 		add_modifier = {
 			name = dvg_modifier_armed_forces_bolstered
 			months = 30
@@ -373,7 +379,7 @@ dvg_belgium.6 = {
 
 	trigger = {
 		exists = c:PLA
-		NOR = {
+		NOT = {
 			has_modifier = modifier_widespread_protests
 			has_modifier = modifier_repressing_protests
 
@@ -400,6 +406,15 @@ dvg_belgium.6 = {
 			name = modifier_widespread_protests
 			months = 3
 			is_decaying = yes
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_belgian_confederacy
+			}
+			change_variable = {
+				name = dvg_belgian_var
+				add = 3
+			}
 		}
 		every_country = {
 			limit = {
@@ -429,6 +444,16 @@ dvg_belgium.6 = {
 			months = 3
 			is_decaying = yes
 		}
+		if = {
+			limit = {
+				has_journal_entry = je_belgian_confederacy
+			}
+			change_variable = {
+				name = dvg_belgian_var
+				subtract = 3
+			}
+		}
+		
 		every_country = {
 			limit = {
 				country_has_primary_culture = cu:septiman
@@ -1732,10 +1757,14 @@ dvg_belgium.25 = {
 		NOT = {
 			has_truce_with = c:PLA
 		}
+		NOT = {
+			has_variable = villefranche
+		}
 		has_journal_entry = je_sanacomie
 		has_technology_researched = nationalism
 	}
 	immediate = {
+		set_variable = villefranche
 		c:PLA = {
 			save_scope_as = scope_PLA
 		}
@@ -1768,15 +1797,31 @@ dvg_belgium.25 = {
 					target_state = scope:scope_sanacomie
 				}
 			}
-		}
-
-		
-
-		
-		
+		}		
 		
 		ai_chance = {
 			base = 50
+		}
+	}
+	option = {
+		name = dvg_belgium.25.a
+
+		change_relations = {
+			country = c:PLA
+			value = 15
+		}
+		add_radicals = {
+			value = 0.05
+			culture = cu:septiman
+		}
+		create_bidirectional_truce = {
+			country = c:PLA
+			months = 12
+		}
+			
+		
+		ai_chance = {
+			base = 1
 		}
 	}
 }
@@ -1876,7 +1921,15 @@ dvg_belgium.27 = {
 		name = dvg_belgium.27.a
 		default_option = yes
 
-		
+		if = {
+			limit = {
+				has_journal_entry = je_belgian_confederacy
+			}
+			change_variable = {
+				name = dvg_belgian_var
+				add = 100
+			}
+		}
 
 		add_loyalists = {
 			value = 0.15
@@ -2805,7 +2858,241 @@ dvg_belgium.40 = {
 			save_scope_as = scope_PLA
 		}
 	}
+	#Belgium Vote of No Confidence
 
+	option = {
+		name = dvg_belgium.40.a
+		default_option = yes
+		
+		
+		
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+#Native land claims
+dvg_belgium.41 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_belgium.41.t
+	desc = dvg_belgium.41.d
+	flavor = dvg_belgium.41.f
+
+	event_image = {
+		video = "europenorthamerica_native_american"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		any_neighbouring_state = {
+			owner = {
+				any_primary_culture = {
+					has_discrimination_trait = indigenous_american_heritage
+				}
+			}
+		}
+	}
+	immediate = {
+		random_country = {
+			limit = {
+				any_primary_culture = {
+					has_discrimination_trait = arcadian
+				}
+				any_neighbouring_state = {
+					owner = {
+						any_primary_culture = {
+							has_discrimination_trait = indigenous_american_heritage
+						}
+					}
+				}
+			}
+			save_scope_as = scope_bel_settler
+		}
+	}
+
+	option = {
+		name = dvg_belgium.41.a
+		default_option = yes
+		
+		add_radicals = {
+			value = 0.25
+			culture = cu:iroquoian
+		}
+
+		add_radicals = {
+			value = 0.25
+			culture = cu:algonquian
+		}
+		add_loyalists = {
+			value = 0.15
+			culture = cu:septiman
+		}
+		every_country = {
+			limit = {
+				is_subject_of = ROOT
+				any_primary_culture = {
+					has_discrimination_trait = arcadian
+				}
+				any_neighbouring_state = {
+					owner = {
+						any_primary_culture = {
+							has_discrimination_trait = indigenous_american_heritage
+						}
+					}
+				}
+			}
+			add_liberty_desire = -20
+		}
+		if = {
+			limit = {
+				exists = c:SKR
+			}
+			change_relations = {
+				country = c:SKR
+				value = -10
+			}
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+
+	option = {
+		name = dvg_belgium.41.b
+		default_option = yes
+		
+		add_loyalists = {
+			value = 0.25
+			culture = cu:iroquoian
+		}
+
+		add_loyalists = {
+			value = 0.25
+			culture = cu:algonquian
+		}
+		add_radicals = {
+			value = 0.20
+			culture = cu:septiman
+		}
+		if = {
+			limit = {
+				exists = c:SKR
+			}
+			change_relations = {
+				country = c:SKR
+				value = 10
+			}
+		}
+		every_country = {
+			limit = {
+				is_subject_of = ROOT
+				any_primary_culture = {
+					has_discrimination_trait = arcadian
+				}
+				any_neighbouring_state = {
+					owner = {
+						any_primary_culture = {
+							has_discrimination_trait = indigenous_american_heritage
+						}
+					}
+				}
+			}
+			add_liberty_desire = 25
+		}
+		
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+dvg_belgium.42 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_belgium.42.t
+	desc = dvg_belgium.42.d
+	flavor = dvg_belgium.42.f
+
+	event_image = {
+		video = "europenorthamerica_capitalists_meeting"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	immediate = {
+		c:PLA = {
+			save_scope_as = scope_PLA
+		}
+		ig:ig_industrialists = {
+			save_scope_as = industrialists_scope
+		}
+	}
+	#Belgium Vote of No Confidence
+
+	option = {
+		name = dvg_belgium.40.a
+		default_option = yes
+		
+		trigger_event = {
+			id = dvg_belgium.43 days = 30
+		}
+		add_modifier = {
+			 name = dvg_modifier_industrialists_bolstered
+			 months = -1
+		}
+		
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+dvg_belgium.43 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_belgium.43.t
+	desc = dvg_belgium.43.d
+	flavor = dvg_belgium.43.f
+
+	event_image = {
+		video = "unspecific_signed_contract"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	immediate = {
+		c:PLA = {
+			save_scope_as = scope_PLA
+		}
+	}
 	#Belgium Vote of No Confidence
 
 	option = {
