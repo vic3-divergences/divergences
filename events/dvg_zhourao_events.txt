@@ -95,9 +95,7 @@ dvg_zhourao.2 = {
     }
 
     immediate = {
-        #		c:KOO = {
-        #			save_scope_as = dvg_koori_scope
-        #		}
+     
     }
 
     # Maintain status quo
@@ -1561,6 +1559,137 @@ dvg_zhourao.19 = {
             base = 100
         }
 
+    }
+}
+
+# Retakes entire continent
+dvg_zhourao.20 = {
+    type = country_event
+    placement = ROOT
+
+    title = dvg_zhourao.20.t
+    desc = dvg_zhourao.20.d
+    flavor = dvg_zhourao.20.f
+
+    event_image = {
+        video = "ep1_transfer_of_authority"
+    }
+
+    on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+    icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+    duration = 3
+
+    trigger = {
+    }
+
+    immediate = {
+        random_neighbouring_state = {
+            limit = {
+                owner = {
+                    is_ai = yes
+                    relations:root >= relations_threshold:amicable
+                    OR = {
+                        country_has_primary_culture = cu:australian
+                        country_has_primary_culture = cu:maori
+                        country_has_primary_culture = cu:aborigine
+                    }
+                    is_subject = yes
+                    NOT = { THIS = ROOT }
+                    top_overlord = {
+                        THIS = root.top_overlord
+                    }
+                    this.gdp < root.gdp
+                }
+            }
+            owner = { save_scope_as = canada_annex_scope }
+        }
+        if = {
+            limit = {
+                is_subject = yes
+            }
+            top_overlord = {
+                save_scope_as = canada_overlord_country
+                ruler = {
+                    save_scope_as = canada_overlord_ruler
+                }
+            }
+        }
+
+    }
+
+    option = {
+        name = dvg_zhourao.20.b
+        default_option = yes
+
+        add_loyalists = {
+            value = 0.30
+        }
+        add_modifier = {
+            name = dvg_assimilate
+            months = 60
+            is_decaying = yes
+        }
+        every_scope_state = {
+            random_scope_pop = {
+                limit = {
+                    NOT = {
+                        culture = cu:zhourao
+                    }
+                }
+                change_pop_culture = {
+                    target = cu:zhourao
+                    value = 1
+                }
+            }
+        }
+        every_scope_state = {
+            limit = {
+                is_incorporated = yes
+            }
+            state_region = {
+                add_homeland = cu:zhourao
+            }
+        }
+        
+       
+    }
+
+
+    option = {
+        name = dvg_zhourao.20.a
+        default_option = yes
+
+        add_journal_entry = { type = je_zhrzsa_indonesia_first_step }
+
+        every_scope_state = {
+            limit = {
+                is_incorporated = yes
+            }
+            state_region = {
+                add_homeland = cu:zhourao
+            }
+        }
+
+		every_state_region = {
+			limit = {
+			OR = {
+				is_homeland = cu:melanesian
+				is_homeland = cu:polynesian
+				is_homeland = cu:maori
+			}
+			}
+			add_claim = ROOT
+		}
+		create_incident = {
+			country = THIS
+			value = 12
+		}
+        
+        add_loyalists = {
+            value = 0.30
+        }
     }
 }
 
