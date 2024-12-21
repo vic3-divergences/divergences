@@ -2019,8 +2019,8 @@ dvg_belgium.29 = {
 	trigger = {
 		any_scope_state = {
 			OR = {
-				state_region = STATE_HAUTE_VALOISIE
-				state_region = STATE_FLANDRE_SUPERIEURE
+				state_region = s:STATE_HAUTE_VALOISIE
+				state_region = s:STATE_FLANDRE_SUPERIEURE
 			}
 		}
 	}
@@ -2087,7 +2087,7 @@ dvg_belgium.29 = {
 		s:STATE_FLANDRE_SUPERIEURE = {
 			add_claim = ROOT
 		}
-		s:STATE_HAUTE_VALOISE = {
+		s:STATE_HAUTE_VALOISIE = {
 			add_claim = ROOT
 		}
 		
@@ -2291,11 +2291,15 @@ dvg_belgium.32 = {
 
 	trigger = {
 		any_scope_state = {
-			state_region = STATE_BASSE_VALOISIE
+			state_region = s:STATE_BASSE_VALOISIE
 
+		NOT = {
+			has_global_variable = cbv_declared
 		}
 	}
+	}
 	immediate = {
+		set_global_variable = cbv_declared
 		if = {
 			limit = {
 				exists = s:STATE_BASSE_VALOISIE.region_state:BLC
@@ -2588,6 +2592,11 @@ dvg_belgium.36 = {
 	}
 	option = {
 		name = dvg_belgium.36.b
+		trigger = {
+			NOT = {
+				owns_entire_state_region = STATE_HAUTE_VALOISIE
+			}
+		}
 		
 		s:STATE_HAUTE_VALOISIE = {
 			add_claim = ROOT
@@ -3016,7 +3025,7 @@ dvg_belgium.41 = {
 		}
 	}
 }
-
+# Rise of Les Fiducies
 dvg_belgium.42 = {
 	type = country_event
 	placement = ROOT
@@ -3049,6 +3058,7 @@ dvg_belgium.42 = {
 	#Belgium Vote of No Confidence
 
 	option = {
+
 		name = dvg_belgium.40.a
 		default_option = yes
 		
@@ -3059,6 +3069,14 @@ dvg_belgium.42 = {
 			 name = dvg_modifier_industrialists_bolstered
 			 months = -1
 		}
+		add_journal_entry = {
+			type = je_wylde_rytt
+		}
+		set_variable = blc_corpo_var
+		change_variable = {
+			name = blc_corpo_var
+			add = 4
+		}
 		
 		
 		ai_chance = {
@@ -3066,7 +3084,7 @@ dvg_belgium.42 = {
 		}
 	}
 }
-
+#Reconstruction?
 dvg_belgium.43 = {
 	type = country_event
 	placement = ROOT
@@ -3092,14 +3110,146 @@ dvg_belgium.43 = {
 		c:PLA = {
 			save_scope_as = scope_PLA
 		}
+		ig:ig_industrialists = {
+			save_scope_as = ig_industrialists
+		}
 	}
-	#Belgium Vote of No Confidence
+	#Yes Carpetbagging
 
 	option = {
-		name = dvg_belgium.40.a
+		name = dvg_belgium.43.a
 		default_option = yes
 		
+		ig:ig_rural_folk = {
+			add_modifier = {
+				name = modifier_ig_dissaproves
+				is_decaying = yes
+				months = 24
+			}
+		}
+		change_variable = {
+			name = blc_corpo_var
+			add = 1
+		}
+
+		add_radicals = {
+			value = 0.15
+			culture = cu:cadien
+		}
 		
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+	#No Carpetbagging
+	option = {
+		name = dvg_belgium.43.b
+		
+		ig:ig_industrialists = {
+			add_modifier = {
+				name = modifier_ig_dissaproves
+				is_decaying = yes
+				months = 24
+			}
+			
+		}
+		change_variable = {
+			name = blc_corpo_var
+			subtract = 1
+		}
+		
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#Western Expansion?
+dvg_belgium.44 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_belgium.44.t
+	desc = dvg_belgium.44.d
+	flavor = dvg_belgium.44.f
+
+	event_image = {
+		video = "unspecific_signed_contract"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	immediate = {
+		c:SKR = {
+			save_scope_as = scope_PLA
+		}
+		ig:ig_industrialists = {
+			save_scope_as = ig_industrialists
+		}
+	}
+	#Yes Migrant Labor
+
+	option = {
+		name = dvg_belgium.44.a
+		default_option = yes
+		
+		ig:ig_industrialists = {
+			add_modifier = {
+				name = modifier_ig_approves
+				is_decaying = yes
+				months = 24
+			}
+		}
+		every_scope_state = {
+			limit = {
+				is_coastal = no
+			}
+			add_modifier = {
+				name = dvg_fiducies_development
+				months = 12
+				is_decaying = yes
+			}
+		}
+		change_variable = {
+			name = blc_corpo_var
+			add = 1
+		}
+
+		add_radicals = {
+			value = 0.15
+			culture = cu:cadien
+		}
+		
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+	#No Migrant Labor
+	option = {
+		name = dvg_belgium.44.b
+		
+		ig:ig_trade_unions = {
+			add_modifier = {
+				name = modifier_ig_approves
+				is_decaying = yes
+				months = 24
+			}
+			
+		}
+		change_variable = {
+			name = blc_corpo_var
+			subtract = 1
+		}
 		
 		
 		ai_chance = {
