@@ -2169,6 +2169,15 @@ LEW = { #Leeuwin
 	flag_definition = {
 		coa = LEW
 		coa_with_overlord_canton = LEW
+		priority = 1
+	}
+	flag_definition = {
+		coa = LEW_geus
+		coa_with_overlord_canton = LEW_geus
+		priority = 10
+		trigger = {
+			coa_def_monarchy_flag_trigger = yes
+		}
 	}
 }
 
@@ -2183,6 +2192,19 @@ OPS = { #Opstalia
 	flag_definition = {
 		coa = OPS
 		coa_with_overlord_canton = OPS
+		subject_canton = OPS
+		priority = 1
+	}
+	flag_definition = {
+		coa = NRV
+		coa_with_overlord_canton = OPS
+		subject_canton = OPS
+		trigger = {
+			c:OPS = {
+				owns_entire_state_region = STATE_LOURENCO_MARQUES
+			}
+		}
+		priority = 10
 	}
 }
 
@@ -2190,6 +2212,29 @@ NFL = { #Nuweflander
 	flag_definition = {
 		coa = NFL
 		coa_with_overlord_canton = NFL
+		priority = 1
+	}
+	flag_definition = {
+		coa = NFL_monarchy
+		coa_with_overlord_canton = NFL_monarchy
+		trigger = {
+			coa_def_monarchy_flag_trigger = yes
+		}
+		priority = 10
+	}
+	flag_definition = {
+		coa = NRV
+		coa_with_overlord_canton = NRV
+		subject_canton = NRV
+		trigger = {
+			c:NFL = {
+				AND = {
+					has_state_in_state_region = STATE_TRANSVAAL
+					has_state_in_state_region = STATE_VRYSTAAT
+				}
+			}
+		}
+		priority = 15
 	}
 }
 
@@ -2197,13 +2242,25 @@ BTV = { #Batavia
 	flag_definition = {
 		coa = BTV
 		coa_with_overlord_canton = BTV
+		priority = 1
 	}
 }
 
 VRY = { #Vryland
 	flag_definition = {
 		coa = VRY
+		subject_canton = VRY
 		coa_with_overlord_canton = VRY
+		priority = 1
+	}
+	flag_definition = {
+		coa = VRY_slave_subject
+		allow_overlord_canton = yes
+		coa_with_overlord_canton = VRY_slave_subject
+		trigger = {
+			coa_def_lesser_subject_trigger = yes
+		}
+		priority = 10
 	}
 }
 
@@ -2935,28 +2992,8 @@ QUI = { #QUITO
 		trigger = {
 			exists = c:QUI
 			exists = c:SPA
-			OR = {
-				c:SPA = {
-					has_diplomatic_pact = {
-						who = c:QUI
-						type = protectorate
-						is_initiator = yes
-					}
-				}
-				c:SPA = {
-					has_diplomatic_pact = {
-						who = c:QUI
-						type = puppet
-						is_initiator = yes
-					}
-				}
-				c:SPA = {
-					has_diplomatic_pact = {
-						who = c:QUI
-						type = dominion
-						is_initiator = yes
-					}
-				}
+			c:QUI = {
+				is_subject_of = c:SPA
 			}
 		}
 	}
@@ -2982,27 +3019,14 @@ GRA = { #GRANADA
 		trigger = {
 			exists = c:GRA
 			exists = c:SPA
-			OR = {
-				c:SPA = {
-					has_diplomatic_pact = {
-						who = c:GRA
-						type = puppet
-						is_initiator = yes
-					}
-				}
-				c:SPA = {
-					has_diplomatic_pact = {
-						who = c:GRA
-						type = dominion
-						is_initiator = yes
-					}
-				}
+			c:GRA = {
+				is_subject_of = c:SPA
 			}
 		}
 	}
 }
 
-LUS = { #GRANADA
+LUS = { #Lusitania
 	flag_definition = {
 		coa = LUS
 		coa_with_overlord_canton = LUS
@@ -3012,23 +3036,10 @@ LUS = { #GRANADA
 		subject_canton = LUS_viceroy #DVG
 		priority = 1000
 		trigger = {
-			exists = c:GRA
+			exists = c:LUS
 			exists = c:SPA
-			OR = {
-				c:SPA = {
-					has_diplomatic_pact = {
-						who = c:GRA
-						type = puppet
-						is_initiator = yes
-					}
-				}
-				c:SPA = {
-					has_diplomatic_pact = {
-						who = c:GRA
-						type = dominion
-						is_initiator = yes
-					}
-				}
+			c:LUS = {
+				is_subject_of = c:SPA
 			}
 		}
 	}
@@ -3495,15 +3506,20 @@ SHN = { #Shanxi
 		allow_overlord_canton = yes		
 		priority = 50
 		trigger = { 
+
+			c:SHU ?= { 
+				exists = yes
+			}
+
 			OR = {
-				c:SHU = {
+				c:SHU ?= {
 					has_diplomatic_pact = {
 						who = c:HNA
 						type = puppet
 						is_initiator = yes
 					}
 				}
-				c:SHU = {
+				c:SHU ?= {
 					has_diplomatic_pact = {
 						who = c:HNA
 						type = vassal
@@ -3535,6 +3551,10 @@ HNA = { #Hunan
 		allow_overlord_canton = yes		
 		priority = 1500
 		trigger = { 
+			c:SHU ?= { 
+				exists = yes
+			}
+
 			OR = {
 				c:SHU = {
 					has_diplomatic_pact = {
@@ -3564,6 +3584,11 @@ SIH = { #Sichuan
 		allow_overlord_canton = yes		
 		priority = 50
 		trigger = { 
+
+			c:SHU ?= { 
+				exists = yes
+			}
+
 			OR = {
 				c:SHU = {
 					has_diplomatic_pact = {
@@ -3595,6 +3620,10 @@ GUI = { #Guizhou
 		priority = 50
 		trigger = { 
 			OR = {
+				c:SHU ?= { 
+					exists = yes
+				}
+
 				c:SHU = {
 					has_diplomatic_pact = {
 						who = c:GUI
@@ -4051,8 +4080,7 @@ ITC = { #Italian Confederation
 		trigger = {
 			exists = scope:actor
 			scope:actor = {
-				was_formed_from = c:PRO
-				
+				was_formed_from = PRO
 			}
 		}
 	}
@@ -4063,8 +4091,7 @@ ITC = { #Italian Confederation
 		trigger = {
 			exists = scope:actor
 			scope:actor = {
-				was_formed_from = c:COR
-				
+				was_formed_from = COR
 			}
 		}
 	}
@@ -4075,8 +4102,7 @@ ITC = { #Italian Confederation
 		trigger = {
 			exists = scope:actor
 			scope:actor = {
-				was_formed_from = c:LOM
-				
+				was_formed_from = LOM
 			}
 		}
 	}
@@ -5934,7 +5960,12 @@ MLY = { #Malaysia
 		coa_with_overlord_canton = MLY_subject	
 		priority = 20	
 		trigger = { 	
-			coa_def_theocracy_flag_trigger = yes	
+			coa_def_theocracy_flag_trigger = yes
+			country_has_state_religion = rel:sunni	
+			exists = scope:actor
+			scope:actor = {
+				country_has_state_religion = rel:sunni
+			}
 		}	
 	}
 	
@@ -5976,6 +6007,24 @@ MLY = { #Malaysia
 		priority = 20	
 		trigger = { 	
 			coa_def_monarchy_flag_trigger = yes	
+		}	
+	}
+	flag_definition = {	
+		coa = MLY_buddhist
+		subject_canton = MLY_buddhist	
+		allow_overlord_canton = yes		
+		coa_with_overlord_canton = MLY_subject	
+		priority = 1505
+		trigger = { 	
+			scope:actor = {
+				coa_def_theocracy_flag_trigger = yes
+				OR = {
+					country_has_state_religion = rel:theravada
+					country_has_state_religion = rel:mahayana
+
+				}
+			}
+			
 		}	
 	}
 }
@@ -6069,7 +6118,7 @@ LNG = {
 	}
 }
 
-CPT = { # Romania
+CPT = { # Carpathia
 	flag_definition = {
 		coa = CPT
 		subject_canton = CPT
