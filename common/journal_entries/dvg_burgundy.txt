@@ -589,6 +589,34 @@ je_rhine_burgundy = {
 			}
 			if = {
 				limit = {
+					exists = c:RHI
+					c:RHI = {
+						is_subject_of = c:BRG
+						liberty_desire > 0.50
+					}
+				}
+				change_variable = {
+					name = dvg_burg_rhine_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					exists = c:RHI
+					c:RHI = {
+						has_attitude = {
+							who = c:BRG
+							attitude = rebellious
+						}
+					}
+				}
+				change_variable = {
+					name = dvg_burg_rhine_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
 					has_global_variable = dvg_bav_second_german_council
 				}
 				trigger_event = {
@@ -634,7 +662,15 @@ je_rhine_burgundy = {
 
 
 	complete = {
-		scope:journal_entry = { is_goal_complete = yes }
+		OR = {
+			scope:journal_entry = { is_goal_complete = yes }
+			AND = {
+				c:RHI = {
+					liberty_desire > 90
+				}
+			}
+		}
+		
 		
 	}
 
@@ -644,12 +680,29 @@ je_rhine_burgundy = {
 		}
 	}
 	fail = {
-		cu:rheinish = {
-			NOT = {
-				culture_is_discriminated_in = ROOT
+		OR = {
+			AND = {
+				has_global_variable = dvg_cologne_meeting
+				NOT = {
+					any_state = {
+						state_region = {
+							is_homeland = cu:rheinish
+						}
+						radical_fraction = {
+							value > 0.33
+						}
+					}
+				}
+
 			}
+
+			any_scope_pop = {
+				culture = cu:rheinish
+				religion = rel:catholic
+				pop_acceptance = 5
+			}
+			
 		}
-		has_law = law_type:law_freedom_of_conscience
 		
 	}
 	on_fail = {
@@ -721,8 +774,9 @@ je_netherlands_burgundy = {
 			}
 			if = {
 				limit = {
-					cu:dutch = {
-						culture_is_discriminated_in = ROOT
+					cultural_acceptance_base = {
+						target = cu:dutch
+						value < acceptance_status_3
 					}
 				}
 				change_variable = {
@@ -869,11 +923,9 @@ je_netherlands_burgundy = {
 				ig:ig_petty_bourgeoisie = {
 					ig_approval >= 10
 				}
-				has_technology_researched = pan-nationalism
-				cu:dutch = {
-					NOT = {
-						culture_is_discriminated_in = ROOT
-					}
+				cultural_acceptance_base = {
+					target = cu:dutch
+					value > acceptance_status_3
 				}
 			}
 
