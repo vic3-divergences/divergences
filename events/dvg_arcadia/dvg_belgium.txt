@@ -252,6 +252,9 @@ dvg_belgium.5 = {
 	duration = 3
 
 	trigger = {
+		NOT = {
+			has_variable = constitutional_convention
+		}
 	}
 	immediate = {
 		c:PLA = {
@@ -270,6 +273,7 @@ dvg_belgium.5 = {
 		ig:ig_petty_bourgeoisie = {
 			save_scope_as = burgundian_ig
 		} 
+		set_variable = constitutional_convention
 	}
 
 
@@ -498,6 +502,7 @@ dvg_belgium.7 = {
 	duration = 3
 
 	trigger = {
+
 	}
 	immediate = {
 		c:PLA = {
@@ -2881,7 +2886,7 @@ dvg_belgium.40 = {
 		}
 	}
 }
-#Native land claims
+#Native / Indian land claims
 dvg_belgium.41 = {
 	type = country_event
 	placement = ROOT
@@ -2902,12 +2907,27 @@ dvg_belgium.41 = {
 	duration = 3
 
 	trigger = {
-		any_neighbouring_state = {
-			owner = {
-				any_primary_culture = {
-					has_discrimination_trait = indigenous_american_heritage
+		OR = {
+			any_subject_or_below = {
+				any_neighbouring_state = {
+					owner = {
+						any_primary_culture = {
+							has_discrimination_trait = indigenous_american_heritage
+						}
+					}
 				}
 			}
+			any_neighbouring_state = {
+				owner = {
+					any_primary_culture = {
+						has_discrimination_trait = indigenous_american_heritage
+					}
+				}
+			}
+		}
+		
+		NOT = {
+			has_modifier = dvg_border_raids
 		}
 	}
 	immediate = {
@@ -2926,6 +2946,7 @@ dvg_belgium.41 = {
 			}
 			save_scope_as = scope_bel_settler
 		}
+		
 	}
 
 	option = {
@@ -2935,6 +2956,11 @@ dvg_belgium.41 = {
 		add_radicals = {
 			value = 0.25
 			culture = cu:iroquoian
+		}
+		add_modifier = {
+			name = dvg_border_raids
+			months = 5
+			is_decaying = yes
 		}
 
 		add_radicals = {
@@ -2959,7 +2985,7 @@ dvg_belgium.41 = {
 					}
 				}
 			}
-			add_liberty_desire = -20
+			add_liberty_desire = -10
 		}
 		if = {
 			limit = {
@@ -2983,6 +3009,11 @@ dvg_belgium.41 = {
 		add_loyalists = {
 			value = 0.25
 			culture = cu:iroquoian
+		}
+		add_modifier = {
+			name = dvg_border_raids
+			months = 3
+			is_decaying = yes
 		}
 
 		add_loyalists = {
@@ -3016,7 +3047,7 @@ dvg_belgium.41 = {
 					}
 				}
 			}
-			add_liberty_desire = 25
+			add_liberty_desire = 15
 		}
 		
 		
@@ -3055,7 +3086,6 @@ dvg_belgium.42 = {
 			save_scope_as = industrialists_scope
 		}
 	}
-	#Belgium Vote of No Confidence
 
 	option = {
 
@@ -4203,6 +4233,90 @@ dvg_belgium.64 = {
 		default_option = yes
 		
 		activate_law = law_type:law_state_religion
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+dvg_belgium.65 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_belgium.65.t
+	desc = dvg_belgium.65.d
+	flavor = dvg_belgium.65.f
+
+	event_image = {
+		video = "gfx/event_pictures/europenorthamerica_london_center.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	immediate = {
+
+		c:PLA = {
+			save_scope_as = scope_PLA
+		}
+		every_subject_or_below = {
+			limit = {
+				liberty_desire > 50
+			}
+			make_independent = yes
+		}
+		every_country = {
+			limit = {
+				country_has_primary_culture = septiman
+			}
+			save_scope_as = belgian_subject
+		}
+	}
+
+	#Belgium Starting Event
+
+	option = {
+		name = dvg_belgium.65.a
+		default_option = yes
+		every_country = {
+			limit = {
+				country_has_primary_culture = septiman
+			}
+			change_relations = {
+				country = ROOT
+				value = 20
+			}
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+	option = {
+		name = dvg_belgium.65.b
+
+		every_state_region = {
+			limit = {
+				is_homeland = cu:septiman
+			}
+			add_claim = ROOT
+		}
+
+		create_diplomatic_play = {
+			type = dp_rebellion_annex
+			target_country = scope:belgian_subject
+
+			add_war_goal = {
+				holder = scope:belgian_subject
+				type = revoke_all_claims
+			}
+		}
 		
 		ai_chance = {
 			base = 1
