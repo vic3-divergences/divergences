@@ -230,6 +230,8 @@ dvg_belgium.4 = {
 			base = 1
 		}
 	}
+
+	
 }
 #Tenth Session of Constitutional Convention
 dvg_belgium.5 = {
@@ -525,7 +527,6 @@ dvg_belgium.7 = {
 		add_journal_entry = {
 			type = je_belgian_confederacy
 		}
-
 		change_variable = {
 			name = dvg_belgian_var
 			add = 35
@@ -588,6 +589,7 @@ dvg_belgium.8 = {
 			}
 			save_scope_as = overlord_scope
 		}
+		
 	}
 
 
@@ -619,7 +621,13 @@ dvg_belgium.8 = {
 		trigger = {
 			OR = {
 				is_player = yes
-				liberty_desire >= 75
+				AND = {
+					liberty_desire > 75
+					has_attitude = {
+						who = scope:overlord_scope
+						attitude = rebellious
+					}
+				}
 			}
 		}
 		if = {
@@ -685,6 +693,13 @@ dvg_belgium.9 = {
 		add_loyalists = {
 			value = 0.15
 		}
+		c:BLC = {
+			trigger_event = {
+			
+				id = dvg_belgium.10 days = 30
+			}
+		}
+		
 		
 		ai_chance = {
 			base = 1
@@ -720,6 +735,9 @@ dvg_belgium.10 = {
 			save_scope_as = scope_PLA
 		}
 		set_variable = sanacomie_proposee
+		ig:ig_landowners = {
+			save_scope_as = lions_ig
+		}
 	}
 
 
@@ -746,7 +764,7 @@ dvg_belgium.10 = {
 		
 		
 		ai_chance = {
-			base = 1
+			base = 10
 		}
 	}
 }
@@ -820,7 +838,7 @@ dvg_belgium.11 = {
 		}
 	}
 	option = {
-		name = dvg_belgium.11.a
+		name = dvg_belgium.11.b
 		
 		scope:scope_BLC = {
 			trigger_event = {
@@ -836,7 +854,7 @@ dvg_belgium.11 = {
 			}
 			change_relations = {
 				country = scope:scope_BLC
-				value = -15
+				value = 15
 			}
 		}
 		
@@ -973,6 +991,20 @@ dvg_belgium.14 = {
 		ai_chance = {
 			base = 50
 		}
+			scope:scope_BLC = {
+				trigger_event = {
+					id = dvg_belgium.17
+					days = 10
+				}
+			}
+			
+			c:PLA = {
+				trigger_event = {
+					id = dvg_belgium.16
+					days = 10
+				}
+			}
+		
 	}
 
 	option = {
@@ -993,6 +1025,20 @@ dvg_belgium.14 = {
 	option = {
 		name = dvg_belgium.14.c
 
+		random_scope_state = {
+			limit = {
+				state_region = s:STATE_SANACOMIE
+			}
+			set_state_owner = scope:scope_BLC
+		} 
+		add_radicals = {
+			value = 0.25
+		}
+		change_relations = {
+			country = scope:scope_BLC
+			value = 30
+		}
+		
 		
 		ai_chance = {
 			base = 50
@@ -1037,6 +1083,19 @@ dvg_belgium.15 = {
 			country = c:PLA
 			value = -15
 		}
+	
+			trigger_event = {
+				id = dvg_belgium.17
+				days = 10
+			}
+			c:PLA = {
+				trigger_event = {
+					id = dvg_belgium.16
+					days = 10
+				}
+			}
+		
+		
 		
 		ai_chance = {
 			base = 1
@@ -1055,6 +1114,7 @@ dvg_belgium.15 = {
 			}
 			set_state_owner = c:PLA
 		} 
+		set_variable = sanacomie_give_up
 		
 		ai_chance = {
 			base = 1
@@ -1210,10 +1270,11 @@ dvg_belgium.18 = {
 
 	option = {
 		name = dvg_belgium.18.b
+		
 
 		create_incident = {
 			country = THIS
-			value = 13
+			value = 7
 		}
 
 		s:STATE_LOUISIANE_ROYALE = {
@@ -1289,6 +1350,9 @@ dvg_belgium.19 = {
 			}
 			save_scope_as = scope_sanacomie
 		} 
+		c:BLC = {
+			save_scope_as = BLC_scope
+		}
 		
 	}
 
@@ -1298,17 +1362,20 @@ dvg_belgium.19 = {
 		default_option = yes
 
 		hidden_effect = {
-			trigger_event = {
-				id = dvg_belgium.20
-				days = 100
+			c:PLA = {
+				trigger_event = {
+					id = dvg_belgium.21
+				}
 			}
-			trigger_event = {
-				id = dvg_belgium.22
-				days = 100
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_journal_entry = je_lou_insurgency
+				}
 			}
-			trigger_event = {
-				id = dvg_belgium.23
-				days = 100
+			add_journal_entry = {
+				type = je_lou_insurgency
 			}
 		}
 
@@ -1935,6 +2002,16 @@ dvg_belgium.27 = {
 				add = 100
 			}
 		}
+		if = {
+			limit = {
+				ig:ig_industrialists = {
+					is_marginal = no
+				}
+			}
+			trigger_event = {
+				id = dvg_belgium.42 days = 60
+			}
+		}
 
 		add_loyalists = {
 			value = 0.15
@@ -1973,6 +2050,7 @@ dvg_belgium.28 = {
 		c:PLA = {
 			save_scope_as = scope_PLA
 		}
+		set_global_variable = belgium_no_confidence
 	}
 
 	option = {
@@ -2028,6 +2106,8 @@ dvg_belgium.29 = {
 				state_region = s:STATE_FLANDRE_SUPERIEURE
 			}
 		}
+		has_variable = recently_lost_war
+		has_global_variable = belgium_no_confidence
 	}
 	immediate = {
 		if = {
@@ -2151,7 +2231,6 @@ dvg_belgium.30 = {
 		}
 	}
 
-	#Belgium Vote of No Confidence
 
 	option = {
 		name = dvg_belgium.30.a
@@ -3084,6 +3163,7 @@ dvg_belgium.42 = {
 		}
 		ig:ig_industrialists = {
 			save_scope_as = industrialists_scope
+			set_interest_group_name = ig_les_fiduces
 		}
 	}
 
@@ -3331,6 +3411,13 @@ dvg_belgium.45 = {
 		s:STATE_NOUVELLE_LORRAINE.region_state:BLC = {
 			save_scope_as = lorraine_scope
 		}
+
+		ig:ig_industrialists = {
+			save_scope_as = ig_industrialists
+		}
+		ig:ig_landowners = {
+			save_scope_as = ig_landowners
+		}
 	}
 	#Support Militias
 
@@ -3418,6 +3505,9 @@ dvg_belgium.46 = {
 	immediate = {
 		ig:ig_armed_forces = {
 			save_scope_as = armed_forces_ig
+		}
+		ig:ig_industrialists = {
+			save_scope_as = ig_industrialists
 		}
 		set_variable = maline_strike
 	}
