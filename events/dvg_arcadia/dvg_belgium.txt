@@ -936,6 +936,9 @@ dvg_belgium.13 = {
 		c:PLA = {
 			save_scope_as = scope_PLA
 		}
+		ig:ig_petty_bourgeoisie = {
+			save_scope_as = pb_scope
+		}
 	}
 
 
@@ -1858,6 +1861,9 @@ dvg_belgium.25 = {
 		if = {
 			limit = {
 				exists = s:STATE_SANACOMIE.region_state:PLA
+				NOT = {
+					has_variable = blc_claim_louisiane
+				}
 			}
 			create_diplomatic_play = {
 				type = dp_return_state
@@ -1869,6 +1875,35 @@ dvg_belgium.25 = {
 					type = return_state
 					target_state = scope:scope_sanacomie
 				}
+				
+			}
+		}	
+
+		if = {
+			limit = {
+				exists = s:STATE_SANACOMIE.region_state:PLA
+				has_variable = blc_claim_louisiane
+			}
+			create_diplomatic_play = {
+				type = dp_return_state
+				target_state = s:STATE_SANACOMIE.region_state:PLA
+				war = yes
+	
+				add_war_goal = {
+					holder = c:PLA
+					type = return_state
+					target_state = scope:scope_sanacomie
+				}
+				add_war_goal = {
+					holder = ROOT
+					type = return_state
+					target_state = s:STATE_LOUISIANE_ROYALE.region_state:PLA
+				}
+				add_war_goal = {
+					holder = ROOT
+					type = return_state
+					target_state = s:STATE_CHARLESIE.region_state:PLA
+				}
 			}
 		}		
 		
@@ -1877,7 +1912,7 @@ dvg_belgium.25 = {
 		}
 	}
 	option = {
-		name = dvg_belgium.25.a
+		name = dvg_belgium.25.b
 
 		change_relations = {
 			country = c:PLA
@@ -2011,6 +2046,15 @@ dvg_belgium.27 = {
 			}
 			trigger_event = {
 				id = dvg_belgium.42 days = 60
+			}
+		}
+
+		if = {
+			limit = {
+				has_law = law_type:law_legacy_slavery
+			}
+			trigger_event = {
+				id = dvg_belgium.39 days = 30
 			}
 		}
 
@@ -2866,11 +2910,16 @@ dvg_belgium.39 = {
 	}
 
 	option = {
-		name = dvg_belgium.39.a
+		name = dvg_belgium.39.b
 		default_option = yes
 		
-		
+		activate_law = law_type:law_slave_trade
+
 		s:STATE_LOUISIANE_ROYALE.region_state:BLC = {
+			set_variable = slave_state
+		}
+
+		s:STATE_CHARLESIE.region_state:BLC = {
 			set_variable = slave_state
 		}
 
@@ -2900,11 +2949,14 @@ dvg_belgium.39 = {
 
 
 	option = {
-		name = dvg_belgium.39.b
+		name = dvg_belgium.39.a
 
-		every_scope_state = {
+		every_interest_group = {
 			limit = {
-				is_slave_state = yes
+				law_stance = {
+					law = law_type:law_slavery_banned
+					value < neutral
+				}
 			}
 			add_modifier = {
 				name = ig_slavers_mad
@@ -2912,6 +2964,16 @@ dvg_belgium.39 = {
 				is_decaying = yes
 			}
 		}
+		if = {
+			limit = {
+				has_journal_entry = je_belgian_confederacy
+			}
+			change_variable = {
+				name = dvg_belgian_var
+				add = 15
+			}
+		}
+		
 		hidden_effect = {
 			trigger_event = {
 				id = dvg_belgium.40
@@ -2919,10 +2981,12 @@ dvg_belgium.39 = {
 			}
 		}
 		
+		
 		ai_chance = {
 			base = 1
 		}
 	}
+	
 }
 
 #LOU Revolt for Belgium
@@ -2951,6 +3015,23 @@ dvg_belgium.40 = {
 		c:PLA = {
 			save_scope_as = scope_PLA
 		}
+		random_scope_state = {
+			limit = {
+				state_region = s:STATE_LOUISIANE_ROYALE
+			}
+			save_scope_as = lou_state
+		}
+		create_country = {
+			tag = LOU
+			origin = this
+			state = scope:lou_state
+		}
+		c:LOU = {
+			save_scope_as = scope_LOU
+		}
+		ig:ig_armed_forces = {
+			save_scope_as = armed_forces_ig
+		}
 	}
 	#Belgium Vote of No Confidence
 
@@ -2958,7 +3039,43 @@ dvg_belgium.40 = {
 		name = dvg_belgium.40.a
 		default_option = yes
 		
+		create_diplomatic_play = {
+			type = dp_rebellion_annex
+			target_country = c:LOU
+			
+			add_war_goal = {
+				holder = c:LOU
+				type = independence
+			}
+		}
+		every_scope_state = {
+			limit = {
+				state_region = {
+					is_homeland = cu:cadien
+				}
+			}
+			set_state_owner = c:LOU
+		}
 		
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+	#Play as Louisiane
+	option = {
+		name = dvg_belgium.40.b
+		
+		play_as = c:LOU
+		
+		every_scope_state = {
+			limit = {
+				state_region = {
+					is_homeland = cu:cadien
+				}
+			}
+			set_state_owner = c:LOU
+		}
 		
 		
 		ai_chance = {
@@ -3180,10 +3297,14 @@ dvg_belgium.42 = {
 			 name = dvg_modifier_industrialists_bolstered
 			 months = -1
 		}
+		
+		set_variable = {
+			name = blc_corpo_var
+			value = 0
+		}
 		add_journal_entry = {
 			type = je_wylde_rytt
 		}
-		set_variable = blc_corpo_var
 		change_variable = {
 			name = blc_corpo_var
 			add = 4
@@ -3576,7 +3697,7 @@ dvg_belgium.47 = {
 	flavor = dvg_belgium.47.f
 
 	event_image = {
-		video = "gfx/event_pictures/europenorthamerica_london_center.bk2"
+		video = "gfx/event_pictures/votp_agitator_speaking.bk2"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
@@ -3594,6 +3715,12 @@ dvg_belgium.47 = {
 	immediate = {
 		c:PLA = {
 			save_scope_as = scope_PLA
+		}
+		ig:ig_industrialists = {
+			save_scope_as = industrialists_scope
+		}
+		ig:ig_petty_bourgeoisie = {
+			save_scope_as = pb_scope
 		}
 	}
 	#Salan Seizes Power
@@ -3617,8 +3744,20 @@ dvg_belgium.47 = {
 				celebrity_commander
 				charismatic
 				immortal
+				grifter
+			}	
+		}
+		ig:ig_petty_bourgeoisie = {
+			add_ideology = ideology_individualist
+		} 
 
-			}
+		trigger_event = {
+			id = dvg_belgium.48
+			days = 30
+		}
+
+		add_journal_entry = {
+			type = je_nieuweu_cursus
 		}
 		
 		
@@ -3658,6 +3797,11 @@ dvg_belgium.48 = {
 	option = {
 		name = dvg_belgium.48.a
 		default_option = yes
+
+		trigger_event = {
+			id = dvg_belgium.49
+			days = 30
+		}
 		
 		
 		activate_law = law_type:law_secret_police
@@ -3668,8 +3812,14 @@ dvg_belgium.48 = {
 	}
 	option = {
 		name = dvg_belgium.48.b
+		trigger = {
+			has_law = law_type:law_no_home_affairs
+		}
 		
-		
+		trigger_event = {
+			id = dvg_belgium.49
+			days = 30
+		}
 		
 		
 		ai_chance = {
@@ -3738,6 +3888,7 @@ dvg_belgium.50 = {
 	duration = 3
 
 	trigger = {
+		
 	}
 	immediate = {
 		
@@ -3790,13 +3941,30 @@ dvg_belgium.51 = {
 	immediate = {
 		
 	}
-	#Belgium Dissolve Government
 
 	option = {
 		name = dvg_belgium.51.a
 		default_option = yes
+
+		activate_law = law_type:law_debt_slavery
 		
 		activate_law = law_type:law_state_religion
+
+		activate_law = law_type:law_national_supremacy
+
+		random_primary_culture = {
+			add_cultural_obsession = opium
+		}
+		random_primary_culture = {
+			add_cultural_obsession = tobacco
+		}
+		random_primary_culture = {
+			add_cultural_obsession = sugar
+		}
+
+		add_loyalists = {
+			value = 0.15
+		}
 		
 		ai_chance = {
 			base = 1
@@ -3958,7 +4126,9 @@ dvg_belgium.55 = {
 		
 	}
 	immediate = {
-		
+		ig:ig_petty_bourgeoisie = {
+			save_scope_as = pb_scope
+		}
 	}
 	#Belgium Dissolve Government
 
@@ -3998,7 +4168,9 @@ dvg_belgium.56 = {
 		
 	}
 	immediate = {
-		
+		ig:ig_petty_bourgeoisie = {
+			save_scope_as = pb_scope
+		}
 	}
 	#Belgium Dissolve Government
 
@@ -4006,7 +4178,24 @@ dvg_belgium.56 = {
 		name = dvg_belgium.56.a
 		default_option = yes
 		
-		activate_law = law_type:law_state_religion
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+
+	option = {
+		name = dvg_belgium.56.b
+		
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+
+	option = {
+		name = dvg_belgium.56.c
+		
 		
 		ai_chance = {
 			base = 1
@@ -4254,7 +4443,7 @@ dvg_belgium.62 = {
 	}
 }
 
-#Septiman Directorate SUCCESS
+#les Fiducies EXPOSED
 dvg_belgium.63 = {
 	type = country_event
 	placement = ROOT
@@ -4264,7 +4453,7 @@ dvg_belgium.63 = {
 	flavor = dvg_belgium.63.f
 
 	event_image = {
-		video = "gfx/event_pictures/europenorthamerica_london_center.bk2"
+		video = "gfx/event_pictures/middleeast_police_breaking_door.bk2"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
@@ -4278,16 +4467,29 @@ dvg_belgium.63 = {
 		
 	}
 	immediate = {
-		
+		ig:ig_petty_bourgeoisie = {
+			save_scope_as = pb_scope
+		}
+		ig:ig_industrialists = {
+			save_scope_as = industrialists_scope
+		}
 	}
-	#Belgium Dissolve Government
 
 	option = {
 		name = dvg_belgium.63.a
 		default_option = yes
 		
-		activate_law = law_type:law_state_religion
-		
+		add_modifier = {
+			name = dvg_modifier_industrialists_purged
+			months = 24 
+			is_decaying = yes
+		}
+		add_modifier = {
+			name = dvg_populist_republic
+			months = 24 
+			is_decaying = yes
+		}
+
 		ai_chance = {
 			base = 1
 		}
@@ -4410,6 +4612,152 @@ dvg_belgium.65 = {
 				holder = scope:belgian_subject
 				type = revoke_all_claims
 			}
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+dvg_belgium.66 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_belgium.66.t
+	desc = dvg_belgium.66.d
+	flavor = dvg_belgium.66.f
+
+	event_image = {
+		video = "gfx/event_pictures/southamerica_slave_chains.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		any_subject_or_below = {
+			has_law = law_type:law_slavery_banned
+		}
+		any_subject_or_below = {
+			NOT = {
+				has_law = law_type:law_slavery_banned
+			}
+		}
+	}
+	immediate = {
+		random_country = {
+			limit = {
+				has_law = law_type:law_slavery_banned
+				is_subject_of = ROOT
+			}
+			save_scope_as = abolitionist_scope
+
+		}
+		random_country = {
+			limit = {
+				NOT = {
+					has_law = law_type:law_slavery_banned
+				}
+				is_subject_of = ROOT
+			}
+			save_scope_as = slaver_scope
+		}
+		
+	}
+	#Keep slavery
+
+	option = {
+		name = dvg_belgium.66.a
+		default_option = yes
+
+		every_interest_group = {
+			limit = {
+				law_stance = {
+					law = law_type:law_slavery_banned
+					value > neutral
+				}
+			}
+			add_modifier = modifier_ig_dissaproves
+		}
+		every_interest_group = {
+			limit = {
+				law_stance = {
+					law = law_type:law_slavery_banned
+					value < neutral
+				}
+			}
+			add_modifier = modifier_ig_approves
+		}
+		every_subject_or_below = {
+			limit = {
+				has_law = law_type:law_legacy_slavery
+			}
+			add_liberty_desire = -6
+		}
+		every_subject_or_below = {
+			limit = {
+				has_law = law_type:law_slave_trade
+			}
+			add_liberty_desire = -12
+		}
+
+		every_subject_or_below = {
+			limit = {
+				has_law = law_type:law_slavery_banned
+			}
+			add_liberty_desire = 12
+		}
+		
+		ai_chance = {
+			base = 100
+		}
+	}
+	#Abolish Slavery
+	option = {
+		name = dvg_belgium.66.b
+
+		every_interest_group = {
+			limit = {
+				law_stance = {
+					law = law_type:law_slavery_banned
+					value > neutral
+				}
+			}
+			add_modifier = modifier_ig_approves
+		}
+		every_interest_group = {
+			limit = {
+				law_stance = {
+					law = law_type:law_slavery_banned
+					value < neutral
+				}
+			}
+			add_modifier = modifier_ig_dissaproves
+		}
+		
+		every_subject_or_below = {
+			limit = {
+				has_law = law_type:law_legacy_slavery
+			}
+			add_liberty_desire = 6
+		}
+		every_subject_or_below = {
+			limit = {
+				has_law = law_type:law_slave_trade
+			}
+			add_liberty_desire = 12
+		}
+
+		every_subject_or_below = {
+			limit = {
+				has_law = law_type:law_slavery_banned
+			}
+			add_liberty_desire = -12
 		}
 		
 		ai_chance = {

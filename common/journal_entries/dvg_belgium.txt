@@ -96,7 +96,8 @@
 			}
 		}
 		random_events = {
-			10 = dvg_belgium.41
+			5 = dvg_belgium.41
+			5 = dvg_belgium.66
 		}
 		
 		
@@ -427,10 +428,6 @@ je_belgian_confederacy = {
 
 	progressbar = yes
 	goal_add_value = 700
-
-
-
-
 	
 	should_be_pinned_by_default = yes
 }
@@ -535,7 +532,12 @@ je_wylde_rytt = {
 
 
 	immediate = {
-
+		ig:ig_industrialists = {
+			save_scope_as = industrialists_scope
+		}
+		ig:ig_intelligentsia = {
+			save_scope_as = intelligentsia_scope
+		}
 		if = {
 			limit = {
 				NOT = {
@@ -562,10 +564,30 @@ je_wylde_rytt = {
 			add_technology_researched = corporatism
 		}
 
-		if = {
-			limit = {
-				NOT = {
-					
+		
+	}
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					ig:ig_industrialists = {
+						is_powerful = yes 
+					}
+				}
+				change_variable = {
+					name = blc_corpo_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					ig:ig_industrialists = {
+						is_marginal = yes
+					}
+				}
+				change_variable = {
+					name = blc_corpo_var
+					subtract = 1
 				}
 			}
 			
@@ -585,23 +607,42 @@ je_wylde_rytt = {
 
 	goal_add_value = 10
 
+	
 	complete = {
-		has_variable = maline_strike
-		has_technology_researched = political_agitation
+		AND = {
+			has_variable = maline_strike
+			scope:journal_entry = { is_goal_complete = yes }
+			ig:ig_industrialists = {
+				is_powerful = yes
+			}
+		}
 
 	}
 	on_complete = {
-		
+		trigger_event = {
+			id = dvg_belgium.47
+		}
 	}
 	timeout = 3650
 
-	on_timeout = {
-		if = {
-			limit = {
-
-			}
+	fail = {
+		has_law = law_type:law_secret_police
+		institution_investment_level = {
+			institution = institution_home_affairs
+			value > 2
+		}
+		ig:ig_industrialists = {
+			is_in_government = no
 		}
 	}
+
+	on_timeout = {
+		trigger_event = {
+			id = dvg_belgium.63
+		}
+		remove_modifier = dvg_modifier_industrialists_bolstered
+	}
+
 
 	current_value = {
 		value = var:blc_corpo_var
