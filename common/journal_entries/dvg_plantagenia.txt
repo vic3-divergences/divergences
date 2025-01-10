@@ -1283,15 +1283,16 @@ je_lou_insurgency = {
 		exists = c:PLA
 		c:PLA = ROOT
 	}
+	possible = {
+		has_global_variable = lou_to_liberate
+	}
 	immediate = {
 		set_variable = {
 			name = lou_var
 			value = 0
 		}
 	}
-	possible = {
-		has_global_variable = lou_to_liberate
-	}
+
 	on_monthly_pulse = {
 		effect = {
 			if = {
@@ -1303,18 +1304,71 @@ je_lou_insurgency = {
 						value > 0.33
 					}
 					}
-					
+					var:lou_var < 20
 				}
 				change_variable = {
 					name = lou_var
 					add = 1
 				}
 			}
+			if = {
+				limit = {
+					has_variable = diverted_troops_1
+					var:lou_var < 20
+
+				}
+				change_variable = {
+					name = lou_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					has_variable = diverted_troops_2
+					var:lou_var < 20
+
+				}
+				change_variable = {
+					name = lou_var
+					add = 2
+				}
+			}
+			if = {
+				limit = {
+					institution_investment_level = {
+						institution = institution_police
+						value > 0
+					}
+					var:lou_var < 20
+
+				}
+				change_variable = {
+					name = lou_var
+					subtract = 1
+				}
+			}
+			if = {
+				limit = {
+					institution_investment_level = {
+						institution = institution_home_affairs
+						value > 0
+					}
+					var:lou_var > 0
+
+				}
+				change_variable = {
+					name = lou_var
+					subtract = 1
+				}
+			}
 		}
 		
 	}
 	complete = {
-		is_goal_complete = yes
+		OR = {
+			is_goal_complete = yes
+			is_diplomatic_play_committed_participant = yes
+		}
 		OR = {
 			has_variable = diverted_troops_1
 			has_variable = diverted_troops_2
@@ -1329,15 +1383,18 @@ je_lou_insurgency = {
 			trigger_event = {
 				id = dvg_belgium.22
 			}
+			remove_variable = diverted_troops_1
 		}
 		if = {
 			limit = {
-				has_variable = diverted_troops_1
+				has_variable = diverted_troops_2
 			}
 
 			trigger_event = {
 				id = dvg_belgium.22
 			}
+			remove_variable = diverted_troops_2
+
 		}
 		
 	}
@@ -1345,11 +1402,11 @@ je_lou_insurgency = {
 	fail = {
 		OR = {
 			AND = {
-				has_law = law_type:law_secret_police
-				institution_investment_level = {
-					institution = institution_home_affairs
-					value > 1
+				is_diplomatic_play_enemy_of = c:BLC
+				NOT = {
+					has_variable = diverted_troops_1
 				}
+				has_variable = diverted_troops_2
 			}
 			AND = {
 				has_law = law_type:law_secret_police
@@ -1358,10 +1415,21 @@ je_lou_insurgency = {
 					value > 1
 				}
 			}
+			AND = {
+				NOT = {
+					has_law = law_type:law_no_police
+				}
+				institution_investment_level = {
+					institution = institution_police
+					value > 3
+				}
+			}
 		}
 	}
 	on_fail = {
-		
+		trigger_event = {
+			id = dvg_belgium.20
+		}
 	}
 
 	timeout = 2555
