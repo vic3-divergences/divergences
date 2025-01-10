@@ -381,6 +381,102 @@ je_belgium_unite_button = {
 	}
 }
 
+je_settlers_button = {
+
+	name = "je_sponsor_settlers"
+	desc = "je_sponsor_settlers_desc"
+
+	visible = { 
+		has_journal_entry = je_manifest_destiny_blc
+	}
+
+	possible = {
+		NOT = {
+			has_modifier = dvg_sponsor_settlers
+		}
+	}
+	effect = {
+		random_primary_culture = {
+			save_scope_as = primary_culture_scope
+		}
+		add_modifier = {
+		name = dvg_sponsor_settlers
+		months = 4
+		}
+		create_incident = {
+			country = THIS
+			value = 3
+		}
+		
+		random_neighbouring_state = {
+			limit = {
+				NOT = {
+					owner = ROOT
+				}
+			}
+			add_modifier = {
+				name = dvg_fiducies_development
+				months = 12
+			}
+			save_scope_as = foreign_neighbor_state
+		}
+		random_scope_pop = {
+			limit = {
+				culture = scope:primary_culture_scope
+				wealth < 50
+			}
+			move_pop = scope:foreign_neighbor_state
+		}
+		
+	}
+}
+
+je_claim_button = {
+
+	name = "je_claim_state"
+	desc = "je_claim_state_desc"
+
+	visible = { 
+		has_law = law_type:law_frontier_colonization
+	}
+
+	possible = {
+		any_neighbouring_state = {
+			NOT = {
+				owner = ROOT
+			}
+			has_modifier = dvg_fiducies_development
+			culture_percent_state = {
+				target = scope:primary_culture_scope
+				value > 0.30
+			}
+		}
+	}
+	effect = {
+		create_incident = {
+			country = THIS
+			value = 5
+		}
+		random_neighbouring_state = {
+			limit = {
+				culture_percent_state = {
+					target = scope:primary_culture_pop
+					value > 0.30
+				}
+			}
+			add_modifier = {
+				name = dvg_fiducies_development
+				months = 12
+			}
+			state_region = {
+				add_claim = ROOT
+			}
+		}
+		
+		
+	}
+}
+
 # je_the_krakow_uprising_annex_button = {
 # 	name = "je_the_krakow_uprising_annex_button"
 # 	desc = "je_the_krakow_uprising_annex_button_desc"
