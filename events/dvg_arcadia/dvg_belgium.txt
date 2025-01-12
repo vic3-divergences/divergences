@@ -3446,6 +3446,10 @@ dvg_belgium.43 = {
 				add = 1
 			}
 		}
+		trigger_event = {
+			id = dvg_belgium.44
+			days = 60
+		}
 
 		add_radicals = {
 			value = 0.15
@@ -3477,6 +3481,10 @@ dvg_belgium.43 = {
 				name = blc_corpo_var
 				subtract = 1
 			}
+		}
+		trigger_event = {
+			id = dvg_belgium.44
+			days = 60
 		}
 		
 		
@@ -3515,11 +3523,54 @@ dvg_belgium.44 = {
 		ig:ig_industrialists = {
 			save_scope_as = ig_industrialists
 		}
+		random_scope_state = {
+			limit = { 
+				is_incorporated = yes
+				is_coastal = no
+				any_scope_pop = {
+					pop_acceptance < acceptance_status_4
+					wealth > 20
+				}
+			}
+			random_scope_pop = {
+				limit = { 
+					pop_acceptance < acceptance_status_4
+					wealth > 20
+				}
+				if = {
+					limit = { 
+						state = {
+							state_cultural_acceptance = {  
+								target = PREV.culture
+							    value < acceptance_status_4 
+						   	}
+						}
+					}
+					save_scope_as = discriminated_culture_pop
+				}
+				else_if = {
+					limit = { 
+						state = {
+							state_religious_acceptance = {  
+								target = PREV.religion
+							    value < religious_acceptance_medium 
+						   	}
+						}
+					}
+					save_scope_as = discriminated_religion_pop
+				}
+			}
+		}
 	}
 	#Yes Migrant Labor
 	option = {
 		name = dvg_belgium.44.a
 		default_option = yes
+
+		trigger_event = {
+			id = dvg_belgium.45
+			days = 90
+		}
 		
 		ig:ig_industrialists = {
 			add_modifier = {
@@ -3561,6 +3612,11 @@ dvg_belgium.44 = {
 	#No Migrant Labor
 	option = {
 		name = dvg_belgium.44.b
+
+		trigger_event = {
+			id = dvg_belgium.45
+			days = 90
+		}
 		
 		ig:ig_trade_unions = {
 			add_modifier = {
@@ -3568,7 +3624,24 @@ dvg_belgium.44 = {
 				is_decaying = yes
 				months = 24
 			}
-			
+		}
+		random_scope_state = {
+			limit = {
+				is_coastal = no
+			}
+			add_culture_standard_of_living_modifier = {
+				culture = scope:discriminated_culture_pop
+				months = 7
+				multiplier = -2
+			}
+		}
+		
+		ig:ig_industrialists = {
+			add_modifier = {
+				name = modifier_ig_dissaproves
+				is_decaying = yes
+				months = 24
+			}
 		}
 		change_variable = {
 			name = blc_corpo_var
@@ -4726,6 +4799,9 @@ dvg_belgium.66 = {
 				has_law = law_type:law_slavery_banned
 			}
 		}
+		NOT = {
+			has_modifier = decision_cooldown
+		}
 	}
 	immediate = {
 		random_country = {
@@ -4745,7 +4821,10 @@ dvg_belgium.66 = {
 			}
 			save_scope_as = slaver_scope
 		}
-		
+		add_modifier = {
+			name = decision_cooldown
+			months = 4
+		}
 	}
 	#Keep slavery
 
