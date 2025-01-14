@@ -187,7 +187,7 @@ dvg_belgium.4 = {
 	flavor = dvg_belgium.4.f
 
 	event_image = {
-		video = "europenorthamerica_capitalists_meeting"
+		video = "unspecific_politicians_arguing"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
@@ -2947,6 +2947,7 @@ dvg_belgium.39 = {
 	duration = 3
 
 	trigger = {
+		
 	}
 	immediate = {
 		c:PLA = {
@@ -2974,6 +2975,21 @@ dvg_belgium.39 = {
 		
 		ai_chance = {
 			base = 1
+		}
+		if = {
+			limit = {
+				exists = c:LOU
+				c:LOU = {
+					is_ai = yes
+					NOT = {
+						is_subject_of = ROOT
+					}
+				}
+			}
+			create_diplomatic_pact = {
+				country = c:LOU
+				type = protectorate
+			}
 		}
 		every_scope_state = {
 			limit = {
@@ -3385,7 +3401,7 @@ dvg_belgium.42 = {
 		}
 		change_variable = {
 			name = blc_corpo_var
-			add = 4
+			add = 3
 		}
 		
 		
@@ -3655,7 +3671,7 @@ dvg_belgium.44 = {
 	}
 }
 
-#Jone Brigades
+#Jonge Brigades
 dvg_belgium.45 = {
 	type = country_event
 	placement = ROOT
@@ -3689,7 +3705,7 @@ dvg_belgium.45 = {
 			save_scope_as = ig_industrialists
 		}
 		ig:ig_landowners = {
-			save_scope_as = ig_landowners
+			save_scope_as = landowners_scope
 		}
 	}
 	#Support Militias
@@ -3703,12 +3719,17 @@ dvg_belgium.45 = {
 			name = blc_corpo_var
 			add = 1
 		}
+
 		ig:ig_landowners = {
 			add_modifier = {
 				name = modifier_ig_dissaproves
 				is_decaying = yes
 				months = 12
 			}
+		}
+
+		trigger_event = {
+			id = dvg_belgium.46 days = 90
 		}
 		
 		
@@ -3740,6 +3761,13 @@ dvg_belgium.45 = {
 				is_decaying = yes
 				months = 12
 			}
+		}
+		change_variable = {
+			name = blc_corpo_var
+			subtract = 1
+		}
+		trigger_event = {
+			id = dvg_belgium.46 days = 90
 		}
 		
 		ai_chance = {
@@ -3782,15 +3810,17 @@ dvg_belgium.46 = {
 		ig:ig_industrialists = {
 			save_scope_as = ig_industrialists
 		}
-		set_variable = maline_strike
 	}
 	#Roosevelts break strike
 
 	option = {
 		name = dvg_belgium.46.a
 		default_option = yes
+
+		set_variable = maline_strike
+
 		
-		ig:ig_landowners = {
+		ig:ig_industrialists = {
 			add_modifier = {
 				name = modifier_ig_approves
 				is_decaying = yes
@@ -3888,19 +3918,19 @@ dvg_belgium.47 = {
 			last_name = Salan
 			age = 40
 			dna = dna_vanderbilt
-			interest_group = ig_industrialists
-			ideology = ideology_market_liberal
+			interest_group = ig_petty_bourgeoisie
+			ideology = ideology_authoritarian
 			culture = cu:septiman
 			traits = {
 				celebrity_commander
 				charismatic
 				immortal
 				grifter
+				cocaine_addiction
+				bigoted
 			}	
 		}
-		ig:ig_petty_bourgeoisie = {
-			add_ideology = ideology_individualist
-		} 
+	
 
 		trigger_event = {
 			id = dvg_belgium.48
@@ -3928,7 +3958,7 @@ dvg_belgium.48 = {
 	flavor = dvg_belgium.48.f
 
 	event_image = {
-		video = "gfx/event_pictures/europenorthamerica_london_center.bk2"
+		video = "gfx/event_pictures/europenorthamerica_judaism.bk2"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
@@ -3941,6 +3971,10 @@ dvg_belgium.48 = {
 	trigger = {
 	}
 	immediate = {
+
+		ig:ig_industrialists = {
+			save_scope_as = industrialists_scope
+		}
 	
 	}
 	#Secret Police Time
@@ -3952,6 +3986,10 @@ dvg_belgium.48 = {
 		trigger_event = {
 			id = dvg_belgium.49
 			days = 30
+		}
+
+		ig:ig_armed_forces = {
+			set_interest_group_name = ig_gendarmerie
 		}
 		
 		
@@ -3988,7 +4026,7 @@ dvg_belgium.49 = {
 	flavor = dvg_belgium.49.f
 
 	event_image = {
-		video = "gfx/event_pictures/europenorthamerica_london_center.bk2"
+		video = "unspecific_ruler_speaking_to_people"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
@@ -4001,7 +4039,9 @@ dvg_belgium.49 = {
 	trigger = {
 	}
 	immediate = {
-		
+		ig:ig_industrialists = {
+			save_scope_as = industrialists_scope
+		}
 	}
 	#Belgium Dissolve Government
 
@@ -4011,7 +4051,18 @@ dvg_belgium.49 = {
 		
 		activate_law = law_type:law_technocracy
 
-		
+		ig:ig_industrialists = {
+			add_ideology = ideology_enclavist
+		}
+		ig:ig_petty_bourgeoisie = {
+			add_ideology = ideology_enclavist
+			remove_ideology = ideology_reactionary
+		}
+
+		create_character = {
+			ideology = ideology:ideology_positivist
+			is_agitator = yes
+		}
 		
 		ai_chance = {
 			base = 1
@@ -4051,6 +4102,14 @@ dvg_belgium.50 = {
 		
 		activate_law = law_type:law_guaranteed_liberties
 		activate_law = law_type:law_universal_suffrage
+
+		ig:ig_industrialists = {
+			remove_ideology = ideology_enclavist
+		}
+		ig:ig_petty_bourgeoisie = {
+			remove_ideology = ideology_enclavist
+		}
+
 		ruler = {
 			kill_character = yes
 		}
@@ -4076,7 +4135,7 @@ dvg_belgium.51 = {
 	flavor = dvg_belgium.51.f
 
 	event_image = {
-		video = "gfx/event_pictures/europenorthamerica_london_center.bk2"
+		video = "gfx/event_pictures/europenorthamerica_opium_smoker.bk2"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
@@ -4090,7 +4149,12 @@ dvg_belgium.51 = {
 		
 	}
 	immediate = {
-		
+		ig:ig_armed_forces = {
+			save_scope_as = armed_forces_ig
+		}
+		ig:ig_industrialists = {
+			save_scope_as = industrialists_scope
+		}
 	}
 
 	option = {
