@@ -171,6 +171,14 @@ je_sanacomie = {
 
 	on_complete = {
 		trigger_event = { id = dvg_belgium.27 }	
+
+		hidden_effect = {
+			c:VIN = {
+				trigger_event = {
+					id = dvg_skraeling.8
+				}
+			}
+		}
 	}
 	on_monthly_pulse = {
 		random_events = {
@@ -206,10 +214,46 @@ je_sanacomie = {
 		trigger_event = {
 			id = dvg_belgium.28
 		}
+		hidden_effect = {
+			c:VIN = {
+				trigger_event = {
+					id = dvg_skraeling.8
+				}
+			}
+		}
 	}
 
 	invalid = {
+		AND = {
+			c:PLA = {
+				NOT = {
+					any_scope_state = {
+						state_region = s:STATE_SANACOMIE
+					}
+				}
+			}
+			NOT = {
+				any_scope_state = {
+					state_region = s:STATE_SANACOMIE
+				}
+				any_subject_or_below = {
+					any_scope_state = {
+						state_region = s:STATE_SANACOMIE
+					}
+				}
+			}
+
+		}
 		
+	}
+	on_invalid = {
+		hidden_effect = {
+			c:VIN = {
+				trigger_event = {
+					id = dvg_skraeling.8
+				}
+			}
+		}
 	}
 	
 	should_be_pinned_by_default = yes
@@ -299,7 +343,6 @@ je_belgian_confederacy = {
 					add = 1
 				}
 			}
-			
 		}
 		
 	}
@@ -826,6 +869,31 @@ je_manifest_destiny_blc = {
 	scripted_button = je_settlers_button
 	scripted_button = je_claim_button
 
+	on_monthly_pulse = {
+		effect = {
+			random_state = {
+				limit = {
+					NOT = {
+						owner = ROOT
+					}
+					has_modifier = dvg_fiducies_development
+				}
+				save_scope_as = foreign_neighbor_state
+			}
+			if = {
+				limit = {
+					has_modifier = dvg_sponsor_settlers
+				}
+				random_scope_pop = {
+					limit = {
+						culture = cu:septiman
+					}
+					move_pop = scope:foreign_neighbor_state
+				}
+			}
+		}
+	}
+
 	on_yearly_pulse = {
 		effect = {
 			every_scope_state = {
@@ -884,6 +952,7 @@ je_manifest_destiny_blc = {
 	fail = {
 		OR = {
 			has_law = law_type:law_no_colonial_affairs
+			global_country_ranking < rank_value:minor_power
 			custom_tooltip = {
 				text = blc_fail_tt
 				OR = {
