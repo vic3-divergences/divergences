@@ -111,6 +111,8 @@
 	ai_chance = {
 		base = 100
 	}
+	should_be_pinned_by_default = yes
+
 }
 
 je_skraelingr = {
@@ -251,5 +253,145 @@ je_skraelingr = {
 	progressbar = yes
 	goal_add_value = 700
 	
+	should_be_pinned_by_default = yes
+}
+
+je_great_crane = {
+	icon = "gfx/interface/icons/event_icons/event_empty_chair.dds"
+	
+	group = je_group_historical_content
+
+	is_shown_when_inactive = {
+	
+	}
+	possible = {
+		
+	}
+	
+	complete = {
+		has_law = law_type:law_theocracy
+	}
+
+	on_complete = {
+		trigger_event = { id = dvg_china.7 popup = yes }
+	}
+
+	fail = {
+		custom_tooltip = {
+		text = great_crane_tt
+		NOT = {
+			any_scope_character = {
+				has_variable = great_crane_var
+			}
+		}
+		}
+		
+	}
+	on_fail = {
+	}
+	should_be_pinned_by_default = yes
+	weight = 5000
+}
+
+je_skraeling_missions = {
+	icon = "gfx/interface/icons/religion_icons/catholic.dds"
+
+	group = je_group_historical_content
+
+	#scripted_button = CHI_deport_missionaries_button
+
+	is_shown_when_inactive = {
+	
+	}
+
+	possible = {
+		
+	}
+
+	immediate = {
+		custom_tooltip = {
+			text = missionary_activities_begin_tt
+			trigger_event = {
+				id = heavenly.1
+			}
+		}
+		every_scope_state = {
+			limit = {
+				any_neighbouring_state = {
+					is_treaty_port = yes
+					owner = {
+						religion = {
+							has_discrimination_trait = christian
+						}
+					}
+				}
+			}
+			set_variable = open_to_missionaries_state
+		}
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					has_law = law_type:law_no_migration_controls
+					any_scope_state = {
+						NOT = {
+							has_variable = open_to_missionaries_state
+						}
+					}
+				}
+				every_scope_state = {
+					limit = {
+						NOT = {
+							has_variable = open_to_missionaries_state
+						}
+					}
+					set_variable = open_to_missionaries_state
+				}
+			}
+			else = {
+				every_scope_state = {
+					limit = {
+						any_neighbouring_state = {
+							is_treaty_port = yes
+							owner = {
+								religion = {
+									has_discrimination_trait = christian
+								}
+							}
+						}
+						NOT = {
+							has_variable = open_to_missionaries_state
+						}
+					}
+					set_variable = open_to_missionaries_state
+				}
+			}
+		}
+		random_events = {
+			500 = 0
+			10 = CHI_missionaries.1
+			10 = CHI_missionaries.2
+			10 = CHI_missionaries.3
+			10 = CHI_missionaries.4
+			10 = CHI_missionaries.5
+		}
+	}
+
+	complete = {
+		custom_tooltip = {
+			text = missionary_ban_tt
+			has_variable = CHI_deported_missionaries
+		}
+		OR = {
+			is_country_type = recognized
+			has_law = law_type:law_state_atheism
+			has_law = law_type:law_isolationism
+			has_law = law_type:law_closed_borders
+		}
+	}
+
+	weight = 10000
 	should_be_pinned_by_default = yes
 }
