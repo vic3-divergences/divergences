@@ -2,6 +2,16 @@
 	group = je_group_internal_affairs
 	icon = "gfx/interface/icons/event_icons/event_military.dds"
 
+	immediate = {
+		c:SCA = {
+			save_scope_as = scope_SCA
+		}
+
+		c:VIN = {
+			save_scope_as = scope_VIN
+		}
+	}
+
 	is_shown_when_inactive = {
 		exists = c:VIN
 		exists = c:SCA
@@ -33,7 +43,13 @@
 			has_technology_researched = nationalism
 			any_scope_state = {
 			is_capital = yes
-			turmoil > 0.55
+			OR = {
+				is_isolated_from_market = yes
+				turmoil > 0.55
+				owner = {
+					is_diplomatic_play_enemy_of = c:SCA
+				}
+			}
 			}
 			radical_fraction = {
 			value > 0.50
@@ -68,6 +84,7 @@
 				}
 			}
 			}
+			
 		}
 	}
 
@@ -94,4 +111,145 @@
 	ai_chance = {
 		base = 100
 	}
+}
+
+je_skraelingr = {
+	icon = "gfx/interface/icons/invention_icons/nationalism.dds"
+
+	group = je_group_internal_affairs
+
+	immediate = {
+	}
+
+	is_shown_when_inactive = {
+
+
+	}
+	
+
+	possible = {
+		
+	}
+
+	
+
+	complete = {
+		scope:journal_entry = { is_goal_complete = yes }
+		authority > 400
+		any_scope_state = {
+			count > 3
+			turmoil < 0.50
+		}
+	}
+
+	on_complete = {
+
+	}
+
+	on_weekly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					has_variable = recently_lost_war
+					
+				}
+				change_variable = {
+					name = dvg_skr_var
+					subtract = 1
+				}
+			}
+			if = {
+				limit = {
+					liberty_desire > 75
+				}
+				change_variable = {
+					name = dvg_skr_var
+					subtract = 1
+				}
+			}
+			if = {
+				limit = {
+					any_interest_group = {
+						is_insurrectionary = yes
+					}
+				}
+				change_variable = {
+					name = dvg_skr_var
+					subtract = 1
+				}
+			}
+			if = {
+				limit = {
+					any_scope_state = {
+						count > 3
+						turmoil < 0.50
+					}
+				}
+				change_variable = {
+					name = dvg_skr_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					authority > 300
+				}
+				change_variable = {
+					name = dvg_skr_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					authority < 0
+				}
+				change_variable = {
+					name = dvg_skr_var
+					add = 1
+				}
+			}
+		}
+		
+	}
+	on_monthly_pulse = {
+		effect = {
+			
+			
+			}
+			
+	
+	
+		}
+		
+	
+
+
+	fail = {
+		authority < 0
+		custom_tooltip = {
+			text = skr_fail_tt
+			this = { var:dvg_skr_var <= 0 }
+		}
+		any_scope_state = {
+			
+			count < 3
+		}
+	}
+
+	on_fail = {
+		
+		set_country_type = decentralized
+	}
+
+	invalid = {
+		
+	}
+	current_value = {
+		value = var:dvg_skr_var
+	}
+
+	progressbar = yes
+	goal_add_value = 700
+	
+	should_be_pinned_by_default = yes
 }

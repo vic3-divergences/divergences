@@ -1,4 +1,4 @@
-﻿bankroll = {
+﻿fund_lobbies = {
 	groups= {
 		general
 	}
@@ -10,6 +10,7 @@
 	}
 	
 	selectable = {
+		has_dlc_feature = lobbies
 		NOT = { is_country_type = decentralized }
 		is_revolutionary = no
 	}
@@ -17,64 +18,135 @@
 	potential = {
 		scope:target_country = {
 			NOT = { is_country_type = decentralized }
+			is_revolutionary = no
 		}
 	}
 	
-	possible = {}
+	accept_effect = {
+		custom_tooltip = {
+			text = fund_lobbies_increase_friendly_join_weight_effect
+		}
+		custom_tooltip = {
+			text = fund_lobbies_decrease_hostile_join_weight_effect
+		}
+		custom_tooltip = {
+			text = fund_lobbies_increase_rival_hostile_join_weight_effect
+		}
+		custom_tooltip = {
+			text = fund_lobbies_decrease_rival_friendly_join_weight_effect
+		}		
+	}	
 	
 	pact = {	
 		cost = 100
 	
 		is_two_sided_pact = no
-		show_in_outliner = yes
-		can_be_used_in_sway_offers = yes
-		sway_maneuvers_cost = 10
-
-		relations_progress_per_day = 3 # At 100, +1 relations
-		relations_improvement_max = 80
+		
+		second_modifier = {
+			country_lobby_leverage_generation_mult = 0.25
+		}
+		
+		second_foreign_pro_country_lobby_member_modifier = {
+			interest_group_pop_attraction_mult = 0.25
+		}
+		
+		second_foreign_anti_country_lobby_member_modifier = {
+			interest_group_pop_attraction_mult = -0.25
+		}		
 		
 		income_transfer = 0.20
 		max_paying_country_income_to_transfer = 0.10
 		second_country_gets_income_transfer = yes
 		income_transfer_based_on_second_country = yes
-		
-		second_modifier = {
-			country_pact_leverage_generation_add = 200
+		income_transfer_to_pops = {
+			allow_non_fully_accepted = no
+			upper_strata_pops = {
+				value = 0.5
+				if = {
+					limit = {
+						OR = {
+							has_law = law_type:law_autocracy
+							has_law = law_type:law_oligarchy
+						}		
+					}
+					add = 0.5
+				}
+				else_if = {
+					limit = {
+						OR = {
+							has_law = law_type:law_wealth_voting
+							has_law = law_type:law_landed_voting
+						}		
+					}
+					add = 0.25
+				}				
+				else_if = {
+					limit = {
+						has_law = law_type:law_anarchy
+					}
+					subtract = 0.25
+				}	
+				
+				max = 1
+				min = 0
+			}
+			middle_strata_pops = {
+				value = 0.25
+				
+				if = {
+					limit = {
+						OR = {
+							has_law = law_type:law_census_voting
+							has_law = law_type:law_universal_suffrage
+						}					
+					}
+					add = 0.25
+				}	
+
+				max = 1
+				min = 0				
+			}
+			lower_strata_pops = {
+				value = 0.0
+				
+				if = {
+					limit = {
+						OR = {
+							has_law = law_type:law_universal_suffrage		
+							has_law = law_type:law_anarchy
+						}
+					}
+					add = 0.25
+				}	
+
+				max = 1
+				min = 0				
+			}
 		}
 		
-		weekly_effect = {
-			if = {
-				limit = { 
-					NOT = { scope:diplomatic_pact ?= { is_forced_pact = yes } }
-				}		
-				custom_tooltip = {
-					text = bankroll_weekly_obligation_effect
-					if = {
-						limit = {
-							root = {
-								owes_obligation_to = scope:target_country			
+		weekly_effect = {		
+			scope:target_country = {
+				if = {
+					limit = {  
+						NOT = {
+							any_political_lobby = { 
+								target = root
+								OR = {
+									is_political_lobby_type = lobby_pro_country
+									is_political_lobby_type = lobby_pro_overlord
+								}							
 							}						
 						}
-						random_list = { 
-							998 = {}
-							2 = { root = { set_owes_obligation_to = { country = scope:target_country setting = no } } }
-						}				
 					}		
-					else_if = {
-						limit = {
-							NOT = { 
-								scope:target_country = {
-									owes_obligation_to = root			
-								}						
-							}
-						}
-						random_list = { 
-							998 = {}
-							2 = { scope:target_country = { set_owes_obligation_to = { country = root setting = yes } } }
-						}
+					custom_tooltip = {
+						text = fund_lobbies_weekly_create_lobby_effect
+						create_diplomatic_catalyst = {
+							type = catalyst_lobbies_funded
+							target = root
+						}						
 					}				
-				}			
-			}
+				}
+			}			
 		} 
 		
 		requirement_to_maintain = {
@@ -120,7 +192,12 @@
 
 		requirement_to_maintain = {
 			trigger = {
-				country_rank >= scope:target_country.country_rank
+				custom_tooltip = {
+					text = "EQUAL_OR_BETTER_RANK_THAN_TARGET"
+					country_rank >= scope:target_country.country_rank
+				}	
+
+				
 			}
 		}
 
@@ -135,151 +212,16 @@
 		max_influence_spending_fraction = 0.20
 		
 		evaluation_chance = {
-			value = 0.0
+			value = 0.1
 			
-			if = {
-				limit = { country_rank >= rank_value:major_power }
-				add = {
-					value = country_rank
-					multiply = 0.05
-				}				
+			add = {
+				value = country_rank
+				multiply = 0.05
 			}			
 		}		
-		
-		# This is only used for determining the value of a bankroll in sways, so it follows different logic from normal action acceptance
-		# The format here is as if scope:actor was asking if root wants a bankroll
-		accept_score = {
-			value = 0
-
-			add = {
-				desc = "DIPLOMATIC_ACCEPTANCE_BASE"
-				value = 5
-			}
-			
-			add = {
-				desc = "DIPLOMATIC_ACCEPTANCE_RANK"
-	
-				if = {
-					limit = { scope:actor = { country_rank < root.country_rank } }
-					value = -5
-				}
-				
-				if = {
-					limit = { scope:actor = { country_rank > root.country_rank } }
-					value = 5
-				}				
-			}		
-			
-			add = {
-				desc = "DIPLOMATIC_ACCEPTANCE_GDP"
-				value = "scope:actor.ai_gdp_comparison(root)"
-				max = 20
-				min = -20
-			}
-			
-			if = {
-				limit = { scaled_debt >= 0.05 }
-				
-				add = {
-					desc = "DIPLOMATIC_ACCEPTANCE_DEBT"
-					value = scaled_debt
-					multiply = 30	
-					min = 1
-				}					
-			}
-			else_if = {
-				limit = { scaled_gold_reserves >= 0.05 }
-				
-				subtract = {
-					desc = "DIPLOMATIC_ACCEPTANCE_GOLD_RESERVES"				
-					value = scaled_gold_reserves
-					multiply = 20
-					min = 1
-				}						
-			}
-		}		
-	
-		# This is only used for determining the value of a bankroll in sways, so it follows different logic from normal action acceptance
-		# The format here is as if scope:actor was asking for a bankroll from root
-		junior_accept_score = {
-			value = 0
-
-			add = {
-				desc = "DIPLOMATIC_ACCEPTANCE_BASE"
-				value = -10
-			}			
-			
-			add = {
-				desc = "DIPLOMATIC_ACCEPTANCE_RANK"
-	
-				if = {
-					limit = { scope:actor = { country_rank > root.country_rank } }
-					value = -5
-				}
-				
-				if = {
-					limit = { scope:actor = { country_rank < root.country_rank } }
-					value = 5
-				}				
-			}				
-
-			subtract = {
-				value = 10
-				multiply = scope:actor.num_income_transfer_pacts
-			}
-
-			subtract = {
-				value = 10
-				multiply = num_income_transfer_pacts
-			}				
-			
-			add = {
-				desc = "DIPLOMATIC_ACCEPTANCE_GDP"
-				value = "scope:actor.ai_gdp_comparison(root)"
-				add = 2
-				multiply = -10
-				min = -100
-				max = 0
-			}
-			
-			if = {
-				limit = { scaled_debt >= 0.05 }
-				
-				subtract = {
-					desc = "DIPLOMATIC_ACCEPTANCE_DEBT"
-					value = scaled_debt
-					multiply = 100	
-					min = 1
-				}					
-			}
-			else_if = {
-				limit = { scaled_gold_reserves >= 0.05 }
-				
-				add = {
-					desc = "DIPLOMATIC_ACCEPTANCE_GOLD_RESERVES"				
-					value = scaled_gold_reserves
-					multiply = 25
-					min = 1
-				}						
-			}
-		}	
 	
 		propose_score = {
 			value = 10
-
-			if = {
-				limit = {
-					exists = c:CIR
-					has_journal_entry = je_great_game_control
-					country_has_primary_culture = cu:british
-					scope:target_country = {
-						c:CIR ?= this
-					}
-				}
-				add = {
-					value = 50
-				}		
-			}
 		}
 	
 		will_propose = { 
@@ -367,12 +309,6 @@
 		}
 		
 		will_break = { 
-			NOT = {
-				AND = {
-					has_variable = forced_bankroll_time
-					var:forced_bankroll_time ?= scope:target_country
-				}
-			}
 			OR = {		
 				scaled_debt > 0.25
 				AND = {

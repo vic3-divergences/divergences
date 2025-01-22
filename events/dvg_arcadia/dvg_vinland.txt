@@ -101,7 +101,7 @@ dvg_vinland.3 = { #Skraelings Primer
 	duration = 3
 
 	event_image = {
-		video = "gfx/event_pictures/unspecific_ruler_speaking_to_people.bk2"
+		video = "europenorthamerica_native_american"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
@@ -131,6 +131,8 @@ dvg_vinland.3 = { #Skraelings Primer
 		trigger_event = {
 			id = dvg_skraeling.1 days = 365
 		}
+		
+		
 	}
 }
 
@@ -470,6 +472,13 @@ dvg_vinland.10 = { #End of Dominion
 		c:VIN = {
 			make_independent = yes
 		}
+		every_diplomatic_play = {
+			limit = {
+				initiator_is = ROOT
+				target_is = c:VIN
+			}
+			end_play = yes
+		}
 
 		ai_chance = {
 			base = 90
@@ -542,15 +551,15 @@ dvg_vinland.11 = { #Masgirland Informed
 		}
 	}
 	trigger = {
-		
+		exists = c:SCA
 	}
 	
 	option = {
 		name = dvg_vinland.11.a
 		default_option = yes
 		trigger = {
-			c:VIN = {
-				relations:root >= relations_threshold:cordial
+			NOT = {
+				is_diplomatic_play_enemy_of = c:SCA
 			}
 		}
 		set_variable = support_vin
@@ -563,8 +572,8 @@ dvg_vinland.11 = { #Masgirland Informed
 	option = {
 		name = dvg_vinland.11.b
 		trigger = {
-			c:SCA = {
-				relations:root >= relations_threshold:cordial
+			NOT = {
+				is_diplomatic_play_ally_of = c:SCA
 			}
 		}
 		set_variable = support_sca
@@ -664,7 +673,7 @@ dvg_vinland.13 = { #Vinland War of Independence
 	}
 	
 	option = {
-		name = dvg_vinland.11.a
+		name = dvg_vinland.13.a
 		default_option = yes
 	}
 
@@ -709,7 +718,7 @@ dvg_vinland.14 = { #Treaty of Venice
 	}
 	
 	option = {
-		name = dvg_vinland.11.a
+		name = dvg_vinland.14.a
 		default_option = yes
 	}
 }
@@ -752,7 +761,7 @@ dvg_vinland.15 = { #SCA wins
 	}
 	
 	option = {
-		name = dvg_vinland.11.a
+		name = dvg_vinland.15.a
 		default_option = yes
 	}
 }
@@ -795,8 +804,16 @@ dvg_vinland.16 = { #Constitutional Convention
 	}
 	
 	option = {
-		name = dvg_vinland.11.a
+		name = dvg_vinland.16.a
 		default_option = yes
+
+		if = {
+			limit = {
+				has_modifier = dvg_modifier_industrialists_bolstered
+			}
+			remove_modifier = dvg_modifier_industrialists_bolstered
+		}
+		add_modifier = dvg_populist_republic
 	}
 }
 
@@ -991,7 +1008,7 @@ dvg_vinland.19 = { #Native Rights
 	}
 }
 
-dvg_vinland.20 = { #Martyrdom of Sondergaard
+dvg_vinland.20 = { #Native Land Rights
 	type = country_event
 	placement = ROOT
 
@@ -1032,6 +1049,18 @@ dvg_vinland.20 = { #Martyrdom of Sondergaard
 		name = dvg_vinland.20.a
 		default_option = yes
 
+		ig:ig_intelligentsia = {
+			add_modifier = {
+				name = modifier_ig_dissaproves
+				months = 40
+				is_decaying = yes
+			}
+		}
+		add_loyalists = {
+			value = 0.15
+			culture = cu:vinlander
+		}
+
 		c:SKR = {
 			every_scope_state = {
 				state_region = {
@@ -1058,9 +1087,29 @@ dvg_vinland.20 = { #Martyrdom of Sondergaard
 	option = {
 		name = dvg_vinland.20.b
 
+		ig:ig_industrialists = {
+			add_modifier = {
+				name = modifier_ig_approves
+				months = 40
+				is_decaying = yes
+			}
+		}
+		add_modifier = {
+			name = colonial_enthusiasm_settlers
+			months = 30
+			is_decaying = yes
+		}
+		add_modifier = {
+			name = dvg_sponsor_settlers
+			months = 30
+			is_decaying = yes
+		}
+		add_radicals = {
+			value = 0.05
+			culture = cu:vinlander
+		}
 		
 	}
-
 	option = {
 		name = dvg_vinland.20.c
 
@@ -1072,6 +1121,11 @@ dvg_vinland.20 = { #Martyrdom of Sondergaard
 			country = c:SKR
 			value = 35
 		}
+		add_radicals = {
+			value = 0.15
+			culture = cu:vinlander
+		}
+		add_primary_culture = cu:cree
 	}
 }
 
@@ -1130,6 +1184,80 @@ dvg_vinland.21 = { #Presidency
 
 		ai_chance = {
 			base = 100
+		}
+	}
+}
+
+dvg_vinland.22 = { #Masgirland Petitions for annexation
+	type = country_event
+	placement = ROOT
+
+	title = dvg_vinland.22.t
+	desc = dvg_vinland.22.d
+	flavor = dvg_vinland.22.f
+
+	duration = 3
+
+	event_image = {
+		video = "gfx/event_pictures/unspecific_ruler_speaking_to_people.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/leader_speaking_to_a_group_of_people"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	immediate = {
+		c:SCA = {
+			save_scope_as = scope_SCA
+		}
+		c:VIN = {
+			save_scope_as = scope_VIN
+		}
+		c:MSG = {
+			save_scope_as = scope_MSG
+		}
+		c:SKR = {
+			save_scope_as = scope_SKR
+		}
+		create_truce = {
+			country = c:MSG
+			months = 30
+		}
+	}
+	trigger = {
+		
+	}
+	
+	option = {
+		name = dvg_vinland.22.a
+		default_option = yes
+
+		c:VIN = {
+			if = {
+				limit = {
+					has_game_rule = breakaway
+				}
+				add_primary_culture = cu:masgirlander
+			}
+			annex = c:MSG
+		}
+
+		ai_chance = {
+			base = 100
+		}
+	}
+
+	option = {
+		name = dvg_vinland.22.b
+
+		change_relations = {
+			country = c:MSG
+			value = -20
+		}
+
+		ai_chance = {
+			base = 1
 		}
 	}
 }
