@@ -1,6 +1,6 @@
 ﻿namespace = dvg_skraeling
 
-dvg_skraeling.1 = { #Vinland Primer
+dvg_skraeling.1 = { #Skraeling Primer
 	type = country_event
 	placement = ROOT
 
@@ -104,14 +104,22 @@ dvg_skraeling.2 = { #Jesuits Primer
 			}
 			add_modifier = {
 				name = missionary_schools_hospitals
-				months = 24
+				months = 30
 			}
+		}
+		ig:ig_intelligentsia = {
+			set_interest_group_name = ig_jesuits
+			remove_ideology = ideology_anti_clerical
+			remove_ideology = ideology_anti_slavery
+			add_ideology = ideology_jesuit
 		}
 		change_relations = {
 			country = c:PLA
 			value = 10
 		}
-
+		add_journal_entry = {
+			type = je_skraeling_missions
+		}
 		
 		
 	}
@@ -814,7 +822,7 @@ dvg_skraeling.15 = { #Martyrdom of Sondergaard
 	}
 }
 
-dvg_skraeling.16 = { #Martyrdom of Sondergaard
+dvg_skraeling.16 = { #Confederal Collapse
 	type = country_event
 	placement = ROOT
 
@@ -834,6 +842,60 @@ dvg_skraeling.16 = { #Martyrdom of Sondergaard
 	icon = "gfx/interface/icons/event_icons/event_fire.dds"
 
 	immediate = {
+		random_scope_state = {
+			limit = {
+				state_region = {
+					is_homeland = cu:iroquoian
+				}
+			}
+			save_scope_as = iro_state
+		}
+		if = {
+			limit = {
+				exists = c:BLC
+			}
+			c:VIN = {
+				trigger_event = {
+					id = dvg_skraeling.18 
+					days = 7
+				}
+			}
+		}
+		
+
+		if = {
+			limit = {
+				any_scope_state = {
+					state_region = {
+						is_homeland = cu:siouan
+					}
+				}
+				NOT = {
+					exists = c:DKT
+				}
+			}
+			random_scope_state = {
+				limit = {
+					state_region = {
+						is_homeland = cu:dakota
+					}
+				}
+				save_scope_as = dkt_state
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					exists = c:AGQ
+				}
+				exists = s:STATE_COSKAQUIAS
+			}
+			create_country = {
+				tag = IRO
+				origin = THIS
+				state = scope:iro_state
+			}
+		}
 		c:SCA = {
 			save_scope_as = scope_SCA
 		}
@@ -846,18 +908,62 @@ dvg_skraeling.16 = { #Martyrdom of Sondergaard
 		c:SKR = {
 			save_scope_as = scope_SKR
 		}
+		create_country = {
+			tag = IRO
+			origin = THIS
+			state = scope:iro_state
+		}
+		c:PLA = {
+			trigger_event = {
+				id = dvg_skraeling.17
+			}
+		}
+		every_neighbouring_state = {
+			limit = {
+				NOT = {
+					owner = ROOT
+				}
+			}
+			owner = {
+				save_scope_as = colonizer_scope
+			}
+		}
 	}
 	trigger = {
 		
 	}
 	
 	option = {
-		name = dvg_skraeling.11.a
+		name = dvg_skraeling.16.a
 		default_option = yes
+
+		every_scope_state = {
+			limit = {
+				state_region = {
+					is_homeland = cu:iroquoian
+				}
+			}
+			set_state_owner = c:IRO
+		}
+		
+		every_scope_state = {
+			limit = {
+				state_region = {
+					is_homeland = cu:dakota
+				}
+			}
+			set_state_owner = c:DKT
+		}
+		scope:colonizer_scope = {
+			trigger_event = {
+				id = dvg_skraeling.17 days = 7
+			}
+		}
+
 	}
 }
 
-dvg_skraeling.17 = { #Martyrdom of Sondergaard
+dvg_skraeling.17 = { #Scramble Time
 	type = country_event
 	placement = ROOT
 
@@ -882,6 +988,7 @@ dvg_skraeling.17 = { #Martyrdom of Sondergaard
 		}
 		c:VIN = {
 			save_scope_as = scope_VIN
+			
 		}
 		c:MSG = {
 			save_scope_as = scope_MSG
@@ -895,12 +1002,48 @@ dvg_skraeling.17 = { #Martyrdom of Sondergaard
 	}
 	
 	option = {
-		name = dvg_skraeling.11.a
+		name = dvg_skraeling.17.a
 		default_option = yes
+
+		random_neighbouring_state = {
+			limit = {
+				NOT = {
+					owner = ROOT
+				}
+			}
+			state_region = {
+				add_claim = ROOT
+			}
+		}
+		create_incident = {
+			country = ROOT
+			value = 5
+		}
+		if = {
+			limit = {
+				has_law = law_type:law_no_colonial_affairs
+			}
+			activate_law = law_type:law_frontier_colonization
+		}
+	}
+
+	option = {
+		name = dvg_skraeling.17.b
+
+		change_infamy = -3
+
+		every_neighbouring_state = {
+			owner = {
+				change_relations = {
+					country = ROOT
+					value = 15
+				}
+			}
+		}
 	}
 }
 
-dvg_skraeling.18 = { #Martyrdom of Sondergaard
+dvg_skraeling.18 = { #Vinland Responds to SKR collapse
 	type = country_event
 	placement = ROOT
 
@@ -920,45 +1063,97 @@ dvg_skraeling.18 = { #Martyrdom of Sondergaard
 	icon = "gfx/interface/icons/event_icons/event_fire.dds"
 
 	immediate = {
+		
 		c:SCA = {
 			save_scope_as = scope_SCA
 		}
 		c:VIN = {
 			save_scope_as = scope_VIN
 		}
-		c:MSG = {
+		c:BLC = {
 			save_scope_as = scope_MSG
 		}
 		c:SKR = {
 			save_scope_as = scope_SKR
 		}
+		
+
 	}
 	trigger = {
-		
+		exists = c:BLC
+		exists = c:SKR
 	}
 	
 	option = {
 		name = dvg_skraeling.18.a
 		default_option = yes
 
-		activate_law = law_type:law_landed_voting
+		if = {
+			limit = {
+				exists = c:SKR
+			}
+			c:SKR = {
+				change_relations = {
+					country = ROOT
+					value = 20
+				}
+			}
+			create_diplomatic_pact = {
+				country = c:SKR
+				type = guarantee_independence
+			}
+			
+		}
+
+		if = {
+			limit = {
+				exists = c:IRO
+			}
+			c:SKR = {
+				change_relations = {
+					country = ROOT
+					value = 20
+				}
+			}
+			create_diplomatic_pact = {
+				country = c:SKR
+				type = guarantee_independence
+			}
+			
+		}
+		
+		c:BLC = {
+			trigger_event = {
+				id = dvg_skraeling.19 days = 7
+			}
+		}
 	}
 
 
 	option = {
 		name = dvg_skraeling.18.b
 
-		activate_law = law_type:law_wealth_voting
+		c:BLC = {
+			trigger_event = {
+				id = dvg_skraeling.20 days = 7
+			}
+		}
 	}
 
 	option = {
 		name = dvg_skraeling.18.c
 
-		activate_law = law_type:law_universal_suffrage
+		scope:native_country = {
+			change_relations = {
+				country = ROOT
+				value = -20
+			}
+		}
+
 	}
 }
 
-dvg_skraeling.19 = { #Martyrdom of Sondergaard
+dvg_skraeling.19 = { #Vinland Threatens Intervention
 	type = country_event
 	placement = ROOT
 
@@ -990,6 +1185,7 @@ dvg_skraeling.19 = { #Martyrdom of Sondergaard
 		c:SKR = {
 			save_scope_as = scope_SKR
 		}
+		
 	}
 	trigger = {
 		
@@ -999,27 +1195,53 @@ dvg_skraeling.19 = { #Martyrdom of Sondergaard
 		name = dvg_skraeling.19.a
 		default_option = yes
 
-		activate_law = law_type:law_racial_segregation
+		c:VIN = {
+			trigger_event = dvg_skraeling.22
+		}
+
+		if = {
+			limit = {
+				exists = c:IRO
+			}
+			create_diplomatic_play = {
+				type = dp_annex_war
+				target_country = c:IRO
+				add_war_goal = {
+					type = war_reparations
+					holder = c:IRO
+					
+				 }
+				 
+			}
+		}
+		if = {
+			limit = {
+				exists = c:SKR
+			}
+			create_diplomatic_play = {
+				type = dp_annex_war
+				target_country = c:SKR
+				add_war_goal = {
+					type = war_reparations
+					holder = c:SKR
+					
+				 }
+				 
+			}
+		}
 	}
 
 	option = {
 		name = dvg_skraeling.19.b
 
-		if = {
-			limit = {
-				NOT = {
-					has_technology_researched = human_rights
-				}
-			}
-			add_technology_researched = human_rights
+		add_radicals = {
+			value = 0.30
 		}
-
-		activate_law = law_type:law_multicultural
 
 	}
 }
 
-dvg_skraeling.20 = { #Martyrdom of Sondergaard
+dvg_skraeling.20 = { #Partition Agreement with Vinland?
 	type = country_event
 	placement = ROOT
 
@@ -1060,20 +1282,59 @@ dvg_skraeling.20 = { #Martyrdom of Sondergaard
 		name = dvg_skraeling.20.a
 		default_option = yes
 
+		change_relations = {
+			country = c:VIN
+			value = 20
+		}
+		c:VIN = {
+			trigger_event = {
+				id = dvg_skraeling.21
+			}
+		}
 
 	}
 
 	option = {
 		name = dvg_skraeling.20.b
 
-		
+		c:VIN = {
+			trigger_event = {
+				id = dvg_skraeling.22
+				days = 7
+			}
+		}
+		if = {
+			limit = {
+				exists = c:IRO
+			}
+			c:BLC = {
+				create_diplomatic_play = {
+					type = dp_annex_war
+					add_war_goal = { 
+						holder = c:IRO
+						type = war_reparations
+					}
+				}
+			}
+		}
+
+		if = {
+			limit = {
+				exists = c:SKR
+			}
+			c:BLC = {
+				create_diplomatic_play = {
+					type = dp_annex_war
+					add_war_goal = { 
+						holder = c:SKR
+						type = war_reparations
+					}
+				}
+			}
+		}
 	}
 
-	option = {
-		name = dvg_skraeling.20.c
-		add_primary_culture = cu:cree
-		
-	}
+	
 }
 
 dvg_skraeling.21 = { #Presidency
@@ -1117,29 +1378,52 @@ dvg_skraeling.21 = { #Presidency
 		name = dvg_skraeling.21.a
 		default_option = yes
 
+		if = {
+			limit = {
+				exists = c:IRO
+			}
+			c:BLC = {
+				create_diplomatic_play = {
+					type = dp_annex_war
+					add_war_goal = { 
+						holder = c:IRO
+						type = war_reparations
+					}
+				}
+			}
+		}
+
+		if = {
+			limit = {
+				exists = c:SKR
+			}
+			c:VIN = {
+				create_diplomatic_play = {
+					type = dp_annex_war
+					add_war_goal = { 
+						holder = c:SKR
+						type = war_reparations
+					}
+				}
+			}
+		}
+
 		ai_chance = {
 			base = 1
 		}
 	}
 
-	option = {
-		name = dvg_skraeling.21.a
-
-
-		ai_chance = {
-			base = 100
-		}
-	}
+	
 }
 
 
-dvg_skraeling.27 = { 
+dvg_skraeling.22 = { 
 	type = country_event
 	placement = ROOT
 
-	title = dvg_skraeling.27.t
-	desc = dvg_skraeling.27.d
-	flavor = dvg_skraeling.27.f
+	title = dvg_skraeling.22.t
+	desc = dvg_skraeling.22.d
+	flavor = dvg_skraeling.22.f
 
 	duration = 3
 
@@ -1165,14 +1449,27 @@ dvg_skraeling.27 = {
 		c:SKR = {
 			save_scope_as = scope_SKR
 		}
+		change_relations = {
+			country = c:BLC
+			value = -20
+		}
 	}
 	trigger = {
-		
+		exists = c:BLC
 	}
 	
 	option = {
-		name = dvg_skraeling.27.a
+		name = dvg_skraeling.22.a
 		default_option = yes
+
+		every_diplomatic_play = {
+			limit = {
+				initiator_is = c:BLC
+			}
+			add_target_backers = {
+				c:VIN
+			}
+		}
 
 		ai_chance = {
 			base = 1
@@ -1180,7 +1477,12 @@ dvg_skraeling.27 = {
 	}
 
 	option = {
-		name = dvg_skraeling.27.a
+		name = dvg_skraeling.22.b
+
+		change_relations = {
+			country = c:BLC
+			value = 20
+		}
 
 
 		ai_chance = {
@@ -1441,6 +1743,244 @@ dvg_skraeling.26 = {
 
 		ai_chance = {
 			base = 100
+		}
+	}
+}
+
+dvg_skraeling.27 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_skraeling.27.t
+	desc = dvg_skraeling.27.d
+	flavor = dvg_skraeling.27.f
+
+	event_image = {
+		video = "southamerica_christianity"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_scales.dds"
+
+	duration = 3
+
+	trigger = {
+		
+		
+	}
+	immediate = {
+		random_scope_state = {
+			save_scope_as = missionary_state
+		}
+	}
+
+	option = {
+		name = dvg_skraeling.27.a
+		default_option = yes
+		scope:missionary_state = {
+			add_modifier = {
+				name = missionary_schools_hospitals
+				months = 6
+			}
+			
+			convert_population = {
+				target = rel:catholic 
+				value = 0.15
+			}
+		}
+		add_modifier = {
+			name = dvg_favored_foreigners
+			months = 7 
+			is_decaying = yes
+		}
+		add_modifier = {
+			name = dvg_modifier_intelligentsia_bolstered
+			months = 5
+			is_decaying = yes
+		}
+	}
+	option = {
+		name = dvg_skraeling.27.b
+		change_relations = {
+			country = c:PLA
+			value = -10
+		}
+		scope:missionary_state = {
+			convert_population = {
+				target = rel:catholic
+				value = 0.01
+			}
+		}
+	}
+}
+#Marriages Question
+dvg_skraeling.28 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_skraeling.28.t
+	desc = dvg_skraeling.28.d
+	flavor = dvg_skraeling.28.f
+
+	event_image = {
+		video = "southamerica_christianity"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_scales.dds"
+
+	duration = 3
+
+	trigger = {
+		
+	}
+	immediate = {
+	}
+
+	option = {
+		name = dvg_skraeling.28.a
+		default_option = yes
+
+		add_radicals = {
+			value = 0.20
+			religion = rel:animist
+		}
+		add_loyalists = {
+			value = 0.20
+			religion = rel:protestant
+		}
+
+		add_loyalists = {
+			value = 0.20
+			religion = rel:catholic
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_skraelingr
+			}
+			change_variable = {
+				name = dvg_skr_var
+				add = 5
+			}
+		}
+	}
+	option = {
+		name = dvg_skraeling.28.b
+		
+		add_radicals = {
+			value = 0.20
+			religion = rel:protestant
+		}
+
+		add_radicals = {
+			value = 0.20
+			religion = rel:catholic
+		}
+		add_loyalists = {
+			value = 0.20
+			religion = rel:animist
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_skraelingr
+			}
+			change_variable = {
+				name = dvg_skr_var
+				add = -5
+			}
+		}
+		add_modifier = {
+			name = dvg_favored_foreigners
+			months = 7 
+			is_decaying = yes
+		}
+	}
+}
+
+#Slavery Question
+dvg_skraeling.29 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_skraeling.28.t
+	desc = dvg_skraeling.28.d
+	flavor = dvg_skraeling.28.f
+
+	event_image = {
+		video = "southamerica_christianity"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_scales.dds"
+
+	duration = 3
+
+	trigger = {
+		# Fired by journal entry
+	}
+	immediate = {
+		
+	}
+
+	option = {
+		name = dvg_skraeling.28.a
+		default_option = yes
+
+		add_radicals = {
+			value = 0.20
+			religion = rel:animist
+		}
+		add_loyalists = {
+			value = 0.20
+			religion = rel:protestant
+		}
+
+		add_loyalists = {
+			value = 0.20
+			religion = rel:catholic
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_skraelingr
+			}
+			change_variable = {
+				name = dvg_skr_var
+				add = 5
+			}
+		}
+	}
+	option = {
+		name = dvg_skraeling.28.b
+		
+		add_radicals = {
+			value = 0.20
+			religion = rel:protestant
+		}
+
+		add_radicals = {
+			value = 0.20
+			religion = rel:catholic
+		}
+		add_loyalists = {
+			value = 0.20
+			religion = rel:animist
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_skraelingr
+			}
+			change_variable = {
+				name = dvg_skr_var
+				add = -5
+			}
+		}
+		add_modifier = {
+			name = dvg_favored_foreigners
+			months = 7 
+			is_decaying = yes
 		}
 	}
 }

@@ -119,6 +119,10 @@ je_skraelingr = {
 	group = je_group_internal_affairs
 
 	immediate = {
+		set_variable = {
+			name = dvg_skr_var
+			value = 0
+		} 
 	}
 
 	is_shown_when_inactive = {
@@ -134,7 +138,10 @@ je_skraelingr = {
 	
 
 	complete = {
-		scope:journal_entry = { is_goal_complete = yes }
+		OR = {
+			scope:journal_entry = { is_goal_complete = yes }
+			is_country_type = recognized
+		}
 		authority > 400
 		any_scope_state = {
 			count > 3
@@ -192,7 +199,7 @@ je_skraelingr = {
 			}
 			if = {
 				limit = {
-					authority > 300
+					authority > 400
 				}
 				change_variable = {
 					name = dvg_skr_var
@@ -216,29 +223,29 @@ je_skraelingr = {
 			
 			
 			}
-			
-	
-	
-		}
+	}
 		
 	
 
 
 	fail = {
-		authority < 0
-		custom_tooltip = {
-			text = skr_fail_tt
-			this = { var:dvg_skr_var <= 0 }
+		OR = {
+			authority < 0
+			radical_fraction = {
+				value > 0.55
+			}
 		}
+
 		any_scope_state = {
-			
-			count < 3
+			turmoil > 0.55
+			count > 3
 		}
 	}
 
 	on_fail = {
-		
-		set_country_type = decentralized
+		trigger_event = {
+			id = dvg_skraeling.16
+		}
 	}
 
 	invalid = {
@@ -267,11 +274,22 @@ je_great_crane = {
 	}
 	
 	complete = {
-		has_law = law_type:law_theocracy
+		OR = {
+			has_law = law_type:law_theocracy
+			AND ={
+				ruler = {
+					has_variable = great_crane_var
+				}
+				ig:ig_devout = {
+					is_powerful = yes
+					is_in_government = yes
+				}
+			}
+		}
 	}
 
 	on_complete = {
-		trigger_event = { id = dvg_china.7 popup = yes }
+		set_state_religion = rel:protestant
 	}
 
 	fail = {
@@ -296,7 +314,7 @@ je_skraeling_missions = {
 
 	group = je_group_historical_content
 
-	#scripted_button = CHI_deport_missionaries_button
+	scripted_button = dvg_ban_missionaries_button_skr
 
 	is_shown_when_inactive = {
 	
@@ -330,6 +348,7 @@ je_skraeling_missions = {
 
 	on_monthly_pulse = {
 		effect = {
+			
 			if = {
 				limit = {
 					has_law = law_type:law_no_migration_controls
@@ -368,25 +387,46 @@ je_skraeling_missions = {
 			}
 		}
 		random_events = {
-			500 = 0
-			10 = CHI_missionaries.1
-			10 = CHI_missionaries.2
-			10 = CHI_missionaries.3
-			10 = CHI_missionaries.4
-			10 = CHI_missionaries.5
+			20 = 0
+			5 = dvg_skraeling.27
+			5 = dvg_skraeling.28
 		}
 	}
 
 	complete = {
-		custom_tooltip = {
-			text = missionary_ban_tt
-			has_variable = CHI_deported_missionaries
+		ig:ig_intelligentsia = {
+			is_powerful = yes
+			is_in_government = yes
 		}
-		OR = {
-			is_country_type = recognized
-			has_law = law_type:law_state_atheism
-			has_law = law_type:law_isolationism
-			has_law = law_type:law_closed_borders
+	}
+	on_complete = {
+		set_state_religion = rel:catholic
+		ig:ig_devout = {
+			set_interest_group_name = ig_catholic_church
+		}
+		every_country = {
+			limit = {
+				has_state_religion = rel:catholic
+			}
+			change_relations = {
+				country = c:PLA
+				value = 30
+			}
+		}
+	}
+
+	fail = {
+		ig:ig_intelligentsia = {
+			is_powerful = yes
+			OR = {
+				is_insurrectionary = yes
+				ig_approval < -15
+			}
+		}
+	}
+	on_fail = {
+		trigger_event = {
+			id = dvg_skraeling.14
 		}
 	}
 
