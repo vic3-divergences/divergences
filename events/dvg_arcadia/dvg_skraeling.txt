@@ -212,7 +212,7 @@ dvg_skraeling.3 = { #Great Crane
 	}
 }
 
-dvg_skraeling.4 = { #Vinland Primer
+dvg_skraeling.4 = { #Skraeling Primer
 	type = country_event
 	placement = ROOT
 
@@ -302,7 +302,7 @@ dvg_skraeling.5 = { #Vinland Primer
 	}
 }
 
-dvg_skraeling.6 = { #Vinland Primer
+dvg_skraeling.6 = { #Freedom time?
 	type = country_event
 	placement = ROOT
 
@@ -340,9 +340,76 @@ dvg_skraeling.6 = { #Vinland Primer
 		name = dvg_skraeling.6.a
 		default_option = yes
 
-		trigger_event = {
-			id = dvg_skraeling.7
-			days = 90
+		change_relations = {
+			country = c:VIN
+			value = 20
+		}
+		change_relations = {
+			country = c:SCA
+			value = 30
+		}
+	}
+
+	option = {
+		name = dvg_skraeling.6.b
+
+		change_relations = {
+			country = c:VIN
+			value = -20
+		}
+
+		change_relations = {
+			country = c:SCA
+			value = 20
+		}
+		
+		every_diplomatic_play = {
+			limit = {
+				initiator_is = c:SCA
+			}
+			add_initiator_backers = {
+				ROOT
+			}
+		}
+		c:SCA = {
+			set_owes_obligation_to = {
+				country = ROOT
+				setting = yes
+			}
+		}
+	}
+
+	option = {
+		name = dvg_skraeling.6.c
+
+		c:VIN = {
+			add_modifier = dvg_modifier_intelligentsia_bolstered
+		}
+
+		change_relations = {
+			country = c:VIN
+			value = 20
+		}
+
+		change_relations = {
+			country = c:SCA
+			value = -20
+		}
+		
+		every_diplomatic_play = {
+			limit = {
+				target_is = c:VIN
+			}
+			add_target_backers = {
+				ROOT
+			}
+		}
+
+		c:VIN = {
+			set_owes_obligation_to = {
+				country = ROOT
+				setting = yes
+			}
 		}
 	}
 }
@@ -1648,7 +1715,9 @@ dvg_skraeling.25 = {
 		}
 		c:SKR = {
 			save_scope_as = scope_SKR
+			
 		}
+		
 	}
 	trigger = {
 		
@@ -1670,9 +1739,16 @@ dvg_skraeling.25 = {
 
 		annex = scope:scope_SKR
 
-		add_primary_culture = cu:algonquian
-		add_primary_culture = cu:iroquoian
-
+		if = {
+			limit = {
+				NOT = {
+					any_primary_culture = {
+						has_discrimination_trait = indigenous_american_heritage
+					}
+				}
+			}
+			add_primary_culture = cu:skraeling
+		}
 
 
 		ai_chance = {
@@ -1982,5 +2058,68 @@ dvg_skraeling.29 = {
 			months = 7 
 			is_decaying = yes
 		}
+	}
+}
+
+
+dvg_skraeling.30 = { #United Skraeling Culture?
+	type = country_event
+	placement = ROOT
+
+	title = dvg_skraeling.30.t
+	desc = dvg_skraeling.30.d
+	flavor = dvg_skraeling.30.f
+
+	duration = 3
+
+	event_image = {
+		video = "gfx/event_pictures/unspecific_ruler_speaking_to_people.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/leader_speaking_to_a_group_of_people"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	immediate = {
+		c:SCA = {
+			save_scope_as = scope_SCA
+		}
+		c:VIN = {
+			save_scope_as = scope_VIN
+		}
+		c:MSG = {
+			save_scope_as = scope_MSG
+		}
+		c:SKR = {
+			save_scope_as = scope_SKR
+		}
+	}
+	
+	option = {
+		name = dvg_skraeling.30.a
+		default_option = yes
+
+		every_scope_pop = {
+			limit = {
+				culture = {
+					has_discrimination_trait = indigenous_american_heritage
+				}
+				literacy_rate > 0.20 
+			}
+			change_pop_culture = {
+				target = cu:skraeling
+				value = 1.0
+			}
+		}
+		every_scope_state = {
+			limit = {
+				state_is_in_north_america = yes
+			}
+			state_region = {
+				add_homeland = cu:skraeling
+			}
+		}
+
 	}
 }
