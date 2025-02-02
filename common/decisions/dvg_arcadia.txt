@@ -43,6 +43,19 @@
 			country = ROOT
 			value = 20
 		}
+		every_country = {
+			limit = {
+				any_scope_state = {
+					state_region = {
+						is_homeland = cu:afro_arcadian
+					}
+				}
+			}
+			add_radicals = {
+				value = 0.40
+				culture = cu:afro_arcadian
+			}
+		}
 		set_global_variable = {
 				name = afroarcadian_liberation
 				value = 0
@@ -116,7 +129,6 @@ dvg_manifest_destiny_cadien = {
 			has_variable = manifested_destiny_plantagenia
 		}
 	}
-
     possible = {
 		has_technology_researched = nationalism
 		has_technology_researched = romanticism
@@ -169,6 +181,16 @@ dvg_manifest_destiny_cadien = {
 		}
 		if = {
 			limit = {
+				NOT = {
+					has_journal_entry = je_manifest_destiny_pla
+				}
+			}
+			add_journal_entry = {
+				type = je_manifest_destiny_pla
+			}
+		}
+		if = {
+			limit = {
 				OR = {
 					ruler = {
 						has_ideology = ideology:ideology_jingoist_leader
@@ -193,8 +215,9 @@ dvg_manifest_destiny_cadien = {
 				add_claim = ROOT
 			}
 		}
-		add_journal_entry = {
-			type = je_manifest_destiny_pla
+		create_incident = {
+			country = THIS
+			value = 15
 		}
 		set_variable = manifested_destiny_plantagenia
     }
@@ -265,51 +288,65 @@ dvg_embrace_afro_arcadian = {
 	}
 }
 
-dvg_isolation_failsafe = {
+
+
+dvg_manifest_destiny_septiman = {
 	is_shown = {
 		
-		is_subject = yes
-		overlord = {
-			is_ai = yes
+		country_has_primary_culture = cu:septiman
+
+		NOT = {
+			has_variable = manifested_destiny_septiman
 		}
-		is_ai = yes
-
 	}
-
     possible = {
-		
-		any_scope_state = {
-			is_capital = yes
-			is_isolated_from_market = yes
+		has_technology_researched = nationalism
+		has_technology_researched = romanticism
+		country_rank >= rank_value:minor_power
+		is_subject = no
+		is_at_war = no 
+		NOT = {
+			has_law = law_type:law_no_colonial_affairs
 		}
-		is_diplomatic_play_committed_participant = no
-		
 	}
-		
-		
-
     when_taken = {
+		create_incident = {
+			country = THIS
+			value = 5
+		}
+		every_state = {
+			limit = {
+				
+				state_region = {
+					
+				is_homeland = cu:septiman
+					
+				}
+				NOT = {
+					owner = ROOT
+				}
+				state_is_in_north_america = yes
+			}
+			state_region = {
+					
+				add_claim = ROOT
+					
+			}	
+			
+		}
 		
-		make_independent = yes
-
 		if = {
 			limit = {
-				has_law = law_type:law_closed_borders
+				NOT = {
+					has_journal_entry = je_manifest_destiny_blc
+				}
 			}
-			activate_law = law_type:law_migration_controls
-		}
-
-		if = {
-			limit = {
-				has_law = law_type:law_isolationism
+			add_journal_entry = {
+				type = je_manifest_destiny_blc
 			}
-			activate_law = law_type:law_protectionism
 		}
-		add_modifier = {
-			name = dvg_approval_buff
-			months = 30
-			is_decaying = yes
-		}
+		
+		set_variable = manifested_destiny_septiman
     }
 
 	ai_chance = {
@@ -317,3 +354,57 @@ dvg_isolation_failsafe = {
 	}
 }
 
+dvg_join_belgium = {
+	is_shown = {
+		
+		exists = c:BLC
+		NOT = {
+			c:BLC = ROOT
+		}
+		any_primary_culture = {
+			has_discrimination_trait = francophone
+		}
+		country_is_in_north_america = yes
+		NOT = {
+			has_law = law_type:law_monarchy
+		}
+	}
+
+    possible = {
+
+		
+		
+		has_technology_researched = pan-nationalism
+		c:BLC = {
+			relations:root >= relations_threshold:amicable
+		}
+		OR = {
+			c:BLC = {
+				has_attitude = {
+					who = ROOT
+					attitude > disinterested
+				}
+			}
+			has_attitude = {
+				who = c:BLC
+				attitude > disinterested
+			}
+		}
+		
+		
+	}
+		
+		
+
+    when_taken = {
+		set_variable = blc_joiner
+		c:BLC = {
+			trigger_event = dvg_plantagenia.45
+		}
+		
+    }
+
+	ai_chance = {
+		base = 100
+	}
+}
