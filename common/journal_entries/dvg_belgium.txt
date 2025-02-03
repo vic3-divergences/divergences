@@ -125,7 +125,23 @@
 	}
 	fail = {
 		has_variable = constitutional_convention
+		
 		OR = {
+			AND = {
+				any_scope_state = {
+					count < 3
+					state_region = {
+						is_homeland = cu:septiman
+					}
+				}
+				NOT = {
+					any_subject_or_below = {
+						country_has_primary_culture = cu:septiman
+					}
+					
+				}
+			}
+			
 			any_country = {
 				count >= 3
 				liberty_desire > 75
@@ -136,17 +152,7 @@
 					attitude = rebellious
 				}
 			}
-			NOT = {
-				any_subject_or_below = {
-					country_has_primary_culture = cu:septiman
-				}
-				any_scope_state = {
-					count < 3
-					state_region = {
-						is_homeland = cu:septiman
-					}
-				}
-			}
+			
 		}
 		
 		
@@ -404,6 +410,21 @@ je_belgian_confederacy = {
 					add = 1
 				}
 			}
+
+			if = {
+				limit = {
+					exists = c:LOU
+					c:LOU = {
+						has_truce_with = ROOT
+					}
+					has_variable = lou_revolted
+					
+				}
+				change_variable = {
+					name = dvg_belgian_var
+					subtract = 1
+				}
+			}
 		}
 		
 	}
@@ -498,6 +519,7 @@ je_belgian_confederacy = {
 		trigger_event = {
 			id = dvg_belgium.28
 		}
+		set_global_variable = belgium_collapsed
 		if = {
 			limit = {
 				NOT = {
@@ -573,7 +595,6 @@ je_cbv_monarchy = {
 			id = dvg_belgium.34
 		}
 	}
-
 }
 
 je_restore_blc = {
@@ -595,6 +616,7 @@ je_restore_blc = {
 		}
 		country_has_primary_culture = cu:septiman
 		has_global_variable = belgium_united
+		has_global_variable = belgium_collapsed
 	}
 	
 
@@ -607,10 +629,61 @@ je_restore_blc = {
 		}
 		
 	}
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					any_scope_state = {
+						count > 3
+						state_region = {
+							is_homeland = cu:septiman
+						}
+					}
+					NOT = {
+						has_variable = belgium_bloodlust
+					}
+				}
+				set_variable = belgium_bloodlust
+				every_country = {
+					limit = {
+						NOT = {
+							has_variable = belgium_bloodlust
+							has_variable = join_belgium_maybe
+						}
+						country_has_primary_culture = cu:septiman
+						country_is_in_north_america = yes
+					}
+					trigger_event = {
+						id = dvg_belgium.38
+					}
+				}
+				
+			}
+
+			if = {
+				limit = {
+					NOT = {
+						exists = c:CBV
+					}
+					NOT = {
+						has_variable = cbv_destroyed
+					}
+					has_global_variable = cbv_declared
+				}
+				set_variable = cbv_destroyed
+				trigger_event = {
+					id = dvg_belgium.33
+				}
+			}
+		}
+		}
+	}
 
 	complete = {
 		custom_tooltip = {
 			text = restore_blc_tt
+			exists = c:BLC
+			c:BLC = ROOT
 			NOT = {
 				exists = c:CBV
 				exists = c:CHV
@@ -707,7 +780,7 @@ je_wylde_rytt = {
 				}
 
 				trigger_event = {
-					id = dvg_belgium.48
+					id = dvg_belgium.46
 				}
 			}
 			
@@ -864,12 +937,17 @@ je_nieuweu_cursus = {
 		
 	}
 	complete = {
+		authority > 700
 		OR = {
-			authority > 777
 			any_interest_group = {
 				count >= 2
 				is_powerful = yes
-				ig_approval > 5
+				ig_approval > 10
+			}
+			any_interest_group = {
+				count >= 2
+				is_marginal = no
+				ig_approval > 10
 			}
 		}
 		radical_fraction = {
