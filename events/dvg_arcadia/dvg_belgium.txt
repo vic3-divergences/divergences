@@ -2633,14 +2633,25 @@ dvg_belgium.33 = {
 		}
 	}
 
-	#Belgium Vote of No Confidence
+	#Time to Destroy the North
 
 	option = {
 		name = dvg_belgium.33.a
 		default_option = yes
 		
 		
-		
+		if = {
+			limit = {
+				OR = {
+					exists = c:CCA
+					exists = c:CPH
+				}
+			}
+			trigger_event = {
+				id = dvg_belgium.37
+				days = 90
+			}
+		}
 		
 		ai_chance = {
 			base = 1
@@ -2832,8 +2843,7 @@ dvg_belgium.37 = {
 	duration = 3
 
 	trigger = {
-		exists = c:CPH
-		exists = c:CCA
+		
 	}
 	immediate = {
 		c:PLA = {
@@ -2844,18 +2854,32 @@ dvg_belgium.37 = {
 	option = {
 		name = dvg_belgium.37.a
 		default_option = yes
+
+		if = {
+			limit = {
+				exists = c:CCA
+			}
+			create_diplomatic_play = {
+				target_country = c:CCA
+				type = dp_rebellion_annex
+
+	
+			}
+		}
 		
-		create_diplomatic_play = {
-			target_country = c:CCA
-			type = dp_rebellion_annex
 
+		if = {
+			limit = {
+				exists = c:CPH
+			}
+			create_diplomatic_play = {
+				target_country = c:CPH
+				type = dp_rebellion_annex
+
+	
+			}
 		}
 
-		create_diplomatic_play = {
-			target_country = c:CPH
-			type = dp_rebellion_annex
-
-		}
 		create_incident = {
 			country = THIS
 			value = 10
@@ -2913,19 +2937,26 @@ dvg_belgium.38 = {
 		c:PLA = {
 			save_scope_as = scope_PLA
 		}
+		random_country = {
+			limit = {
+				has_variable = belgium_bloodlust
+			}
+			save_scope_as = BLC_scope
+		}
+		set_variable = join_belgium_maybe
 	}
 
 	option = {
 		name = dvg_belgium.38.a
 		default_option = yes
 		
-		c:BLC = {
+		scope:BLC_scope = {
 			annex = ROOT
 		}
 		
 		
 		ai_chance = {
-			base = 1
+			base = 67
 		}
 	}
 
@@ -2935,10 +2966,16 @@ dvg_belgium.38 = {
 		add_loyalists = {
 			value = 0.25
 		}
+		scope:BLC_scope = {
+			create_incident = {
+				country = scope:BLC_scope
+				value = 3
+			}
+		}
 		
 
 		ai_chance = {
-			base = 1
+			base = 33
 		}
 	}
 }
