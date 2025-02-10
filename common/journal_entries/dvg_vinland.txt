@@ -32,56 +32,7 @@
 
 	}
 
-	on_monthly_pulse = {
-		effect = {
-			if = {
-			limit = {
-			liberty_desire > 95
-			has_technology_researched = nationalism
-			OR = {
-				any_scope_state = {
-					is_capital = yes
-					turmoil > 0.55
-				}
-				is_diplomatic_play_enemy_of = c:SCA
-			}
-			
-			radical_fraction = {
-			value > 0.50
-			}
-			NOT = {
-				has_global_variable = vinlandic_revolution
-			}
-			}
-			trigger_event = {
-				id = dvg_vinland.9
-			}
-			if = {
-				limit = {
-					exists = c:SCA
-					is_subject_of = c:SCA
-					
-				}
-				c:SCA = {
-					trigger_event = {
-						id = dvg_vinland.10
-					}
-				}
-				if = {
-					limit = {
-						exists = c:MSG
-					}
-					c:MSG = {
-						trigger_event = {
-							id = dvg_vinland.11
-						}
-					}
-				}
-			}
-			}
-			
-		}
-	}
+	
 
     complete = {
 		is_subject = no
@@ -135,6 +86,7 @@ je_skraelingr = {
 		OR = {
 			scope:journal_entry = { is_goal_complete = yes }
 			is_country_type = recognized
+			has_technology_researched = pan-nationalism
 		}
 		authority > 400
 		any_scope_state = {
@@ -145,7 +97,9 @@ je_skraelingr = {
 	}
 
 	on_complete = {
-
+		trigger_event = {
+			id = dvg_skraeling.30
+		}
 	}
 
 	on_weekly_pulse = {
@@ -224,14 +178,13 @@ je_skraelingr = {
 
 
 	fail = {
-		is_ai = yes
 		OR = {
 			authority < 0
 			radical_fraction = {
 				value > 0.55
 			}
 		}
-
+		government_legitimacy < 50
 		any_scope_state = {
 			turmoil > 0.55
 			count > 3
@@ -401,30 +354,50 @@ je_skraeling_missions = {
 		ig:ig_devout = {
 			set_interest_group_name = ig_catholic_church
 		}
-		every_country = {
-			limit = {
-				has_state_religion = rel:catholic
-			}
-			change_relations = {
-				country = c:PLA
-				value = 30
-			}
+		change_relations = {
+			country = c:PLA
+			value = 30
+		}
+		change_relations = {
+			country = c:CHE
+			value = 30
 		}
 	}
 
 	fail = {
-		ig:ig_intelligentsia = {
-			is_powerful = yes
-			OR = {
-				is_insurrectionary = yes
-				ig_approval < -15
+		OR = {
+			has_global_variable = skr_banned_missions
+			ig:ig_intelligentsia = {
+				is_powerful = yes
+				OR = {
+					is_insurrectionary = yes
+					ig_approval < -15
+				}
 			}
 		}
+		
 	}
 	on_fail = {
-		trigger_event = {
-			id = dvg_skraeling.14
+		if = {
+			limit = {
+				NOT = {
+					has_global_variable = skr_banned_missions
+				}
+			}
+			trigger_event = {
+				id = dvg_skraeling.14
+			}
 		}
+
+		if = {
+			limit = {
+				has_global_variable = skr_banned_missions
+			}
+			trigger_event = {
+				id = dvg_skraeling.31
+			}
+		}
+	
 	}
 
 	weight = 10000

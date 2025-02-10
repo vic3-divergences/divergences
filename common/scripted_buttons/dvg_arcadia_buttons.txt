@@ -391,7 +391,9 @@ je_settlers_button = {
 	}
 
 	possible = {
-		
+		NOT = {
+			has_modifier = dvg_sponsor_settlers
+		}
 	}
 	effect = {
 		random_primary_culture = {
@@ -399,7 +401,7 @@ je_settlers_button = {
 		}
 		add_modifier = {
 		name = dvg_sponsor_settlers
-		months = 4
+		months = 12
 		}
 		create_incident = {
 			country = THIS
@@ -417,7 +419,7 @@ je_settlers_button = {
 				name = dvg_fiducies_development
 				months = 12
 			}
-			
+			set_variable = migration_target_state
 			save_scope_as = foreign_neighbor_state
 			create_mass_migration = {
 				origin = ROOT
@@ -441,7 +443,9 @@ je_claim_button = {
 	desc = "je_claim_state_desc"
 
 	visible = { 
-		has_law = law_type:law_frontier_colonization
+		NOT = {
+			has_law = law_type:law_no_colonial_affairs
+		}
 	}
 
 	possible = {
@@ -455,6 +459,7 @@ je_claim_button = {
 				target = scope:primary_culture_scope
 				value > 0.30
 			}
+			has_variable = migration_target_state
 		}
 	}
 	effect = {
@@ -473,11 +478,13 @@ je_claim_button = {
 					value > 0.30
 				}
 			}
+			remove_variable = migration_target_state
 			
 			state_region = {
 				add_claim = ROOT
 			}
 		}
+		
 	}
 }
 
@@ -511,7 +518,11 @@ dvg_ban_missionaries_button_skr = {
 	name = "SKR_deport_button"
 	desc = "SKR_deport_button_desc"
 
-	visible = { always = yes }
+	visible = { always = yes 
+	NOT = {
+		has_global_variable = skr_banned_missions
+	}
+	}
 
 	possible = {
 		any_scope_state = {
@@ -533,9 +544,9 @@ dvg_ban_missionaries_button_skr = {
 		}
 		every_scope_state = {
 			limit = {
-				has_modifier = dvg_xijao_missions
+				has_modifier = missionary_schools_hospitals
 			}
-			remove_modifier = dvg_xijao_missions
+			remove_modifier = missionary_schools_hospitals
 		}
 		if = {
 			limit = { 
@@ -543,21 +554,71 @@ dvg_ban_missionaries_button_skr = {
 			has_variable = dvg_xijiao_var 
 			}
 			change_variable = {
-				name = dvg_xijiao_var
-				subtract = 10
+				name = dvg_skr_var
+				add = 15
 			}
 			
-			c:JIA = {trigger_event = dvg_xijiao.8}
+			set_global_variable = skr_banned_missions
+		}
+		
+	}
+}
+
+dvg_vinland_revolution_button = {
+	name = "dvg_vinland_revolution_button"
+	desc = "dvg_vinland_revolution_button_desc"
+
+	visible = { 
+		
+		always = yes
+		is_subject_of = c:SCA
+		NOT = {
+		has_global_variable = vinlandic_revolution
+		}
+	}
+
+	possible = {
+		liberty_desire > 95
+		OR = {
+			has_diplomatic_pact = {
+				who = THIS
+				type = guarantee_independence
+			}
+			has_technology_researched = nationalism
+		}
+		
+	}
+
+	effect = {
+		set_global_variable = vinlandic_revolution
+		trigger_event = {
+			id = dvg_belgium.8
 		}
 		if = {
-			limit = { 
-			has_journal_entry = je_decline_of_great_shun_main
-			has_variable = dvg_shun_var
+			limit = {
+				exists = c:SCA
+				is_subject_of = c:SCA
+				
 			}
-			change_variable = {
-				name = dvg_shun_var
-				add = 2
+			c:SCA = {
+				trigger_event = {
+					id = dvg_vinland.10
+				}
+			}
+			if = {
+				limit = {
+					exists = c:MSG
+				}
+				c:MSG = {
+					trigger_event = {
+						id = dvg_vinland.11
+					}
+				}
 			}
 		}
+	}
+
+	ai_chance = {
+		base = 100
 	}
 }

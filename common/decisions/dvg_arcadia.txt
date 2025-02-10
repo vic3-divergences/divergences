@@ -358,21 +358,117 @@ dvg_join_belgium = {
 	is_shown = {
 		
 		exists = c:BLC
-		exists = c:PLA
+		NOT = {
+			c:BLC = ROOT
+		}
+		any_primary_culture = {
+			has_discrimination_trait = francophone
+		}
+		country_is_in_north_america = yes
+		NOT = {
+			has_law = law_type:law_monarchy
+		}
 	}
 
     possible = {
-		
+
 		has_technology_researched = pan-nationalism
+		c:BLC = {
+			relations:root >= relations_threshold:amicable
+		}
+		OR = {
+			c:BLC = {
+				has_attitude = {
+					who = ROOT
+					attitude = protective
+				}
+			}
+			has_attitude = {
+				who = c:BLC
+				attitude = genial
+			}
+		}
+		
 		
 	}
 		
 		
 
     when_taken = {
-		
+		set_variable = blc_joiner
+		c:BLC = {
+			trigger_event = dvg_plantagenia.45
+		}
 		
     }
+
+	ai_chance = {
+		base = 100
+	}
+}
+
+
+dvg_buy_athesia = {
+	is_shown = {
+		country_is_in_north_america = yes
+		OR = {
+			has_interest_marker_in_region = sr:region_caribbean
+			has_interest_marker_in_region = sr:region_dixie
+		}
+
+		NOT = {
+			owns_entire_state_region = STATE_ATHESIA
+		}
+		AND = {
+			exists = c:ATH
+			c:ATH = {
+				is_ai = yes
+				is_subject_of = c:VEN
+			}
+		}
+		
+	}
+
+    possible = {
+
+		gold_reserves > 100000
+		c:VEN = {
+			global_country_ranking < rank_value:major_power 
+			relations:root >= relations_threshold:amicable
+			OR = {
+				has_attitude = {
+					who = ROOT
+					attitude = genial
+				}
+				has_attitude = {
+					who = ROOT
+					attitude = loyal
+				}
+
+			}
+		}
+		NOT = {
+			has_law = law_type:law_no_colonial_affairs
+		}
+	}		
+
+    when_taken = {
+		
+		c:VEN = {
+			add_modifier = {
+				name = dvg_falklands_sale
+				months = 12
+			}
+		}
+
+		add_modifier = {
+			name = dvg_falklands_buy
+			months = 12
+			
+		}
+		
+		annex = c:ATH
+	 }
 
 	ai_chance = {
 		base = 100

@@ -1497,25 +1497,35 @@ dvg_songyan_society = {
 }
 
 
-dvg_join_zhourao = {
+dvg_join_mianjin = {
 	is_shown = {
-		exists = c:ZSA
-		root = c:ZSA
-		exists = c:ZHR
-		has_variable = dvg_songyan_society_zsa
+		exists = c:MJN
+		c:MJN = {
+			relations:root > relations_threshold:cordial
+
+		}
 	}
 
     possible = {
-		exists = c:ZSA
-		root = c:ZSA
-		has_variable = dvg_songyan_society_zsa
+		OR = {
+			has_global_variable = mjn_good
+			AND = {
+				exists = c:XXG
+				c:XXG = ROOT
+				c:XXG = {
+					relations:MJN >= relations_threshold:cordial
+				}
+			}
+		}
 	}
 
     when_taken = { #change event number
-		play_as = c:ZHR
-		c:ZHR = {
-			trigger_event = { id = dvg_zhourao.1002 }
-			annex = c:ZSA
+		set_variable = to_join_zhr
+		play_as = c:MJN
+		c:MJN = {
+			trigger_event = {
+				id = dvg_zhourao.508
+			}
 		}
     }
 
@@ -1528,21 +1538,53 @@ dvg_join_zhourao = {
 	is_shown = {
 		exists = c:ZSA
 		root = c:ZSA
-		exists = c:ZHR
 		has_variable = dvg_songyan_society_zsa
+		OR = {
+			exists = c:YLO
+			exists = c:ZHR
+		}
 	}
 
     possible = {
 		exists = c:ZSA
 		root = c:ZSA
 		has_variable = dvg_songyan_society_zsa
+		is_diplomatic_play_committed_participant = no
+		OR = {
+			c:YLO = {
+				country_has_voting_franchise = yes
+			}
+			c:ZHR = {
+				country_has_voting_franchise = yes
+			}
+		}
+		
 	}
 
     when_taken = { #change event number
-		play_as = c:ZHR
-		c:ZHR = {
-			trigger_event = { id = dvg_zhourao.1002 }
-			annex = c:ZSA
+		remove_variable = dvg_songyan_society_zsa
+		if = {
+			limit = {
+				exists = c:YLO
+				NOT = {
+					exists = c:ZHR
+				}
+			}
+			c:YLO = {
+				trigger_event = { id = dvg_zhourao.1002 }
+
+			}
+		}
+		if = {
+			limit = {
+				exists = c:ZHR
+				NOT = {
+					exists = c:YLO
+				}
+			}
+			c:YLO = {
+				trigger_event = { id = dvg_zhourao.1002 }
+			}
 		}
     }
 
@@ -2010,7 +2052,6 @@ dvg_zhourao_protection = {
 	possible = {
 		is_at_war = no
 		has_technology_researched = nationalism
-		
 		custom_tooltip = {
 			text = je_one_kongsi_goal
 			any_neighbouring_state = {
@@ -2153,7 +2194,6 @@ dvg_become_chougie = {
 		}
 		
 	}
-
     possible = {
 		any_scope_state = {
 			state_region = s:STATE_YOLNGU
