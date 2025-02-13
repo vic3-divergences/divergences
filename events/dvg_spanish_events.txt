@@ -341,15 +341,6 @@ dvg_spain.7 = {
 	trigger = {
 	}
 	
-	immediate = {
-		add_journal_entry = {
-			type = je_centralize_spain_SPA
-		}
-		add_journal_entry = {
-			type = je_SPA_instability
-		}
-	}
-	
 	# I am the State, and I am victorious! 
 	option = {
 		name = dvg_spain.7.a
@@ -2107,16 +2098,44 @@ dvg_spain.45 = {
 	duration = 3
 
 	trigger = {
+		exists = c:SPA
+		this = c:SPA
+		year = 1865
+		has_variable = SPA_Fueros
+		has_variable = SPA_ChurchLandResolved
+		this = { var:dvg_centralization_var >= 5 }
 	}
 	
-	# The Spanish Civil War
+	# We must and shall suppress these treasonous lies!
 	option = {
 		name = dvg_spain.45.a
 		default_option = yes
 		
+		change_variable = {
+			name = dvg_instability_var
+			add = 1
+		}
+		change_variable = {
+			name = dvg_centralization_var
+			add = 3
+		}
 		
 		ai_chance = {
-			base = 1
+			base = 70
+		}
+	}
+	# The delusions of eastern Spaniards do not concern us.
+	option = {
+		name = dvg_spain.45.b
+		default_option = yes
+		
+		change_variable = {
+			name = dvg_instability_var
+			add = 2
+		}
+		
+		ai_chance = {
+			base = 30
 		}
 	}
 }
@@ -2140,16 +2159,43 @@ dvg_spain.46 = {
 	duration = 3
 
 	trigger = {
+		exists = c:SPA
+		this = c:SPA
+		year = 1865
+		has_variable = SPA_Fueros
+		has_variable = SPA_ChurchLandResolved
+		this = { var:dvg_centralization_var < 5 }
 	}
 	
-	# The Spanish Civil War
+	# Federalism, not centralism, will save Spain from separation!
 	option = {
 		name = dvg_spain.46.a
 		default_option = yes
 		
+		change_variable = {
+			name = dvg_instability_var
+			add = 1
+		}
+		change_variable = {
+			name = dvg_centralization_var
+			add = -1
+		}
 		
 		ai_chance = {
-			base = 1
+			base = 70
+		}
+	}
+	# The delusions of eastern Spaniards do not concern us.
+	option = {
+		name = dvg_spain.46.b
+		default_option = yes
+		
+		change_variable = {
+			name = dvg_instability_var
+			add = 2
+		}
+		ai_chance = {
+			base = 30
 		}
 	}
 }
@@ -2175,6 +2221,7 @@ dvg_spain.47 = {
 	trigger = {
 		exists = c:SPA
 		this = c:SPA
+		year = 1870
 		has_technology_researched = railways
 		NOT = { has_global_variable = spa_railways }
 	}
@@ -2452,6 +2499,14 @@ dvg_spain.55 = {
 	duration = 3
 
 	trigger = {
+		exists = c:SPA
+		this = c:SPA
+		this = { var:dvg_centralization_var >= 8 }
+		has_variable = dvg_castile_crisis
+		NOR = {
+			has_global_variable = dvg_castile_stage_two
+			has_global_variable = dvg_spanish_civil_war_over
+		}
 	}
 	
 	# The Spanish Civil War
@@ -2487,14 +2542,30 @@ dvg_spain.56 = {
 	trigger = {
 	}
 	
-	# The Spanish Civil War
+	# What we need are events to rally Spanish unity, not division.
 	option = {
 		name = dvg_spain.56.a
 		default_option = yes
 		
+		change_variable = {
+			name = dvg_instability_var
+			add = 1
+		}
 		
 		ai_chance = {
-			base = 1
+			base = 70
+		}
+	}
+	# Yes, let’s curtail this radicalism at once!
+	option = {
+		name = dvg_spain.56.b
+		
+		change_variable = {
+			name = dvg_centralization_var
+			add = 1
+		}
+		ai_chance = {
+			base = 30
 		}
 	}
 }
@@ -2525,6 +2596,21 @@ dvg_spain.57 = {
 		name = dvg_spain.57.a
 		default_option = yes
 		
+		if = {
+			limit = { this = { var:dvg_centralization_var >= 8 } }
+			trigger_event = { id = dvg_spain.60 }
+		}
+		else_if = {
+			limit = { 
+				this = { var:dvg_centralization_var >= 3 } 
+				this = { var:dvg_centralization_var < 8 }
+			}
+			trigger_event = { id = dvg_spain.59 }
+		}
+		else = {
+			limit = { this = { var:dvg_centralization_var < 3 } }
+			trigger_event = { id = dvg_spain.58 }
+		}
 		
 		ai_chance = {
 			base = 1
@@ -2673,11 +2759,11 @@ dvg_spain.61 = {
 		default_option = yes
 		
 		if = {
-			limit = { this = { var:dvg_centralization_var >= 18 } }
+			limit = { this = { var:dvg_centralization_var >= 8 } }
 			trigger_event = { id = dvg_spain.62 days = 7 }
 		}
 		else = {
-			limit = { this = { var:dvg_centralization_var < 18 } }
+			limit = { this = { var:dvg_centralization_var < 8 } }
 			trigger_event = { id = dvg_spain.63 days = 7 }
 		}
 		
@@ -3682,11 +3768,12 @@ dvg_spain.85 = {
 	trigger = {
 	}
 	
-	# The Spanish Civil War
+	# The sun rises once more upon Espanha
 	option = {
 		name = dvg_spain.85.a
 		default_option = yes
 		
+		set_global_variable = dvg_spanish_civil_war_over
 		
 		ai_chance = {
 			base = 1
@@ -3715,10 +3802,15 @@ dvg_spain.86 = {
 	trigger = {
 	}
 	
-	# The Spanish Civil War
+	# Una España todas las personas
 	option = {
 		name = dvg_spain.86.a
 		default_option = yes
+		
+		if = {
+			limit = { NOT = { has_variable = dvg_spanish_civil_war_over } }
+			set_variable = dvg_spain_civil_war_averted
+		}
 		
 		ai_chance = {
 			base = 1
@@ -3747,11 +3839,15 @@ dvg_spain.87 = {
 	trigger = {
 	}
 	
-	# The Spanish Civil War
+	# Uma Espanha, com liberdade e justiça para todos
 	option = {
 		name = dvg_spain.87.a
 		default_option = yes
 		
+		if = {
+			limit = { NOT = { has_variable = dvg_spanish_civil_war_over } }
+			set_variable = dvg_spain_civil_war_averted
+		}
 		
 		ai_chance = {
 			base = 1
@@ -3780,11 +3876,15 @@ dvg_spain.88 = {
 	trigger = {
 	}
 	
-	# The Spanish Civil War
+	# A Espanha, indivisa!
 	option = {
 		name = dvg_spain.88.a
 		default_option = yes
 		
+		if = {
+			limit = { NOT = { has_variable = dvg_spanish_civil_war_over } }
+			set_variable = dvg_spain_civil_war_averted
+		}
 		
 		ai_chance = {
 			base = 1
@@ -4234,7 +4334,7 @@ dvg_spain.102 = {
 	flavor = dvg_spain.102.f
 
 	event_image = {
-		video = "southamerica_aristocrats"
+		video = "southamerica_war_civilians"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
@@ -4252,6 +4352,13 @@ dvg_spain.102 = {
 		name = dvg_spain.102.a
 		default_option = yes
 		
+		
+		add_journal_entry = {
+			type = je_centralize_spain_SPA
+		}
+		add_journal_entry = {
+			type = je_SPA_instability
+		}
 		change_variable = {
 			name = dvg_centralization_var
 			add = 3
@@ -4274,11 +4381,11 @@ dvg_spain.103 = {
 	flavor = dvg_spain.103.f
 
 	event_image = {
-		video = "southamerica_aristocrats"
+		video = "votp_monarch_holding_court"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
-	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+	on_opened_soundeffect = "event:/SFX/Events/votp/monarch_holding_court"
 
 	icon = "gfx/interface/icons/event_icons/event_fire.dds"
 
