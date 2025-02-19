@@ -216,9 +216,9 @@ je_sanacomie = {
 	}
 	on_monthly_pulse = {
 		random_events = {
-			10 = 0
+			15 = 0
 			2 = dvg_belgium.6
-			2 = dvg_belgium.25
+			10 = dvg_belgium.25
 		}
 		effect = {
 			if = {
@@ -730,10 +730,14 @@ je_wylde_rytt = {
 
 	group = je_group_internal_affairs
 
+	scripted_button = je_belgium_beatroosters_button
 
 	immediate = {
 		ig:ig_industrialists = {
 			save_scope_as = industrialists_scope
+		}
+		ig:ig_trade_unions = {
+			save_scope_as = trade_unions_scope
 		}
 		ig:ig_intelligentsia = {
 			save_scope_as = intelligentsia_scope
@@ -776,7 +780,7 @@ je_wylde_rytt = {
 				}
 				change_variable = {
 					name = blc_corpo_var
-					add = 1
+					add = 5
 				}
 			}
 			if = {
@@ -787,7 +791,7 @@ je_wylde_rytt = {
 				}
 				change_variable = {
 					name = blc_corpo_var
-					subtract = 1
+					subtract = 10
 				}
 			}
 
@@ -806,10 +810,35 @@ je_wylde_rytt = {
 					id = dvg_belgium.46
 				}
 			}
+			if = {
+				limit = {
+					NOT = {
+						has_variable = maline_strike
+					}
+					scope:journal_entry = { is_goal_complete = yes }
+				}
+				trigger_event = {
+					id = dvg_belgium.46
+				}
+			}
+			
 			
 		}
 	}
-
+	on_weekly_pulse = {
+		effect = {
+			if = {
+				limit = {
+				has_modifier = dvg_modifier_cnf_beatingroosters
+				}
+				change_variable = {
+				name = blc_corpo_var
+				subtract = 1
+				}
+			}
+		}
+	}
+		
 	is_shown_when_inactive = {
 		
 	}
@@ -821,12 +850,15 @@ je_wylde_rytt = {
 
 	progressbar = yes
 
-	goal_add_value = 10
+	goal_add_value = 100
 
-	
+
 	complete = {
 		AND = {
-			has_variable = maline_strike
+			custom_tooltip = {
+            text = je_belgium_wild_ride_strike_tooltip
+            has_variable = maline_strike
+        }
 			scope:journal_entry = { is_goal_complete = yes }
 			ig:ig_industrialists = {
 				is_powerful = yes
@@ -853,16 +885,21 @@ je_wylde_rytt = {
 		}
 	}
 	on_fail = {
+		custom_tooltip = {
+            text = 	je_wild_ride_fail_tooltip
+        }
 		trigger_event = {
 			id = dvg_belgium.63
 		}
 	}
 
 	on_timeout = {
+		custom_tooltip = {
+            text = 	je_wild_ride_fail_tooltip
+        }
 		trigger_event = {
 			id = dvg_belgium.63
 		}
-		remove_modifier = dvg_modifier_industrialists_bolstered
 	}
 
 
@@ -960,7 +997,7 @@ je_nieuweu_cursus = {
 		
 	}
 	complete = {
-		authority > 700
+		authority > 777
 		OR = {
 			any_interest_group = {
 				count >= 2
@@ -1009,7 +1046,7 @@ je_nieuweu_cursus = {
 	}
 	fail = {
 		radical_fraction = {
-			value = 0.40
+			value >= 0.40
 		}
 		any_interest_group = {
 			count > 2
