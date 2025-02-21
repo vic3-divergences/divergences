@@ -758,6 +758,9 @@ dvg_spain.16 = {
 	option = {
 		name = dvg_spain.16.a
 		default_option = yes
+		
+		set_variable = dvg_toledo_junta
+		
 		trigger_event = { id = dvg_spain.17 days = 7 }
 		ai_chance = {
 			base = 1
@@ -2503,6 +2506,15 @@ dvg_spain.52 = {
 	duration = 3
 
 	trigger = {
+		exists = c:SPA
+		this = c:SPA
+		has_government_type = gov_council_dictatorship
+		NOR = {
+			has_global_variable = dvg_castile_stage_two
+			has_global_variable = dvg_spanish_civil_war_over
+			has_global_variable = dvg_spain_civil_war_averted
+			has_variable = dvg_SPA_communist
+		}
 	}
 	
 	# The Spanish Civil War
@@ -2510,6 +2522,15 @@ dvg_spain.52 = {
 		name = dvg_spain.52.a
 		default_option = yes
 		
+		change_variable = {
+			name = dvg_instability_var
+			add = 10
+		}
+		change_variable = {
+			name = dvg_centralization_var
+			add = 6
+		}
+		set_variable = dvg_SPA_communist
 		
 		ai_chance = {
 			base = 1
@@ -2536,6 +2557,18 @@ dvg_spain.53 = {
 	duration = 3
 
 	trigger = {
+		exists = c:SPA
+		this = c:SPA
+		OR = {
+			has_government_type = gov_fascist_state
+			has_government_type = gov_fascist_corporate_state
+		}
+		NOR = {
+			has_global_variable = dvg_castile_stage_two
+			has_global_variable = dvg_spanish_civil_war_over
+			has_global_variable = dvg_spain_civil_war_averted
+			has_variable = dvg_SPA_fascist
+		}
 	}
 	
 	# The Spanish Civil War
@@ -2543,7 +2576,15 @@ dvg_spain.53 = {
 		name = dvg_spain.53.a
 		default_option = yes
 		
-		
+		change_variable = {
+			name = dvg_instability_var
+			add = 20
+		}
+		change_variable = {
+			name = dvg_centralization_var
+			add = 20
+		}
+		set_variable = dvg_SPA_fascist
 		ai_chance = {
 			base = 1
 		}
@@ -2714,7 +2755,7 @@ dvg_spain.57 = {
 			limit = { this = { var:dvg_centralization_var < 3 } }
 			trigger_event = { id = dvg_spain.58 }
 		}
-		
+		set_global_variable = dvg_castile_stage_two
 		ai_chance = {
 			base = 1
 		}
@@ -2747,7 +2788,7 @@ dvg_spain.58 = {
 		name = dvg_spain.58.a
 		default_option = yes
 		
-		
+		trigger_event = { id = dvg_spain.61 }
 		ai_chance = {
 			base = 1
 		}
@@ -2780,6 +2821,7 @@ dvg_spain.59 = {
 		name = dvg_spain.59.a
 		default_option = yes
 		
+		trigger_event = { id = dvg_spain.61 }
 		
 		ai_chance = {
 			base = 1
@@ -2813,6 +2855,7 @@ dvg_spain.60 = {
 		name = dvg_spain.60.a
 		default_option = yes
 		
+		trigger_event = { id = dvg_spain.61 }
 		
 		ai_chance = {
 			base = 1
@@ -3003,15 +3046,42 @@ dvg_spain.64 = {
 	trigger = {
 	}
 	
-	# The Spanish Civil War
+	# Rebel scum!
 	option = {
 		name = dvg_spain.64.a
 		default_option = yes
 		
-		trigger_event = { id = dvg_spain.65 }
+		if = {
+			limit = { NOT = { has_variable = dvg_toledo_junta } }
+			trigger_event = { id = dvg_spain.65 }
+		}
+		else = {
+			limit = { has_variable = dvg_toledo_junta }
+			trigger_event = { id = dvg_spain.66 }
+		}
 		
 		ai_chance = {
 			base = 1
+		}
+	}
+	# ¡Tierra y Libertad! #blue (Play as the south)#!
+	option = {
+		name = dvg_spain.64.b
+		
+		change_tag = ANL
+		c:SPA = {
+			if = {
+				limit = { NOT = { has_variable = dvg_toledo_junta } }
+				trigger_event = { id = dvg_spain.65 }
+			}
+			else = {
+				limit = { has_variable = dvg_toledo_junta }
+				trigger_event = { id = dvg_spain.66 }
+			}
+		}
+		
+		ai_chance = {
+			base = 0
 		}
 	}
 }
@@ -3042,7 +3112,7 @@ dvg_spain.65 = {
 		name = dvg_spain.65.a
 		default_option = yes
 		
-		trigger_event = { id = dvg_spain.66 }
+		trigger_event = { id = dvg_spain.68 }
 		
 		ai_chance = {
 			base = 1
@@ -3076,7 +3146,7 @@ dvg_spain.66 = {
 		name = dvg_spain.66.a
 		default_option = yes
 		
-		trigger_event = { id = dvg_spain.67 }
+		trigger_event = { id = dvg_spain.68 }
 		
 		ai_chance = {
 			base = 1
@@ -3168,6 +3238,19 @@ dvg_spain.69 = {
 
 	duration = 3
 
+	immediate = {
+		if = {
+			limit = { exists = s:STATE_TOLEDO.region_state:SPA }
+			create_country = {
+				tag = CAS
+				origin = this
+				state = s:STATE_TOLEDO.region_state:SPA
+				state = s:STATE_CASTILE.region_state:SPA
+				state = s:STATE_CARTAGENA.region_state:SPA
+				state = s:STATE_BADAJOZ.region_state:SPA
+			}
+		}
+	}
 	trigger = {
 	}
 	
