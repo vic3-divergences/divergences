@@ -909,45 +909,95 @@ je_centralize_spain_SPA = {
 	progressbar = yes
 	
 	complete = {
-		custom_tooltip = {
-			text = centralization_success
-			this = { var:dvg_centralization_var >= 8 }
+		OR = {
+			AND = {
+				custom_tooltip = {
+					text = centralization_success
+					this = { var:dvg_centralization_var >= 8 }
+				}
+				has_technology_researched = nationalism
+			}
+			AND = {
+				custom_tooltip = {
+					text = centralization_meh
+					this = { var:dvg_centralization_var < 8 }
+					this = { var:dvg_centralization_var >= 3 }
+				}
+				OR = {
+					has_law = law_type:law_racial_segregation
+					has_law = law_type:law_cultural_exclusion
+					has_law = law_type:law_multicultural
+				}
+			}
+			AND = {
+				custom_tooltip = {
+					text = centralization_fail
+					this = { var:dvg_centralization_var < 3 }
+				}
+				OR = {
+					has_law = law_type:law_racial_segregation
+					has_law = law_type:law_cultural_exclusion
+					has_law = law_type:law_multicultural
+				}
+			}
 		}
-		has_technology_researched = nationalism
 		c:SPA = {
 			country_rank >= rank_value:great_power
 		}
 	}
 	invalid = {
-		custom_tooltip = {
-			text = centralization_meh
-			this = { var:dvg_centralization_var < 8 }
-			this = { var:dvg_centralization_var >= 3 }
-		}
-		has_law = law_type:law_racial_segregation
-		c:SPA = {
-			country_rank >= rank_value:great_power
-		}
+		
 	}
 	fail = {
-		custom_tooltip = {
-			text = centralization_fail
-			this = { var:dvg_centralization_var < 3 }
-		}
-		has_law = law_type:law_racial_segregation
-		c:SPA = {
-			country_rank >= rank_value:great_power
-		}
+		
 	}
 	
 	on_complete = {
-		trigger_event = { id = dvg_spain.88 }
+		if = {
+			limit = {
+				custom_tooltip = {
+					text = centralization_success
+					this = { var:dvg_centralization_var >= 8 }
+				}
+				has_technology_researched = nationalism
+			}
+			trigger_event = { id = dvg_spain.88 }
+		}
+		else_if = {
+			limit = {
+				custom_tooltip = {
+					text = centralization_meh
+					this = { var:dvg_centralization_var < 8 }
+					this = { var:dvg_centralization_var >= 3 }
+				}
+				OR = {
+					has_law = law_type:law_racial_segregation
+					has_law = law_type:law_cultural_exclusion
+					has_law = law_type:law_multicultural
+				}
+			}
+			trigger_event = { id = dvg_spain.87 }
+		}
+		else = {
+			limit = {
+				custom_tooltip = {
+					text = centralization_fail
+					this = { var:dvg_centralization_var < 3 }
+				}
+				OR = {
+					has_law = law_type:law_racial_segregation
+					has_law = law_type:law_cultural_exclusion
+					has_law = law_type:law_multicultural
+				}
+			}
+			trigger_event = { id = dvg_spain.86 }
+		}
 	}
 	on_invalid = {
-		trigger_event = { id = dvg_spain.87 }
+		
 	}
 	on_fail = {
-		trigger_event = { id = dvg_spain.86 }
+		
 	}
 	weight = 100
 	should_be_pinned_by_default = yes
@@ -1051,7 +1101,14 @@ je_spanish_civil_war_CAS = {
 		is_at_war = no
 	}
 	on_complete = {
-		trigger_event = { id = dvg_spain.89 }
+		if = {
+			limit = { has_variable = CAS_traditional }
+			trigger_event = { id = dvg_spain.89 }
+		}
+		else = {
+			limit = { has_variable = CAS_federal_republic }
+			trigger_event = { id = dvg_spain.94 }
+		}
 	}
 	
 	weight = 100
@@ -1100,6 +1157,25 @@ je_castilian_war_of_independence = {
 	}
     on_complete = {
 		trigger_event = { id = dvg_spain.91 }
+	}
+	
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+je_castilian_war_of_independence_ATR = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	
+	group = je_group_crises
+	
+	complete = {
+		c:ATR = {
+			is_subject = no
+			is_at_war = no
+		}
+		c:SPA = { has_truce_with = c:ATR }
+	}
+    on_complete = {
+		trigger_event = { id = dvg_spain.92 }
 	}
 	
 	weight = 100

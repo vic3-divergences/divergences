@@ -3281,7 +3281,10 @@ dvg_spain.69 = {
 				state = s:STATE_TOLEDO.region_state:SPA
 				state = s:STATE_CASTILE.region_state:SPA
 				state = s:STATE_CARTAGENA.region_state:SPA
-				activate_law = law_type:law_presidential_republic
+				
+				on_created = {
+					activate_law = law_type:law_presidential_republic
+				}
 			}
 			c:CAS = { set_capital = STATE_TOLEDO }
 		}
@@ -3444,22 +3447,22 @@ dvg_spain.72 = {
 			limit = { has_variable = dvg_CAS_low_centralization }
 			remove_variable = dvg_CAS_low_centralization
 		}
-		
+		set_variable = CAS_federal_republic
 		ai_chance = {
 			base = 25
 			modifier = {
 				trigger = {
 					c:SPA = { has_law = law_type:law_monarchy }
 				}
-				multiply = 2
+				add = 25
 			}
 			modifier = {
 				trigger = { has_variable = dvg_CAS_low_centralization }
-				multiply = 2
+				add = 25
 			}
 			modifier = {
 				trigger = { has_variable = dvg_CAS_high_centralization }
-				multiply = 0.5
+				add = -12.5
 			}
 		}
 	}
@@ -3471,7 +3474,15 @@ dvg_spain.72 = {
 		c:SPA = {
 			trigger_event = { id = dvg_spain.79 days = 7 }
 		}
-		
+		if = {
+			limit = { has_variable = dvg_CAS_high_centralization }
+			remove_variable = dvg_CAS_high_centralization
+		}
+		else = {
+			limit = { has_variable = dvg_CAS_low_centralization }
+			remove_variable = dvg_CAS_low_centralization
+		}
+		set_variable = CAS_traditional
 		ai_chance = {
 			base = 50
 			modifier = {
@@ -3481,7 +3492,7 @@ dvg_spain.72 = {
 						has_variable = dvg_CAS_high_centralization
 					}
 				}
-				multiply = 0.5
+				add = -25
 			}
 		}
 	}
@@ -3492,6 +3503,14 @@ dvg_spain.72 = {
 		trigger_event = { id = dvg_spain.74 }
 		set_variable = CAS_independence
 		
+		if = {
+			limit = { has_variable = dvg_CAS_high_centralization }
+			remove_variable = dvg_CAS_high_centralization
+		}
+		else = {
+			limit = { has_variable = dvg_CAS_low_centralization }
+			remove_variable = dvg_CAS_low_centralization
+		}
 		
 		ai_chance = {
 			base = 25
@@ -3499,15 +3518,15 @@ dvg_spain.72 = {
 				trigger = {
 					c:SPA = { NOT = { has_law = law_type:law_monarchy } }
 				}
-				multiply = 2
+				add = 25
 			}
 			modifier = {
 				trigger = { has_variable = dvg_CAS_high_centralization }
-				multiply = 2
+				add = 25
 			}
 			modifier = {
 				trigger = { has_variable = dvg_CAS_low_centralization }
-				multiply = 0.5
+				add = -12.5
 			}
 		}
 	}
@@ -4072,9 +4091,9 @@ dvg_spain.82 = {
 			type = dp_annex_war
 			
 			add_war_goal = {
-				holder = c:CAS
+				holder = c:ATR
 				type = annex_country
-				target_country = c:ATR
+				target_country = c:CAS
 			}
 		}
 		
@@ -4159,11 +4178,6 @@ dvg_spain.84 = {
 			war = yes
 			type = dp_annex_war
 			
-			add_war_goal = {
-				holder = c:CAS
-				type = annex_country
-				target_country = c:ATR
-			}
 		}
 		create_diplomatic_play = {
 			target_country = c:ANL
@@ -4171,9 +4185,9 @@ dvg_spain.84 = {
 			type = dp_annex_war
 			
 			add_war_goal = {
-				holder = c:CAS
+				holder = c:ANL
 				type = annex_country
-				target_country = c:ANL
+				target_country = c:CAS
 			}
 		}
 		ai_chance = {
@@ -4242,6 +4256,9 @@ dvg_spain.86 = {
 	option = {
 		name = dvg_spain.86.a
 		default_option = yes
+		
+		add_primary_culture = cu:spanish
+		add_primary_culture = cu:galician
 		
 		if = {
 			limit = { NOT = { has_global_variable = dvg_spanish_civil_war_over } }
@@ -4518,7 +4535,9 @@ dvg_spain.92 = {
 		s:STATE_TOLEDO = {
 			remove_homeland = cu:portuguese
 		}
-		
+		c:SPA = {
+			trigger_event = { id = dvg_spain.93 }
+		}
 		ai_chance = {
 			base = 1
 		}
@@ -4551,7 +4570,22 @@ dvg_spain.93 = {
 		name = dvg_spain.93.a
 		default_option = yes
 		
-		
+		if = {
+			limit = { exists = c:DUA }
+			c:DUA = {
+				trigger_event = { id = dvg_spain.98 }
+			}
+		}
+		else = {
+			limit = { 
+				NOT = { exists = c:DUA } 
+			}
+			random_country = {
+				limit = { owns_entire_state_region = STATE_HOME_COUNTIES }
+				trigger_event = { id = dvg_spain.99 }
+			}
+		}
+		change_tag = POR
 		ai_chance = {
 			base = 1
 		}
@@ -4584,6 +4618,10 @@ dvg_spain.94 = {
 		name = dvg_spain.94.a
 		default_option = yes
 		
+		add_primary_culture = cu:portuguese
+		add_primary_culture = cu:galician
+		
+		trigger_event = { id = dvg_spain.96 }
 		
 		ai_chance = {
 			base = 1
@@ -4728,7 +4766,20 @@ dvg_spain.98 = {
 		name = dvg_spain.98.a
 		default_option = yes
 		
-		
+		every_state = {
+			limit = {
+				c:POR ?= owner
+				NOT = { region = sr:region_iberia }
+			}
+			set_state_owner = c:DUA
+		}
+		every_country = {
+			limit = {
+				is_subject_of = c:POR
+				NOT = { capital.region = sr:region_iberia }
+			}
+			trigger_event = { id = dvg_spain.100 }
+		}
 		ai_chance = {
 			base = 1
 		}
@@ -4761,7 +4812,20 @@ dvg_spain.99 = {
 		name = dvg_spain.99.a
 		default_option = yes
 		
-		
+		every_state = {
+			limit = {
+				c:POR ?= owner
+				NOT = { region = sr:region_iberia }
+			}
+			set_state_owner = root
+		}
+		every_country = {
+			limit = {
+				is_subject_of = c:POR
+				NOT = { capital.region = sr:region_iberia }
+			}
+			trigger_event = { id = dvg_spain.100 }
+		}
 		ai_chance = {
 			base = 1
 		}
@@ -4794,7 +4858,51 @@ dvg_spain.100 = {
 		name = dvg_spain.100.a
 		default_option = yes
 		
-		
+		if = {
+			limit = { is_subject_type = subject_type_colony }
+			c:POR = {
+				remove_diplomatic_pact = {
+					country = root
+					type = colony
+				}
+			}
+		}
+		else_if = {
+			limit = { is_subject_type = subject_type_protectorate }
+			c:POR = {
+				remove_diplomatic_pact = {
+					country = root
+					type = protectorate
+				}
+			}
+		}
+		else_if = {
+			limit = { is_subject_type = subject_type_dominion }
+			c:POR = {
+				remove_diplomatic_pact = {
+					country = root
+					type = dominion
+				}
+			}
+		}
+		else_if = {
+			limit = { is_subject_type = subject_type_chartered_company }
+			c:POR = {
+				remove_diplomatic_pact = {
+					country = root
+					type = chartered_company
+				}
+			}
+		}
+		else = {
+			limit = { is_subject_type = subject_type_personal_union }
+			c:POR = {
+				remove_diplomatic_pact = {
+					country = root
+					type = personal_union
+				}
+			}
+		}
 		ai_chance = {
 			base = 1
 		}
@@ -4904,6 +5012,14 @@ dvg_spain.103 = {
 		name = dvg_spain.103.a
 		default_option = yes
 		
+		add_primary_culture = cu:lusitanian
+		add_primary_culture = cu:mexican
+		add_primary_culture = cu:central_american
+		
+		change_tag = SPC
+		annex_with_incorporation = c:GCO
+		
+		trigger_event = { id = dvg_spain.104 }
 		
 		ai_chance = {
 			base = 1
