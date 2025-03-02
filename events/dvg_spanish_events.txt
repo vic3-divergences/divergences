@@ -723,6 +723,9 @@ dvg_spain.15 = {
 		add_journal_entry = {
 			type = je_SPA_instability
 		}
+		ig:ig_intelligentsia = {
+			leader = { save_scope_as = is_sales }
+		}
 	}
 	
 	
@@ -804,6 +807,9 @@ dvg_spain.17 = {
 	}
 	
 	immediate = {
+		ig:ig_intelligentsia = {
+			leader = { save_scope_as = is_sales }
+		}
 	}
 	
 	
@@ -888,6 +894,9 @@ dvg_spain.19 = {
 	}
 	
 	immediate = {
+		ig:ig_intelligentsia = {
+			leader = { save_scope_as = is_sales }
+		}
 	}
 	
 	# Better a constitutional kingdom than no kingdom at all.
@@ -1003,6 +1012,9 @@ dvg_spain.21 = {
 	}
 	
 	immediate = {
+		ig:ig_intelligentsia = {
+			leader = { save_scope_as = is_sales }
+		}
 	}
 	
 	# An inauspicious beginning, to be sure…
@@ -1016,6 +1028,9 @@ dvg_spain.21 = {
 		change_variable = {
 			name = dvg_instability_var
 			add = 1
+		}
+		ig:ig_intelligentsia = {
+			leader = { kill_character = yes }
 		}
 		ai_chance = {
 			base = 1
@@ -4326,7 +4341,10 @@ dvg_spain.86 = {
 		name = dvg_spain.86.a
 		default_option = yes
 		
-		add_primary_culture = cu:spanish
+		if = {
+			limit = { NOT = { country_has_primary_culture = cu:spanish } }
+			add_primary_culture = cu:spanish
+		}
 		add_primary_culture = cu:galician
 		
 		if = {
@@ -4724,6 +4742,7 @@ dvg_spain.95 = {
 		name = dvg_spain.95.a
 		default_option = yes
 		
+		set_global_variable = ANL_faction_collapse
 		trigger_event = { id = dvg_spain.96 }
 		
 		ai_chance = {
@@ -4759,7 +4778,11 @@ dvg_spain.96 = {
 		default_option = yes
 		
 		change_tag = SPA
-		add_primary_culture = cu:spanish
+		if = {
+			limit = { NOT = { country_has_primary_culture = cu:spanish } }
+			add_primary_culture = cu:spanish
+		}
+		add_primary_culture = cu:galician
 		
 		ai_chance = {
 			base = 1
@@ -4786,6 +4809,10 @@ dvg_spain.97 = {
 	duration = 3
 
 	trigger = {
+		exists = c:SPA
+		this = c:SPA
+		has_global_variable = ANL_faction_collapse
+		at_war = no
 	}
 	
 	# The Communists are defeated
@@ -4793,18 +4820,37 @@ dvg_spain.97 = {
 		name = dvg_spain.97.a
 		default_option = yes
 		
+		remove_global_variable = ANL_faction_collapse
 		
 		ai_chance = {
-			base = 50
+			base = 35
 		}
 	}
 	# The revolution is victorious
 	option = {
 		name = dvg_spain.97.b
 		
+		ig:ig_trade_unions = {
+			add_ruling_interest_group = yes
+		}
+		ig:ig_landowners = {
+			remove_ruling_interest_group = yes
+		}
+		activate_law = law_type:law_council_republic
+		activate_law = law_type:law_autocracy
+		activate_law = law_type:law_closed_borders
+		activate_law = law_type:law_slavery_banned
+		activate_law = law_type:law_old_age_pension
+		activate_law = law_type:law_state_atheism
+		activate_law = law_type:law_public_health_insurance
+		activate_law = law_type:law_outlawed_dissent
+		activate_law = law_type:law_militarized_police_force
+		activate_law = law_type:law_worker_protections
+		activate_law = law_type:law_secret_police
+		activate_law = law_type:law_mass_conscription
 		
 		ai_chance = {
-			base = 50
+			base = 65
 		}
 	}
 }
@@ -4999,8 +5045,12 @@ dvg_spain.101 = {
 	trigger = {
 		exists = c:SPA
 		this = c:SPA
-		c:GCO = { is_subject_of = c:SPA }
+		c:GCO = { 
+			liberty_desire >=50
+			is_subject_of = c:SPA 
+		}
 		c:SPA = { country_rank < rank_value:great_power }
+		NOT = { has_global_variable = new_spain_warning }
 	}
 	
 	# We will not falter!
@@ -5008,6 +5058,7 @@ dvg_spain.101 = {
 		name = dvg_spain.101.a
 		default_option = yes
 		
+		set_global_variable = new_spain_warning
 		
 		ai_chance = {
 			base = 1
@@ -5122,6 +5173,10 @@ dvg_spain.104 = {
 		name = dvg_spain.104.a
 		default_option = yes
 		
+		if = {
+			limit = { NOT = { country_has_primary_culture = cu:spanish } }
+			add_primary_culture = cu:spanish
+		}
 		
 		ai_chance = {
 			base = 1
@@ -5148,6 +5203,11 @@ dvg_spain.105 = {
 	duration = 3
 
 	trigger = {
+		exists = c:SPA
+		this = c:SPA
+		at_war = no
+		year = 1860
+		NOT = { has_variable = denied_independence }
 	}
 	
 	# This can only be good for the empire.
@@ -5155,9 +5215,100 @@ dvg_spain.105 = {
 		name = dvg_spain.105.a
 		default_option = yes
 		
-		
+		remove_diplomatic_pact = {
+			country = c:GRA
+			type = colony
+		}
+		change_relations = {
+			country = c:GRA
+			value = 100
+		}
 		ai_chance = {
-			base = 1
+			base = 80
+			
+			modifier = {
+				trigger = {
+					OR = {
+						has_government_type = gov_council_dictatorship
+						has_government_type = gov_fascist_state
+						has_government_type = gov_fascist_corporate_state
+						has_government_type = gov_presidential_dictatorship
+						has_government_type = gov_junta
+					}
+				}
+				add = -80
+			}
+			modifier = {
+				trigger = {
+					has_government_type = gov_absolute_kingdom
+				}
+				add = -60
+			}
+			modifier = {
+				trigger = {
+					OR = {
+						has_government_type = gov_presidential_democracy
+						has_government_type = gov_parliamentary_democracy
+						has_government_type = gov_constitutional_kingdom
+						has_government_type = gov_council_republic
+					}
+				}
+				add = 40
+			}
+		}
+	}
+	#No, they shall remain under our direct control.
+	option = {
+		name = dvg_spain.105.b
+		
+		set_variable = denied_independence
+		
+		change_relations = {
+			country = c:GRA
+			value = -50
+		}
+		c:GRA = {
+			add_liberty_desire = 25
+		}
+		ai_chance = {
+			base = 20
+			
+			modifier = {
+				trigger = {
+					has_government_type = gov_absolute_kingdom
+				}
+				add = 15
+			}
+			modifier = {
+				trigger = {
+					OR = {
+						has_government_type = gov_presidential_democracy
+						has_government_type = gov_parliamentary_democracy
+						has_government_type = gov_constitutional_kingdom
+						has_government_type = gov_council_republic
+					}
+				}
+				add = -10
+			}
+		}
+	}
+	# Onwards to New Granada!
+	option = {
+		name = dvg_spain.105.c
+		
+		remove_diplomatic_pact = {
+			country = c:GRA
+			type = colony
+		}
+		c:SPA = {
+			change_relations = {
+				country = c:GRA
+				value = 100
+			}
+		}
+		play_as = c:GRA
+		ai_chance = {
+			base = 0
 		}
 	}
 }
@@ -5181,11 +5332,278 @@ dvg_spain.106 = {
 	duration = 3
 
 	trigger = {
+		exists = c:SPA
+		this = c:SPA
+		at_war = no
+		year = 1860
+		NOT = { has_variable = denied_independence }
 	}
 	
 	# This can only be good for the empire.
 	option = {
 		name = dvg_spain.106.a
+		default_option = yes
+		
+		remove_diplomatic_pact = {
+			country = c:CUB
+			type = colony
+		}
+		change_relations = {
+			country = c:CUB
+			value = 100
+		}
+		
+		ai_chance = {
+			base = 80
+			
+			modifier = {
+				trigger = {
+					OR = {
+						has_government_type = gov_council_dictatorship
+						has_government_type = gov_fascist_state
+						has_government_type = gov_fascist_corporate_state
+						has_government_type = gov_presidential_dictatorship
+						has_government_type = gov_junta
+					}
+				}
+				add = -80
+			}
+			modifier = {
+				trigger = {
+					OR = {
+						has_government_type = gov_absolute_kingdom
+						has_government_type = gov_absolute_empire
+						has_government_type = gov_empire
+						has_government_type = gov_kingdom
+						has_government_type = gov_feudal_kingdom
+						has_government_type = gov_feudal_empire
+					}
+				}
+				add = -60
+			}
+			modifier = {
+				trigger = {
+					OR = {
+						has_government_type = gov_presidential_democracy
+						has_government_type = gov_parliamentary_democracy
+						has_government_type = gov_constitutional_kingdom
+						has_government_type = gov_constitutional_empire
+						has_government_type = gov_council_republic
+					}
+				}
+				add = 40
+			}
+		}
+	}
+	#No, they shall remain under our direct control.
+	option = {
+		name = dvg_spain.105.b
+		
+		change_relations = {
+			country = c:GRA
+			value = -50
+		}
+		c:GRA = {
+			add_liberty_desire = 25
+		}
+		ai_chance = {
+			base = 20
+			
+			modifier = {
+				trigger = {
+					OR = {
+						has_government_type = gov_absolute_kingdom
+						has_government_type = gov_absolute_empire
+						has_government_type = gov_empire
+						has_government_type = gov_kingdom
+						has_government_type = gov_feudal_kingdom
+						has_government_type = gov_feudal_empire
+					}
+				}
+				add = 15
+			}
+			modifier = {
+				trigger = {
+					OR = {
+						has_government_type = gov_presidential_democracy
+						has_government_type = gov_parliamentary_democracy
+						has_government_type = gov_constitutional_kingdom
+						has_government_type = gov_constitutional_empire
+						has_government_type = gov_council_republic
+					}
+				}
+				add = -10
+			}
+		}
+	}
+	# Onwards to Cuba!
+	option = {
+		name = dvg_spain.106.c
+		
+		remove_diplomatic_pact = {
+			country = c:CUB
+			type = colony
+		}
+		c:SPA = {
+			change_relations = {
+				country = c:CUB
+				value = 100
+			}
+		}
+		play_as = c:CUB
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+dvg_spain.107 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.107.t
+	desc = dvg_spain.107.d
+	flavor = dvg_spain.107.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# We shall finish what Pizarro started!
+	option = {
+		name = dvg_spain.107.a
+		default_option = yes
+		
+		create_diplomatic_play = {
+			target_country = c:TWT
+			war = yes
+			type = dp_annex_war
+			
+			add_war_goal = {
+				holder = c:TWT
+				type = annex_country
+				target_country = c:QUI
+			}
+		}
+		add_journal_entry = {
+			type = je_the_last_andine_war_SPA
+		}
+		c:TWT = {
+			trigger_event = { id = dvg_spain.108 }
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.108 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.108.t
+	desc = dvg_spain.108.d
+	flavor = dvg_spain.108.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# Onwards, to war!
+	option = {
+		name = dvg_spain.108.a
+		default_option = yes
+		
+		add_journal_entry = {
+			type = je_the_last_andine_war_TWT
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.109 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.109.t
+	desc = dvg_spain.109.d
+	flavor = dvg_spain.109.f
+
+	event_image = {
+		video = "votp_monarch_holding_court"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/votp/monarch_holding_court"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# Plus Ultra!
+	option = {
+		name = dvg_spain.109.a
+		default_option = yes
+		
+		if = {
+			limit = { exists = s:STATE_NEAR_COLLASUYU.region_state:SPA }
+			create_country = {
+				origin = this
+				
+			}
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.110 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.110.t
+	desc = dvg_spain.110.d
+	flavor = dvg_spain.110.f
+
+	event_image = {
+		video = "votp_monarch_holding_court"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/votp/monarch_holding_court"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# Fortune favours the bold!
+	option = {
+		name = dvg_spain.110.a
 		default_option = yes
 		
 		
