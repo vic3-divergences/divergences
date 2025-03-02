@@ -2637,6 +2637,20 @@ dvg_spain.54 = {
 	duration = 3
 
 	trigger = {
+		exists = c:SPA
+		this = c:SPA
+		OR = {
+			has_government_type = gov_presidential_democracy
+			has_government_type = gov_parliamentary_democracy
+		}
+		has_global_variable = SPA_intro_clear
+		NOT = { has_variable = dvg_SPA_republic }
+		NOR = {
+			has_global_variable = dvg_castile_stage_two
+			has_global_variable = dvg_spanish_civil_war_over
+			has_global_variable = dvg_spain_civil_war_averted
+			has_variable = dvg_SPA_republic
+		}
 	}
 	
 	# The Spanish Civil War
@@ -2644,7 +2658,15 @@ dvg_spain.54 = {
 		name = dvg_spain.54.a
 		default_option = yes
 		
-		
+		change_variable = {
+			name = dvg_instability_var
+			add = 3
+		}
+		change_variable = {
+			name = dvg_centralization_var
+			add = 3
+		}
+		set_variable = dvg_SPA_republic
 		ai_chance = {
 			base = 1
 		}
@@ -5559,6 +5581,42 @@ dvg_spain.109 = {
 
 	duration = 3
 
+	immediate = {
+		c:QUI = {
+			every_scope_character = {
+				limit = { has_variable = is_juan_pablo }
+				save_scope_as = scope_juan_pablo
+			}
+		}
+		if = {
+			limit = { exists = s:STATE_NEAR_COLLASUYU.region_state:SPA }
+			create_country = {
+				tag = QUL
+				origin = this
+				state = s:STATE_ANTISUYU.region_state:SPA
+				state = s:STATE_ATACAMA.region_state:SPA
+				state = s:STATE_CATAMARCA.region_state:SPA
+				state = s:STATE_CHARCAS.region_state:SPA
+				state = s:STATE_KUCHICHAY.region_state:SPA
+				state = s:STATE_NEAR_COLLASUYU.region_state:SPA
+				state = s:STATE_TILCARA.region_state:SPA
+				state = s:STATE_TIWANAKU.region_state:SPA
+				
+				on_created = {
+					add_primary_culture = cu:portuguese
+					set_state_religion = rel:catholic
+					set_country_type = colonial
+					
+					c:SPA = {
+						create_diplomatic_pact = {
+							country = c:QUL
+							type = colony
+						}
+					}
+				}
+			}
+		}
+	}
 	trigger = {
 	}
 	
@@ -5567,13 +5625,22 @@ dvg_spain.109 = {
 		name = dvg_spain.109.a
 		default_option = yes
 		
-		if = {
-			limit = { exists = s:STATE_NEAR_COLLASUYU.region_state:SPA }
-			create_country = {
-				origin = this
-				
+		s:STATE_CUNTISUYU.region_state:SPA = {
+			set_state_owner = c:QUI
+		}
+		s:STATE_CUZCO.region_state:SPA = {
+			set_state_owner = c:QUI
+		}
+		s:STATE_NEAR_ANTISUYU.region_state:SPA = {
+			set_state_owner = c:QUI
+		}
+		c:QUI = {
+			scope:scope_juan_pablo = {
+				transfer_character = c:QUL
+				set_character_as_ruler = yes
 			}
 		}
+		
 		ai_chance = {
 			base = 1
 		}
