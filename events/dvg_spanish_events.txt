@@ -1569,6 +1569,7 @@ dvg_spain.31 = {
 			trigger_event = { id = dvg_cuba.2 days = 14 }
 		}
 		set_variable = dvg_SPA_clear_initial_chain
+		remove_variable = dvg_SPA_wait_DUA
 		ai_chance = {
 			base = 1
 		}
@@ -1610,7 +1611,11 @@ dvg_spain.32 = {
 		default_option = yes
 		
 		remove_variable = dvg_SPA_clear_initial_chain
-		remove_variable = dvg_SPA_wait_DUA
+		if = {
+			limit = { has_variable = dvg_SPA_wait_DUA }
+			remove_variable = dvg_SPA_wait_DUA
+		}
+		
 		add_loyalists = {
 			value = 0.3
 		}
@@ -3484,9 +3489,21 @@ dvg_spain.69 = {
 			limit = { this = { var:dvg_centralization_var >= 5 } }
 			trigger_event = { id = dvg_spain.71 days = 7 }
 		}
-		s:STATE_TOLEDO = { add_claim = ROOT }
-		s:STATE_CASTILE = { add_claim = ROOT }
-		s:STATE_CARTAGENA = { add_claim = ROOT }
+		s:STATE_TOLEDO = { 
+			add_claim = ROOT
+			add_claim = c:ATR
+			add_claim = c:ANL
+		}
+		s:STATE_CASTILE = { 
+			add_claim = ROOT
+			add_claim = c:ATR
+			add_claim = c:ANL
+		}
+		s:STATE_CARTAGENA = { 
+			add_claim = ROOT
+			add_claim = c:ATR
+			add_claim = c:ANL
+		}
 		ai_chance = {
 			base = 1
 		}
@@ -3507,9 +3524,21 @@ dvg_spain.69 = {
 				trigger_event = { id = dvg_spain.71 days = 7 }
 			}
 		}
-		s:STATE_TOLEDO = { add_claim = ROOT }
-		s:STATE_CASTILE = { add_claim = ROOT }
-		s:STATE_CARTAGENA = { add_claim = ROOT }
+		s:STATE_TOLEDO = { 
+			add_claim = ROOT
+			add_claim = c:ATR
+			add_claim = c:ANL
+		}
+		s:STATE_CASTILE = { 
+			add_claim = ROOT
+			add_claim = c:ATR
+			add_claim = c:ANL
+		}
+		s:STATE_CARTAGENA = { 
+			add_claim = ROOT
+			add_claim = c:ATR
+			add_claim = c:ANL
+		}
 		ai_chance = {
 			base = 0
 		}
@@ -3546,7 +3575,11 @@ dvg_spain.70 = {
 			trigger_event = { id = dvg_spain.72 days = 7 }
 			set_variable = dvg_CAS_low_centralization
 		}
-		s:STATE_BADAJOZ = { add_claim = c:CAS }
+		s:STATE_BADAJOZ = { 
+			add_claim = c:CAS
+			add_claim = c:ATR
+			add_claim = c:ANL
+		}
 		
 		ai_chance = {
 			base = 1
@@ -3583,7 +3616,11 @@ dvg_spain.71 = {
 		if = {
 			limit = { exists = s:STATE_BADAJOZ.region_state:SPA }
 			s:STATE_BADAJOZ.region_state:SPA = { set_state_owner = c:CAS }
-			s:STATE_BADAJOZ = { add_claim = ROOT }
+			s:STATE_BADAJOZ = { 
+				add_claim = ROOT
+				add_claim = c:ATR
+				add_claim = c:ANL
+			}
 		}
 		c:CAS = {
 			trigger_event = { id = dvg_spain.72 days = 7 }
@@ -4105,7 +4142,30 @@ dvg_spain.80 = {
 			create_diplomatic_play = {
 				target_country = c:CAS
 				war = yes
-				type = dp_annex_war
+				type = dp_rebellion_annex
+			}
+			c:CAS = {
+				add_journal_entry = {
+					type = je_castilian_war_of_independence
+				}
+			}
+		}
+		else_if = {
+			limit = { 
+				has_variable = CAS_independence
+				exists = s:STATE_BADAJOZ.region_state:SPA
+			}
+			create_diplomatic_play = {
+				target_country = c:CAS
+				war = yes
+				type = dp_rebellion_annex
+				
+				add_war_goal = {
+					holder = c:CAS
+					type = return_state
+					target_state = s:STATE_BADAJOZ.region_state:SPA
+					target_country = c:SPA
+				}
 			}
 			c:CAS = {
 				add_journal_entry = {
@@ -4117,7 +4177,7 @@ dvg_spain.80 = {
 			create_diplomatic_play = {
 				target_country = c:CAS
 				war = yes
-				type = dp_annex_war
+				type = dp_rebellion_annex
 				
 				add_war_goal = {
 					holder = c:CAS
@@ -4130,6 +4190,13 @@ dvg_spain.80 = {
 					type = je_spanish_civil_war_CAS
 				}
 			}
+			s:STATE_ALENTEJO = { add_claim = c:CAS }
+			s:STATE_BEIRA = { add_claim = c:CAS }
+			s:STATE_ESTREMADURA = { add_claim = c:CAS }
+			s:STATE_AZORES = { add_claim = c:CAS }
+			s:STATE_MADEIRA = { add_claim = c:CAS }
+			s:STATE_CANARY_ISLANDS = { add_claim = c:CAS }
+			
 		}
 		
 		hidden_effect = {
@@ -4138,13 +4205,29 @@ dvg_spain.80 = {
 				create_diplomatic_play = {
 					target_country = c:GLI
 					war = yes
-					type = dp_annex_war
+					type = dp_rebellion_annex
 				}
 			}
 			if = {
 				limit = { 
 					exists = c:ATR
 					exists = c:ANL
+				}
+				create_diplomatic_play = {
+					target_country = c:ATR
+					war = yes
+					type = dp_rebellion_annex
+				}
+				create_diplomatic_play = {
+					target_country = c:ANL
+					war = yes
+					type = dp_rebellion_annex
+					
+					add_war_goal = {
+						holder = c:ANL
+						type = annex_country
+						target_country = c:SPA
+					}
 				}
 				c:ATR = {
 					trigger_event = { id = dvg_spain.81 }
@@ -4156,11 +4239,22 @@ dvg_spain.80 = {
 				c:CAS = {
 					trigger_event = { id = dvg_spain.84 }
 				}
+				s:STATE_ALENTEJO = { add_claim = c:ANL }
+				s:STATE_BEIRA = { add_claim = c:ANL }
+				s:STATE_ESTREMADURA = { add_claim = c:ANL }
+				s:STATE_AZORES = { add_claim = c:ANL }
+				s:STATE_MADEIRA = { add_claim = c:ANL }
+				s:STATE_CANARY_ISLANDS = { add_claim = c:ANL }
 			}
 			else_if = {
 				limit = { 
 					exists = c:ATR 
 					NOT = { exists = c:ANL }
+				}
+				create_diplomatic_play = {
+					target_country = c:ATR
+					war = yes
+					type = dp_rebellion_annex
 				}
 				c:CAS = {
 					trigger_event = { id = dvg_spain.82 }
@@ -4171,12 +4265,29 @@ dvg_spain.80 = {
 					exists = c:ANL 
 					NOT = { exists = c:ATR }
 				}
+				create_diplomatic_play = {
+					target_country = c:ANL
+					war = yes
+					type = dp_rebellion_annex
+					
+					add_war_goal = {
+						holder = c:ANL
+						type = annex_country
+						target_country = c:SPA
+					}
+				}
 				c:CAS = {
 					trigger_event = { id = dvg_spain.83 }
 				}
 				c:ANL = {
 					add_journal_entry = { type = je_spanish_civil_war_ANL }
 				}
+				s:STATE_ALENTEJO = { add_claim = c:ANL }
+				s:STATE_BEIRA = { add_claim = c:ANL }
+				s:STATE_ESTREMADURA = { add_claim = c:ANL }
+				s:STATE_AZORES = { add_claim = c:ANL }
+				s:STATE_MADEIRA = { add_claim = c:ANL }
+				s:STATE_CANARY_ISLANDS = { add_claim = c:ANL }
 			}
 		}
 		
@@ -4221,7 +4332,7 @@ dvg_spain.81 = {
 			create_diplomatic_play = {
 				target_country = c:ANL
 				war = yes
-				type = dp_annex_war
+				type = dp_rebellion_annex
 				
 				add_war_goal = {
 					holder = c:ANL
@@ -4230,15 +4341,12 @@ dvg_spain.81 = {
 				}
 			}
 		}
+		s:STATE_ASTURIAS = { add_claim = c:ANL }
+		s:STATE_NAVARRA = { add_claim = c:ANL }
+		s:STATE_GALICIA = { add_claim = c:ANL }
+		s:STATE_ANDALUSIA = { add_claim = c:ATR }
+		s:STATE_GRANADA = { add_claim = c:ATR }
 		
-		if = {
-			limit = { exists = c:GLI }
-			create_diplomatic_play = {
-				target_country = c:GLI
-				war = yes
-				type = dp_annex_war
-			}
-		}
 		ai_chance = {
 			base = 1
 		}
@@ -4274,7 +4382,7 @@ dvg_spain.82 = {
 		create_diplomatic_play = {
 			target_country = c:ATR
 			war = yes
-			type = dp_annex_war
+			type = dp_rebellion_annex
 			
 			add_war_goal = {
 				holder = c:ATR
@@ -4282,7 +4390,11 @@ dvg_spain.82 = {
 				target_country = c:CAS
 			}
 		}
-		
+		s:STATE_ASTURIAS = { add_claim = c:CAS }
+		s:STATE_NAVARRA = { add_claim = c:CAS }
+		s:STATE_GALICIA = { add_claim = c:CAS }
+		s:STATE_ANDALUSIA = { add_claim = c:ATR }
+		s:STATE_GRANADA = { add_claim = c:ATR }
 		ai_chance = {
 			base = 1
 		}
@@ -4318,7 +4430,7 @@ dvg_spain.83 = {
 		create_diplomatic_play = {
 			target_country = c:ANL
 			war = yes
-			type = dp_annex_war
+			type = dp_rebellion_annex
 			
 			add_war_goal = {
 				holder = c:CAS
@@ -4326,6 +4438,11 @@ dvg_spain.83 = {
 				target_country = c:ANL
 			}
 		}
+		s:STATE_ASTURIAS = { add_claim = c:ANL }
+		s:STATE_NAVARRA = { add_claim = c:ANL }
+		s:STATE_GALICIA = { add_claim = c:ANL }
+		s:STATE_ANDALUSIA = { add_claim = c:CAS }
+		s:STATE_GRANADA = { add_claim = c:CAS }
 		
 		ai_chance = {
 			base = 1
@@ -4362,13 +4479,18 @@ dvg_spain.84 = {
 		create_diplomatic_play = {
 			target_country = c:ATR
 			war = yes
-			type = dp_annex_war
+			type = dp_rebellion_annex
 			
+			add_war_goal = {
+				holder = c:ATR
+				type = annex_country
+				target_country = c:CAS
+			}
 		}
 		create_diplomatic_play = {
 			target_country = c:ANL
 			war = yes
-			type = dp_annex_war
+			type = dp_rebellion_annex
 			
 			add_war_goal = {
 				holder = c:ANL
@@ -4376,6 +4498,11 @@ dvg_spain.84 = {
 				target_country = c:CAS
 			}
 		}
+		s:STATE_ASTURIAS = { add_claim = ROOT }
+		s:STATE_NAVARRA = { add_claim = ROOT }
+		s:STATE_GALICIA = { add_claim = ROOT }
+		s:STATE_ANDALUSIA = { add_claim = ROOT }
+		s:STATE_GRANADA = { add_claim = ROOT }
 		ai_chance = {
 			base = 1
 		}
@@ -4950,6 +5077,9 @@ dvg_spain.97 = {
 		activate_law = law_type:law_worker_protections
 		activate_law = law_type:law_secret_police
 		activate_law = law_type:law_mass_conscription
+		activate_law = law_type:law_command_economy
+		activate_law = law_type:law_collectivized_agriculture
+		activate_law = law_type:law_protectionism
 		
 		ai_chance = {
 			base = 65
