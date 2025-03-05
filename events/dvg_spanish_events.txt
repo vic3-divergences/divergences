@@ -353,6 +353,7 @@ dvg_spain.7 = {
 		add_journal_entry = {
 			type = je_SPA_instability
 		}
+		set_variable = dvg_SPA_clear_initial_chain
 		ai_chance = {
 			base = 40
 		}
@@ -371,6 +372,7 @@ dvg_spain.7 = {
 		add_journal_entry = {
 			type = je_SPA_instability
 		}
+		set_variable = dvg_SPA_clear_initial_chain
 		ai_chance = {
 			base = 60
 		}
@@ -641,6 +643,7 @@ dvg_spain.13 = {
 		name = dvg_spain.13.b
 		
 		activate_law = law_type:law_landed_voting
+		set_variable = dvg_SPA_clear_initial_chain
 		
 		ai_chance = {
 			base = 0.5
@@ -686,6 +689,7 @@ dvg_spain.14 = {
 			name = dvg_instability_var
 			add = 2
 		}
+		set_variable = dvg_SPA_clear_initial_chain
 		ai_chance = {
 			base = 1
 		}
@@ -980,7 +984,7 @@ dvg_spain.20 = {
 			value = 0.35
 			culture = cu:spanish
 		}
-		
+		set_variable = dvg_SPA_clear_initial_chain
 		ai_chance = {
 			base = 0.5
 		}
@@ -1028,6 +1032,7 @@ dvg_spain.21 = {
 			name = dvg_instability_var
 			add = 1
 		}
+		set_variable = dvg_SPA_clear_initial_chain
 		ig:ig_intelligentsia = {
 			leader = { kill_character = yes }
 		}
@@ -1113,6 +1118,8 @@ dvg_spain.23 = {
 		activate_law = law_type:law_wealth_voting
 		activate_law = law_type:law_appointed_bureaucrats
 		trigger_event = { id = dvg_spain.24 days = 3 }
+		set_variable = dvg_SPA_clear_initial_chain
+		set_variable = dvg_SPA_wait_DUA
 		c:DUA = {
 			trigger_event = { id = dvg_spain.25 days = 31 }
 		}
@@ -1561,6 +1568,7 @@ dvg_spain.31 = {
 		c:CUB = {
 			trigger_event = { id = dvg_cuba.2 days = 14 }
 		}
+		set_variable = dvg_SPA_clear_initial_chain
 		ai_chance = {
 			base = 1
 		}
@@ -1587,6 +1595,13 @@ dvg_spain.32 = {
 	duration = 3
 
 	trigger = {
+		exists = c:SPA
+		this = c:SPA
+		has_variable = dvg_SPA_clear_initial_chain
+		OR = {
+			has_variable = dvg_SPA_wait_DUA
+			NOT = { exists = c:DUA }
+		}
 	}
 	
 	# À frente!
@@ -1594,8 +1609,19 @@ dvg_spain.32 = {
 		name = dvg_spain.32.a
 		default_option = yes
 		
+		remove_variable = dvg_SPA_clear_initial_chain
+		remove_variable = dvg_SPA_wait_DUA
 		add_loyalists = {
 			value = 0.3
+		}
+		if = {
+			limit = {
+				OR = {
+					has_government_type = gov_parliamentary_democracy
+					has_government_type = gov_presidential_democracy
+				}
+			}
+			set_variable = dvg_SPA_republic
 		}
 		set_global_variable = SPA_intro_clear
 		ai_chance = {
