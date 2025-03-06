@@ -27,7 +27,7 @@
 			liberty_desire <=20
 		}
 		
-		at_war = no
+		is_at_war = no
 	}
 	when_taken = {
 		annex_with_incorporation = c:GRA
@@ -63,7 +63,7 @@ integrate_quito = {
 			is_subject = yes
 			liberty_desire <=20
 		}
-		at_war = no
+		is_at_war = no
 	}
 	when_taken = {
 		annex_with_incorporation = c:QUI
@@ -95,11 +95,108 @@ end_the_andine_wars = {
 	possible = {
 		country_rank = rank_value:great_power
 		has_technology_researched = civilizing_mission
-		at_war = no
+		is_at_war = no
 		NOT = { has_truce_with = c:TWT }
 	}
 	when_taken = {
 		trigger_event = { id = dvg_spain.107 }
 		set_global_variable = andine_war_declared
+	}
+}
+establish_mauretania = {
+	is_shown = {
+		OR = {
+			AND = {
+				exists = c:SPC
+				this = c:SPC
+			}
+			AND = {
+				exists = c:SPA
+				this = c:SPA
+			}
+		}
+		
+		NOT = { has_global_variable = mauretania_established }
+	}
+	possible = {
+		country_rank = rank_value:great_power
+		has_technology_researched = civilizing_mission
+		is_at_war = no
+		owns_entire_state_region = STATE_INNER_MOROCCO
+		owns_entire_state_region = STATE_MARRAKECH
+		owns_entire_state_region = STATE_AL_RIF
+		owns_entire_state_region = STATE_FEZ
+		NOT = { exists = c:MOR }
+		NOT = { exists = c:SUS }
+	}
+	when_taken = {
+		if = {
+			limit = { 
+				has_game_rule = no_breakaway
+				exists = c:SPA
+				this = c:SPA
+			}
+			
+			create_country = {
+				tag = MAU
+				origin = this
+				state = s:STATE_AL_RIF.region_state:SPA
+				state = s:STATE_MARRAKECH.region_state:SPA
+				state = s:STATE_FEZ.region_state:SPA
+				state = s:STATE_INNER_MOROCCO.region_state:SPA
+				
+				on_created = {
+					remove_primary_culture = cu:mauretanian
+					add_primary_culture = cu:portuguese
+					activate_law = law_type:law_presidential_republic
+					activate_law = law_type:law_oligarchy
+					
+					c:SPA = {
+						create_diplomatic_pact = {
+							country = c:MAU
+							type = colony
+						}
+					}
+				}
+			}
+			s:STATE_MARRAKECH = { add_homeland = cu:portuguese }
+			s:STATE_FEZ = { add_homeland = cu:portuguese }
+			s:STATE_INNER_MOROCCO = { add_homeland = cu:portuguese }
+		}
+		else_if = {
+			limit = { 
+				has_game_rule = breakaway
+				exists = c:SPA
+				this = c:SPA
+			}
+			
+			create_country = {
+				tag = MAU
+				origin = this
+				state = s:STATE_AL_RIF.region_state:SPA
+				state = s:STATE_MARRAKECH.region_state:SPA
+				state = s:STATE_FEZ.region_state:SPA
+				state = s:STATE_INNER_MOROCCO.region_state:SPA
+				
+				on_created = {
+					activate_law = law_type:law_presidential_republic
+					activate_law = law_type:law_oligarchy
+					
+					c:SPA = {
+						create_diplomatic_pact = {
+							country = c:MAU
+							type = colony
+						}
+					}
+				}
+			}
+			s:STATE_AL_RIF = {
+				remove_homeland = cu:portuguese
+				add_homeland = cu:mauretanian
+			}
+			s:STATE_MARRAKECH = { add_homeland = cu:mauretanian }
+			s:STATE_FEZ = { add_homeland = cu:mauretanian }
+			s:STATE_INNER_MOROCCO = { add_homeland = cu:mauretanian }
+		}
 	}
 }
