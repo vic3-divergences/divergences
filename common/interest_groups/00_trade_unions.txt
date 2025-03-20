@@ -10,6 +10,12 @@
 		ideology_populist
 		ideology_anti_slavery
 	}
+	
+	character_ideologies = {
+		ideology_moderate
+		ideology_reformer
+		ideology_radical
+	}
 
 	enable = {
 		always = yes
@@ -24,13 +30,72 @@
 	
 	on_enable = {
 		ig:ig_trade_unions = {
-			set_ig_trait = ig_trait:ig_trait_work_to_rule
-			set_ig_trait = ig_trait:ig_trait_industrial_organizers
-			set_ig_trait = ig_trait:ig_trait_solidarity
+			if = {
+				limit = {
+					has_dlc_feature = voice_of_the_people_content
+					owner = { c:FRA ?= this }
+				}
+				set_ig_trait = ig_trait:ig_trait_work_to_rule
+				set_ig_trait = ig_trait:ig_trait_industrial_organizers
+				set_ig_trait = ig_trait:ig_trait_bourse_du_travail
+			}
+			else = {
+				set_ig_trait = ig_trait:ig_trait_work_to_rule
+				set_ig_trait = ig_trait:ig_trait_industrial_organizers
+				set_ig_trait = ig_trait:ig_trait_solidarity
+			}
+		}
+		
+		### Socialism
+		if = {
+			limit = {
+				has_technology_researched = socialism
+			}
+			ig:ig_trade_unions = {
+				add_ideology = ideology_socialist
+			}
+		}
+
+		### Feminism
+		if = {
+			limit = {
+				has_technology_researched = feminism
+			}
+			every_interest_group = {
+				limit = {
+					has_ideology = ideology:ideology_egalitarian
+				}
+				remove_ideology = ideology_egalitarian
+				add_ideology = ideology_egalitarian_modern
+			}
 		}
 	}
 
 	on_disable = {}
+	priority_cultures = { #Country scope
+		rule = {
+			trigger = {
+				c:BEI ?= this
+				any_primary_culture = { 
+					cu:burgundian = this
+				}
+			}
+			cultures = {
+				javan balinese visayan sumatran bornean malay moluccan dayak tionghoa makassarese bugis batak
+			}
+		}
+		rule = {
+			trigger = {
+				c:CHR ?= this
+				any_primary_culture = { 
+					cu:scandinavian = this
+				}
+			}
+			cultures = {
+				filipino bugis tagalog visayan
+			}
+		}
+	}
 	on_character_ig_membership = {}
 
 	pop_potential = {
@@ -40,10 +105,28 @@
 			is_pop_type = shopkeepers
 			is_pop_type = officers
 		}
-		NOR = {
-			pop_employment_building_group = bg_agriculture
-			pop_employment_building_group = bg_ranching
-			pop_employment_building_group = bg_plantations
+		OR = {
+			AND = {
+				custom_tooltip = {
+					text = owner_has_modern_agriculture_tt
+					owner = {
+						OR = {
+							has_law = law_type:law_commercialized_agriculture
+							has_law = law_type:law_collectivized_agriculture
+						}
+					}
+				}
+				strata = lower
+				NOR = {
+					pop_employment_building_group = bg_subsistence_agriculture
+					pop_employment_building_group = bg_subsistence_ranching
+				}
+			}
+			NOR = {
+				pop_employment_building_group = bg_agriculture
+				pop_employment_building_group = bg_ranching
+				pop_employment_building_group = bg_plantations
+			}
 		}
 	}
 
@@ -61,6 +144,12 @@
 					}
 				}
 				value = 50
+				if = {
+					limit = {
+						strata = middle
+					}
+					divide = 2
+				}
 			}
 		}
 
@@ -149,6 +238,33 @@
 				value = 1
 				add = scope:interest_group.modifier:interest_group_in_government_attraction_mult
 				min = 0
+			}
+		}
+		
+		if = {
+			limit = {
+				scope:interest_group = {
+					is_in_government = yes
+				}
+			}
+			multiply = { # Multiplied by 1.25x max
+				desc = "POP_LOYALISTS"
+				value = pop_loyalist_fraction
+				divide = 4
+				add = 1
+			}
+		}
+		if = {
+			limit = {
+				scope:interest_group = {
+					is_in_government = no
+				}
+			}
+			multiply = { # Multiplied by 1.25x max
+				desc = "POP_RADICALS"
+				value = pop_radical_fraction
+				divide = 4
+				add = 1
 			}
 		}
 	}
@@ -285,15 +401,6 @@
 	# scope:character is the most popular commander in the IG
 	commander_leader_chance = {
 		value = 0.25
-		if = {
-			limit = {
-				exists = scope:character
-			}
-			multiply = {
-				value = 1
-				add = scope:character.popularity
-				min = 0
-			}
-		}
+		multiply = ig_commander_leader_chance_mult
 	}
 }
