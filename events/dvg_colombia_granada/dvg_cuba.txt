@@ -819,6 +819,8 @@ dvg_cuba.22 = {
 		name = dvg_cuba.22.a
 		default_option = yes
 		
+		trigger_event = { id = dvg_gran_colombia.22 days = 31 }
+		
 		ai_chance = {
 			base = 1
 		}
@@ -884,6 +886,10 @@ dvg_cuba.24 = {
 	option = {
 		name = dvg_cuba.24.a
 		default_option = yes
+		
+		c:GCO = {
+			trigger_event = { id = dvg_cuba.25 days = 1 }
+		}
 		
 		ai_chance = {
 			base = 1
@@ -964,19 +970,7 @@ dvg_cuba.26 = {
 		name = dvg_cuba.26.a
 		default_option = yes
 		
-		c:CUB = {
-			create_diplomatic_play = {
-				name = cuban_war_of_independence
-				target_country = c:SPA
-				war = no
-				type = dp_independence
-			}
-		}
-		c:CUB = {
-			add_journal_entry = {
-				type = je_cuban_war_of_independence
-			}
-		}
+		
 		c:SPA = {
 			trigger_event = { id = dvg_cuba.28 days = 7 }
 		}
@@ -1012,6 +1006,11 @@ dvg_cuba.27 = {
 		name = dvg_cuba.27.a
 		default_option = yes
 		
+		create_diplomatic_pact = {
+			country = c:CUB
+			type = alliance
+		}
+		
 		ai_chance = {
 			base = 1
 		}
@@ -1042,6 +1041,20 @@ dvg_cuba.28 = {
 	option = {
 		name = dvg_cuba.28.a
 		default_option = yes
+		
+		c:CUB = {
+			create_diplomatic_play = {
+				name = cuban_war_of_independence
+				target_country = c:SPA
+				war = no
+				type = dp_independence
+			}
+		}
+		c:CUB = {
+			add_journal_entry = {
+				type = je_cuban_war_of_independence
+			}
+		}
 		
 		add_journal_entry = {
 			type = je_cuban_war_of_independence_SPA
@@ -1078,6 +1091,12 @@ dvg_cuba.29 = {
 		name = dvg_cuba.29.a
 		default_option = yes
 		
+		every_country = {
+			limit = {
+				has_variable = cuban_supporter
+			}
+			trigger_event = { id = dvg_cuba.30 }
+		}
 		remove_global_variable = cuban_war_active_republican
 		
 		ai_chance = {
@@ -1145,6 +1164,20 @@ dvg_cuba.31 = {
 		default_option = yes
 		
 		remove_global_variable = cuban_war_active_republican
+		every_country = {
+			limit = {
+				has_variable = cuban_supporter
+				NOT = { tag = PLA }
+			}
+			trigger_event = { id = dvg_cuba.32 }
+		}
+		every_country = {
+			limit = { 
+				has_variable = cuban_supporter
+				tag = PLA 
+			}
+			trigger_event = { id = dvg_cuba.33 }
+		}
 		
 		ai_chance = {
 			base = 1
@@ -1210,8 +1243,21 @@ dvg_cuba.33 = {
 		name = dvg_cuba.33.a
 		default_option = yes
 		
+		create_diplomatic_play = {
+			target_country = c:CUB
+			war = no
+			type = dp_make_dominion
+		}
+		
 		ai_chance = {
 			base = 1
+		}
+	}
+	option = {
+		name = dvg_cuba.33.b
+		
+		ai_chance = {
+			base = 0
 		}
 	}
 }
@@ -1498,6 +1544,81 @@ dvg_cuba.40 = {
 			}
 		}
 		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_cuba.41 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_cuba.41.t
+	desc = dvg_cuba.41.d
+	flavor = dvg_cuba.41.f
+	
+	event_image = {
+		video = "ep1_transfer_of_authority"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/ep1/transfer_of_authority"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+	
+	trigger = {
+		exists = c:CUB
+		this = c:CUB
+		NOT = { is_subject_of = c:SPA }
+		NOT = { is_at_war = yes }
+		NOT = { has_variable = CUB_gov_set }
+	}
+	
+	option = {
+		name = dvg_cuba.41.a
+		default_option = yes
+		
+		if = {
+			limit = { 
+				NOT = { has_variable = dead_castro }
+			}
+			activate_law = law_type:law_presidential_republic
+			activate_law = law_type:law_autocracy
+			activate_law = law_type:law_censorship
+		}
+		else_if = {
+			limit = { 
+				 has_variable = dead_castro
+				 year < 1910
+			}
+			activate_law = law_type:law_presidential_republic
+			activate_law = law_type:law_census_voting
+			activate_law = law_type:law_right_of_assembly
+		}
+		else = {
+			limit = { 
+				 has_variable = dead_castro
+				 year >= 1910
+			}
+			activate_law = law_type:law_council_republic
+				activate_law = law_type:law_autocracy
+				activate_law = law_type:law_closed_borders
+				activate_law = law_type:law_slavery_banned
+				activate_law = law_type:law_old_age_pension
+				activate_law = law_type:law_state_atheism
+				activate_law = law_type:law_public_health_insurance
+				activate_law = law_type:law_outlawed_dissent
+				activate_law = law_type:law_militarized_police_force
+				activate_law = law_type:law_worker_protections
+				activate_law = law_type:law_secret_police
+				activate_law = law_type:law_mass_conscription
+				activate_law = law_type:law_command_economy
+				activate_law = law_type:law_collectivized_agriculture
+				activate_law = law_type:law_protectionism
+		}
+		set_variable = CUB_gov_set
 		ai_chance = {
 			base = 1
 		}
