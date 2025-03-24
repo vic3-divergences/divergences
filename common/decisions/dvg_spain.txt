@@ -6,6 +6,10 @@
 				this = c:SPC
 			}
 			AND = {
+				exists = c:IBE
+				this = c:IBE
+			}
+			AND = {
 				exists = c:SPA
 				this = c:SPA
 			}
@@ -40,6 +44,10 @@ integrate_quito = {
 				this = c:SPC
 			}
 			AND = {
+				exists = c:IBE
+				this = c:IBE
+			}
+			AND = {
 				exists = c:SPA
 				this = c:SPA
 			}
@@ -71,6 +79,10 @@ integrate_cuba = {
 			AND = {
 				exists = c:SPC
 				this = c:SPC
+			}
+			AND = {
+				exists = c:IBE
+				this = c:IBE
 			}
 			AND = {
 				exists = c:SPA
@@ -107,6 +119,10 @@ end_the_andine_wars = {
 				this = c:SPC
 			}
 			AND = {
+				exists = c:IBE
+				this = c:IBE
+			}
+			AND = {
 				exists = c:SPA
 				this = c:SPA
 			}
@@ -136,6 +152,10 @@ establish_mauretania = {
 				this = c:SPC
 			}
 			AND = {
+				exists = c:IBE
+				this = c:IBE
+			}
+			AND = {
 				exists = c:SPA
 				this = c:SPA
 			}
@@ -152,9 +172,6 @@ establish_mauretania = {
 		owns_entire_state_region = STATE_AL_RIF
 		owns_entire_state_region = STATE_FEZ
 		owns_entire_state_region = STATE_WEST_SAHARA
-		NOT = { exists = c:MOR }
-		NOT = { exists = c:SUS }
-		NOT = { exists = c:SAH }
 	}
 	when_taken = {
 		if = {
@@ -272,7 +289,7 @@ establish_mauretania = {
 			s:STATE_INNER_MOROCCO = { add_homeland = cu:portuguese }
 			s:STATE_WEST_SAHARA = { add_homeland = cu:portuguese }
 		}
-		else = {
+		else_if = {
 			limit = { 
 				has_game_rule = no_breakaway
 				exists = c:SPC
@@ -313,6 +330,84 @@ establish_mauretania = {
 			s:STATE_INNER_MOROCCO = { add_homeland = cu:mauretanian }
 			s:STATE_WEST_SAHARA = { add_homeland = cu:mauretanian }
 		}
+		else_if = {
+			limit = { 
+				has_game_rule = no_breakaway
+				exists = c:IBE
+				this = c:IBE
+			}
+			
+			create_country = {
+				tag = MAU
+				origin = this
+				state = s:STATE_AL_RIF.region_state:IBE
+				state = s:STATE_MARRAKECH.region_state:IBE
+				state = s:STATE_FEZ.region_state:IBE
+				state = s:STATE_INNER_MOROCCO.region_state:IBE
+				state = s:STATE_WEST_SAHARA.region_state:IBE
+				
+				on_created = {
+					remove_primary_culture = cu:mauretanian
+					add_primary_culture = cu:portuguese
+					set_country_type = colonial
+					activate_law = law_type:law_presidential_republic
+					activate_law = law_type:law_oligarchy
+					
+					c:IBE = {
+						create_diplomatic_pact = {
+							country = c:MAU
+							type = colony
+						}
+					}
+				}
+			}
+			s:STATE_AL_RIF = { add_homeland = cu:portuguese }
+			s:STATE_MARRAKECH = { add_homeland = cu:portuguese }
+			s:STATE_FEZ = { add_homeland = cu:portuguese }
+			s:STATE_INNER_MOROCCO = { add_homeland = cu:portuguese }
+			s:STATE_WEST_SAHARA = { add_homeland = cu:portuguese }
+		}
+		else = {
+			limit = { 
+				has_game_rule = no_breakaway
+				exists = c:IBE
+				this = c:IBE
+			}
+			
+			create_country = {
+				tag = MAU
+				origin = this
+				state = s:STATE_AL_RIF.region_state:IBE
+				state = s:STATE_MARRAKECH.region_state:IBE
+				state = s:STATE_FEZ.region_state:IBE
+				state = s:STATE_INNER_MOROCCO.region_state:IBE
+				state = s:STATE_WEST_SAHARA.region_state:IBE
+				
+				on_created = {
+					activate_law = law_type:law_presidential_republic
+					activate_law = law_type:law_oligarchy
+					set_country_type = colonial
+					every_scope_pop = {
+						limit = { 
+							culture = { has_discrimination_trait = european_heritage }
+							NOT = { culture = cu:sephardic }
+						}
+						change_pop_culture = { target = cu:mauretanian value = 1 }
+					}
+					c:IBE = {
+						create_diplomatic_pact = {
+							country = c:MAU
+							type = colony
+						}
+					}
+				}
+			}
+			s:STATE_AL_RIF = { add_homeland = cu:mauretanian }
+			s:STATE_MARRAKECH = { add_homeland = cu:mauretanian }
+			s:STATE_FEZ = { add_homeland = cu:mauretanian }
+			s:STATE_INNER_MOROCCO = { add_homeland = cu:mauretanian }
+			s:STATE_WEST_SAHARA = { add_homeland = cu:mauretanian }
+		}
 		set_global_variable = mauretania_established
 	}
 }
@@ -322,6 +417,10 @@ weak_novo_sistema = {
 			AND = {
 				exists = c:SPC
 				this = c:SPC
+			}
+			AND = {
+				exists = c:IBE
+				this = c:IBE
 			}
 			AND = {
 				exists = c:SPA
@@ -351,6 +450,10 @@ novo_sistema = {
 			AND = {
 				exists = c:SPC
 				this = c:SPC
+			}
+			AND = {
+				exists = c:IBE
+				this = c:IBE
 			}
 			AND = {
 				exists = c:SPA
@@ -384,25 +487,40 @@ integrate_navarra = {
 				this = c:SPC
 			}
 			AND = {
+				exists = c:IBE
+				this = c:IBE
+			}
+			AND = {
 				exists = c:SPA
 				this = c:SPA
 			}
 		}
 		exists = c:NAV
-		NOT = { has_variable = basqueland }
-		NOT = { country_has_primary_culture = cu:basque }
-	}
-	possible = {
-		c:NAV = {
-			NOT = { is_subject_of = c:ARN }
-			is_at_war = no
-			is_subject_of = root
+		NOR = { 
+			has_variable = basqueland
+			country_has_primary_culture = cu:basque
 		}
 	}
+	possible = {
+		OR = {
+			c:NAV = {
+				NOT = { is_subject_of = c:ARN }
+				is_at_war = no
+				is_subject_of = root
+			}
+			owns_entire_state_region = STATE_NAVARRA
+		}
+		
+	}
 	when_taken = {
-		annex_with_incorporation = c:NAV
+		if = {
+			limit = {
+				exists = c:NAV
+				c:NAV = { is_subject_of = root }
+			}
+			annex_with_incorporation = c:NAV
+		}
 		add_primary_culture = cu:basque
-		add_primary_culture = cu:navarragon
 		set_variable = basqueland
 	}
 }
@@ -414,12 +532,18 @@ integrate_catalan = {
 				this = c:SPC
 			}
 			AND = {
+				exists = c:IBE
+				this = c:IBE
+			}
+			AND = {
 				exists = c:SPA
 				this = c:SPA
 			}
 		}
-		NOT = { has_variable = catalan_integrated }
-		NOT = { country_has_primary_culture = cu:catalan }
+		NOR = { 
+			has_variable = catalan_integrated
+			country_has_primary_culture = cu:catalan
+		}
 	}
 	possible = {
 		owns_entire_state_region = STATE_ARAGON
@@ -429,6 +553,7 @@ integrate_catalan = {
 	}
 	when_taken = {
 		add_primary_culture = cu:catalan
+		add_primary_culture = cu:navarragon
 		set_variable = catalan_integrated
 	}
 }
@@ -438,6 +563,10 @@ callabero_decree = {
 			AND = {
 				exists = c:SPA
 				this = c:SPA
+			}
+			AND = {
+				exists = c:IBE
+				this = c:IBE
 			}
 			AND = {
 				exists = c:SPC
