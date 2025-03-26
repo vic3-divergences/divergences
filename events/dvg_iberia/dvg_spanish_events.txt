@@ -130,13 +130,12 @@ dvg_spain.3 = {
 				name = colombian_war_of_independence
 				target_country = c:GCO
 				war = yes
-				type = dp_make_protectorate
+				type = dp_rebellion_annex
 				
 				add_war_goal = {
-					holder = c:SPA
-					type = revoke_claim
-					target_state = s:STATE_CUBA.region_state:CUB
-					target_country = c:GCO
+					holder = c:GCO
+					type = independence
+					target_country = c:SPA
 				}
 			}
 		}
@@ -329,35 +328,86 @@ dvg_spain.6 = {
 			value = 0.2
 			pop_type = aristocrats
 		}
-		create_character = {
-			first_name = Velasco
-			last_name = de_Iturbide
-			culture = cu:mexican
-			birth_date = 1794.1.1
-			noble = yes
-			interest_group = ig_landowners
-			ideology = ideology_royalist
-			
-			on_created = {
-				transfer_character = c:GCO
-				set_character_as_ruler = yes
+		custom_tooltip = {
+			text = reform_new_spain_tt
+			if = {
+				limit = { exists = s:STATE_MEXICO.region_state:SPA }
+				create_country = {
+					tag = GCO
+					origin = this
+					state = s:STATE_MEXICO.region_state:SPA
+					state = s:STATE_VERACRUZ.region_state:SPA
+					state = s:STATE_GUERRERO.region_state:SPA
+					state = s:STATE_OAXACA.region_state:SPA
+					state = s:STATE_DURANGO.region_state:SPA
+					state = s:STATE_YUCATAN.region_state:SPA
+					state = s:STATE_JALISCO.region_state:SPA
+					state = s:STATE_SINALOA.region_state:SPA
+					state = s:STATE_BAJIO.region_state:SPA
+					state = s:STATE_ZACATECAS.region_state:SPA
+					state = s:STATE_CHIAPAS.region_state:SPA
+					state = s:STATE_BAHIA.region_state:SPA
+					state = s:STATE_SANTA_CATARINA.region_state:SPA
+					state = s:STATE_TEJAS.region_state:SPA
+					state = s:STATE_RIO_GRANDE.region_state:SPA
+					state = s:STATE_BAJA_CALIFORNIA.region_state:SPA
+					
+					on_created = {
+						set_country_type = colonial
+						create_character = {
+							first_name = Velasco
+							last_name = de_Iturbide
+							culture = cu:mexican
+							birth_date = 1794.1.1
+							noble = yes
+							ruler = yes
+							interest_group = ig_landowners
+							ideology = ideology_royalist
+						}
+						create_character = {
+							first_name = Manuel
+							last_name = Diaz
+							culture = cu:mexican
+							birth_date = 1810.1.1
+							is_general = yes
+							ig_leader = yes
+							interest_group = ig_armed_forces
+							ideology = ideology_republican_leader
+							
+						}
+						trigger_event = { id = dvg_gran_colombia.4 }
+						c:SPA = {
+							create_diplomatic_pact = {
+								country = c:GCO
+								type = colony
+							}
+						}
+					}
+				}
+			}
+			if = {
+				limit = { exists = s:STATE_GUATEMALA.region_state:SPA }
+				create_country = {
+					tag = UCA
+					origin = this
+					state = s:STATE_GUATEMALA.region_state:SPA
+					state = s:STATE_SAN_SALVADOR.region_state:SPA
+					state = s:STATE_MANAGUA.region_state:SPA
+					state = s:STATE_COSTA_RICA.region_state:SPA
+					state = s:STATE_PANAMA.region_state:SPA
+					
+					on_created = {
+						c:SPA = {
+							create_diplomatic_pact = {
+								country = c:UCA
+								type = colony
+							}
+						}
+					}
+				}
 			}
 		}
-		create_character = {
-			first_name = Manuel
-			last_name = Diaz
-			culture = cu:mexican
-			birth_date = 1810.1.1
-			is_general = yes
-			interest_group = ig_armed_forces
-			ideology = ideology_republican_leader
-			
-			on_created = {
-				transfer_character = c:GCO
-				set_as_interest_group_leader = yes
-				set_variable = is_manuel_diaz
-			}
-		}
+		
 		if = {
 			limit = { #Preventing the player from getting the JE if they already formed Hispania manually
 				NAND = {
@@ -372,7 +422,130 @@ dvg_spain.6 = {
 		
 		trigger_event = { id = dvg_spain.7 days = 7 }
 		ai_chance = {
-			base = 1
+			base = 100
+		}
+	}
+	# Let's divide Colombia
+	option = {
+		name = dvg_spain.6.b
+		add_loyalists = {
+			value = 0.2
+			pop_type = aristocrats
+		}
+		custom_tooltip = {
+			text = partition_new_spain_tt
+			if = {
+				limit = { exists = s:STATE_MEXICO.region_state:SPA }
+				create_country = {
+					tag = MEX
+					origin = this
+					state = s:STATE_MEXICO.region_state:SPA
+					state = s:STATE_VERACRUZ.region_state:SPA
+					state = s:STATE_GUERRERO.region_state:SPA
+					state = s:STATE_OAXACA.region_state:SPA
+					state = s:STATE_DURANGO.region_state:SPA
+					state = s:STATE_YUCATAN.region_state:SPA
+					state = s:STATE_JALISCO.region_state:SPA
+					state = s:STATE_SINALOA.region_state:SPA
+					state = s:STATE_BAJIO.region_state:SPA
+					state = s:STATE_ZACATECAS.region_state:SPA
+					state = s:STATE_CHIAPAS.region_state:SPA
+					
+					on_created = {
+						set_country_type = colonial
+						create_character = {
+							first_name = Velasco
+							last_name = de_Iturbide
+							culture = cu:mexican
+							birth_date = 1794.1.1
+							noble = yes
+							ruler = yes
+							interest_group = ig_landowners
+							ideology = ideology_royalist
+						}
+						create_character = {
+							first_name = Manuel
+							last_name = Diaz
+							culture = cu:mexican
+							birth_date = 1810.1.1
+							is_general = yes
+							ig_leader = yes
+							interest_group = ig_armed_forces
+							ideology = ideology_republican_leader
+							
+							on_created = {
+								set_variable = is_manuel_diaz
+							}
+							
+						}
+						trigger_event = { id = dvg_gran_colombia.4 }
+						c:SPA = {
+							create_diplomatic_pact = {
+								country = c:MEX
+								type = colony
+							}
+						}
+					}
+				}
+			}
+			if = {
+				limit = { exists = s:STATE_GUATEMALA.region_state:SPA }
+				create_country = {
+					tag = UCA
+					origin = this
+					state = s:STATE_GUATEMALA.region_state:SPA
+					state = s:STATE_SAN_SALVADOR.region_state:SPA
+					state = s:STATE_MANAGUA.region_state:SPA
+					state = s:STATE_COSTA_RICA.region_state:SPA
+					state = s:STATE_PANAMA.region_state:SPA
+					
+					on_created = {
+						c:SPA = {
+							create_diplomatic_pact = {
+								country = c:UCA
+								type = colony
+							}
+						}
+					}
+				}
+			}
+			if = {
+				limit = { exists = s:STATE_BAHIA.region_state:SPA }
+				create_country = {
+					tag = LUS
+					origin = this
+					state = s:STATE_BAHIA.region_state:SPA
+					state = s:STATE_SANTA_CATARINA.region_state:SPA
+					state = s:STATE_TEJAS.region_state:SPA
+					state = s:STATE_RIO_GRANDE.region_state:SPA
+					state = s:STATE_BAJA_CALIFORNIA.region_state:SPA
+					
+					on_created = {
+						c:SPA = {
+							create_diplomatic_pact = {
+								country = c:LUS
+								type = colony
+							}
+						}
+					}
+				}
+			}
+		}
+		if = {
+			limit = { #Preventing the player from getting the JE if they already formed Hispania manually
+				NAND = {
+					exists = c:SPC
+					this = c:SPC
+				}
+			}
+			add_journal_entry =  {
+				type = je_uma_gran_comunidade_2
+			}
+		}
+		
+		trigger_event = { id = dvg_spain.7 days = 7 }
+		ai_chance = {
+			base = 0
 		}
 	}
 }
@@ -404,8 +577,25 @@ dvg_spain.7 = {
 	option = {
 		name = dvg_spain.7.a
 		default_option = yes
-		c:GCO = {
-			add_liberty_desire = 10
+		if = {
+			limit = {
+				exists = c:GCO
+				c:GCO = { is_subject_of = c:SPA}
+			}
+			c:GCO = {
+				add_liberty_desire = 10
+			}
+		}
+		else = {
+			c:MEX = {
+				add_liberty_desire = 10
+			}
+			c:LUS = {
+				add_liberty_desire = 10
+			}
+			c:UCA = {
+				add_liberty_desire = 10
+			}
 		}
 		add_journal_entry = {
 			type = je_centralize_spain_SPA
@@ -422,8 +612,25 @@ dvg_spain.7 = {
 	option = {
 		name = dvg_spain.7.b
 		
-		c:GCO = {
-			add_liberty_desire = -10
+		if = {
+			limit = {
+				exists = c:GCO
+				c:GCO = { is_subject_of = c:SPA}
+			}
+			c:GCO = {
+				add_liberty_desire = -10
+			}
+		}
+		else = {
+			c:MEX = {
+				add_liberty_desire = -10
+			}
+			c:LUS = {
+				add_liberty_desire = -10
+			}
+			c:UCA = {
+				add_liberty_desire = -10
+			}
 		}
 		activate_law = law_type:law_landed_voting
 		add_journal_entry = {
@@ -5606,10 +5813,33 @@ dvg_spain.101 = {
 	trigger = {
 		exists = c:SPA
 		this = c:SPA
-		c:GCO = { 
-			liberty_desire >=50
-			is_subject_of = c:SPA 
+		OR = {
+			AND = {
+				c:GCO = { 
+					liberty_desire >=50
+					is_subject_of = c:SPA 
+				}
+				c:UCA = { 
+					liberty_desire >=50
+					is_subject_of = c:SPA 
+				}
+			}
+			AND = {
+				c:MEX = { 
+					liberty_desire >=50
+					is_subject_of = c:SPA 
+				}
+				c:LUS = { 
+					liberty_desire >=50
+					is_subject_of = c:SPA 
+				}
+				c:UCA = { 
+					liberty_desire >=50
+					is_subject_of = c:SPA 
+				}
+			}
 		}
+		
 		c:SPA = { country_rank < rank_value:great_power }
 		NOT = { has_global_variable = new_spain_warning }
 	}
@@ -5667,15 +5897,41 @@ dvg_spain.102 = {
 			name = dvg_instability_var
 			add = 3
 		}
-		c:GCO = {
-			kill_character = yes
-			scope:scope_manuel_diaz = {
-				set_character_as_ruler = yes
+		if = {
+			limit = {
+				exists = c:GCO
+				c:GCO = { is_subject_of = c:SPA }
+			}
+			c:GCO = {
+				ruler = { kill_character = yes }
+				scope:scope_manuel_diaz = {
+					set_character_as_ruler = yes
+				}
+			}
+			remove_diplomatic_pact = {
+				country = c:GCO
+				type = colony
 			}
 		}
-		remove_diplomatic_pact = {
-			country = c:GCO
-			type = colony
+		else = {
+			c:MEX = {
+				ruler = { kill_character = yes }
+				scope:scope_manuel_diaz = {
+					set_character_as_ruler = yes
+				}
+			}
+			remove_diplomatic_pact = {
+				country = c:MEX
+				type = colony
+			}
+			remove_diplomatic_pact = {
+				country = c:LUS
+				type = colony
+			}
+			remove_diplomatic_pact = {
+				country = c:UCA
+				type = colony
+			}
 		}
 		ai_chance = {
 			base = 1
@@ -5711,10 +5967,19 @@ dvg_spain.103 = {
 		
 		add_primary_culture = cu:lusitanian
 		add_primary_culture = cu:mexican
-		add_primary_culture = cu:central_american
 		
 		change_tag = SPC
-		annex_with_incorporation = c:GCO
+		if = {
+			limit = {
+				exists = c:GCO
+				c:GCO = { is_subject_of = c:SPA }
+			}
+			annex_with_incorporation = c:GCO
+		}
+		else = {
+			annex_with_incorporation = c:MEX
+			annex_with_incorporation = c:LUS
+		}
 		
 		add_modifier = {
 			name = dvg_emperor_of_the_indias
