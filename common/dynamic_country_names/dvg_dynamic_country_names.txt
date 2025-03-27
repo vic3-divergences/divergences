@@ -1413,9 +1413,16 @@ QUI = {
 		priority = 100
 		
 		trigger = {
-			exists = c:SPA
+			OR = {
+				exists = c:SPA
+				exists = c:SPC
+			}
+			
 			c:QUI = {
-				is_subject_of = c:SPA
+				OR = {
+					is_subject_of = c:SPA
+					is_subject_of = c:SPC
+				}
 			}
 		}
 	}
@@ -1488,6 +1495,17 @@ ADS = { #Andesia
 			scope:actor ?= { has_law = law_type:law_monarchy }
 		}
 	}
+	dynamic_country_name = {
+		name = dyn_c_viceroyalty_of_caladero
+		adjective = dyn_c_viceroyalty_of_caladero_adj
+		
+		is_main_tag_only = yes
+		priority = 100
+		
+		trigger = {
+			coa_def_spanish_ensign_trigger = yes
+		}
+	}
 }
 
 QUL = {
@@ -1501,6 +1519,7 @@ QUL = {
 		trigger = {
 			exists = scope:actor
 			scope:actor = { has_law = law_type:law_monarchy}
+			is_subject = no
 		}
 	}
 	dynamic_country_name = {
@@ -1512,55 +1531,19 @@ QUL = {
 		
 		trigger = {
 			OR = {
-				exists = c:SPA
+				AND = {
+					exists = c:SPA
+					c:QUL = { is_subject_of = c:SPA }
+				}
+				AND = {
+					exists = c:SPC
+					c:QUL = { is_subject_of = c:SPC }
+				}
+				
 				AND = {
 					exists = c:ADS
 					c:ADS = { has_law = law_type:law_monarchy }
-				}
-			}
-			
-			OR = {
-				c:SPA = {
-					has_diplomatic_pact = {
-						who = c:QUL
-						type = protectorate
-						is_initiator = yes
-					}
-				}
-				c:SPA = {
-					has_diplomatic_pact = {
-						who = c:QUL
-						type = puppet
-						is_initiator = yes
-					}
-				}
-				c:SPA = {
-					has_diplomatic_pact = {
-						who = c:QUL
-						type = dominion
-						is_initiator = yes
-					}
-				}
-				c:ADS = {
-					has_diplomatic_pact = {
-						who = c:QUL
-						type = protectorate
-						is_initiator = yes
-					}
-				}
-				c:ADS = {
-					has_diplomatic_pact = {
-						who = c:QUL
-						type = puppet
-						is_initiator = yes
-					}
-				}
-				c:ADS = {
-					has_diplomatic_pact = {
-						who = c:QUL
-						type = dominion
-						is_initiator = yes
-					}
+					c:QUL = { is_subject_of = c:ADS }
 				}
 			}
 		}
@@ -1576,9 +1559,15 @@ GCO = { # Gran Colombia
 		priority = 100
 		
 		trigger = {
-			exists = c:SPA
-			c:GCO = {
-				is_subject_of = c:SPA
+			OR = {
+				AND = {
+					exists = c:SPA
+					c:GCO = { is_subject_of = c:SPA }
+				}
+				AND = {
+					exists = c:SPC
+					c:GCO = { is_subject_of = c:SPC }
+				}
 			}
 			NOT = {
 				c:GCO = { has_modifier = dvg_spanish_independence }
@@ -1588,7 +1577,7 @@ GCO = { # Gran Colombia
 
 	dynamic_country_name = {
 		name = dyn_c_gran_colombia_communist
-		adjective = dyn_c_gran_colombia_communist_adj
+		adjective = GCO_ADJ
 		
 		is_main_tag_only = yes
 		priority = 1
@@ -1618,7 +1607,7 @@ GCO = { # Gran Colombia
 	
 	dynamic_country_name = {
 		name = dyn_c_gran_colombia_monarchy
-		adjective = dyn_c_gran_colombia_monarchy_adj
+		adjective = GCO_ADJ
 		
 		is_main_tag_only = yes
 		priority = 1
@@ -1632,7 +1621,7 @@ GCO = { # Gran Colombia
 	}	
 	dynamic_country_name = {
 		name = dyn_c_gran_colombia_alliance
-		adjective = dyn_c_gran_colombia_alliance_adj
+		adjective = GCO_ADJ
 		
 		is_main_tag_only = yes
 		priority = 100
@@ -1649,6 +1638,7 @@ GCO = { # Gran Colombia
 UCA = {
 	dynamic_country_name = {
 		name = dyn_c_viceroyalty_of_salvadore
+		adjective = UCA_ADJ
 		
 		is_main_tag_only = yes
 		priority = 100
@@ -1664,7 +1654,7 @@ UCA = {
 CUB = {
 	dynamic_country_name = {
 		name = dyn_c_captaincy_general_of_cuba
-		adjective = dyn_c_captaincy_general_of_cuba_adj
+		adjective = CUB_ADJ
 		
 		is_main_tag_only = yes
 		priority = 100
@@ -1678,7 +1668,7 @@ CUB = {
 	}
 	dynamic_country_name = {
 		name = dyn_c_colombian_republic_of_cuba
-		adjective = dyn_c_colombian_republic_of_cuba_adj
+		adjective = CUB_ADJ
 		
 		is_main_tag_only = yes
 		priority = 100
@@ -1694,6 +1684,7 @@ CUB = {
 LUS = {
 	dynamic_country_name = {
 		name = dyn_c_viceroyalty_of_new_portugal
+		adjective = dyn_c_viceroyalty_of_new_portugal_adj
 		
 		is_main_tag_only = yes
 		priority = 100
@@ -3765,6 +3756,49 @@ VIN = {
 		}
 	}
 }
-
+SPC = {
+	dynamic_country_name = {
+		name = dyn_c_spc_republic
+		adjective = SPC_ADJ
+		
+		is_main_tag_only = yes
+		priority = 1
+		
+		trigger = {
+			exists = scope:actor
+			scope:actor ?= {
+				coa_def_republic_flag_trigger = yes
+			}
+		}
+	}
+	dynamic_country_name = {
+		name = dyn_c_spc_communist
+		adjective = SPC_ADJ
+		
+		is_main_tag_only = yes
+		priority = 1
+		
+		trigger = {
+			exists = scope:actor
+			scope:actor ?= {
+				coa_def_communist_flag_trigger = yes
+			}
+		}
+	}
+	dynamic_country_name = {
+		name = dyn_c_spc_fascist
+		adjective = SPC_ADJ
+		
+		is_main_tag_only = yes
+		priority = 1
+		
+		trigger = {
+			exists = scope:actor
+			scope:actor ?= {
+				coa_def_fascist_flag_trigger = yes
+			}
+		}
+	}
+}
 
 
