@@ -34,9 +34,6 @@
 					owner = {
 						country_has_state_religion = rel:protestant
 						NOT = {
-							c:BEI ?= this
-						}
-						NOT = {
 							c:BEO ?= this
 						}
 					}
@@ -125,7 +122,7 @@
 			else_if = {
 				limit = {
 					owner = {
-						c:BEI ?= this
+						c:BIC ?= this
 					}
 				}
 				set_ig_trait = ig_trait:ig_trait_pious_fiction
@@ -181,13 +178,15 @@
 			limit = {
 				country_has_state_religion = rel:protestant
 				OR = {
-					country_has_primary_culture = cu:beornian
+					country_has_primary_culture = cu:maori
+					country_has_primary_culture = cu:australian
+					country_has_primary_culture = cu:anglo_canadian
 					country_has_primary_culture = cu:british
-					country_has_primary_culture = cu:scottish
+					country_has_primary_culture = cu:irish
 					c:NRU ?= this
 				}
 				NOT = {
-					c:BEI ?= this
+					c:BIC ?= this
 				}
 			}
 			ig:ig_devout = {
@@ -214,13 +213,22 @@
 		else_if = {
 			limit = {
 				country_has_state_religion = rel:protestant
-				country_has_primary_culture = cu:scandinavian
+				country_has_primary_culture = cu:danish
 			}
 			ig:ig_devout = {
 				set_interest_group_name = ig_church_of_denmark
 			}
 		}
-		
+		# Church of Norway
+		else_if = {
+			limit = {
+				country_has_state_religion = rel:protestant
+				country_has_primary_culture = cu:norwegian
+			}
+			ig:ig_devout = {
+				set_interest_group_name = ig_church_of_norway
+			}
+		}
 		# Church of Finland
 		else_if = {
 			limit = {
@@ -231,7 +239,16 @@
 				set_interest_group_name = ig_church_of_finland
 			}
 		}
-		
+		# Church of Sweden
+		else_if = {
+			limit = {
+				country_has_state_religion = rel:protestant
+				country_has_primary_culture = cu:swedish
+			}
+			ig:ig_devout = {
+				set_interest_group_name = ig_church_of_sweden
+			}
+		}
 		# Confucian Scholars
 		else_if = {
 			limit = {
@@ -249,13 +266,10 @@
 			limit = {
 				country_has_state_religion = rel:protestant
 				OR = {
-					country_has_primary_culture = cu:lotharian
-					country_has_primary_culture = cu:atlantian
-					country_has_primary_culture = cu:belgian
-					country_has_primary_culture = cu:vinlander
-					country_has_primary_culture = cu:verlander
-					country_has_primary_culture = cu:boer
-					
+					country_has_primary_culture = cu:yankee
+					country_has_primary_culture = cu:dixie
+					country_has_primary_culture = cu:afro_american
+					country_has_primary_culture = cu:cherokee
 				}
 			}
 			ig:ig_devout = {
@@ -289,7 +303,7 @@
 			limit = { 
 				country_has_state_religion = rel:protestant 
 				NOT = {
-					c:BEI ?= this
+					c:BIC ?= this
 				}
 			}
 			ig:ig_devout = { 
@@ -298,16 +312,7 @@
 		}
 		# Sunni Ulema
 		else_if = {
-			limit = {
-				OR = {
-					country_has_state_religion = rel:sunni 
-					AND = {
-						c:BEI = this?
-						
-					}
-				}
-				
-			}
+			limit = { country_has_state_religion = rel:sunni }
 			ig:ig_devout = { 
 				set_interest_group_name = ig_sunni_madrasahs
 			}
@@ -344,7 +349,31 @@
 				add_ideology = ideology_orthodox_patriarch
 			}
 		}
-		
+		# Hindu Priesthood
+		else_if = {
+			limit = { 
+				OR = {
+					country_has_state_religion = rel:hindu 
+					c:BIC ?= this
+				}
+			}
+			ig:ig_devout = {
+				set_interest_group_name = ig_hindu_priesthood
+				if = {
+					limit = {
+						owner = {
+							c:BIC ?= this
+						}
+					}
+					remove_ideology = ideology_moralist
+					add_ideology = ideology_hindu_moralist_british_india
+				}
+				else = {
+					remove_ideology = ideology_moralist
+					add_ideology = ideology_hindu_moralist
+				}
+			}
+		}
 		# Vajrayana Monks
 		else_if = {
 			limit = { country_has_state_religion = rel:gelugpa }
@@ -398,28 +427,13 @@
 	priority_cultures = { #Country scope
 		rule = {
 			trigger = {
-				c:BEI ?= this
+				c:BIC ?= this
 				any_primary_culture = { 
-					cu:burgundian = this
-				}
-				OR = {
-					has_law = law_type:law_total_separation
-					has_law = law_type:law_religious_autonomy
+					cu:british = this
 				}
 			}
 			cultures = {
-				javan balinese visayan sumatran bornean malay moluccan dayak makassarese bugis
-			}
-		}
-		rule = {
-			trigger = {
-				c:CHR ?= this
-				any_primary_culture = { 
-					cu:scandinavian = this
-				}
-			}
-			cultures = {
-				filipino visayan bugis tagalog
+				assamese avadhi baluchi bengali bihari gujarati kannada malayalam marathi oriya panjabi pathan rajput sindi tamil telegu hindustani bundeli pahari gondi bageli chhattisgarhi deccani
 			}
 		}
 	}
@@ -428,10 +442,10 @@
 		if = {
 			limit = {
 				owner = {
-					c:BEI ?= this
+					c:BIC ?= this
 				}
 			}
-			change_character_religion = rel:protestant
+			change_character_religion = rel:hindu
 		}
 		else_if = {
 			limit = {
@@ -453,9 +467,9 @@
 		OR = {
 			has_state_religion = yes
 			AND = {
-				exists = c:BEI
-				owner ?= c:BEI
-				has_pop_religion = protestant
+				exists = c:BIC
+				owner ?= c:BIC
+				has_pop_religion = hindu
 			}
 		}
 		NOT = {
