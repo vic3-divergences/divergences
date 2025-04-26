@@ -77,7 +77,12 @@ je_llapa_succession = {
 	complete = {
 		AND = {
 			ig:ig_intelligentsia = { is_powerful = yes }
-			ig:ig_armed_forces = { is_powerful = no }
+			OR = {
+				ig:ig_armed_forces = { is_powerful = no }
+				ig:ig_landowners = {
+					ig_approval >= 10
+				}
+			}
 			game_date >= 1838.1.1
 		}
 	}
@@ -105,7 +110,12 @@ je_washkar_succession = {
 	complete = { 
 		AND = {
 			ig:ig_intelligentsia = { is_powerful = no }
-			ig:ig_armed_forces = { is_powerful = yes }
+			OR = {
+				ig:ig_armed_forces = { is_powerful = yes }
+				ig:ig_landowners = {
+					ig_approval >= 10
+				}
+			}
 			game_date >= 1838.1.1
 		}
 	}
@@ -324,11 +334,51 @@ je_washkars_conquests = {
 	on_complete = {
 		trigger_event = { id = dvg_inca_path_washkar.12 }
 	}
-
-	timeout = 7300
-	on_timeout = {
+	
+	progressbar = yes
+	
+	current_value = {
+		value = root.var:dvg_inca_washkar_conquest_var
+	}
+	
+	immediate = {
+		set_variable = {
+			name = dvg_inca_washkar_conquest_var
+			value = 0
+		}
+	}
+	
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					ROOT = {is_at_war = no}
+				}
+				change_variable = {
+					name = dvg_inca_washkar_conquest_var
+					add = 1
+				}
+			}
+		}
+	}
+	
+	goal_add_value = {
+		value = 609
+	}
+	
+	fail = {
+		scope:journal_entry = { is_goal_complete = yes }
+	}
+	
+	on_fail = {
 		trigger_event = { id = dvg_inca_path_washkar.9 }
 	}
+	
+	#timeout = 7300
+	
+	#on_timeout = {
+	#	trigger_event = { id = dvg_inca_path_washkar.9 }
+	#}
 
 	weight = 100
 	should_be_pinned_by_default = yes
