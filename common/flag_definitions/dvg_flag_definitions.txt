@@ -642,6 +642,38 @@ ADS = {
 		subject_canton = ADS
 		priority = 100
 	}
+	flag_definition = {
+		coa = ADS_republic
+		subject_canton = ADS_republic
+		priority = 1000
+		trigger = {
+			coa_def_republic_flag_trigger = yes
+		}
+	}
+	flag_definition = {
+		coa = ADS_monarchy
+		subject_canton = ADS_monarchy
+		priority = 1000
+		trigger = {
+			coa_def_monarchy_flag_trigger = yes
+		}
+	}
+	flag_definition = {
+		coa = ADS_fascist
+		subject_canton = ADS_fascist
+		priority = 1000
+		trigger = {
+			coa_def_fascist_flag_trigger = yes
+		}
+	}
+	flag_definition = {
+		coa = ADS_communist
+		subject_canton = ADS_communist
+		priority = 1000
+		trigger = {
+			coa_def_communist_flag_trigger = yes
+		}
+	}
 }
 
 EQX = { #EQX
@@ -1142,10 +1174,17 @@ BLC = { #Belgium/Belgian Confederation
 		subject_canton = sub_BLC_subject
 		priority = 1500
 		trigger = {
-			coa_def_dictatorship_flag_trigger = yes
+			exists = scope:actor
+			scope:actor = {
+				OR = {
+					has_law = law_type:law_technocracy
+					has_law = law_type:law_autocracy
+					has_law = law_type:law_oligarchy
+				}
+			}
 		}
 	}
-}
+}	
 
 CNF = { #Nouvelle Flandre - same definition as Belgium temporarily
 	flag_definition = {
@@ -1324,6 +1363,26 @@ ARC = { #Arcadia
 			scope:actor = {
 				coa_def_theocracy_flag_trigger = yes
 				country_has_state_religion = rel:catholic
+			}
+		
+		}	
+	}
+
+	flag_definition = {	
+		coa = ARC_technocracy_blc
+		subject_canton = ARC_technocracy_blc
+		allow_overlord_canton = yes		
+		coa_with_overlord_canton = ARC_technocracy_blc	
+		priority = 21
+		trigger = { 	
+			exists = scope:actor
+			scope:actor = {
+				was_formed_from = BLC
+				OR = {
+					has_law = law_type:law_technocracy
+					has_law = law_type:law_autocracy
+					has_law = law_type:law_oligarchy
+				}
 			}
 		
 		}	
@@ -2292,6 +2351,16 @@ BEI = { #Burgudnian East Indies
 						}
 					}
 				}
+				AND = {
+					exists = c:BRG
+					c:BRG = {
+						has_diplomatic_pact = {
+							who = c:BEI
+							type = chartered_company
+							is_initiator = yes
+						}
+					}
+				}
 			}
 		}
 	}
@@ -2984,35 +3053,26 @@ QUI = { #QUITO
 	flag_definition = {
 		coa = QUI
 		coa_with_overlord_canton = QUI
+		priority = 1
 	}
 	flag_definition = {
 		coa = QUI_viceroy
 		subject_canton = QUI_viceroy
 		priority = 1000
 		trigger = {
-			exists = c:QUI
-			exists = c:SPA
+			exists = scope:actor
 			OR = {
-				c:SPA = {
-					has_diplomatic_pact = {
-						who = c:QUI
-						type = protectorate
-						is_initiator = yes
-					}
+				AND = {
+					exists = c:SPA
+					scope:actor = { is_subject_of = c:SPA }
 				}
-				c:SPA = {
-					has_diplomatic_pact = {
-						who = c:QUI
-						type = puppet
-						is_initiator = yes
-					}
+				AND = {
+					exists = c:IBE
+					scope:actor = { is_subject_of = c:IBE }
 				}
-				c:SPA = {
-					has_diplomatic_pact = {
-						who = c:QUI
-						type = dominion
-						is_initiator = yes
-					}
+				AND = {
+					exists = c:SPC
+					scope:actor = { is_subject_of = c:SPC }
 				}
 			}
 		}
@@ -3020,7 +3080,7 @@ QUI = { #QUITO
 	flag_definition = {
 		coa = QUI_quito
 		subject_canton = QUI_quito
-		priority = 1000
+		priority = 100
 		trigger = {
 			coa_def_republic_flag_trigger = yes
 		}
@@ -3037,29 +3097,12 @@ GRA = { #GRANADA
 		subject_canton = GRA_viceroy #DVG
 		priority = 1000
 		trigger = {
-			exists = c:GRA
-			exists = c:SPA
-			OR = {
-				c:SPA = {
-					has_diplomatic_pact = {
-						who = c:GRA
-						type = puppet
-						is_initiator = yes
-					}
-				}
-				c:SPA = {
-					has_diplomatic_pact = {
-						who = c:GRA
-						type = dominion
-						is_initiator = yes
-					}
-				}
-			}
+			coa_def_spanish_ensign_trigger = yes
 		}
 	}
 }
 
-LUS = { #GRANADA
+LUS = { #Lusitania
 	flag_definition = {
 		coa = LUS
 		coa_with_overlord_canton = LUS
@@ -3069,24 +3112,7 @@ LUS = { #GRANADA
 		subject_canton = LUS_viceroy #DVG
 		priority = 1000
 		trigger = {
-			exists = c:GRA
-			exists = c:SPA
-			OR = {
-				c:SPA = {
-					has_diplomatic_pact = {
-						who = c:GRA
-						type = puppet
-						is_initiator = yes
-					}
-				}
-				c:SPA = {
-					has_diplomatic_pact = {
-						who = c:GRA
-						type = dominion
-						is_initiator = yes
-					}
-				}
-			}
+			coa_def_spanish_ensign_trigger = yes
 		}
 	}
 }
@@ -3548,7 +3574,7 @@ SHN = { #Shanxi
 		}	
 	}
 	flag_definition = {
-		coa = HNA_subject
+		coa = SHN_subject_SHU
 		allow_overlord_canton = yes		
 		priority = 50
 		trigger = { 
@@ -3556,18 +3582,19 @@ SHN = { #Shanxi
 			c:SHU ?= { 
 				exists = yes
 			}
+			exists = c:SHN
 
 			OR = {
 				c:SHU ?= {
 					has_diplomatic_pact = {
-						who = c:HNA
+						who = c:SHN
 						type = puppet
 						is_initiator = yes
 					}
 				}
 				c:SHU ?= {
 					has_diplomatic_pact = {
-						who = c:HNA
+						who = c:SHN
 						type = vassal
 						is_initiator = yes
 					}
@@ -3600,6 +3627,7 @@ HNA = { #Hunan
 			c:SHU ?= { 
 				exists = yes
 			}
+			exists = c:HNA
 
 			OR = {
 				c:SHU = {
@@ -3634,6 +3662,7 @@ SIH = { #Sichuan
 			c:SHU ?= { 
 				exists = yes
 			}
+			exists = c:SIH
 
 			OR = {
 				c:SHU = {
@@ -3666,9 +3695,10 @@ GUI = { #Guizhou
 		priority = 50
 		trigger = { 
 			OR = {
-				SHU = { 
+				c:SHU ?= { 
 					exists = yes
 				}
+				exists = c:GUI
 
 				c:SHU = {
 					has_diplomatic_pact = {
@@ -4126,8 +4156,7 @@ ITC = { #Italian Confederation
 		trigger = {
 			exists = scope:actor
 			scope:actor = {
-				was_formed_from = c:PRO
-				
+				was_formed_from = PRO
 			}
 		}
 	}
@@ -4138,8 +4167,7 @@ ITC = { #Italian Confederation
 		trigger = {
 			exists = scope:actor
 			scope:actor = {
-				was_formed_from = c:COR
-				
+				was_formed_from = COR
 			}
 		}
 	}
@@ -4150,8 +4178,7 @@ ITC = { #Italian Confederation
 		trigger = {
 			exists = scope:actor
 			scope:actor = {
-				was_formed_from = c:LOM
-				
+				was_formed_from = LOM
 			}
 		}
 	}
@@ -5093,7 +5120,7 @@ SKR = { #Skraelingr
 	flag_definition = {
 		coa = SKR_subject
 		allow_overlord_canton = yes		
-		priority = 50
+		priority = 1500
 		trigger = { 
 			coa_def_british_ensign_trigger = yes
 		}
@@ -6009,7 +6036,12 @@ MLY = { #Malaysia
 		coa_with_overlord_canton = MLY_subject	
 		priority = 20	
 		trigger = { 	
-			coa_def_theocracy_flag_trigger = yes	
+			coa_def_theocracy_flag_trigger = yes
+			country_has_state_religion = rel:sunni	
+			exists = scope:actor
+			scope:actor = {
+				country_has_state_religion = rel:sunni
+			}
 		}	
 	}
 	
@@ -6051,6 +6083,24 @@ MLY = { #Malaysia
 		priority = 20	
 		trigger = { 	
 			coa_def_monarchy_flag_trigger = yes	
+		}	
+	}
+	flag_definition = {	
+		coa = MLY_buddhist
+		subject_canton = MLY_buddhist	
+		allow_overlord_canton = yes		
+		coa_with_overlord_canton = MLY_subject	
+		priority = 1505
+		trigger = { 	
+			scope:actor = {
+				coa_def_theocracy_flag_trigger = yes
+				OR = {
+					country_has_state_religion = rel:theravada
+					country_has_state_religion = rel:mahayana
+
+				}
+			}
+			
 		}	
 	}
 }
@@ -6144,11 +6194,121 @@ LNG = {
 	}
 }
 
-CPT = { # Romania
+CPT = { # Carpathia
 	flag_definition = {
 		coa = CPT
 		subject_canton = CPT
 		priority = 1
 	}
 
+}
+
+AFN = { #Vinland
+	flag_definition = {
+		coa = AFN
+		subject_canton = AFN
+		allow_overlord_canton = yes	
+		coa_with_overlord_canton = AFN_subject
+		priority = 1
+	}
+	flag_definition = {
+		coa = AFN_monarchy
+		subject_canton = AFN_monarchy
+		allow_overlord_canton = yes	
+		coa_with_overlord_canton = AFN_subject
+		priority = 20
+		trigger = { 
+			coa_def_monarchy_flag_trigger = yes
+		}
+	}
+	flag_definition = {
+		coa = AFN_dictatorship
+		subject_canton = AFN_dictatorship
+		allow_overlord_canton = yes	
+		coa_with_overlord_canton = AFN_subject
+		priority = 20
+		trigger = {
+			coa_def_dictatorship_flag_trigger = yes
+		}
+	}
+	flag_definition = {
+		coa = AFN_communist
+		subject_canton = AFN_communist
+		priority = 1500
+		trigger = {
+			coa_def_communist_flag_trigger = yes
+		}
+	}
+	flag_definition = {
+		coa = AFN_fascist
+		subject_canton = AFN_fascist
+		priority = 1500
+		trigger = {
+			coa_def_fascist_flag_trigger = yes
+		}
+	}
+	flag_definition = {
+		coa = AFN_theocracy_protestant
+		subject_canton = AFN_theocracy_protestant
+		priority = 1500
+		trigger = {
+			exists = scope:actor
+			scope:actor = {
+				has_law = law_type:law_theocracy
+				has_state_religion = rel:protestant
+			}
+		}
+	}
+	flag_definition = {
+		coa = AFN_SKR
+		subject_canton = AFN_theocracy_protestant
+		priority = 1500
+		trigger = {
+			exists = scope:actor
+			scope:actor = {
+				has_law = law_type:law_theocracy
+				has_state_religion = rel:protestant
+			}
+		}
+	}
+}
+SPC = {#Hispania
+	flag_definition = {
+		coa = SPC
+		coa_with_overlord_canton = SPC
+		priority = 1
+	}
+	flag_definition = {
+		coa = SPC_monarchy
+		coa_with_overlord_canton = SPC_monarchy
+		priority = 99
+		trigger = {
+			coa_def_undemocratic_monarchy_flag_trigger = yes
+		}
+	}
+	flag_definition = {
+		coa = SPC_communist
+		coa_with_overlord_canton = SPC_communist
+		priority = 99
+		trigger = {
+			coa_def_communist_flag_trigger = yes
+		}
+	}
+	flag_definition = {
+		coa = SPC_republic
+		coa_with_overlord_canton = SPC_republic
+		priority = 99
+		trigger = {
+			coa_def_republic_flag_trigger = yes
+		}
+	}
+	flag_definition = {
+		coa = SPC_fascist
+		coa_with_overlord_canton = SPC_fascist
+		priority = 99
+		trigger = {
+			coa_def_fascist_flag_trigger = yes
+			coa_def_dictatorship_flag_trigger = yes
+		}
+	}
 }

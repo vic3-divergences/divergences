@@ -3,8 +3,17 @@
 
 	group = je_group_foreign_affairs
 
+	scripted_progress_bar = earn_recognition_progress_bar
+
 	is_shown_when_inactive = {
 		is_country_type = unrecognized
+	}
+
+	immediate = {
+		set_variable = {
+			name = recognition_progress_var
+			value = 0
+		}
 	}
 
 	possible = {
@@ -18,20 +27,16 @@
 		}
 	}
 
-	immediate = {
-		set_variable = {
-			name = recognition_progress_var
-			value = 0
-		}
-	}
-
 	complete = {
 		any_country = {
 			country_rank >= rank_value:great_power
 			relations:root >= relations_threshold:amicable
 		}
-		scope:journal_entry = {
-			is_goal_complete = yes
+		custom_tooltip = { 
+			text = je_earn_recognition_complete_tt
+			scope:journal_entry ?= {
+				"scripted_bar_progress(earn_recognition_progress_bar)" >= 200
+			}
 		}
 	}
 
@@ -49,10 +54,6 @@
 	}
 
 	on_fail = {
-	}
-
-	invalid = {
-		NOT = { is_country_type = unrecognized }
 	}
 
 	on_monthly_pulse = {
@@ -101,23 +102,6 @@
 			}
 			if = {
 				limit = {
-					any_country = {
-						country_rank = rank_value:great_power
-						has_truce_with = ROOT
-						has_variable = recently_lost_war
-					}
-					NOT = {
-						has_variable = recently_lost_war
-					}
-				}
-				change_variable = {
-					name = recognition_progress_var
-					add = 2
-				}
-			}
-
-			if = {
-				limit = {
 					gdp > {
 						value = global_gdp
 						multiply = 0.20
@@ -128,47 +112,29 @@
 					add = 1
 				}
 			}
-			if = {
-				limit = {
-					total_population_including_subjects_share >= 0.33
-
-				}
-				change_variable = {
-					name = recognition_progress_var
-					add = 1
-				}
-			}
-			if = {
-				limit = {
-					any_scope_state = {
-						is_under_colonization  = yes
-					}
-					NOT = {
-						has_law = law_type:law_no_colonial_affairs
-					}
-				}
-				change_variable = {
-					name = recognition_progress_var
-					add = 1
-				}
-			}
-			if = {
-				limit = {
-					any_subject_or_below = {
-						is_country_type = recognized
-						country_rank >= rank_value:insignificant_power 
-					}
-				}
-				change_variable = {
-					name = recognition_progress_var
-					add = 1
-				}
-			}
-			
 			# Deplete Conditions
 			
 			
-			
+			if = {
+				limit = {
+					# Traditional economic system
+					has_law = law_type:law_traditionalism
+				}
+				change_variable = {
+					name = recognition_progress_var
+					add = -1
+				}
+			}
+			if = {
+				limit = {
+					# 'Draconic' law
+					has_law = law_type:law_outlawed_dissent
+				}
+				change_variable = {
+					name = recognition_progress_var
+					add = -1
+				}
+			}
 			if = {
 				limit = {
 					# Literacy rating is low
@@ -200,19 +166,9 @@
 				}
 			}
 			
-			clamp_variable = { name = recognition_progress_var max = 150 min = 0 }
+			clamp_variable = { name = recognition_progress_var max = 200 min = 0 }
 		}
 	}
-
-	current_value = {
-		value = root.var:recognition_progress_var
-	}
-
-	goal_add_value = {
-		value = 150
-	}
-
-	progressbar = yes
 
 	weight = 100
 

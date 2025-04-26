@@ -928,6 +928,21 @@ dvg_ciudad_victoria = {
 			name = renovation_veracruz
 			value = 0
 		}
+		if = {
+			limit = {
+				any_scope_state = {
+					state_region = s:STATE_VERACRUZ
+				}
+			}
+			s:STATE_VERACRUZ = {
+				random_scope_state = {
+					set_hub_name = {
+						type = city
+						name = HUB_NAME_STATE_VERACRUZ_city_castro
+					}
+				}
+			}
+		}
 		s:STATE_VERACRUZ.region_state:GCO = {
 			add_modifier = {
 				name = dvg_colonial_recruitment
@@ -956,6 +971,21 @@ dvg_puertoriental = {
 		set_global_variable = {
 			name = renovation_puertoriental
 			value = 0
+		}
+		if = {
+			limit = {
+				any_scope_state = {
+					state_region = s:STATE_PANAMA
+				}
+			}
+			s:STATE_PANAMA = {
+				random_scope_state = {
+					set_hub_name = {
+						type = city
+						name = HUB_NAME_STATE_PANAMA_city_castro
+					}
+				}
+			}
 		}
 		s:STATE_PANAMA.region_state:GCO = {
 			add_modifier = {
@@ -1258,7 +1288,23 @@ dvg_ciudad_vicente = {
 			name = renovation_veracruz
 			value = 0
 		}
-		set_capital = STATE_VERACRUZ
+		if = {
+			limit = {
+				any_scope_state = {
+					state_region = s:STATE_VERACRUZ
+				}
+			}
+			set_capital = STATE_VERACRUZ
+
+			s:STATE_VERACRUZ = {
+				random_scope_state = {
+					set_hub_name = {
+						type = city
+						name = HUB_NAME_STATE_VERACRUZ_city_vicente
+					}
+				}
+			}
+		}
 		s:STATE_VERACRUZ.region_state:GCO = {
 			add_modifier = {
 				name = dvg_colonial_recruitment
@@ -1367,15 +1413,25 @@ dvg_galapagos_naval_base = {
 		}
 	}
 }
-dvg_gco_afro_latinos_citizens = {
+dvg_afro_latinos_citizens = {
 	is_shown = {
-		exists = c:GCO
-		this = c:GCO
+		any_primary_culture = {
+			OR = {
+				has_discrimination_trait = hispanophone
+				has_discrimination_trait = lusophone
+				has_discrimination_trait = native_mesoamerican_culture_group
+			}
+		}
+		ruler = {
+			NOT = { has_variable = is_rocafuerte } #Rocafuerte has his own unique decision
+		}
+		has_law = law_type:law_slavery_banned
 		is_subject = no
 		NOT = { country_has_primary_culture = cu:afro_latino }
 	}
 	possible = {
-		has_law = law_type:law_slavery_banned
+		has_technology_researched = egalitarianism
+		has_law = law_type:law_universal_suffrage
 		OR = {
 			has_law = law_type:law_cultural_exclusion
 			has_law = law_type:law_multicultural
@@ -1383,6 +1439,18 @@ dvg_gco_afro_latinos_citizens = {
 	}
 	when_taken = {
 		add_primary_culture = cu:afro_latino
+		every_scope_pop = {
+			limit = {
+				religion = rel:catholic
+				culture = {
+					has_discrimination_trait = african_heritage
+				}
+			}
+			change_pop_culture = {
+				target = cu:afro_latino
+				value = 1
+			}
+		}
 	}
 }
 dvg_gco_accept_caribeno = {
@@ -1467,7 +1535,8 @@ dvg_seize_cuba = {
 			owns_entire_state_region = STATE_CUBA
 			c:CUB = { is_subject_of = c:GCO }
 		}
-		NOT = { exists = global_var:colombian_navy_dispatched }
+		has_variable = castro_colombia
+		NOT = { has_global_variable = CUB_global_revolution }
 	}
 	possible = {
 		NOR = {
@@ -1480,9 +1549,6 @@ dvg_seize_cuba = {
 		c:SPA = {
 			trigger_event = { id = dvg_cuba.16 }
 		}
-		set_global_variable = {
-			name = colombian_navy_dispatched
-			value = 0
-		}
+		set_global_variable = CUB_global_revolution
 	}
 }

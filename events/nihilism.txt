@@ -33,19 +33,6 @@ nihilism.1 = {
 						game_date >= 1862.1.1
 						game_date <= 1882.1.1
 					}
-					OR = { #So that the player always has first dibs on Stirner if they're playing a German country.
-						is_player = yes
-						NOT = {
-							any_country = {
-								OR = {
-									country_has_primary_culture = cu:north_german
-									country_has_primary_culture = cu:south_german
-								}
-								is_player = yes
-							}
-						}
-					}
-					NOT = { has_global_variable = stirner_spawn }
 				}
 				create_character = {
 					first_name = Varfolomey
@@ -73,6 +60,19 @@ nihilism.1 = {
 						game_date >= 1844.1.1
 						game_date <= 1866.1.1
 					}
+					OR = { #So that the player always has first dibs on Stirner if they're playing a German country.
+						is_player = yes
+						NOT = {
+							any_country = {
+								OR = {
+									country_has_primary_culture = cu:north_german
+									country_has_primary_culture = cu:south_german
+								}
+								is_player = yes
+							}
+						}
+					}
+					NOT = { has_global_variable = stirner_spawn }
 				}
 				create_character = {
 					first_name = Max
@@ -90,32 +90,33 @@ nihilism.1 = {
 					}
 					on_created = {
 						set_variable = is_stirner_var
+						set_global_variable = stirner_spawn
 					}
 				}
 			}
 			# else_if = {
-			# 	limit = {
-			# 		THIS = c:USA
-			# 		AND = {
-			# 			game_date >= 1876.1.1
-			# 			game_date <= 1930.1.1
-			# 		}
-			# 	}
-			# 	create_character = {
-			# 		first_name = Benjamin
-			# 		last_name = Tucker
-			# 		   culture = cu:yankee
-			# 		birth_date = 1854.4.17
-			# 		is_agitator = yes 
-			# 		historical = yes
-			# 		interest_group = ig_intelligentsia
-			# 		female = no
-			# 		ideology = ideology_atheist
-			# 		traits = {	
-			# 			charismatic
-			# 			persistent
-			# 		}
-			# 	}
+				# limit = {
+					# THIS = c:USA
+					# AND = {
+						# game_date >= 1876.1.1
+						# game_date <= 1930.1.1
+					# }
+				# }
+				# create_character = {
+					# first_name = Benjamin
+					# last_name = Tucker
+					   # culture = cu:yankee
+					# birth_date = 1854.4.17
+					# is_agitator = yes 
+					# historical = yes
+					# interest_group = ig_intelligentsia
+					# female = no
+					# ideology = ideology_atheist
+					# traits = {	
+						# charismatic
+						# persistent
+					# }
+				# }
 			# }
 			else_if = {
 				limit = {
@@ -192,14 +193,22 @@ nihilism.1 = {
 	option = { 
 		name = nihilism.1.a
 		default_option = yes
-		# nihilism becomes very popular
-		custom_tooltip = big_nihilism_tt
-		ig:ig_intelligentsia = {
-			set_variable = {
-				name = big_nihilism_var
-				months = long_modifier_time
-			}
+		add_modifier = {
+			name = modifier_nihilist_movement_enhancement
+			months = long_modifier_time
+			multiplier = 2
 		}
+		if = {
+			limit = {
+				NOT = {
+					any_political_movement = {
+						is_political_movement_type = movement_nihilist
+					}
+				}
+			}
+			create_political_movement = { type = movement_nihilist }
+		}
+
 		custom_tooltip = {
 			text = nihilism.1.tt
 		}
@@ -208,26 +217,36 @@ nihilism.1 = {
 				name = popular_nihilist
 			}
 		}
+		set_variable = nihilism_je_started
 	}
 
 	option = { 
 		name = nihilism.1.b
-		# nihilism becomes a bit more popular
-		custom_tooltip = nihilism_tt
-		ig:ig_intelligentsia = {
-			set_variable = {
-				name = nihilism_var
-				days = long_modifier_time
-			}
+		
+		add_modifier = {
+			name = modifier_nihilist_movement_enhancement
+			months = long_modifier_time
 		}
+		
 		custom_tooltip = {
 			text = nihilism.1.tt
+		}
+		if = {
+			limit = {
+				NOT = {
+					any_political_movement = {
+						is_political_movement_type = movement_nihilist
+					}
+				}
+			}
+			create_political_movement = { type = movement_nihilist }
 		}
 		scope:nihilist_scope = {
 			add_modifier = {
 				name = less_popular_nihilist
 			}
 		}
+		set_variable = nihilism_je_started
 	}
 	option = { 
 		name = nihilism.1.c
@@ -240,11 +259,22 @@ nihilism.1 = {
 		custom_tooltip = {
 			text = nihilism.1.tt
 		}
+		if = {
+			limit = {
+				NOT = {
+					any_political_movement = {
+						is_political_movement_type = movement_nihilist
+					}
+				}
+			}
+			create_political_movement = { type = movement_nihilist }
+		}
 		scope:nihilist_scope = {
 			add_modifier = {
 				name = less_popular_nihilist_red
 			}
 		}
+		set_variable = nihilism_je_started
 	}
 }
 
@@ -556,10 +586,7 @@ nihilism.4 = {  #Fathers and Sons
 
 	trigger = {
 		ig:ig_intelligentsia = {
-			OR = {
-				is_being_suppressed = yes
-				ig_approval < 0
-			}
+			ig_approval < 0
 		}
 		any_scope_character = {
 			has_role = agitator
@@ -698,10 +725,7 @@ nihilism.5 = { #University Nihilists
 	trigger = {
 		has_variable = nihilism_level_one
 		ig:ig_intelligentsia = {
-			OR = {
-				is_being_suppressed = yes
-				ig_approval < 0
-			}
+			ig_approval < 0
 		}
 		any_scope_state = {
 			has_building = building_university
@@ -780,10 +804,7 @@ nihilism.6 = { #Noblewoman feels snubbed by nihilist students
 	trigger = {
 		has_variable = nihilism_level_one
 		ig:ig_intelligentsia = {
-			OR = {
-				is_being_suppressed = yes
-				ig_approval < 0
-			}
+			ig_approval < 0
 		}
 	}
 
@@ -848,10 +869,7 @@ nihilism.7 = { #Turmoil at universities
 	trigger = {
 		has_variable = nihilism_level_one
 		ig:ig_intelligentsia = {
-			OR = {
-				is_being_suppressed = yes
-				ig_approval < 0
-			}	
+			ig_approval < 0	
 		}
 		any_interest_group = {
 			is_marginal = no
@@ -970,10 +988,7 @@ nihilism.8 = { #Outrageous act of protest, Devout demand repressions
 	trigger = {
 		has_variable = nihilism_level_one
 		ig:ig_intelligentsia = {
-			OR = {
-				is_being_suppressed = yes
-				ig_approval < 0
-			}	
+			ig_approval < 0	
 		}
 	}
 
@@ -1015,7 +1030,7 @@ nihilism.8 = { #Outrageous act of protest, Devout demand repressions
 		}
 		capital = {
 			add_radicals_in_state = {
-				strata = rich
+				strata = upper
 				value = small_radicals
 			}
 		}
@@ -1044,10 +1059,7 @@ nihilism.9 = { #Nihilists commit arson on government buildings
 	trigger = {
 		has_variable = nihilism_level_two
 		ig:ig_intelligentsia = {
-			OR = {
-				is_being_suppressed = yes
-				ig_approval < 0
-			}	
+			ig_approval < 0	
 		}
 		any_scope_state = {
 			AND = {
@@ -1175,10 +1187,7 @@ nihilism.10 = { #Intellectual leader becomes a nihilist
 	trigger = {
 		has_variable = nihilism_level_two
 		ig:ig_intelligentsia = {
-			OR = {
-				is_being_suppressed = yes
-				ig_approval < 0
-			}	
+			ig_approval < 0	
 			leader = {
 				NOT = {
 					has_ideology = ideology:ideology_atheist
@@ -1345,10 +1354,7 @@ nihilism.11 = { #Agitator fight! Nihilist agitator argues with communists about 
 	trigger = {
 		has_variable = nihilism_level_two
 		ig:ig_intelligentsia = {
-			OR = {
-				is_being_suppressed = yes
-				ig_approval < 0
-			}	
+			ig_approval < 0	
 			leader = {
 				has_ideology = ideology:ideology_atheist
 			}
@@ -1437,7 +1443,7 @@ nihilism.11 = { #Agitator fight! Nihilist agitator argues with communists about 
 		name = nihilism.11.c
 		capital = {
 			add_radicals_in_state = {
-				strata = poor
+				strata = lower
 				value = small_radicals
 			}
 		}
@@ -1467,20 +1473,14 @@ nihilism.12 = { #Trade Unions adopt a positive view of state atheism/total separ
 	trigger = {
 		has_variable = nihilist_communist_front
 		ig:ig_intelligentsia = {
-			OR = {
-				is_being_suppressed = yes
-				ig_approval < 0
-			}
+			ig_approval < 0
 			leader = {
 				has_ideology = ideology:ideology_atheist
 			}
 		}
 		any_interest_group = {
 			has_variable = communist_ig_in_front
-			OR = {
-				is_being_suppressed = yes
-				ig_approval < 0
-			}
+			ig_approval < 0
 		}
 	}
 
@@ -1556,7 +1556,7 @@ nihilism.12 = { #Trade Unions adopt a positive view of state atheism/total separ
 				has_building = building_university #No disassembling universities to break the game!
 			}
 			add_radicals_in_state = {
-				strata = poor
+				strata = lower
 				value = medium_radicals
 			}
 		}
