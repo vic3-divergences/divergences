@@ -9,6 +9,13 @@
 		ideology_stratocratic
 		ideology_patriarchal
 	}
+	
+	character_ideologies = {
+		ideology_moderate
+		ideology_traditionalist
+		ideology_legitimist
+		ideology_jeanist_leader
+	}
 
 	enable = {
 		always = yes
@@ -23,9 +30,73 @@
 
 	on_enable = {
 		ig:ig_landowners = {
-			set_ig_trait = ig_trait:ig_trait_noble_privileges
-			set_ig_trait = ig_trait:ig_trait_family_ties
-			set_ig_trait = ig_trait:ig_trait_noblesse_oblige
+			if = {
+				limit = {
+					owner = { c:RUS ?= this}
+				}
+				set_ig_trait = ig_trait:ig_trait_profitable_estates
+				set_ig_trait = ig_trait:ig_trait_the_velvet_book
+				set_ig_trait = ig_trait:ig_trait_bad_boyars
+			}
+			else_if = {
+				limit = {
+					has_dlc_feature = rp1_content
+					owner = { c:BRZ ?= this}
+				}
+				set_ig_trait = ig_trait:ig_trait_noble_privileges
+				set_ig_trait = ig_trait:ig_trait_fazenda_ibicaba
+				set_ig_trait = ig_trait:ig_trait_latifundios
+			}
+			else_if = {
+				limit = {
+					OR = {
+						owner = { c:PRU ?= this}
+						AND = {
+							owner = { c:NGF ?= this}
+							c:NGF ?= { was_formed_from = PRU }
+						}
+						AND = {
+							owner = { c:GER ?= this }
+							c:GER ?= { was_formed_from = PRU }
+						}
+					}
+				}
+				set_ig_trait = ig_trait:ig_trait_noble_privileges
+				set_ig_trait = ig_trait:ig_trait_family_ties
+				set_ig_trait = ig_trait:ig_trait_junkerdom
+			}
+			else_if = {
+				limit = {
+					OR = {
+						owner = { c:AUS ?= this}
+						AND = {
+							owner = { c:GER ?= this }
+							c:GER ?= { was_formed_from = AUS }
+						}
+					}
+				}
+				set_ig_trait = ig_trait:ig_trait_noble_privileges
+				set_ig_trait = ig_trait:ig_trait_family_ties
+				set_ig_trait = ig_trait:ig_trait_wiener_walzer
+			}
+			else_if = {
+				limit = {
+					owner = {
+						OR = {
+							country_has_primary_culture = cu:yankee
+							country_has_primary_culture = cu:dixie
+						}
+					}
+				}
+				set_ig_trait = ig_trait:ig_trait_noble_privileges
+				set_ig_trait = ig_trait:ig_trait_family_ties
+				set_ig_trait = ig_trait:ig_trait_patrician_philanthropy
+			}
+			else = {
+				set_ig_trait = ig_trait:ig_trait_noble_privileges
+				set_ig_trait = ig_trait:ig_trait_family_ties
+				set_ig_trait = ig_trait:ig_trait_noblesse_oblige
+			}
 		}
 		
 		# Squattocracy
@@ -99,26 +170,19 @@
 		# Yangban Officials
 		else_if = {
 			limit = {
-				OR = {
-					c:KOR ?= this
-					c:QDA ?= this
-				}
+				c:KOR ?= this
 			}
 			ig:ig_landowners = { 
 				set_interest_group_name = ig_yangban
-				add_ideology = ideology_confucian
 			}
 		}
 		# Scholar Officials
 		else_if = {
 			limit = {
-				OR = {
-					c:CHI ?= this
-					any_primary_culture = {
-						has_discrimination_trait = han_chinese
-					}
+				any_primary_culture = {
+					has_discrimination_trait = han_chinese
 				}
-				
+				has_law = law_type:law_monarchy
 			}
 			ig:ig_landowners = { 
 				set_interest_group_name = ig_scholar_officials
@@ -126,118 +190,73 @@
 				add_ideology = ideology_scholar_paternalistic
 			}
 		}
-		# Pious Spanish Landowners
+		
+		
+		# South American Caudillos/republicans
 		else_if = {
 			limit = {
-				country_has_primary_culture = cu:spanish
-			}
-			ig:ig_landowners = {
-				add_ideology = ideology_pious
-			}
-		}
-		# Aristocracy of Officials
-		else_if = {
-			limit = {
-				country_has_primary_culture = cu:norwegian
-			}
-			ig:ig_landowners = {
-				set_interest_group_name = ig_aristocracy_of_officials
-			}
-		}
-		# Caudillo Ideology
-		else_if = {
-			limit = {
-				OR = {
-					country_has_primary_culture = cu:andesian
-					country_has_primary_culture = cu:caladeran
-					country_has_primary_culture = cu:granadan
-					country_has_primary_culture = cu:central_american
-					country_has_primary_culture = cu:mexican
-					country_has_primary_culture = cu:lusitanian
+				any_primary_culture = {
+					has_discrimination_trait = hispanophone
+					has_discrimination_trait = european_heritage
+					NOT = { has_discrimination_trait = iberian_culture_group }
+					NOT = { cu:caribeno = this }
 				}
 			}
 			ig:ig_landowners = {
 				remove_ideology = ideology_paternalistic
-				add_ideology = ideology_caudillismo
+				add_ideology = ideology_republican_paternalistic
 			}
 		}
-		#Zamindars
+		# India
 		else_if = {
-		limit = {
+			limit = {
 				OR = {
-					country_has_primary_culture = cu:sindi
-					country_has_primary_culture = cu:rajput
-					country_has_primary_culture = cu:gujarati
-					country_has_primary_culture = cu:panjabi
-					country_has_primary_culture = cu:kashmiri
-					country_has_primary_culture = cu:avadhi
-					country_has_primary_culture = cu:kanauji
-					country_has_primary_culture = cu:bihari
-					country_has_primary_culture = cu:bengali
-					country_has_primary_culture = cu:oriya
-					country_has_primary_culture = cu:telegu
+					c:BEI ?= this
+					country_has_primary_culture = cu:javan
 				}
 			}
 			ig:ig_landowners = {
-				set_interest_group_name = ig_zamindars
-			}
-		}
-		#Palaiyakkarars
-		else_if = {
-		limit = {
-				OR = {
-					country_has_primary_culture = cu:tamil
+				set_interest_group_name = ig_priyayi
+				if = {
+					limit = {
+						owner = {
+							c:BEI ?= this
+						}
+					}
+					set_ig_trait = ig_trait:ig_trait_summon_no_zamindars
 				}
-			}
-			ig:ig_landowners = {
-				set_interest_group_name = ig_poligars
-			}
-		}
-		#Jenmi
-		else_if = {
-		limit = {
-				OR = {
-					country_has_primary_culture = cu:malayalam
-				}
-			}
-			ig:ig_landowners = {
-				set_interest_group_name = ig_jenmis
-			}
-		}
-		#Vatandar
-		else_if = {
-		limit = {
-				OR = {
-					country_has_primary_culture = cu:marathi
-				}
-			}
-			ig:ig_landowners = {
-				set_interest_group_name = ig_vatandars
-			}
-		}
-		#Bhuiyan
-		else_if = {
-		limit = {
-				OR = {
-					country_has_primary_culture = cu:assamese
-				}
-			}
-			ig:ig_landowners = {
-				set_interest_group_name = ig_bhuiyan
-			}
-		}
-		else_if = {
-		limit = {
-				OR = {
-					country_has_primary_culture = cu:kannada
-				}
-			}
-			ig:ig_landowners = {
-				set_interest_group_name = ig_vokkaligas
+				set_ig_trait = ig_trait:ig_trait_famine_reserves
+				set_ig_trait = ig_trait:ig_trait_profitable_estates
 			}
 		}
 	}
 	on_disable = {}
+	
+	priority_cultures = { #Country scope
+		rule = {
+			trigger = {
+				c:BEI ?= this
+				any_primary_culture = { 
+					cu:burgundian = this
+				}
+			}
+			cultures = {
+				javan balinese visayan sumatran bornean malay moluccan dayak tionghoa tagalog makassarese bugis
+			}
+		}
+		rule = {
+			trigger = {
+				c:AMA ?= this
+				any_primary_culture = { 
+					cu:antarctican = this
+				}
+			}
+			cultures = {
+				antarctican
+			}
+		}
+	}
+	
 	on_character_ig_membership = {}
 
 	pop_potential = {
@@ -278,7 +297,7 @@
 				limit = {
 					is_pop_type = officers
 				}
-				value = 50
+				value = 25
 			}
 		}
 
@@ -288,12 +307,36 @@
 				limit = {
 					is_pop_type = farmers
 				}
-				value = 50
+				value = 25
+				add = this.standard_of_living
 				
 				if = {
 					limit = { owner = { has_law = law_type:law_homesteading } }
-					add = 50
+					multiply = 1.25
 				}
+
+				if = {
+					limit = {
+						state = {
+							is_slave_state = yes
+						}
+					}
+					multiply = 4
+				}
+			}
+		}
+
+		
+		if = {
+			limit = {
+				c:BEI ?= owner
+				culture = {
+					has_discrimination_trait = european_heritage
+				}
+			}
+			multiply = {
+				desc = "POP_INDIA_COLONIAL_RULE"
+				value = 0.1
 			}
 		}
 
@@ -320,6 +363,33 @@
 				value = 1
 				add = scope:interest_group.modifier:interest_group_in_government_attraction_mult
 				min = 0
+			}
+		}
+		
+		if = {
+			limit = {
+				scope:interest_group = {
+					is_in_government = yes
+				}
+			}
+			multiply = { # Multiplied by 1.25x max
+				desc = "POP_LOYALISTS"
+				value = pop_loyalist_fraction
+				divide = 4
+				add = 1
+			}
+		}
+		if = {
+			limit = {
+				scope:interest_group = {
+					is_in_government = no
+				}
+			}
+			multiply = { # Multiplied by 1.25x max
+				desc = "POP_RADICALS"
+				value = pop_radical_fraction
+				divide = 4
+				add = 1
 			}
 		}
 	}
@@ -464,15 +534,6 @@
 	# scope:character is the most popular commander in the IG
 	commander_leader_chance = {
 		value = 0.5
-		if = {
-			limit = {
-				exists = scope:character
-			}
-			multiply = {
-				value = 1
-				add = scope:character.popularity
-				min = 0
-			}
-		}
+		multiply = ig_commander_leader_chance_mult
 	}
 }
