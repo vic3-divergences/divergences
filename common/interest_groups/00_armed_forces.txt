@@ -9,6 +9,12 @@
 		ideology_loyalist
 		ideology_patriotic
 	}
+	
+	character_ideologies = {
+		ideology_moderate
+		ideology_orleanist
+		ideology_bonapartist
+	}
 
 	enable = {
 		always = yes
@@ -23,17 +29,94 @@
 
 	on_enable = {
 		ig:ig_armed_forces = {
-			set_ig_trait = ig_trait:ig_trait_materiel_waste
-			set_ig_trait = ig_trait:ig_trait_veteran_consultation
-			set_ig_trait = ig_trait:ig_trait_patriotic_fervor
+			if = {
+				limit = {
+					owner = {
+						OR = {
+							c:CHI ?= this
+							c:SHU ?= this
+						}
+					}
+				}
+				set_ig_trait = ig_trait:ig_trait_newly_created_army
+				set_ig_trait = ig_trait:ig_trait_self_strengthening
+				set_ig_trait = ig_trait:ig_trait_parochial_leadership
+			}
+			else_if = {
+				limit = {
+					owner = {
+						OR = {
+							c:FRA ?= this
+							c:LOT ?= this
+							country_has_primary_culture = cu:french
+						}
+					}
+				}
+				set_ig_trait = ig_trait:ig_trait_materiel_waste
+				set_ig_trait = ig_trait:ig_trait_veteran_consultation
+				set_ig_trait = ig_trait:ig_trait_elan_vital
+			}
+			else_if = {
+				limit = {
+					owner = {
+						any_primary_culture = {
+							has_discrimination_trait = hispanophone
+							has_discrimination_trait = european_heritage
+							NOT = { has_discrimination_trait = iberian_culture_group }
+						}
+					}
+				}
+				set_ig_trait = ig_trait:ig_trait_materiel_waste
+				set_ig_trait = ig_trait:ig_trait_veteran_consultation
+				set_ig_trait = ig_trait:ig_trait_el_buen_jefe
+			}
+			else_if = {
+				limit = {
+					owner = {
+						has_dlc_feature = rp1_content
+						c:LUS ?= this
+					}
+				}
+				set_ig_trait = ig_trait:ig_trait_coronelismo
+				set_ig_trait = ig_trait:ig_trait_clube_militar
+				set_ig_trait = ig_trait:ig_trait_patriotic_fervor
+			}
+			else_if = {
+				limit = {
+					owner = {
+						has_dlc_feature = ip2_content
+						any_primary_culture = {
+							has_discrimination_trait = european_heritage
+						}
+						country_is_india = yes
+					}
+				}
+				set_ig_trait = ig_trait:ig_trait_divided_ranks
+				set_ig_trait = ig_trait:ig_trait_imperial_service
+				set_ig_trait = ig_trait:ig_trait_veerta
+			}
+			else_if = {
+				limit = {
+					owner = {
+						c:PAN ?= this
+					}
+				}
+				set_ig_trait = ig_trait:ig_trait_materiel_waste
+				set_ig_trait = ig_trait:ig_trait_khalsa
+				set_ig_trait = ig_trait:ig_trait_patriotic_fervor
+			}
+			else = {
+				set_ig_trait = ig_trait:ig_trait_materiel_waste
+				set_ig_trait = ig_trait:ig_trait_veteran_consultation
+				set_ig_trait = ig_trait:ig_trait_patriotic_fervor
+			}
 		}
 		# Caudillo Ideology
 		if = {
 			limit = {
 				OR = {
-					country_has_primary_culture = cu:platinean
-					country_has_primary_culture = cu:south_andean
-					country_has_primary_culture = cu:north_andean
+					country_has_primary_culture = cu:caladeran
+					country_has_primary_culture = cu:granadan
 					country_has_primary_culture = cu:central_american
 					country_has_primary_culture = cu:mexican
 				}
@@ -53,46 +136,45 @@
 				set_interest_group_name = ig_samurai
 			}
 		}
-		# Mansabdars
+		# India
 		else_if = {
 			limit = {
-				c:MUG ?= this
+				c:BEI ?= this
 			}
 			ig:ig_armed_forces = {
-				set_interest_group_name = ig_mansabdars
+				set_interest_group_name = ig_presidency_armies
 			}
 		}
-		#Maratha Sena
+		# Sikh Empire
 		else_if = {
 			limit = {
-				c:VIJ ?= this
+				c:PAN ?= this
 			}
 			ig:ig_armed_forces = {
-				set_interest_group_name = ig_maratha
-			}
-		}
-		#Paiks
-		else_if = {
-			limit = {
-				c:ASM ?= this
-			}
-			ig:ig_armed_forces = {
-				set_interest_group_name = ig_paik
-			}
-		}
-		#Khandayat
-		else_if = {
-			limit = {
-				c:ORI ?= this
-			}
-			ig:ig_armed_forces = {
-				set_interest_group_name = ig_khanda
+				set_interest_group_name = ig_khalsaji
+				remove_ideology = ideology_jingoist
+				add_ideology = ideology_sikh_militancy
 			}
 		}
 	}
 	on_disable = {}
-	on_character_ig_membership = {}
 
+	priority_cultures = { #Country scope
+		rule = {
+			trigger = {
+				c:BEI ?= this
+				any_primary_culture = { 
+					cu:burgundian = this
+				}
+			}
+			cultures = {
+				burgundian dutch verlander
+			}
+		}
+	}
+
+	on_character_ig_membership = {}
+	
 	pop_potential = {
 		OR = {
 			is_pop_type = soldiers
@@ -202,7 +284,34 @@
 				limit = {
 					is_pop_type = aristocrats
 				}
-				value = 50
+				value = 10
+				if = {
+					limit = {
+						owner = {
+							has_modifier = age_of_caudillos_modifier
+						}
+					}
+					add = 25
+				}
+				if = {
+					limit = {
+						owner = {
+							has_law = law_type:law_peasant_levies
+						}
+					}
+					add = 50
+				}
+			}
+		}
+		
+		add = {
+			desc = "SIKH_MILITANCY"
+			if = {
+				limit = {
+					is_pop_type = aristocrats
+					religion = rel:sikh
+				}
+				add = 100
 			}
 		}
 
@@ -212,7 +321,47 @@
 				limit = {
 					is_pop_type = officers
 				}
-				value = 200
+				value = 250
+			}
+		}
+
+		add = { # There's one firearm for every twelve people on the planet. The question is, how do we arm the other eleven?
+			desc = "MILITARY_INDUSTRIES"
+			if = {
+				limit = {
+					OR = {
+						pop_employment_building_group = bg_munition_plants
+						pop_employment_building_group = bg_arms_industries
+						pop_employment_building_group = bg_artillery_foundaries
+						pop_employment_building_group = bg_military_shipyards
+					}
+				}
+				if = {
+					limit = {
+						strata = middle
+					}
+					value = 75
+				}
+				if = {
+					limit = {
+						strata = upper
+					}
+					value = 150
+				}
+			}
+		}
+		
+		add = {
+			desc = "POP_MILITARY_BUREAUCRACY"
+			if = {
+				limit = {
+					is_pop_type = bureaucrats
+					owner = {
+						c:ALK ?= this
+						has_government_type = gov_chartered_company
+					}
+				}
+				value = 100
 			}
 		}
 
@@ -239,6 +388,32 @@
 				value = 1
 				add = scope:interest_group.modifier:interest_group_in_government_attraction_mult
 				min = 0
+			}
+		}
+		if = {
+			limit = {
+				scope:interest_group = {
+					is_in_government = yes
+				}
+			}
+			multiply = { # Multiplied by 1.25x max
+				desc = "POP_LOYALISTS"
+				value = pop_loyalist_fraction
+				divide = 4
+				add = 1
+			}
+		}
+		if = {
+			limit = {
+				scope:interest_group = {
+					is_in_government = no
+				}
+			}
+			multiply = { # Multiplied by 1.25x max
+				desc = "POP_RADICALS"
+				value = pop_radical_fraction
+				divide = 4
+				add = 1
 			}
 		}
 	}
@@ -384,15 +559,6 @@
 	# scope:character is the most popular commander in the IG
 	commander_leader_chance = {
 		value = 0.75
-		if = {
-			limit = {
-				exists = scope:character
-			}
-			multiply = {
-				value = 1
-				add = scope:character.popularity
-				min = 0
-			}
-		}
+		multiply = ig_commander_leader_chance_mult
 	}
 }
