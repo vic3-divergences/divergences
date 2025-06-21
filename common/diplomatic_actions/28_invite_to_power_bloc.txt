@@ -9,14 +9,14 @@
 
 	selectable = {
 		NOT = { is_country_type = decentralized }
-		is_revolutionary = no	
+		is_revolutionary = no
 		is_in_power_bloc = yes
 
 		# Note that most of the script below has been written under the assumption that root is the power bloc leader.
 		is_power_bloc_leader = yes      # if you change this line, remember to change power_bloc_invite_available
 	}
-	
-	potential = { 
+
+	potential = {
 		scope:target_country = {
 			NOT = { is_country_type = decentralized }
 		}
@@ -25,13 +25,13 @@
 	possible = {
 		# Must not be able to immediately start a power struggle
 		custom_tooltip = {
-			text = "NO_POWER_STRUGGLE_BLOC_JOIN"		
+			text = "NO_POWER_STRUGGLE_BLOC_JOIN"
 			OR = {
 				prestige > scope:target_country.prestige
 				country_rank > scope:target_country.country_rank
 			}
 		}
-	
+
 		power_bloc = {
 			leverage_advantage = {
 				target = scope:target_country
@@ -58,97 +58,102 @@
 			}
 		}
 	}
-	
+
 	accept_effect = {
 		scope:target_country = {
 			join_power_bloc = root
 		}
 	}
-	
+
 	decline_effect = {
-		change_relations = { country = scope:target_country value = -50 } 
+		change_relations = { country = scope:target_country value = -50 }
 		hidden_effect = {
 			create_diplomatic_catalyst = {
 				type = catalyst_declined_bloc_invite
 				target = scope:target_country
-			}						
+			}
 		}
-	}	
-	
+	}
+
 	ai = {
 		evaluation_chance = {
 			value = 0
 			if = {
 				limit = { is_power_bloc_leader = yes }
 				add = 1
-			}	
-		}	
-	
+			}
+		}
+
 		accept_score = {
 			value = 0
-			
+
+			# We are doing this to be able to reuse loc across treaties and diplomatic actions
+			scope:target_country = {
+				save_temporary_scope_as = target
+			}
+
 			add = {
 				desc = "DIPLOMATIC_ACCEPTANCE_BASE"
 				value = -100
 			}
-			
+
 			### Leverage
 			add = {
 				desc = "DIPLOMATIC_ACCEPTANCE_LEVERAGE"
 				value = "scope:actor.power_bloc.leverage_advantage(root)"
 				multiply = 0.5
-				
+
 				### Leverage effect when already part of the bloc can go into negative, to help determine if they want to leave
 				if = {
-					limit = { is_in_same_power_bloc = scope:actor	}					
+					limit = { is_in_same_power_bloc = scope:actor	}
 					min = -200
 				}
 				else = {
 					min = 0
 				}
-				
+
 				max = 200
-			}		
-			
+			}
+
 			if = {
 				limit = {
 					scope:target_country = { is_in_power_bloc = yes }
 				}
-				
+
 				### Cohesion of current Bloc
 				subtract = {
 					desc = "DIPLOMATIC_ACCEPTANCE_COHESION_OF_TARGET"
 					value = "scope:target_country.power_bloc.current_cohesion_number"
 					subtract = 50
-					
+
 					### Low cohesion is more impactful than high cohesion
 					if = {
 						limit = { scope:target_country.power_bloc = { current_cohesion_number < 20 } }
 						multiply = 2
-					}					
+					}
 					else_if = {
 						limit = { scope:target_country.power_bloc = { current_cohesion_number < 40 } }
 						multiply = 1.5
 					}
-				}				
+				}
 			}
-			
+
 			### Cohesion
 			add = {
 				desc = "DIPLOMATIC_ACCEPTANCE_COHESION"
 				value = "scope:actor.power_bloc.current_cohesion_number"
 				subtract = 50
-				
+
 				### Low cohesion is more impactful than high cohesion
 				if = {
 					limit = { scope:actor.power_bloc = { current_cohesion_number < 20 } }
 					multiply = 4
-				}					
+				}
 				else_if = {
 					limit = { scope:actor.power_bloc = { current_cohesion_number < 40 } }
 					multiply = 2
 				}
-				
+
 				### Care more about cohesion when part of bloc
 				if = {
 					limit = { is_in_same_power_bloc = scope:actor }
@@ -167,31 +172,31 @@
 							limit = {
 								scope:target_country.country_rank = rank_value:great_power
 							}
-							add = modifier:power_bloc_invite_acceptance_great_power_add 
+							add = modifier:power_bloc_invite_acceptance_great_power_add
 						}
 						else_if = {
 							limit = {
 								scope:target_country.country_rank = rank_value:major_power
 							}
-							add = modifier:power_bloc_invite_acceptance_major_power_add 
+							add = modifier:power_bloc_invite_acceptance_major_power_add
 						}
 						else_if = {
 							limit = {
 								scope:target_country.country_rank = rank_value:minor_power
 							}
-							add = modifier:power_bloc_invite_acceptance_minor_power_add 
+							add = modifier:power_bloc_invite_acceptance_minor_power_add
 						}
 						else_if = {
 							limit = {
 								scope:target_country.country_rank = rank_value:unrecognized_major_power
 							}
-							add = modifier:power_bloc_invite_acceptance_unrecognized_major_power_add 
+							add = modifier:power_bloc_invite_acceptance_unrecognized_major_power_add
 						}
 						else_if = {
 							limit = {
 								scope:target_country.country_rank = rank_value:unrecognized_regional_power
 							}
-							add = modifier:power_bloc_invite_acceptance_unrecognized_regional_power_add 
+							add = modifier:power_bloc_invite_acceptance_unrecognized_regional_power_add
 						}
 					}
 				}
@@ -225,36 +230,38 @@
 					max = 25
 					min = -25
 				}
-			}	
+			}
 
-			### Powerful Protectors is always a factor, but less so if not being invited to a sovereign empire		
+			### Powerful Protectors is always a factor, but less so if not being invited to a sovereign empire
 			if = {
 				limit = {
 					scope:actor.power_bloc ?= {
 						NOT = { has_identity = identity:identity_sovereign_empire }
 					}
-					has_powerful_protectors = yes
+					has_powerful_protectors = {
+						ACTOR_SCOPE = scope:actor
+					}
 				}
 				add = {
 					desc = "DIPLOMATIC_ACCEPTANCE_POWERFUL_PROTECTORS_THEM"
 					value = -25
-				}	
+				}
 			}
-			
+
 			### Relative rank
 			add = {
 				desc = "DIPLOMATIC_ACCEPTANCE_RANK"
 				value = scope:actor.country_rank
 				subtract = 2
 				subtract = country_rank
-				multiply = 10			
+				multiply = 10
 			}
-					
+
 			if = {
 				limit = {
 					gdp >= 2000000
 				}
-				
+
 				subtract = {
 					desc = "DIPLOMATIC_ACCEPTANCE_HIGH_GDP"
 					value = gdp
@@ -263,7 +270,7 @@
 					min = 1
 					max = 100
 				}
-			}		
+			}
 
 			add = {
 				desc = "DIPLOMATIC_ACCEPTANCE_ATTITUDE"
@@ -272,13 +279,13 @@
 						has_attitude = {
 							who = scope:actor
 							attitude = genial
-						}											
+						}
 					}
 					value = 50
 				}
 				else_if = {
 					limit = {
-						OR = {					
+						OR = {
 							has_attitude = {
 								who = scope:actor
 								attitude = cooperative
@@ -286,7 +293,7 @@
 							has_attitude = {
 								who = scope:actor
 								attitude = conciliatory
-							}	
+							}
 						}
 					}
 					value = 25
@@ -301,22 +308,22 @@
 							has_attitude = {
 								who = scope:actor
 								attitude = domineering
-							}	
+							}
 							has_attitude = {
 								who = scope:actor
 								attitude = belligerent
-							}							
+							}
 						}
 					}
 					value = -1000
 				}
 				else = {
 					value = -50
-				}				
+				}
 			}
 
 			add = {
-				desc = "DIPLOMATIC_ACCEPTANCE_RELATIONS"								
+				desc = "DIPLOMATIC_ACCEPTANCE_RELATIONS"
 				if = {
 					limit = {
 						"relations(scope:actor)" < relations_threshold:friendly
@@ -329,7 +336,7 @@
 						"relations(scope:actor)" < relations_threshold:friendly
 					}
 					value = 15
-				}	
+				}
 				if = {
 					limit = {
 						"relations(scope:actor)" >= relations_threshold:friendly
@@ -337,7 +344,7 @@
 					value = 30
 				}
 			}
-			
+
 			add = {
 				desc = "DIPLOMATIC_ACCEPTANCE_INFAMY"
 				if = {
@@ -346,7 +353,7 @@
 						"scope:actor.infamy" < infamy_threshold:notorious
 					}
 					value = -10
-				}	
+				}
 				if = {
 					limit = {
 						"scope:actor.infamy" >= infamy_threshold:notorious
@@ -361,7 +368,7 @@
 					value = -50
 				}
 			}
-			
+
 			if = {
 				limit = {
 					scope:actor = {
@@ -374,7 +381,7 @@
 					value = 50
 				}
 			}
-			
+
 			if = {
 				limit = {
 					scope:actor = {
@@ -408,14 +415,14 @@
 				}
 			}
 		}
-		
-		will_propose = {  
+
+		will_propose = {
 			would_accept_diplomatic_action = {
 				actor = scope:target_country
 				type = join_power_bloc
 			}
-		}	
-		
+		}
+
 		propose_score = {
 			value = 20
 		}
@@ -423,22 +430,22 @@
 		use_obligation_chance = {
 			value = 75
 		}
-		
+
 		owe_obligation_chance = {
 			value = 0
 
 			if = {
-				limit = { 
+				limit = {
 					scope:target_country = {
 						country_rank >= rank_value:major_power
 					}
 				}
-				
+
 				add = 50
 			}
 		}
-		
-		will_propose_even_if_not_accepted = { 
+
+		will_propose_even_if_not_accepted = {
 			OR = {
 				has_attitude = {
 					who = scope:target_country
@@ -449,7 +456,7 @@
 						target = scope:target_country
 						value >= 500
 					}
-				}				
+				}
 			}
 		}
 	}
