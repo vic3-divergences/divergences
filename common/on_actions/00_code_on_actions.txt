@@ -1053,6 +1053,124 @@ on_diplomatic_pact_third_party_auto_break = {
 	}
 }
 
+# Root = Treaty
+on_treaty_proposed = {
+	effect = {
+		post_proposal = proposal_treaty
+	}
+}
+
+# Root = Treaty
+on_treaty_proposal_declined = {
+	effect = {
+		post_notification = treaty_proposal_declined
+	}
+}
+
+# Root = Treaty
+on_treaty_entered_into_force = {
+	effect = {
+		post_notification = treaty_entered_into_force
+	}
+}
+
+# Root = Treaty
+# Fires in addition to on_treaty_entered_into_force for treaties enforced by plays, etc
+on_treaty_enforced = {
+	effect = {
+		scope:treaty_options.first_country = {
+			create_diplomatic_catalyst = {
+				type = catalyst_treaty_enforced
+				target = scope:treaty_options.second_country
+			}
+		}
+	}
+}
+
+# Root = Treaty
+# scope:withdrawing_country = Withdrawing Country
+# scope:non_withdrawing_country = Non-Withdrawing Country
+# Fires when the binding period is not active
+on_country_withdrawn_from_treaty = {
+	effect = {
+		post_notification = country_withdrawn_from_treaty
+	}
+}
+
+# Root = Treaty
+# scope:withdrawing_country = Withdrawing Country
+# scope:non_withdrawing_country = Non-Withdrawing Country
+# Fires instead of on_country_withdrawn_from_treaty when the binding period is still active
+on_country_broke_treaty = {
+	effect = {
+		post_notification = country_broke_treaty
+
+		scope:withdrawing_country = {
+			create_diplomatic_catalyst = {
+				type = catalyst_treaty_broken
+				target = scope:non_withdrawing_country
+			}
+
+			add_modifier = {
+				name = modifier_untrustworthy_country
+				days = long_modifier_time
+				multiplier = {
+					value = 1
+					add = {
+						root = {
+							every_scope_article = {
+								if = {
+									limit = {
+										OR = {
+											has_type = alliance
+											has_type = state_transfer
+										}
+									}
+									add = 5
+								}
+								else_if = {
+									limit = {
+										OR = {
+											has_type = defensive_pact
+											has_type = treaty_port
+										}
+									}
+									add = 3
+								}
+								else_if = {
+									limit = {
+										OR = {
+											has_type = guarantee_independence
+											has_type = support_independence
+										}
+									}
+									add = 2
+								}
+							}
+						}
+					}
+					max = 20
+				}
+			}
+		}
+	}
+}
+
+# Root = Treaty
+on_treaty_dissolved = {
+	effect = {
+		post_notification = treaty_dissolved
+	}
+}
+
+# Root = Treaty
+# scope:article = Treaty Article
+on_treaty_article_removed = {
+	effect = {
+		post_notification = treaty_article_removed
+	}
+}
+
 # Root = Releasing Country
 # scope:target = Released Country
 on_country_released_as_independent = {
