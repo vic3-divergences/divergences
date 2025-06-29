@@ -2,10 +2,10 @@
 	groups= {
 		overlord
 	}
-	
+
 	texture = "gfx/interface/icons/diplomatic_action_icons/grant_state.dds"
 	confirmation_sound = "event:/SFX/UI/MapInteraction/SubjectInteractions/diplomatic_action_subjects_13_handle_states"
-	
+
 	requires_approval = no
 	should_notify_third_parties = yes
 	show_effect_in_tooltip = yes
@@ -18,7 +18,7 @@
 		scope:target_country = { is_diplomatic_play_committed_participant = no }
 		is_revolutionary = no
 	}
-	
+
 	first_state_trigger = {
 		OR = {
 			AND = {
@@ -28,7 +28,7 @@
 					is_homeland_of_country_cultures = scope:country
 				}
 			}
-			scope:country = { 
+			scope:country = {
 				any_subject_or_below = { # can give away states owned by other subjects
 					root.owner = this
 					NOT = { root.owner = scope:target_country }
@@ -36,7 +36,7 @@
 						is_subject_type = subject_type_colony
 						is_subject_type = subject_type_puppet
 						is_subject_type = subject_type_vassal
-					}								
+					}
 				}
 			}
 		}
@@ -51,14 +51,14 @@
 			}
 		}
 	}
-	
+
 	accept_effect = {
 		if = {
 			limit = { exists = scope:first_state }
-			
+
 			# Giving a state from one subject to another
 			if = {
-				limit = { scope:first_state = { NOT = { owner = root } } }	
+				limit = { scope:first_state = { NOT = { owner = root } } }
 				scope:first_state.owner = { save_temporary_scope_as = subject_taken_from }
 				scope:subject_taken_from = {
 					add_liberty_desire = {
@@ -66,10 +66,10 @@
 						divide = 5
 						max = 100
 						min = 20
-					}				
+					}
 				}
-			}		
-			
+			}
+
 			scope:target_country = {
 				add_liberty_desire = {
 					value = 0
@@ -77,12 +77,12 @@
 					divide = 5
 					max = -5
 					min = -50
-				}				
-			}		
-			scope:first_state = { set_state_owner = scope:target_country }		
+				}
+			}
+			scope:first_state = { set_state_owner = scope:target_country }
 		}
 	}
-	
+
 	ai = {
 		evaluation_chance = {
 			value = 0.0
@@ -94,11 +94,11 @@
 							is_subject_type = subject_type_protectorate
 							is_subject_type = subject_type_tributary
 						}
-					}					
+					}
 				}
-				add = 0.25			
-			}	
-			
+				add = 0.25
+			}
+
 			if = {
 				limit = {
 					any_subject_or_below = {
@@ -107,12 +107,12 @@
 							c:DEI ?= this
 							is_african_subject = yes
 						}
-					}					
+					}
 				}
 				add = 0.5
 			}
-		}	
-	
+		}
+
 		will_select_as_first_state = {
 			is_incorporated = no
 			NOT = { is_homeland_of_country_cultures = owner }
@@ -143,7 +143,7 @@
 				}
 			}
 		}
-		
+
 		will_propose_with_states = {
 			exists = scope:first_state
 
@@ -151,7 +151,7 @@
 				who = scope:target_country
 				attitude = protective
 			}
-			
+
 			# AI doesn't give away states adjacent to their incorporated states
 			scope:first_state = {
 				NOT = {
@@ -159,15 +159,15 @@
 						owner = root
 						is_incorporated = yes
 					}
-				}			
-			}			
-	
+				}
+			}
+
 			# AI doesn't give away states to subjects that are unrecognized when they are recognized
 			# They also don't want to give states to very autonomous subjects since they don't get much from it
 			# The exception to these rules is when the state is totally disconnected from the rest of their empire
 			OR = {
 				AND = {
-					scope:target_country = {				
+					scope:target_country = {
 						NOR = {
 							is_subject_type = subject_type_protectorate
 							is_subject_type = subject_type_tributary
@@ -175,20 +175,20 @@
 					}
 					NAND = {
 						NOT = { is_country_type = unrecognized }
-						scope:target_country = { is_country_type = unrecognized } 						
-					}		
+						scope:target_country = { is_country_type = unrecognized }
+					}
 				}
-				scope:first_state = { 
+				scope:first_state = {
 					has_port = no
 					NOT = {
 						any_neighbouring_state = {
 							owner = root
-						}					
+						}
 					}
 					any_neighbouring_state = {
 						owner = scope:target_country
-					}					
-				}			
+					}
+				}
 			}
 
 			# China shouldn't give all of its West to Tibet
@@ -204,8 +204,8 @@
 					NOT = { is_homeland_of_country_cultures = scope:target_country }
 				}
 			}
-		}	
-	
+		}
+
 		propose_score = {
 			value = 10
 
@@ -241,22 +241,22 @@
 				}
 				add = 50
 			}
-			
+
 			# Prefer ceding land to same culture subjects
 			if = {
-				limit = { 
-					scope:target_country = { 
+				limit = {
+					scope:target_country = {
 						any_primary_culture = { is_primary_culture_of = root }
-					} 
+					}
 				}
 				multiply = 5.0
-			}			
-			
+			}
+
 			# Avoid ceding land to unrecognized if there's alternatives
 			if = {
-				limit = { 
+				limit = {
 					NOT = { is_country_type = unrecognized }
-					scope:target_country = { is_country_type = unrecognized } 					
+					scope:target_country = { is_country_type = unrecognized }
 				}
 				multiply = 0.1
 			}
@@ -268,9 +268,9 @@ take_state = {
 	groups= {
 		overlord
 	}
-	
+
 	texture = "gfx/interface/icons/diplomatic_action_icons/take_state.dds"
-	
+
 	requires_approval = no
 	should_notify_third_parties = yes
 	show_effect_in_tooltip = yes
@@ -279,40 +279,40 @@ take_state = {
 	can_use_obligations = no
 
 	possible = {
-		scope:target_country = { 
+		scope:target_country = {
 			OR = {
 				is_subject_type = subject_type_colony
 				is_subject_type = subject_type_puppet
 				is_subject_type = subject_type_vassal
 			}
-			is_diplomatic_play_committed_participant = no 
+			is_diplomatic_play_committed_participant = no
 			is_revolutionary = no
 			liberty_desire < 25
 		}
 	}
-	
+
 	second_state_trigger = {
 		owner = scope:target_country
 		is_capital = no
 		is_under_colonization = no
-		
+
 		# Not allowed to take incorporated states from dominions
 		trigger_if = {
 			limit = { scope:target_country = { is_subject_type = subject_type_dominion } }
 			is_incorporated = no
 		}
 	}
-	
+
 	accept_effect = {
 		if = {
-			limit = { exists = scope:second_state }	
+			limit = { exists = scope:second_state }
 			scope:target_country = {
 				add_liberty_desire = {
 					value = "scope:second_state.ai_state_value(scope:target_country)"
 					divide = 5
 					max = 100
 					min = 20
-				}				
+				}
 			}
 			create_incident = {
 				country = scope:target_country
@@ -320,13 +320,13 @@ take_state = {
 					value = "scope:second_state.ai_state_value(scope:target_country)"
 					divide = 10
 					max = 50
-					min = 10						
+					min = 10
 				}
-			}					
-			scope:second_state = { set_state_owner = root }		
+			}
+			scope:second_state = { set_state_owner = root }
 		}
 	}
-	
+
 	ai = {
 		evaluation_chance = {
 			value = 0.0
@@ -339,27 +339,27 @@ take_state = {
 							is_subject_type = subject_type_puppet
 							is_subject_type = subject_type_vassal
 						}
-					}					
+					}
 				}
 				add = 0.1
-			}				
-		}		
-	
+			}
+		}
+
 		will_select_as_second_state = {
-			is_incorporated = no		
-		}	
-		
+			is_incorporated = no
+		}
+
 		will_propose_with_states = {
 			exists = scope:second_state
-			
+
 			# The AI only uses take state on disconnected colonial bits of subjects which are adjacent to their own lands
 			NOT = {
 				any_neighbouring_state = {
 					owner = root.owner
 					is_incorporated = yes
 				}
-			}			
-			
+			}
+
 			scope:second_state = {
 				any_neighbouring_state = {
 					owner = root
@@ -371,9 +371,9 @@ take_state = {
 			has_attitude = {
 				who = scope:target_country
 				attitude = protective
-			}		
-		}	
-	
+			}
+		}
+
 		propose_score = {
 			value = 10
 		}
@@ -384,10 +384,10 @@ demand_state = {
 	groups= {
 		subject
 	}
-	
+
 	texture = "gfx/interface/icons/diplomatic_action_icons/take_state.dds"
 	confirmation_sound = "event:/SFX/UI/MapInteraction/SubjectInteractions/diplomatic_action_subjects_13_handle_states"
-	
+
 	requires_approval = yes
 	should_notify_third_parties = yes
 	show_effect_in_tooltip = yes
@@ -400,7 +400,7 @@ demand_state = {
 		scope:target_country = { is_diplomatic_play_committed_participant = no }
 		is_revolutionary = no
 	}
-	
+
 	second_state_trigger = {
 		OR = {
 			scope:country = { is_adjacent_to_state = root } # must either be adjacent to the initiating country, or
@@ -431,14 +431,14 @@ demand_state = {
 		is_capital = no
 		is_under_colonization = no
 	}
-	
+
 	accept_effect = {
 		if = {
 			limit = { exists = scope:second_state }
-			
+
 			# Giving a state from one subject to another
 			if = {
-				limit = { scope:second_state = { NOT = { owner = scope:target_country } } }	
+				limit = { scope:second_state = { NOT = { owner = scope:target_country } } }
 				scope:second_state.owner = { save_temporary_scope_as = subject_taken_from }
 				scope:subject_taken_from = {
 					add_liberty_desire = {
@@ -449,18 +449,18 @@ demand_state = {
 					}
 				}
 			}
-			
+
 			add_liberty_desire = {
 				value = 0
 				subtract = "scope:second_state.ai_state_value(root)"
 				divide = 5
 				max = -5
 				min = -50
-			}	
-			scope:second_state = { set_state_owner = root }		
+			}
+			scope:second_state = { set_state_owner = root }
 		}
 	}
-	
+
 	ai = {
 		evaluation_chance = {
 			value = {
@@ -475,7 +475,7 @@ demand_state = {
 				}
 				add = 0.1
 			}
-			
+
 			if = {
 				limit = {
 					OR = {
@@ -487,7 +487,7 @@ demand_state = {
 				add = 0.2
 			}
 		}
-		
+
 		will_propose_with_states = {
 			exists = scope:second_state
 			trigger_if = {
@@ -501,31 +501,31 @@ demand_state = {
 					}
 				}
 			}
-		}	
-	
+		}
+
 		accept_score = {
 			add = {
 				desc = "DIPLOMATIC_ACCEPTANCE_BASE"
 				value = -100
 			}
-			
+
 			if = {
 				limit = { exists = scope:second_state }
 				subtract = {
 					value = "scope:second_state.ai_state_value(scope:second_state.owner)"
 					desc = "DIPLOMATIC_ACCEPTANCE_TRADE_STATE_SECOND_STATE"
-					
+
 					if = {
 						limit = {
-							scope:second_state = { owner = root }					
+							scope:second_state = { owner = root }
 						}
 						multiply = 2
-					}						
-					
-					min = 10				
+					}
+
+					min = 10
 				}
 			}
-			
+
 			add = {
 				desc = "DIPLOMATIC_ACCEPTANCE_ATTITUDE"
 				if = {
@@ -533,19 +533,19 @@ demand_state = {
 						has_attitude = {
 							who = scope:actor
 							attitude = protective
-						}	
+						}
 					}
 					value = 50
-				}				
+				}
 				else_if = {
 					limit = {
 						has_attitude = {
 							who = scope:actor
 							attitude = domineering
-						}	
+						}
 					}
 					value = -50
-				}							
+				}
 			}
 
 			add = {
@@ -558,19 +558,19 @@ demand_state = {
 			}
 
 			add = {
-				desc = "DIPLOMATIC_ACCEPTANCE_RELATIONS"		
+				desc = "DIPLOMATIC_ACCEPTANCE_RELATIONS"
 				if = {
 					limit = {
 						"relations(scope:actor)" >= relations_threshold:friendly
 					}
 					value = 50
-				}	
+				}
 				else_if = {
 					limit = {
 						"relations(scope:actor)" >= relations_threshold:amicable
 					}
 					value = 25
-				}					
+				}
 				else_if = {
 					limit = {
 						"relations(scope:actor)" >=  relations_threshold:cordial
@@ -582,19 +582,19 @@ demand_state = {
 						"relations(scope:actor)" > relations_threshold:poor
 					}
 					value = -25
-				}					
+				}
 				else = {
 					value = -50
-				}				
+				}
 			}
 		}
-		
+
 		use_obligation_chance = {
 			value = 10
 		}
-		
+
 		owe_obligation_chance = {
-			value = 10	
+			value = 10
 		}
 	}
 }
