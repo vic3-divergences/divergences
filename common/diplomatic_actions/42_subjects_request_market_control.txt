@@ -6,16 +6,16 @@
 		subject
 		power_bloc_member
 	}
-	
+
 	texture = "gfx/interface/icons/diplomatic_action_icons/request_market_control.dds"
 	confirmation_sound = "event:/SFX/UI/MapInteraction/SubjectInteractions/diplomatic_action_subjects_12_request_market_control_benign"
-	
+
 	potential = {
 		scope:target_country = {
 		   market = root.market # same market as the requester
 		}
 	}
-	
+
 	possible = {
 		OR = {
 			AND = { # the target controls the market and the requester is independent
@@ -41,7 +41,7 @@
 			}
 		}
 	}
-	
+
 	accept_effect = {
 		scope:target_country = { change_relations = { country = root value = 10 } }
 		if = {
@@ -59,31 +59,31 @@
 			}
 		}
 	}
-	
+
 	decline_effect = {
 		scope:target_country = { change_relations = { country = root value = -20 } }
 		if = {
-			limit = { 
+			limit = {
 				is_subject_of = scope:target_country
 			}
-			add_liberty_desire = 10		
+			add_liberty_desire = 10
 		}
 		hidden_effect = {
 			scope:target_country = {
 				create_diplomatic_catalyst = {
 					type = catalyst_market_control_requested
 					target = root
-				}		
+				}
 			}
-		}			
+		}
 	}
-	
+
 	pact = {
 		cost = 0
 		forced_duration = 12
-		
+
 		market_owner = first_country
-		
+
 		requirement_to_maintain = {
 			trigger = {
 				OR = {
@@ -92,7 +92,7 @@
 				}
 			}
 		}
-		
+
 		actor_can_break = {
 			always = yes
 		}
@@ -104,19 +104,19 @@
 			change_relations = { country = scope:target_country value = -10 }
 		}
 	}
-	
+
 	ai = {
 		evaluation_chance = {
 			value = 0.25
 		}
-	
+
 		accept_score = {
 			value = 0
-			
+
 			add = {
 				desc = "DIPLOMATIC_ACCEPTANCE_BASE"
 				value = -100
-			}		
+			}
 
 			if = {
 				limit = {
@@ -127,7 +127,7 @@
 					value = "scope:actor.ai_ideological_opinion(root)"
 					multiply = 0.5
 					max = 25
-				}					
+				}
 			}
 			else_if = {
 				limit = {
@@ -138,9 +138,9 @@
 					value = "scope:actor.ai_ideological_opinion(root)"
 					multiply = 0.5
 					min = -25
-				}					
-			}						
-							
+				}
+			}
+
 			add = {
 				desc = "DIPLOMATIC_ACCEPTANCE_ATTITUDE"
 				if = {
@@ -148,25 +148,25 @@
 						has_attitude = {
 							who = scope:actor
 							attitude = protective
-						}	
+						}
 					}
 					value = 50
-				}				
+				}
 				else_if = {
 					limit = {
 						has_attitude = {
 							who = scope:actor
 							attitude = domineering
-						}	
+						}
 					}
 					value = -50
-				}							
+				}
 			}
 
 			add = {
 				desc = "DIPLOMATIC_ACCEPTANCE_ACTOR_ECONOMIC_DEPENDENCE"
 				value = 1
-				subtract = "scope:actor.economic_dependence(root)"	
+				subtract = "scope:actor.economic_dependence(root)"
 				multiply = 50
 			}
 
@@ -179,30 +179,30 @@
 					value = "scope:actor.liberty_desire"
 					subtract = 25
 					multiply = 0.5
-				}				
+				}
 			}
-			
+
 			add = {
 				desc = "DIPLOMATIC_ACCEPTANCE_ACTOR_CAPITAL_MARKET_ACCESS"
 				value = 1
 				subtract = scope:actor.capital.market_access
 				multiply = 100
-			}	
-				
+			}
+
 			add = {
-				desc = "DIPLOMATIC_ACCEPTANCE_RELATIONS"		
+				desc = "DIPLOMATIC_ACCEPTANCE_RELATIONS"
 				if = {
 					limit = {
 						"relations(scope:actor)" >= relations_threshold:friendly
 					}
 					value = 50
-				}	
+				}
 				else_if = {
 					limit = {
 						"relations(scope:actor)" >= relations_threshold:amicable
 					}
 					value = 25
-				}					
+				}
 				else_if = {
 					limit = {
 						"relations(scope:actor)" >=  relations_threshold:cordial
@@ -214,12 +214,12 @@
 						"relations(scope:actor)" > relations_threshold:poor
 					}
 					value = -25
-				}					
+				}
 				else = {
 					value = -50
-				}				
+				}
 			}
-			
+
 			add = {
 				desc = "DIPLOMATIC_ACCEPTANCE_INFAMY"
 				if = {
@@ -228,7 +228,7 @@
 						"scope:actor.infamy" < infamy_threshold:notorious
 					}
 					value = -10
-				}	
+				}
 				if = {
 					limit = {
 						"scope:actor.infamy" >= infamy_threshold:notorious
@@ -241,22 +241,22 @@
 						"scope:actor.infamy" >= infamy_threshold:pariah
 					}
 					value = -50
-				}					
-			}					
+				}
+			}
 		}
-	
-		propose_score = { 
+
+		propose_score = {
 			value = 10
 		}
-	
-		will_propose = {	
+
+		will_propose = {
 			NOT = { is_adjacent_to_country = scope:target_country }
-			capital = { is_isolated_from_market = yes }						
+			capital = { is_isolated_from_market = yes }
 		}
-		
+
 		will_propose_even_if_not_accepted = {
 			always = yes
-		}			
+		}
 	}
 }
 
