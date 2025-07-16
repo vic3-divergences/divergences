@@ -25,6 +25,8 @@ dvg_hre.1 = {
             activate_law = law_type:law_right_of_assembly
         }
 
+        add_journal_entry = { type = je_hre_bayreuth_constitution }
+
 
     }
 }
@@ -122,6 +124,8 @@ dvg_hre.4 = {
             }
             save_scope_as = dvg_bayreuth_overlord
         }
+
+        set_variable = bayreuth_electorate_fired
     }
 
     trigger = {
@@ -129,6 +133,8 @@ dvg_hre.4 = {
         c:FRE = { is_subject = yes }
 
         this = c:BOH
+
+        NOT = { has_variable = bayreuth_electorate_fired }
     }
 
     option = {
@@ -597,6 +603,141 @@ dvg_hre.18 = {
         set_variable = je_hre_thuringian_succession_resolved_failure
 
         decrease_hre_stability = yes
+
+    }
+}
+
+### The Rise of the Hohenzollern
+dvg_hre.19 = {
+    type = country
+    placement = ROOT
+
+    title = dvg_hre.19.t
+    desc = dvg_hre.19.d
+    flavor = dvg_hre.19.f
+
+    event_image = {video = "unspecific_military_parade"}
+    on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+    icon = "gfx/interface/icons/event_icons/event_default.dds"
+    duration = 1
+
+    option = { ##
+        name = dvg_hre.19.a
+
+        increase_hre_stability = yes
+
+        ai_chance = {
+            base = 50
+        }
+    }
+
+    option = { ##
+        name = dvg_hre.19.b
+
+        create_diplomatic_play = {
+            type = dp_make_protectorate
+            target_country = c:FRE
+        }
+
+        decrease_hre_stability = yes
+
+        ai_chance = {
+            base = 50
+        }
+    }
+}
+
+
+### The fate of Pommerania 
+dvg_hre.20 = {
+    type = country
+    placement = ROOT
+
+    title = dvg_hre.20.t
+    desc = dvg_hre.20.d
+    flavor = dvg_hre.20.f
+
+    event_image = {video = "unspecific_military_parade"}
+    on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+    icon = "gfx/interface/icons/event_icons/event_default.dds"
+    duration = 1
+
+    trigger = {
+        this = c:BOH
+        country_or_subject_owns_entire_state_region = STATE_MECKLENBURG
+        country_or_subject_owns_entire_state_region = STATE_POMERANIA
+
+        NOT = { has_variable = dvg_fate_of_pommerania_fired }
+    }
+
+    immediate = {
+        set_variable = dvg_fate_of_pommerania_fired
+    }
+
+    option = { 
+        name = dvg_hre.20.a
+
+        if = {
+            limit = { exists = c:MSZ }
+
+            random_scope_state = {
+                limit = {
+                    state_region = s:STATE_MECKLENBURG
+                }
+                set_state_owner = c:MSZ
+            }
+        }
+        else = {
+            create_country = {
+				tag = MSZ
+				state = s:STATE_MECKLENBURG.region_state:BOH
+			}
+
+            create_diplomatic_pact = {
+                country = c:MSZ
+                type = puppet
+            }
+        }
+
+
+        if = {
+            limit = { exists = c:POM }
+
+            random_scope_state = {
+                limit = {
+                    state_region = s:STATE_POMERANIA
+                }
+                set_state_owner = c:POM
+            }
+        }
+        else = {
+            create_country = {
+				tag = POM
+				state = s:STATE_POMERANIA.region_state:BOH
+		    }
+
+            create_diplomatic_pact = {
+                country = c:POM
+                type = puppet
+            }
+        }
+
+        increase_hre_stability = yes
+
+        ai_chance = {
+            base = 50
+        }
+        
+    }
+
+    option = { 
+        name = dvg_hre.20.b
+
+        decrease_hre_stability = yes
+
+        ai_chance = {
+            base = 50
+        }
 
     }
 }
