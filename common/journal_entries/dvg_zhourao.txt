@@ -39,7 +39,6 @@
 		if = {
 			limit = {
 				exists = c:MJN	
-				is_diplomatic_play_enemy_of = c:MJN
 			}
 			trigger_event = {
 				id = dvg_zhourao.6 # The Northern Hui Defect!
@@ -70,12 +69,11 @@
 		if = {
 			limit = {
 				NOT = {
-					exists = c:MJN
 					any_neighbouring_state = {
 						owner = c:TPG
 					}
+					exists = c:MJN
 				}
-			
 			}
 			trigger_event = {
 				id = dvg_zhourao.21 # Xinxiang Declares independence
@@ -158,6 +156,23 @@ je_one_kongsi = {
 			2 = dvg_zhourao.14
 
 		}
+
+		effect = {
+			if = {
+				limit = {
+					NOT = {
+						any_country = {
+							relations:root < relations_threshold:amicable
+							country_has_primary_culture = cu:zhourao
+						}
+					}
+				}
+				change_variable = {
+					name = zhourao_var
+					add = 1
+				}
+			}
+		}
 	}
 	
 	complete = {
@@ -210,25 +225,7 @@ je_one_kongsi = {
     on_fail = {
 	}
 
-	on_monthly_pulse = {
-		effect = {
-			if = {
-				limit = {
-					NOT = {
-						any_country = {
-							relations:root < relations_threshold:amicable
-							country_has_primary_culture = cu:zhourao
-						}
-					}
-				}
-				change_variable = {
-					name = zhourao_var
-					add = 1
-				}
-			}
-			
-		}
-	}
+	
 
 	
 
@@ -1316,10 +1313,11 @@ je_xijiao_takoever = {
 		radical_fraction = {
 			value > 0.40
 		}
-		any_scope_pop = {
-			culture = cu:hakka
-			religion = rel:taiping
-			pop_acceptance > 3 
+		AND = {
+			has_law = law_type:law_freedom_of_conscience
+			NOT = {
+				has_law = law_type:law_ethnostate
+			}
 		}
 		
 	}
@@ -1525,6 +1523,77 @@ je_mianjin_oligarchy = {
 	}
 	progressbar = yes
 	goal_add_value = 88
+	
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+
+
+je_zhongting = {
+	icon = "gfx/interface/icons/event_icons/event_zhusha.dds"
+
+	group = je_group_foreign_affairs
+
+	is_shown_when_inactive = {
+		country_has_primary_culture = cu:zhourao
+		has_interest_marker_in_region = sr:region_oceania
+	}
+
+	possible = {
+		OR = {
+			any_subject_or_below = {
+				any_scope_state = {
+					state_region = {
+						is_homeland = cu:maori
+					}
+				}
+			}
+			any_scope_state = {
+				state_region = {
+					is_homeland = cu:maori
+				}
+			}
+		}
+		OR = {
+			has_technology_researched = romanticism
+			has_technology_researched = nationalism
+		}
+	}
+
+	complete = {
+		country_or_subject_owns_entire_state_region = STATE_MOTU_PARI
+		country_or_subject_owns_entire_state_region = STATE_MOTU_TIMU
+	}
+	
+	fail = {
+		OR = {
+			NOT = {
+				has_law = law_type:law_no_colonial_affairs
+			}
+			NOT = {
+				any_subject_or_below = {
+					any_scope_state = {
+						state_region = {
+							is_homeland = cu:maori
+						}
+					}
+				}
+				any_scope_state = {
+					state_region = {
+						is_homeland = cu:maori
+					}
+				}
+			}
+		}
+
+	}
+
+    on_complete = {
+		trigger_event = { id = dvg_zhourao.14 popup = yes }
+	}
+	
+    on_fail = {
+	}
 	
 	weight = 100
 	should_be_pinned_by_default = yes
