@@ -1,0 +1,94 @@
+﻿je_moravia_survey = {
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	group = je_group_technology
+
+	on_monthly_pulse = {
+		effect = {
+			change_variable = {
+				name = survey_moravia_taken
+				add = 1
+			}
+		}
+	}
+
+	complete = {
+		scope:journal_entry = { is_goal_complete = yes }
+	}
+
+	on_complete = {
+		remove_modifier = dvg_modifier_surveying_moravia
+		trigger_event = { id = dvg_canal_events.1 }
+	}
+
+	current_value = {
+		value = root.var:survey_moravia_taken
+	}
+
+	goal_add_value = {
+		value = 1
+	}
+
+	invalid = { # If the Intermarium Canal is being built and you're not the one building it, you've blown it, chief.
+		OR = {
+			NOT = { has_variable = survey_moravia_taken }
+			s:STATE_MORAVIA = {
+				any_scope_state = {
+					NOT = { owner = ROOT }
+					has_building = building_intermarium_canal
+				}
+			}
+			#NOT = { owns_entire_state_region = STATE_MORAVIA }
+		}
+	}
+
+	on_invalid = {
+		remove_variable = survey_moravia_taken
+		remove_modifier = dvg_modifier_surveying_moravia
+	}
+
+	progressbar = yes
+
+	weight = 10
+	should_be_pinned_by_default = yes
+}
+
+je_intermarium_canal = {
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	group = je_group_technology
+
+	complete = {
+		s:STATE_MORAVIA = {
+			any_scope_state = {
+				owner = root
+				any_scope_building = {
+					is_building_type = building_intermarium_canal
+					occupancy >= 0.9
+				}
+			}
+		}
+	}
+
+	on_complete = {
+		set_global_variable = intermarium_canal_complete
+	}
+
+	invalid = { # If the Intermarium Canal is being built and you're not the one building it, you've blown it, chief.
+		OR = {
+			NOT = { has_variable = survey_moravia_taken }
+			s:STATE_MORAVIA = {
+				any_scope_state = {
+					NOT = { owner = ROOT }
+					has_building = building_intermarium_canal
+				}
+			}
+		}
+	}
+
+	on_invalid = {
+		remove_variable = survey_moravia_taken
+		remove_modifier = dvg_modifier_surveying_moravia
+	}
+	should_be_pinned_by_default = yes
+}

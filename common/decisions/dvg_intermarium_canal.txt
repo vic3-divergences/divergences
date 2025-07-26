@@ -1,0 +1,81 @@
+﻿intermarium_survey_decision = {
+	is_shown = {
+		owns_entire_state_region = STATE_MORAVIA
+		NOT = {
+			has_variable = survey_moravia_taken
+			has_global_variable = intermarium_canal_complete
+		}
+		OR = {
+			country_rank = rank_value:great_power
+			s:STATE_MORAVIA = {
+				any_scope_state = {
+					owner = ROOT
+				}
+			}
+		}
+		s:STATE_MORAVIA = {
+			NOT = {
+				any_scope_state = {
+					has_building = building_intermarium_canal
+				}
+			}
+		}
+	}
+
+	possible = {
+		has_technology_researched = reinforced_concrete
+		produced_bureaucracy > 1000
+	}
+
+	when_taken = {
+		set_variable = {
+			name = survey_moravia_taken
+			value = 0
+		}
+		add_modifier = {
+			name = dvg_modifier_surveying_moravia
+		}
+		add_journal_entry = {
+			type = je_moravia_survey
+		}
+	}
+
+	ai_chance = {
+		value = 0
+		if = {
+			limit = { produced_bureaucracy > 5000 }
+			add = 10
+		}
+		if = {
+			limit = {
+				has_strategy = ai_strategy_armed_isolationism
+			}
+			multiply = 0
+		}
+		if = {
+			limit = {
+				OR = {
+					is_diplomatic_play_committed_participant = yes
+					is_at_war = yes
+				}
+			}
+			multiply = 0
+		}
+	}
+}
+
+stop_intermarium_survey_decision = {
+	is_shown = {
+		has_modifier = dvg_modifier_surveying_moravia
+	}
+	possible = {
+		has_modifier = dvg_modifier_surveying_moravia
+	}
+	when_taken = {
+		remove_variable = survey_moravia_taken
+		remove_modifier = dvg_modifier_surveying_moravia
+	}
+	ai_chance = {
+		value = 0
+	}
+}
