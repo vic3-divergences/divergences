@@ -53,7 +53,7 @@ dvg_zhourao.1 = {
         default_option = yes
         trigger_event = { id = dvg_zhourao.2 days = 1825 }
         add_modifier = {
-            name = dvg_populist_republic
+            name = dvg_populist_republic_yaluo
             days = -1
         }
 
@@ -506,16 +506,35 @@ dvg_zhourao.6 = {
         #NOT = {
         #	has_variable = dvg_northern_hui
         #}
-        exists = c:MJN
+        #exists = c:MJN (must exist)
     }
 
     immediate = {
         set_variable = dvg_northern_hui
+        ig:ig_landowners = {
+            save_scope_as = landowners_ig
+        }
+	every_country = {
+		limit = {
+			is_revolutionary = yes
+			country_definition = root.country_definition
+			owns_entire_state_region = STATE_XINXIANG
+			country_has_primary_culture = cu:zhourao
+		}
+		random_scope_state = {
+			limit = {
+				state_region = s:STATE_XINXIANG
+				owner = prev
+			}
+			set_state_owner = c:MJN
+		}
+	}
         if = {
             limit = {
                 s:STATE_XINXIANG.region_state:YLO = {
-                    scope:landowner_ig = {
-                        is_powerful = yes
+                    ig_state_pol_strength_share = {
+                        target = scope:landowners_ig
+                        value > 0.1
                     }
                 }
             }
@@ -523,10 +542,11 @@ dvg_zhourao.6 = {
                 set_state_owner = c:MJN
             }
         }
-        random_state = {
+        ordered_state = {
             limit = {
                 owner = c:MJN
             }
+            order_by = state_population
             save_scope_as = MJN_state
         }
 
@@ -551,20 +571,28 @@ dvg_zhourao.6 = {
             limit = {
                 ig:ig_landowners = {
                     is_marginal = no
-
                 }
             }
-            random_scope_pop = {
+            ordered_scope_pop = {
                 limit = {
-                    is_pop_type = capitalists
+                    is_pop_type = aristocrats
                 }
-                move_pop = scope:MJN_state
+                order_by = total_size
+                max = 6
+                move_partial_pop = { 
+                    state = scope:MJN_state
+                    population_ratio = 0.5
+                }
             }
-            random_scope_pop = {
+            ordered_scope_pop = {
                 limit = {
                     is_pop_type = farmers
                 }
-                move_pop = scope:MJN_state
+                max = 6
+                move_partial_pop = { 
+                    state = scope:MJN_state
+                    population_ratio = 0.1
+                }
             }
         }
 
@@ -1692,7 +1720,7 @@ dvg_zhourao.21 = {
         #NOT = {
         #	has_variable = dvg_northern_hui
         #}
-        exists = c:MJN
+        #exists = c:MJN
     }
 
     immediate = {
@@ -1704,14 +1732,13 @@ dvg_zhourao.21 = {
             state = s:STATE_WEIHUAI.region_state:YLO
             state = s:STATE_ZHENG_HE.region_state:YLO
         }
-       
+ 
         c:XXG = {
             change_relations = {
                 country = c:MJN
                 value = 30
             }
         }
-
     }
 
     # Oh dear
@@ -1719,8 +1746,6 @@ dvg_zhourao.21 = {
         name = dvg_zhourao.6.a
 		default_option = yes
 
-
-       
         add_modifier = {
             name = dvg_modifier_landowners_purged
             months = 60
@@ -1958,6 +1983,9 @@ dvg_zhourao.504 = {
         }
         c:YLO = {
             save_scope_as = scope_YLO
+        }
+        c:QIN = {
+            save_scope_as = scope_QIN
         }
     }
 
