@@ -4359,16 +4359,17 @@ dvg_caladero.94 = {
 
 	trigger = {
 	}
-	#The flames of the Revolution are growing colder – thankfully.
+	#Towards Andagoya City!
 	option = {
 		name = dvg_caladero.94.a
 		default_option = yes
 		
-		if = {
-			limit = { exists = c:PNM }
-			c:PNM = {
-				trigger_event = { id = dvg_caladero.95 }
+		every_country = {
+			limit = { 
+				owns_entire_state_region = STATE_PANAMA 
+				NOT = { this = c:PNM }
 			}
+			trigger_event = { id = dvg_caladero.95 }
 		}
 		
 		ai_chance = {
@@ -4395,12 +4396,47 @@ dvg_caladero.95 = {
 
 	duration = 3
 
+	immediate = {
+		every_country = {
+			limit = { 
+				owns_entire_state_region = STATE_PANAMA 
+				NOT = { this = c:PNM }
+			}
+			save_scope_as = dvg_andagoya_owner
+		}
+	}
 	trigger = {
 	}
-	#The flames of the Revolution are growing colder – thankfully.
+	#To Arms!
 	option = {
 		name = dvg_caladero.95.a
 		default_option = yes
+		
+		if = {
+			limit = { NOT = { exists = c:PNM } }
+			c:ADS = {
+				create_diplomatic_play = {
+					war = no
+					target_country = scope:dvg_andagoya_owner
+					target_state = s:STATE_PANAMA.region_state:dvg_andagoya_owner
+					type = dp_return_state
+				}
+			}
+		}
+		else = {
+			limit = { exists = c:PNM }
+			c:ADS = {
+				create_diplomatic_play = {
+					war = no
+					target_country = c:PNM
+					target_state = s:STATE_PANAMA.region_state:PNM
+					type = dp_return_state
+				}
+			}
+		}
+		c:ADS = {
+			add_journal_entry = je_conquer_andagoya
+		}
 		
 		ai_chance = {
 			base = 1
@@ -4433,7 +4469,9 @@ dvg_caladero.96 = {
 		name = dvg_caladero.96.a
 		default_option = yes
 		
-		trigger_event = { id = dvg_caladero.97 }
+		c:PNM = {
+			trigger_event = { id = dvg_caladero.95 }
+		}
 		ai_chance = {
 			base = 1
 		}
@@ -4460,10 +4498,14 @@ dvg_caladero.97 = {
 
 	trigger = {
 	}
-	#The flames of the Revolution are growing colder – thankfully.
+	#Tragic
 	option = {
 		name = dvg_caladero.97.a
 		default_option = yes
+		
+		s:STATE_PANAMA = {
+			remove_claim = c:ADS
+		}
 		
 		ai_chance = {
 			base = 1
@@ -4534,6 +4576,16 @@ dvg_caladero.99 = {
 		name = dvg_caladero.99.a
 		default_option = yes
 		
+		c:ADS = {
+			create_diplomatic_play = {
+				war = no
+				target_country = c:CUB
+				target_state = s:STATE_PANAMA.region_state:CUB
+				type = dp_return_state
+			}
+			add_journal_entry = je_conquer_cuba
+		}
+		
 		ai_chance = {
 			base = 1
 		}
@@ -4564,6 +4616,8 @@ dvg_caladero.100 = {
 	option = {
 		name = dvg_caladero.100.a
 		default_option = yes
+		
+		s:STATE_CUBA = { remove_claim = c:ADS }
 		
 		ai_chance = {
 			base = 1
