@@ -3915,7 +3915,7 @@ dvg_caladero.83 = {
 	option = {
 		name = dvg_caladero.83.c
 		
-		change_tag = QUL
+		change_tag = CHM
 		trigger_event = { id = dvg_caladero.84 }
 		c:ADS = {
 			trigger_event = { id = dvg_caladero.85 }
@@ -4413,12 +4413,29 @@ dvg_caladero.95 = {
 		default_option = yes
 		
 		if = {
-			limit = { NOT = { exists = c:PNM } }
+			limit = { 
+				NOT = { exists = c:PNM }
+				exists = s:STATE_PANAMA.region_state:GCO
+			}
 			c:ADS = {
 				create_diplomatic_play = {
 					war = no
 					target_country = scope:dvg_andagoya_owner
-					target_state = s:STATE_PANAMA.region_state:dvg_andagoya_owner
+					target_state = s:STATE_PANAMA.region_state:GCO
+					type = dp_return_state
+				}
+			}
+		}
+		else_if = {
+			limit = { 
+				NOT = { exists = c:PNM }
+				exists = s:STATE_PANAMA.region_state:UCA
+			}
+			c:ADS = {
+				create_diplomatic_play = {
+					war = no
+					target_country = scope:dvg_andagoya_owner
+					target_state = s:STATE_PANAMA.region_state:UCA
 					type = dp_return_state
 				}
 			}
@@ -5568,6 +5585,11 @@ dvg_caladero.121 = {
 		}
 	}
 	trigger = {
+		exists = c:ADS
+		this = c:ADS
+		exists = c:QUL
+		c:QUL = { is_subject_of = c:ADS }
+		NOT = { has_variable = tupac_qullaw }
 	}
 	#Make haste, Juan Pablo!
 	option = {
@@ -5578,7 +5600,7 @@ dvg_caladero.121 = {
 			transfer_character = c:QUI
 			set_character_as_ruler = yes
 		}
-		
+		set_variable = tupac_qullaw
 		ai_chance = {
 			base = 1
 		}
@@ -5605,7 +5627,7 @@ dvg_caladero.122 = {
 
 	trigger = {
 	}
-	#The flames of the Revolution are growing colder – thankfully.
+	#Send a delegation to Nueva Murcia!
 	option = {
 		name = dvg_caladero.122.a
 		default_option = yes
@@ -5614,14 +5636,22 @@ dvg_caladero.122 = {
 			trigger_event = { id = dvg_caladero.123 }
 		}
 		ai_chance = {
-			base = 0.5
+			base = 50
 		}
 	}
 	option = {
 		name = dvg_caladero.122.b
 		
+		s:STATE_NEAR_COLLASUYU = { add_claim = ROOT }
+		
+		create_diplomatic_play = {
+			target_country = c:SPA
+			target_state = s:STATE_NEAR_COLLASUYU.region_state:SPA
+			type = dp_return_state
+		}
+		
 		ai_chance = {
-			base = 0.5
+			base = 50
 		}
 	}
 }
@@ -5651,16 +5681,20 @@ dvg_caladero.123 = {
 		name = dvg_caladero.123.a
 		default_option = yes
 		
+		trigger_event = { id = dvg_caladero.124 }
+		
 		ai_chance = {
-			base = 0.5
+			base = 50
 		}
 	}
 	#The flames of the Revolution are growing colder – thankfully.
 	option = {
 		name = dvg_caladero.123.b
 		
+		trigger_event = { id = dvg_caladero.125 }
+		
 		ai_chance = {
-			base = 0.5
+			base = 50
 		}
 	}
 }
@@ -5689,6 +5723,8 @@ dvg_caladero.124 = {
 	option = {
 		name = dvg_caladero.124.a
 		default_option = yes
+		
+		trigger_event = { id = dvg_caladero.126 }
 		
 		ai_chance = {
 			base = 1
@@ -5721,6 +5757,14 @@ dvg_caladero.125 = {
 		name = dvg_caladero.125.a
 		default_option = yes
 		
+		s:STATE_NEAR_COLLASUYU = { add_claim = ROOT }
+		
+		create_diplomatic_play = {
+			target_country = c:SPA
+			target_state = s:STATE_NEAR_COLLASUYU.region_state:SPA
+			type = dp_return_state
+		}
+		
 		ai_chance = {
 			base = 1
 		}
@@ -5747,10 +5791,24 @@ dvg_caladero.126 = {
 
 	trigger = {
 	}
-	#The flames of the Revolution are growing colder – thankfully.
+	#Goodbye Chiri!
 	option = {
 		name = dvg_caladero.126.a
 		default_option = yes
+		
+		if = {
+			limit = { exists = s:STATE_NEAR_COLLASUYU.region_state:SPA }
+			s:STATE_NEAR_COLLASUYU.region_state:SPA = {
+				set_state_owner = c:ADS
+					add_modifier = {
+					name = dvg_inca_special_administrative_region
+					years = 50
+				}
+			}
+		}
+		c:SPA = {
+			add_treasury = 100000
+		}
 		
 		ai_chance = {
 			base = 1
@@ -5819,7 +5877,11 @@ dvg_caladero.128 = {
 		default_option = yes
 		
 		c:ADS = {
-			trigger_event = { id = dvg_caladero.129 days = 14 }
+			if = {
+				limit = { has_law = law_type:law_state_religion }
+				activate_law = law_type:law_freedom_of_conscience
+			}
+			trigger_event = { id = dvg_caladero.130 days = 14 }
 		}
 		
 		ai_chance = {
@@ -5898,13 +5960,13 @@ dvg_caladero.130 = {
 
 	trigger = {
 	}
-	#The flames of the Revolution are growing colder – thankfully.
+	#A reasonable enough deal
 	option = {
 		name = dvg_caladero.130.a
 		default_option = yes
 		
 		c:SCA = {
-			trigger_event = { id = dvg_caladero.130 days = 14 }
+			trigger_event = { id = dvg_caladero.131 days = 14 }
 		}
 		
 		ai_chance = {
@@ -5981,7 +6043,7 @@ dvg_caladero.132 = {
 
 	trigger = {
 	}
-	#The flames of the Revolution are growing colder – thankfully.
+	#The Collao is whole once more!
 	option = {
 		name = dvg_caladero.132.a
 		default_option = yes
@@ -6012,13 +6074,29 @@ dvg_caladero.133 = {
 
 	trigger = {
 	}
-	#The flames of the Revolution are growing colder – thankfully.
+	#We will prop up the New-Mercians
 	option = {
 		name = dvg_caladero.133.a
 		default_option = yes
 		
+		c:SCA = {
+			trigger_event = { id = dvg_caladero.134 }
+		}
+		
 		ai_chance = {
-			base = 1
+			base = 50
+		}
+	}
+	option = {
+		name = dvg_caladero.133.b
+		
+		create_diplomatic_play = {
+			target_country = c:NME
+			type = dp_annex_war
+		}
+		
+		ai_chance = {
+			base = 50
 		}
 	}
 }
@@ -6043,13 +6121,26 @@ dvg_caladero.134 = {
 
 	trigger = {
 	}
-	#The flames of the Revolution are growing colder – thankfully.
+	#We will prepare for the worse, onwards!
 	option = {
 		name = dvg_caladero.134.a
 		default_option = yes
 		
+		trigger_event = { id = dvg_caladero.136 }
+		
 		ai_chance = {
-			base = 1
+			base = 50
+		}
+	}
+	option = {
+		name = dvg_caladero.134.b
+		
+		c:ADS = {
+			trigger_event = { id = dvg_caladero.135 }
+		}
+		
+		ai_chance = {
+			base = 50
 		}
 	}
 }
@@ -6074,7 +6165,7 @@ dvg_caladero.135 = {
 
 	trigger = {
 	}
-	#The flames of the Revolution are growing colder – thankfully.
+	#Collaboration with Beornians? that's new.
 	option = {
 		name = dvg_caladero.135.a
 		default_option = yes
@@ -6110,6 +6201,12 @@ dvg_caladero.136 = {
 		name = dvg_caladero.136.a
 		default_option = yes
 		
+		create_diplomatic_play = {
+			target_country = c:NME
+			type = dp_annex_war
+			add_target_backers = { c:ADS }
+		}
+		
 		ai_chance = {
 			base = 1
 		}
@@ -6136,7 +6233,7 @@ dvg_caladero.137 = {
 
 	trigger = {
 	}
-	#The flames of the Revolution are growing colder – thankfully.
+	#Collaboration with Beornians? that's new.
 	option = {
 		name = dvg_caladero.137.a
 		default_option = yes
@@ -6167,10 +6264,13 @@ dvg_caladero.138 = {
 
 	trigger = {
 	}
-	#The flames of the Revolution are growing colder – thankfully.
+	#A new Beornia, a new Empire?
 	option = {
 		name = dvg_caladero.138.a
 		default_option = yes
+		
+		trigger_event = { id = dvg_caladero.139 days = 50 }
+		trigger_event = { id = dvg_caladero.140 days = 2000 }
 		
 		ai_chance = {
 			base = 1
@@ -6659,6 +6759,11 @@ dvg_caladero.151 = {
 	duration = 3
 
 	trigger = {
+		exists = c:ADS
+		this = c:ADS
+		has_variable = ads_tupac
+		has_law = law_type:monarchy
+		NOT = { has_variable = ads_tupac_empire }
 	}
 	#We will seek to settle and bring the light of both God and Europe to these lands!
 	option = {
@@ -6678,6 +6783,7 @@ dvg_caladero.151 = {
 			culture = cu:caladeran
 		}
 		activate_law = law_type:law_frontier_colonization
+		set_variable = ads_tupac_empire
 		trigger_event = { id = dvg_caladero.152 days = 60 }
 		
 		ai_chance = {
@@ -6698,7 +6804,7 @@ dvg_caladero.151 = {
 			value = 0.1
 			culture = cu:aimara
 		}
-		
+		set_variable = ads_tupac_empire
 		trigger_event = { id = dvg_caladero.152 days = 60 }
 		
 		ai_chance = {
