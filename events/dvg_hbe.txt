@@ -761,17 +761,21 @@ dvg_hbe.10 = { #Great Awakening Primer
 			value = 0.10
 		}
 
-		add_journal_entry = {
-			type = je_beornian_awakening
-		}
-
-		add_journal_entry = {
-			type = je_beo_parishers
+		
+		set_variable = {
+			name = presbyterian_var
+			value = 0
 		}
 
 		add_journal_entry = {
 			type = je_beo_presbyterians
 		}
+
+		change_variable = {
+			name = presbyterian_var
+			add = 25
+		}
+		
 		
 		trigger_event = {
 			id = dvg_hbe.11 days = 30
@@ -910,7 +914,7 @@ dvg_hbe.14 = { #Student Protests
 	type = country_event
 	placement = ROOT
 	event_image = {
-		video = "gfx/event_pictures/unspecific_fire.bk2"
+		video = "votp_agitator_speaking"
 	}
 
 	on_created_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
@@ -943,7 +947,7 @@ dvg_hbe.15 = { #Church Tax Exemptions
 	type = country_event
 	placement = ROOT
 	event_image = {
-		video = "gfx/event_pictures/unspecific_fire.bk2"
+		video = "gfx/event_pictures/southamerica_christianity.bk2"
 	}
 
 	on_created_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
@@ -1020,7 +1024,7 @@ dvg_hbe.17 = { #Establish Communion
 	type = country_event
 	placement = ROOT
 	event_image = {
-		video = "gfx/event_pictures/unspecific_fire.bk2"
+		video = "southamerica_christianity"
 	}
 
 	on_created_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
@@ -1056,7 +1060,7 @@ dvg_hbe.18 = { #Become the HBE
 	type = country_event
 	placement = ROOT
 	event_image = {
-		video = "gfx/event_pictures/unspecific_fire.bk2"
+		video = "votp_monarch_holding_court"
 	}
 
 	on_created_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
@@ -1095,14 +1099,13 @@ dvg_hbe.18 = { #Become the HBE
 dvg_hbe.19 = { #Build the Pendragon
 	type = country_event
 	placement = ROOT
-	event_image = {
-		video = "gfx/event_pictures/unspecific_fire.bk2"
-	}
+		event_image = {
+		video = "votp_gunboat_diplomacy"
+		}
 
-	on_created_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
-	on_opened_soundeffect = "event:/SFX/Events/unspecific/military_parade"
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
 
-	icon = "gfx/interface/icons/event_icons/event_skull.dds"
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
 
 	title = dvg_hbe.19.t
 	desc = dvg_hbe.19.d
@@ -1121,7 +1124,16 @@ dvg_hbe.19 = { #Build the Pendragon
 		name = dvg_hbe.19.a
 		default_option = yes
 		
-		
+		random_scope_state = {
+			limit = {
+				state_region = s:STATE_AVALON
+			}
+			add_modifier = {
+			name = pendragon_modifier
+			multiplier = money_amount_multiplier_medium
+			days = long_modifier_time
+			}
+		}
 	}
 	
 }
@@ -1194,7 +1206,7 @@ dvg_hbe.21 = { #Build the Pendragon
 	
 }
 
-dvg_hbe.22 = { #Build the Pendragon
+dvg_hbe.22 = { #Honorary Britannians
 	type = country_event
 	placement = ROOT
 	event_image = {
@@ -1222,13 +1234,65 @@ dvg_hbe.22 = { #Build the Pendragon
 	option = {
 		name = dvg_hbe.22.a
 		default_option = yes
+
+		add_radicals = {
+			value = large_radicals
+			culture = scope:discriminated_culture_pop.culture
+		}
 		
+		every_scope_state = {
+			add_modifier = dvg_honorary_britannians
+		}
+		
+	}
+
+	option = {
+		name = dvg_hbe.22.b
+		trigger = {
+			NOT = {
+				has_law = law_type:law_no_schools
+			}
+		}
+
+		add_radicals = {
+			value = large_radicals
+			culture = scope:discriminated_culture_pop.culture
+		}
+		add_modifier = {
+			name = linguistic_discrimination
+			days = normal_modifier_time
+		}
+
+		add_modifier = {
+			name = dvg_small_research_value
+		}
+	}
+
+	option = {
+		name = dvg_hbe.22.c
+
+		if = {
+			limit = {
+				exists = scope:discriminated_culture_pop
+			}
+			add_radicals = {
+				value = medium_radicals
+				culture = scope:discriminated_culture_pop.culture
+			}
+		}
+		
+		every_political_movement = {
+			limit = {
+				
+			}
+			add_modifier = modifier_recognized_legal_discrimination
+		}
 		
 	}
 	
 }
 
-dvg_hbe.23 = { #Build the Pendragon
+dvg_hbe.23 = { #Primer on Parishers
 	type = country_event
 	placement = ROOT
 	event_image = {
@@ -1257,7 +1321,19 @@ dvg_hbe.23 = { #Build the Pendragon
 		name = dvg_hbe.23.a
 		default_option = yes
 		
-		
+		set_variable = {
+			name = parisher_var
+			value = 0
+		}
+
+		add_journal_entry = {
+			type = je_beo_parishers
+		}
+
+		change_variable = {
+			name = parisher_var
+			add = 25
+		}
 	}
 	
 }
@@ -1296,11 +1372,11 @@ dvg_hbe.24 = { #Build the Pendragon
 	
 }
 
-dvg_hbe.25 = { #Build the Pendragon
+dvg_hbe.25 = { #Coup of the Faithful
 	type = country_event
 	placement = ROOT
 	event_image = {
-		video = "gfx/event_pictures/unspecific_fire.bk2"
+		video = "votp_prison"
 	}
 
 	on_created_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
@@ -1330,11 +1406,11 @@ dvg_hbe.25 = { #Build the Pendragon
 	
 }
 
-dvg_hbe.26 = { #Build the Pendragon
+dvg_hbe.26 = { #Republican Preachers
 	type = country_event
 	placement = ROOT
 	event_image = {
-		video = "gfx/event_pictures/unspecific_fire.bk2"
+		video = "southamerica_christianity"
 	}
 
 	on_created_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
@@ -1359,7 +1435,6 @@ dvg_hbe.26 = { #Build the Pendragon
 		name = dvg_hbe.26.a
 		default_option = yes
 		
-		
 	}
 	
 }
@@ -1368,7 +1443,7 @@ dvg_hbe.27 = { #Build the Pendragon
 	type = country_event
 	placement = ROOT
 	event_image = {
-		video = "gfx/event_pictures/unspecific_fire.bk2"
+		video = "votp_agitator_speaking"
 	}
 
 	on_created_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
@@ -1386,14 +1461,23 @@ dvg_hbe.27 = { #Build the Pendragon
 	}
 
 	immediate = {	
-		
+		set_global_variable = camelot_uprising
 	}
 
 	option = {
 		name = dvg_hbe.27.a
 		default_option = yes
 		
+		activate_law = law_type:law_presidential_republic
+
+	}
+
+	option = {
+		name = dvg_hbe.27.b
 		
+		activate_law = law_type:law_presidential_republic
+		activate_law = law_type:law_total_separation
+
 	}
 	
 }

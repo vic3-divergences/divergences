@@ -985,6 +985,232 @@ je_beornian_awakening = {
 
 }
 
+
+
+je_beo_parishers = {
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	group = je_group_internal_affairs
+
+	is_shown_when_inactive = {
+	
+	
+	}
+	immediate = {
+		set_variable = parisher_var
+	}
+
+    possible = {
+			
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					ig:ig_rural_folk = {
+						ig_approval < 0
+					}
+				}
+				change_variable = {
+					name = parisher_var
+					add = 1
+				}
+			}
+
+			if = {
+				limit = {
+					ig:ig_armed_forces = {
+						ig_approval <-5
+					}
+				}
+				change_variable = {
+					name = parisher_var
+					add = 1
+				}
+			}
+
+			if = {
+				limit = {
+					ig:ig_devout = {
+						ig_approval <-5
+					}
+				}
+				change_variable = {
+					name = parisher_var
+					add = 1
+				}
+			}
+		}
+	}
+
+	complete = {
+
+	
+		AND = {
+			ig:ig_rural_folk = {
+						ig_approval < 0
+			}
+
+			ig:ig_devout = {
+						ig_approval < -5
+			}
+			ig:ig_armed_forces = {
+						ig_approval < -5
+			}
+		}
+		
+		scope:journal_entry = {is_goal_complete = yes}
+		
+	}
+    on_complete = {
+		trigger_event = {
+			id = dvg_hbe.25
+		}
+		
+    }
+	fail = {
+		
+		var:parisher_var < 1 
+
+	
+	}
+	on_fail = {
+	
+		
+	}
+	current_value = {
+		value = root.var:parisher_var
+	}
+
+	goal_add_value = {
+		value = 100
+	}
+
+	progressbar = yes
+
+	should_be_pinned_by_default = yes
+}
+
+je_beo_presbyterians = {
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	group = je_group_internal_affairs
+
+	is_shown_when_inactive = {
+	
+	
+	}
+
+	immediate = {
+		set_variable = presbyterian_var
+	}
+
+    possible = {
+			
+	}
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					ig:ig_intelligentsia = {
+						ig_approval < 0
+					}
+				}
+				change_variable = {
+					name = parisher_var
+					add = 1
+				}
+			}
+
+			if = {
+				limit = {
+					ig:ig_devout = {
+						ig_approval < -5
+					}
+				}
+				change_variable = {
+					name = parisher_var
+					add = 1
+				}
+			}
+
+			if = {
+				limit = {
+					ig:ig_devout = {
+						ig_approval > 5
+					}
+				}
+				change_variable = {
+					name = parisher_var
+					subtract = 1
+				}
+			}
+
+			if = {
+				limit = {
+					ig:ig_petty_bourgeoisie = {
+						ig_approval < -5
+					}
+				}
+				change_variable = {
+					name = parisher_var
+					add = 1
+				}
+			}
+			
+		}
+	}
+
+	complete = {
+
+		
+		
+		AND = {
+			ig:ig_petty_bourgeoisie = {
+						ig_approval < 0
+			}
+
+			ig:ig_devout = {
+						ig_approval < -5
+			}
+			ig:ig_intelligentsia = {
+						ig_approval < -5
+			}
+		}
+		
+		scope:journal_entry = {is_goal_complete = yes}
+		
+	}
+
+    on_complete = {
+		trigger_event = {
+			id = dvg_hbe.27
+		}
+		
+    }
+	fail = {	
+		
+		var:presbyterian_var < 1 
+	}
+	on_fail = {
+	
+		
+	}
+	invalid = {
+		NOT = {
+			has_law = law_type:law_monarchy
+		}
+	}
+
+	goal_add_value = {
+		value = 100
+	}
+
+	should_be_pinned_by_default = yes
+}
+
+
 je_beo_hbe = {
 	icon = "gfx/interface/icons/event_icons/event_map.dds"
 
@@ -998,11 +1224,24 @@ je_beo_hbe = {
     possible = {
 			
 	}
+	scripted_button = pendragon_fortress_button
+	scripted_button = army_git_good_button
 
 	complete = {
-	
 		
-		
+		any_scope_state = {
+			state_region = {
+                is_homeland = cu:beornian
+            }
+            count > 2
+            any_scope_building = {
+                is_building_type = building_barracks
+                level >= 20
+                occupancy >= 0.5
+            }
+        }
+		scope:journal_entry = { is_goal_complete = yes }
+
 	}
     on_complete = {
 		trigger_event = {
@@ -1022,80 +1261,12 @@ je_beo_hbe = {
 	}
 	progressbar = yes
 	should_be_pinned_by_default = yes
-}
 
-
-je_beo_parishers = {
-	icon = "gfx/interface/icons/event_icons/event_map.dds"
-
-	group = je_group_internal_affairs
-
-	is_shown_when_inactive = {
-	
-	
-	}
-
-    possible = {
-			
-	}
-
-	complete = {
-	
-		
-		
-	}
-    on_complete = {
-		trigger_event = {
-			id = dvg_hbe.25
-		}
-		
+	current_value = {
+        value = root.gdp
     }
-	fail = {
-		
-		
-		
-	
-	}
-	on_fail = {
-	
-		
-	}
-	progressbar = yes
 
-	should_be_pinned_by_default = yes
-}
-
-je_beo_presbyterians = {
-	icon = "gfx/interface/icons/event_icons/event_map.dds"
-
-	group = je_group_internal_affairs
-
-	is_shown_when_inactive = {
-	
-	
-	}
-
-    possible = {
-			
-	}
-
-	complete = {
-	
-		
-		
-	}
-    on_complete = {
-		trigger_event = {
-			id = dvg_hbe.27
-		}
-		
+    goal_add_value = {
+        value = root.gdp
     }
-	fail = {	
-	
-	}
-	on_fail = {
-	
-		
-	}
-	should_be_pinned_by_default = yes
 }
