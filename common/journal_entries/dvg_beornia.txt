@@ -940,14 +940,12 @@ je_beornian_awakening = {
 		
 	}
 
-	on_weekly_pulse = {
-		events = {
-
-		}
-		effect = {
-			
+	on_yearly_pulse = {
+		random_events = {
+			100 = dvg_hbe.15
 		}
 	}
+
 	
 
 	scripted_button = beo_hbe_button
@@ -1014,14 +1012,26 @@ je_beo_parishers = {
     possible = {
 			
 	}
+	on_yearly_pulse = {
+		random_events = {
+			100 = 0
+			10 = dvg_hbe.13
+			10 = dvg_hbe.12
+		}
+	}
 
 	on_monthly_pulse = {
+
+		
+		
 		effect = {
+			
 			if = {
 				limit = {
 					ig:ig_rural_folk = {
 						ig_approval < 0
 					}
+					var:parisher_var < 100
 				}
 				change_variable = {
 					name = parisher_var
@@ -1034,6 +1044,7 @@ je_beo_parishers = {
 					ig:ig_armed_forces = {
 						ig_approval <-5
 					}
+					var:parisher_var < 100
 				}
 				change_variable = {
 					name = parisher_var
@@ -1046,6 +1057,7 @@ je_beo_parishers = {
 					ig:ig_devout = {
 						ig_approval <-5
 					}
+					var:parisher_var < 100
 				}
 				change_variable = {
 					name = parisher_var
@@ -1080,12 +1092,16 @@ je_beo_parishers = {
 		}
 		
     }
-	fail = {
-		
-		var:parisher_var < 1 
-
-	
+	fail = {	
+		OR = {
+			var:parisher_var < 1 
+			AND = {
+				exists = c:HBE
+				c:HBE = ROOT
+			}
+		}
 	}
+
 	on_fail = {
 	
 		
@@ -1120,6 +1136,12 @@ je_beo_presbyterians = {
     possible = {
 			
 	}
+	on_yearly_pulse = {
+		random_events = {
+			100 = 0
+			10 = dvg_hbe.14
+		}
+	}
 	on_monthly_pulse = {
 		effect = {
 			if = {
@@ -1127,9 +1149,11 @@ je_beo_presbyterians = {
 					ig:ig_intelligentsia = {
 						ig_approval < 0
 					}
+					var:presbyterian_var < 100
+
 				}
 				change_variable = {
-					name = parisher_var
+					name = presbyterian_var
 					add = 1
 				}
 			}
@@ -1139,9 +1163,10 @@ je_beo_presbyterians = {
 					ig:ig_devout = {
 						ig_approval < -5
 					}
+					var:presbyterian_var < 100
 				}
 				change_variable = {
-					name = parisher_var
+					name = presbyterian_var
 					add = 1
 				}
 			}
@@ -1151,9 +1176,10 @@ je_beo_presbyterians = {
 					ig:ig_devout = {
 						ig_approval > 5
 					}
+					var:presbyterian_var > 0
 				}
 				change_variable = {
-					name = parisher_var
+					name = presbyterian_var
 					subtract = 1
 				}
 			}
@@ -1163,9 +1189,10 @@ je_beo_presbyterians = {
 					ig:ig_petty_bourgeoisie = {
 						ig_approval < -5
 					}
+					var:presbyterian_var < 100
 				}
 				change_variable = {
-					name = parisher_var
+					name = presbyterian_var
 					add = 1
 				}
 			}
@@ -1201,8 +1228,13 @@ je_beo_presbyterians = {
 		
     }
 	fail = {	
-		
-		var:presbyterian_var < 1 
+		OR = {
+			var:presbyterian_var < 1 
+			AND = {
+				exists = c:HBE
+				c:HBE = ROOT
+			}
+		}
 	}
 	on_fail = {
 	
@@ -1280,4 +1312,52 @@ je_beo_hbe = {
     goal_add_value = {
         value = root.gdp
     }
+}
+
+je_beornia_development = {
+	icon = "gfx/interface/icons/event_icons/event_industry.dds"
+
+	group = je_group_internal_affairs
+
+	complete = {
+		in_default = no
+		any_scope_state = {
+			filter = {
+				is_incorporated = yes
+				state_region = {
+					is_homeland = cu:beornian
+				}
+			}
+			any_scope_building = {
+				is_building_type = building_urban_center
+				level > 2
+			}
+			has_building = building_railway
+			has_building = building_government_administration
+			percent > 0.8
+		}
+	}
+
+	on_complete = {
+
+		every_scope_state = {
+			add_modifier = {
+				name = sa_migration_attraction
+				months = 65
+			}
+			
+		}
+		ruler = {
+			add_modifier = promisekeeper
+		}
+	}
+
+	on_yearly_pulse = {
+		
+	}
+
+	transferable = no
+	should_be_pinned_by_default = yes
+
+	weight = 5000
 }
