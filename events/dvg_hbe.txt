@@ -716,6 +716,12 @@ dvg_hbe.9 = { #King Edward's Death
 		add_loyalists = {
 			value = 0.10
 		}
+
+		ruler = {
+			add_trait = bigoted
+
+		}
+		
 	}
 	
 	option = {
@@ -723,6 +729,11 @@ dvg_hbe.9 = { #King Edward's Death
 		
 		add_radicals = {
 			value = 0.10
+		}
+
+		ruler = {
+			add_trait = ambitious
+
 		}
 	}
 }
@@ -806,7 +817,17 @@ dvg_hbe.11 = { #New King's Marriage
 	}
 
 	immediate = {	
-		
+		ruler = {
+			save_scope_as = royal_marriage_character
+			set_variable = getting_married # for clothing script
+			if = {
+				limit = {
+					has_variable = is_married
+				}
+				remove_variable = is_married
+			}
+		}
+
 	}
 
 	option = {
@@ -814,9 +835,14 @@ dvg_hbe.11 = { #New King's Marriage
 		default_option = yes
 		
 		add_loyalists = {
-			value = 0.10
-			pop_type = farmers
+			value = 0.15
 		}
+		ruler = {
+			add_trait = honorable
+			set_variable = is_married
+		}
+
+		
 	}
 	
 	option = {
@@ -826,9 +852,21 @@ dvg_hbe.11 = { #New King's Marriage
 			country = c:SCA
 			value = 20
 		}
+		ruler = {
+			set_variable = is_married
+		}
 		create_diplomatic_catalyst = {
 			type = catalyst_event_positive
 			target = c:SCA
+		}
+		c:SCA = {
+			save_scope_as = marriage_country
+
+		}
+		
+		
+		trigger_event = {
+			id = wedding.1
 		}
 		
 	}
@@ -839,6 +877,40 @@ dvg_hbe.11 = { #New King's Marriage
 		add_loyalists = {
 			value = 0.10
 			pop_type = laborers
+		}
+		ruler = {
+			add_modifier = modifier_man_of_the_people
+			set_variable = is_married
+		}
+
+		
+		
+	}
+
+	option = {
+		name = dvg_hbe.11.e
+		
+		add_radicals = {
+			value = 0.15
+		}
+		if = {
+			limit = {
+				NOR = {
+					ruler = {
+						has_trait = basic_diplomat
+					}
+					ruler = {
+						has_trait = experienced_diplomat
+					}
+				}
+			}
+			ruler = {
+			add_trait = basic_diplomat
+			}
+		}
+		
+		ruler = {
+			add_modifier = known_cheater
 		}
 
 	}
@@ -863,6 +935,9 @@ dvg_hbe.12 = { #Pardoning Caroleans
 	duration = 3
 
 	trigger = {
+		NOT = {
+			has_variable = pardon_issued
+		}
 	}
 
 	immediate = {	
@@ -873,6 +948,17 @@ dvg_hbe.12 = { #Pardoning Caroleans
 		name = dvg_hbe.12.a
 		default_option = yes
 		
+		ruler = {
+			add_modifier = merciful_ruler
+		}
+		
+		set_variable = pardon_issued
+	}
+
+	option = {
+		name = dvg_hbe.12.b
+		
+		set_variable = pardon_issued
 	}
 	
 }
@@ -881,7 +967,7 @@ dvg_hbe.13 = { #Lotharian vs Beornian Settlers in Chaco
 	type = country_event
 	placement = ROOT
 	event_image = {
-		video = "gfx/event_pictures/unspecific_fire.bk2"
+		video = "southamerica_war_civilians"
 	}
 
 	on_created_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
@@ -896,6 +982,12 @@ dvg_hbe.13 = { #Lotharian vs Beornian Settlers in Chaco
 	duration = 3
 
 	trigger = {
+		any_scope_state = {
+			state_region = s:STATE_GRAND_CHACO
+			is_split_state = yes
+		}
+		exists = c:LOT
+
 	}
 
 	immediate = {	
@@ -905,6 +997,37 @@ dvg_hbe.13 = { #Lotharian vs Beornian Settlers in Chaco
 	option = {
 		name = dvg_hbe.13.a
 		default_option = yes
+
+		add_loyalists = {
+			value = 0.10
+		}
+
+
+		
+		s:STATE_GRAND_CHACO = {
+			add_claim = c:BEO
+			add_claim = c:LOT
+		}
+		change_relations = {
+			country = c:LOT
+			value = -20
+		}
+	}
+
+	option = {
+		name = dvg_hbe.13.b
+
+		add_radicals = {
+			value = 0.10
+		}
+		change_variable = {
+			name = parisher_var
+			add = 15
+		}
+		change_relations = {
+			country = c:LOT
+			value = 15
+		}
 		
 	}
 	
@@ -929,6 +1052,9 @@ dvg_hbe.14 = { #Student Protests
 	duration = 3
 
 	trigger = {
+		any_scope_state = {
+			has_building = building_university
+		}
 	}
 
 	immediate = {	
@@ -939,6 +1065,39 @@ dvg_hbe.14 = { #Student Protests
 		name = dvg_hbe.14.a
 		default_option = yes
 		
+		add_radicals = {
+			value = 0.20
+			pop_type = academics
+		}
+		add_modifier = {
+			name = modifier_repressing_protests
+			months = 3
+		}
+		
+		random_scope_building = {
+			limit = {
+				is_building_type = building_university
+			}
+			add_modifier = modifier_arresting_students_building
+		}
+	}
+
+	option = {
+		name = dvg_hbe.14.b
+
+
+		change_variable = {
+			name = presbyterian_var
+			add = 10
+		}
+		add_modifier = {
+			name = pro_democracy_protests
+			months = 3
+		}	
+		add_modifier = {
+			name = modifier_not_arresting_students_country
+			months = 3
+		}	
 	}
 	
 }
@@ -962,6 +1121,13 @@ dvg_hbe.15 = { #Church Tax Exemptions
 	duration = 3
 
 	trigger = {
+		NOT = {
+			any_scope_state = {
+				has_modifier = church_tax_enforce
+				has_modifier = church_tax_exempt
+
+			}
+		}
 	}
 
 	immediate = {	
@@ -972,7 +1138,52 @@ dvg_hbe.15 = { #Church Tax Exemptions
 		name = dvg_hbe.15.a
 		default_option = yes
 		
+		add_radicals = {
+			value = 0.15
+		}
+		every_scope_state = {
+			add_modifier = {
+				name = church_tax_enforce
+				months = 11
+			}
+		}
+
+		change_variable = {
+			name = presbyterian_var
+			subtract = 10
+		}
+
+		change_variable = {
+			name = parisher_Var
+			subtract = 10
+		}
+		
 	}
+
+	option = {
+		name = dvg_hbe.15.b
+
+		add_loyalists = {
+			value = 0.15
+		}
+		every_scope_state = {
+			add_modifier = {
+				name = church_tax_exempt
+				months = 11
+			}
+		}
+		change_variable = {
+			name = presbyterian_var
+			add = 10
+		}
+
+		change_variable = {
+			name = parisher_Var
+			add = 10
+		}
+	}
+
+	
 	
 }
 
@@ -980,7 +1191,7 @@ dvg_hbe.16 = { #Migration Restrictions
 	type = country_event
 	placement = ROOT
 	event_image = {
-		video = "gfx/event_pictures/unspecific_fire.bk2"
+		video = "asia_poor_people_moving"
 	}
 
 	on_created_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
@@ -1138,11 +1349,11 @@ dvg_hbe.19 = { #Build the Pendragon
 	
 }
 
-dvg_hbe.20 = { #Build the Pendragon
+dvg_hbe.20 = { #Give up the Falklands
 	type = country_event
 	placement = ROOT
 	event_image = {
-		video = "gfx/event_pictures/unspecific_fire.bk2"
+		video = "votp_gunboat_diplomacy"
 	}
 
 	on_created_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
@@ -1172,11 +1383,11 @@ dvg_hbe.20 = { #Build the Pendragon
 	
 }
 
-dvg_hbe.21 = { #Build the Pendragon
+dvg_hbe.21 = { #Establish the Ragnarok Connection
 	type = country_event
 	placement = ROOT
 	event_image = {
-		video = "gfx/event_pictures/unspecific_fire.bk2"
+		video = "unspecific_iceberg"
 	}
 
 	on_created_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
@@ -1201,7 +1412,15 @@ dvg_hbe.21 = { #Build the Pendragon
 		name = dvg_hbe.21.a
 		default_option = yes
 		
-		
+		random_scope_state = {
+			limit = {
+				state_region = s:STATE_SOUTH_ATLANTIC_ISLANDS
+			}
+			add_modifier = ragnarok_modifier
+		}
+		ruler = {
+			add_trait = pious
+		}
 	}
 	
 }
@@ -1210,7 +1429,7 @@ dvg_hbe.22 = { #Honorary Britannians
 	type = country_event
 	placement = ROOT
 	event_image = {
-		video = "gfx/event_pictures/unspecific_fire.bk2"
+		video = "asia_sepoy_mutiny"
 	}
 
 	on_created_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
@@ -1296,7 +1515,7 @@ dvg_hbe.23 = { #Primer on Parishers
 	type = country_event
 	placement = ROOT
 	event_image = {
-		video = "gfx/event_pictures/unspecific_fire.bk2"
+		video = "southamerica_christianity"
 	}
 
 	on_created_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
@@ -1314,7 +1533,26 @@ dvg_hbe.23 = { #Primer on Parishers
 	}
 
 	immediate = {	
-		
+		create_character = {
+					first_name = "John"
+					last_name = "Faith"
+					is_agitator = yes
+					historical = yes 
+					birth_date = 1806.7.04
+					interest_group = ig_rural_folk
+					ideology = ideology_ethno_nationalist
+					traits = {
+						pious
+						wrathful
+						bigoted
+						firebrand
+						plains_commander
+					}
+					on_created = {
+						set_variable = john_faith_var
+					}
+		}
+		every_scope_character = { limit = { has_variable = john_faith_var } save_scope_as = scope_john_faith }
 	}
 
 	option = {
@@ -1334,11 +1572,18 @@ dvg_hbe.23 = { #Primer on Parishers
 			name = parisher_var
 			add = 25
 		}
+		scope:scope_john_faith = {
+			kill_character = yes
+		}
+		trigger_event = {
+			id = dvg_hbe.24 days = 180
+		}
+	
 	}
 	
 }
 
-dvg_hbe.24 = { #Build the Pendragon
+dvg_hbe.24 = { #Return of John Faith
 	type = country_event
 	placement = ROOT
 	event_image = {
@@ -1360,14 +1605,74 @@ dvg_hbe.24 = { #Build the Pendragon
 	}
 
 	immediate = {	
-		
+		create_character = {
+					first_name = "John"
+					last_name = "Faith"
+					is_agitator = yes
+					historical = yes 
+					age = 20
+					interest_group = ig_rural_folk
+					ideology = ideology_ethno_nationalist
+					traits = {
+						pious
+						wrathful
+						bigoted
+						firebrand
+						plains_commander
+					}
+					on_created = {
+						set_variable = john_faith_var
+					}
+		}
+		every_scope_character = { limit = { has_variable = john_faith_var } save_scope_as = scope_john_faith }
 	}
 
 	option = {
 		name = dvg_hbe.24.a
 		default_option = yes
 		
+		change_variable = {
+			name = parisher_var
+			add = 10
+		}
+
+		scope:scope_john_faith = {
+			add_trait = immortal
+		}
 		
+	}
+	option = {
+		name = dvg_hbe.24.b
+
+		every_scope_state = {
+			limit = {
+				NOT = {
+					state_region = s:STATE_AVALON
+				}
+			}
+			add_radicals_in_state = {
+				value = 0.25
+			}
+		}
+
+		every_scope_state = {
+			limit = {
+				state_region = s:STATE_AVALON
+			}
+			add_radicals_in_state = {
+				value = 0.05
+			}
+		}
+
+		hidden_effect = {
+			trigger_event = {
+				id = dvg_hbe.24 days = 180
+			}
+		}
+
+		scope:scope_john_faith = {
+			kill_character = yes
+		}
 	}
 	
 }
@@ -1394,14 +1699,48 @@ dvg_hbe.25 = { #Coup of the Faithful
 	}
 
 	immediate = {	
-		
+		every_scope_character = { limit = { has_variable = john_faith_var } save_scope_as = scope_john_faith }
+
 	}
 
 	option = {
 		name = dvg_hbe.25.a
 		default_option = yes
+
+		every_character = {
+			limit = {
+				has_trait = immortal
+			}
+			remove_trait = immortal
+		}
+
+		activate_law = law_type:law_industry_banned
+		activate_law = law_type:law_national_supremacy
+
 		
-		
+		create_character = {
+			ruler = yes
+			historical = yes
+			first_name = Richard
+			last_name = Cavendish
+			birth_date = 1816.05.12
+			ideology = ideology_ethno_nationalist
+			interest_group = ig_rural_folk
+			traits = {
+				pious
+
+				bigoted
+
+				wrathful
+			}
+		}
+		set_heir = scope:scope_john_faith
+
+
+		scope:scope_john_faith = {
+			
+			set_as_interest_group_leader = yes
+		}
 	}
 	
 }
@@ -1439,7 +1778,7 @@ dvg_hbe.26 = { #Republican Preachers
 	
 }
 
-dvg_hbe.27 = { #Build the Pendragon
+dvg_hbe.27 = { #Presbyterian Uprising
 	type = country_event
 	placement = ROOT
 	event_image = {
@@ -1458,10 +1797,19 @@ dvg_hbe.27 = { #Build the Pendragon
 	duration = 3
 
 	trigger = {
+		
 	}
 
 	immediate = {	
 		set_global_variable = camelot_uprising
+		every_character = {
+			limit = {
+				has_trait = immortal
+			}
+			remove_trait = immortal
+		}
+		every_scope_character = { limit = { has_variable = john_faith_var } save_scope_as = scope_john_faith }
+
 	}
 
 	option = {
@@ -1469,6 +1817,12 @@ dvg_hbe.27 = { #Build the Pendragon
 		default_option = yes
 		
 		activate_law = law_type:law_presidential_republic
+		activate_law = law_type:law_freedom_of_conscience
+
+		scope:scope_john_faith = {
+			
+			set_as_interest_group_leader = yes
+		}
 
 	}
 
@@ -1478,15 +1832,19 @@ dvg_hbe.27 = { #Build the Pendragon
 		activate_law = law_type:law_presidential_republic
 		activate_law = law_type:law_total_separation
 
+		scope:scope_john_faith = {
+			
+			set_as_interest_group_leader = yes
+		}
 	}
 	
 }
 
-dvg_hbe.28 = { #Build the Pendragon
+dvg_hbe.28 = { #Dealing with the Woke Mob
 	type = country_event
 	placement = ROOT
 	event_image = {
-		video = "gfx/event_pictures/unspecific_fire.bk2"
+		video = "votp_agitator_speaking"
 	}
 
 	on_created_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
@@ -1501,17 +1859,136 @@ dvg_hbe.28 = { #Build the Pendragon
 	duration = 3
 
 	trigger = {
+		has_journal_entry = je_beo_presbyterians
 	}
 
 	immediate = {	
-		
+		random_neighbouring_state = {
+			limit = {
+				NOT = {
+					owner = ROOT
+				}
+			}
+			save_scope_as = foreign_state
+		}
 	}
 
 	option = {
 		name = dvg_hbe.28.a
 		default_option = yes
 		
+		every_scope_state = {
+			
+
+		
+			hidden_effect = {
+				kill_population_in_state = {
+				culture = scope:discriminated_culture_pop
+				value = 0.25
+				}
+				random_scope_pop = {
+				limit = {
+					pop_acceptance < 3
+				}
+				move_pop = scope:foreign_state
+				}
+				add_modifier = {
+				name = dvg_nightmare_in_the_west
+				months = 60
+			}
+			}
+			
+		}
+		
+		change_variable = {
+			name = presbyterian_var
+			subtract = 20
+		}
 		
 	}
+
+	option = {
+		name = dvg_hbe.28.b
+		
+		every_scope_state = {
+			add_modifier = {
+				name = dvg_assimilate
+				months = 12
+			}
+		}
+		if = {
+			limit = {
+				has_law = law_type:law_no_schools
+			}
+			activate_law = law_type:law_religious_schools
+		}
+	}
 	
+}
+
+
+dvg_hbe.29 = { #Dealing with John Faith
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = "votp_agitator_speaking"
+	}
+
+	on_created_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/military_parade"
+
+	icon = "gfx/interface/icons/event_icons/event_skull.dds"
+
+	title = dvg_hbe.29.t
+	desc = dvg_hbe.29.d
+	flavor = dvg_hbe.29.f
+
+	duration = 3
+
+	trigger = {
+		has_journal_entry = je_beo_parishers
+	}
+
+	immediate = {	
+		random_scope_character = {
+			limit = {
+				has_variable = john_faith_var
+			}
+			save_scope_as = scope_john_faith
+		}
+	}
+
+	option = {
+		name = dvg_hbe.29.a
+		default_option = yes
+		
+		add_radicals = {
+			value = 0.15
+			interest_group = ig:ig_rural_folk
+		}
+		add_radicals = {
+			value = 0.15
+			interest_group = ig:ig_armed_forces
+		}
+		scope:scope_john_faith = {
+			kill_character = yes
+
+		}
+		hidden_effect = {
+			trigger_event = {
+				id = dvg_hbe.24 days = 180
+			}
+		}
+	}
+	
+	option = {
+		name = dvg_hbe.29.b
+		
+		scope:scope_john_faith = {
+			add_trait = experienced_political_operator
+
+			add_modifier = sovereignty_defender
+		}
+
+	}
 }
