@@ -157,7 +157,7 @@ dvg_integrate_north_qq = {
 				OR = {
 					AND = {
 						has_state_in_state_region = STATE_TERRES_ROUGES
-						s:STATE_COMANCHERIE = {
+						s:STATE_TERRES_ROUGES = {
 							NOT = {
 								is_homeland = cu:qingqiuan
 							}
@@ -318,13 +318,32 @@ dvg_attack_blf = {
 
     when_taken = {
 		set_variable = blf_attacked
+		save_temporary_scope_value_as = {
+			name = war_reparations_amount
+			value = {
+				value = income
+				multiply = define:NDiplomacy|DEFAULT_WAR_REPARATIONS_MONEY_TRANSFER
+			}
+		}
+
+			
+		
 		create_diplomatic_play = {
 			type = dp_annex_war
 			target_country = c:BLF
 			add_war_goal = {
 				holder = c:BLF
-				type = war_reparations
-			 }
+				target_country = ROOT
+				type = enforce_treaty_article
+				article = {
+					article = money_transfer
+					source_country = ROOT
+					target_country = c:BLF
+					inputs = {
+						{ quantity = scope:war_reparations_amount }
+					}
+				}
+			}
 		}
     }
 
