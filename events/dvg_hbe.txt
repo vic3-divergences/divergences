@@ -2163,7 +2163,8 @@ dvg_hbe.30 = { #Creating a Communion
 	option = {
 		name = dvg_hbe.30.a
 		
-		
+		trigger_event = { id = dvg_hbe.35 days = 130 }
+
 
 		trigger_event = { id = dvg_hbe.31 days = 30 }
 	}
@@ -2353,11 +2354,11 @@ dvg_hbe.34 = { #Dealing with the Opps
 	}
 }
 
-dvg_hbe.35 = { #Dealing with the Opps
+dvg_hbe.35 = { #New Capital?
 	type = country_event
 	placement = ROOT
 	event_image = {
-		video = "gfx/event_pictures/unspecific_fire.bk2"
+		video = "votp_monarch_holding_court"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
@@ -2372,20 +2373,49 @@ dvg_hbe.35 = { #Dealing with the Opps
 	duration = 3
 
 	trigger = {
+		any_scope_state = {
+			is_capital = yes
+			state_region = s:STATE_AVALON
+		}
+		NOT = {
+			has_modifier = moved_capital_recently
+		}
+		
 	}
 
 	immediate = {		
+		random_scope_state = {
+			limit = {
+				is_capital = no
+				any_province = {
+					has_terrain = mountain
+				}
+			}
+			state_region = {
+				save_scope_as = new_capital_state_scope
+			}
+		}
 	}
 
 	option = {
-		name = dvg_hbe.34.a
+		name = dvg_hbe.35.a
+		default_option = yes
+
 		
 		
-		trigger_event = { id = dvg_hbe.36 days = 30 }
+		
+	}
+
+	option = {
+		name = dvg_hbe.35.b
+
+		add_modifier = moved_capital_recently
+		
+		set_capital = scope:new_capital_state_scope
 	}
 }
 
-dvg_hbe.36 = { #Dealing with the Opps
+dvg_hbe.36 = { #Failure of Communion
 	type = country_event
 	placement = ROOT
 	event_image = {
@@ -2410,18 +2440,64 @@ dvg_hbe.36 = { #Dealing with the Opps
 	}
 
 	option = {
-		name = dvg_hbe.34.a
+		name = dvg_hbe.36.a
 		
+		add_radicals = {
+			value = 0.15
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_beo_parishers
+			}
+			change_variable = {
+				name = parisher_var
+				add = 10
+			}
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_beo_presbyterians
+			}
+			change_variable = {
+				name = presbyterian_var
+				add = 10
+			}
+		}
+	}
+
+	option = {
+		name = dvg_hbe.36.a
+		trigger = {
+			ruler = {
+				popularity > 40
+			}
+			any_scope_state = {
+				state_region = s:STATE_AVALON
+			}
+			any_scope_state = {
+				NOT = {
+				state_region = s:STATE_AVALON
+				}
+			}
+		}
 		
-		trigger_event = { id = dvg_hbe.37 days = 30 }
+		add_radicals = {
+			value = 0.25
+		}
+		change_tag = HBE
+		trigger_event = {
+			id = dvg_hbe.37 
+			days = 14
+		}
+
 	}
 }
 
-dvg_hbe.37 = { #Dealing with the Opps
+dvg_hbe.37 = { #Violent HBE route
 	type = country_event
 	placement = ROOT
 	event_image = {
-		video = "gfx/event_pictures/unspecific_fire.bk2"
+		video = "votp_monarch_holding_court"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
@@ -2436,20 +2512,81 @@ dvg_hbe.37 = { #Dealing with the Opps
 	duration = 3
 
 	trigger = {
+		any_scope_state = {
+			state_region = s:STATE_AVALON
+			
+		}
 	}
 
 	immediate = {		
+		create_country = {
+			tag = BEO
+			origin = this
+			state = s:STATE_AVALON.region_state:HBE
+		}
+		random_scope_character = {
+			limit = {
+				has_variable = john_faith_var
+			}
+			if = {
+				limit = {
+					has_trait = immortal
+				}
+				remove_trait = immortal
+			}
+			transfer_character = c:BEO
+		}
+		c:BEO = {
+			save_scope_as = scope_BEO
+			activate_law = law_type:law_parliamentary_republic
+			activate_law = law_type:law_freedom_of_conscience
+		}
 	}
 
 	option = {
-		name = dvg_hbe.34.a
+		name = dvg_hbe.37.a
+
+		create_diplomatic_play = {
+			type = dp_rebellion_annex
+			target_country = c:BEO
+		}
 		
+		every_scope_state = {
+			limit = {
+				is_capital = no
+				radical_fraction = {
+					value  > 0.40
+				}
+			}
+			set_state_owner = c:BEO
+		}
 		
-		trigger_event = { id = dvg_hbe.38 days = 30 }
+	}
+
+	option = {
+		name = dvg_hbe.37.b
+
+		create_diplomatic_play = {
+			type = dp_rebellion_annex
+			target_country = c:BEO
+		}
+
+		play_as = c:BEO
+
+		every_scope_state = {
+			limit = {
+				is_capital = no
+				radical_fraction = {
+					value  > 0.40
+				}
+			}
+			set_state_owner = c:BEO
+		}
+		
 	}
 }
 
-dvg_hbe.38 = { #Dealing with the Opps
+dvg_hbe.38 = { #End of the HBE
 	type = country_event
 	placement = ROOT
 	event_image = {
