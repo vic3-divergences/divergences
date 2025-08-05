@@ -1,60 +1,686 @@
-﻿je_kor_unsan_mine_depleted = {
-    icon = "gfx/interface/icons/event_icons/event_fire.dds"
+﻿namespace = dvg_korea
 
-    group = je_group_internal_affairs
+#Intro Event: the jewel of the chrysanthemum throne
 
-    timeout = 735
+dvg_korea.1 = {
+	type = country_event
+	placement = ROOT
 
-    immediate = {
-        if = {
-            limit = {            
-                THIS = c:KOR
-                c:JAP = { has_subject_relation_with = c:KOR }
-            }
-            c:JAP = { trigger_event = { id = dvg_kor_flavor_events.13 days = 31 } } #Japan is notified of the Unsan mine 
-        }
-        set_variable = kor_has_unsan_struggles
-    }
+	title = dvg_korea.1.t
+	desc = dvg_korea.1.d
+	flavor = dvg_korea.1.f
 
-    on_timeout = {
-        hidden_effect = {        
-            trigger_event = { id = dvg_kor_flavor_events.13 days = 31 } #jinnampo event chain
-            remove_variable = kor_has_unsan_struggles
-        }
-    }
-
-	on_monthly_pulse = {
-		random_events = {
-			180 = 0
-            15 = dvg_kor_flavor_events.4 # the laborers demand payment (or be mad)
-            15 = dvg_kor_flavor_events.5 # the people need someone to blame (the king or the government)
-            20 = dvg_kor_flavor_events.6 # miners and prospectors leave (and enter manchuria or qingqiu)
-            10 = dvg_kor_flavor_events.7 # Confucian officials urge to abandon the mines
-            10 = dvg_kor_flavor_events.8 # the growing need for advanced technology (pay to get atmospheric engines or watertube boilers)
-        }
-        #     10 = dvg_kor_flavor_events.9 # hire local prospectors to search for more gold (a lottery - they give you money or ends with a flop)
-        #     10 = dvg_kor_flavor_events.10 # local businesses suffer from lack of traffic (PB is mad)
-        #     10 = dvg_kor_flavor_events.11 # the abandoned mineshafts generate pollution
-        #     10 = dvg_kor_flavor_events.12 # Japan demands annual tribute
-		# }
+	event_image = {
+		video = "gfx/event_pictures/asia_confucianism_shinto.bk2"
 	}
 
-    complete = {
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
 
-        any_scope_state = {
-            state_region = s:STATE_PYONGYANG
-        }
-        has_technology_researched = watertube_boiler
-        has_technology_researched = nitroglycerin
-    }
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
 
-    on_complete = {=
-        trigger_event = { id = dvg_kor_flavor_events.3 } #reactivate the Unsan mine
-    }
+	duration = 3
 
-    invalid = {
-        
-    }
+	immediate = {
 
-    weight = 10
+	}
+	
+	option = {
+		name = dvg_korea.1.a
+		default_option = yes
+		
+		add_journal_entry = {
+			type = je_kor_trouble_and_uncertainty
+		}
+
+		add_journal_entry = {
+			type = je_kor_rice_granary
+		}
+
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+
+dvg_korea.2 = { #unsan mine is depleted
+	type = country_event
+	placement = ROOT
+
+	title = dvg_korea.2.t
+	desc = dvg_korea.2.d
+	flavor = {
+		triggered_desc = {
+			flavor = dvg_korea.2.f.k
+			trigger = {
+				THIS = c:KOR		
+				has_law = law_type:law_monarchy
+			}
+		}
+		triggered_desc = {
+			flavor = dvg_korea.2.f.a
+			trigger = {
+				OR = {
+					THIS != c:KOR
+					NOT = { has_law = law_type:law_monarchy }
+				}
+			}
+		}
+	}
+
+	event_image = {
+		video = "gfx/event_pictures/southamerica_child_labor.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	trigger = {
+		game_date >= 1847.1.1
+		NOT = { has_global_variable = kor_unsan_mine_depleted }
+		any_scope_state = {
+			state_region = s:STATE_PYONGYANG
+			is_treaty_port = no
+			state_has_building_levels = { target = bt:building_gold_mine value >= 1 }
+		}
+		NOT = { has_technology_researched = watertube_boiler }
+		NOT = { has_technology_researched = nitroglycerin }
+	}
+
+	duration = 3
+
+	immediate = {
+		set_global_variable = kor_unsan_mine_depleted
+		random_scope_state = {
+			limit = {
+				state_region = s:STATE_PYONGYANG
+			}
+			save_scope_as = unsan_mine_state
+		}
+	}
+	
+	option = {
+		name = dvg_korea.2.k
+		trigger = {
+				THIS = c:KOR		
+				has_law = law_type:law_monarchy
+		}
+		owner = {
+			add_journal_entry = {
+				type = je_kor_unsan_mine_depleted
+			}
+		}
+		s:STATE_PYONGYANG = {
+			every_scope_state = {
+				limit = {
+					state_has_building_levels = { target = bt:building_gold_mine value >= 1 }
+				}
+				deactivate_building = { building = building_gold_mine }
+				set_variable = state_unsan_mine_depleted
+			}
+		}
+		ai_chance = {
+			base = 50
+		}
+	}
+
+	option = {
+		name = dvg_korea.2.a
+		trigger = {
+			OR = {
+				THIS != c:KOR
+				NOT = { has_law = law_type:law_monarchy }
+			}
+		}
+		default_option = yes
+		owner = {
+			add_journal_entry = {
+				type = je_kor_unsan_mine_depleted
+			}
+		}
+		s:STATE_PYONGYANG = {
+			every_scope_state = {
+				limit = {
+					state_has_building_levels = { target = bt:building_gold_mine value >= 1 }
+				}
+				deactivate_building = { building = building_gold_mine }
+				set_variable = state_unsan_mine_depleted
+			}
+		}
+		ai_chance = {
+			base = 50
+		}
+	}
+
+}
+
+dvg_korea.3 = { #unsan mine reopens
+	type = state_event
+	placement = ROOT
+
+	title = dvg_korea.3.t
+	desc = dvg_korea.3.d
+	flavor = dvg_korea.3.f
+
+	event_image = {
+		video = "gfx/event_pictures/europenorthamerica_gold_prospectors.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	immediate = {
+		remove_variable = state_unsan_mine_depleted
+	}
+
+	duration = 3
+	
+	option = { #The golden age of Unsan has returned!
+		name = dvg_korea.3.a
+		default_option = yes
+		activate_building = { building = building_gold_mine }
+		add_loyalists_in_state = {
+			value = 0.05
+		}
+		add_modifier = { #higher gold throughput, higher mortality (Hopefully it works in buildings)
+			name = dvg_kor_rejuvenated_gold_mines
+			months = 36
+		}
+		owner = {
+			add_modifier = { #minor government legitimacy modifier
+				name = kor_unsan_mine_reopened
+				months = 36
+			}
+		}
+		ai_chance = {
+			base = 50
+		}
+	}	
+
+	option = { #Let's proceed with caution
+		name = dvg_korea.3.b
+		default_option = yes
+		activate_building = { building = building_gold_mine }
+		add_loyalists_in_state = {
+			value = 0.05
+		}
+
+		owner = {
+			add_modifier = { #minor government legitimacy modifier
+				name = dvg_kor_unsan_mine_reopened
+				months = 36
+			}
+		}
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+
+
+dvg_korea.4 = { #the laborers demand payment
+	type = country_event
+	placement = scope:unsan_mine_state
+
+	title = dvg_korea.4.t
+	desc = dvg_korea.4.d
+	flavor = dvg_korea.4.f
+
+	event_image = {
+		video = "gfx/event_pictures/asia_poor_people_moving.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+
+	duration = 3
+	
+	trigger = {
+		NOT = { has_variable = unsan_payment } #one-time only.
+	}
+
+	immediate = {
+		set_variable = unsan_payment
+	}
+
+	option = { #we must save the workers from poverty.
+		name = dvg_korea.4.a
+
+		add_treasury = -100000
+		set_variable = unsan_payment
+		scope:unsan_mine_state ={
+			add_loyalists_in_state = {
+				pop_type = laborers
+				value = 0.2
+			}
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+
+	option = { #the Crown has no budget to spare.
+		name = dvg_korea.4.a
+		default_option = yes
+
+		scope:unsan_mine_state ={
+			add_radicals_in_state = {
+				pop_type = laborers
+				value = 0.2
+			}
+		}
+		ruler = {
+			add_modifier = { #decrease the king's popularity
+				name = dvg_kor_neglected_unsan_miners
+				months = 120
+			}
+		}
+		ai_chance = {
+			base = 50
+		}
+	}
+
+}
+
+
+dvg_korea.5 = { #the people need somebody to blame. Can happen multiple times.
+	type = country_event
+	placement = scope:unsan_mine_state
+
+	title = dvg_korea.5.t
+	desc = dvg_korea.5.d
+	flavor = dvg_korea.5.f
+
+	event_image = {
+		video = "gfx/event_pictures/europenorthamerica_political_extremism.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+
+	duration = 3
+	
+	option = { #Blame the officials.
+		name = dvg_korea.5.a
+		default_option = yes
+		scope:unsan_mine_state ={
+			add_radicals_in_state = {
+				value = 0.02
+			}
+		}
+		add_modifier = { #minor government legitimacy modifier
+			name = dvg_kor_recent_government_failures
+			months = 120
+		}
+		ai_chance = {
+			base = 50
+		}
+	}
+
+	option = { #The king is to blame.
+		name = dvg_korea.5.b
+
+		scope:unsan_mine_state ={
+			add_radicals_in_state = {
+				value = 0.02
+			}
+		}
+		ruler = {
+			add_modifier = { #decreased popularity of the king
+				name = dvg_kor_neglected_unsan_miners
+				months = 120
+			}
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+
+	option = { #They should stop blaming someone.
+		name = dvg_korea.5.c
+
+		scope:unsan_mine_state ={
+			add_radicals_in_state = {
+				value = 0.08
+			}
+		}
+		ai_chance = {
+			base = 20
+		}
+	}
+}
+
+dvg_korea.6 = { #miners and prospectors move out of korea, to the lands of Manchuria or Qingqiu
+	type = country_event
+	placement = scope:unsan_mine_state
+
+	title = dvg_korea.6.t
+	desc = dvg_korea.6.d
+	flavor = dvg_korea.6.f
+
+	event_image = {
+		video = "gfx/event_pictures/europenorthamerica_gold_prospectors.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+
+	duration = 3
+	
+	trigger ={
+		is_mass_migration_origin = no
+	}
+
+	immediate = {
+		random_state = {
+			limit = {
+				region = { THIS = sr:region_manchuria }
+				NOT = {
+					OR = {
+						state_region = s:STATE_PYONGYANG
+						state_region = s:STATE_SEOUL
+						state_region = s:STATE_SARIWON
+						state_region = s:STATE_BUSAN
+						state_region = s:STATE_YANGHO
+					}
+				}
+			}
+			save_scope_as = unsan_migration_state_manchuria
+		}
+		random_state = {
+			limit = {
+				state_region = {
+					is_homeland = cu:buyeo
+				}
+			}
+			save_scope_as = unsan_migration_state_qingqiu
+		}
+		save_scope_as = migration_country
+	}
+
+	option = { #Off to Manchuria they go.
+		name = dvg_korea.6.a
+		default_option = yes
+		
+		scope:unsan_migration_state_manchuria = {
+			create_mass_migration = {
+				origin = scope:migration_country
+				culture = cu:korean
+			}
+		}
+		ai_chance = {
+			base = 150
+		}
+	}
+
+	option = { #Off to Buyeo they go.
+		name = dvg_korea.6.b
+		
+		scope:unsan_migration_state_qingqiu = {
+			create_mass_migration = {
+				origin = scope:migration_country
+				culture = cu:korean
+			}
+		}
+		ai_chance = {
+			base = 80
+		}
+	}
+	option = { #We cannot just let them leave!
+		name = dvg_korea.6.c
+		
+		scope:unsan_mine_state ={
+			add_radicals_in_state = {
+				value = 0.1
+				strata = poor
+			}
+		}
+		ai_chance = {
+			base = 5
+		}
+	}
+
+}
+
+dvg_korea.7 = { #The Confucian officials demand to suppress the mining industry.
+	type = country_event
+	placement = ROOT
+
+	title = dvg_korea.7.t
+	desc = dvg_korea.7.d
+	flavor = dvg_korea.7.f
+
+	event_image = {
+		video = "gfx/event_pictures/unspecific_politicians_arguing.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+
+	duration = 3
+	
+	trigger = {
+		NOT = { has_modifier = dvg_kor_the_confucian_ways }
+	}
+
+	option = { #The officials are right.
+		name = dvg_korea.7.a
+		default_option = yes
+
+		add_modifier = { #-mines throughput, +agri througput
+			name = dvg_kor_the_confucian_ways
+			months = 120
+		}
+		ig:ig_devout = {
+			add_modifier = {
+				name = dvg_kor_accepted_faction_demands
+				months = 60
+			}
+		}
+		ig:ig_rural_folk = {
+			add_modifier = {
+				name = dvg_kor_accepted_faction_demands
+				months = 60
+			}
+		}
+		ig:ig_industrialists = {
+			add_modifier = {
+				name = dvg_kor_unfair_government_practices
+				months = 60
+			}
+		}
+		ai_chance = {
+			base = 20
+		}
+	}
+
+	option = { #I need those mines.
+		name = dvg_korea.7.b
+
+		ig:ig_devout = {
+			add_modifier = {
+				name = dvg_kor_ignored_faction_demands
+				months = 60
+			}
+		}
+		ig:ig_rural_folk = {
+			add_modifier = {
+				name = dvg_kor_ignored_faction_demands
+				months = 60
+			}
+		}
+		ig:ig_industrialists = {
+			add_modifier = {
+				name = dvg_kor_factional_favoratism
+				months = 60
+			}
+		}
+
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+dvg_korea.8 = { #The need for new technology.
+	type = country_event
+	placement = ROOT
+
+	title = dvg_korea.8.t
+	desc = dvg_korea.8.d
+	flavor = dvg_korea.8.f
+
+	event_image = {
+		video = "gfx/event_pictures/unspecific_gears_pistons.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_industry.dds"
+
+	duration = 3
+	
+	option = { #The future belongs to those who adapt.
+		name = dvg_korea.8.a1
+		trigger = {
+			NOT = { has_technology_researched = atmospheric_engine }
+		}
+		add_technology_progress = { progress = 3500 technology = atmospheric_engine }
+		add_treasury = -700000
+
+		ai_chance = {
+			base = 50
+		}
+	}
+
+	option = { #Let us further improve our machinery
+		name = dvg_korea.8.a2
+
+		trigger = {
+			NOT = { has_technology_researched = watertube_boiler }
+		}
+		add_technology_progress = { progress = 3500 technology = watertube_boiler }
+		add_treasury = -700000
+
+		ai_chance = {
+			base = 50
+		}
+	}
+
+	option = { #The love for gunpowder is embedded in our tradition.
+		name = dvg_korea.8.b
+
+		trigger = {
+			NOT = { has_technology_researched = nitroglycerin }
+		}
+		add_technology_progress = { progress = 5000 technology = nitroglycerin }
+		add_treasury = -1000000
+
+		ai_chance = {
+			base = 50
+		}
+	}
+
+	option = { #Such contraptions have no place in our lands.
+		name = dvg_korea.8.c
+		default_option = yes
+
+		ig:ig_devout = {
+			add_modifier = { #The Convservatives endorse this
+				name = dvg_kor_dismissed_western_contraptions
+				months = 60
+			}
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+
+	option = { #They should stop blaming someone.
+		name = dvg_korea.5.c
+
+		scope:unsan_mine_state ={
+			add_radicals_in_state = {
+				value = 0.08
+			}
+		}
+		ai_chance = {
+			base = 20
+		}
+	}
+}
+
+dvg_korea.9 = { #the prospectors request investment
+	type = country_event
+	placement = scope:unsan_mine_state
+
+	title = dvg_korea.9.t
+	desc = dvg_korea.9.d
+	flavor = dvg_korea.9.f
+
+	event_image = {
+		video = "gfx/event_pictures/europenorthamerica_gold_prospectors.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	duration = 3
+	
+	trigger = {
+		NOT = { has_variable = unsan_payment } #one-time only.
+	}
+
+	immediate = {
+		set_variable = unsan_payment
+	}
+
+	option = { #Fortune favors the bold.
+		name = dvg_korea.9.a
+		default_option = yes
+
+		add_treasury = -500000
+		random_list = {
+			5 = { #major success
+				trigger_event = {
+					id = dvg_korea.13
+					months = 6
+					popup = yes
+				}
+			}
+			5 = { #minor results
+				trigger_event = {
+					id = random_bonus_events.14
+					months = 6
+					popup = yes
+				}
+			}
+			10 = { #prospectors found nothing
+				trigger_event = {
+					id = random_bonus_events.15
+					months = 6
+					popup = yes
+				}
+			}
+		}
+		ai_chance = {
+			base = 50
+		}
+	}
+
+	option = { #Enough wishful thinking—the mine is finished.
+		name = dvg_korea.9.a
+
+		ai_chance = {
+			base = 10
+		}
+	}
+
 }
