@@ -139,10 +139,14 @@
 	invalid = {
 		OR = {
 		exists = c:NME
-		NAND = {
-			owns_entire_state_region = STATE_NEAR_COLLASUYU
-			owns_entire_state_region = STATE_CATAMARCA
-			owns_entire_state_region = STATE_KUCHICHAY
+		any_scope_state = {
+			count = 0
+			is_coastal = yes
+			is_isolated_from_market = no
+			state_region = {
+				is_homeland = cu:aimara
+				is_homeland = cu:beornian
+			}
 		}
 
 		}
@@ -1028,7 +1032,7 @@ je_beornian_awakening = {
 
 	on_complete = {
 		trigger_event = {
-			id = dvg_hbe.28
+			id = dvg_hbe.22
 		}
 	}
 	fail = {
@@ -1121,8 +1125,6 @@ je_beo_parishers = {
 	
 	}
 	immediate = {
-		set_variable = parisher_var
-
 		
 	}
 
@@ -1132,12 +1134,17 @@ je_beo_parishers = {
 	on_yearly_pulse = {
 		random_events = {
 			100 = 0
-			10 = dvg_hbe.13
-			10 = dvg_hbe.12
+			50 = dvg_hbe.12
 		}
 	}
 
 	on_monthly_pulse = {
+
+		random_events = {
+			100 = 0
+			20 = dvg_hbe.13
+			10 = dvg_hbe.16
+		}
 		
 		effect = {
 			
@@ -1248,19 +1255,22 @@ je_beo_presbyterians = {
 	}
 
 	immediate = {
-		set_variable = presbyterian_var
+
 	}
 
     possible = {
 			
 	}
 	on_yearly_pulse = {
-		random_events = {
-			100 = 0
-			10 = dvg_hbe.14
-		}
+		
 	}
 	on_monthly_pulse = {
+
+		random_events = {
+			100 = 0
+			15 = dvg_hbe.26
+			10 = dvg_hbe.14
+		}
 		effect = {
 			if = {
 				limit = {
@@ -1347,12 +1357,15 @@ je_beo_presbyterians = {
     }
 	fail = {	
 		OR = {
-			var:presbyterian_var < 1 
 			AND = {
-				exists = c:HBE
-				c:HBE = ROOT
+			var:presbyterian_var < 1 
+			has_modifier = communion_made
+			}
+			NOT = {
+				exists = c:BEO
 			}
 		}
+		
 	}
 	on_fail = {
 	
@@ -1367,6 +1380,11 @@ je_beo_presbyterians = {
 	goal_add_value = {
 		value = 100
 	}
+
+	current_value = {
+		value = root.var:presbyterian_var
+	}
+
 	progressbar = yes
 
 	timeout = 7125
@@ -1389,6 +1407,8 @@ je_beo_hbe = {
     possible = {
 			
 	}
+
+	
 	immediate = {
 		set_variable = {
 			name = new_hbe_var
@@ -1402,7 +1422,8 @@ je_beo_hbe = {
 		has_modifier = pendragon_modifier
 		has_modifier = dvg_modifier_armed_forces_bolstered
 
-
+		var:parisher_var < 1
+		var:presbyterian_var < 1
 		scope:journal_entry = { is_goal_complete = yes }
 
 	}
@@ -1467,7 +1488,7 @@ je_beornia_development = {
 			}
 			any_scope_building = {
 				is_building_type = building_urban_center
-				level > 2
+				level > 3
 			}
 			has_building = building_railway
 			has_building = building_government_administration
@@ -1478,6 +1499,12 @@ je_beornia_development = {
 	on_complete = {
 
 		every_scope_state = {
+			limit = {
+				any_scope_building = {
+				is_building_type = building_urban_center
+				level > 3
+				}
+			}
 			add_modifier = {
 				name = sa_migration_attraction
 				months = 65
@@ -1487,6 +1514,7 @@ je_beornia_development = {
 		ruler = {
 			add_modifier = promisekeeper
 		}
+		set_variable = rural_developed
 	}
 
 	on_yearly_pulse = {
