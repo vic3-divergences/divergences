@@ -764,6 +764,12 @@ dvg_hbe.10 = { #Great Awakening Primer
 		trigger_event = {
 			id = dvg_hbe.23
 		}
+		ig:ig_devout = {
+			save_scope_as = devout_scope
+		}
+		ig:ig_rural_folk = {
+			save_scope_as = rural_folk_scope
+		}
 	}
 
 	option = {
@@ -790,19 +796,7 @@ dvg_hbe.10 = { #Great Awakening Primer
 			add = 25
 		}
 
-		set_variable = {
-			name = parisher_var
-			value = 0
-		}
-
-		add_journal_entry = {
-			type = je_beo_parishers
-		}
-
-		change_variable = {
-			name = parisher_var
-			add = 25
-		}
+		
 		
 		
 		trigger_event = {
@@ -845,7 +839,9 @@ dvg_hbe.11 = { #New King's Marriage
 				remove_variable = is_married
 			}
 		}
-
+		ig:ig_devout = {
+			save_scope_as = devout_ig
+		}
 	}
 
 	option = {
@@ -1003,14 +999,29 @@ dvg_hbe.13 = { #Lotharian vs Beornian Settlers in Chaco
 	trigger = {
 		any_scope_state = {
 			state_region = s:STATE_GRAND_CHACO
-			is_split_state = yes
+			OR = {
+				is_under_colonization = yes
+				is_split_state = yes
+			}
 		}
 		exists = c:LOT
 
+		c:LOT = {
+			any_scope_state = {
+			state_region = s:STATE_GRAND_CHACO
+			OR = {
+				is_split_state = yes
+				is_under_colonization = yes
+			}
+			}
+		}
+		NOT = {
+			has_variable = chaco_disputed
+		}
 	}
 
 	immediate = {	
-		
+		set_variable = chaco_disputed
 	}
 
 	option = {
@@ -1021,20 +1032,37 @@ dvg_hbe.13 = { #Lotharian vs Beornian Settlers in Chaco
 			value = 0.10
 		}
 
-
+		ruler = {
+			add_modifier = sovereignty_defender
+		}
 		
 		s:STATE_GRAND_CHACO = {
 			add_claim = c:BEO
 			add_claim = c:LOT
+			add_modifier = {
+				name = border_sovereignity_questioned
+				months = 12
+				is_decaying = yes
+			}
 		}
 		change_relations = {
 			country = c:LOT
 			value = -20
 		}
+		
 	}
 
 	option = {
 		name = dvg_hbe.13.b
+
+		if = {
+			limit = {
+				ruler = {
+					has_modifier = sovereignty_defender
+				}
+			}
+			remove_modifier = sovereignty_defender
+		}
 
 		add_radicals = {
 			value = 0.10
@@ -1068,11 +1096,17 @@ dvg_hbe.14 = { #Student Protests
 	desc = dvg_hbe.14.d
 	flavor = dvg_hbe.14.f
 
-	duration = 3
+	duration = 1
 
 	trigger = {
 		any_scope_state = {
 			has_building = building_university
+		}
+		NOT = {
+			has_modifier = modifier_repressing_protests
+		}
+		NOT = {
+			has_modifier = pro_democracy_protests
 		}
 	}
 
@@ -1160,12 +1194,17 @@ dvg_hbe.15 = { #Church Tax Exemptions
 		add_radicals = {
 			value = 0.15
 		}
-		every_scope_state = {
+		custom_tooltip = {
+			text = tax_enforcce_tt
+
+			every_scope_state = {
 			add_modifier = {
 				name = church_tax_enforce
 				months = 11
 			}
+			}
 		}
+		
 
 		change_variable = {
 			name = presbyterian_var
@@ -1173,7 +1212,7 @@ dvg_hbe.15 = { #Church Tax Exemptions
 		}
 
 		change_variable = {
-			name = parisher_Var
+			name = parisher_var
 			subtract = 10
 		}
 		
@@ -1185,19 +1224,33 @@ dvg_hbe.15 = { #Church Tax Exemptions
 		add_loyalists = {
 			value = 0.15
 		}
-		every_scope_state = {
+
+		ruler = {
+			add_modifier = {
+				name = merciful_ruler
+				months = 11
+				is_decaying = yes
+			}
+		}
+
+		custom_tooltip = {
+			text = tax_exempt_tt
+
+			every_scope_state = {
 			add_modifier = {
 				name = church_tax_exempt
 				months = 11
 			}
 		}
+		}
+		
 		change_variable = {
 			name = presbyterian_var
 			add = 10
 		}
 
 		change_variable = {
-			name = parisher_Var
+			name = parisher_var
 			add = 10
 		}
 	}
@@ -1225,27 +1278,63 @@ dvg_hbe.16 = { #Migration Restrictions
 	duration = 3
 
 	trigger = {
+
+		NOT = {
+			has_variable = rural_migration_question
+			has_variable = rural_developed
+			any_scope_state = {
+				has_modifier = limiting_workforce_migration
+			}
+			has_modifier = moved_capital_recently
+		}
 	}
 
 	immediate = {	
-		
+		set_variable = rural_migration_question
 	}
 
 	option = {
 		name = dvg_hbe.16.a
 		default_option = yes
 		
+		random_scope_state = {
+			limit = {
+				state_region = s:STATE_AVALON
+			}
+			add_modifier = {
+				name = limiting_workforce_migration
+				months = 12
+			}
+		}
+		remove_variable = rural_migration_question
 	}
 
 	option = {
 		name = dvg_hbe.16.b
 		
+		if = {
+			limit = {
+				has_journal_entry = je_beo_parishers
+			}
+			change_variable = {
+				name = parisher_var
+				add = 10
+			}
+		}
+		remove_variable = rural_migration_question
 	}
 
 	option = {
 		name = dvg_hbe.16.c
+		trigger = {
+			NOT = {
+				has_journal_entry = je_beornia_development
+			}
+		}
 		
-
+		add_journal_entry = {
+			type = je_beornia_development
+		}
 	}
 	
 }
@@ -1373,6 +1462,15 @@ dvg_hbe.19 = { #Build the Pendragon
 			days = long_modifier_time
 			}
 		}
+		if = {
+			limit = {
+				has_journal_entry = je_beo_hbe
+			}
+			change_variable = {
+				name = new_hbe_var
+				add = 1
+			}
+		}
 	}
 	
 }
@@ -1449,15 +1547,24 @@ dvg_hbe.21 = { #Establish the Ragnarok Connection
 		ruler = {
 			add_trait = pious
 		}
+		if = {
+			limit = {
+				has_journal_entry = je_beo_hbe
+			}
+			change_variable = {
+				name = new_hbe_var
+				add = 1
+			}
+		}
 	}
 	
 }
 
-dvg_hbe.22 = { #Honorary Britannians
+dvg_hbe.22 = { #Anglican Victory
 	type = country_event
 	placement = ROOT
 	event_image = {
-		video = "asia_sepoy_mutiny"
+		video = "europenorthamerica_london_center"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
@@ -1475,67 +1582,39 @@ dvg_hbe.22 = { #Honorary Britannians
 	}
 
 	immediate = {	
-		
+		ig:ig_devout = {
+			save_scope_as = devout_scope
+		}
 	}
 
 	option = {
 		name = dvg_hbe.22.a
 		default_option = yes
 
-		add_radicals = {
-			value = large_radicals
-			culture = scope:discriminated_culture_pop.culture
+		add_loyalists = {
+			value = 0.10
+		}		
+		ruler = {
+			add_trait = opium_addiction
+			add_trait = expensive_tastes
 		}
-		
-		every_scope_state = {
-			add_modifier = dvg_honorary_britannians
-		}
-		
-	}
-
-	option = {
-		name = dvg_hbe.22.b
-		trigger = {
-			NOT = {
-				has_law = law_type:law_no_schools
-			}
-		}
-
-		add_radicals = {
-			value = large_radicals
-			culture = scope:discriminated_culture_pop.culture
-		}
-		add_modifier = {
-			name = linguistic_discrimination
-			days = normal_modifier_time
-		}
-
-		add_modifier = {
-			name = dvg_small_research_value
-		}
-	}
-
-	option = {
-		name = dvg_hbe.22.c
-
 		if = {
 			limit = {
-				exists = scope:discriminated_culture_pop
+				ruler = {
+					NOT = {
+						has_trait = hedonist
+					}
+				}
 			}
-			add_radicals = {
-				value = medium_radicals
-				culture = scope:discriminated_culture_pop.culture
+			ruler = {
+				add_trait = hedonist
 			}
 		}
-		
-		every_political_movement = {
-			limit = {
-				
-			}
-			add_modifier = modifier_recognized_legal_discrimination
-		}
-		
 	}
+
+
+
+
 	
 }
 
@@ -1560,7 +1639,22 @@ dvg_hbe.23 = { #Primer on Parishers
 	trigger = {
 	}
 
-	immediate = {	
+	immediate = {
+		
+		set_variable = {
+			name = parisher_var
+			value = 0
+		}
+
+		add_journal_entry = {
+			type = je_beo_parishers
+		}
+
+		change_variable = {
+			name = parisher_var
+			add = 15
+		}
+
 		ig:ig_rural_folk = {
 			save_scope_as = rural_folk_ig
 		}
@@ -1590,18 +1684,14 @@ dvg_hbe.23 = { #Primer on Parishers
 		name = dvg_hbe.23.a
 		default_option = yes
 		
-		set_variable = {
-			name = parisher_var
-			value = 0
-		}
-
-		add_journal_entry = {
-			type = je_beo_parishers
-		}
-
-		change_variable = {
-			name = parisher_var
-			add = 40
+		if = {
+			limit = {
+				has_journal_entry = je_beo_parishers
+			}
+			change_variable = {
+				name = parisher_var
+				add = 10
+			}
 		}
 	}
 
@@ -1627,7 +1717,7 @@ dvg_hbe.23 = { #Primer on Parishers
 		}
 		hidden_effect = {
 			trigger_event = {
-			id = dvg_hbe.24 days = 180
+			id = dvg_hbe.24 days = 270
 		}
 		}
 		
@@ -1718,7 +1808,7 @@ dvg_hbe.24 = { #Return of John Faith
 
 		hidden_effect = {
 			trigger_event = {
-				id = dvg_hbe.24 days = 180
+				id = dvg_hbe.24 days = 270
 			}
 		}
 
@@ -1878,7 +1968,57 @@ dvg_hbe.26 = { #Republican Preachers
 	option = {
 		name = dvg_hbe.26.a
 		default_option = yes
+
+		every_scope_state = {
+			limit = {
+				total_urbanization > 2
+			}
+			add_radicals_in_state = {
+				value = 0.20
+			}
+		}
 		
+		if = {
+			limit = {
+				has_journal_entry = je_beo_presbyterians
+			}
+			change_variable = {
+				name = presbyterian_var
+				subtract = 15
+			}
+		}
+	}
+
+	option = {
+		name = dvg_hbe.26.b
+		
+
+		if = {
+			limit = {
+				has_journal_entry = je_beo_presbyterians
+			}
+			change_variable = {
+				name = presbyterian_var
+				add = 15
+			}
+		}
+	}
+
+	option = {
+		name = dvg_hbe.26.c
+		trigger = {
+			has_law = law_type:law_secret_police
+		}
+		
+		if = {
+			limit = {
+				has_journal_entry = je_beo_presbyterians
+			}
+			change_variable = {
+				name = presbyterian_var
+				subtract = 15
+			}
+		}
 	}
 	
 }
@@ -1944,11 +2084,30 @@ dvg_hbe.27 = { #Presbyterian Uprising
 			}
 		}
 
-		scope:scope_john_faith = {
+		if = {
+			limit = {
+				any_scope_character = {
+					has_variable = john_faith_var
+				}
+			}
+			scope:scope_john_faith = {
 			
 			set_as_interest_group_leader = yes
+			}
 		}
-
+		add_radicals = {
+			value = 0.20
+			interest_group = ig:ig_devout
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_beo_parishers
+			}
+			change_variable = {
+				name = parisher_var
+				add = 10
+			}
+		}
 	}
 
 	option = {
@@ -1974,6 +2133,36 @@ dvg_hbe.27 = { #Presbyterian Uprising
 					}
 				}
 				set_character_as_ruler = yes
+			}
+		}
+		add_radicals = {
+			value = 0.20
+			interest_group = ig:ig_devout
+		}
+		add_loyalists = {
+			value = 0.20
+			interest_group = ig:ig_intelligentsia
+		}
+
+		if = {
+			limit = {
+				any_scope_character = {
+					has_variable = john_faith_var
+				}
+			}
+			scope:scope_john_faith = {
+			
+			set_as_interest_group_leader = yes
+			}
+		}
+
+		if = {
+			limit = {
+				has_journal_entry = je_beo_parishers
+			}
+			change_variable = {
+				name = parisher_var
+				add = 15
 			}
 		}
 
@@ -2121,7 +2310,7 @@ dvg_hbe.29 = { #Dealing with John Faith
 		}
 		hidden_effect = {
 			trigger_event = {
-				id = dvg_hbe.24 days = 180
+				id = dvg_hbe.24 days = 270
 			}
 		}
 	}
@@ -2202,7 +2391,99 @@ dvg_hbe.31 = { #Defining Britannians
 	option = {
 		name = dvg_hbe.31.a
 		
+		if = {
+			limit = {
+				has_journal_entry = je_beo_hbe
+			}
+			change_variable = {
+				name = new_hbe_var
+				add = 1
+			}
+		}
+
+		if = {
+			limit = {
+				has_journal_entry = je_beo_presbyterians
+			}
+			change_variable = {
+				name = presbyterian_var
+				add = 15
+			}
+		}
+
+		if = {
+			limit = {
+				has_journal_entry = je_beo_parishers
+			}
+			change_variable = {
+				name = parisher_var
+				subtract = 15
+			}
+		}
+
+		trigger_event = { id = dvg_hbe.32 days = 30 }
+	}
+
+	option = {
+		name = dvg_hbe.31.b
 		
+		if = {
+			limit = {
+				has_journal_entry = je_beo_hbe
+			}
+			change_variable = {
+				name = new_hbe_var
+				add = 1
+			}
+			
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_beo_presbyterians
+			}
+			change_variable = {
+				name = presbyterian_var
+				subtract = 30
+			}
+	
+		}
+
+		if = {
+			limit = {
+				has_journal_entry = je_beo_parishers
+			}
+			change_variable = {
+				name = parisher_var
+				add = 15
+			}
+		}
+
+		trigger_event = { id = dvg_hbe.32 days = 30 }
+	}
+
+	option = {
+		name = dvg_hbe.31.c
+		
+		if = {
+			limit = {
+				has_journal_entry = je_beo_hbe
+			}
+			change_variable = {
+				name = new_hbe_var
+				add = 1
+			}
+		}
+
+		if = {
+			limit = {
+				has_journal_entry = je_beo_presbyterians
+			}
+			change_variable = {
+				name = presbyterian_var
+				subtract = 15
+			}
+			
+		}
 
 		trigger_event = { id = dvg_hbe.32 days = 30 }
 	}
@@ -2235,6 +2516,110 @@ dvg_hbe.32 = { #A National Saint
 	option = {
 		name = dvg_hbe.32.a
 		
+		if = {
+			limit = {
+				has_journal_entry = je_beo_hbe
+			}
+			change_variable = {
+				name = new_hbe_var
+				add = 1
+			}
+		}
+
+		if = {
+			limit = {
+				has_journal_entry = je_beo_presbyterians
+			}
+			change_variable = {
+				name = presbyterian_var
+				add = 20
+			}
+	
+		}
+
+		if = {
+			limit = {
+				has_journal_entry = je_beo_parishers
+			}
+			change_variable = {
+				name = parisher_var
+				subtract = 25
+			}
+		}
+		
+		trigger_event = { id = dvg_hbe.33 days = 30 }
+	}
+
+	option = {
+		name = dvg_hbe.32.b
+		
+		if = {
+			limit = {
+				has_journal_entry = je_beo_hbe
+			}
+			change_variable = {
+				name = new_hbe_var
+				add = 2
+			}
+		}
+
+		if = {
+			limit = {
+				has_journal_entry = je_beo_presbyterians
+			}
+			change_variable = {
+				name = presbyterian_var
+				subtract = 15
+			}
+	
+		}
+
+		if = {
+			limit = {
+				has_journal_entry = je_beo_parishers
+			}
+			change_variable = {
+				name = parisher_var
+				subtract = 25
+			}
+		}
+		
+		trigger_event = { id = dvg_hbe.33 days = 30 }
+	}
+
+	option = {
+		name = dvg_hbe.32.c
+		
+		if = {
+			limit = {
+				has_journal_entry = je_beo_hbe
+			}
+			change_variable = {
+				name = new_hbe_var
+				add = 1
+			}
+			
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_beo_presbyterians
+			}
+			change_variable = {
+				name = presbyterian_var
+				subtract = 30
+			}
+	
+		}
+
+		if = {
+			limit = {
+				has_journal_entry = je_beo_parishers
+			}
+			change_variable = {
+				name = parisher_var
+				add = 15
+			}
+		}
 		
 		trigger_event = { id = dvg_hbe.33 days = 30 }
 	}
@@ -2277,6 +2662,36 @@ dvg_hbe.33 = { #Honorary Britannians
 		every_scope_state = {
 			add_modifier = dvg_honorary_britannians
 		}
+
+		if = {
+			limit = {
+				has_journal_entry = je_beo_hbe
+			}
+			change_variable = {
+				name = new_hbe_var
+				add = 1
+			}
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_beo_presbyterians
+			}
+			change_variable = {
+				name = presbyterian_var
+				subtract = 15
+			}
+	
+		}
+
+		if = {
+			limit = {
+				has_journal_entry = je_beo_parishers
+			}
+			change_variable = {
+				name = parisher_var
+				subtract = 15
+			}
+		}
 		
 	}
 
@@ -2285,6 +2700,16 @@ dvg_hbe.33 = { #Honorary Britannians
 		trigger = {
 			NOT = {
 				has_law = law_type:law_no_schools
+			}
+		}
+
+		if = {
+			limit = {
+				has_journal_entry = je_beo_hbe
+			}
+			change_variable = {
+				name = new_hbe_var
+				add = 1
 			}
 		}
 
@@ -2299,6 +2724,26 @@ dvg_hbe.33 = { #Honorary Britannians
 
 		add_modifier = {
 			name = dvg_small_research_value
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_beo_presbyterians
+			}
+			change_variable = {
+				name = presbyterian_var
+				subtract = 25
+			}
+	
+		}
+
+		if = {
+			limit = {
+				has_journal_entry = je_beo_parishers
+			}
+			change_variable = {
+				name = parisher_var
+				add = 15
+			}
 		}
 	}
 
@@ -2320,6 +2765,26 @@ dvg_hbe.33 = { #Honorary Britannians
 				
 			}
 			add_modifier = modifier_recognized_legal_discrimination
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_beo_presbyterians
+			}
+			change_variable = {
+				name = presbyterian_var
+				add = 15
+			}
+	
+		}
+
+		if = {
+			limit = {
+				has_journal_entry = je_beo_parishers
+			}
+			change_variable = {
+				name = parisher_var
+				subtract = 20
+			}
 		}
 		
 	}
@@ -2354,8 +2819,46 @@ dvg_hbe.34 = { #Dealing with the Opps
 	option = {
 		name = dvg_hbe.34.a
 		
+		add_radicals = {
+			value = 0.15
+		}
 		
-		trigger_event = { id = dvg_hbe.35 days = 30 }
+	}
+
+	option = {
+		name = dvg_hbe.34.b
+
+		if = {
+			limit = {
+				has_journal_entry = je_beo_hbe
+			}
+			change_variable = {
+			name = new_hbe_var
+			subtract = 2
+			}
+		}
+		
+		
+	}
+
+	option = {
+		name = dvg_hbe.34.c
+		trigger = {
+			has_law = law_type:law_secret_police
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_beo_hbe
+			}
+			change_variable = {
+			name = new_hbe_var
+			add = 2
+			}
+		}
+
+		add_loyalists = {
+			value = 0.10
+		}
 	}
 }
 
@@ -2388,18 +2891,53 @@ dvg_hbe.35 = { #New Capital?
 		
 	}
 
-	immediate = {		
+	immediate = {
+		if = {
+			limit = {
+				any_scope_state = {
+				has_modifier = pendragon_modifier
+				is_capital = no
+				NOT = {
+					state_region = s:STATE_AVALON
+				}
+				}
+			}	
+			random_scope_state = {
+			limit = {
+				has_modifier = pendragon_modifier
+				is_capital = no
+				NOT = {
+					state_region = s:STATE_AVALON
+				}
+			}
+			save_scope_as = new_capital_state_scope
+
+			}
+		}
+
+		if = {
+			limit = {
+				NOT = {
+					any_scope_state = {
+					has_modifier = pendragon_modifier
+					}
+				}
+			}	
+			save_scope_as = new_capital_state_scope
+		}
+
 		random_scope_state = {
 			limit = {
 				is_capital = no
-				any_province = {
-					has_terrain = mountain
+				NOT = {
+					state_region = s:STATE_AVALON
 				}
 			}
 			state_region = {
 				save_scope_as = new_capital_state_scope
 			}
 		}
+		
 	}
 
 	option = {
@@ -2417,6 +2955,16 @@ dvg_hbe.35 = { #New Capital?
 		add_modifier = moved_capital_recently
 		
 		set_capital = scope:new_capital_state_scope
+
+		if = {
+			limit = {
+				has_journal_entry = je_beo_hbe
+			}
+			change_variable = {
+				name = new_hbe_var
+				add = 1
+			}
+		}
 	}
 }
 
@@ -2424,7 +2972,7 @@ dvg_hbe.36 = { #Failure of Communion
 	type = country_event
 	placement = ROOT
 	event_image = {
-		video = "gfx/event_pictures/unspecific_fire.bk2"
+		video = "gfx/event_pictures/unspecific_politicians_arguing.bk2"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
@@ -2490,6 +3038,7 @@ dvg_hbe.36 = { #Failure of Communion
 			value = 0.25
 		}
 		change_tag = HBE
+
 		trigger_event = {
 			id = dvg_hbe.37 
 			days = 14
@@ -2676,7 +3225,7 @@ dvg_hbe.40 = { #Choosing a Promised Land
 	type = country_event
 	placement = ROOT
 	event_image = {
-		video = "gfx/event_pictures/unspecific_fire.bk2"
+		video = "europenorthamerica_london_center"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
@@ -2785,6 +3334,8 @@ dvg_hbe.40 = { #Choosing a Promised Land
 	option = {
 		name = dvg_hbe.40.c
 		
-		
+		add_loyalists = {
+			value = 0.15
+		}
 	}
 }
