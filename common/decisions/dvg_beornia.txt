@@ -199,31 +199,11 @@ dvg_beo_lot_union = {
 		c:LOT = {has_law = law_type:law_monarchy }
 	}
 
-	potential = {
-		power_bloc ?= {
-			scope:target_country.power_bloc ?= this
-		}
-	}
-
     possible = {
 		has_technology_researched = pan-nationalism
-			c:LOT = {
-				is_at_war = no
-				
-				has_law = law_type:law_monarchy
-				
-				owner = {
-					is_ai = yes
-					
-					relations:root >= relations_threshold:amicable
-					
-					
-					
-					this.gdp < root.gdp
-				}
-				
+		c:LOT = {
+			is_in_same_power_bloc = c:BEO
 		}
-		
 	}
 		
 
@@ -260,25 +240,8 @@ dvg_lot_beo_union = {
     possible = {
 		has_technology_researched = pan-nationalism
 			c:BEO = {
-			
-			
-				market = {
-					owner = ROOT
-				}
-				is_at_war = no
-				has_law = law_type:law_monarchy
-				owner = {
-					is_ai = yes
-					
-					relations:root >= relations_threshold:amicable
-					
-					
-					this.gdp < root.gdp
-					
-				}
-				
-				
-		}
+				is_in_same_power_bloc = c:LOT
+			}
 		
 	}
 		
@@ -417,7 +380,9 @@ dvg_falklands_purchase = {
 			has_variable = falklands_purchase_var
 		}
 		c:SCA = {
-			owns_entire_state_region = STATE_SOUTH_ATLANTIC_ISLANDS
+			any_scope_state = {
+				state_region = s:STATE_SOUTH_ATLANTIC_ISLANDS 
+			}
 			is_subject = no
 			is_player = no
 		}
@@ -428,11 +393,29 @@ dvg_falklands_purchase = {
 		taking_loans = no
 		is_at_war = no
 		gold_reserves > 100000
-		c:SCA = {
-			relations:root >= 0
-			is_at_war = no
-			taking_loans = yes
-			
+		OR = {
+			has_global_variable = sca_beo_marriage
+			c:SCA = {
+				country_rank < rank_value:major_power
+			}
+			c:SCA = {
+				has_attitude = {
+					who = c:BEO
+					attitude = genial
+				}
+			}
+			c:SCA = {
+				has_attitude = {
+					who = c:BEO
+					attitude = cooperative
+				}
+			}
+			c:SCA = {
+				has_attitude = {
+					who = c:BEO
+					attitude = loyal
+				}
+			}
 		}
 	}
 
@@ -483,10 +466,6 @@ dvg_embrace_aimara = {
 	has_law = law_type:law_multicultural
 	
 		}
-	
-	
-	
-	
 	
 	when_taken = {
 		add_primary_culture = cu:aimara
@@ -597,68 +576,22 @@ dvg_beornia_aigle = {
 
 dvg_proclaim_hbe = {
 	is_shown = {
-		exists = c:BEO
-		this = c:BEO
-		NOT = { has_game_rule = plausible_formable_nations 
-			
-		}
+		exists = c:HBE
+		this = c:HBE
 		is_player = yes
-		
 	}
 
     possible = {
 		
-		OR = {
-		country_rank >= rank_value:major_power
-		custom_tooltip = {
-			text = dvg_beornia_primo_tt
 		NOT = {
-		any_country = {
-			country_is_in_south_america = yes 
-
-			country_rank > root.country_rank
+			has_journal_entry = je_ameriga_conquer
+			has_journal_entry = je_england_conquer
 		}
-		}
-		}
-		}
-		has_law = law_type:law_monarchy
-		has_law = law_type:law_autocracy
-		has_law = law_type:law_professional_army
-		
-		
-		
-		NOT = { has_law = law_type:law_multicultural
-				has_law = law_type:law_cultural_exclusion
-				has_law = law_type:law_total_separation
-				has_law = law_type:law_protected_speech
-				has_law = law_type:law_right_of_assembly
-				has_law = law_type:law_state_atheism
-		}
-		NOT = {
-		
-		has_journal_entry = je_cattle_barons_wrath
-				
-		has_journal_entry = je_anglo_summit
-		
-		}
-		custom_tooltip = {
-			text = not_lost_war_tt
-			NOR = {
-				has_variable = recently_lost_war
-				AND = {
-					has_variable = recently_had_war
-					NOT = {
-						has_variable = recently_won_war
-					}
-				}
-			}
-		}
-		
-	
 	}
 
     when_taken = {
-		trigger_event = { id = dvg_beornia.18 }
+		trigger_event = { id = dvg_hbe.40 }
+		
     }
 
 	ai_chance = {
