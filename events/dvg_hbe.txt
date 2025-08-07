@@ -721,20 +721,32 @@ dvg_hbe.9 = { #King Edward's Death
 			add_trait = bigoted
 
 		}
-		
+		if = {
+			limit = {
+				has_modifier = dvg_modifier_industrialists_bolstered
+			}
+			remove_modifier = dvg_modifier_industrialists_bolstered
+		}
 	}
 	
 	option = {
 		name = dvg_hbe.9.b
 		
 		add_radicals = {
-			value = 0.10
+			value = 0.15
+		}
+		
+		add_modifier = {
+			name = dvg_modifier_industrialists_bolstered
+			months = 12
+			is_decaying = yes
 		}
 
 		ruler = {
 			add_trait = ambitious
-
 		}
+
+		
 	}
 }
 
@@ -877,6 +889,8 @@ dvg_hbe.11 = { #New King's Marriage
 			save_scope_as = marriage_country
 
 		}
+
+		set_global_variable = sca_beo_marriage
 		
 		
 		trigger_event = {
@@ -1747,6 +1761,10 @@ dvg_hbe.23 = { #Primer on Parishers
 			name = parisher_var
 			add = 25
 		}
+		add_radicals = {
+			value = 0.25
+			interest_group = ig:ig_rural_folk
+		}
 
 		scope:scope_john_faith = {
 			kill_character = yes
@@ -1850,6 +1868,10 @@ dvg_hbe.24 = { #Return of John Faith
 
 		scope:scope_john_faith = {
 			kill_character = yes
+		}
+		add_radicals = {
+			value = 0.15
+			interest_group = ig:ig_armed_forces
 		}
 	}
 	
@@ -3019,14 +3041,17 @@ dvg_hbe.35 = { #New Capital?
 	duration = 3
 
 	trigger = {
-		any_scope_state = {
-			is_capital = yes
-			state_region = s:STATE_AVALON
-		}
-		NOT = {
-			has_modifier = moved_capital_recently
-		}
 		
+		any_scope_state = {
+			NOT = {
+				state_region = s:STATE_AVALON
+				AND = {
+					state_region = s:STATE_AVALON
+					has_modifier = ragnarok_modifier
+				}
+			}
+			
+		}
 	}
 
 	immediate = {
@@ -3048,7 +3073,9 @@ dvg_hbe.35 = { #New Capital?
 					state_region = s:STATE_AVALON
 				}
 			}
-			save_scope_as = new_capital_state_scope
+			state_region = {
+				save_scope_as = new_capital_state_scope
+			}
 
 			}
 		}
@@ -3061,20 +3088,23 @@ dvg_hbe.35 = { #New Capital?
 					}
 				}
 			}	
-			save_scope_as = new_capital_state_scope
-		}
-
-		random_scope_state = {
+			random_scope_state = {
 			limit = {
-				is_capital = no
-				NOT = {
+					NOT = {
+				state_region = s:STATE_AVALON
+						AND = {
 					state_region = s:STATE_AVALON
+					has_modifier = ragnarok_modifier
+						}
+					}
+				}
+				state_region = {
+					save_scope_as = new_capital_state_scope
 				}
 			}
-			state_region = {
-				save_scope_as = new_capital_state_scope
-			}
 		}
+
+		
 		
 	}
 
@@ -3083,8 +3113,14 @@ dvg_hbe.35 = { #New Capital?
 		default_option = yes
 
 		
-		
-		
+		add_loyalists = {
+			value = 0.15
+			interest_group = ig:ig_industrialists
+		}
+		add_radicals = {
+			value = 0.15
+			interest_group = ig:ig_rural_folk
+		}
 	}
 
 	option = {
@@ -3092,7 +3128,18 @@ dvg_hbe.35 = { #New Capital?
 
 		add_modifier = moved_capital_recently
 		
-		set_capital = scope:new_capital_state_scope
+		if = {
+			limit = {
+				owns_entire_state_region = STATE_GODWINSON
+			}
+			set_capital = STATE_GODWINSON
+		}
+		if = {
+			limit = {
+				exists = scope:new_capital_state_scope
+			}
+			set_capital = new_capital_state_scope
+		}
 
 		if = {
 			limit = {
@@ -3393,11 +3440,17 @@ dvg_hbe.40 = { #Choosing a Promised Land
 
 	option = {
 		name = dvg_hbe.40.a
+		trigger = {
+			NOT = {
+				has_variable = hbe_claim_ameriga
+			}
+		}
 
 		create_incident = {
 			country = ROOT
 			value = 20
 		}
+		set_variable = hbe_claim_ameriga
 		
 		every_state_region = {
 			limit = {
@@ -3416,11 +3469,17 @@ dvg_hbe.40 = { #Choosing a Promised Land
 
 	option = {
 		name = dvg_hbe.40.b
+		trigger = {
+			country_rank > rank_value:minor_power
+			NOT = {
+				has_variable = hbe_claim_britain
+			}
+		}
 		create_incident = {
 			country = scope:england_country
 			value = 20
 		}
-		
+		set_variable = hbe_claim_britain
 		every_state_region = {
 			limit = {
 				state_region = {
@@ -3471,6 +3530,7 @@ dvg_hbe.40 = { #Choosing a Promised Land
 
 	option = {
 		name = dvg_hbe.40.c
+		
 		
 		add_loyalists = {
 			value = 0.15

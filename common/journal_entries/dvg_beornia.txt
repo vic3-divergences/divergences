@@ -1216,13 +1216,16 @@ je_beo_parishers = {
     }
 	fail = {	
 		OR = {
-			var:parisher_var < 1 
-			custom_tooltip = {
+			AND = {
+				var:parisher_var < 1 
+				custom_tooltip = {
 				text = je_beo_hbe_goal
-
+				var:new_hbe_var > 9
 				exists = c:HBE
 				c:HBE = ROOT
-			}	
+				}	
+			}
+			
 		}
 	}
 
@@ -1331,9 +1334,11 @@ je_beo_presbyterians = {
 
 	complete = {
 
-		
-		
-		AND = {
+		OR = {
+			NOT = {
+			has_law = law_type:law_monarchy
+			}
+			AND = {
 			ig:ig_petty_bourgeoisie = {
 						ig_approval < 0
 			}
@@ -1344,9 +1349,12 @@ je_beo_presbyterians = {
 			ig:ig_intelligentsia = {
 						ig_approval < -5
 			}
+			}
+		
+			scope:journal_entry = {is_goal_complete = yes}
 		}
 		
-		scope:journal_entry = {is_goal_complete = yes}
+		
 		
 	}
 
@@ -1360,22 +1368,21 @@ je_beo_presbyterians = {
 		OR = {
 			AND = {
 			var:presbyterian_var < 1 
-			}
 			custom_tooltip = {
 				text = je_beo_hbe_goal
 				exists = c:HBE
 				c:HBE = ROOT
+				var:new_hbe_var > 9
 			}
+			}
+			
 		}
 	}
 	on_fail = {
-	
 		
 	}
 	invalid = {
-		NOT = {
-			has_law = law_type:law_monarchy
-		}
+		
 	}
 
 	goal_add_value = {
@@ -1443,14 +1450,28 @@ je_beo_hbe = {
 	}
 	scripted_button = pendragon_fortress_button
 	scripted_button = army_git_good_button
+	scripted_button = ragnarok_connection_button
+
 
 	complete = {
 		has_modifier = pendragon_modifier
-		has_modifier = dvg_modifier_armed_forces_bolstered
 
 		var:parisher_var < 1
 		var:presbyterian_var < 1
 		scope:journal_entry = { is_goal_complete = yes }
+
+		custom_tooltip = {
+			text = not_lost_war_tt
+			NOR = {
+				has_variable = recently_lost_war
+				AND = {
+					has_variable = recently_had_war
+					NOT = {
+						has_variable = recently_won_war
+					}
+				}
+			}
+		}
 
 	}
     on_complete = {
