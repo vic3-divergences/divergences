@@ -385,6 +385,11 @@ dvg_hbe.6 = {
 		add_journal_entry = {
 			type = je_world_conquer
 		}
+		add_modifier = {
+			name = dvg_continent_country
+			months = 240
+			is_decaying = yes
+		}
 		every_scope_state = {
 			limit = {
 				state_region = {
@@ -436,6 +441,16 @@ dvg_hbe.6 = {
 		
 		change_infamy = -1000
 		change_infamy = 25
+
+		add_journal_entry = {
+			type = je_amerigan_nation_building
+		}
+
+		add_modifier = {
+			name = dvg_continent_country
+			months = 240
+			is_decaying = yes
+		}
 
 		ai_chance = {
 			base = 30
@@ -978,10 +993,58 @@ dvg_hbe.12 = { #Pardoning Caroleans
 		}
 		
 		set_variable = pardon_issued
+
+		if = {
+			limit = {
+				has_journal_entry = je_beo_parishers
+			}
+			custom_tooltip = {
+
+				text = prorishers_tt
+				change_variable = {
+				name = parisher_var
+				subtract = 20
+				}
+
+			}
+		}
+
+		if = {
+			limit = {
+				has_journal_entry = je_beo_presbyterians
+			}
+			custom_tooltip = {
+				text = antiyterians_tt
+				change_variable = {
+				name = parisher_var
+				add = 10
+				}
+			}
+		}
+
+		add_radicals = {
+			value = 0.15
+			interest_group = ig:ig_industrialists
+		}
+
+		add_radicals = {
+			value = 0.15
+			interest_group = ig:ig_intelligentsia
+		}
 	}
 
 	option = {
 		name = dvg_hbe.12.b
+
+		add_radicals = {
+			value = 0.15
+			interest_group = ig:ig_rural_folk
+		}
+
+		add_radicals = {
+			value = 0.20
+			interest_group = ig:ig_landowners
+		}
 		
 		set_variable = pardon_issued
 	}
@@ -1129,9 +1192,15 @@ dvg_hbe.14 = { #Student Protests
 		default_option = yes
 		
 		add_radicals = {
-			value = 0.20
+			value = 0.15
 			pop_type = academics
 		}
+
+		add_radicals = {
+			value = 0.15
+			interest_group = ig:ig_intelligentsia
+		}
+
 		add_modifier = {
 			name = modifier_repressing_protests
 			months = 3
@@ -1143,16 +1212,43 @@ dvg_hbe.14 = { #Student Protests
 			}
 			add_modifier = modifier_arresting_students_building
 		}
+		if = {
+			limit = {
+				has_journal_entry = je_beo_parishers
+			}
+			custom_tooltip = {
+			text = prorishers_tt
+			change_variable = {
+			name = parisher_var
+			subtract = 10
+			}
+			}
+		}
+
+		
 	}
 
 	option = {
 		name = dvg_hbe.14.b
 
-
-		change_variable = {
+		add_radicals = {
+			value = 0.15
+			interest_group = ig:ig_armed_forces
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_beo_presbyterians
+			}
+			custom_tooltip = {
+			text = prosbyterians_tt
+			change_variable = {
 			name = presbyterian_var
 			add = 10
+			}
+			}
 		}
+
+		
 		add_modifier = {
 			name = pro_democracy_protests
 			months = 3
@@ -2084,10 +2180,14 @@ dvg_hbe.26 = { #Republican Preachers
 
 		every_scope_state = {
 			limit = {
-				total_urbanization > 2
+				any_scope_building = {
+				is_building_type = building_urban_center
+				level > 3
+				}
 			}
 			add_radicals_in_state = {
-				value = 0.20
+				value = 0.25
+				strata = lower
 			}
 		}
 		
@@ -2095,14 +2195,17 @@ dvg_hbe.26 = { #Republican Preachers
 			limit = {
 				has_journal_entry = je_beo_presbyterians
 			}
+			custom_tooltip = {
+			text = antiyterians_tt
 			change_variable = {
-				name = presbyterian_var
-				subtract = 15
+			name = presbyterian_var
+			add = 15
+			}
 			}
 		}
 	}
 
-	option = {
+	option = {   #Don't arrest
 		name = dvg_hbe.26.b
 		
 
@@ -2110,9 +2213,12 @@ dvg_hbe.26 = { #Republican Preachers
 			limit = {
 				has_journal_entry = je_beo_presbyterians
 			}
+			custom_tooltip = {
+			text = antiyterians_tt
 			change_variable = {
-				name = presbyterian_var
-				add = 15
+			name = presbyterian_var
+			add = 15
+			}
 			}
 		}
 	}
@@ -2127,10 +2233,14 @@ dvg_hbe.26 = { #Republican Preachers
 			limit = {
 				has_journal_entry = je_beo_presbyterians
 			}
-			change_variable = {
+			custom_tooltip = {
+				text = prosbyterians_tt
+				change_variable = {
 				name = presbyterian_var
 				subtract = 15
+				}
 			}
+			
 		}
 	}
 	
@@ -3345,6 +3455,8 @@ dvg_hbe.36 = { #Failure of Communion
 					has_ideology = ideology:ideology_moralist
 				}
 				remove_ideology = ideology_moralist
+				
+				add_ideology = ideology_honorary_britannian
 			}
 		}
 
@@ -3383,6 +3495,7 @@ dvg_hbe.37 = { #Violent HBE route
 	}
 
 	immediate = {		
+		
 		create_country = {
 			tag = BEO
 			origin = this
@@ -3682,7 +3795,7 @@ dvg_hbe.40 = { #Choosing a Promised Land
 					has_journal_entry = je_england_conquer
 				}
 			}
-			set_variable = england_set_to_conquer
+			set_variable = hbe_claim_britain
 			add_journal_entry = {
 				type = je_england_conquer
 			}
@@ -3697,5 +3810,62 @@ dvg_hbe.40 = { #Choosing a Promised Land
 		add_loyalists = {
 			value = 0.15
 		}
+	}
+}
+
+dvg_hbe.41 = { #Britain Taken
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = "gfx/event_pictures/unspecific_fire.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/military_parade"
+
+    icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	title = dvg_hbe.41.t
+	desc = dvg_hbe.41.d
+	flavor = dvg_hbe.41.f
+
+	duration = 3
+
+	trigger = {
+	}
+
+	immediate = {		
+	}
+
+	option = {
+		name = dvg_hbe.41.a
+		default_option = yes
+		
+
+		remove_primary_culture = cu:beornian
+		if = {
+			limit = {
+				NOT = {
+					country_has_primary_culture = cu:british
+				}
+			}
+			add_primary_culture = cu:british
+		}
+
+
+		add_loyalists = {
+			value = 0.15
+		}
+	}
+
+	option = {
+		name = dvg_hbe.41.b
+
+		add_journal_entry = {
+			type = je_world_conquer
+		}
+
+
+		
 	}
 }
