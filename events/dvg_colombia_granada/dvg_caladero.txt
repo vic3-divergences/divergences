@@ -43,7 +43,14 @@ dvg_caladero.1 = {
 			value = 0.3
 			culture = cu:caladeran
 		}
-		
+		add_journal_entry = {
+			type = je_colombian_war_of_independence_QUI
+		}
+		add_modifier = {
+			name = dvg_colonial_agitation
+			days = -1
+		}
+		add_liberty_desire = 20
 		trigger_event = { id = dvg_caladero.2 days = 180 }
 		trigger_event = { id = dvg_caladero.3 days = 360 }
 		
@@ -343,7 +350,11 @@ dvg_caladero.8 = {
 			has_variable = romanticos_accepted
 			has_variable = QUI_countercoup
 		}
-		NOT = { has_variable = dvg_martin_is_super_glad }
+		is_subject = no
+		NOR = { 
+			has_variable = dvg_martin_is_super_glad
+			has_variable = QUI_coalition_ended
+		}
 	}
 	
 	#¡Por Unidad!
@@ -822,10 +833,40 @@ dvg_caladero.17 = {
 			add_character_role = general
 		}
 		set_variable = dvg_martin_is_super_glad
-		c:SPA = {
-			remove_diplomatic_pact = {
-				country = c:QUI
-				type = protectorate
+		if = {
+			limit = { is_subject_type = subject_type_protectorate }
+			c:SPA = {
+				remove_diplomatic_pact = {
+					country = c:QUI
+					type = protectorate
+				}
+			}
+		}
+		else_if = {
+			limit = { is_subject_type = subject_type_dominion }
+			c:SPA = {
+				remove_diplomatic_pact = {
+					country = c:QUI
+					type = dominion
+				}
+			}
+		}
+		else_if = {
+			limit = { is_subject_type = subject_type_puppet }
+			c:SPA = {
+				remove_diplomatic_pact = {
+					country = c:QUI
+					type = puppet
+				}
+			}
+		}
+		else = {
+			limit = { is_subject_type = subject_type_colony }
+			c:SPA = {
+				remove_diplomatic_pact = {
+					country = c:QUI
+					type = colony
+				}
 			}
 		}
 		
@@ -854,9 +895,11 @@ dvg_caladero.18 = {
 	duration = 3
 
 	immediate = {
-		every_scope_character = {
-			limit = { has_variable = is_ballivian }
-			save_scope_as = scope_ballivian
+		c:GRA = {
+			every_scope_character = {
+				limit = { has_variable = is_ballivian }
+				save_scope_as = scope_ballivian
+			}
 		}
 		every_scope_character = {
 			limit = { has_variable = is_tupac }
@@ -877,7 +920,51 @@ dvg_caladero.18 = {
 			limit = { has_variable = romanticos_rejected }
 			set_variable = dvg_martin_is_super_glad
 		}
-		
+		scope:scope_ballivian = {
+			transfer_character = c:QUI
+			set_character_as_ruler = yes
+		}
+		scope:scope_tupac = {
+			set_character_as_ruler = no
+			add_character_role = general
+		}
+		if = {
+			limit = { is_subject_type = subject_type_protectorate }
+			c:SPA = {
+				remove_diplomatic_pact = {
+					country = c:QUI
+					type = protectorate
+				}
+			}
+		}
+		else_if = {
+			limit = { is_subject_type = subject_type_dominion }
+			c:SPA = {
+				remove_diplomatic_pact = {
+					country = c:QUI
+					type = dominion
+				}
+			}
+		}
+		else_if = {
+			limit = { is_subject_type = subject_type_puppet }
+			c:SPA = {
+				remove_diplomatic_pact = {
+					country = c:QUI
+					type = puppet
+				}
+			}
+		}
+		else = {
+			limit = { is_subject_type = subject_type_colony }
+			c:SPA = {
+				remove_diplomatic_pact = {
+					country = c:QUI
+					type = colony
+				}
+			}
+		}
+		remove_modifier = dvg_colonial_agitation
 		ai_chance = {
 			base = 0.5
 		}
@@ -888,10 +975,7 @@ dvg_caladero.18 = {
 		default_option = yes
 		
 		scope:scope_ballivian = { kill_character = yes }
-		scope:scope_tupac = {
-			set_character_as_ruler = yes
-		}
-		
+		remove_modifier = dvg_colonial_agitation
 		ai_chance = {
 			base = 0.5
 		}
@@ -982,6 +1066,7 @@ dvg_caladero.20 = {
 				type = colony
 			}
 		}
+		remove_modifier = dvg_colonial_agitation
 		
 		hidden_effect = {
 			set_country_type = colonial
@@ -1217,7 +1302,7 @@ dvg_caladero.25 = {
 			create_diplomatic_play = {
 				name = caladeran_war_of_independence
 				target_country = c:SPA
-				war = yes
+				war = no
 				type = dp_independence
 				
 				add_war_goal = {
