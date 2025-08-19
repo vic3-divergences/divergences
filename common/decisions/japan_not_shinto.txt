@@ -52,7 +52,7 @@
 	}
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
@@ -83,7 +83,7 @@ dvg_ai_westernize_japan = {
 	}
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
@@ -104,34 +104,92 @@ dvg_high_castle = {
 		}
 		NOT = { has_game_rule = plausible_formable_nations }
 		has_technology_researched = pan-nationalism
-		ruler = {  
+		NOT = {
+			any_interest_group = {
+				is_powerful = yes
+				is_in_government = yes
+				has_ideology = ideology:ideology_pacifist
+			}
+		}
+		
+		any_interest_group = {
+			is_powerful = yes
+			is_in_government = yes
 			OR = {
 				has_ideology = ideology:ideology_fascist
+				has_ideology = ideology:ideology_colonialist
 				has_ideology = ideology:ideology_jingoist_leader
+				has_ideology = ideology:ideology_jingoist
 			}
 		}
 	}
 
 	when_taken = {
 		set_variable = that_castle_do_be_high_var
+		save_temporary_scope_value_as = {
+			name = war_reparations_amount
+			value = {
+				value = income
+				multiply = define:NDiplomacy|DEFAULT_WAR_REPARATIONS_MONEY_TRANSFER
+			}
+		}
+
 		create_diplomatic_play = {
 				
-				target_country = c:QIN
-				
-				war = yes
-				
-				type = dp_annex_war
-				
+			target_country = c:QIN
+			
+			war = yes
+			
+			type = dp_annex_war
+			
 				add_war_goal = {
-					holder = c:QIN
-					type = war_reparations
-					target_country = c:JAP
+				holder = c:QIN
+				target_country = c:JAP
+				type = enforce_treaty_article
+				article = {
+					article = money_transfer
+					source_country = c:JAP
+					target_country = c:QIN
+					inputs = {
+						{ quantity = scope:war_reparations_amount }
+					}
 				}
-				
 			}
+		}
 	}
 
 	ai_chance = {
-		base = 100
+		value = 100
+	}
+}
+
+dvg_embrace_ainu = {
+	is_shown = {
+		exists = c:JAP
+		c:JAP = THIS
+		any_scope_state = {
+			state_region = {
+				is_homeland = cu:ainu
+			}
+		}
+		NOT = {
+			country_has_primary_culture = cu:ainu
+		}
+	}
+
+	possible = {
+		cultural_acceptance_base = {
+			target = cu:ainu
+			value > acceptance_status_3
+		}
+	}
+
+	when_taken = {
+		add_primary_culture = cu:ainu
+		
+	}
+
+	ai_chance = {
+		value = 100
 	}
 }

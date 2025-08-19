@@ -3,28 +3,54 @@
 
 	group = je_group_internal_affairs
 
-	complete = {
-		custom_tooltip = {
-			text =  dvg_yaluo_reform_tt
-			OR = {
-				AND = {	
-					scope:journal_entry = { is_goal_complete = yes }
-					has_technology_researched = nationalism
-				}
-				
-				has_war_with = c:MJN
-				any_country = {
-				is_revolutionary = yes
-				country_definition = root.country_definition
-				owns_entire_state_region = STATE_XINXIANG	
+	immediate = {
+		c:MJN = {
+			save_scope_as = scope_mianjin
+		}
+		ig:ig_landowners = {
+			save_scope_as = scope_gentry
+		}
+		random_scope_state = {
+			limit = {
+				state_region = s:STATE_XINXIANG
+				owner = prev
 			}
+			save_scope_as = scope_xinxiang
+		}
+		c:YLO = {
+			save_scope_as = scope_yaluo
+		}
+	}
+
+	complete = {
+		OR = {
+			custom_tooltip = {
+				text =  dvg_yaluo_reform_2_tt
+				any_country = {
+					is_revolutionary = yes
+					country_definition = root.country_definition
+					owns_entire_state_region = STATE_XINXIANG
+				}
+			}
+			AND = {
+				custom_tooltip = {
+					text = dvg_yaluo_reform_1_tt
+					scope:journal_entry = { is_goal_complete = yes }
+				}
+				OR = {
+					has_technology_researched = nationalism
+					is_diplomatic_play_enemy_of = c:MJN
+				}
 			}
 		}
 		
 	}
 
 	fail = {
-		var:dvg_yaluo_reform_variable_var = 0
+		custom_tooltip = {
+			text = dvg_yaluo_reform_fail_tt
+			var:dvg_yaluo_reform_variable_var = 0
+		}
 	}
 	
 	on_monthly_pulse = {
@@ -36,25 +62,13 @@
 
 		if = {
 			limit = {
-				exists = c:MJN
-				NOT = {
-					exists = c:MJN
-				}
+				is_diplomatic_play_enemy_of = c:MJN
 			}
 			trigger_event = {
 				id = dvg_zhourao.6 # The Northern Hui Defect!
 			}
-			every_country = {
-				limit = {
-				is_revolutionary = yes
-				country_definition = root.country_definition
-				owns_entire_state_region = STATE_XINXIANG
-				country_has_primary_culture = cu:zhourao
-				}
-				c:MJN = { annex = prev }
-			}
 		}
-		if = {
+		else_if = {
 			limit = {
 				exists = c:TPG
 				any_neighbouring_state = {
@@ -66,8 +80,28 @@
 			}
 			
 		}
+
+		else = {
+			trigger_event = {
+				id = dvg_zhourao.21 # Xinxiang Declares independence
+			}
+		}
 		
 
+	}
+	event_outcome_completed_desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = dvg_event_effects_zhourao.6_tt
+			}
+		}
+	}
+	event_outcome_failed_desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = dvg_event_effects_zhourao.8_tt
+			}
+		}
 	}
 
 	on_fail = {
@@ -84,9 +118,20 @@
 		add = 8
 	}
 	invalid = {
-		NOT = {
-			exists = c:MJN
+		OR = {
+			NOT = {
+				exists = c:MJN
+			}
+			AND = {
+				exists = c:XXG
+				c:XXG = {
+					is_subject_of = ROOT
+				}
+			}
+			
 		}
+		
+
 	}
 
 	progressbar = yes
@@ -118,6 +163,7 @@ je_one_kongsi = {
 	}
 	on_monthly_pulse = {
 		random_events = {
+			10 = 0
 			2 = dvg_zhourao.16
 			2 = dvg_zhourao.14
 
@@ -129,11 +175,12 @@ je_one_kongsi = {
 		OR = {
 			AND = {
 				exists = c:ZHR
-			c:ZHR = ROOT	
+				c:ZHR = ROOT	
 			}
 			AND = {
 				
-				scope:journal_entry = { is_goal_complete = yes
+				scope:journal_entry = { 
+					is_goal_complete = yes
 				
 				}
 				NOT = {
@@ -483,10 +530,10 @@ je_zhrzsa_luoxi_will = {
 	should_be_pinned_by_default = yes
 }
 
-je_zhr_reconsolidate_control = {
+je_zhourao_destiny = {
 	icon = "gfx/interface/icons/event_icons/event_zhourao_ink.dds"
 	
-	group = je_group_internal_affairs
+	group = je_group_foreign_affairs
 	
 	complete = {
 		owns_entire_state_region = STATE_NOONGAR
@@ -512,9 +559,20 @@ je_zhr_reconsolidate_control = {
 	}
 
     on_complete = {
+		every_scope_state = {
+			limit = {
+				region = sr:region_zhourao
+			}
+			state_region = {
+				add_homeland = cu:zhourao
+			}
+		}
+		
 	}
 	
     on_fail = {
+
+
 	}
 	
 	weight = 100
@@ -822,6 +880,11 @@ je_red_prince = {
 		trigger_event = {
 			id = dvg_zhourao.719
 		}
+	}
+
+	on_fail = {
+
+		
 	}
 
 
@@ -1200,7 +1263,10 @@ je_zhourao_truce = {
 		country_has_primary_culture = cu:zhourao
 	}
 	possible = {
-		has_variable = dvg_zhourao_convention_held
+		custom_tooltip = {
+			text = je_zhourao_truce_potential_tt
+			has_variable = dvg_zhourao_convention_held
+		}
 	}
 
 	on_monthly_pulse = {
@@ -1251,8 +1317,18 @@ je_xijiao_takoever = {
 		OR = {
 			country_has_state_religion = rel:catholic
 			country_has_state_religion = rel:protestant
+			country_has_state_religion = rel:orthodox
+			country_has_state_religion = rel:oriental_orthodox
 		}
-		country_has_primary_culture = cu:zhourao
+		country_is_in_east_asia = no
+		OR = {
+			any_primary_culture = {
+				has_discrimination_trait = han_chinese
+			}
+			any_primary_culture = {
+				has_discrimination_trait = sinosphere
+			}
+		}
 	}
 	possible = {
 		custom_tooltip = {
@@ -1260,6 +1336,14 @@ je_xijiao_takoever = {
 			any_scope_pop = {
 				religion = rel:taiping
 			}
+		}
+		radical_fraction = {
+			value > 0.40
+		}
+		any_scope_pop = {
+			culture = cu:hakka
+			religion = rel:taiping
+			pop_acceptance > 3 
 		}
 		
 	}
@@ -1277,14 +1361,36 @@ je_xijiao_takoever = {
 			}
 			is_powerful = yes
 		}
+		
 		AND = {
 			has_law = law_type:law_theocracy
 			any_scope_state = {
 				is_capital = yes
 				religion_percent_state = {
 					target = rel:taiping
-					value >= 0.5
+					value > 0.5
 				}
+			}
+			religion_percent_country = {
+				target = rel:taiping
+				value > 0.30
+			}
+		}
+		AND = {
+			OR = {
+				has_law = law_type:law_freedom_of_conscience
+				has_law = law_type:law_state_religion
+			}
+			any_scope_state = {
+				is_capital = yes
+				religion_percent_state = {
+					target = rel:taiping
+					value > 0.80
+				}
+			}
+			religion_percent_country = {
+				target = rel:taiping
+				value > 0.67
 			}
 		}
 		}
@@ -1339,4 +1445,131 @@ je_xijiao_takoever = {
 	
 	weight = 100
 	should_be_pinned_by_default = yes
+}
+
+
+je_mianjin_oligarchy = {
+	icon = "gfx/interface/icons/event_icons/event_zhourao.dds"
+	
+	group = je_group_internal_affairs
+
+	is_shown_when_inactive = {
+		
+	}
+	possible = {
+		
+	}
+
+	immediate = {
+		c:MJN = {
+			save_scope_as = scope_mianjin
+		}
+		c:YLN = {
+			save_scope_as = scope_yaluo
+		}
+	}
+
+	on_monthly_pulse = {
+		effect = {
+
+			if = {
+				limit = {
+					authority > 350
+					root.average_sol > 8
+					is_at_war = no
+				}
+				change_variable = {
+					name = mjn_var
+					add = 1
+				}
+			}
+
+			if = {
+				limit = {
+					radical_fraction = {
+						value > 0.55
+					}
+				}
+				change_variable = {
+					name = mjn_var
+					subtract = 1
+				}
+			}
+
+		}
+		
+		
+	}
+	
+	complete = {
+		OR = {
+			any_country = {
+					count = 1
+					country_has_primary_culture = cu:zhourao
+			}
+			AND = {
+				authority > 350
+				root.average_sol > 8
+				is_at_war = no
+				scope:journal_entry = {
+					is_goal_complete = yes
+				}
+			}
+		}
+		
+	}
+	
+	
+
+	on_complete = {
+		trigger_event = {
+			id = dvg_zhourao.506
+		}
+	}
+	fail = {
+		has_technology_researched = nationalism
+		OR = {
+			radical_fraction = {
+				value > 0.55
+			}
+			ig:ig_intelligentsia = {
+				is_in_government = yes
+				is_powerful = yes
+			}
+			ig:ig_trade_unions = {
+				is_in_government = yes
+				is_powerful = yes
+			}
+		}
+		
+	}
+	
+    on_fail = {
+		trigger_event = {
+			id = dvg_zhourao.507
+		}
+	}
+	current_value = {
+		value = root.var:mjn_var
+	}
+	progressbar = yes
+	goal_add_value = 88
+	
+	weight = 100
+	should_be_pinned_by_default = yes
+
+	event_outcome_completed_desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = dvg_event_effects_zhourao.506_tt
+			}
+		}
+	}
+	event_outcome_failed_desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = dvg_event_effects_zhourao.507_tt
+			}
+		}
+	}
 }

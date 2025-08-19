@@ -23,7 +23,7 @@ dvg_nov_non_russians.1 = {
 	trigger = {
 		exists = c:VYA
 		this = c:VYA
-		year = 1840
+		year <= 1840
 		NOT = { has_variable = VYA_nonrussians }
 		NOT = { has_variable = VYA_nonrussians_end }
 	}
@@ -135,7 +135,7 @@ dvg_nov_non_russians.3 = {
 		remove_modifier = dvg_yasak
 		add_modifier = { 
 			name = dvg_conscription_law
-			months = very_long_modifier_time
+			days = very_long_modifier_time
 		}
 
 		change_relations = { 
@@ -382,14 +382,31 @@ dvg_nov_non_russians.7 = {
 
 		set_variable = nov_udm_war
 
+		save_temporary_scope_value_as = {
+			name = war_reparations_amount
+			value = {
+				value = income
+				multiply = define:NDiplomacy|DEFAULT_WAR_REPARATIONS_MONEY_TRANSFER
+			}
+		}
 		create_diplomatic_play = {
-			target_country = c:UDM
+			target_country = c:NOV
 			war = yes
 			type = dp_annex_war
+
 			
 			add_war_goal = {
 				holder = c:UDM
-				type = war_reparations
+				target_country = ROOT
+				type = enforce_treaty_article
+				article = {
+					article = money_transfer
+					source_country = ROOT
+					target_country = c:UDM
+					inputs = {
+						{ quantity = scope:war_reparations_amount }
+					}
+				}
 			}
 		}
 

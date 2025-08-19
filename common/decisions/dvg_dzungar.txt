@@ -68,7 +68,7 @@
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
@@ -122,7 +122,7 @@ dvg_dzu_tib_union = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
@@ -181,6 +181,14 @@ dvg_annex_siberia = {
 			limit = {
 				exists = c:SBR
 			}
+			save_temporary_scope_value_as = {
+				name = war_reparations_amount
+				value = {
+					value = income
+					multiply = define:NDiplomacy|DEFAULT_WAR_REPARATIONS_MONEY_TRANSFER
+				}
+			}
+			
 			create_diplomatic_play = {
 				type = dp_annex_war
 				target_country = c:SBR
@@ -188,7 +196,15 @@ dvg_annex_siberia = {
 				add_war_goal = {
 					holder = c:SBR
 					target_country = ROOT
-					type = war_reparations
+					type = enforce_treaty_article
+					article = {
+						article = money_transfer
+						source_country = ROOT
+						target_country = c:SBR
+						inputs = {
+							{ quantity = scope:war_reparations_amount }
+						}
+					}
 				}
 			}
 		}
@@ -200,7 +216,7 @@ dvg_annex_siberia = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 dvg_annex_yakutia = {
@@ -259,9 +275,10 @@ dvg_annex_yakutia = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
+
 dvg_tib_dzu_union = {
 	is_shown = {
 	
@@ -311,8 +328,51 @@ dvg_tib_dzu_union = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
 
+dvg_accept_mizrahi = {
+	is_shown = {
+		OR = {
+			country_is_in_middle_east = yes
+			country_is_in_central_asia = yes
+		}
+		any_scope_state = {
+			state_region = {
+				is_homeland = cu:mizrahi
+			}
+		}
+		any_scope_pop = {
+			culture = cu:mizrahi
+		}
+		OR = {
+			scope:state_religion_scope = {
+				has_discrimination_trait = muslim
+			}
+			scope:state_religion_scope = {
+				has_discrimination_trait = christian
+			}
+			scope:state_religion_scope = {
+				has_discrimination_trait = jewish
+			}
+		}
+	}
+
+    possible = {
+		cultural_acceptance_base = {
+			target = cu:mizrahi
+			value > acceptance_status_3
+		}
+		has_law = law_type:law_cultural_exclusion
+	}
+
+    when_taken = {
+		add_primary_culture = cu:mizrahi
+    }
+
+	ai_chance = {
+		value = 100
+	}
+}

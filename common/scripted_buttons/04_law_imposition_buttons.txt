@@ -1,32 +1,36 @@
 ﻿button_implement_law_imposition = {
 	name = "button_implement_law_imposition"
 	desc = "button_implement_law_imposition_desc"
-	
+
 	visible = {
 		scope:journal_entry = {
 			NOT = { has_variable = has_been_abandoned }
 		}
+		#OR = {
+		has_journal_entry = je_law_imposition
+		#	has_journal_entry = je_british_dictate_law
+		#}
 	}
-	
+
 	possible = {
 		custom_tooltip = {
 			text = law_imposition_already_enacting_law
-			NOT = { currently_enacting_law = imposed_law }
-		}	
+			NOT = { currently_enacting_law ?= imposed_law }
+		}
 	}
-	
+
 	effect = {
 		if = {
-			limit = { 
-				NOT = { currently_enacting_law = imposed_law }
-				enacting_any_law = yes 
+			limit = {
+				NOT = { currently_enacting_law ?= imposed_law }
+				enacting_any_law = yes
 			}
 			cancel_enactment = yes
 		}
 		start_enactment = imposed_law.type
 		add_enactment_modifier = {
 			name = agreeable_to_imposition
-		}	
+		}
 		hidden_effect = {
 			scope:journal_entry = {
 				if = {
@@ -38,67 +42,71 @@
 				}
 			}
 		}
-	}  
+	}
 
 	ai_chance = {
-		base = 0
-		
-		modifier = {
-			trigger = { "enactment_chance_for_law(imposed_law.type)" > 0.1 }
+		value = 0
+
+		if = {
+			limit = { "enactment_chance_for_law(imposed_law.type)" > 0.1 }
 			add = 10
 		}
-		
-		modifier = {
-			trigger = { "enactment_chance_for_law(imposed_law.type)" > 0.2 }
+
+		if = {
+			limit = { "enactment_chance_for_law(imposed_law.type)" > 0.2 }
 			add = 20
-		}	
-		
-		modifier = {
-			trigger = { "enactment_chance_for_law(imposed_law.type)" > 0.3 }
+		}
+
+		if = {
+			limit = { "enactment_chance_for_law(imposed_law.type)" > 0.3 }
 			add = 30
 		}
 
-		modifier = {
-			trigger = { "enactment_chance_for_law(imposed_law.type)" > 0.4 }
+		if = {
+			limit = { "enactment_chance_for_law(imposed_law.type)" > 0.4 }
 			add = 40
-		}		
-		
-		modifier = {
-			trigger = { "enactment_chance_for_law(imposed_law.type)" > 0.5 }
+		}
+
+		if = {
+			limit = { "enactment_chance_for_law(imposed_law.type)" > 0.5 }
 			add = 50
-		}					
-		
-		modifier = {
-			trigger = { 
-				is_subject = yes 
+		}
+
+		if = {
+			limit = {
+				is_subject = yes
 				liberty_desire > 50
 			}
 			add = -25
 		}
-		
-		modifier = {
-			trigger = { 
-				is_subject = yes 
+
+		if = {
+			limit = {
+				is_subject = yes
 				liberty_desire > 75
 			}
 			add = -25
-		}		
+		}
 	}
 }
 
 button_refuse_law_imposition = {
 	name = "button_refuse_law_imposition"
 	desc = "button_refuse_law_imposition_desc"
-	
+
 	visible = {
 		scope:journal_entry = {
 			NOT = { has_variable = has_been_abandoned }
 		}
+		#OR = {
+		has_journal_entry = je_law_imposition
+		#	has_journal_entry = je_british_dictate_law
+		#}
 	}
-	
+
 	effect = {
-		if = { 
-			limit = { currently_enacting_law = imposed_law }
+		if = {
+			limit = { currently_enacting_law ?= imposed_law }
 			cancel_enactment = yes
 		}
 		imposed_law = {
@@ -113,8 +121,8 @@ button_refuse_law_imposition = {
 			add_liberty_desire = 10
 		}
 		else_if = {
-			limit = { 
-				power_bloc ?= scope:foreign_imposition_country.power_bloc 
+			limit = {
+				power_bloc ?= scope:foreign_imposition_country.power_bloc
 			}
 			power_bloc = {
 				add_cohesion_percent = -0.10
@@ -142,42 +150,42 @@ button_refuse_law_imposition = {
 				}
 			}
 		}
-	}  
+	}
 
 	ai_chance = {
-		base = -25
-		modifier = {
-			trigger = {
-				NOT = { currently_enacting_law = imposed_law }
+		value = -25
+		if = {
+			limit = {
+				NOT = { currently_enacting_law ?= imposed_law }
 			}
 			add = 15
 		}
-		modifier = {
-			trigger = {
+		if = {
+			limit = {
 				scope:journal_entry = {
 					journal_entry_age > 500 # days
 				}
 			}
 			add = 10
-		}		
-		modifier = {
-			trigger = {
+		}
+		if = {
+			limit = {
 				scope:journal_entry = {
 					journal_entry_age > 1000 # days
 				}
 			}
 			add = 10
 		}
-		modifier = {
-			trigger = {
+		if = {
+			limit = {
 				scope:journal_entry = {
 					journal_entry_age > 1500 # days
 				}
 			}
 			add = 10
 		}
-		modifier = {
-			trigger = {
+		if = {
+			limit = {
 				scope:journal_entry = {
 					journal_entry_age > 2000 # days
 				}

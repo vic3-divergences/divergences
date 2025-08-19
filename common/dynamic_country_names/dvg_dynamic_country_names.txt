@@ -1357,20 +1357,62 @@ GRA = {
 		priority = 100
 		
 		trigger = {
-			exists = c:SPA
 			OR = {
-				c:SPA = {
-					has_diplomatic_pact = {
-						who = c:GRA
-						type = puppet
-						is_initiator = yes
+				AND = {
+					exists = c:SPA
+					OR = {
+						c:SPA = {
+							has_diplomatic_pact = {
+								who = c:GRA
+								type = puppet
+								is_initiator = yes
+							}
+						}
+						c:SPA = {
+							has_diplomatic_pact = {
+								who = c:GRA
+								type = colony
+								is_initiator = yes
+							}
+						}
 					}
 				}
-				c:SPA = {
-					has_diplomatic_pact = {
-						who = c:GRA
-						type = colony
-						is_initiator = yes
+				AND = {
+					exists = c:IBE
+					OR = {
+						c:IBE = {
+							has_diplomatic_pact = {
+								who = c:GRA
+								type = puppet
+								is_initiator = yes
+							}
+						}
+						c:IBE = {
+							has_diplomatic_pact = {
+								who = c:GRA
+								type = colony
+								is_initiator = yes
+							}
+						}
+					}
+				}
+				AND = {
+					exists = c:SPC
+					OR = {
+						c:SPC = {
+							has_diplomatic_pact = {
+								who = c:GRA
+								type = puppet
+								is_initiator = yes
+							}
+						}
+						c:SPC = {
+							has_diplomatic_pact = {
+								who = c:GRA
+								type = colony
+								is_initiator = yes
+							}
+						}
 					}
 				}
 			}
@@ -1385,21 +1427,66 @@ GRA = {
 		priority = 100
 		
 		trigger = {
-			exists = c:SPA
 			OR = {
-				c:SPA = {
-					has_diplomatic_pact = {
-						who = c:GRA
-						type = dominion
-						is_initiator = yes
+				AND = {
+					exists = c:SPA
+					OR = {
+						c:SPA = {
+							has_diplomatic_pact = {
+								who = c:GRA
+								type = dominion
+								is_initiator = yes
+							}
+						}
+						c:SPA = {
+							has_diplomatic_pact = {
+								who = c:GRA
+								type = protectorate
+								is_initiator = yes
+							}
+						}
 					}
-					has_diplomatic_pact = {
-						who = c:GRA
-						type = protectorate
-						is_initiator = yes
+				}
+				AND = {
+					exists = c:IBE
+					OR = {
+						c:IBE = {
+							has_diplomatic_pact = {
+								who = c:GRA
+								type = dominion
+								is_initiator = yes
+							}
+						}
+						c:IBE = {
+							has_diplomatic_pact = {
+								who = c:GRA
+								type = protectorate
+								is_initiator = yes
+							}
+						}
+					}
+				}
+				AND = {
+					exists = c:SPC
+					OR = {
+						c:SPC = {
+							has_diplomatic_pact = {
+								who = c:GRA
+								type = dominion
+								is_initiator = yes
+							}
+						}
+						c:SPC = {
+							has_diplomatic_pact = {
+								who = c:GRA
+								type = protectorate
+								is_initiator = yes
+							}
+						}
 					}
 				}
 			}
+			
 		}
 	}
 }
@@ -1413,14 +1500,26 @@ QUI = {
 		priority = 100
 		
 		trigger = {
-			exists = c:SPA
-			c:QUI = {
-				is_subject_of = c:SPA
+			exists = scope:actor
+			OR = {
+				AND = {
+					exists = c:SPA
+					scope:actor = { is_subject_of = c:SPA }
+				}
+				AND = {
+					exists = c:IBE
+					scope:actor = { is_subject_of = c:IBE }
+				}
+				AND = {
+					exists = c:SPC
+					scope:actor = { is_subject_of = c:SPC }
+				}
 			}
 		}
 	}
 	dynamic_country_name = {
 		name = dyn_c_quito
+		adjective = dyn_c_quito_adj
 		
 		is_main_tag_only = yes
 		priority = 10
@@ -1449,6 +1548,7 @@ QUI = {
 	}
 	dynamic_country_name = {
 		name = dyn_c_granada_toledo
+		adjective = dyn_c_granada_toledo_adj
 		
 		is_main_tag_only = yes
 		priority = 10
@@ -1457,6 +1557,7 @@ QUI = {
 			exists = scope:actor
 			scope:actor = { 
 				has_variable = dvg_martin_is_super_glad
+				is_subject = no
 			}
 		}
 	}
@@ -1488,6 +1589,17 @@ ADS = { #Andesia
 			scope:actor ?= { has_law = law_type:law_monarchy }
 		}
 	}
+	dynamic_country_name = {
+		name = dyn_c_viceroyalty_of_caladero
+		adjective = dyn_c_viceroyalty_of_caladero_adj
+		
+		is_main_tag_only = yes
+		priority = 100
+		
+		trigger = {
+			coa_def_spanish_ensign_trigger = yes
+		}
+	}
 }
 
 QUL = {
@@ -1501,6 +1613,7 @@ QUL = {
 		trigger = {
 			exists = scope:actor
 			scope:actor = { has_law = law_type:law_monarchy}
+			is_subject = no
 		}
 	}
 	dynamic_country_name = {
@@ -1512,55 +1625,11 @@ QUL = {
 		
 		trigger = {
 			OR = {
-				exists = c:SPA
+				coa_def_spanish_ensign_trigger = yes
 				AND = {
 					exists = c:ADS
 					c:ADS = { has_law = law_type:law_monarchy }
-				}
-			}
-			
-			OR = {
-				c:SPA = {
-					has_diplomatic_pact = {
-						who = c:QUL
-						type = protectorate
-						is_initiator = yes
-					}
-				}
-				c:SPA = {
-					has_diplomatic_pact = {
-						who = c:QUL
-						type = puppet
-						is_initiator = yes
-					}
-				}
-				c:SPA = {
-					has_diplomatic_pact = {
-						who = c:QUL
-						type = dominion
-						is_initiator = yes
-					}
-				}
-				c:ADS = {
-					has_diplomatic_pact = {
-						who = c:QUL
-						type = protectorate
-						is_initiator = yes
-					}
-				}
-				c:ADS = {
-					has_diplomatic_pact = {
-						who = c:QUL
-						type = puppet
-						is_initiator = yes
-					}
-				}
-				c:ADS = {
-					has_diplomatic_pact = {
-						who = c:QUL
-						type = dominion
-						is_initiator = yes
-					}
+					c:QUL = { is_subject_of = c:ADS }
 				}
 			}
 		}
@@ -1576,10 +1645,7 @@ GCO = { # Gran Colombia
 		priority = 100
 		
 		trigger = {
-			exists = c:SPA
-			c:GCO = {
-				is_subject_of = c:SPA
-			}
+			coa_def_spanish_ensign_trigger = yes
 			NOT = {
 				c:GCO = { has_modifier = dvg_spanish_independence }
 			}
@@ -1588,7 +1654,7 @@ GCO = { # Gran Colombia
 
 	dynamic_country_name = {
 		name = dyn_c_gran_colombia_communist
-		adjective = dyn_c_gran_colombia_communist_adj
+		adjective = GCO_ADJ
 		
 		is_main_tag_only = yes
 		priority = 1
@@ -1618,7 +1684,7 @@ GCO = { # Gran Colombia
 	
 	dynamic_country_name = {
 		name = dyn_c_gran_colombia_monarchy
-		adjective = dyn_c_gran_colombia_monarchy_adj
+		adjective = GCO_ADJ
 		
 		is_main_tag_only = yes
 		priority = 1
@@ -1627,12 +1693,13 @@ GCO = { # Gran Colombia
 			exists = scope:actor
 			scope:actor = { 
 				coa_def_monarchy_flag_trigger = yes
+				NOT = { is_subject = yes }
 			}
 		}
 	}	
 	dynamic_country_name = {
 		name = dyn_c_gran_colombia_alliance
-		adjective = dyn_c_gran_colombia_alliance_adj
+		adjective = GCO_ADJ
 		
 		is_main_tag_only = yes
 		priority = 100
@@ -1649,36 +1716,31 @@ GCO = { # Gran Colombia
 UCA = {
 	dynamic_country_name = {
 		name = dyn_c_viceroyalty_of_salvadore
+		adjective = UCA_ADJ
 		
 		is_main_tag_only = yes
 		priority = 100
 		
 		trigger = {
-			exists = c:SPA
-			c:UCA = {
-				is_subject_of = c:SPA
-			}
+			coa_def_spanish_ensign_trigger = yes
 		}
 	}
 }
 CUB = {
 	dynamic_country_name = {
 		name = dyn_c_captaincy_general_of_cuba
-		adjective = dyn_c_captaincy_general_of_cuba_adj
+		adjective = CUB_ADJ
 		
 		is_main_tag_only = yes
 		priority = 100
 		
 		trigger = {
-			exists = c:SPA
-			c:CUB = {
-				is_subject_of = c:SPA
-			}
+			coa_def_spanish_ensign_trigger = yes
 		}
 	}
 	dynamic_country_name = {
 		name = dyn_c_colombian_republic_of_cuba
-		adjective = dyn_c_colombian_republic_of_cuba_adj
+		adjective = CUB_ADJ
 		
 		is_main_tag_only = yes
 		priority = 100
@@ -1694,15 +1756,13 @@ CUB = {
 LUS = {
 	dynamic_country_name = {
 		name = dyn_c_viceroyalty_of_new_portugal
+		adjective = dyn_c_viceroyalty_of_new_portugal_adj
 		
 		is_main_tag_only = yes
 		priority = 100
 		
 		trigger = {
-			exists = c:SPA
-			c:LUS = {
-				is_subject_of = c:SPA
-			}
+			coa_def_spanish_ensign_trigger = yes
 		}
 	}
 }
@@ -1710,15 +1770,13 @@ LUS = {
 MEX = {
 	dynamic_country_name = {
 		name = dyn_c_viceroyalty_of_new_spain
+		adjective = dyn_c_viceroyalty_of_new_spain_adj
 		
 		is_main_tag_only = yes
 		priority = 100
 		
 		trigger = {
-			exists = c:SPA
-			c:MEX = {
-				is_subject_of = c:SPA
-			}
+			coa_def_spanish_ensign_trigger = yes
 		}
 	}
 }
@@ -1784,10 +1842,7 @@ TWT = {
 		priority = 100
 		
 		trigger = {
-			exists = c:SPA
-			c:TWT = {
-				is_subject_of = c:SPA
-			}
+			coa_def_spanish_ensign_trigger = yes
 		}
 	}
 }
@@ -1898,21 +1953,65 @@ MOR = {
 		priority = 0
 		
 		trigger = {
-			exists = c:SPA
-			exists = c:MOR
 			OR = {
-				c:SPA = {
-					has_diplomatic_pact = {
-						who = c:MOR
-						type = puppet
-						is_initiator = yes
+				AND = {
+					exists = c:SPA
+					exists = c:MOR
+					OR = {
+						c:SPA = {
+							has_diplomatic_pact = {
+								who = c:MOR
+								type = puppet
+								is_initiator = yes
+							}
+						}
+						c:SPA = {
+							has_diplomatic_pact = {
+								who = c:MOR
+								type = protectorate
+								is_initiator = yes
+							}
+						}
 					}
 				}
-				c:SPA = {
-					has_diplomatic_pact = {
-						who = c:MOR
-						type = dominion
-						is_initiator = yes
+				AND = {
+					exists = c:IBE
+					exists = c:MOR
+					OR = {
+						c:IBE = {
+							has_diplomatic_pact = {
+								who = c:MOR
+								type = puppet
+								is_initiator = yes
+							}
+						}
+						c:IBE = {
+							has_diplomatic_pact = {
+								who = c:MOR
+								type = protectorate
+								is_initiator = yes
+							}
+						}
+					}
+				}
+				AND = {
+					exists = c:SPC
+					exists = c:MOR
+					OR = {
+						c:SPC = {
+							has_diplomatic_pact = {
+								who = c:MOR
+								type = puppet
+								is_initiator = yes
+							}
+						}
+						c:SPC = {
+							has_diplomatic_pact = {
+								who = c:MOR
+								type = protectorate
+								is_initiator = yes
+							}
+						}
 					}
 				}
 			}
@@ -1923,23 +2022,40 @@ MOR = {
 CCR = {
 	dynamic_country_name = {
 		name = dyn_c_ccr_company
+		adjective = CCR_ADJ
 		
 		is_main_tag_only = yes
 		priority = 0
 		trigger = {
 			OR = {
-				c:SPA = {
-					has_diplomatic_pact = {
-						who = c:CCR
-						type = puppet
-						is_initiator = yes
+				AND = {
+					exists = c:SPA
+					c:SPA = {
+						has_diplomatic_pact = {
+							who = c:CCR
+							type = chartered_company
+							is_initiator = yes
+						}
 					}
 				}
-				c:SPA = {
-					has_diplomatic_pact = {
-						who = c:CCR
-						type = dominion
-						is_initiator = yes
+				AND = {
+					exists = c:IBE
+					c:IBE = {
+						has_diplomatic_pact = {
+							who = c:CCR
+							type = chartered_company
+							is_initiator = yes
+						}
+					}
+				}
+				AND = {
+					exists = c:SPC
+					c:SPC = {
+						has_diplomatic_pact = {
+							who = c:CCR
+							type = chartered_company
+							is_initiator = yes
+						}
 					}
 				}
 			}
@@ -1950,23 +2066,40 @@ CCR = {
 CC2 = {
 	dynamic_country_name = {
 		name = dyn_c_cc2_company
+		adjective = CC2_ADJ
 		
 		is_main_tag_only = yes
 		priority = 0
 		trigger = {
 			OR = {
-				c:SPA = {
-					has_diplomatic_pact = {
-						who = c:CC2
-						type = puppet
-						is_initiator = yes
+				AND = {
+					exists = c:SPA
+					c:SPA = {
+						has_diplomatic_pact = {
+							who = c:CC2
+							type = chartered_company
+							is_initiator = yes
+						}
 					}
 				}
-				c:SPA = {
-					has_diplomatic_pact = {
-						who = c:CC2
-						type = dominion
-						is_initiator = yes
+				AND = {
+					exists = c:IBE
+					c:IBE = {
+						has_diplomatic_pact = {
+							who = c:CC2
+							type = chartered_company
+							is_initiator = yes
+						}
+					}
+				}
+				AND = {
+					exists = c:SPC
+					c:SPC = {
+						has_diplomatic_pact = {
+							who = c:CC2
+							type = chartered_company
+							is_initiator = yes
+						}
 					}
 				}
 			}
@@ -2300,10 +2433,7 @@ BEO = {
 		priority = 0
 		
 		trigger = {
-			exists = c:SPA
-			c:BEO = {
-				is_subject_of = c:SPA
-			}
+			coa_def_spanish_ensign_trigger = yes
 		}
 	}
 	dynamic_country_name = {
@@ -2649,6 +2779,32 @@ YLO = {
 		trigger = {
 			coa_def_communist_flag_trigger = yes
 
+		}
+	}
+}
+
+XXG = {
+	dynamic_country_name = {
+		name = dyn_c_yixingtang
+		
+		priority = 10
+		
+		trigger = {
+			scope:actor = {
+				OR = {
+					any_subject_or_below = {
+						country_has_primary_culture = cu:zhourao
+						count > 1
+					}
+					any_scope_state = {
+						count > 1
+						state_region = {
+							is_homeland = cu:zhourao
+						}
+					}	
+				}
+				
+			}
 		}
 	}
 }
@@ -3521,15 +3677,31 @@ CNF = { #Nouvelle Flandre
 		adjective = dyn_c_belgian_confederation_adj
 		
 		is_main_tag_only = yes
-		priority = 0
+		priority = 5
 		
 		trigger = {
-			c:CNF = {
-				has_state_in_state_region = STATE_SANACOMIE
+			exists = scope:actor
+		
+			scope:actor = {
+				OR = {
+					any_subject_or_below = {
+						country_has_primary_culture = cu:septiman
+						count > 1
+					}
+					any_scope_state = {
+						count > 1
+						state_region = {
+							is_homeland = cu:septiman
+						}
+					}	
+				}
+				
 			}
 		}
 	}
 }
+
+
 #Western Japan
 WJP = { #
 	dynamic_country_name = {
@@ -3670,6 +3842,99 @@ TGI = {
 					type = puppet
 					is_initiator = yes
 				}
+			}
+		}
+	}
+}
+
+SKR = {
+	dynamic_country_name = {
+		name = dyn_c_skr_territory
+		adjective =  SKR_ADJ
+
+		is_main_tag_only = yes
+		priority = 1
+		
+		trigger = {
+			scope:actor = {
+				is_subject = yes
+			}
+		}
+	}
+}
+
+
+VIN = {
+	dynamic_country_name = {
+		name = dyn_c_vin_skr
+		adjective =  VIN_ADJ
+
+		is_main_tag_only = yes
+		priority = 1
+		
+		trigger = {
+			scope:actor = {
+				has_variable = vin_skr_unite
+			}
+		}
+	}
+	dynamic_country_name = {
+		name = dyn_c_vin_sca_colony
+		adjective =  VIN_ADJ
+
+		is_main_tag_only = yes
+		priority = 1
+		
+		trigger = {
+			scope:actor = {
+				is_subject_of = c:SCA
+			}
+			c:SCA = {
+				has_law = law_type:law_monarchy
+			}
+		}
+	}
+}
+SPC = {
+	dynamic_country_name = {
+		name = dyn_c_spc_republic
+		adjective = SPC_ADJ
+		
+		is_main_tag_only = yes
+		priority = 1
+		
+		trigger = {
+			exists = scope:actor
+			scope:actor ?= {
+				coa_def_republic_flag_trigger = yes
+			}
+		}
+	}
+	dynamic_country_name = {
+		name = dyn_c_spc_communist
+		adjective = SPC_ADJ
+		
+		is_main_tag_only = yes
+		priority = 1
+		
+		trigger = {
+			exists = scope:actor
+			scope:actor ?= {
+				coa_def_communist_flag_trigger = yes
+			}
+		}
+	}
+	dynamic_country_name = {
+		name = dyn_c_spc_fascist
+		adjective = SPC_ADJ
+		
+		is_main_tag_only = yes
+		priority = 1
+		
+		trigger = {
+			exists = scope:actor
+			scope:actor ?= {
+				coa_def_fascist_flag_trigger = yes
 			}
 		}
 	}

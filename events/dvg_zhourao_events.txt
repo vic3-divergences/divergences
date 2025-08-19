@@ -53,7 +53,7 @@ dvg_zhourao.1 = {
         default_option = yes
         trigger_event = { id = dvg_zhourao.2 days = 1825 }
         add_modifier = {
-            name = dvg_populist_republic
+            name = dvg_populist_republic_yaluo
             days = -1
         }
 
@@ -467,6 +467,8 @@ dvg_zhourao.5 = {
     # The truce is almost over, we can fight, so can they
     option = {
         name = dvg_zhourao.5.a
+		default_option = yes
+		
         custom_tooltip = {
             text = dvg_one_kongsi_tt
             set_variable = dvg_one_kongsi
@@ -504,16 +506,35 @@ dvg_zhourao.6 = {
         #NOT = {
         #	has_variable = dvg_northern_hui
         #}
-        exists = c:MJN
+        #exists = c:MJN (must exist)
     }
 
     immediate = {
         set_variable = dvg_northern_hui
+        ig:ig_landowners = {
+            save_scope_as = landowners_ig
+        }
+	every_country = {
+		limit = {
+			is_revolutionary = yes
+			country_definition = root.country_definition
+			owns_entire_state_region = STATE_XINXIANG
+			country_has_primary_culture = cu:zhourao
+		}
+		random_scope_state = {
+			limit = {
+				state_region = s:STATE_XINXIANG
+				owner = prev
+			}
+			set_state_owner = c:MJN
+		}
+	}
         if = {
             limit = {
                 s:STATE_XINXIANG.region_state:YLO = {
-                    scope:landowner_ig = {
-                        is_powerful = yes
+                    ig_state_pol_strength_share = {
+                        target = scope:landowners_ig
+                        value > 0.1
                     }
                 }
             }
@@ -521,10 +542,11 @@ dvg_zhourao.6 = {
                 set_state_owner = c:MJN
             }
         }
-        random_state = {
+        ordered_state = {
             limit = {
                 owner = c:MJN
             }
+            order_by = state_population
             save_scope_as = MJN_state
         }
 
@@ -549,20 +571,28 @@ dvg_zhourao.6 = {
             limit = {
                 ig:ig_landowners = {
                     is_marginal = no
-
                 }
             }
-            random_scope_pop = {
+            ordered_scope_pop = {
                 limit = {
-                    is_pop_type = capitalists
+                    is_pop_type = aristocrats
                 }
-                move_pop = scope:MJN_state
+                order_by = total_size
+                max = 6
+                move_partial_pop = { 
+                    state = scope:MJN_state
+                    population_ratio = 0.3
+                }
             }
-            random_scope_pop = {
+            ordered_scope_pop = {
                 limit = {
                     is_pop_type = farmers
                 }
-                move_pop = scope:MJN_state
+                max = 6
+                move_partial_pop = { 
+                    state = scope:MJN_state
+                    population_ratio = 0.1
+                }
             }
         }
 
@@ -939,6 +969,7 @@ dvg_zhourao.12 = {
     # War!
     option = {
         name = dvg_zhourao.12.a
+		default_option = yes
         custom_tooltip = {
             text = dvg_guli_this_will_war_with_yaluo_tt
             create_diplomatic_play = {
@@ -946,7 +977,6 @@ dvg_zhourao.12 = {
 
                 target_country = c:YLO
 
-                war = yes
 
                 type = dp_rebellion_annex
 
@@ -967,7 +997,7 @@ dvg_zhourao.12 = {
             exists = c:YLO
             c:YLO = ROOT
         }
-        create_truce = {
+        create_bidirectional_truce = {
             country = THIS
             months = 60
         }
@@ -981,7 +1011,7 @@ dvg_zhourao.12 = {
             exists = c:MJN
             c:MJN = ROOT
         }
-        create_truce = {
+        create_bidirectional_truce = {
             country = THIS
             months = 60
         }
@@ -1020,6 +1050,8 @@ dvg_zhourao.13 = {
     # War!
     option = {
         name = dvg_zhourao.12.a
+		default_option = yes
+		
         custom_tooltip = {
             text = dvg_this_will_war_with_mianjin_tt
             create_diplomatic_play = {
@@ -1027,7 +1059,6 @@ dvg_zhourao.13 = {
 
                 target_country = c:MJN
 
-                war = yes
 
                 type = dp_rebellion_annex
 
@@ -1091,6 +1122,7 @@ dvg_zhourao.14 = {
     # Reunification is complete!(for real this time)
     option = {
         name = dvg_zhourao.14.a
+		default_option = yes
         add_loyalists = {
             value = 0.05
         }
@@ -1660,6 +1692,81 @@ dvg_zhourao.20 = {
     
 }
 
+
+# Xinxiang Declares Independence
+dvg_zhourao.21 = {
+    type = country_event
+    placement = ROOT
+
+    title = dvg_zhourao.6.t
+    desc = dvg_zhourao.6.d
+    flavor = dvg_zhourao.6.f
+
+    event_image = {
+        video = "gfx/event_pictures/unspecific_fire.bk2"
+    }
+
+    on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+    on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+    icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+    duration = 3
+
+    trigger = {
+        #has_variable = dvg_yaluo_reform_variable_var_2
+        #this = { var:dvg_yaluo_reform_variable_var_2 >= 8 }
+        #has_variable = dvg_one_kongsi
+        #NOT = {
+        #	has_variable = dvg_northern_hui
+        #}
+        #exists = c:MJN
+    }
+
+    immediate = {
+        set_variable = dvg_northern_hui
+        create_country = {
+            tag = XXG
+            origin = this
+            state = s:STATE_XINXIANG.region_state:YLO
+            state = s:STATE_WEIHUAI.region_state:YLO
+            state = s:STATE_ZHENG_HE.region_state:YLO
+        }
+ 
+        c:XXG = {
+            change_relations = {
+                country = c:MJN
+                value = 30
+            }
+        }
+    }
+
+    # Oh dear
+    option = {
+        name = dvg_zhourao.6.a
+		default_option = yes
+
+        add_modifier = {
+            name = dvg_modifier_landowners_purged
+            months = 60
+            is_decaying = yes
+        }
+        ai_chance = {
+            base = 1
+        }
+    }
+    option = {
+        name = dvg_zhourao.6.b
+
+        play_as = c:XXG
+
+
+        ai_chance = {
+            base = 0
+        }
+    }
+}
+
 #dvg_zhourao.1001 = {
 #	type = country_event
 #	placement = ROOT
@@ -1871,14 +1978,32 @@ dvg_zhourao.504 = {
         c:MJN = {
             save_scope_as = scope_MJN
         }
-        c:AOT = {
+        c:TNU = {
             save_scope_as = scope_AOT
+        }
+        c:YLO = {
+            save_scope_as = scope_YLO
+        }
+        c:QIN = {
+            save_scope_as = scope_QIN
         }
     }
 
     option = {
         name = dvg_zhourao.504.a
         default_option = yes
+        set_variable = {
+			name = mjn_var
+			value = 0
+		}
+		
+        add_journal_entry = {
+            type = je_mianjin_oligarchy
+        }
+        change_variable = {
+			name = mjn_var
+			add = 8
+		}
 
         ai_chance = {
             base = 1
@@ -1895,8 +2020,8 @@ dvg_zhourao.505 = {
     desc = dvg_zhourao.505.d
     flavor = dvg_zhourao.505.f
 
-    #gui_window = event_window_1char_tabloid
-    #left_icon = scope:maori_ruler
+    gui_window = event_window_1char_tabloid
+    left_icon = root.ruler
 
     on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
     on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
@@ -1912,16 +2037,18 @@ dvg_zhourao.505 = {
         c:MJN ?= {
             save_scope_as = scope_MJN
         }
-        c:AOT ?= {
+        c:TNU ?= {
             save_scope_as = scope_AOT
         }
-        #c:AOT ?= {ruler = {
-        #    save_scope_as = maori_ruler
-        #}
-    }
+	}
     option = {
         name = dvg_zhourao.505.a
         default_option = yes
+		
+		create_diplomatic_catalyst = {
+			type = catalyst_event_negative
+			target = c:QQQ
+		}
     
         ai_chance = {
             base = 1
@@ -1930,18 +2057,132 @@ dvg_zhourao.505 = {
 }
 
 
-
-
-
-
-#Zhusha Intro Event
-dvg_zhourao.700 = {
+#Mianjin Success
+dvg_zhourao.506 = {
     type = country_event
     placement = ROOT
 
-    title = dvg_zhourao.700.t
-    desc = dvg_zhourao.700.d
-    flavor = dvg_zhourao.700.f
+    title = dvg_zhourao.506.t
+    desc = dvg_zhourao.506.d
+    flavor = dvg_zhourao.506.f
+
+    event_image = {
+        video = "gfx/event_pictures/unspecific_fire.bk2"
+    }
+
+    on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+    on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+    icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+    duration = 3
+
+    trigger = {
+
+    }
+
+    immediate = {
+      
+    }
+
+    # Reports
+    option = {
+        name = dvg_zhourao.506.a
+
+        random_scope_state = {
+            limit = {
+                is_capital = yes
+                is_isolated_from_market = no
+            }
+            add_modifier = {
+                name = dvg_world_city
+                months = 12
+                is_decaying = yes
+            }
+        }
+
+        set_global_variable = mjn_good
+    }
+}
+
+#Mianjin Fail
+dvg_zhourao.507 = {
+    type = country_event
+    placement = ROOT
+
+    title = dvg_zhourao.507.t
+    desc = dvg_zhourao.507.d
+    flavor = dvg_zhourao.507.f
+
+    event_image = {
+        video = "gfx/event_pictures/unspecific_fire.bk2"
+    }
+
+    on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+    on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+    icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+    duration = 3
+
+    trigger = {
+
+    }
+
+    immediate = {
+        ruler = {
+            exile_character = yes
+        }
+        activate_law = law_type:law_appointed_bureaucrats
+        activate_law = law_type:law_total_separation
+
+        set_ruling_interest_groups = {
+            ig_intelligentsia
+        }
+    }
+
+    # Join Yaluo
+    option = {
+        name = dvg_zhourao.507.a
+        trigger = {
+            exists = c:YLO
+        }
+        set_variable = to_join_zhr
+        
+        ai_chance = {
+            base = 100
+        }
+    }
+
+      # Don't Join
+      option = {
+        name = dvg_zhourao.507.b
+        default_option = yes
+
+        activate_law = law_type:law_census_voting
+        call_election = {
+            months = 1
+        }
+        
+        add_loyalists = {
+            value = 0.10
+        }
+
+        ai_chance = {
+            base = 1
+        }
+    }
+}
+
+
+#Zhusha Intro Event
+dvg_zhourao.508 = {
+    type = country_event
+    placement = ROOT
+
+    title = dvg_zhourao.508.t
+    desc = dvg_zhourao.508.d
+    flavor = dvg_zhourao.508.f
 
     event_image = {
         video = "gfx/event_pictures/asia_dead_cattle_poor_harvest.bk2"
@@ -1955,24 +2196,40 @@ dvg_zhourao.700 = {
     duration = 3
 
     trigger = {
+        
     }
 
     immediate = {
-        rel:confucian = {
-            save_scope_as = scope_confucian
+        random_country = {
+            limit = {
+                has_variable = to_join_zhr
+            }
+            save_scope_as = scope_joiner
         }
+        
     }
 
     # We must ensure our survival by claiming the desert!
     option = {
-        name = dvg_zhourao.700.a
+        name = dvg_zhourao.508.a
+        default_option = yes
+
+
+        annex = scope:scope_joiner
+        
+
+        ai_chance = {
+            base = 1
+        }
+    }
+
+    option = {
+        name = dvg_zhourao.508.b
         default_option = yes
 
 
 
-        hidden_effect = {
-            set_variable = dvg_southern_push_variable
-        }
+        
 
         ai_chance = {
             base = 1
@@ -2278,6 +2535,8 @@ dvg_zhourao.704 = {
 
             remove_trait = immortal
         }
+       
+        
         scope:leader_luoxi = {
             remove_trait = immortal
         }
@@ -2288,6 +2547,10 @@ dvg_zhourao.704 = {
             }
 
         }
+        create_diplomatic_catalyst = {  
+			type = catalyst_event_positive
+			target = c:DUA
+		}
         ai_chance = {
             base = 1
         }
@@ -2317,8 +2580,11 @@ dvg_zhourao.704 = {
                 country = c:JAP
                 value = 50
             }
-
         }
+        create_diplomatic_catalyst = {  
+			type = catalyst_event_positive
+			target = c:JAP
+		}
         ai_chance = {
             base = 1
         }
@@ -3455,6 +3721,7 @@ dvg_zhourao.719 = {
 
     immediate = {
         set_variable = dvg_songyan_society_zsa
+        set_variable = dvg_songyaned
     }
 
     # And thus, the long reign is over.
@@ -3470,7 +3737,6 @@ dvg_zhourao.719 = {
             }
             set_state_religion = rel:mahayana
         }
-
         if = {
             limit = {
                 NOT = {
@@ -3513,7 +3779,7 @@ dvg_zhourao.719 = {
                 }
                 change_relations = {
                     country = ROOT
-                    value = 15
+                    value = 50
                 }
             }
         }
@@ -4056,6 +4322,7 @@ dvg_zhourao.1205 = {
         }
     }
 }
+
 #Law Enforcement Collaboration?
 dvg_zhourao.1206 = {
     type = country_event
