@@ -158,7 +158,7 @@ dvg_qingqiu_spain.3 = {
 		ai_chance = {
 			base = 50
 			modifier = {
-				limit = { 
+				trigger = { 
 					c:SPA = { is_player = yes }
 				}
 				add = -50
@@ -185,6 +185,12 @@ dvg_qingqiu_spain.3 = {
 		}
 		ai_chance = {
 			base = 50
+			modifier = {
+				trigger = { 
+					c:SPA = { is_player = yes }
+				}
+				add = 50
+			}
 		}
 	}
 }
@@ -220,7 +226,7 @@ dvg_qingqiu_spain.4 = {
 		name = dvg_qingqiu_spain.4.a
 		default_option = yes
 		
-		change_relation = {
+		change_relations = {
 			country = c:QIN
 			value = 150
 		}
@@ -252,11 +258,11 @@ dvg_qingqiu_spain.4 = {
 		ai_chance = {
 			base = 50
 			modifier = {
-				limit = { this ?= c:PLA }
+				trigger = { this ?= c:PLA }
 				add = -25
 			}
 			modifier = {
-				limit = { this ?= c:TWT }
+				trigger = { this ?= c:TWT }
 				add = 50
 			}
 		}
@@ -265,7 +271,7 @@ dvg_qingqiu_spain.4 = {
 	option = {
 		name = dvg_qingqiu_spain.4.b
 		
-		change_relation = {
+		change_relations = {
 			country = c:QIN
 			value = -50
 		}
@@ -273,11 +279,11 @@ dvg_qingqiu_spain.4 = {
 		ai_chance = {
 			base = 50
 			modifier = {
-				limit = { this ?= c:PLA }
+				trigger = { this ?= c:PLA }
 				add = 25
 			}
 			modifier = {
-				limit = { this ?= c:TWT }
+				trigger = { this ?= c:TWT }
 				add = -50
 			}
 		}
@@ -315,7 +321,7 @@ dvg_qingqiu_spain.5 = {
 		name = dvg_qingqiu_spain.5.a
 		default_option = yes
 		
-		change_relation = {
+		change_relations = {
 			country = c:QIN
 			value = 150
 		}
@@ -353,7 +359,7 @@ dvg_qingqiu_spain.5 = {
 	option = {
 		name = dvg_qingqiu_spain.5.b
 		
-		change_relation = {
+		change_relations = {
 			country = c:QIN
 			value = -50
 		}
@@ -395,7 +401,7 @@ dvg_qingqiu_spain.6 = {
 		name = dvg_qingqiu_spain.6.a
 		default_option = yes
 		
-		change_relation = {
+		change_relations = {
 			country = c:QIN
 			value = 150
 		}
@@ -433,7 +439,7 @@ dvg_qingqiu_spain.6 = {
 	option = {
 		name = dvg_qingqiu_spain.6.b
 		
-		change_relation = {
+		change_relations = {
 			country = c:QIN
 			value = -50
 		}
@@ -467,6 +473,14 @@ dvg_qingqiu_spain.7 = {
 		s:STATE_XINGTIAN = { add_claim = ROOT }
 		s:STATE_JINSHAN = { add_claim = ROOT }
 		s:STATE_YICHENG = { add_claim = ROOT }
+		every_country = {
+			limit = { owns_entire_state_region = STATE_BAJA_CALIFORNIA }
+			save_scope_as = dvg_california_owner
+		}
+		random_scope_state = {
+			limit = { state_region = s:STATE_BAJA_CALIFORNIA }
+			save_scope_as = california_state
+		}
 	}
 	trigger = {
 	}
@@ -493,8 +507,32 @@ dvg_qingqiu_spain.7 = {
 			add_war_goal = {
 				holder = c:SPA
 				target_country = c:UTE
-				target_state = s:STATE_JINSHAN.region_state:UTE
+				target_state = s:STATE_YICHENG.region_state:UTE
 				type = return_state
+			}
+			add_war_goal = {
+				holder = c:QIN
+				target_country = c:SPA
+				target_state = s:STATE_XINGTIAN.region_state:QIN
+				type = revoke_claim
+			}
+			add_war_goal = {
+				holder = c:QIN
+				target_country = scope:dvg_california_owner
+				target_state = scope:california_owner
+				type = return_state
+			}
+			add_war_goal = {
+				holder = c:NVJ
+				target_country = c:SPA
+				target_state = s:STATE_JINSHAN.region_state:NVJ
+				type = revoke_claim
+			}
+			add_war_goal = {
+				holder = c:UTE
+				target_country = c:SPA
+				target_state = s:STATE_YICHENG.region_state:UTE
+				type = revoke_claim
 			}
 		}
 		c:QIN = {
@@ -656,6 +694,190 @@ dvg_qingqiu_spain.10 = {
 	# Plus Ultra!
 	option = {
 		name = dvg_qingqiu_spain.10.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+# Treaty of Puerto del Rey - QQ victory
+dvg_qingqiu_spain.11 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_qingqiu_spain.11.t
+	desc = dvg_qingqiu_spain.11.d
+	flavor = dvg_qingqiu_spain.11.f
+	
+	event_image = {
+		video = "votp_monarch_holding_court"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/votp/monarch_holding_court"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	immediate = {
+	}
+	trigger = {
+	}
+	
+	
+	# Like Dom Quixote, just a foolish old man and his rusty lance.
+	option = {
+		name = dvg_qingqiu_spain.11.a
+		default_option = yes
+		
+		if = {
+			limit = { exists = c:GCO }
+			c:GCO = {
+				trigger_event = { id = dvg_qingqiu_spain.12 }
+			}
+		}
+		else = {
+			limit = { exists = c:LUS }
+			c:SPA = {
+				remove_diplomatic_pact = {
+					country = c:LUS
+					type = colony
+				}
+				remove_diplomatic_pact = {
+					country = c:MEX
+					type = colony
+				}
+			}
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+# Treaty of Puerto del Rey - GCO/LUS breaks free
+dvg_qingqiu_spain.12 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_qingqiu_spain.12.t
+	desc = dvg_qingqiu_spain.12.d
+	flavor = dvg_qingqiu_spain.12.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	immediate = {
+	}
+	trigger = {
+	}
+	
+	
+	# We are broken, but we are at least free.
+	option = {
+		name = dvg_qingqiu_spain.12.a
+		default_option = yes
+		
+		c:SPA = {
+			remove_diplomatic_pact = {
+				country = this
+				type = colony
+			}
+		}
+		create_country = {
+			tag = LUS
+			origin = this
+			
+			state = s:STATE_BAHIA.region_state:GCO
+			state = s:STATE_SANTA_CATARINA.region_state:GCO
+			state = s:STATE_TEJAS.region_state:GCO
+			state = s:STATE_RIO_GRANDE.region_state:GCO
+			state = s:STATE_BAJA_CALIFORNIA.region_state:GCO
+		}
+		change_tag = MEX
+		c:QIN = {
+			trigger_event = { id = dvg_qingqiu_spain.13 }
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+# QIN celebration
+dvg_qingqiu_spain.13 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_qingqiu_spain.13.t
+	desc = dvg_qingqiu_spain.13.d
+	flavor = dvg_qingqiu_spain.13.f
+	
+	event_image = {
+		video = "votp_monarch_holding_court"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/votp/monarch_holding_court"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	immediate = {
+	}
+	trigger = {
+	}
+	
+	
+	# We did it! I can’t believe we did it!
+	option = {
+		name = dvg_qingqiu_spain.13.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+# Treaty of Sanbao - White Peace
+dvg_qingqiu_spain.14 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_qingqiu_spain.14.t
+	desc = dvg_qingqiu_spain.14.d
+	flavor = dvg_qingqiu_spain.14.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	immediate = {
+	}
+	trigger = {
+	}
+	
+	
+	# At least we know we are equal to the powers of Europe.
+	option = {
+		name = dvg_qingqiu_spain.14.a
 		default_option = yes
 		
 		ai_chance = {
