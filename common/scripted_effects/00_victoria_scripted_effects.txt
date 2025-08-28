@@ -1,4 +1,4 @@
-﻿create_taiping_characters = {
+﻿ereate_taiping_characters = {
 	if = {
 		limit = {
 			game_date < 1880.1.1
@@ -2014,6 +2014,95 @@ replicate_laws_from_prev = {
 		}
 		ROOT = {
 			activate_law = PREV.type
+		}
+	}
+}
+
+capitulate_to_revolution = {
+	scope:ongoing_revolution_movement = { #Can't trigger if they want governance reforms anyway.
+		this.most_desired_law ?= {
+			save_scope_as = revolutionaries_law
+		}
+	}
+	every_interest_group = {
+		limit = {
+			is_insurrectionary = yes
+		}
+		set_variable = { name = revolutionary_ig days = 7 }
+	}
+	ordered_interest_group = {
+		limit = {
+			is_insurrectionary = yes
+		}
+		order_by = ig_clout
+		save_scope_as = revolution_leader_ig
+	}
+	activate_law = scope:revolutionaries_law
+
+	every_interest_group = {
+		limit = {
+			has_variable = revolutionary_ig
+		}
+		owner = {
+			add_loyalists = {
+				value = 0.8
+				interest_group = PREV
+			}
+		}
+	}
+
+	if = {
+		limit = {
+			country_has_voting_franchise = yes
+		}
+		call_election = {
+			months = 6
+		}
+	}
+	if = {
+		limit = {
+			NOT = {
+				has_law = law_type:law_monarchy
+			}
+		}
+		hidden_effect = {
+			scope:revolution_leader_ig = {
+				leader = {
+					set_character_as_ruler = yes
+				}
+			}
+		}
+	}
+
+	every_interest_group = {
+		limit = {
+			is_in_government = yes
+		}
+		remove_ruling_interest_group = yes
+		add_modifier = {
+			name = modifier_revolution_defeated_light
+			days = normal_modifier_time
+			is_decaying = yes
+		}
+	}
+
+	every_interest_group = {
+		limit = {
+			has_variable = revolutionary_ig
+		}
+		hidden_effect = {
+			abandon_revolution = yes
+		}
+		add_modifier = {
+			name = modifier_revolution_victorious_light
+			days = normal_modifier_time
+			is_decaying = yes
+		}
+		if = {
+			limit = {
+				is_insurrectionary = no
+			}
+			add_ruling_interest_group = yes
 		}
 	}
 }
