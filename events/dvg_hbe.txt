@@ -1015,12 +1015,26 @@ dvg_hbe.10 = { #Great Awakening Primer
 		add_journal_entry = {
 			type = je_beo_presbyterians
 		}
+		trigger_event = {
+			id = dvg_hbe.45
+			days = 90
+		}
 
 		change_variable = {
 			name = presbyterian_var
 			add = 25
 		}
-		
+		ig:ig_intelligentsia = {
+			remove_ideology = ideology_anti_clerical
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_technology_researched = anarchism
+				}
+			}
+			add_technology_researched = anarchism
+		}
 		
 		
 		trigger_event = {
@@ -2222,6 +2236,33 @@ dvg_hbe.24 = { #Return of John Faith
 	duration = 3
 
 	trigger = {
+		NOT = {
+			has_modifier = martyrizing_modifier
+
+			any_scope_character = {
+				has_variable = john_faith_var
+			}
+		}
+
+		OR = {
+			any_scope_state = {
+				turmoil > 0.35
+			}
+			any_scope_state = {
+				state_unemployment_rate > 0.25
+			}
+			any_scope_state = {
+				culture_percent_state = {
+  					target = cu:beornian
+  					value < 0.50
+ 				}
+				is_incorporated = yes
+				state_region = {
+					is_homeland = cu:beornian
+				}
+			}
+		}
+
 	}
 
 	immediate = {	
@@ -4490,7 +4531,8 @@ dvg_hbe.44 = { #Robin Hood
 			first_name = "Robin"
 			last_name = "Hood"
 			is_agitator = yes
-			interest_group = ig:ig_intelligentsia
+			age = 20
+			interest_group = ig:ig_petty_bourgeoisie
 			ideology = ideology_anarchist
 
 			traits = {
@@ -4586,21 +4628,47 @@ dvg_hbe.46 = { #Return of Robin Hood
 
 	trigger = {
 		NOT = {
-			has_modifier = {
-				name = martyrizing_modifier
+			 
+			c:BEO = {
+				
 			}
+			any_scope_character = {
+				has_variable = john_faith_var
+			}
+
+			has_modifier = martyrizing_modifier
 		}
 		OR = {
 			average_sol < expected_sol
 			radical_fraction > 0.50
 		}
+		
 	}
 
 	immediate = {		
-		if = {
-			limit = {
-				NOT = {
-					any_chara
+		create_character = {
+			first_name = "Robin"
+			last_name = "Hood"
+			is_agitator = yes
+			age = 20
+			interest_group = ig:ig_petty_bourgeoisie
+			ideology = ideology_anarchist
+
+			traits = {
+				social_bandit
+
+				surveyor
+
+				immortal
+			}
+			on_created = {
+				set_variable = robin_hood_var
+				add_modifier = {
+					name = on_the_run
+					months = 3
+				}
+				add_modifier = {
+					name = modifier_man_of_the_people
 				}
 			}
 		}
@@ -4693,8 +4761,8 @@ dvg_hbe.47 = { #Killing Robin Hood
 		}
 		
 		
-	}
 }
+
 
 
 
@@ -4717,10 +4785,12 @@ dvg_hbe.48 = { #Rise of the Black Knights
 	duration = 3
 
 	trigger = {
+
 	}
 
-	immediate = {		
-	}
+	immediate = {	
+
+	} 
 
 	option = {
 		name = dvg_hbe.48.a
