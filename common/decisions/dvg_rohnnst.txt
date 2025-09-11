@@ -1,8 +1,8 @@
 ﻿dvg_integrate_new_lands_rohnnst = {
 
 	is_shown = {
-		root = c:RHN
 		exists = c:RHN
+		c:RHN = ROOT
 		root = {
 			OR = {
 				AND = {
@@ -118,8 +118,8 @@
 
 dvg_greater_rohnnst = {
 	is_shown = {
-		root = c:RHN
 		exists = c:RHN
+		c:RHN = ROOT
 		NOT = {
 			is_subject = yes
 		}	
@@ -172,7 +172,7 @@ dvg_attack_rohnnst = {
 	is_shown = {
 		exists = c:RHN
 		NOT = {
-			root = c:RHN
+			c:RHN = ROOT
 		}
 		is_ai = yes
 		NOT = {
@@ -193,14 +193,30 @@ dvg_attack_rohnnst = {
 	}
 
     when_taken = {
+		save_temporary_scope_value_as = {
+			name = war_reparations_amount
+			value = {
+				value = income
+				multiply = define:NDiplomacy|DEFAULT_WAR_REPARATIONS_MONEY_TRANSFER
+			}
+		}
 		set_variable = rhn_attacked
 		create_diplomatic_play = {
 			type = dp_annex_war
 			target_country = c:RHN
 			add_war_goal = {
 				holder = c:RHN
-				type = war_reparations
-			 }
+				target_country = ROOT
+				type = enforce_treaty_article
+				article = {
+					article = money_transfer
+					source_country = ROOT
+					target_country = c:RHN
+					inputs = {
+						{ quantity = scope:war_reparations_amount }
+					}
+				}
+			}
 		}
     }
 
@@ -213,7 +229,7 @@ dvg_attack_rohnnst = {
 dvg_embrace_cree = {
 	is_shown = {
 		exists = c:RHN
-		root = c:RHN
+		c:RHN = ROOT
 
 		NOT = {
 			country_has_primary_culture = cu:cree
