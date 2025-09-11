@@ -1,64 +1,29 @@
-﻿je_hre_internal = {
-	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
-	
-	group = je_group_internal_affairs
-	
-	complete = {
-		has_law = law_type:law_state_religion
-		has_law = law_type:law_racial_segregation
-		has_law = law_type:law_autocracy
+﻿je_holy_roman_empire = {
+    icon = "gfx/interface/icons/invention_icons/pan_nationalism.dds"
+    should_be_pinned_by_default = yes
+    group = je_group_foreign_affairs
 
-		NOT = {
-			c:SCA = {
-				any_subject_or_below = {
-					OR = {
-						country_has_primary_culture = cu:north_german
-						country_has_primary_culture = cu:south_german
-						country_has_primary_culture = cu:rheinish
-					}
-				}
-			}
-			c:BRG = {
-				any_subject_or_below = {
-					OR = {
-						country_has_primary_culture = cu:north_german
-						country_has_primary_culture = cu:south_german
-						country_has_primary_culture = cu:rheinish
-					}
-				}
-			}
-		}
-	}
+    timeout = 5110
 
-	on_complete = {
-		#trigger_event = {
-		#	id = hre.1
-		#}
-		custom_tooltip = HRE_success_tt
-		set_global_variable = hre_success_1
-	}
+    scripted_button = je_hre_debug_up
+    scripted_button = je_hre_debug_down
 
-	fail = {
-		has_revolution = yes
-	}
+    scripted_button = je_hre_unify_empire
 
-	# 12 Years
-	timeout = 4380
+    immediate = {
 
-	invalid = {
-		has_law = law_type:law_landed_voting
-		has_law = law_type:law_wealth_voting
-		has_law = law_type:law_total_separation
-	}
+        set_variable = {
+            name = je_holy_roman_empire_stability_var
+            value = 5
+        }
 
-	weight = 100
-	should_be_pinned_by_default = yes
-}	
+        c:BOH = {
+            save_scope_as = scope_BOH
+        }
+    }
 
-je_hre_external = {
-	icon = "gfx/interface/icons/event_icons/event_military.dds"
 
-	group = je_group_foreign_affairs
+    scripted_progress_bar = je_holy_roman_empire_stability_progress_bar
 
 	complete = {
 		country_or_subject_owns_entire_state_region = STATE_BOHEMIA
@@ -90,50 +55,375 @@ je_hre_external = {
 		country_or_subject_owns_entire_state_region = STATE_SCHLESWIG_HOLSTEIN
 	}
 
-	on_complete = {
-		#trigger_event = {
-		#	id = hre.1
-		#}
-		#set_global_variable = hre_success_2
-	}
 
-	fail = {
-		has_revolution = yes
-	}
+    complete = {
+        custom_tooltip = {
+            text = dvg_hre_unified
+            exists = c:HLR
+            this = c:HLR
+        }
+    }
 
-	on_fail = {
-		set_global_variable = hre_fail
-		add_journal_entry = {
-			type = je_elbian_confederation 
-		}
-	}
+    fail = {
+        OR = {
+            custom_tooltip = {
+                text = dvg_hre_stability_zero
+                var:je_holy_roman_empire_stability_var <=0
+            }
+            custom_tooltip = {
+                text = dvg_hre_dissolved
+                has_global_variable = dvg_hre_failed
+            }
+        }
 
-	# 12 Years
-	timeout = 4380
+    }
 
-	on_timeout = {
-		set_global_variable = hre_fail
-		#trigger_event = {
-			#id = elbian_confederation.4
-		#}
-		add_journal_entry = {
-			type = je_elbian_confederation 
-		}
-	}
+    on_fail = {
+        if = {
+            limit = {
+                this = c:BOH
+            }  
+            add_journal_entry = { type = je_dvg_elbian_confederation }
+            
+            custom_tooltip = {
+                text = dvg_hre_disbanded_member_effect
+                every_country = {
+                    limit = {
+                        is_in_same_power_bloc = c:BOH
+                    }
+                    c:BOH.power_bloc = {
+                        add_leverage = { target = PREV value = -1000 }
+                    }
+                }
+            }
+            
+        }
 
-	invalid = {
-		custom_tooltip = {
-			text = elbian_confederation_invalid
-			NOT = {
-				any_scope_state = {
-					state_region = {
-						is_homeland = cu:north_german
-					}
-				}
-			}
-		}
-	}
+        
+    }
 
-	weight = 100
-	should_be_pinned_by_default = yes
+    on_timeout = {
+        custom_tooltip = {
+            text = dvg_hre_dissolved_2
+            set_global_variable = dvg_hre_failed
+
+            
+        }
+
+        if = {
+            limit = {
+                this = c:BOH
+            }  
+            add_journal_entry = { type = je_dvg_elbian_confederation }
+
+
+            custom_tooltip = {
+                text = dvg_hre_disbanded_member_effect
+                every_country = {
+                    limit = {
+                        is_in_same_power_bloc = c:BOH
+                    }
+                    c:BOH.power_bloc = {
+                        add_leverage = { target = PREV value = -1000 }
+                    }
+                }
+            }
+            
+        }
+    }
+
+}
+
+je_hre_north_germany = {
+    icon = "gfx/interface/icons/invention_icons/pan_nationalism.dds"
+    should_be_pinned_by_default = yes
+    group = je_group_foreign_affairs
+
+    timeout = 5110
+
+    complete = {
+
+        country_or_subject_owns_entire_state_region = STATE_MECKLENBURG
+        country_or_subject_owns_entire_state_region = STATE_POMERANIA
+    }
+
+    on_complete = {
+
+        increase_hre_stability = yes
+
+    }
+
+    fail = {
+        OR = {
+            custom_tooltip = {
+                text = dvg_hre_stability_zero
+                var:je_holy_roman_empire_stability_var <=0
+            }
+            custom_tooltip = {
+                text = dvg_hre_dissolved
+                has_global_variable = dvg_hre_failed
+            }
+        }
+
+    }
+
+    on_timeout = {
+        custom_tooltip = {
+            text = dvg_hre_dissolved_2
+            set_global_variable = dvg_hre_failed
+        }
+    }
+}
+
+je_hre_bayreuth_constitution = {
+    icon = "gfx/interface/icons/lens_toolbar_icons/unused/grant_recognition.dds"
+    should_be_pinned_by_default = yes
+    group = je_group_foreign_affairs
+
+
+    scripted_button = je_hre_bayreuth_constitution_restore_order
+    scripted_button = je_hre_bayreuth_constitution_negotiate
+
+
+    complete = {
+        custom_tooltip = {
+            text = je_hre_bayreuth_constitution_complete_tooltip
+            has_variable = je_hre_bayreuth_constitution_complete
+        }
+    }
+
+    timeout = 730 ### 2 Years
+    on_timeout = {
+        decrease_hre_stability = yes
+    }
+
+}
+
+je_hre_bayreuth_electorate = {
+    icon = "gfx/interface/icons/lens_toolbar_icons/unused/grant_recognition.dds"
+    should_be_pinned_by_default = yes
+    group = je_group_foreign_affairs
+
+    scripted_button = je_hre_bayreuth_electorate_restore_bayreuth
+    scripted_button = je_hre_bayreuth_electorate_give_to_baden
+    scripted_button = je_hre_bayreuth_electorate_keep
+    scripted_button = je_hre_bayreuth_demand_bayreuth_independence
+
+    complete = {
+        OR = {
+            custom_tooltip = {
+                text = je_hre_bayreuth_electorate_complete_tooltip_2
+                has_variable = je_hre_bayreuth_electorate_complete
+            }
+
+            c:FRE = { is_subject = no }
+        }
+    }
+
+    on_complete = {
+        custom_tooltip = je_hre_bayreuth_electorate_on_complete_tooltip
+
+        if = {
+            limit = {
+                c:FRE = { is_subject = no }
+            }
+
+            increase_hre_stability = yes
+        }
+    }
+
+    timeout = 730 ### 2 Years
+    on_timeout = {
+        decrease_hre_stability = yes
+    }
+
+
+}
+
+je_hre_thuringian_succession = {
+    icon = "gfx/interface/icons/lens_toolbar_icons/unused/grant_recognition.dds"
+    should_be_pinned_by_default = yes
+    group = je_group_foreign_affairs
+
+    scripted_button = je_hre_thuringian_succession_get_involved
+
+    immediate = {
+        c:THU = {
+            add_modifier = {
+                name = je_hre_thuringian_succession_modifier
+                days = 120
+            }
+        }
+    }
+
+    complete = {
+        custom_tooltip = {
+            text = je_hre_thuringian_succession_resolved_tooltip
+            has_variable = je_hre_thuringian_succession_resolved
+        }
+    }
+
+    on_complete = {
+        custom_tooltip = je_hre_thuringian_succession_on_complete_tooltip
+
+        if = {
+            limit = {
+                c:THU = { is_in_same_power_bloc = c:BOH }
+                has_variable = je_hre_thuringian_succession_resolved
+                NOT = { has_variable = je_hre_thuringian_succession_resolved_failure }
+            }
+
+            increase_hre_stability = yes
+        }
+
+        hidden_effect = {
+            c:THU = {
+                annex_with_incorporation = c:SME
+            }
+
+            trigger_event = dvg_hre.19
+        }
+    }
+
+    timeout = 730 ### 2 Years
+    on_timeout = {
+        decrease_hre_stability = yes
+    }
+
+
+}
+
+
+je_matter_of_swabia = {
+    icon = "gfx/interface/icons/lens_toolbar_icons/unused/grant_recognition.dds"
+    should_be_pinned_by_default = yes
+    group = je_group_internal_affairs
+
+
+    scripted_button = je_matter_of_swabia_settle_ulm_question
+    scripted_button = je_matter_of_swabia_wurttemberg
+
+    complete = {
+        OR = {
+            AND = {
+                c:WUR = { is_subject_of = c:BAD }
+                OR = {
+                    c:ULM = { is_subject_of = c:BAD }
+                    c:ULM = { is_subject_of = c:WUR }
+                }
+            }
+            AND = {
+                owns_entire_state_region = STATE_BADEN
+                owns_entire_state_region = STATE_WURTTEMBERG
+            }
+
+        }
+
+
+    }
+
+    on_complete = {
+
+        if = {
+            limit = {
+                exists = c:WUR
+                c:WUR = { is_subject_of = root}
+            }
+            annex_with_incorporation = c:WUR
+        }
+
+        if = {
+            limit = {
+                exists = c:ULM
+                c:ULM = { is_subject_of = root}
+            }
+            annex_with_incorporation = c:ULM
+        }
+
+        change_tag = SWA
+
+        c:BOH = {
+            trigger_event = dvg_hre.11
+        }
+
+    }
+
+}
+
+
+je_dvg_hre_hungarian_crisis = {
+    icon = "gfx/interface/icons/lens_toolbar_icons/unused/grant_recognition.dds"
+    should_be_pinned_by_default = yes
+    group = je_group_foreign_affairs
+
+    scripted_button = je_meeting_in_moravia
+
+    complete = {
+        c:HUN = {
+            is_subject_of = c:BOH
+        }
+    }
+
+    fail = {
+        custom_tooltip = {
+            text = dvg_hre_hungarian_crisis_failed
+            has_global_variable = dvg_hre_hungarian_crisis_failed
+        }
+    }
+
+    on_fail = {
+        custom_tooltip = {
+            text = dvg_hre_hungarian_crisis_failed_effect
+            decrease_hre_stability = yes
+            decrease_hre_stability = yes
+            decrease_hre_stability = yes
+        }
+        
+    }
+
+    on_complete = {
+        
+
+        custom_tooltip = {
+            text = dvg_hre_hungarian_crisis_complete_tooltip
+
+            remove_diplomatic_pact = {
+                country = c:HUN
+                type = protectorate
+            }
+
+            create_diplomatic_pact = {
+                country = c:HUN
+                type = personal_union
+            }
+        }
+        increase_hre_stability = yes
+        
+    }
+
+    timeout = 730 ### 2 Years
+    on_timeout = {
+        decrease_hre_stability = yes
+    }
+}
+
+
+je_dvg_hre_hungarian_crisis_hungary = {
+    icon = "gfx/interface/icons/lens_toolbar_icons/unused/grant_recognition.dds"
+    should_be_pinned_by_default = yes
+    group = je_group_foreign_affairs
+
+    fail = {
+        is_subject_of = c:BOH
+    }
+
+    complete = {
+        custom_tooltip = {
+            text = dvg_hre_hungarian_crisis_failed
+            has_global_variable = dvg_hre_hungarian_crisis_failed
+        }
+    }
+
+    timeout = 730 ### 2 Years
+
 }
