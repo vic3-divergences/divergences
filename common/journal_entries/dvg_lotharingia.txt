@@ -133,31 +133,50 @@
 
 	complete = {
 		# If-else clause to avoid errors because of missing variable before JE activates
-		
+		calc_true_if = {
+			amount = 4
+			any_enemy_in_diplo_play = {
+				country_has_primary_culture = cu:lotharian
+			}
+			OR = {
+			radical_fraction = {
+				value > 0.50
+			}
+			ig:ig_armed_forces = {
+				ig_approval < -10
+			}
+			any_interest_group = {
+				ig_approval < -6
+				ig_clout > 0.10
+			}
+			any_interest_group = {
+					is_powerful = yes
+					is_insurrectionary = yes
+			}
+
+			}
+			root.average_sol < average_expected_sol
+		}
+
+
 		
 		trigger_if = {
 			limit = { exists = var:aigle_var }
 			scope:journal_entry = { is_goal_complete = yes }
 		}
-		OR = {
-			any_interest_group = {
-				count >= 2
-				ig_approval < -6
-				ig_clout > 0.10
-				}
-			any_interest_group = {
-					is_powerful = yes
-					is_insurrectionary = yes
-				}
-
-		}
-
+		
 		has_law = law_type:law_autocracy
-		root.average_sol < average_expected_sol
+		
 	}
 	
 	on_complete = {
 		#set_variable = house_of_cards_complete
+		every_diplomatic_play = {
+			limit = {
+				initiator_is = ROOT
+			}
+			end_play = yes
+		}
 		trigger_event = {
 			id = dvg_lotharingia.5
 		}
