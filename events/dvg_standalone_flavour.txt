@@ -116,7 +116,7 @@ dvg_standalone_flavour.3 = { #Spread of Mulberry trees across Arcadia
 			}
 			has_building = building_silk_plantation
 		}
-		any_scope_country = {
+		any_country = {
 			owns_entire_state_region = STATE_XINGTIAN
 			owns_entire_state_region = STATE_DONGHAI
 			owns_entire_state_region = STATE_SANBAO
@@ -169,7 +169,7 @@ dvg_standalone_flavour.4 = { #Qingqiuan Kanhu
  				standard_of_living > 15
 			}
 		}
-		any_scope_country = {
+		any_country = {
 			country_has_primary_culture = cu:qingqiuan
 		}
 	}
@@ -180,7 +180,9 @@ dvg_standalone_flavour.4 = { #Qingqiuan Kanhu
 			limit = {
 				has_building = building_logging_camp
 				has_building = building_paper_mills
-				is_homeland = cu:qingqiuan
+				this.state_region = {
+					is_homeland = cu:qingqiuan
+				}
 				any_scope_pop = {
 					culture = cu:qingqiuan
 					pop_acceptance >= acceptance_status_5
@@ -240,4 +242,94 @@ dvg_standalone_flavour.5 = { #Selecting the National Animal of Scandinavia
 		name = dvg_standalone_flavour.5.h
 	}
 	
+}
+
+dvg_standalone_flavour.6 = { #debate on the birthplace of crab rangoons
+	type = country_event
+	placement = ROOT
+
+	title = dvg_standalone_flavour.6.t
+	desc = dvg_standalone_flavour.6.d
+	flavor = dvg_standalone_flavour.6.f
+
+	event_image = {
+		video = "gfx/event_pictures/unspecific_vandalized_storefront.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		any_company = {
+			can_potentially_produce_prestige_goods = prestige_good_fusang_cuisine
+			is_producing_prestige_goods = yes
+			company_is_prosperous = yes
+		}
+		NOT = {
+			has_variable = dvg_standalone_flavour_crabrangoon_var
+		}
+		any_scope_state = {
+			state_region = s:STATE_XIAOSU
+		}
+		any_scope_state = {
+			state_region = s:STATE_SANBAO
+		}
+		has_technology_researched = pasteurization
+	}
+	
+	immediate = {
+		set_variable = dvg_standalone_flavour_crabrangoon_var
+		random_scope_state = {
+			limit = {
+				state_region = s:STATE_SANBAO
+			}
+			save_scope_as = scope_sanbao_crabrangoon
+		}
+		random_scope_state = {
+			limit = {
+				state_region = s:STATE_XIAOSU
+			}
+			save_scope_as = scope_baishan_crabrangoon
+		}
+	}
+
+	#favor sanbao claims
+	option = {
+		name = dvg_standalone_flavour.6.a
+		default_option = yes
+		scope:scope_sanbao_crabrangoon = {
+			add_loyalists_in_state = {
+				value = 0.02
+			}
+		}
+		scope:scope_baishan_crabrangoon = {
+			add_radicals_in_state = {
+				value = 0.05
+			}
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+
+	# favor Baishanese claims
+	option = {
+		name = dvg_standalone_flavour.6.b
+		scope:scope_baishan_crabrangoon = {
+			add_loyalists_in_state = {
+				value = 0.02
+			}
+		}
+		scope:scope_sanbao_crabrangoon = {
+			add_radicals_in_state = {
+				value = 0.05
+			}
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
 }

@@ -605,11 +605,12 @@
 		value = 0
 
 		if = {
-			limit = {	
-				scope:target_state = { 
-					is_treaty_port = yes 
-					region = { 
-						any_scope_state = { 
+			limit = {
+				# Because the target state in a treaty article is not actually the treaty port state, we need to check the entire state region
+				scope:target_state = {
+					state_region = {
+						any_scope_state = {
+							is_treaty_port = yes
 							OR = {
 								owner = { is_subject_of = ROOT }
 								owner = ROOT
@@ -623,16 +624,19 @@
 
 		if = {
 			limit = {
+				NOT = { is_country_type = unrecognized }
+				scope:target_country = { is_country_type = unrecognized }
+				NOT = { is_adjacent_to_country = scope:target_country } # No interest in treaty ports right next to our lands
 				OR = {
 					scope:target_country = {
 						has_diplomatic_pact = {
 							who = root
 							type = embargo
 						}
-					}	
+					}
 					AND = {
 						has_strategy = ai_strategy_economic_imperialism
-						"num_mutual_trade_route_levels_with_country(root)" >= 10
+						"mutual_trade_value_with_country(root)" >= 1000
 						OR = {
 							has_attitude = {
 								who = scope:target_country
@@ -641,113 +645,123 @@
 							has_attitude = {
 								who = scope:target_country
 								attitude = domineering
-							}	
+							}
 							has_attitude = {
 								who = scope:target_country
 								attitude = antagonistic
-							}								
-						}							
+							}
+						}
 					}
-				}				
+				}
 			}
 
 			add = {
 				value = 5
-			
+
 				add = {
 					value = scope:target_state.state_population
 					divide = 200000
 					max = 10
 				}
-				
+
 				add = {
 					value = scope:target_state.gdp
 					divide = 200000
 					max = 10
 				}
-			
+
 				if = {
 					limit = {
 						any_scope_building = {
 							is_building_type = building_trade_center
 							level > 0
-						}						
+						}
 					}
 					add = 5
 				}
-				
+
 				if = {
 					limit = {
-						OR = {
-							is_country_type = unrecognized
-							scope:target_country = { NOT = { is_country_type = unrecognized } }
-						}						
+						has_strategic_adjacency = scope:target_state
 					}
-					multiply = 0.5
+					multiply = 1.50
 				}
-					
-				if = {
-					limit = {
-						has_strategic_adjacency = scope:target_state		
-					}
-					multiply = 1.25
-				}	
 
 				if = {
 					limit = {
 						scope:target_state = { is_incorporated = no	}
 					}
 					multiply = 0.25
-				}						
-			}										
-		}
-		
-		# Not worth doing against very small markets
-		if = {
-			limit = {
-				scope:target_country = {
-					gdp < 2000000 
 				}
 			}
-			multiply = 0
-		}					
+		}
 
 		if = {
 			limit = {
-				has_treaty_port_in_country = scope:target_country
-			}
-			multiply = 0
-		}
-		
-		# Don't want treaty ports on countries in our market
-		if = {
-			limit = {
-				market_capital.market = scope:target_country.market_capital.market
-			}
-			multiply = 0
-		}			
-		
-		if = {
-			limit = {
-				scope:target_country = {
-					has_diplomatic_pact = {
-						who = root
-						type = trade_agreement
-					}	
+				# Because the target state in a treaty article is not actually the treaty port state, we need to check the entire state region
+				scope:target_state = {
+					NOT = {
+						state_region = {
+							any_scope_state = {
+								is_treaty_port = yes
+								OR = {
+									owner = { is_subject_of = ROOT }
+									owner = ROOT
+								}
+							}
+						}
+					}
 				}
 			}
-			multiply = 0
-		}
-		
-		if = {
-			limit = {
-				can_reach_target_state = no
+
+			if = {
+				limit = { has_treaty_port_in_market = scope:target_country.market }
+				multiply = 0.25
 			}
-			multiply = 0
-		}			
+
+			# Don't want treaty ports on countries in our market
+			if = {
+				limit = {
+					market_capital.market ?= scope:target_country.market_capital.market
+				}
+				multiply = 0.0
+			}
+
+			# Not worth doing against very small markets
+			if = {
+				limit = {
+					scope:target_country = {
+						gdp < 2000000
+					}
+				}
+				multiply = 0
+			}
+
+			if = {
+				limit = {
+					scope:target_country = {
+						any_scope_treaty = {
+							binds = root
+							any_scope_article = {
+								has_type = trade_privilege
+								source_country = scope:target_country
+							}
+						}
+					}
+				}
+				multiply = 0.25
+			}
+
+			if = {
+				limit = {
+					can_reach_target_state = no
+				}
+				multiply = 0
+			}
+		}
 
 		min = 0
-		max = 100		
+		max = 100
 	}
 
 	# How much does the AI desire another country as their subject
@@ -2144,30 +2158,36 @@
 
 				if = {
 					limit = {
-						has_diplomatic_pact = {
-							who = scope:target_country
-							type = defensive_pact
-						}	
+						any_scope_treaty = {
+							binds = scope:target_country
+							any_scope_article = {
+								has_type = defensive_pact 
+							}
+						}
 					}
 					multiply = 0.5
-				}	
+				}
 
 				if = {
 					limit = {
-						has_diplomatic_pact = {
-							who = scope:target_country
-							type = alliance
-						}		
+						any_scope_treaty = {
+							binds = scope:target_country
+							any_scope_article = {
+								has_type = alliance 
+							}
+						}
 					}
 					multiply = 0.25
 				}	
 
 				if = {
 					limit = {
-						has_diplomatic_pact = {
-							who = scope:target_country
-							type = trade_agreement
-						}			
+						any_scope_treaty = {
+							binds = scope:target_country
+							any_scope_article = {
+								has_type = trade_privilege
+							}
+						}
 					}
 					multiply = 0.5
 				}								
@@ -2314,33 +2334,46 @@
 
 				if = {
 					limit = {
-						has_diplomatic_pact = {
-							who = scope:target_country
-							type = defensive_pact
-						}	
+						any_scope_treaty = {
+							binds = scope:target_country
+							any_scope_article = {
+								has_type = defensive_pact
+							}
+						}
 					}
 					multiply = 0.5
 				}	
 
 				if = {
 					limit = {
-						has_diplomatic_pact = {
-							who = scope:target_country
-							type = alliance
-						}		
+						any_scope_treaty = {
+							binds = scope:target_country
+							any_scope_article = {
+								has_type = alliance
+							}
+						}
 					}
 					multiply = 0.25
 				}	
 
 				if = {
 					limit = {
-						has_diplomatic_pact = {
-							who = scope:target_country
-							type = trade_agreement
-						}			
+						any_scope_treaty = {
+							binds = scope:target_country
+							any_scope_article = {
+								has_type = trade_privilege
+								source_country = scope:target_country
+							}
+						}
 					}
 					multiply = 0.5
-				}								
+				}
+				if = {
+					limit = {
+						is_in_customs_union_with = scope:target_country
+					}
+					multiply = 0.25
+				}
 			}
 
 			if = {
@@ -2498,33 +2531,46 @@
 
 				if = {
 					limit = {
-						has_diplomatic_pact = {
-							who = scope:target_country
-							type = defensive_pact
-						}	
+						any_scope_treaty = {
+							binds = scope:target_country
+							any_scope_article = {
+								has_type = defensive_pact
+							}
+						}
 					}
 					multiply = 0.5
 				}	
 
 				if = {
 					limit = {
-						has_diplomatic_pact = {
-							who = scope:target_country
-							type = alliance
-						}		
+						any_scope_treaty = {
+							binds = scope:target_country
+							any_scope_article = {
+								has_type = alliance
+							}
+						}
 					}
 					multiply = 0.25
 				}	
 
 				if = {
 					limit = {
-						has_diplomatic_pact = {
-							who = scope:target_country
-							type = trade_agreement
-						}			
+						any_scope_treaty = {
+							binds = scope:target_country
+							any_scope_article = {
+								has_type = trade_privilege
+								source_country = scope:target_country
+							}
+						}
 					}
 					multiply = 0.5
-				}							
+				}
+				if = {
+					limit = {
+						is_in_customs_union_with = scope:target_country
+					}
+					multiply = 0.25
+				}
 			}			
 
 			if = {

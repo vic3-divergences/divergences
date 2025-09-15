@@ -144,7 +144,7 @@ dvg_pitjantjajara_colony = {
 
 dvg_yolngu_colony = {
 	is_shown = {
-				exists = c:GRJ
+		exists = c:GRJ
 		root = {
 			has_state_in_state_region = STATE_YOLNGU
 		}
@@ -155,60 +155,65 @@ dvg_yolngu_colony = {
 			}
 		}
 	}
-
-    possible = {
-		custom_tooltip = {
-			text = margere_colony_tt
-			OR = {
+	
+	possible = {
+		OR = {
+			custom_tooltip = {
+				text = margere_colony_1_tt
 				year >= 1850
-				AND = {
-					OR = {
-						AND = {
-							exists = c:YLN
-							c:YLN = ROOT
+			}
+			AND = {
+				custom_tooltip = {
+					text = margere_colony_2_tt
+					switch = {
+						trigger = ROOT
+						c:YLN = {
+							NOR = {
+								exists = c:NGL
+								exists = c:GWG
+								exists = c:MKS
+							}
 						}
-						AND = {
-							exists = c:NGL
-							c:NGL = ROOT
+						c:NGL = {
+							NOR = {
+								exists = c:NGL
+								exists = c:YLN
+								exists = c:MKS
+							}
 						}
-						AND = {
-							exists = c:GWG
-							c:GWG = ROOT
+						c:GWG = {
+							NOR = {
+								exists = c:NGL
+								exists = c:YLN
+								exists = c:MKS
+							}
 						}
-						AND = {
-							exists = c:MKS
-							c:MKS = ROOT
+						c:MKS = {
+							NOR = {
+								exists = c:NGL
+								exists = c:GWG
+								exists = c:YLN
+							}
 						}
 					}
-					exists = c:DUA
+				}
+				custom_tooltip = {
+					text = margere_colony_3_tt
 					NOT = {
-						c:DUA = {
+						c:DUA ?= {
 							has_state_in_state_region = STATE_YOLNGU
 						}
 					}
 				}
-				#AND = {
-				#	OR = {
-				#		AND = {
-				#			exists = c:YLN
-				#			root = c:YLN
-				#		}
-				#		AND = {
-				#			exists = c:NGL
-				#			root = c:NGL
-				#		}
-				#		AND = {
-				#			exists = c:GWG
-				#			root = c:GWG
-				#		}
-				#	}
-				#}
 			}
 		}
 	}
 
-    when_taken = {
-		trigger_event = { id = dvg_oceania.5 popup = yes }
+	when_taken = {
+		trigger_event = { 
+			id = dvg_oceania.5 
+			popup = yes 
+		}
 		hidden_effect = {
 			set_variable = dvg_colony_yln
 		}
@@ -219,7 +224,7 @@ dvg_yolngu_colony = {
 				add_homeland = cu:moluccan
 			}
 		}
-    }
+	}
 
 	ai_chance = {
 		value = 100
@@ -2250,6 +2255,73 @@ dvg_become_chougie = {
     when_taken = { #change event number
 		add_primary_culture = cu:verlander
 		change_tag = CGI
+    }
+
+	ai_chance = {
+		value = 100
+	}
+} 
+
+dvg_expand_zhourao = {
+	is_shown = {
+		has_variable = oceania_claimer
+		exists = c:ZHR
+		c:ZHR = ROOT
+		any_scope_state = {
+			region = sr:region_zhourao
+			NOT = {
+				state_region = {
+					is_homeland = cu:zhourao
+				}
+			}
+			any_neighbouring_state = {
+				state_region = {
+					is_homeland = cu:zhourao
+				}
+			}
+		}
+	}
+
+    possible = {
+
+		NOT = {
+			has_law = law_type:law_no_colonial_affairs
+		}
+		any_scope_state = {
+			region = sr:region_oceania
+			NOT = {
+				state_region = {
+					is_homeland = cu:zhourao
+				}
+			}
+			culture_percent_state = {
+				target = cu:zhourao
+				value > 0.50
+			}
+		}
+	}
+
+    when_taken = {
+       every_scope_state = {
+			limit = {
+				culture_percent_state = {
+				target = cu:zhourao
+				value > 0.50
+			}
+			region = sr:region_oceania
+				NOT = {
+				state_region = {
+					is_homeland = cu:zhourao
+				}
+				}
+				
+
+			}
+			state_region = {
+				add_homeland = cu:zhourao
+			}
+	   }
+	  
     }
 
 	ai_chance = {
