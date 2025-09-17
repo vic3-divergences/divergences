@@ -6,6 +6,10 @@
 	is_shown_when_inactive = {	
 		exists = c:BEO
 		this = c:BEO
+		NOT = { exists = c:NME  }
+		any_scope_state = {
+			region = sr:region_andes
+		}
 	}
 
 	possible = {
@@ -18,7 +22,6 @@
 				is_homeland = cu:beornian
 			}
 		}
-		NOT = { exists = c:NME  }
 	}
 
 	immediate = {
@@ -30,12 +33,17 @@
 
 	complete = {
 		# If-else clause to avoid errors because of missing variable before JE activates
-		ig:ig_rural_folk = {
-				ig_approval < 0
-				is_in_government = no
+		any_scope_state = {
+			percent > 0.50
+			filter = {
+				region = sr:region_andes
 			}
+			turmoil > 0.50
+		}
 		trigger_if = {
-			limit = { exists = var:new_mercia_var }
+			limit = { 
+				has_variable = new_mercia_var
+			 }
 			OR = {
 				scope:journal_entry = { is_goal_complete = yes }
 			}
@@ -63,8 +71,9 @@
 		effect = {
 			if = {
 				limit = {
-					ig:ig_rural_folk = {
-					ig_approval < 0
+					any_scope_state = {
+						region = sr:region_andes
+						turmoil > 0.33
 					}
 				}
 				change_variable = {
