@@ -43,7 +43,6 @@ ig_desires_laws_for_petition = {
 
 law_is_valid_for_ig_petition = {
 	# Can the law be enacted at all?
-	can_be_enacted = yes
 
 	# Special code trigger that checks if:
 	# 1: Anyone in government wants to enact this law, and nobody in government actively opposes it
@@ -499,6 +498,18 @@ goods_is_industrial = {
 	}
 }
 
+is_afghan_nation = {
+	OR = {
+		c:AFG ?= this
+		c:KAB ?= this
+		c:KAN ?= this
+		c:HER ?= this
+		c:KUN ?= this
+		c:MAI ?= this
+		# c:KAF ?= this
+	}
+}
+
 is_african_subject = {
 	OR = {
 		has_variable = senegal_subject_var
@@ -507,6 +518,76 @@ is_african_subject = {
 		has_variable = congo_subject_var
 		has_variable = southern_africa_subject_var
 		has_variable = ethiopia_subject_var
+	}
+}
+
+asian_ally_against_russia_trigger = {
+	scope:target_country = {
+		country_rank >= rank_value:unrecognized_major_power
+		OR = {
+			capital.region = sr:region_japan
+			capital.region = sr:region_manchuria
+			capital.region = sr:region_north_china
+			capital.region = sr:region_south_china
+			capital.region = sr:region_indonesia
+		}
+	}
+	exists = c:RUS
+	c:RUS ?= {
+		any_scope_state = {
+			region = sr:region_manchuria
+			OR = {
+				any_scope_building = {
+					is_building_type = building_port
+					level >= 5
+				}
+				any_scope_building = {
+					is_building_type = building_naval_base
+					level >= 15
+				}
+			}
+		}
+	}
+}
+
+independent_chinese_country_exists_in_region = {
+	any_scope_country = {
+		filter = {
+			OR = {
+				any_primary_culture = {
+					has_discrimination_trait = heritage_han
+				}
+				country_has_primary_culture = cu:yi
+				country_has_primary_culture = cu:manchu
+			}
+		}
+		OR = {
+			is_subject_of = ROOT
+			trigger_if = {
+				limit = {
+					ROOT = {
+						is_power_bloc_leader = yes
+					}
+				}
+				is_in_same_power_bloc = ROOT
+			}
+		}
+		percent = 1
+	}
+}
+
+meiji_completion_trigger = {
+	AND = {
+		ig:ig_landowners ?= {
+			is_in_government = no
+		}
+		OR = {
+			government_legitimacy >= 50
+			ig:ig_landowners ?= { is_marginal = yes }
+		}
+		has_insurrectionary_interest_groups = no
+		is_at_war = no
+		owns_entire_state_region = STATE_KANTO
 	}
 }
 
@@ -546,6 +627,41 @@ state_is_homeland_of_indian_cultures = {
 	}
 }
 
+state_is_homeland_of_german_cultures = {
+	state_region = {
+		OR = {
+			is_homeland = cu:north_german
+			is_homeland = cu:south_german
+			is_homeland = cu:alemannic
+			is_homeland = cu:rheinish
+			is_homeland = cu:balters
+		}
+	}
+}
+
+state_is_homeland_of_italian_cultures = {
+	state_region = {
+		OR = {
+			is_homeland = cu:north_italian
+			is_homeland = cu:south_italian
+			is_homeland = cu:central_italian
+			is_homeland = cu:sardinian
+			is_homeland = cu:venetian
+		}
+	}
+}
+
+state_is_homeland_of_yugoslav_cultures = {
+	state_region = {
+		OR = {
+			is_homeland = cu:serb
+			is_homeland = cu:croat
+			is_homeland = cu:bosniak
+			is_homeland = cu:slovene
+		}
+	}
+}
+
 ### Ideology Scripted Triggers - all within interest_group scope.
 ### I will not take responsibility for the transgressions of Humanity.
 
@@ -558,6 +674,19 @@ ideology_traditionalist_valid_trigger = {
 		is_interest_group_type = ig_landowners
 		is_interest_group_type = ig_devout
 	}
+	trigger_if = {
+		limit = {
+			c:BEI ?= owner
+		}
+		NOR = {
+			is_interest_group_type = ig_trade_unions
+			is_interest_group_type = ig_rural_folk
+			is_interest_group_type = ig_petty_bourgeoisie
+			is_interest_group_type = ig_landowners
+			is_interest_group_type = ig_devout
+			is_interest_group_type = ig_intelligentsia
+		}
+	}
 }
 
 ideology_traditionalist_minoritarian_valid_trigger = {
@@ -568,6 +697,15 @@ ideology_traditionalist_minoritarian_valid_trigger = {
 		is_interest_group_type = ig_petty_bourgeoisie
 		is_interest_group_type = ig_landowners
 		is_interest_group_type = ig_devout
+	}
+	trigger_if = {
+		limit = {
+			c:BEI ?= owner
+		}
+		NOR = {
+			is_interest_group_type = ig_armed_forces
+			is_interest_group_type = ig_industrialists
+		}
 	}
 }
 
@@ -694,12 +832,25 @@ ideology_anarchist_valid_trigger = {
 }
 
 ideology_ethno_nationalist_valid_trigger = {
+	trigger_if = {
+		limit = {
+			c:BEI ?= owner
+		}
+		NOR = {
+			is_interest_group_type = ig_trade_unions
+			is_interest_group_type = ig_rural_folk
+			is_interest_group_type = ig_petty_bourgeoisie
+			is_interest_group_type = ig_landowners
+			is_interest_group_type = ig_devout
+			is_interest_group_type = ig_intelligentsia
+		}
+	}
 }
 
 ideology_theocrat_valid_trigger = {
 	OR = {
 		owner = {
-			has_law = law_type:law_theocracy
+			has_law_or_variant = law_type:law_theocracy
 		}
 		is_interest_group_type = ig_devout
 	}
@@ -743,6 +894,14 @@ ideology_protectionist_valid_trigger = {
 ideology_humanitarian_valid_trigger = {
 	OR = {
 		is_interest_group_type = ig_intelligentsia
+		is_interest_group_type = ig_trade_unions
+	}
+}
+
+ideology_jacksonian_democrat_valid_trigger = {
+	OR = {
+		is_interest_group_type = ig_rural_folk
+		is_interest_group_type = ig_petty_bourgeoisie
 		is_interest_group_type = ig_trade_unions
 	}
 }
@@ -818,6 +977,15 @@ ideology_utilitarian_leader_valid_trigger = {
 		is_interest_group_type = ig_intelligentsia
 		is_interest_group_type = ig_petty_bourgeoisie
 	}
+	trigger_if = {
+		limit = {
+			c:BEI ?= owner
+		}
+		NOR = {
+			is_interest_group_type = ig_intelligentsia
+			is_interest_group_type = ig_petty_bourgeoisie
+		}
+	}
 }
 
 ideology_sovereignist_leader_valid_trigger = {
@@ -829,11 +997,59 @@ ideology_sovereignist_leader_valid_trigger = {
 	}
 }
 
+ideology_orleanist_valid_trigger = {
+	OR = {
+		is_interest_group_type = ig_industrialists
+		is_interest_group_type = ig_petty_bourgeoisie
+		is_interest_group_type = ig_intelligentsia
+		is_interest_group_type = ig_armed_forces
+	}
+}
+
+ideology_bonapartist_valid_trigger = {
+	OR = {
+		is_interest_group_type = ig_rural_folk
+		is_interest_group_type = ig_petty_bourgeoisie
+		is_interest_group_type = ig_industrialists
+		is_interest_group_type = ig_armed_forces
+	}
+}
+
+ideology_legitimist_valid_trigger = {
+	OR = {
+		is_interest_group_type = ig_devout
+		is_interest_group_type = ig_rural_folk
+		is_interest_group_type = ig_petty_bourgeoisie
+		is_interest_group_type = ig_landowners
+	}
+}
+
 ideology_utopian_valid_trigger = {
 	OR = {
 		is_interest_group_type = ig_rural_folk
 		is_interest_group_type = ig_petty_bourgeoisie
 		is_interest_group_type = ig_intelligentsia
 		is_interest_group_type = ig_trade_unions
+	}
+}
+
+movement_is_plausibly_indian_nationalist = {
+	OR = {
+		is_political_movement_type = movement_religious_minority
+		is_political_movement_type = movement_cultural_minority
+		is_political_movement_type = movement_india_pan_national
+		is_political_movement_type = movement_hindu_nationalist
+		is_political_movement_type = movement_muslim_nationalist
+	}
+}
+
+is_indian_interest_group = {
+	OR = {
+		is_interest_group_type = ig_landowners
+		is_interest_group_type = ig_petty_bourgeoisie
+		is_interest_group_type = ig_intelligentsia
+		is_interest_group_type = ig_trade_unions
+		is_interest_group_type = ig_devout
+		is_interest_group_type = ig_rural_folk
 	}
 }
