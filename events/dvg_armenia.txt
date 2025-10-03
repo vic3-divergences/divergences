@@ -1,0 +1,365 @@
+﻿namespace = dvg_armenia
+#Armenia restored
+dvg_armenia.1 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_armenia.1.t
+	desc = dvg_armenia.1.d
+	flavor = dvg_armenia.1.f
+
+	event_image = {
+		video = "southamerica_christianity"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	immediate = {
+		
+	}
+
+	#armenia Starting Event
+
+	option = {
+		name = dvg_armenia.1.a
+		default_option = yes
+
+		create_incident = {
+			country = THIS
+			value = 5
+		}
+		set_variable = greater_armenia		
+		
+		add_loyalists = {
+			value = 0.25
+			culture = cu:armenian
+		}
+		every_scope_state = {
+			limit = {
+				OR = {
+					region = sr:region_anatolia
+					region = sr:region_caucasus
+					region = sr:region_persia
+					region = sr:region_arabic
+				}
+				NOT = {
+					state_region = {
+						is_homeland = cu:armenian  
+					}
+				}
+			}
+			state_region = {
+				add_homeland = cu:armenian
+			}
+			random_scope_pop = {
+				change_pop_culture = {
+					target = cu:armenian
+					value = 1
+				}
+			}
+		}
+	}
+
+	option = {
+		name = dvg_armenia.1.b
+
+		add_loyalists = {
+			value = 0.15
+			religion = rel:oriental_orthodox
+		}
+		
+		add_primary_culture = cu:assyrian
+		every_state_region = {
+			limit = {
+				state_region = {
+					is_homeland = cu:assyrian
+				}
+			}
+			state_region = {
+				add_claim = ROOT
+			}
+		}
+		if = {
+			limit = {
+				any_state = {
+					state_region = cu:syriac
+				}
+			}
+			state_region = {
+				remove_homeland = cu:syriac
+				add_homeland = cu:assyrian
+			}
+			every_country = {
+				every_scope_pop = {
+					limit = {
+						culture = cu:syriac
+					}
+					change_pop_culture = {
+					target = cu:assyrian
+					value = 1
+					}
+				}
+				
+			}
+		}
+		s:STATE_PALESTINE = {
+			add_claim = ROOT
+		}
+		s:STATE_TRANSJORDAN = {
+			add_claim = ROOT
+		}
+		s:STATE_LEBANON = {
+			add_claim = ROOT
+		}
+		create_incident = {
+			country = THIS
+			value = 5
+		}
+
+	}
+}
+#Establishment of armenia, Jewish refugees
+dvg_armenia.2 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_armenia.2.t
+	desc = dvg_armenia.2.d
+	flavor = dvg_armenia.2.f
+
+	event_image = {
+		video = "europenorthamerica_judaism"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+
+	immediate = {
+		random_neighbouring_state = {
+			limit = {
+				NOT = {
+					owner = ROOT
+				}
+			}
+			owner = {
+				save_scope_as = neighbor_country
+			}
+			save_scope_as = neighbor_state
+		}
+		random_country = {
+			limit = {
+				any_scope_pop = {
+					has_pop_culture = ashkenazi
+				}
+			}
+			save_scope_as = ashkenazi_country
+		}
+		random_country = {
+			limit = {
+				any_scope_pop = {
+					has_pop_culture = sephardic
+				}
+			}
+			save_scope_as = sephardic_country
+		}
+		random_country = {
+			limit = {
+				any_scope_pop = {
+					has_pop_culture = mizrahi
+				}
+			}
+			save_scope_as = mizrahi_country
+		}
+	}
+
+
+	
+	option = {
+		name = dvg_armenia.2.a
+		default_option = yes
+		
+		add_loyalists = {
+			value = 0.10
+		}
+	}
+	option = {
+		name = dvg_armenia.2.b
+		
+		create_incident = {
+			country = THIS
+			value = 10
+		}
+		every_country = {
+			limit = {
+				any_scope_pop = {
+					has_pop_religion = jewish
+				}
+			}
+			random_scope_pop = {
+				limit = {
+					religion = rel:jewish
+				}
+				move_pop = s:STATE_PALESTINE.region_state:ISR
+			}
+		}
+		s:STATE_PALESTINE.region_state:ISR = {
+			create_mass_migration = {
+			origin = scope:ashkenazi_country
+			culture = cu:ashkenazi
+			}
+			create_mass_migration = {
+			origin = scope:ashkenazi_country
+			culture = cu:sephardic
+			}
+			create_mass_migration = {
+			origin = scope:mizrahi_country
+			culture = cu:mizrahi
+			}
+		}
+		
+
+
+		ai_chance = {
+			base = 50
+		}
+	}
+
+	option = {
+		name = dvg_armenia.2.c
+		
+		create_incident = {
+			country = THIS
+			value = 20
+		}
+		every_neighbouring_state = {
+			owner = {
+				trigger_event = dvg_armenia.3
+			}
+		}
+		every_country = {
+			limit = {
+				any_scope_pop = {
+					has_pop_religion = jewish
+				}
+			}
+			random_scope_pop = {
+				limit = {
+					religion = rel:jewish
+				}
+				move_pop = s:STATE_PALESTINE.region_state:ISR
+			}
+		}
+		s:STATE_PALESTINE.region_state:ISR = {
+			create_mass_migration = {
+			origin = scope:ashkenazi_country
+			culture = cu:ashkenazi
+			}
+			create_mass_migration = {
+			origin = scope:ashkenazi_country
+			culture = cu:sephardic
+			}
+			create_mass_migration = {
+			origin = scope:mizrahi_country
+			culture = cu:mizrahi
+			}
+		}
+		every_scope_pop = {
+			limit = {
+				NOT = {
+					religion = rel:jewish
+					culture = {
+						has_discrimination_trait = jewish
+					}
+				}
+				pop_acceptance < 30
+			}
+			move_pop = scope:neighbor_state
+		}
+
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+#Destroy armenia Event
+dvg_armenia.3 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_armenia.3.t
+	desc = dvg_armenia.3.d
+	flavor = dvg_armenia.3.f
+
+	event_image = {
+		video = "europenorthamerica_judaism"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		
+	}
+	immediate = {
+		random_country = {
+			limit = {
+				country_has_state_religion = rel:jewish
+			}
+			save_scope_as = jewish_country
+		}
+		random_primary_culture = {
+			limit = {
+				NOT = {
+					has_discrimination_trait = jewish_group
+				}
+			}
+			save_scope_as = goyim_culture
+		}
+	}
+
+	#armenia Starting Event
+
+	option = {
+		name = dvg_armenia.3.a
+		default_option = yes
+
+		create_diplomatic_play = {
+			type = dp_annex_war
+			target_country = scope:jewish_country
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+	option = {
+		name = dvg_armenia.3.b
+		
+		add_radicals = {
+			value = 0.20
+			culture = scope:goyim_culture
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}

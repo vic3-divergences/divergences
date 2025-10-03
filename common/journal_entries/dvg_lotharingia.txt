@@ -28,6 +28,7 @@
 					count > 1
 					ig_approval < -6
 					}
+					var:aigle_var < 250 
 				}
 				change_variable = {
 					name = aigle_var
@@ -40,7 +41,7 @@
 					count > 3
 					ig_approval < -10
 					}
-					
+					var:aigle_var < 230 
 				}
 				change_variable = {
 					name = aigle_var
@@ -52,7 +53,7 @@
 					ig:ig_armed_forces = {
 						is_insurrectionary = yes
 					}
-					
+					var:aigle_var < 230 
 				}
 				change_variable = {
 					name = aigle_var
@@ -65,7 +66,7 @@
 						is_insurrectionary = yes
 						ig_clout >= 0.12
 					}
-					
+					var:aigle_var < 235 
 				}
 				change_variable = {
 					name = aigle_var
@@ -77,8 +78,9 @@
 					ig:ig_armed_forces = {
 						is_powerful = yes
 						is_in_government = yes
+						var:aigle_var > 0 
 					}
-					root.average_sol > 10
+					root.average_sol > average_expected_sol
 				}
 				change_variable = {
 					name = aigle_var
@@ -91,7 +93,8 @@
 						is_powerful = yes
 						is_in_government = yes
 					}
-					root.average_sol > 11
+					var:aigle_var > 1
+					root.average_sol > average_expected_sol
 				}
 				change_variable = {
 					name = aigle_var
@@ -101,6 +104,7 @@
 			if = {
 				limit = {
 					has_variable = benevolent_dictatorship
+					var:aigle_var > 1 
 				}
 				change_variable = {
 					name = aigle_var
@@ -133,33 +137,50 @@
 
 	complete = {
 		# If-else clause to avoid errors because of missing variable before JE activates
-		
+		calc_true_if = {
+			amount = 4
+			any_enemy_in_diplo_play = {
+				country_has_primary_culture = cu:lotharian
+			}
+			OR = {
+			radical_fraction = {
+				value > 0.50
+			}
+			ig:ig_armed_forces = {
+				ig_approval < -10
+			}
+			any_interest_group = {
+				ig_approval < -6
+				ig_clout > 0.10
+			}
+			any_interest_group = {
+					is_powerful = yes
+					is_insurrectionary = yes
+			}
+
+			}
+			root.average_sol < average_expected_sol
+		}
+
+
 		
 		trigger_if = {
 			limit = { exists = var:aigle_var }
 			scope:journal_entry = { is_goal_complete = yes }
 		}
-		OR = {
-			any_interest_group = {
-				count >= 2
-				ig_approval < -6
-				ig_clout > 0.10
-				}
-			any_interest_group = {
-					is_powerful = yes
-					is_insurrectionary = yes
-				}
-
-		}
-
-		
 		
 		has_law = law_type:law_autocracy
-		root.average_sol <= 11
+		
 	}
 	
 	on_complete = {
 		#set_variable = house_of_cards_complete
+		every_diplomatic_play = {
+			limit = {
+				initiator_is = ROOT
+			}
+			end_play = yes
+		}
 		trigger_event = {
 			id = dvg_lotharingia.5
 		}
@@ -570,7 +591,7 @@ je_anglo_lotharingia = {
 					ig_clout >= 0.10
 					}
 		
-		root.average_sol <= 11
+		root.average_sol < average_expected_sol
 	}
 	
 	on_complete = {
@@ -624,3 +645,159 @@ je_anglo_lotharingia = {
 	weight = 10000
 	should_be_pinned_by_default = yes
 }
+
+je_lotharian_awakening = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	group = je_group_great_awakening
+
+	is_shown_when_inactive = {
+		country_is_in_south_america = yes
+		country_has_primary_culture = cu:lotharian
+	}
+	possible = {
+		any_neighbouring_state = {
+			owner = {
+				has_variable = beornian_awakening
+			}
+		}
+	}
+
+	immediate = {
+
+		set_variable = beornian_awakening
+	}
+	
+	progressbar = yes
+
+	on_monthly_pulse = {
+		random_events = {
+			10 = dvg_lotharingia.25
+		}
+		effect = {
+			if = {
+				limit = {
+					ig:ig_devout = {
+					is_in_government = yes
+					}
+				}
+
+				change_variable = {
+				name = pc_var
+				add = 1
+				}
+			}
+			if = {
+				limit = {
+					ig:ig_devout = {
+					ig_approval > 10
+					}
+				}
+				change_variable = {
+				name = pc_var
+				add = 1
+				}
+			}
+			if = {
+				limit = {
+					ig:ig_devout = {
+					ig_approval < -10
+					}
+				}
+				change_variable = {
+				name = pc_var
+				subtract = 1
+				}
+			}
+			if = {
+				limit = {
+					ig:ig_devout = {
+						is_in_government = no
+					}
+				}
+				change_variable = {
+				name = pc_var
+				subtract = 1
+				}
+			}
+		}
+	}
+
+	complete = {
+		trigger_if = {
+			scope:journal_entry = { is_goal_complete = yes }
+		}
+		ig:ig_devout = {
+			is_in_government = yes
+			ig_approval > 10
+		}
+	}
+	
+	goal_add_value = 100
+
+	on_complete = {
+		trigger_event = { id = dvg_lotharingia.22 }
+	}
+	should_be_pinned_by_default = yes
+
+	fail = {
+		ig:ig_devout = {
+			is_in_government = no
+			ig_approval < -10
+			is_marginal = yes
+		}
+	}
+	timeout = 7125
+
+}
+
+
+je_grand_chaco = {
+	icon = "gfx/interface/icons/invention_icons/pan_nationalism.dds"
+
+	group = je_group_foreign_affairs
+
+	is_shown_when_inactive = {
+		any_scope_state = {
+			state_region = s:STATE_GRAND_CHACO
+		}
+	}
+	immediate = {
+		random_primary_culture = {
+			save_scope_as = primary_culture_scope
+		}
+	}
+
+    possible = {
+		NOT = {
+			has_law = law_type:law_no_colonial_affairs
+		}
+		custom_tooltip = {
+			text = edward_dead
+			NOT = {
+				c:BEO = {
+					ruler = {
+					has_variable = is_edward
+					}
+				}		
+			}
+		}
+		has_technology_researched = nationalism
+	}
+
+	complete = {
+		owns_entire_state_region = STATE_GRAND_CHACO
+	}
+
+    on_complete = {
+		ruler = {
+			add_modifier = sovereignty_defender
+		}
+		s:STATE_GRAND_CHACO = {
+			add_homeland = scope:primary_culture_scope
+		}
+    }
+
+	should_be_pinned_by_default = yes
+}
+
