@@ -123,7 +123,6 @@ on_yearly_pulse = { }
 on_monthly_pulse_country = {
     events = {
         communism.8 # Red Army
-        peoples_springtime.1
         colonial_administration_events.2 # African Colony Radicals
         #sa_migration.5
 
@@ -218,7 +217,60 @@ on_monthly_pulse_country = {
         #	}
         #}
         #}
+		if = { # Springtime of the Peoples
+			limit = {
+				NOT = { has_global_variable = peoples_springtime_happening }
+				NOT = { has_global_variable = peoples_springtime_happened }
+				country_is_in_europe = yes
+				has_technology_researched = egalitarianism
+				country_rank >= rank_value:major_power
+				OR = {
+					any_political_movement = {
+						OR = {
+							movement_is_liberal = yes
+							movement_is_socialist = yes
+						}
+						is_insurrectionary = yes
+					}
+					AND = {
+						c:FRA ?= this
+						has_variable = france_had_revolution
+					}
+				}
+			}
+			save_scope_as = revolutionary_country
+			set_global_variable = {
+				name = peoples_springtime_happening
+			}
+			set_global_variable = {
+				name = peoples_springtime_recent
+				days = normal_modifier_time
+			}
+			every_country = {
+				limit = {
+					country_is_in_europe = yes
+					has_technology_researched = egalitarianism
+				}
+				trigger_event = { id = peoples_springtime.1 }
+			}
+		}
 
+		if = {
+			limit = {
+				has_global_variable = peoples_springtime_happening
+				NOT = {
+					has_global_variable = peoples_springtime_recent
+				}
+			}
+			every_country = {
+				limit = {
+					country_is_in_europe = yes
+				}
+				trigger_event = { id = peoples_springtime.6 }
+			}
+			remove_global_variable = peoples_springtime_happening
+			set_global_variable = peoples_springtime_happened
+		}
         # TODO: Move these to tag-specific pulses
 
         if = {
