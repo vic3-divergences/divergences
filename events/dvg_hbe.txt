@@ -4244,7 +4244,7 @@ dvg_hbe.38 = { #End of the HBE
 	type = country_event
 	placement = ROOT
 	event_image = {
-		video = "gfx/event_pictures/unspecific_fire.bk2"
+		video = "gfx/event_pictures/unspecific_military_parade.bk2"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
@@ -4270,9 +4270,15 @@ dvg_hbe.38 = { #End of the HBE
 		add_loyalists = {
 			value = 0.15
 		}
+		if = {
+			limit = {
+				NOT = {
+					has_law = law_type:law_parliamentary_republic
+				}
+			}
+			activate_law = law_type:law_parliamentary_republic
+		}
 		
-		
-		trigger_event = { id = dvg_hbe.39 days = 30 }
 	}
 }
 
@@ -4679,11 +4685,11 @@ dvg_hbe.43 = { #Spread of the Great Awakening
 }
 
 
-dvg_hbe.44 = { #Robin Hood
+dvg_hbe.44 = { #John Faith's Execution
 	type = country_event
 	placement = ROOT
 	event_image = {
-		video = "votp_agitators_sneaking"
+		video = "votp_prison"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
@@ -4698,7 +4704,6 @@ dvg_hbe.44 = { #Robin Hood
 	duration = 3
 
 	trigger = {
-		empty_agitator_slots > 0
 	}
 
 	immediate = {		
@@ -4708,6 +4713,68 @@ dvg_hbe.44 = { #Robin Hood
 		name = dvg_hbe.44.a
 		default_option = yes
 
+		add_radicals = {
+			value = 0.10
+			interest_group = ig:ig_rural_folk
+		}
+		random_scope_character = {
+			limit = {
+				has_variable = john_faith_var
+			}
+			kill_character = yes
+		}
+		add_radicals = {
+			value = 0.05
+			interest_group = ig:ig_armed_forces
+		}
+
+		add_radicals = {
+			value = 0.05
+			interest_group = ig:ig_landowners
+		}
+		add_loyalists = {
+			value = 0.10
+			interest_group = ig:ig_industrialists
+		}
+			add_loyalists = {
+			value = 0.10
+			interest_group = ig:ig_intelligentsia
+		}
+	}
+}
+
+
+dvg_hbe.45 = { #Robin Hood
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = "votp_agitators_sneaking"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/military_parade"
+
+    icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	title = dvg_hbe.45.t
+	desc = dvg_hbe.45.d
+	flavor = dvg_hbe.45.f
+
+	duration = 3
+
+	trigger = {
+	}
+
+	immediate = {		
+	}
+
+	option = {
+		name = dvg_hbe.45.a
+		default_option = yes
+		
+		add_radicals = {
+			value = 0.10
+		}
 		create_character = {
 			first_name = "Robin"
 			last_name = "Hood"
@@ -4748,48 +4815,11 @@ dvg_hbe.44 = { #Robin Hood
 				add = 10
 			}
 		}
-	}
-}
-
-
-dvg_hbe.45 = { #Rise of the Black Knights
-	type = country_event
-	placement = ROOT
-	event_image = {
-		video = "votp_agitators_sneaking"
-	}
-
-	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
-	on_opened_soundeffect = "event:/SFX/Events/unspecific/military_parade"
-
-    icon = "gfx/interface/icons/event_icons/event_portrait.dds"
-
-	title = dvg_hbe.45.t
-	desc = dvg_hbe.45.d
-	flavor = dvg_hbe.45.f
-
-	duration = 3
-
-	trigger = {
-	}
-
-	immediate = {		
-	}
-
-	option = {
-		name = dvg_hbe.45.a
-		default_option = yes
-		
-		add_radicals = {
-			value = 0.10
-		}
 		
 	}
 }
 
-
-
-dvg_hbe.46 = { #Return of Robin Hood
+dvg_hbe.46 = { #Robin Hood Returns
 	type = country_event
 	placement = ROOT
 	event_image = {
@@ -4809,24 +4839,14 @@ dvg_hbe.46 = { #Return of Robin Hood
 
 	trigger = {
 		NOT = {
-			 
-			c:BEO = {
-				
-			}
 			any_scope_character = {
-				has_variable = john_faith_var
+				has_variable = robin_hood_var
 			}
-
 			has_modifier = martyrizing_modifier
 		}
-		OR = {
-			average_sol < expected_sol
-			radical_fraction > 0.50
-		}
-		
 	}
 
-	immediate = {		
+	immediate = {	
 		create_character = {
 			first_name = "Robin"
 			last_name = "Hood"
@@ -4852,7 +4872,7 @@ dvg_hbe.46 = { #Return of Robin Hood
 					name = modifier_man_of_the_people
 				}
 			}
-		}
+		}	
 	}
 
 	option = {
@@ -4863,22 +4883,42 @@ dvg_hbe.46 = { #Return of Robin Hood
 			value = 0.10
 		}
 		
+		add_radicals = {
+			value = 0.15
+			strata = upper
+		}
+		
+		if = {
+			limit = {
+				has_journal_entry = je_beo_presbyterians
+			}
+			change_variable = {
+				name = presbyterian_var
+				add = 10
+			}
+		}
+	}
+	option = {
+		name = dvg_hbe.46.b
+		default_option = yes
+		
+		trigger_event = {
+			id = dvg_hbe.47
+		}
 	}
 }
-
-
 
 dvg_hbe.47 = { #Killing Robin Hood
 	type = country_event
 	placement = ROOT
 	event_image = {
-		video = "middleeast_police_breaking_door"
+		video = "ip3_policeraid"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
 	on_opened_soundeffect = "event:/SFX/Events/unspecific/military_parade"
 
-    icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+    	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
 
 	title = dvg_hbe.47.t
 	desc = dvg_hbe.47.d
@@ -4900,7 +4940,13 @@ dvg_hbe.47 = { #Killing Robin Hood
 			value = 0.15
 			strata = lower
 		}
-		if = {
+		add_loyalists = {
+			value = 0.10
+			strata = upper
+		}
+		custom_tooltip = {
+			text = less_pres_tt
+			if = {
 			limit = {
 				has_journal_entry = je_beo_presbyterians
 			}
@@ -4908,11 +4954,14 @@ dvg_hbe.47 = { #Killing Robin Hood
 				name = presbyterian_var
 				subtract = 15
 			}
-		}
-		add_radicals = {
+			}
+			add_radicals = {
 			value = 0.15
 			interest_group = ig:ig_petty_bourgeoisie
+			}
 		}
+		
+		
 		
 		add_modifier = {
 			name = martyrizing_modifier
@@ -4933,7 +4982,7 @@ dvg_hbe.47 = { #Killing Robin Hood
 		}
 
 		add_radicals = {
-			value = 0.15
+			value = 0.05
 			strata = upper
 		}
 		add_radicals = {
@@ -4951,7 +5000,7 @@ dvg_hbe.48 = { #Robin Hood Revolution
 	type = country_event
 	placement = ROOT
 	event_image = {
-		video = "votp_agitators_sneaking"
+		video = "votp_agitator_speaking"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
