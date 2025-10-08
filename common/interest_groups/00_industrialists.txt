@@ -9,11 +9,13 @@
 		ideology_laissez_faire
 		ideology_individualist
 	}
-
+	
 	character_ideologies = {
 		ideology_moderate
 		ideology_market_liberal
 		ideology_protectionist
+		#ideology_orleanist
+		#ideology_bonapartist
 	}
 
 	enable = {
@@ -26,7 +28,7 @@
 		ig_trait_engines_of_progress
 		ig_trait_tax_avoidance
 	}
-
+	
 	on_enable = {
 		ig:ig_industrialists = {
 			if = {
@@ -47,18 +49,6 @@
 			}
 			else_if = {
 				limit = {
-					has_dlc_feature = ip3_content
-					OR = {
-						owner = { c:NOR ?= this }
-						owner = { c:GRE ?= this }
-					}
-				}
-				set_ig_trait = ig_trait:ig_trait_tax_avoidance
-				set_ig_trait = ig_trait:ig_shipping_magnates
-				set_ig_trait = ig_trait:ig_trait_job_creators
-			}
-			else_if = {
-				limit = {
 					has_dlc_feature = voice_of_the_people_content
 					owner = { c:FRA ?= this }
 				}
@@ -75,18 +65,25 @@
 				set_ig_trait = ig_trait:ig_trait_the_goods_must_flow
 				set_ig_trait = ig_trait:ig_trait_job_creators
 			}
-			# Indonesia
+			# India
 			else_if = {
 				limit = {
 					owner = {
-						c:BEI ?= this
+						AND = {
+							country_is_in_europe = no
+							is_subject = yes
+							any_overlord_or_above = {
+								any_primary_culture = {
+									has_discrimination_trait = european_heritage
+								}
+							}
+						}
 					}
 				}
 				set_interest_group_name = ig_east_india_company
 				remove_ideology = ideology_laissez_faire
 				add_ideology = ideology_colonialist
 				remove_ideology = ideology_plutocratic
-				add_ideology = ideology_enclavist
 				remove_ideology = ideology_individualist
 				add_ideology = ideology_malthusian
 
@@ -94,24 +91,21 @@
 				set_ig_trait = ig_trait:ig_trait_stamped_and_signed
 				set_ig_trait = ig_trait:ig_trait_responsible_government
 			}
-			# else_if = {
-				# limit = {
-					# owner = {
-						# OR = {
-							# c:DEI ?= this
-							# c:ALK ?= this
-							# c:HBC ?= this
-							# is_country_type = company
-						# }
-					# }
-				# }
-				# remove_ideology = ideology_laissez_faire
-				# add_ideology = ideology_colonialist
-
-				# set_ig_trait = ig_trait:ig_trait_tax_avoidance
-				# set_ig_trait = ig_trait:ig_trait_engines_of_progress
-				# set_ig_trait = ig_trait:ig_trait_job_creators
-			# }
+#			else_if = { # only applies to Dutch east indies and alaska
+#				limit = {
+#					owner = {
+#						OR = {
+#							c:DEI ?= this
+#							c:ALK ?= this
+#						}
+#					}
+#				}
+#				remove_ideology = ideology_laissez_faire
+#				add_ideology = ideology_colonialist
+#				set_ig_trait = ig_trait:ig_trait_tax_avoidance
+#				set_ig_trait = ig_trait:ig_trait_engines_of_progress
+#				set_ig_trait = ig_trait:ig_trait_job_creators				
+#			}
 			else = {
 				set_ig_trait = ig_trait:ig_trait_tax_avoidance
 				set_ig_trait = ig_trait:ig_trait_engines_of_progress
@@ -126,76 +120,28 @@
 		rule = {
 			trigger = {
 				c:BEI ?= this
-				any_primary_culture = {
+				any_primary_culture = { 
 					cu:burgundian = this
 				}
 			}
 			cultures = {
-				burgundian dutch verlander
+				burgundian dutch verlander 
 			}
 		}
 		rule = {
 			trigger = {
-				c:CHR  ?= this
-				any_primary_culture = {
+				c:CHR ?= this
+				any_primary_culture = { 
 					cu:scandinavian = this
 				}
 			}
 			cultures = {
-				scandinavian scottish
+				scandinavian scottish 
 			}
 		}
-		rule = {
-			trigger = {
-				c:ZAN ?= this
-				any_primary_culture = {
-					cu:bedouin = this
-				}
-			}
-			cultures = {
-				bedouin swahili north_german british gujarati
-			}
-		}
-		# rule = {
-			# trigger = {
-				# c:HAW ?= this
-				# NOT = { has_variable = deported_americans }
-			# }
-			# cultures = {
-				# yankee dixie british hawaiian
-			# }
-		# }
 	}
 
-	on_character_ig_membership = {
-		if = {
-			limit = {
-				OR = {
-					culture = cu:british
-					culture = cu:north_german
-				}
-				owner = {
-					c:ZAN ?= this
-					any_primary_culture = {
-						cu:bedouin = this
-					}
-				}
-			}
-			change_character_religion = rel:protestant
-		}
-		if = {
-			limit = {
-				culture = cu:gujarati
-				owner = {
-					c:ZAN ?= this
-					any_primary_culture = {
-						cu:bedouin = this
-					}
-				}
-			}
-			change_character_religion = rel:shiite
-		}
-	}
+	on_character_ig_membership = {}
 
 	pop_potential = {
 		OR = {
@@ -207,7 +153,7 @@
 				owner ?= c:BEI
 				OR = {
 					culture ?= {
-						has_discrimination_trait_group = heritage_group_european
+						has_discrimination_trait = european_heritage
 					}
 					is_pop_type = bureaucrats
 					is_pop_type = clerks
@@ -237,10 +183,7 @@
 					is_pop_type = engineers
 				}
 				value = 50
-				add = {
-					value = this.standard_of_living
-					multiply = 2
-				}
+				add = this.standard_of_living
 			}
 		}
 
@@ -251,10 +194,7 @@
 					is_pop_type = shopkeepers
 				}
 				value = 50
-				add = {
-					value = this.standard_of_living
-					multiply = 2
-				}
+				add = this.standard_of_living
 			}
 		}
 		if = {
@@ -263,7 +203,7 @@
 					c:BEI ?= this
 				}
 				culture = {
-					has_discrimination_trait_group = heritage_group_european
+					has_discrimination_trait = european_heritage
 				}
 				OR = {
 					strata = upper
@@ -278,7 +218,7 @@
 				value = 250
 			}
 		}
-
+		
 		if = {
 			limit = {
 				owner = {
@@ -289,7 +229,7 @@
 				limit = {
 					NOT = {
 						culture = {
-							has_discrimination_trait_group = heritage_group_european
+							has_discrimination_trait = european_heritage
 						}
 					}
 					OR = {
@@ -306,7 +246,7 @@
 				limit = {
 					NOT = {
 						culture = {
-							has_discrimination_trait_group = heritage_group_european
+							has_discrimination_trait = european_heritage
 						}
 					}
 					NOR = {
@@ -360,7 +300,7 @@
 				min = 0
 			}
 		}
-
+		
 		if = {
 			limit = {
 				scope:interest_group = {
@@ -414,8 +354,8 @@
 			limit = {
 				owner = {
 					OR = {
-						has_law_or_variant = law_type:law_oligarchy
-						has_law_or_variant = law_type:law_wealth_voting
+						has_law = law_type:law_oligarchy
+						has_law = law_type:law_wealth_voting
 					}
 				}
 			}
@@ -427,7 +367,7 @@
 		if = {
 			limit = {
 				owner = {
-					has_law_or_variant = law_type:law_laissez_faire
+					has_law = law_type:law_laissez_faire
 				}
 			}
 			multiply = {
@@ -478,19 +418,11 @@
 		value = 0.5
 	}
 
-	executive_weight = {
-		value = 5.0
-	}
-
 	noble_chance = {
 		value = 0.3
 	}
 
 	female_commander_chance = {
-		value = 0.0
-	}
-
-	female_executive_chance = {
 		value = 0.0
 	}
 
@@ -500,7 +432,7 @@
 		if = {
 			limit = {
 				owner = {
-					has_law_or_variant = law_type:law_womens_suffrage
+					has_law = law_type:law_womens_suffrage
 				}
 
 			}
@@ -512,11 +444,23 @@
 
 	female_agitator_chance = {
 		value = 0.025
-
+		
 		if = {
 			limit = {
 				owner = {
-					has_law_or_variant = law_type:law_women_own_property
+					has_law = law_type:law_women_own_property
+				}
+
+			}
+			add = {
+				value = 0.025
+			}
+		}	
+		
+		if = {
+			limit = {
+				owner = {
+					has_law = law_type:law_women_in_the_workplace
 				}
 
 			}
@@ -528,26 +472,14 @@
 		if = {
 			limit = {
 				owner = {
-					has_law_or_variant = law_type:law_women_in_the_workplace
+					has_law = law_type:law_womens_suffrage
 				}
 
 			}
 			add = {
 				value = 0.025
 			}
-		}
-
-		if = {
-			limit = {
-				owner = {
-					has_law_or_variant = law_type:law_womens_suffrage
-				}
-
-			}
-			add = {
-				value = 0.025
-			}
-		}
+		}		
 	}
 
 	# The chance that a commander belonging to this IG takes over leadership when it changes
@@ -555,11 +487,5 @@
 	commander_leader_chance = {
 		value = 0.25
 		multiply = ig_commander_leader_chance_mult
-	}
-
-	# The chance that a executive belonging to this IG takes over leadership when it changes
-	# scope:character is the most popular executive in the IG
-	executive_leader_chance = {
-		value = 0.75
 	}
 }
