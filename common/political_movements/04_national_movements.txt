@@ -1,24 +1,24 @@
 ﻿movement_hindu_nationalist = {
 	category = movement_category_religious
-	
-	ideology = ideology_traditionalist_minoritarian
+
+	ideology = ideology_traditionalist_minoritarian_movement
 	character_ideologies = {
 		ideology_fascist
 		ideology_theocrat
-	}		
-	
+	}
+
 	creation_trigger = {
 		OR = {
-			#AND = {
-			#	c:BIC ?= this
-			#	has_technology_researched = pan-nationalism
-			#	any_scope_state = {
-			#		state_is_homeland_of_indian_cultures = yes
-			#		any_scope_pop = {
-			#			religion = rel:hindu
-			#		}
-			#	}
-			#}
+			# AND = {
+				# c:BIC ?= this
+				# has_technology_researched = pan-nationalism
+				# any_scope_state = {
+					# state_is_homeland_of_indian_cultures = yes
+					# any_scope_pop = {
+						# religion = rel:hindu
+					# }
+				# }
+			# }
 			AND = {
 				c:MUG ?= this
 				has_technology_researched = pan-nationalism
@@ -32,21 +32,24 @@
 			}
 		}
 	}
+
+	can_cause_obstinance = yes
+
 	creation_weight = {
 		value = 100
-	}		
+	}
 	on_created = {}
-	
+
 	religion_selection_trigger = {
 		this = rel:hindu
 	}
 	religion_selection_weight = {
 		value = 100
-	}	
-	
+	}
+
 	character_support_trigger = {
 		culture = {
-			has_discrimination_trait = south_asian_heritage
+			has_discrimination_trait_group = heritage_group_south_asian
 		}
 		religion = rel:hindu
 	}
@@ -64,11 +67,11 @@
 				value = 5
 			}
 		}
-	}	
-	
+	}
+
 	pop_support_trigger = {
 		culture = {
-			has_discrimination_trait = south_asian_heritage
+			has_discrimination_trait_group = heritage_group_south_asian
 		}
 		religion = rel:hindu
 	}
@@ -81,9 +84,47 @@
 		movement_support_bureaucrats
 		movement_support_clerks
 		movement_support_corporatism_tech
+		movement_support_je_communal_divides
 	}
-	
+
 	pop_support_weight = {
+		if = {
+			limit = {
+				exists = scope:political_movement
+				scope:political_movement ?= {
+					OR = {
+						is_being_suppressed = yes
+						is_being_bolstered = yes
+					}
+				}
+			}
+			if = {
+				limit = {
+					scope:political_movement = {
+						is_being_suppressed = yes
+					}
+				}
+				add = {
+					value = suppression_base_value
+					multiply = {
+						value = -0.5
+						add = owner.modifier:country_suppression_attraction_factor
+					}
+					desc = "concept_suppressed"
+				}
+			}
+			else = {
+				add = {
+					value = bolstering_base_value
+					multiply = {
+						value = 0.5
+						add = owner.modifier:country_bolster_attraction_factor
+					}
+					desc = "concept_bolstered"
+				}
+			}
+		}
+
 		if = {
 			limit = {
 				religion = rel:hindu
@@ -118,7 +159,7 @@
 					value = 9
 					desc = "POP_BUREAUCRATS"
 				}
-			}		
+			}
 			if = {
 				limit = {
 					is_pop_type = clerks
@@ -173,16 +214,16 @@
 	revolution = {
 		possible = {
 			political_movement_support >= 0.05
-		}	
-	
+		}
+
 		weight = {
 			value = 100
 		}
-	
+
 		state_weight = {
 			value = 1
 			if = {
-			   limit = { 
+			   limit = {
 					NOT = {
 						state_is_homeland_of_indian_cultures = yes
 					}
@@ -199,20 +240,20 @@
 			}
 		}
 	}
-	
+
 	secession = {
 		possible = {
 			scope:clout <= 0
 		}
-	
+
 		weight = {
-			value = 1000		
-		}	
-		
+			value = 1000
+		}
+
 		state_weight = {
 			value = 1
 			if = {
-			   limit = { 
+			   limit = {
 					NOT = {
 						state_is_homeland_of_indian_cultures = yes
 					}
@@ -227,9 +268,9 @@
 				}
 				weight = 1000
 			}
-		}		
+		}
 	}
-	
+
 	additional_radicalism_factors = {
 		if = {
 			limit = {
@@ -259,7 +300,7 @@
 					value = 0.05
 				}
 			}
-		}	
+		}
 		if = {
 			limit = {
 				owner = {
@@ -271,35 +312,60 @@
 				value = owner.liberty_desire
 				divide = 500
 			}
-		}	
+		}
+		if = {
+			limit = {
+				owner = {
+					any_neighbouring_state = {
+						owner = {
+							NOT = { THIS = ROOT.owner }
+							any_political_movement = {
+								is_political_movement_type = movement_hindu_nationalist
+								is_insurrectionary = yes
+							}
+						}
+					}
+				}
+			}
+			add = {
+				desc = "NEIGHBOURING_COUNTRY_WITH_REVOLUTION"
+				value = 0.15
+			}
+		}
 	}
 }
 
 movement_muslim_nationalist = {
 	category = movement_category_religious
-	
-	ideology = ideology_traditionalist_minoritarian
+
+	ideology = ideology_traditionalist_minoritarian_movement
 	character_ideologies = {
 		ideology_theocrat
 		ideology_social_democrat
-	}		
-	
+	}
+
 	creation_trigger = {
+		NOT = {
+			any_political_movement = { # Can only ever spawn once
+				is_political_movement_type = movement_muslim_nationalist
+			}
+		}
 		OR = {
-			#AND = {
-			#	c:BIC ?= this
-			#	has_technology_researched = pan-nationalism
-			#	any_scope_state = {
-			#		state_is_homeland_of_indian_cultures = yes
-			#		any_scope_pop = {
-			#			OR = {
-			#				religion = rel:sunni
-			#				religion = rel:shiite
-			#			}
-			#		}
-			#		count >= 5
-			#	}
-			#}
+			# AND = {
+				# c:BIC ?= this
+				# has_technology_researched = pan-nationalism
+				# any_scope_state = {
+					# state_is_homeland_of_indian_cultures = yes
+					# any_scope_pop = {
+						# OR = {
+							# religion = rel:sunni
+							# religion = rel:shiite
+							# religion = rel:ibadi
+						# }
+					# }
+					# count >= 5
+				# }
+			# }
 			AND = {
 				c:MHR ?= this
 				has_technology_researched = pan-nationalism
@@ -309,6 +375,7 @@ movement_muslim_nationalist = {
 						OR = {
 							religion = rel:sunni
 							religion = rel:shiite
+							religion = rel:ibadi
 						}
 					}
 					count >= 5
@@ -318,9 +385,12 @@ movement_muslim_nationalist = {
 	}
 	creation_weight = {
 		value = 100
-	}		
-	on_created = {}
+	}
+
+	can_cause_obstinance = yes
 	
+	on_created = {}
+
 	religion_selection_trigger = {
 		OR = {
 			this = rel:sunni
@@ -329,15 +399,16 @@ movement_muslim_nationalist = {
 	}
 	religion_selection_weight = {
 		value = 100
-	}	
-	
+	}
+
 	character_support_trigger = {
 		culture = {
-			has_discrimination_trait = south_asian_heritage
+			has_discrimination_trait_group = heritage_group_south_asian
 		}
 		OR = {
 			religion = rel:sunni
 			religion = rel:shiite
+			religion = rel:ibadi
 		}
 	}
 	character_support_weight = {
@@ -354,23 +425,24 @@ movement_muslim_nationalist = {
 				value = 5
 			}
 		}
-		#if = {
-		#	limit = {
-		#		has_template = BIC_muhammad_ali_jinnah
-		#	}
-		#	multiply = {
-		#		value = 10
-		#	}
-		#}
-	}	
-	
+		if = {
+			limit = {
+				has_template = BIC_muhammad_ali_jinnah
+			}
+			multiply = {
+				value = 10
+			}
+		}
+	}
+
 	pop_support_trigger = {
 		culture = {
-			has_discrimination_trait = south_asian_heritage
+			has_discrimination_trait_group = heritage_group_south_asian
 		}
 		OR = {
 			religion = rel:sunni
 			religion = rel:shiite
+			religion = rel:ibadi
 		}
 	}
 
@@ -382,14 +454,53 @@ movement_muslim_nationalist = {
 		movement_support_bureaucrats
 		movement_support_clerks
 		movement_support_corporatism_tech
+		movement_support_je_communal_divides
 	}
-	
+
 	pop_support_weight = {
+		if = {
+			limit = {
+				exists = scope:political_movement
+				scope:political_movement ?= {
+					OR = {
+						is_being_suppressed = yes
+						is_being_bolstered = yes
+					}
+				}
+			}
+			if = {
+				limit = {
+					scope:political_movement = {
+						is_being_suppressed = yes
+					}
+				}
+				add = {
+					value = suppression_base_value
+					multiply = {
+						value = -0.5
+						add = owner.modifier:country_suppression_attraction_factor
+					}
+					desc = "concept_suppressed"
+				}
+			}
+			else = {
+				add = {
+					value = bolstering_base_value
+					multiply = {
+						value = 0.5
+						add = owner.modifier:country_bolster_attraction_factor
+					}
+					desc = "concept_bolstered"
+				}
+			}
+		}
+
 		if = {
 			limit = {
 				OR = {
 					religion = rel:sunni
 					religion = rel:shiite
+					religion = rel:ibadi
 				}
 			}
 			add = { # Base acceptance values higher due to being a minority
@@ -478,11 +589,11 @@ movement_muslim_nationalist = {
 		weight = {
 			value = 1000
 		}
-	
+
 		state_weight = {
 			value = 1
 			if = {
-			   limit = { 
+			   limit = {
 					NOT = {
 						state_is_homeland_of_indian_cultures = yes
 					}
@@ -491,14 +602,14 @@ movement_muslim_nationalist = {
 			}
 		}
 
-		#forced_tags = {
-		#	PAK = {
-		#		trigger = {
-		#			always = yes
-		#		}
-		#		weight = 1000
-		#	}
-		#}
+		forced_tags = {
+			HND = {
+				trigger = {
+					always = yes
+				}
+				weight = 1000
+			}
+		}
 	}
 	additional_radicalism_factors = {
 		if = {
@@ -529,7 +640,7 @@ movement_muslim_nationalist = {
 					value = 0.05
 				}
 			}
-		}	
+		}
 		if = {
 			limit = {
 				owner = {
@@ -541,6 +652,61 @@ movement_muslim_nationalist = {
 				value = owner.liberty_desire
 				divide = 500
 			}
-		}	
+		}
+		if = {
+			limit = {
+				owner = {
+					any_neighbouring_state = {
+						owner = {
+							NOT = { THIS = ROOT.owner }
+							any_political_movement = {
+								is_political_movement_type = movement_muslim_nationalist
+								is_insurrectionary = yes
+							}
+						}
+					}
+				}
+			}
+			add = {
+				desc = "NEIGHBOURING_COUNTRY_WITH_REVOLUTION"
+				value = 0.15
+			}
+		}
+
+		if = {
+			limit = {
+				owner = {
+					any_political_movement = {
+						NOT = { this = root } # Insurrectionary movements should not make themselves more insurrectionary
+						is_insurrectionary = yes
+					}
+				}
+			}
+			add = {
+				desc = "INSURRECTIONARY_MOVEMENTS"
+				owner = {
+					every_political_movement = {
+						limit = {
+							NOT = { this = root } # Insurrectionary movements should not make themselves more insurrectionary
+							is_insurrectionary = yes
+						}
+						if = {
+							limit = {
+								exists = this.political_movement_identity_support
+							}
+							add = { # Identity support can get a bit high
+								value = this.political_movement_identity_support
+								multiply = 0.5
+							}
+						}
+						else = {
+							add = this.political_movement_support
+						}
+					}
+				}
+				min = 0.05
+				max = 0.25
+			}
+		}
 	}
 }
