@@ -534,7 +534,16 @@ dvg_lotharingia.5 = { #Split Lotharingia up into warlord states
 		}
 
 		if = {
-			limit = { exists = s:STATE_MARCHES_OUEST.region_state:LOT }
+			limit = { exists = s:STATE_MARCHES_OUEST.region_state:LOT 
+				OR = {
+					cultural_acceptance_base = {
+							target = cu:guarani
+							value < acceptance_status_2
+					}
+					has_variable = white_lot_favored
+				}
+		
+			}
 			create_country = { #Taragui
 				tag = TGI
 				origin = this
@@ -2672,8 +2681,10 @@ dvg_lotharingia.28 = {
 	}
 	
 	
-	# Vive!
+	# Favor Whites!
 	option = {
+		set_variable = white_lot_favored
+
 		name = dvg_lotharingia.28.a
 		default_option = yes
 
@@ -2689,6 +2700,57 @@ dvg_lotharingia.28 = {
 		add_loyalists = {
 			value = 0.10
 			culture = cu:lotharian
+		}
+		
+		ai_chance = {
+			base = 100
+		}
+	}
+	#Favor Indigenous
+	option = {
+		name = dvg_lotharingia.28.b
+		
+		if = {
+			limit = {
+				NOT = {
+					exists = c:TGI
+				}
+			}
+			create_country = {
+				origin = THIS
+				tag = TGI
+				state = s:STATE_CHACO_BOREAL.region_state:LOT
+				state = s:STATE_MARCHES_OUEST.region_state:LOT
+			}
+
+			c:TGI = {
+				activate_law = law_type:law_migration_controls
+				change_relations = {
+					country = c:LOT
+					value = 50
+				}
+			}
+
+			create_diplomatic_pact = {
+				country = c:TGI
+				type = protectorate
+			}
+
+		}
+
+
+		add_radicals = {
+			value = 0.20
+			culture = cu:lotharian
+		}
+
+		add_loyalists = {
+			value = 0.15
+			culture = cu:amazonian
+		}
+		add_loyalists = {
+			value = 0.15
+			culture = cu:guarani
 		}
 		
 		ai_chance = {
