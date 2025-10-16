@@ -269,9 +269,6 @@ dvg_granada.5 = {
 			c:GRA = {
 				trigger_event = { id = dvg_granada.9 days = 7 }	# Secession of Essequibo
 			}
-			c:GRA = {
-				trigger_event = { id = dvg_granada.10 days = 5 } # The Spanish Withdraw
-			}
 			c:GCO = {
 				trigger_event = { id = dvg_gran_colombia.6 days = 5 } # GCO makes decision on the Herrerian Revolution
 			}
@@ -332,9 +329,6 @@ dvg_granada.5 = {
 		hidden_effect = {
 			c:GRA = {
 				trigger_event = { id = dvg_granada.9 days = 7 }	# Secession of Essequibo
-			}
-			c:GRA = {
-				trigger_event = { id = dvg_granada.10 days = 5 } # The Spanish Withdraw
 			}
 			c:GCO = {
 				trigger_event = { id = dvg_gran_colombia.6 days = 5 } # GCO makes decision on the Herrerian Revolution
@@ -522,36 +516,6 @@ dvg_granada.6 = {
 		}
 		change_tag = CST
 		set_capital = STATE_MIRANDA
-		hidden_effect = {
-			c:CST = {
-				add_primary_culture = cu:granadan
-				remove_primary_culture = cu:guianan
-			}
-		}
-		c:CST = {
-			ruler = { kill_character = yes }		
-			create_character = {
-				ruler = yes
-				is_general = yes
-				historical = yes
-				first_name = Antonio
-				last_name = Rocafuerte
-				birth_date = 1782.8.10
-				interest_group = ig_armed_forces
-				ideology = ideology_royalist
-				traits = {
-					persistent
-					expert_offensive_planner
-					romantic
-				}
-				on_created = {
-					set_variable = is_rocafuerte
-				}
-			}
-		}
-		c:ESQ = {
-			ruler = { kill_character = yes }
-		}
 		if = {
 			limit = {
 				NOT = {
@@ -588,9 +552,11 @@ dvg_granada.6 = {
 		}
 		hidden_effect = {
 			c:CST = { 
+				trigger_event = { id = dvg_granada.19 days = 1 }
 				trigger_event = { id = dvg_granada.16 days = 7 }	# Coronation of Antonio Rocafuerte (post Collapse)
 			}
 			c:SAN = { 
+				trigger_event = { id = dvg_granada.19 days = 1 }
 				trigger_event = { id = dvg_granada.18 days = 7 }	# De Blanco proclaims himself the President of Herreria (post Collapse)
 			}
 		}
@@ -969,8 +935,13 @@ dvg_granada.11 = {
 	option = {
 		name = dvg_granada.11.a
 		default_option = yes
-		c:GRA = {
-			trigger_event = { id = dvg_granada.15 days = 7 }	# Coronation of Antonio Rocafuerte (GCW Victory)
+		if = {
+			limit = {
+				c:GRA = { is_subject = no }
+			}
+			c:GRA = {
+				trigger_event = { id = dvg_granada.15 days = 7 }	# Coronation of Antonio Rocafuerte (GCW Victory)
+			}
 		}
 		ai_chance = {
 			base = 1
@@ -1062,9 +1033,7 @@ dvg_granada.13 = {
 			}
 			end_play = yes
 		}
-		change_tag = CST
-		set_capital = STATE_MIRANDA
-		c:CST = {
+		c:GRA = {
 			create_bidirectional_truce = {
 				country = c:SAN
 				months = 48
@@ -1128,32 +1097,32 @@ dvg_granada.14 = {
 		default_option = yes
 		c:SAN = {
 			create_bidirectional_truce = {
-				country = c:CST
+				country = c:GRA
 				months = 48
 			}
 		}
 		if = {
 			limit = { 
-				c:QUI = { has_variable = dvg_martin_is_super_glad }
+				c:QUI = { has_variable = dvg_QUI_ballivian }
 			}
-			c:SAN = {
+			c:GRA = {
 				trigger_event = { id = dvg_granada.21 days = 7 }
 			}
 		}
 		else_if = {
 			limit = { 
 				c:QUI = { 
-					NOT = { has_variable = dvg_martin_is_super_glad }
+					NOT = { has_variable = dvg_QUI_ballivian }
 				}
 			}
-			c:SAN = {
-				trigger_event = { id = dvg_granada.21 days = 7 }
+			c:GRA = {
+				trigger_event = { id = dvg_granada.30 days = 7 }
 			}
 		}
 		hidden_effect = {
-			c:CST = { 
+			c:GRA = { 
 				trigger_event = { id = dvg_granada.19 days = 1 }
-				trigger_event = { id = dvg_granada.16 days = 7 }	# Coronation of Antonio Rocafuerte (post Collapse)
+				trigger_event = { id = dvg_granada.10 days = 5 } # The Spanish Withdraw
 			}
 			c:SAN = {
 				trigger_event = { id = dvg_granada.19 days = 1 }
@@ -1420,7 +1389,7 @@ dvg_granada.17 = {
 			}
 			activate_law = law_type:law_slave_trade
 		}
-		#trigger_event = { id = dvg_granada.21 days = 4 }	# workaround for de Blanco spawning
+		
 	}
 	
 	# Viva de Blanco!
@@ -1492,7 +1461,7 @@ dvg_granada.18 = {
 			}
 			activate_law = law_type:law_slave_trade
 		}
-		#trigger_event = { id = dvg_granada.21 days = 4 }	# workaround for de Blanco spawning
+		
 	}
 	
 	# Viva de Blanco!
@@ -1787,6 +1756,28 @@ dvg_granada.26 = {
 	option = {
 		name = dvg_granada.26.a
 		default_option = yes
+		
+		if = {
+			limit = {
+				c:QUI = { is_player = yes }
+			}
+			annex = c:SAN
+			annex = c:GRA
+			add_primary_culture = cu:granadan
+			set_variable = dvg_martin_is_super_glad
+		}
+		else = {
+			limit = {
+				c:QUI = { is_player = no }
+			}
+			change_tag = QUI
+			c:QUI = {
+				annex = c:SAN
+				annex = c:GRA
+				add_primary_culture = cu:granadan
+				set_variable = dvg_martin_is_super_glad
+			}
+		}
 		ai_chance = {
 			base = 1
 		}
@@ -1916,6 +1907,28 @@ dvg_granada.28 = {
 					target_country = c:GRA
 				}
 			}
+			create_diplomatic_play = {
+				target_country = c:QUI
+				war = no
+				type = dp_annex_war
+				add_war_goal = {
+					holder = c:QUI
+					type = annex_country
+					target_country = c:GRA
+				}
+			}
+		}
+		c:QUI = {
+			create_diplomatic_play = {
+				target_country = c:SAN
+				war = no
+				type = dp_annex_war
+				add_war_goal = {
+					holder = c:SAN
+					type = annex_country
+					target_country = c:QUI
+				}
+			}
 		}
 		c:SAN = { 
 			add_journal_entry = {
@@ -1923,6 +1936,11 @@ dvg_granada.28 = {
 			}
 		}
 		c:GRA = { 
+			add_journal_entry = {
+				type = je_granadan_civil_war
+			}
+		}
+		c:QUI = { 
 			add_journal_entry = {
 				type = je_granadan_civil_war
 			}
@@ -1947,6 +1965,28 @@ dvg_granada.28 = {
 					target_country = c:GRA
 				}
 			}
+			create_diplomatic_play = {
+				target_country = c:QUI
+				war = no
+				type = dp_annex_war
+				add_war_goal = {
+					holder = c:QUI
+					type = annex_country
+					target_country = c:GRA
+				}
+			}
+		}
+		c:QUI = {
+			create_diplomatic_play = {
+				target_country = c:SAN
+				war = no
+				type = dp_annex_war
+				add_war_goal = {
+					holder = c:SAN
+					type = annex_country
+					target_country = c:QUI
+				}
+			}
 		}
 		c:SAN = { 
 			add_journal_entry = {
@@ -1954,6 +1994,11 @@ dvg_granada.28 = {
 			}
 		}
 		c:GRA = { 
+			add_journal_entry = {
+				type = je_granadan_civil_war
+			}
+		}
+		c:QUI = { 
 			add_journal_entry = {
 				type = je_granadan_civil_war
 			}
@@ -1989,7 +2034,7 @@ dvg_granada.29 = {
 		has_variable = de_blanco_revenge
 		NOT = { has_variable = intervened_andes }
 		NOT = { 
-			c:QUI = { has_variable = dvg_martin_is_super_glad } 
+			c:QUI = { has_variable = dvg_QUI_ballivian } 
 		}
 	}
 	
@@ -2412,7 +2457,7 @@ dvg_granada.37 = {
 		exists = c:TWT
 		has_variable = de_blanco_revenge
 		NOT = { has_variable = intervened_andes }
-		c:QUI = { has_variable = dvg_martin_is_super_glad }
+		c:QUI = { has_variable = dvg_QUI_ballivian }
 	}
 	
 	immediate = {
