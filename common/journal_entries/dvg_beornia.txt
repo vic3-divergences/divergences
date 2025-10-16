@@ -1,4 +1,33 @@
-﻿je_new_mercia_revolt = {
+﻿
+je_new_mercia_independent = {
+	icon = "gfx/interface/icons/invention_icons/wargaming.dds"
+
+	group = je_group_internal_affairs
+
+	is_shown_when_inactive = {	
+		
+	}
+
+    possible = {
+		
+	}
+
+	complete = {
+		exists = c:BEO
+		is_diplomatic_play_committed_participant = no
+		is_at_war = no
+		has_truce_with = c:BEO
+	}
+
+    on_complete = {
+		trigger_event = { id = dvg_beornia.32 popup = yes }
+    }
+	weight = 10000
+
+	should_be_pinned_by_default = yes
+}
+
+je_new_mercia_revolt = {
 	icon = "gfx/interface/icons/invention_icons/mechanized_farming.dds"
 
 	group = je_group_internal_affairs
@@ -29,7 +58,8 @@
 				is_homeland = cu:beornian
 			}
 		}
-		
+		has_global_variable = carolean_victory
+
 	}
 
 	immediate = {
@@ -41,10 +71,8 @@
 
 	complete = {
 		any_scope_state = {
-			percent > 0.50
-			filter = {
-				region = sr:region_andes
-			}
+			region = sr:region_andes
+
 			turmoil > 0.50
 		}
 		trigger_if = {
@@ -603,6 +631,25 @@ je_cattle_barons_wrath = {
 	on_monthly_pulse = {
 		
 		effect = {
+			if = {
+				limit = {
+					any_scope_character = {
+						has_variable = is_charles_cavendish
+					}
+					OR = {
+						has_technology_researched = nationalism
+						NOT = {
+							any_scope_character = {
+								has_ideology = ideology_jacksonian_democrat
+							}
+						}
+					}
+					NOT = {
+							has_global_variable = twt_beo_raid
+					}
+				}
+				trigger_event = { id = dvg_beornia.2 }
+			}
 			if = {
 				limit = {
 					any_civil_war = {
@@ -1981,6 +2028,11 @@ je_beornia_conquer = {
 	}
 
     on_complete = {
+		if = {
+			limit = {
+				
+			}
+		}
 		trigger_event = { id = dvg_hbe.3 popup = yes  }	
     }	
 
@@ -2255,32 +2307,75 @@ je_opium_wars_beornia = {
 	timeout = 3650
 }
 
-je_new_mercia_independent = {
-	icon = "gfx/interface/icons/event_icons/event_military.dds"
+je_beornia_replace = {
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
 
-	group = je_group_internal_affairs
-
-	is_shown_when_inactive = {	
-		exists = c:NME
-		this = c:NME	
-	}
-
-    possible = {
-		exists = c:NME
-		this = c:NME
-	}
+	group = je_group_historical_content
 
 	complete = {
-		exists = c:BEO
-		is_diplomatic_play_committed_participant = no
-		is_at_war = no
-		has_truce_with = c:BEO
+		custom_tooltip = {
+			text = beornia_again_tt
 
+			c:BEO ?= this
+
+		}
+		
 	}
 
     on_complete = {
-		trigger_event = { id = dvg_beornia.19 popup = yes }
-    }
+		if = {
+			limit = {
+				any_scope_character = {
+					has_variable = is_richard
 
+				}
+			}
+			activate_law = law_type:law_monarchy
+			random_scope_character = {
+				limit = {
+					has_variable = is_richard
+				}
+				set_character_as_ruler = yes
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					any_scope_character = {
+						has_variable = is_richard
+					}
+				}
+			}
+			create_character = {
+
+            historical = yes
+            first_name = "Richard"
+            last_name = "Cavendish"
+            noble = yes
+            heir = yes
+            dna = dna_lord_wellington
+            interest_group = ig_industrialists
+            ideology = ideology_moderate
+            birth_date = 1829.01.01
+            
+            traits = {
+                hedonist
+            }
+            on_created = {
+                set_variable = {
+                    name = is_richard
+                }
+            }
+
+        	}
+		}
+		trigger_event = { id = dvg_beornia.33 popup = yes  }	
+    }	
+
+	invalid = {
+		
+	}
+
+	weight = 100
 	should_be_pinned_by_default = yes
 }
