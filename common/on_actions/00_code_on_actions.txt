@@ -123,7 +123,6 @@ on_yearly_pulse = { }
 on_monthly_pulse_country = {
     events = {
         communism.8 # Red Army
-        peoples_springtime.1
         colonial_administration_events.2 # African Colony Radicals
         #sa_migration.5
 
@@ -218,7 +217,60 @@ on_monthly_pulse_country = {
         #	}
         #}
         #}
+		if = { # Springtime of the Peoples
+			limit = {
+				NOT = { has_global_variable = peoples_springtime_happening }
+				NOT = { has_global_variable = peoples_springtime_happened }
+				country_is_in_europe = yes
+				has_technology_researched = egalitarianism
+				country_rank >= rank_value:major_power
+				OR = {
+					any_political_movement = {
+						OR = {
+							movement_is_liberal = yes
+							movement_is_socialist = yes
+						}
+						is_insurrectionary = yes
+					}
+					AND = {
+						c:FRA ?= this
+						has_variable = france_had_revolution
+					}
+				}
+			}
+			save_scope_as = revolutionary_country
+			set_global_variable = {
+				name = peoples_springtime_happening
+			}
+			set_global_variable = {
+				name = peoples_springtime_recent
+				days = normal_modifier_time
+			}
+			every_country = {
+				limit = {
+					country_is_in_europe = yes
+					has_technology_researched = egalitarianism
+				}
+				trigger_event = { id = peoples_springtime.1 }
+			}
+		}
 
+		if = {
+			limit = {
+				has_global_variable = peoples_springtime_happening
+				NOT = {
+					has_global_variable = peoples_springtime_recent
+				}
+			}
+			every_country = {
+				limit = {
+					country_is_in_europe = yes
+				}
+				trigger_event = { id = peoples_springtime.6 }
+			}
+			remove_global_variable = peoples_springtime_happening
+			set_global_variable = peoples_springtime_happened
+		}
         # TODO: Move these to tag-specific pulses
 
         if = {
@@ -726,6 +778,167 @@ on_character_death = {
     effect = {
 
         if = {
+			limit = {
+				has_role = politician
+
+				# Check that the character's country has a non-primary culture homeland or cultural community for a culture that is accepted by the country
+				accepted_cultural_minority_check_character_scope = yes
+
+				# cultural trends do not impact the monarchy's line of succession
+				is_heir = no
+				NAND = {
+					is_ruler = yes
+					owner ?= {
+						has_law_or_variant = law_type:law_monarchy
+					}
+				}
+
+  				## the IG must be at least okay with the status quo regarding cultures in order to potentially accept a minority culture character as a leader, and not want to move things back
+  				OR = {
+  					AND = {
+  						ROOT.owner = { has_law_or_variant = law_type:law_national_supremacy }
+  						NOT = {
+							interest_group = {
+								law_stance = {
+									law = law_type:law_ethnostate
+									value >= approve
+								}
+			  				}
+		  				}
+	  				}
+  					AND = {
+  						ROOT.owner = { has_law_or_variant = law_type:law_racial_segregation }
+  						NOT = {
+							interest_group = {
+								law_stance = {
+									law = law_type:law_national_supremacy
+									value >= approve
+								}
+			  				}
+			  			}
+	  				}
+  					AND = {
+  						ROOT.owner = { has_law_or_variant = law_type:law_subjecthood }
+  						NOT = {
+							interest_group = {
+								law_stance = {
+									law = law_type:law_national_supremacy
+									value >= approve
+								}
+			  				}
+			  			}
+	  				}
+  					AND = {
+  						ROOT.owner = { has_law_or_variant = law_type:law_cultural_exclusion }
+  						NOT = {
+							interest_group = {
+								law_stance = {
+									law = law_type:law_racial_segregation
+									value >= approve
+								}
+			  				}
+			  			}
+	  				}
+  					AND = {
+  						ROOT.owner = { has_law_or_variant = law_type:law_multicultural }
+  						NOT = {
+							interest_group = {
+								law_stance = {
+									law = law_type:law_cultural_exclusion
+									value >= approve
+								}
+			  				}
+			  			}
+	  				}
+  				}
+			}
+
+			# If the country and the IG support women's rights, do combinations of woman and/or minority culture for character generation
+			if = {
+				limit = {
+					owner ?= {
+						has_law_or_variant = law_type:law_womens_suffrage
+					}
+					interest_group = {
+						law_stance = {
+							law = law_type:law_womens_suffrage
+							value >= approve
+						}
+	  				}
+				}
+
+				# 40/10/20/5 chance of primary culture man/woman as leader or of accepted minority culture man/woman as leader
+				random_list = {
+					40 = {
+						# Nothing special happens. Regular guy spawns as new leader.
+					}
+					10 = {
+						owner ?= {
+							accepted_cultural_minority_selector_owner_scope_save_scope_as_minority_culture = yes
+							if = {
+								limit = {
+									exists = scope:minority_culture
+								}
+								create_character = {
+									ig_leader = yes
+									culture = scope:minority_culture
+									interest_group = ROOT.interest_group
+								}
+							}
+						}
+					}
+					20 = {
+						owner ?= {
+							create_character = {
+								ig_leader = yes
+								female = yes
+								interest_group = ROOT.interest_group
+							}
+						}
+					}
+					5 = {
+						owner ?= {
+							accepted_cultural_minority_selector_owner_scope_save_scope_as_minority_culture = yes
+							if = {
+								limit = {
+									exists = scope:minority_culture
+								}
+								create_character = {
+									ig_leader = yes
+									female = yes
+									culture = scope:minority_culture
+									interest_group = ROOT.interest_group
+								}
+							}
+						}
+					}
+				}
+			}
+			else = {
+				# 75/25 chance of primary culture leader spawning or of minority culture leader spawning
+				random_list = {
+					75 = {
+						# regular guy spawns as usual
+					}
+					25 = {
+						owner ?= {
+							accepted_cultural_minority_selector_owner_scope_save_scope_as_minority_culture = yes
+							if = {
+								limit = {
+									exists = scope:minority_culture
+								}
+								create_character = {
+									ig_leader = yes
+									culture = scope:minority_culture
+									interest_group = ROOT.interest_group
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		if = {
             limit = {
                 has_variable = expedition_leader_var
                 owner = {
@@ -1839,6 +2052,11 @@ on_law_checkpoint_advance = {
         10 = corporate_state.1
         10 = corporate_state.4
         #50 = utilitarian.8
+		10 = labour_associations_events.2
+		10 = labour_associations_events.8
+		10 = labour_associations_events.9
+		10 = subjecthood_events.3
+		10 = subjecthood_events.4
     }
 }
 
@@ -1944,6 +2162,10 @@ on_law_checkpoint_debate = {
         10 = technocracy.3
         10 = corporate_state.2
         10 = corporate_state.5
+		10 = labour_associations_events.3
+		10 = labour_associations_events.6
+		10 = labour_associations_events.7
+		10 = subjecthood_events.2
     }
     #events = {
         #tanzimat_events.1
@@ -2049,6 +2271,11 @@ on_law_checkpoint_stall = {
         10 = technocracy.1
         10 = corporate_state.3
         10 = corporate_state.6
+		10 = labour_associations_events.1
+		10 = labour_associations_events.4
+		10 = labour_associations_events.5
+		10 = subjecthood_events.1
+		10 = subjecthood_events.5
     }
 }
 
