@@ -9,11 +9,9 @@
 		ideology_loyalist
 		ideology_patriotic
 	}
-	
+
 	character_ideologies = {
 		ideology_moderate
-		# ideology_orleanist
-		# ideology_bonapartist
 	}
 
 	enable = {
@@ -28,7 +26,7 @@
 	}
 
 	on_enable = {
-		ig:ig_armed_forces = {
+		ig:ig_armed_forces ?= {
 			if = {
 				limit = {
 					owner = {
@@ -60,9 +58,9 @@
 				limit = {
 					owner = {
 						any_primary_culture = {
-							has_discrimination_trait = hispanophone
-							has_discrimination_trait = european_heritage
-							NOT = { has_discrimination_trait = iberian_culture_group }
+							has_discrimination_trait = language_hispanophone
+							has_discrimination_trait_group = heritage_group_european
+							NOT = { has_discrimination_trait = heritage_iberian }
 						}
 					}
 				}
@@ -82,18 +80,15 @@
 				set_ig_trait = ig_trait:ig_trait_patriotic_fervor
 			}
 			# else_if = {
-			# 	limit = {
-			# 		owner = {
-			# 			has_dlc_feature = ip2_content
-			# 			any_primary_culture = {
-			# 				has_discrimination_trait = european_heritage
-			# 			}
-			# 			country_is_india = yes
-			# 		}
-			# 	}
-			# 	set_ig_trait = ig_trait:ig_trait_divided_ranks
-			# 	set_ig_trait = ig_trait:ig_trait_imperial_service
-			# 	set_ig_trait = ig_trait:ig_trait_veerta
+				# limit = {
+					# owner = {
+						# has_dlc_feature = ip2_content
+						# c:BEI ?= this
+					# }
+				# }
+				# set_ig_trait = ig_trait:ig_trait_divided_ranks
+				# set_ig_trait = ig_trait:ig_trait_imperial_service
+				# set_ig_trait = ig_trait:ig_trait_veerta
 			# }
 			else_if = {
 				limit = {
@@ -103,6 +98,17 @@
 				}
 				set_ig_trait = ig_trait:ig_trait_materiel_waste
 				set_ig_trait = ig_trait:ig_trait_khalsa
+				set_ig_trait = ig_trait:ig_trait_patriotic_fervor
+			}
+			else_if = {
+				limit = {
+					owner = {
+						c:ZAN ?= this
+						any_primary_culture = { cu:bedouin = this }
+					}
+				}
+				set_ig_trait = ig_trait:ig_trait_divided_ranks
+				set_ig_trait = ig_trait:ig_trait_veteran_consultation
 				set_ig_trait = ig_trait:ig_trait_patriotic_fervor
 			}
 			else = {
@@ -117,11 +123,13 @@
 				OR = {
 					country_has_primary_culture = cu:caladeran
 					country_has_primary_culture = cu:granadan
+					country_has_primary_culture = cu:andesian
+					country_has_primary_culture = cu:lusitanian
 					country_has_primary_culture = cu:central_american
 					country_has_primary_culture = cu:mexican
 				}
 			}
-			ig:ig_armed_forces = {
+			ig:ig_armed_forces ?= {
 				add_ideology = ideology_caudillismo
 			}
 		}
@@ -131,17 +139,17 @@
 				country_has_primary_culture = cu:japanese
 				NOT = { has_global_variable = fall_of_the_samurai_global_var }
 			}
-			ig:ig_armed_forces = {
+			ig:ig_armed_forces ?= {
 				add_ideology = ideology_bakufu
 				set_interest_group_name = ig_samurai
 			}
 		}
-		# India
+		# Indonesia
 		else_if = {
 			limit = {
 				c:BEI ?= this
 			}
-			ig:ig_armed_forces = {
+			ig:ig_armed_forces ?= {
 				set_interest_group_name = ig_presidency_armies
 			}
 		}
@@ -150,7 +158,7 @@
 			limit = {
 				c:PAN ?= this
 			}
-			ig:ig_armed_forces = {
+			ig:ig_armed_forces ?= {
 				set_interest_group_name = ig_khalsaji
 				remove_ideology = ideology_jingoist
 				add_ideology = ideology_sikh_militancy
@@ -163,7 +171,7 @@
 		rule = {
 			trigger = {
 				c:BEI ?= this
-				any_primary_culture = { 
+				any_primary_culture = {
 					cu:burgundian = this
 				}
 			}
@@ -171,10 +179,21 @@
 				burgundian dutch verlander
 			}
 		}
+		rule = {
+			trigger = {
+				c:ZAN ?= this
+				any_primary_culture = {
+					cu:bedouin = this
+				}
+			}
+			cultures = {
+				bedouin swahili baluchi
+			}
+		}
 	}
 
 	on_character_ig_membership = {}
-	
+
 	pop_potential = {
 		OR = {
 			is_pop_type = soldiers
@@ -197,7 +216,10 @@
 				if = { # Militarisation of colonial settlers
 					limit = {
 						owner = {
-							has_law = law_type:law_colonial_resettlement
+							OR = {
+								has_law_or_variant = law_type:law_colonial_resettlement
+								has_law_or_variant = law_type:law_frontier_colonization
+							}
 						}
 						state = {
 							is_incorporated = no
@@ -212,7 +234,7 @@
 							is_pop_type = officers
 						}
 						owner = {
-							has_law = law_type:law_professional_army
+							has_law_or_variant = law_type:law_professional_army
 						}
 					}
 					divide = 2
@@ -230,7 +252,7 @@
 				if = { # Institutional loyalty
 					limit = {
 						owner = {
-							has_law = law_type:law_professional_army
+							has_law_or_variant = law_type:law_professional_army
 						}
 					}
 					add = 50
@@ -284,7 +306,7 @@
 				limit = {
 					is_pop_type = aristocrats
 				}
-				value = 10
+				value = 5
 				if = {
 					limit = {
 						owner = {
@@ -296,14 +318,14 @@
 				if = {
 					limit = {
 						owner = {
-							has_law = law_type:law_peasant_levies
+							has_law_or_variant = law_type:law_peasant_levies
 						}
 					}
 					add = 50
 				}
 			}
 		}
-		
+
 		add = {
 			desc = "SIKH_MILITANCY"
 			if = {
@@ -332,7 +354,7 @@
 					OR = {
 						pop_employment_building_group = bg_munition_plants
 						pop_employment_building_group = bg_arms_industries
-						pop_employment_building_group = bg_artillery_foundaries
+						pop_employment_building_group = bg_artillery_foundries
 						pop_employment_building_group = bg_military_shipyards
 					}
 				}
@@ -350,14 +372,14 @@
 				}
 			}
 		}
-		
+
 		add = {
 			desc = "POP_MILITARY_BUREAUCRACY"
 			if = {
 				limit = {
 					is_pop_type = bureaucrats
 					owner = {
-						#c:ALK ?= this # alaska specific condition
+						# c:ALK ?= this # alaska specific condition
 						has_government_type = gov_chartered_company
 					}
 				}
@@ -443,9 +465,9 @@
 			limit = {
 				owner = {
 					OR = {
-						has_law = law_type:law_oligarchy
-						has_law = law_type:law_autocracy
-						has_law = law_type:law_single_party_state
+						has_law_or_variant = law_type:law_oligarchy
+						has_law_or_variant = law_type:law_autocracy
+						has_law_or_variant = law_type:law_single_party_state
 					}
 				}
 			}
@@ -458,8 +480,8 @@
 			limit = {
 				owner = {
 					OR = {
-						has_law = law_type:law_universal_suffrage
-						has_law = law_type:law_census_voting
+						has_law_or_variant = law_type:law_universal_suffrage
+						has_law_or_variant = law_type:law_census_voting
 					}
 				}
 			}
@@ -472,8 +494,8 @@
 			limit = {
 				owner = {
 					NOR = {
-						has_law = law_type:law_professional_army
-						has_law = law_type:law_mass_conscription
+						has_law_or_variant = law_type:law_professional_army
+						has_law_or_variant = law_type:law_mass_conscription
 					}
 				}
 			}
@@ -489,7 +511,7 @@
 		# Agitators will never be part of a marginalized IG
 		if = {
 			limit = {
-				owner.ig:ig_armed_forces = {
+				owner.ig:ig_armed_forces ?= {
 					is_marginal = yes
 				}
 			}
@@ -503,6 +525,25 @@
 		value = 5.0
 	}
 
+	executive_weight = {
+		value = 0.2
+		
+		# The company owning BEI should not get non-industrialist executives
+		if = {
+			limit = {
+				exists = scope:company
+				exists = c:BEI
+				c:BEI = {
+					exists = owning_company
+					owning_company = scope:company
+				}
+			}
+			multiply = {
+				value = 0
+			}
+		}
+	}
+
 	noble_chance = {
 		value = 0.5
 	}
@@ -511,29 +552,36 @@
 		value = 0.0
 	}
 
+	female_executive_chance = {
+		value = 0.0
+	}
+
 	female_politician_chance = {
 		value = 0.0
+
+		if = {
+			limit = {
+				owner = {
+					has_law_or_variant = law_type:law_womens_suffrage
+				}
+				law_stance = {
+					law = law_type:law_womens_suffrage
+					value >= approve
+				}
+			}
+			add = {
+				value = 0.025
+			}
+		}
 	}
 
 	female_agitator_chance = {
 		value = 0.01
-		
-		if = {
-			limit = {
-				owner = {
-					has_law = law_type:law_women_own_property
-				}
 
-			}
-			add = {
-				value = 0.01
-			}
-		}	
-		
 		if = {
 			limit = {
 				owner = {
-					has_law = law_type:law_women_in_the_workplace
+					has_law_or_variant = law_type:law_women_own_property
 				}
 
 			}
@@ -545,14 +593,26 @@
 		if = {
 			limit = {
 				owner = {
-					has_law = law_type:law_womens_suffrage
+					has_law_or_variant = law_type:law_women_in_the_workplace
 				}
 
 			}
 			add = {
 				value = 0.01
 			}
-		}		
+		}
+
+		if = {
+			limit = {
+				owner = {
+					has_law_or_variant = law_type:law_womens_suffrage
+				}
+
+			}
+			add = {
+				value = 0.01
+			}
+		}
 	}
 
 	# The chance that a commander belonging to this IG takes over leadership when it changes
@@ -560,5 +620,11 @@
 	commander_leader_chance = {
 		value = 0.75
 		multiply = ig_commander_leader_chance_mult
+	}
+
+	# The chance that a executive belonging to this IG takes over leadership when it changes
+	# scope:character is the most popular executive in the IG
+	executive_leader_chance = {
+		value = 0.1
 	}
 }

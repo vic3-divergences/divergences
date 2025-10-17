@@ -32,6 +32,7 @@ dvg_afghanistan.1 = {
 			value = 0.4
 			culture = cu:pashtun
 		}
+		
 		add_radicals = {
 			value = 0.3
 			culture = cu:panjabi
@@ -43,6 +44,11 @@ dvg_afghanistan.1 = {
 				value = 0.15
 			}
 		}
+		ig:ig_petty_bourgeoisie = {
+			set_interest_group_name = ig_khalsaji
+			remove_ideology = ideology_reactionary
+			add_ideology = ideology_sovereignist
+		}
 		add_journal_entry = {
 			type = je_panjabi_revolt
 		}
@@ -52,6 +58,7 @@ dvg_afghanistan.1 = {
 		
 	}
 }
+
 #Panjabi Revolt
 dvg_afghanistan.2 = {	 
 	type = country_event
@@ -84,10 +91,11 @@ dvg_afghanistan.2 = {
 				state = s:STATE_PUNJAB.region_state:AFG
 
 				
-			}
+	}
 	
 	
 	c:PAN = {
+
 			create_character = {
 				is_general = yes
 				ruler = yes
@@ -118,13 +126,22 @@ dvg_afghanistan.2 = {
 		}
 	
 	}
-	c:PAN = { save_scope_as = scope_PAN }
+	c:PAN = { save_scope_as = scope_PAN 
+			change_relations = {
+				country = c:SCA
+				value = 25
+			}
+	}
 	}   
 	option = {
 		name = dvg_afghanistan.2.a
 		default_option = yes
 		
-		
+		ig:ig_petty_bourgeoisie = {
+			set_interest_group_name = ig_petty_bourgeoisie
+			add_ideology = ideology_reactionary
+			remove_ideology = ideology_sovereignist
+		}
 		
 		create_diplomatic_play = {
 			target_country = c:PAN
@@ -146,7 +163,11 @@ dvg_afghanistan.2 = {
 		name = dvg_afghanistan.2.b
 		default_option = yes
 		
-		
+		ig:ig_petty_bourgeoisie = {
+			set_interest_group_name = ig_petty_bourgeoisie
+			add_ideology = ideology_reactionary
+			remove_ideology = ideology_sovereignist
+		}
 		
 		create_diplomatic_play = {
 				
@@ -301,7 +322,14 @@ dvg_afghanistan.4 = {
 			remove_ideology = ideology_moralist
 			add_ideology = ideology_sikh_moralist
 		}
-
+		ig:ig_devout = {
+			set_interest_group_name = ig_petty_bourgeoisie
+			add_ideology = ideology_reactionary
+		}
+		ig:ig_armed_forces = {
+			set_interest_group_name = ig_khalsaji
+			add_ideology = ideology_sikh_militancy
+		}
 
 		ai_chance = {
 			base = 100
@@ -309,6 +337,276 @@ dvg_afghanistan.4 = {
 		
 	}
 	
+}
+
+#Sikh Kitchens
+dvg_afghanistan.5 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_afghanistan.5.t
+	desc = dvg_afghanistan.5.d
+	flavor = dvg_afghanistan.5.f
+	
+	event_image = {
+		video = "gfx/event_pictures/asia_hinduism_sikhism.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+		NOT = {
+			has_modifier = decision_cooldown
+		}
+	}
+
+	immediate = {
+		add_modifier = {
+			name = decision_cooldown
+			months = 12
+		}
+	}
+	
+	# Close down gudawaras
+	option = {
+		name = dvg_afghanistan.5.a
+		default_option = yes
+		
+		add_radicals = {
+			value = 0.20
+			religion = rel:sikh
+		}
+		add_loyalists = {
+			value = 0.15
+			religion = rel:sunni
+		}
+		add_modifier = {
+			name = dvg_modifier_muslim_kitchens
+			months = 12
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_panjabi_revolt
+			}
+			change_variable = {
+				name = punjab_var
+				add = 4
+			}
+		}
+
+		ai_chance = {
+			base = 100
+		}	
+	}
+
+	option = {
+		name = dvg_afghanistan.5.b
+		# Restrict Gudawaras
+
+		add_radicals = {
+			value = 0.10
+			religion = rel:sikh
+		}
+		add_radicals = {
+			value = 0.10
+			religion = rel:sunni
+		}
+		add_modifier = {
+			name = dvg_modifier_sikh_kitchens
+			months = 12
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_panjabi_revolt
+			}
+			change_variable = {
+				name = punjab_var
+				add = 2
+			}
+		}
+
+		ai_chance = {
+			base = 100
+		}	
+	}
+
+	option = {
+		name = dvg_afghanistan.5.c
+		# Allow Gudawaras
+
+		add_modifier = {
+			name = dvg_modifier_sikh_kitchens
+			months = 12
+		}
+		
+		add_loyalists = {
+			value = 0.25
+			religion = rel:sikh
+		}
+		add_radicals = {
+			value = 0.15
+			religion = rel:sunni
+		}
+		random_scope_pop = {
+			change_pop_religion = {
+				target = rel:sikh
+				value = 0.10
+			}
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_panjabi_revolt
+			}
+			change_variable = {
+				name = punjab_var
+				subtract = 3
+			}
+		}
+		ai_chance = {
+			base = 100
+		}	
+	}
+}
+
+
+#Plundering Accusations
+dvg_afghanistan.6 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_afghanistan.6.t
+	desc = dvg_afghanistan.6.d
+	flavor = dvg_afghanistan.6.f
+	
+	event_image = {
+		video = "gfx/event_pictures/asia_hinduism_sikhism.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+		NOT = {
+			has_modifier = decision_cooldown
+		}
+	}
+
+	immediate = {
+		add_modifier = {
+			name = decision_cooldown
+			months = 12
+		}
+		random_scope_state = {
+			limit = {
+				state_region = {
+					is_homeland = cu:panjabi
+				}
+			}
+			save_scope_as = tax_state
+		}
+	}
+	
+	# Side with the Muslims
+	option = {
+		name = dvg_afghanistan.6.a
+		default_option = yes
+		
+		add_radicals = {
+			value = 0.15
+			religion = rel:sikh
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_panjabi_revolt
+			}
+			change_variable = {
+				name = punjab_var
+				add = 4
+			}
+		}
+		add_loyalists = {
+			value = 0.20
+			religion = rel:sunni
+		}
+		scope:tax_state = {
+			add_loyalists = {
+				value = 0.15
+			}
+			add_modifier = {
+				name = tax_modifier_high
+				months = 12
+			}
+		}
+
+		ai_chance = {
+			base = 100
+		}	
+	}
+
+	option = {
+		name = dvg_afghanistan.6.b
+		# Side with Nobody - everyone gets a tax break
+
+		scope:tax_state = {
+			add_loyalists = {
+				value = 0.15
+			}
+			add_modifier = {
+				name = temporary_tax_cut_proportional
+				months = 12
+			}
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_panjabi_revolt
+			}
+			change_variable = {
+				name = punjab_var
+				subtract = 2
+			}
+		}
+		
+
+		ai_chance = {
+			base = 100
+		}	
+	}
+	#Side with the Sikhs
+	option = {
+		name = dvg_afghanistan.6.c		
+		
+		add_loyalists = {
+			value = 0.15
+			religion = rel:sikh
+		}
+		add_radicals = {
+			value = 0.25
+			religion = rel:sunni
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_panjabi_revolt
+			}
+			change_variable = {
+				name = punjab_var
+				subtract = 4
+			}
+		}
+		
+
+		ai_chance = {
+			base = 100
+		}	
+	}
 }
 
 

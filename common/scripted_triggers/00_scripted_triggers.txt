@@ -844,18 +844,29 @@ will_be_accepted_culture = {
         }
         AND = {
             owner = { is_enacting_law = law_type:law_national_supremacy }
-            AND = {
-				culture = { shares_heritage_trait_with_any_primary_culture = root }
-				culture = { shares_non_heritage_trait_with_any_primary_culture = root }
+			culture = {
+				AND = {
+					shares_heritage_trait_group_with_any_primary_culture = root
+					OR = {
+						shares_language_trait_group_with_any_primary_culture = root
+						shares_tradition_trait_with_any_primary_culture = root
+					}
+				}
 			}
         }
         AND = {
             owner = { is_enacting_law = law_type:law_racial_segregation }
-            culture = { shares_heritage_trait_with_any_primary_culture = root }
+            culture = { shares_heritage_trait_group_with_any_primary_culture = root }
         }
         AND = {
             owner = { is_enacting_law = law_type:law_cultural_exclusion }
-            culture = { shares_trait_with_any_primary_culture = root }
+            culture = {
+				OR = {
+					shares_heritage_trait_group_with_any_primary_culture = root
+					shares_language_trait_group_with_any_primary_culture = root
+					shares_tradition_trait_with_any_primary_culture = root
+				}
+			}
         }
         owner = { is_enacting_law = law_type:law_multicultural }
     }
@@ -1124,6 +1135,27 @@ reactionary_revolution_ongoing = {
 	}	
 }
 
+civil_war_is_socialist_revolution = {
+	is_civil_war_type = revolution
+	political_movement = {
+		movement_is_socialist = yes
+	}
+}
+
+civil_war_is_liberal_revolution = {
+	is_civil_war_type = revolution
+	political_movement = {
+		movement_is_liberal = yes
+	}
+}
+
+civil_war_is_reactionary_revolution = {
+	is_civil_war_type = revolution
+	political_movement = {
+		movement_is_conservative = yes
+	}
+}
+
 ig_is_socialist = {
 	OR = {
 		has_ideology = ideology:ideology_socialist
@@ -1255,6 +1287,19 @@ secession_progress_high = {
 		civil_war_progress >= 0.67
 		is_civil_war_type = secession
 	}
+}
+
+civil_war_progress_low = {
+	civil_war_progress < 0.34
+}
+
+civil_war_progress_medium = {
+	civil_war_progress >= 0.34
+	civil_war_progress < 0.67
+}
+
+civil_war_progress_high = { # In a civil_war scope
+	civil_war_progress >= 0.67
 }
 
 government_ig_supports_enaction = {
@@ -1518,32 +1563,44 @@ interest_group_has_conservative_ideology = {
 	}
 }
 
+
 has_liberal_ideology = {
-	OR = {
-		has_ideology = ideology:ideology_republican_leader
-		has_ideology = ideology:ideology_radical
-		has_ideology = ideology:ideology_reformer
-		has_ideology = ideology:ideology_abolitionist
-		has_ideology = ideology:ideology_market_liberal
+	custom_tooltip = {
+		text = has_liberal_ideology_tt
+		OR = {
+			has_ideology = ideology:ideology_republican_leader
+			has_ideology = ideology:ideology_radical
+			has_ideology = ideology:ideology_reformer
+			has_ideology = ideology:ideology_abolitionist
+			has_ideology = ideology:ideology_market_liberal
+		}
 	}
 }
 
 has_progressive_ideology = {
-	OR = {
-		has_ideology = ideology:ideology_nihilist
-		has_ideology = ideology:ideology_radical
-		has_ideology = ideology:ideology_feminist
-		has_ideology = ideology:ideology_social_democrat
-		has_ideology = ideology:ideology_humanitarian
-		has_ideology = ideology:ideology_humanitarian_royalist
+	custom_tooltip = {
+		text = has_progressive_ideology_tt
+		OR = {
+			has_ideology = ideology:ideology_nihilist
+			has_ideology = ideology:ideology_radical
+			has_ideology = ideology:ideology_feminist
+			has_ideology = ideology:ideology_social_democrat
+			has_ideology = ideology:ideology_humanitarian
+			has_ideology = ideology:ideology_humanitarian_royalist
+		}
 	}
 }
 
 has_socialist_ideology = {
-	OR = {
-		has_ideology = ideology:ideology_communist
-		has_ideology = ideology:ideology_vanguardist
-		has_ideology = ideology:ideology_anarchist
+	custom_tooltip = {
+		text = has_socialist_ideology_tt
+		OR = {
+			has_ideology = ideology:ideology_communist
+			has_ideology = ideology:ideology_vanguardist
+			has_ideology = ideology:ideology_anarchist
+			has_ideology = ideology:ideology_nihilist
+			has_ideology = ideology:ideology_utopian
+		}
 	}
 }
 
@@ -1781,12 +1838,18 @@ movement_is_socialist = {
 }
 
 movement_is_liberal = {
-	OR = {
-		is_political_movement_type = movement_liberal
-		is_political_movement_type = movement_radical
-		is_political_movement_type = movement_labor
-		is_political_movement_type = movement_positivist
-		is_political_movement_type = movement_anti_slavery
+	custom_tooltip = {
+		text = movement_is_liberal_tt
+		OR = {
+			is_political_movement_type = movement_liberal
+			is_political_movement_type = movement_radical
+			is_political_movement_type = movement_labor
+			is_political_movement_type = movement_positivist
+			is_political_movement_type = movement_feminist
+			is_political_movement_type = movement_anti_slavery
+			is_political_movement_type = movement_utilitarian
+			is_political_movement_type = movement_modernizer
+		}
 	}
 }
 
@@ -1802,7 +1865,6 @@ movement_is_conservative = {
 	OR = {
 		is_political_movement_type = movement_royalist_constitutional
 		is_political_movement_type = movement_royalist_absolutist
-		is_political_movement_type = movement_legitimist
 		is_political_movement_type = movement_reactionary
 		is_political_movement_type = movement_corporatist
 		is_political_movement_type = movement_fascist
@@ -1811,3 +1873,41 @@ movement_is_conservative = {
 		is_political_movement_type = movement_cultural_majority
 	}
 }
+has_indian_primary_culture = { # Necessary to define princely states without resorting to any loops in government type definitions
+	OR = {
+		country_has_primary_culture = cu:kho
+		country_has_primary_culture = cu:assamese
+		country_has_primary_culture = cu:bengali
+		country_has_primary_culture = cu:bihari
+		country_has_primary_culture = cu:manipuri
+		country_has_primary_culture = cu:oriya
+		country_has_primary_culture = cu:sinhala
+		country_has_primary_culture = cu:avadhi
+		country_has_primary_culture = cu:panjabi
+		country_has_primary_culture = cu:kashmiri
+		country_has_primary_culture = cu:gujarati
+		country_has_primary_culture = cu:marathi
+		country_has_primary_culture = cu:sindi
+		country_has_primary_culture = cu:rajput
+		country_has_primary_culture = cu:kannada
+		country_has_primary_culture = cu:malayalam
+		country_has_primary_culture = cu:tamil
+		country_has_primary_culture = cu:telegu
+		country_has_primary_culture = cu:hindustani
+		country_has_primary_culture = cu:lushai
+		country_has_primary_culture = cu:bundeli
+		country_has_primary_culture = cu:pahari
+		country_has_primary_culture = cu:gondi
+		country_has_primary_culture = cu:bageli
+		country_has_primary_culture = cu:chhattisgarhi
+		country_has_primary_culture = cu:naga
+		country_has_primary_culture = cu:deccani
+		country_has_primary_culture = cu:pathan
+	}
+}
+
+#Makes sure nobody gets this JE
+is_balkan_league_candidate = {
+		has_variable = invited_to_balkan_league
+}
+
