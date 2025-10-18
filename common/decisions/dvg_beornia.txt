@@ -686,36 +686,38 @@ dvg_heisenberg = {
 		this = c:HBE
 		cu:north_german = {
 			root = {
-				cultural_acceptance_base = { target = prev value >= acceptance_status_5 }
+				cultural_acceptance_base = { target = prev value > acceptance_status_3 }
 			}
 		}
-	NOT = { exists = global_var:breaking_bad }
+		NOT = { has_global_variable = breaking_bad }
 	
 	
-	NOT = { has_game_rule = plausible_formable_nations 
-			
+		NOT = { has_game_rule = plausible_formable_nations 
+			is_banning_goods = g:opium
 		}
-	 
-	 
+		OR = {
+			capital.market = {
+			mg:opium = { market_goods_pricier > 0.40 }
+			}
+			any_primary_culture = {
+			has_cultural_obsession = opium
+			}
+			has_variable = coke_okay
+		}
 		
 	}
 	
 	possible = {
 	
-	OR = {
+		has_technology_researched = fractional_distillation
+		has_technology_researched = pharmaceuticals
+
+		capital.market = {
+			mg:opium = { market_goods_pricier > 0.20 }
+		}
+		
+		NOT = { has_law = law_type:law_no_schools }		
 	
-	AND = {
-	has_technology_researched = fractional_distillation
-	
-	has_technology_researched = telephone
-	
-	has_technology_researched = pharmaceuticals
-	
-	NOT = { has_law = law_type:law_no_schools }
-	
-	}
-	
-	}
 	}
 	
 	when_taken = {
@@ -987,8 +989,7 @@ dvg_pr_campaign = {
 		}
 		add_modifier = {
 				name = pr_campaign_expenses
-				months = 12
-			}
+		}
     }
 	ai_chance = {
 		value = 100
@@ -1017,6 +1018,70 @@ dvg_pr_campaign_cancel = {
 			}
 		}
 		remove_modifier = pr_campaign_expenses
+    }
+	ai_chance = {
+		value = 100
+	}
+}
+
+drugs_4_beornia = {
+
+	is_shown = {
+		exists = c:BEO
+		is_ai = yes
+		NOT = {
+			c:BEO = this
+			c:BEO = {
+				has_variable = opium_wars_target
+			}
+		}
+		OR = {
+			has_global_variable = carolean_victory
+			c:BEO = {
+				has_law = law_type:law_industry_banned
+			}
+			c:BEO = {
+				has_law = law_type:law_agrarianism
+			}
+		}
+		OR = {
+			has_interest_marker_in_region = region_la_plata
+
+			AND = {
+				has_interest_marker_in_region = region_andes
+				c:BEO = {
+					any_scope_state = {
+						region = sr:region_andes 
+					}
+				}
+			}
+		}
+	}
+	
+	possible = {
+		any_scope_state = {
+			has_building = building_opium_plantation
+		}
+		capital.market = {
+			NOT = {
+				mg:opium = { market_goods_pricier < 0.20 }
+			}
+		}
+
+		has_technology_researched = pharmaceuticals
+	}
+	when_taken = {
+		
+
+		c:BEO = {
+			set_variable = opium_wars_target
+
+			change_relations = {
+				country = ROOT
+				value = -10
+			}
+		}
+		set_variable = opium_wars_aggressor
     }
 	ai_chance = {
 		value = 100
