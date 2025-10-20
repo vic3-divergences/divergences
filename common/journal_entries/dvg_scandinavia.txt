@@ -121,20 +121,62 @@ je_sca_highland_clearings = {
 
 	group = je_group_internal_affairs
 
-	is_shown_when_inactive = {
-		c:SCA = ROOT
-	}
+	should_be_pinned_by_default = yes
 
 	possible = {
 		c:SCA = ROOT
 		ROOT = {
 			any_scope_state = {
 				owner = ROOT
-				state_region = s:STATE_LOWLANDS
-				state_region = s:STATE_HIGHLANDS
+				OR = {
+					state_region = s:STATE_LOWLANDS
+					state_region = s:STATE_HIGHLANDS
+				}
 			}
 		}
 	}
+	
+	fail = {
+		ROOT = {
+			OR = {
+				any_scope_state = {
+					NOT = { owner = ROOT }
+					state_region = s:STATE_LOWLANDS
+				}
+				any_scope_state = {
+					NOT = { owner = ROOT }
+					state_region = s:STATE_HIGHLANDS
+				}
+			}
+		}	
+	}
+	
+	on_fail = {
+		custom_tooltip = {
+			text = tt_sca_lost_scotland
+			set_local_variable = {
+				name = dvg_sca_kings_watch_je_var
+				value = je:je_sca_kings_watch
+			}
+		}
+	}
+	
+	complete = {
+		c:SCA = ROOT
+	}
+	
+	on_complete = {
+		s:STATE_HIGHLANDS = {
+			remove_state_trait = state_trait_scottish_highlands
+			add_state_trait = state_trait_managed_scottish_highlands
+		}
+		custom_tooltip = {
+			text = sca_actually_highland_clearances_are_quite_good_according_to_the_lairds_at_least_tt
+		}
+	}
+	
+	#this is in the scripted progress bar file :3
+	scripted_progress_bar = dvg_scandinavia_highland_clearances_progress_bar
 }
 
 je_sca_kings_watch = { #The Nobility and Monarch seeing the cufc stuff go down
