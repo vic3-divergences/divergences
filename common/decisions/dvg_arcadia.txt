@@ -497,12 +497,13 @@ dvg_aid_cuba_arcadia = {
 	}
 }
 
-decision_move_capital_to_tripoli = {
+dvg_decision_move_capital_to_tripoli = {
 	is_shown = {
 		any_scope_state = {
 			state_region = s:STATE_SANACOMIE
 		}
-		c:ARC ?= this
+		this = c:ARC
+		exists = c:ARC
 	}
 
 	possible = {
@@ -511,20 +512,37 @@ decision_move_capital_to_tripoli = {
 				state_region = s:STATE_SANACOMIE
 			}
 		}
+		owns_entire_state_region = STATE_SANACOMIE
+		gold_reserves >= 100000
 	}
 
 	when_taken = {
+		add_treasury = -100000
 		set_capital = STATE_SANACOMIE
-		set_variable = tripoli_made_capital_var
-		random_scope_state = {
-			limit = {
-				state_region = s:STATE_SANACOMIE
-			}
+		set_global_variable = {
+			name = tripoli_made_capital_var
+			value = 0
+		}
+		if = {
+            limit = {
+                any_scope_state = {
+                    state_region = s:STATE_SANACOMIE
+                }
+            }
+            set_capital = STATE_SANACOMIE
 			add_modifier = {
 				name = modifier_tripoli_made_capital
 				days = long_modifier_time
 			}
-		}
+            s:STATE_SANACOMIE = {
+                random_scope_state = {
+                    set_hub_name = {
+                        type = city
+                        name = HUB_NAME_STATE_SANACOMIE_city_tripoli
+                    }
+                }
+            }
+        }
 		add_loyalists = {
 			culture = cu:cadien
 			value = small_radicals
