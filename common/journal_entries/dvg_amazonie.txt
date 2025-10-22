@@ -184,7 +184,7 @@ je_antarctica_independent = {
 		OR = {
 			has_truce_with = c:AMA
 			AND =	{
-				owns_entire_state_region = STATE_MONTS_DIAMANTS
+				owns_entire_state_region = STATE_PLUTS_DIAMANTS
 			}
 		}
 	}
@@ -216,7 +216,7 @@ je_amazonie_annex = {
 		NOT = { exists = c:AMA }
 		owns_entire_state_region = STATE_FRANCE_ANTARTIQUE
 		owns_entire_state_region = STATE_COTE_DU_SUCRE
-		owns_entire_state_region = STATE_MONTS_DIAMANTS
+		owns_entire_state_region = STATE_PLUTS_DIAMANTS
 		owns_entire_state_region = STATE_GOUAS
 	}
 
@@ -944,3 +944,350 @@ je_nouvelle_mali = {
 	should_be_pinned_by_default = yes
 }
 
+je_ploumanao_raiding = {
+	icon = "gfx/interface/icons/event_icons/event_raiding.dds"
+
+	group = je_group_historical_content
+
+	scripted_progress_bar = montenegrin_raiding_progress_bar
+
+	is_shown_in_lobby = {
+		has_dlc_feature = ip3_content #National Awakening
+		c:PLU ?= this
+	}
+
+	immediate = {
+		every_scope_state = { #adjusted weekly below
+			add_modifier = { #undoes unemployment popgrowth modifier
+				name = unemployement_birth_rate_countermodifier
+				multiplier = 0.54
+				days = normal_modifier_time
+			}
+		}
+		set_variable = {
+			name = raiding_intensity
+			value = 50
+		}
+		c:EQX ?= {
+			save_scope_as = russia
+		}
+		c:AMA ?= {
+			save_scope_as = ottoman
+		}
+		create_diplomatic_pact = {#help player not forget
+			country = c:EQX
+			type = increase_relations
+		}
+		set_variable = {
+			name = last_week_raiding_income
+			value = 1500 #raiding_income script value doesn't work during initialization. 
+		}
+		create_diplomatic_pact = {
+			country = c:AMA
+			type = raiding_pact
+		}
+		create_diplomatic_pact = {
+			country = c:EQX
+			type = disapproval_pact
+		}
+		add_modifier = {
+			name = modifier_montenegrin_raiding
+			multiplier = 1500 #raiding_income script value doesn't work during initialization. 
+		}
+		add_modifier = {
+				name = modifier_montenegrin_disobedience
+				multiplier = var:raiding_intensity
+		}
+		random_neighbouring_state = {
+			limit = {
+				owner ?= c:AMA
+			}
+			save_scope_as = raid_target
+			add_modifier = {
+				name = raid_target
+				multiplier = 1
+			}
+		}
+		set_global_variable = {
+			name = mon_raid_state
+			value = scope:raid_target
+		}
+		c:AMA ?= {
+			add_journal_entry = {
+				type = je_tur_raided
+			}
+		}
+		#Way of getting rid of errors, cause this variable is only used in Loc
+		if = {
+			limit = {
+				exists = var:mon_raid_state
+			}
+		}
+	}
+
+	scripted_button = je_montenegrin_raiding_decrease_button
+	scripted_button = je_montenegrin_raiding_increase_button
+
+
+	on_weekly_pulse = {
+		effect = {
+			if = { #AI sucks at playing Montenegro, help them
+				limit = {
+					is_ai = yes
+					NOT = {
+						has_modifier = modifier_montenegrin_aid_plus
+					}
+				}
+				add_modifier = {
+					name = modifier_montenegrin_aid_plus
+					days = short_modifier_time
+					multiplier = 0.8
+				}
+			}
+			else_if = { #stop tricky players from swapping to country
+				limit = {
+					is_player = yes
+					has_modifier = modifier_montenegrin_aid_plus
+					NOT = {
+						has_variable = mon_stop_raiding_deal
+					}
+				}
+				remove_modifier = modifier_montenegrin_aid_plus
+			}
+			#counter-modifier for unemployment birth rate modifier
+			every_scope_state = {
+				limit = {
+					has_modifier = unemployement_birth_rate_countermodifier
+				}
+				remove_modifier = unemployement_birth_rate_countermodifier
+			}
+			every_scope_state = {
+				add_modifier = {
+					name = unemployement_birth_rate_countermodifier
+					multiplier = mon_unemployment_estimate
+					days = normal_modifier_time
+				}
+			}
+			scope:raid_target = {
+				if = {
+					limit = {
+						NOT = {
+							owner ?= c:AMA
+						}
+					}
+					remove_modifier = raid_target
+					random_neighbouring_state = {
+						limit = {
+							owner ?= c:AMA
+						}
+						save_scope_as = raid_target
+						if = {
+							limit = {
+								raiding_level >= 2
+							}
+							add_modifier = {
+								name = raid_target
+								multiplier = raiding_level
+							}
+						}
+					}
+				}
+				#still state scope. add some radicals
+				if = {
+					limit = {
+						raiding_level > 2
+					}
+					add_radicals_in_state = {
+						value = 0.005
+					}
+				}
+			}
+			#If Raiding_income has changed, remove and reapply the modifiers with the new values. This is necessary because we do not have support for dynamic modifiers.
+			if = {
+				limit = {
+				var:last_week_raiding_income != raiding_income
+				}
+				remove_modifier = modifier_montenegrin_raiding
+				add_modifier = {
+					name = modifier_montenegrin_raiding
+					multiplier = raiding_income
+				}
+				remove_modifier = modifier_montenegrin_disobedience
+				add_modifier = {
+					name = modifier_montenegrin_disobedience
+					multiplier = var:raiding_intensity
+				}
+				scope:journal_entry = {
+					set_bar_progress = {
+					value = root.var:raiding_intensity
+					name = montenegrin_raiding_progress_bar
+					}
+				}
+				set_variable = {
+					name = last_week_raiding_income
+					value = raiding_income
+				}
+				scope:raid_target ?= {
+					remove_modifier = raid_target
+					add_modifier = {
+						name = raid_target
+						multiplier = raiding_level
+					}
+				}
+			}
+			#Higher odds of ottoman Retribution Depending on Raiding Income.
+			#Note that montenegrin_raiding.1 can only fire once, after which montenegrin_raiding.2 fires from then on. 
+			if = { #playing Russian Roulette each week
+				limit = {
+					raiding_level > 2 #must be raiding more than 1000
+					NAND = { #If AMA is a player and PLU isn't, this is handled by a special button rather than chance. 
+						c:AMA ?= {
+							is_player = yes
+						}
+						c:PLU ?= {
+							is_player = no
+						}
+					}
+				}
+				if = {
+					limit = {
+						NOT = {
+							has_variable = Njegos_brother_dead
+						}
+					}
+					random = {
+						chance = {
+							add = 2
+							multiply = raiding_level
+							subtract = 3
+							multiply = 0.15 #more likely
+						}
+						trigger_event = { 
+							id = montenegrin_raiding.1 
+							popup = yes
+						}
+					}
+				}
+				else = {
+					random = {
+						chance = {
+							add = 2
+							multiply = raiding_level
+							subtract = 3
+							multiply = 0.1
+						}
+						trigger_event = { 
+							id = montenegrin_raiding.2 
+							popup = yes
+						}
+					}
+				}
+			}
+		}
+	}
+
+	status_desc = {
+	desc = je_montenegrin_raiding_amount
+	}
+
+	complete = {
+		NOT = {
+			c:AMA ?= {
+				is_country_alive = yes
+			}
+		}
+	}
+
+	on_complete = {
+		#This is unlikely to happen, more like a stretch goal for youtubers.
+		add_modifier = {
+			name = modifier_montenegrin_victory
+		}
+		set_variable = je_montenegrin_raiding_won
+		end_raiding_cleanup = yes
+	}
+
+	invalid = { #This is normally ended by deal with Russia, but there is also an odd edgecase where c:AMA no longer borders c:PLU
+		OR = {
+			has_variable = mon_stop_raiding_deal #normal way to end JE
+			NOR = {
+				exists = c:AMA
+				exists = c:PLU
+				c:PLU = this #can't become Yugoslavia or Serbia
+			}
+			NOT = {
+				any_neighbouring_state = { # Turkey must be neighbor, unless it's fighting a civil war. 
+					OR = {
+						c:AMA ?= owner
+						AND = {
+							exists = owner.civil_war_origin_country
+							c:AMA ?= owner.civil_war_origin_country
+						}
+					}
+				}
+			}
+		}
+	}
+
+	on_invalid = {
+		end_raiding_cleanup = yes
+		if = {
+			limit = {
+				NOT = {
+					has_variable = mon_stop_raiding_deal
+				}
+			}
+			post_notification = je_montenegrin_raiding_fail
+		}
+	}
+
+	fail = {
+		trigger_if = { #putting this in to avoid errors
+			limit = {
+				exists = c:AMA
+			}
+			c:PLU ?= {
+				is_subject_of = c:AMA
+			}
+		}
+	}
+
+	on_fail = {
+		#Should have an event here.
+		add_modifier = {
+			name = modifier_montenegrin_defeat
+			days = stupidly_long_modifier_time
+		}
+		end_raiding_cleanup = yes
+		if = { #trigger subjugated event if other JEs aren't already
+			limit = {
+				NOR = { 
+					has_journal_entry = je_mon_state_formation
+					has_journal_entry = je_mon_austria_alliance
+				}
+			}
+			trigger_event = { 
+				ID = mon_state_formation.17 
+			}
+		}
+	}
+
+	event_outcome_failed_desc = {
+        first_valid = {
+            triggered_desc = {
+				trigger = {
+					NOR = { 
+						has_journal_entry = je_mon_state_formation
+						has_journal_entry = je_mon_austria_alliance
+					}
+				}
+                desc = event_effects_mon_state_formation.17_tt
+            }
+        }
+    }
+
+	weight = 100
+	can_revolution_inherit = yes
+	transferable = no
+	should_be_pinned_by_default = yes
+}
