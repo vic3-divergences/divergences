@@ -1,4 +1,5 @@
-﻿ig_rural_folk = {
+﻿
+ig_rural_folk = {
 	color = hsv{ 0.32 0.45 0.47 }
 	texture = "gfx/interface/icons/ig_icons/rural_folk.dds"
 	layer = "revolution_dynamic_rural_folk"
@@ -8,6 +9,11 @@
 		ideology_agrarian
 		ideology_particularist
 		ideology_isolationist
+	}
+
+	character_ideologies = {
+		ideology_moderate
+		ideology_pacifist
 	}
 
 	enable = {
@@ -22,35 +28,15 @@
 	}
 
 	on_enable = {
-		ig:ig_rural_folk = {
+		ig:ig_rural_folk ?= {
 			if = {
 				limit = {
-					owner = {
-					OR = {
-						country_has_primary_culture = cu:sindi
-						country_has_primary_culture = cu:rajput
-						country_has_primary_culture = cu:gujarati
-						country_has_primary_culture = cu:panjabi
-						country_has_primary_culture = cu:kashmiri
-						country_has_primary_culture = cu:avadhi
-						country_has_primary_culture = cu:kanauji
-						country_has_primary_culture = cu:bihari
-						country_has_primary_culture = cu:bengali
-						country_has_primary_culture = cu:oriya
-						country_has_primary_culture = cu:telegu
-						country_has_primary_culture = cu:tamil
-						country_has_primary_culture = cu:tamil
-						country_has_primary_culture = cu:marathi
-						country_has_primary_culture = cu:assamese
-						country_has_primary_culture = cu:kannada
-						country_has_primary_culture = cu:malayalam
-					}
-					}
+					has_dlc_feature = rp1_content
+					owner = { c:PLA ?= this }
 				}
-				set_interest_group_name = ig_raiyat
 				set_ig_trait = ig_trait:ig_trait_old_ways
-				set_ig_trait = ig_trait:ig_trait_honest_work
-				set_ig_trait = ig_trait:ig_trait_farmers_markets
+				set_ig_trait = ig_trait:ig_trait_plantation_work
+				set_ig_trait = ig_trait:ig_trait_nucleos_coloniais
 			}
 			else_if = {
 				limit = {
@@ -69,15 +55,192 @@
 				set_ig_trait = ig_trait:ig_trait_fellahin
 				set_ig_trait = ig_trait:ig_trait_farmers_markets
 			}
+			# else_if = {
+				# limit = {
+					# owner = {
+						# OR = {
+							# c:BIC ?= this
+							# any_primary_culture = {
+								# has_discrimination_trait_group = heritage_group_south_asian
+								# NOT = {
+									# has_discrimination_trait = tradition_himalayan
+								# }
+							# }
+						# }
+					# }
+				# }
+				# set_interest_group_name = ig_ryots
+				# set_ig_trait = ig_trait:ig_trait_of_the_sovereign_alone
+				# set_ig_trait = ig_trait:ig_trait_imandari
+				# set_ig_trait = ig_trait:ig_trait_bazaar_bargains
+			# }
+			else_if = {
+				limit = {
+					owner = { c:PAN ?= this }
+				}
+				set_interest_group_name = ig_jats
+				set_ig_trait = ig_trait:ig_trait_old_ways
+				set_ig_trait = ig_trait:ig_trait_honest_work
+				set_ig_trait = ig_trait:ig_trait_khalsa_panth
+			}
+			# Landvolk
+			else_if = {
+				limit = {
+					has_dlc_feature = ip3_content
+					owner = {
+						any_primary_culture = {
+							has_discrimination_trait = language_germanophone
+						}
+					}
+				}
+				set_interest_group_name = ig_landvolk
+				set_ig_trait = ig_trait:ig_trait_born_particularists
+				set_ig_trait = ig_trait:ig_trait_honest_work
+				set_ig_trait = ig_trait:ig_trait_farmers_markets
+			}
 			else = {
 				set_ig_trait = ig_trait:ig_trait_old_ways
 				set_ig_trait = ig_trait:ig_trait_honest_work
 				set_ig_trait = ig_trait:ig_trait_farmers_markets
 			}
 		}
+
+		# Jeffersonian Ideology
+		# if = {
+			# limit = {
+				# OR = {
+					# country_has_primary_culture = cu:yankee
+					# country_has_primary_culture = cu:dixie
+				# }
+			# }
+			# ig:ig_rural_folk ?= {
+				# remove_ideology = ideology_agrarian
+				# add_ideology = ideology_agrarian_jeffersonian
+				# set_interest_group_name = ig_yeoman_farmers
+			# }
+		# }
+
+		# Heimin
+		if = {
+			limit = {
+				country_has_primary_culture = cu:japanese
+			}
+			ig:ig_rural_folk ?= {
+				set_interest_group_name = ig_peasants
+			}
+		}
+		# Maka'āinana
+		if = {
+			limit = {
+				country_has_primary_culture = cu:hawaiian
+			}
+			ig:ig_rural_folk ?= {
+				set_interest_group_name = ig_maka_ainana
+			}
+		}
+		# Sikh Empire
+		if = {
+			limit = {
+				c:PAN ?= this
+			}
+			ig:ig_rural_folk ?= {
+				set_interest_group_name = ig_jats
+			}
+		}
+		# India
+		else_if = {
+			limit = {
+				any_primary_culture = {
+					has_discrimination_trait_group = heritage_group_south_asian
+					NOT = {
+						has_discrimination_trait = tradition_himalayan
+					}
+				}
+			}
+			ig:ig_rural_folk ?= {
+				set_interest_group_name = ig_ryots
+			}
+		}
+		# Nepal
+		else_if = {
+			limit = {
+				any_primary_culture = {
+					has_discrimination_trait_group = heritage_group_south_asian
+					has_discrimination_trait = tradition_himalayan
+				}
+			}
+			ig:ig_rural_folk ?= {
+				set_interest_group_name = ig_kisanharu
+			}
+		}
 	}
 	on_disable = {}
-	on_character_ig_membership = {}
+	priority_cultures = { #Country scope
+		rule = {
+			trigger = {
+				c:BEI ?= this
+				any_primary_culture = {
+					cu:burgundian = this
+				}
+			}
+			cultures = {
+				javan balinese visayan sumatran bornean malay moluccan dayak tionghoa tagalog makassarese bugis
+			}
+		}
+		rule = {
+			trigger = {
+				c:CHR ?= this
+				any_primary_culture = {
+					cu:scandinavian = this
+				}
+			}
+			cultures = {
+				filipino visayan bugis tagalog
+			}
+		}
+		rule = {
+			trigger = {
+				c:YLO ?= this
+				any_primary_culture = {
+					cu:zhourao = this
+				}
+			}
+			cultures = {
+				aborigine aborigine_chinese
+			}
+		}
+		rule = {
+			trigger = {
+				c:ZAN ?= this
+				any_primary_culture = {
+					cu:bedouin = this
+				}
+			}
+			cultures = {
+				swahili lacustrine_bantu oromo
+			}
+		}
+	}
+	on_character_ig_membership = {
+		if = {
+			limit = {
+				OR = {
+					culture = cu:oromo
+					culture = cu:lacustrine_bantu
+				}
+				owner = {
+					c:ZAN ?= this
+					any_primary_culture = {
+						cu:bedouin = this
+					}
+				}
+			}
+			random_list = {
+				2 = { change_character_religion = rel:sunni }
+				1 = { change_character_religion = rel:animist }
+			}
+		}
+	}
 
 	pop_potential = {
 		NOR = {
@@ -88,6 +251,10 @@
 			pop_employment_building_group = bg_agriculture
 			pop_employment_building_group = bg_ranching
 			pop_employment_building_group = bg_plantations
+			pop_employment_building_group = bg_logging
+			pop_employment_building_group = bg_fishing
+			pop_employment_building_group = bg_whaling
+			pop_employment_building_group = bg_manor_houses
 		}
 	}
 
@@ -102,9 +269,21 @@
 						pop_employment_building_group = bg_agriculture
 						pop_employment_building_group = bg_ranching
 						pop_employment_building_group = bg_plantations
+						pop_employment_building_group = bg_logging
+						pop_employment_building_group = bg_fishing
+						pop_employment_building_group = bg_whaling
+						pop_employment_building_group = bg_manor_houses
 					}
 				}
-				value = 100
+				if = {
+					limit = {
+						is_pop_type = clergymen
+					}
+					value = 25
+				}
+				else = {
+					value = 100
+				}
 			}
 		}
 
@@ -134,7 +313,20 @@
 				limit = {
 					is_pop_type = clergymen
 				}
-				value = 100
+				value = 75
+			}
+		}
+
+		if = {
+			limit = {
+				c:BEI ?= owner
+				culture = {
+					has_discrimination_trait_group = heritage_group_european
+				}
+			}
+			multiply = {
+				desc = "POP_INDIA_COLONIAL_RULE"
+				value = 0.1
 			}
 		}
 
@@ -163,6 +355,33 @@
 				min = 0
 			}
 		}
+
+		if = {
+			limit = {
+				scope:interest_group = {
+					is_in_government = yes
+				}
+			}
+			multiply = { # Multiplied by 1.25x max
+				desc = "POP_LOYALISTS"
+				value = pop_loyalist_fraction
+				divide = 4
+				add = 1
+			}
+		}
+		if = {
+			limit = {
+				scope:interest_group = {
+					is_in_government = no
+				}
+			}
+			multiply = { # Multiplied by 1.25x max
+				desc = "POP_RADICALS"
+				value = pop_radical_fraction
+				divide = 4
+				add = 1
+			}
+		}
 	}
 
 	monarch_weight = {
@@ -189,7 +408,7 @@
 		if = {
 			limit = {
 				owner = {
-					has_law = law_type:law_homesteading
+					has_law_or_variant = law_type:law_homesteading
 				}
 			}
 			multiply = {
@@ -200,7 +419,7 @@
 		if = {
 			limit = {
 				owner = {
-					has_law = law_type:law_serfdom
+					has_law_or_variant = law_type:law_serfdom
 				}
 			}
 			multiply = {
@@ -215,7 +434,7 @@
 		# Agitators will never be part of a marginalized IG
 		if = {
 			limit = {
-				owner.ig:ig_rural_folk = {
+				owner.ig:ig_rural_folk ?= {
 					is_marginal = yes
 				}
 			}
@@ -229,6 +448,25 @@
 		value = 1.0
 	}
 
+	executive_weight = {
+		value = 0.1
+		
+		# The company owning BEI should not get non-industrialist executives
+		if = {
+			limit = {
+				exists = scope:company
+				exists = c:BEI
+				c:BEI = {
+					exists = owning_company
+					owning_company = scope:company
+				}
+			}
+			multiply = {
+				value = 0
+			}
+		}
+	}
+
 	noble_chance = {
 		value = 0.2
 	}
@@ -237,15 +475,23 @@
 		value = 0.0
 	}
 
+	female_executive_chance = {
+		value = 0.0
+	}
+
 	female_politician_chance = {
 		value = 0.0
+
 
 		if = {
 			limit = {
 				owner = {
-					has_law = law_type:law_womens_suffrage
+					has_law_or_variant = law_type:law_womens_suffrage
 				}
-
+				law_stance = {
+					law = law_type:law_womens_suffrage
+					value >= approve
+				}
 			}
 			add = {
 				value = 0.025
@@ -255,23 +501,11 @@
 
 	female_agitator_chance = {
 		value = 0.025
-		
-		if = {
-			limit = {
-				owner = {
-					has_law = law_type:law_women_own_property
-				}
 
-			}
-			add = {
-				value = 0.025
-			}
-		}	
-		
 		if = {
 			limit = {
 				owner = {
-					has_law = law_type:law_women_in_the_workplace
+					has_law_or_variant = law_type:law_women_own_property
 				}
 
 			}
@@ -283,29 +517,38 @@
 		if = {
 			limit = {
 				owner = {
-					has_law = law_type:law_womens_suffrage
+					has_law_or_variant = law_type:law_women_in_the_workplace
 				}
 
 			}
 			add = {
 				value = 0.025
 			}
-		}		
+		}
+
+		if = {
+			limit = {
+				owner = {
+					has_law_or_variant = law_type:law_womens_suffrage
+				}
+
+			}
+			add = {
+				value = 0.025
+			}
+		}
 	}
 
 	# The chance that a commander belonging to this IG takes over leadership when it changes
 	# scope:character is the most popular commander in the IG
 	commander_leader_chance = {
 		value = 0.5
-		if = {
-			limit = {
-				exists = scope:character
-			}
-			multiply = {
-				value = 1
-				add = scope:character.popularity
-				min = 0
-			}
-		}
+		multiply = ig_commander_leader_chance_mult
+	}
+
+	# The chance that a executive belonging to this IG takes over leadership when it changes
+	# scope:character is the most popular executive in the IG
+	executive_leader_chance = {
+		value = 0.2
 	}
 }

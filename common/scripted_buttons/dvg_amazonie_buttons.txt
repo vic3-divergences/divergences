@@ -1,0 +1,283 @@
+﻿je_amazonie_debt_negotiation_button = {
+	name = "je_amazonie_debt_negotiation_button"
+	desc = "je_amazonie_debt_negotiation_button_desc"
+
+	visible = { NOT = { has_variable = amazonie_debt_renegotiated_var } }
+
+	ai_chance = {
+		value = 10
+	}
+
+	possible = {
+		NOT = {
+			has_war_with = c:DUA
+			owes_obligation_to = c:DUA
+		}
+		OR = {
+			c:DUA = {
+				relations:root >= relations_threshold:friendly
+			}
+			is_subject_of = c:DUA
+			any_scope_treaty = {
+				binds = c:DUA
+				any_scope_article = {
+					has_type = alliance
+				}
+			}
+		}
+		je:je_amazonie_debt ?= {
+			OR = {
+				has_modifier = modifier_amazonie_independence_payments_1
+				has_modifier = modifier_amazonie_independence_payments_2
+				has_modifier = modifier_amazonie_independence_payments_3
+				has_modifier = modifier_amazonie_independence_payments_4
+			}
+		}
+	}
+
+	effect = {
+		c:DUA = { trigger_event = { id = dvg_amazonie.103 popup = yes } }
+	}
+}
+
+je_amazonie_debt_payment_button = {
+	name = "je_amazonie_debt_payment_button"
+	desc = "je_amazonie_debt_payment_button_desc"
+
+	visible = { always = yes }
+
+	possible = {
+		NOT = { has_war_with = c:DUA }
+		gold_reserves >= 1500000
+		je:je_amazonie_debt ?= {
+			OR = {
+				has_modifier = modifier_amazonie_independence_payments_1
+				has_modifier = modifier_amazonie_independence_payments_2
+				has_modifier = modifier_amazonie_independence_payments_3
+				has_modifier = modifier_amazonie_independence_payments_4
+			}
+		}
+	}
+
+	ai_chance = {
+		value = 50
+	}
+
+	effect = {
+		add_treasury = -1500000
+		if = {
+			limit = {
+				je:je_amazonie_debt ?= { has_modifier = modifier_amazonie_independence_payments_4 }
+			}
+			je:je_amazonie_debt ?= {
+				remove_modifier = modifier_amazonie_independence_payments_4
+				add_modifier = {
+					name = modifier_amazonie_independence_payments_3
+					months = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				je:je_amazonie_debt ?= { has_modifier = modifier_amazonie_independence_payments_3 }
+			}
+			je:je_amazonie_debt ?= {
+				remove_modifier = modifier_amazonie_independence_payments_3
+				add_modifier = {
+					name = modifier_amazonie_independence_payments_2
+					months = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				je:je_amazonie_debt ?= {has_modifier = modifier_amazonie_independence_payments_2 }
+			}
+			je:je_amazonie_debt ?= {
+				remove_modifier = modifier_amazonie_independence_payments_2
+				add_modifier = {
+					name = modifier_amazonie_independence_payments_1
+					months = -1
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				je:je_amazonie_debt ?= { has_modifier = modifier_amazonie_independence_payments_1 }
+			}
+			je:je_amazonie_debt ?= {
+				remove_modifier = modifier_amazonie_independence_payments_1
+			}
+		}
+		c:DUA = {
+			if = {
+				limit = {
+					has_modifier = modifier_dua_independence_payments_4
+				}
+				remove_modifier = modifier_dua_independence_payments_4
+				add_modifier = {
+					name = modifier_dua_independence_payments_3
+					months = -1
+				}
+			}
+			else_if = {
+				limit = {
+					has_modifier = modifier_dua_independence_payments_3
+				}
+				remove_modifier = modifier_dua_independence_payments_3
+				add_modifier = {
+					name = modifier_dua_independence_payments_2
+					months = -1
+				}
+			}
+			else_if = {
+				limit = {
+					has_modifier = modifier_dua_independence_payments_2
+				}
+				remove_modifier = modifier_dua_independence_payments_2
+				add_modifier = {
+					name = modifier_dua_independence_payments_1
+					months = -1
+				}
+			}
+		}
+	}
+}
+
+je_amazonie_cancel_debt_button = {
+	name = "je_amazonie_cancel_debt_button"
+	desc = "je_amazonie_cancel_debt_button_desc"
+
+	visible = { always = yes }
+
+	possible = {
+		je:je_amazonie_debt ?= {
+			OR = {
+				has_modifier = modifier_amazonie_independence_payments_1
+				has_modifier = modifier_amazonie_independence_payments_2
+				has_modifier = modifier_amazonie_independence_payments_3
+				has_modifier = modifier_amazonie_independence_payments_4
+			}
+		}
+	}
+
+	effect = {
+		custom_tooltip = je_amazonie_cancel_debt_button_tt
+		add_modifier = {
+			name = modifier_cancelled_amazonie_debt
+			days = very_long_modifier_time
+		}
+		if = {
+			limit = {
+				je:je_amazonie_debt ?= { has_modifier = modifier_amazonie_independence_payments_1 }
+			}
+			je:je_amazonie_debt ?= { remove_modifier = modifier_amazonie_independence_payments_1 }
+		}
+		if = {
+			limit = {
+				je:je_amazonie_debt ?= { has_modifier = modifier_amazonie_independence_payments_2 }
+			}
+			je:je_amazonie_debt ?= { remove_modifier = modifier_amazonie_independence_payments_2 }
+		}
+		if = {
+			limit = {
+				je:je_amazonie_debt ?= { has_modifier = modifier_amazonie_independence_payments_3 }
+			}
+			je:je_amazonie_debt ?= { remove_modifier = modifier_amazonie_independence_payments_3 }
+		}
+		if = {
+			limit = {
+				je:je_amazonie_debt ?= { has_modifier = modifier_amazonie_independence_payments_4 }
+			}
+			je:je_amazonie_debt ?= { remove_modifier = modifier_amazonie_independence_payments_4 }
+		}
+		c:DUA = {
+			if = {
+				limit = {
+					has_modifier = modifier_dua_independence_payments_1
+				}
+				remove_modifier = modifier_dua_independence_payments_1
+			}
+			if = {
+				limit = {
+					has_modifier = modifier_dua_independence_payments_2
+				}
+				remove_modifier = modifier_dua_independence_payments_2
+			}
+			if = {
+				limit = {
+					has_modifier = modifier_dua_independence_payments_3
+				}
+				remove_modifier = modifier_dua_independence_payments_3
+			}
+			if = {
+				limit = {
+					has_modifier = modifier_dua_independence_payments_4
+				}
+				remove_modifier = modifier_dua_independence_payments_4
+			}
+			change_relations = {
+				country = c:AMA
+				value = -70
+			}
+		}
+		change_infamy = 45
+		every_state_region = {
+			limit = {
+				OR = {
+					is_homeland = cu:amazonien
+					is_homeland = cu:antarctican
+					is_homeland = cu:equinoxien
+				}
+			}
+			add_claim = c:DUA
+		}
+	}
+
+	ai_chance = {
+		value = 0
+		if = {
+			limit = {
+				c:DUA = {
+					OR = {
+						in_default = yes
+						has_revolution = yes
+					}
+				}
+			}
+			add = 10
+		}
+		if = {
+			limit = {
+				OR = {
+					AND = {
+						army_size > c:DUA.army_size
+						navy_size > c:DUA.navy_size
+					}
+					any_scope_ally = {
+						army_size > c:DUA.army_size
+						navy_size > c:DUA.navy_size
+					}
+				}
+			}
+			add = 10
+		}
+
+		if = {
+			limit = {
+				country_rank >= rank_value:major_power
+			}
+			add = 2
+		}
+
+		if = {
+			limit = {
+				OR = {
+					is_diplomatic_play_committed_participant = yes
+					is_at_war = yes
+				}
+			}
+			multiply = 0
+		}
+	}
+}

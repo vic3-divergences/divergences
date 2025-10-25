@@ -1,0 +1,650 @@
+﻿
+golden_law_button = {
+	name = "golden_law_button"
+	desc = "golden_law_button_pla__desc"
+
+	visible = { always = yes }
+
+	possible = {
+		has_law = law_type:law_legacy_slavery
+		c:PLA ?= {
+			OR = {
+				AND = {
+					any_scope_character = {
+						OR = {
+							is_heir = yes
+							is_ruler = yes
+						}
+						OR = {
+							has_ideology = ideology:ideology_abolitionist
+							has_ideology = ideology:ideology_humanitarian
+							has_ideology = ideology:ideology_humanitarian_royalist
+						}
+						age >= 20
+					}
+				}
+				ig:ig_landowners = {
+					is_in_government = no
+					ig_clout < 0.25
+				}
+			}
+			is_enacting_law = law_type:law_slavery_banned
+			custom_tooltip = {
+				text = golden_law_button_tt_2
+				trigger_if = {
+					limit = {
+						is_enacting_law = law_type:law_slavery_banned
+					}
+					enactment_phase >= 1
+				}
+				trigger_else = {
+					always = no
+				}
+			}
+		}
+	}
+
+	ai_chance = {
+		value = 0
+		if = {
+			limit = { 
+				ig:ig_landowners = {
+					is_in_government = no
+				}
+			}
+			add = 2
+		}
+		if = {
+			limit = { 
+				ig:ig_landowners = {
+					is_in_government = no
+					is_powerful = no
+				}
+			}
+			add = 4
+		}
+		if = {
+			limit = { 
+				any_interest_group = {
+					is_in_government = yes
+					OR = {
+						leader = {
+							OR = {
+								has_ideology = ideology:ideology_abolitionist
+								has_ideology = ideology:ideology_humanitarian
+								has_ideology = ideology:ideology_humanitarian_royalist
+							}
+						}
+						OR = {
+							law_stance = {
+								law = law_type:law_slave_trade
+								value = strongly_disapprove
+							}
+							law_stance = {
+								law = law_type:law_legacy_slavery
+								value = strongly_disapprove
+							}
+						}
+					}
+				}
+			}
+			add = 7
+		}
+		if = {
+			limit = { 
+				OR = {
+					is_at_war = yes
+					any_revolution_ongoing = yes
+				}
+			}
+			add = -1000
+		}
+	}
+
+	effect = {
+		
+		activate_law = law_type:law_slavery_banned
+		ig:ig_landowners = {
+			add_modifier = {
+				name = outraged_over_golden_law_modifier
+				days = normal_modifier_time
+			}
+		}
+		
+		
+	}
+}
+# Suppress Slave Trade Button
+je_slave_trade_suppression_button = {
+	name = "je_slave_trade_suppression_button"
+	desc = "je_slave_trade_suppression_button_desc"
+
+	visible = {
+		has_law = law_type:law_slave_trade 
+		NOT = { has_variable = var_slave_trade_suppression_var }
+	}
+
+	possible = {
+		ig:ig_landowners = {
+			is_in_government = no
+		}
+		custom_tooltip = {
+			text = slave_trade_button_cooldown_tt
+			NOT = {
+				has_variable = slave_trade_button_cooldown_var
+			}
+		}
+	}
+
+	effect = {
+		custom_tooltip = je_slave_trade_suppression_button_tt
+		set_variable = var_slave_trade_suppression_var
+		set_variable = {
+			name = slave_trade_button_cooldown_var
+			days = short_modifier_time
+		}
+		every_interest_group = {
+			limit = {
+                law_stance = {
+                    law = law_type:law_slave_trade
+                    value > neutral
+                }
+			}
+			add_modifier = {
+				name = restricted_slave_trade_ig_modifier
+			}
+		}
+		remove_modifier = unrestricted_slave_trade_modifier
+		add_modifier = {
+			name = restricted_slave_trade_modifier
+		}
+	}
+}
+
+reform_law_button = {
+	name = "reform_law_button"
+	desc = "reform_law_button_desc"
+
+	visible = { 
+		has_journal_entry = je_king_louis
+		NOT = {
+			has_modifier = decision_cooldown
+		}
+		NOT = {
+			has_variable = pla_reform_law_enacted
+		}
+	}
+
+	possible = {
+		has_technology_researched = egalitarianism
+		OR = {
+			is_enacting_law = law_type:law_universal_suffrage 
+			is_enacting_law = law_type:law_census_voting
+		}
+		
+	}
+	effect = {
+		add_modifier = {
+			name = decision_cooldown
+			months = 48
+		}
+		if = {
+			limit = {
+				ig:ig_landowners = {
+					is_powerful = yes 
+					is_in_government = yes
+				}
+			}
+			random_list = {
+			
+
+				2 = {
+					trigger_event = {
+						id = dvg_plantagenia.5
+					}
+					
+				}
+				8 = {
+					trigger_event = {
+						id = dvg_plantagenia.33
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				ig:ig_landowners = {
+					is_powerful = yes 
+					is_in_government = no
+				}
+			}
+			random_list = {
+			
+
+				6 = {
+					trigger_event = {
+						id = dvg_plantagenia.5
+					}
+					add_modifier = {
+						name = decision_cooldown
+						months = 48
+					}
+				}
+				4 = {
+					trigger_event = {
+						id = dvg_plantagenia.33
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				ig:ig_landowners = {
+					is_powerful = no 
+					is_in_government = yes
+				}
+			}
+			random_list = {
+			
+
+				5 = {
+					trigger_event = {
+						id = dvg_plantagenia.5
+					}
+					add_modifier = {
+						name = decision_cooldown
+						months = 48
+					}
+				}
+				5 = {
+					trigger_event = {
+						id = dvg_plantagenia.33
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				ig:ig_landowners = {
+					is_powerful = no 
+					is_in_government = no
+				}
+			}
+			random_list = {
+			
+
+				9 = {
+					trigger_event = {
+						id = dvg_plantagenia.5
+					}
+					add_modifier = {
+						name = decision_cooldown
+						months = 48
+					}
+				}
+				1 = {
+					trigger_event = {
+						id = dvg_plantagenia.33
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_law = law_type:law_autocracy
+			}
+			trigger_event = {
+				id = dvg_plantagenia.5
+			}
+			add_radicals = {
+				value = 0.40
+				pop_type = aristocrats
+			}
+		}
+		
+		
+		
+	}
+
+	ai_chance = {
+		value = 100
+		 		 
+	 }	
+}
+
+crown_king_button = {
+
+	name = "crown_the_king"
+	desc = "crown_the_king_desc"
+
+	visible = { 
+		has_journal_entry = je_king_louis
+		has_modifier = brz_regency
+	}
+	possible = {
+		has_modifier = brz_regency
+		ruler = {
+			age >= 18
+		}
+	}
+	effect = {
+		trigger_event = {
+			id = dvg_plantagenia.3
+		}
+	}
+}
+
+###Belgian Buttons###
+je_belgium_unite_button = {
+	name = "je_belgium_unite_button"
+	desc = "je_belgium_unite_button_desc"
+
+	visible = {
+		any_subject_or_below = {
+			country_has_primary_culture = cu:septiman
+		}
+	}
+
+	possible = {
+		has_technology_researched = nationalism
+		any_subject_or_below = {
+			country_has_primary_culture = cu:septiman
+			OR = {	
+				liberty_desire <= 50
+				relations:root >= relations_threshold:amicable
+			}
+		}
+		NOT = {
+			has_modifier = decision_cooldown
+		}
+	}
+
+	effect = {
+		add_modifier = {
+			name = decision_cooldown
+			months = 6
+			is_decaying = yes
+		}
+		every_subject_or_below = {
+			limit = {
+				country_has_primary_culture = cu:septiman
+				OR = {	
+					liberty_desire <= 50
+					relations:root >= relations_threshold:amicable
+				}
+			}
+			trigger_event = {
+				id = dvg_belgium.8
+			}
+		}
+	}
+}
+
+je_settlers_button = {
+
+	name = "je_sponsor_settlers"
+	desc = "je_sponsor_settlers_desc"
+
+	visible = { 
+		has_journal_entry = je_manifest_destiny_blc
+	}
+
+	possible = {
+		NOT = {
+			has_modifier = dvg_sponsor_settlers
+		}
+	}
+	effect = {
+		random_primary_culture = {
+			save_scope_as = primary_culture_scope
+		}
+		add_modifier = {
+		name = dvg_sponsor_settlers
+		months = 12
+		}
+		create_incident = {
+			country = THIS
+			value = 3
+		}
+		
+		random_neighbouring_state = {
+			limit = {
+				NOT = {
+					owner = ROOT
+				}
+				state_is_in_north_america = yes
+			}
+			add_modifier = {
+				name = dvg_fiducies_development
+				months = 12
+			}
+			set_variable = migration_target_state
+			save_scope_as = foreign_neighbor_state
+			create_mass_migration = {
+				origin = ROOT
+				culture = scope:primary_culture_scope
+			}
+		}
+		random_scope_pop = {
+			limit = {
+				culture = scope:primary_culture_scope
+				wealth < 50
+			}
+			move_pop = scope:foreign_neighbor_state
+		}
+		
+	}
+}
+
+je_claim_button = {
+
+	name = "je_claim_state"
+	desc = "je_claim_state_desc"
+
+	visible = { 
+		NOT = {
+			has_law = law_type:law_no_colonial_affairs
+		}
+	}
+
+	possible = {
+		any_neighbouring_state = {
+			NOT = {
+				owner = ROOT
+				has_claim_by = ROOT
+			}
+			has_modifier = dvg_fiducies_development
+			culture_percent_state = {
+				target = scope:primary_culture_scope
+				value > 0.30
+			}
+			has_variable = migration_target_state
+		}
+	}
+	effect = {
+		create_incident = {
+			country = THIS
+			value = 5
+		}
+		every_neighbouring_state = {
+			limit = {
+				NOT = {
+					owner = ROOT
+				}
+				has_modifier = dvg_fiducies_development
+				culture_percent_state = {
+					target = scope:primary_culture_scope
+					value > 0.30
+				}
+			}
+			remove_variable = migration_target_state
+			
+			state_region = {
+				add_claim = ROOT
+			}
+		}
+		
+	}
+}
+
+je_belgium_beatroosters_button = { ### NOT FULLY WORKING, DOES NOT REDUCE JE PB ###
+	name = "je_belgium_beatroosters_button"
+	desc = "je_belgium_beatroosters_button_desc"
+
+	visible = {
+		has_journal_entry = je_wylde_rytt
+	}
+
+	possible = {
+		NOT = {
+			has_modifier = decision_cooldown
+		}
+	}
+
+	effect = {
+		add_modifier = {
+			name = decision_cooldown
+			months = 6
+			is_decaying = yes
+		}
+		add_modifier = {
+			name = dvg_modifier_cnf_beatingroosters
+			months = 6
+		}
+	}
+}
+
+# je_the_krakow_uprising_annex_button = {
+# 	name = "je_the_krakow_uprising_annex_button"
+# 	desc = "je_the_krakow_uprising_annex_button_desc"
+
+# 	visible = { always = yes }
+
+# 	possible = {
+# 		c:KRA ?= {
+# 			is_subject_of = c:AUS
+# 			has_revolution = no
+# 		}
+# 		is_at_war = no
+# 	}
+
+# 	effect = {
+# 		if = {
+# 			limit = {
+# 				c:KRA = {
+# 					exists = yes
+# 				}
+# 			}
+# 			annex = c:KRA
+# 		}
+# 	}
+# }
+
+dvg_ban_missionaries_button_skr = {
+	name = "SKR_deport_button"
+	desc = "SKR_deport_button_desc"
+
+	visible = { always = yes 
+	NOT = {
+		has_global_variable = skr_banned_missions
+	}
+	}
+
+	possible = {
+		any_scope_state = {
+			owner = ROOT
+			has_modifier = missionary_schools_hospitals
+		}
+		authority >= 300
+		OR = {
+		NOT = {has_law = law_type:law_no_police}
+		NOT = {has_law = law_type:law_no_home_affairs}
+		has_law = law_type:law_closed_borders
+		}
+		NOT = { has_modifier = modifier_chi_deporting_missionaries}
+	}
+	effect = {
+		add_modifier = {
+			name = china_authority
+			months = 90
+		}
+		every_scope_state = {
+			limit = {
+				has_modifier = missionary_schools_hospitals
+			}
+			remove_modifier = missionary_schools_hospitals
+		}
+		if = {
+			limit = { 
+				has_journal_entry = je_skraeling_missions
+			}
+			change_variable = {
+				name = dvg_skr_var
+				add = 15
+			}
+			
+			set_global_variable = skr_banned_missions
+		}
+		
+	}
+}
+
+dvg_vinland_revolution_button = {
+	name = "dvg_vinland_revolution_button"
+	desc = "dvg_vinland_revolution_button_desc"
+
+	visible = { 
+		
+		always = yes
+		is_subject_of = c:SCA
+		NOT = {
+		has_global_variable = vinlandic_revolution
+		}
+	}
+
+	possible = {
+		liberty_desire > 95
+		OR = {
+			any_scope_treaty = {
+				any_scope_article = {
+					has_type = support_independence
+				}
+			}
+			has_technology_researched = nationalism
+		}
+		
+	}
+
+	effect = {
+		set_global_variable = vinlandic_revolution
+		trigger_event = {
+			id = dvg_belgium.8
+		}
+		if = {
+			limit = {
+				exists = c:SCA
+				is_subject_of = c:SCA
+				
+			}
+			c:SCA = {
+				trigger_event = {
+					id = dvg_vinland.10
+				}
+			}
+			if = {
+				limit = {
+					exists = c:MSG
+				}
+				c:MSG = {
+					trigger_event = {
+						id = dvg_vinland.11
+					}
+				}
+			}
+		}
+	}
+
+	ai_chance = {
+		value = 100
+	}
+}

@@ -19,6 +19,13 @@ dvg_cuba.1 = {
 
 	duration = 3
 	
+	immediate = {
+		c:GCO = {
+			ig:ig_petty_bourgeoisie = {
+				leader = { save_scope_as = scope_castro }
+			}
+		}
+	}
 	trigger = {
 	}
 	
@@ -82,12 +89,19 @@ dvg_cuba.3 = {
 	duration = 3
 	
 	trigger = {
+		exists = c:GCO
+		exists = c:CUB
+		this = c:CUB
+		NOT = { has_global_variable = castro_update }
+		c:GCO = { has_variable = castro_colombia }
 	}
 	
 	option = {
 		name = dvg_cuba.3.a
 		default_option = yes
 		
+		add_liberty_desire = 10
+		set_global_variable = castro_update
 		ai_chance = {
 			base = 1
 		}
@@ -114,8 +128,10 @@ dvg_cuba.4 = {
 	
 	trigger = {
 		exists = c:GCO
+		exists = c:CUB
 		this = c:CUB
-		year < 1864
+		NOT = { has_global_variable = castro_update }
+		NOT = { has_global_variable = castro_return }
 		c:GCO = {
 			NOR = {
 				has_variable = castro_colombia
@@ -127,6 +143,10 @@ dvg_cuba.4 = {
 	option = {
 		name = dvg_cuba.4.a
 		default_option = yes
+		
+		add_liberty_desire = 5
+		set_global_variable = castro_update
+		set_global_variable = castro_return
 		
 		ai_chance = {
 			base = 1
@@ -153,14 +173,58 @@ dvg_cuba.5 = {
 	duration = 3
 	
 	trigger = {
+		exists = c:CUB
+		this = c:CUB
+		year = 1845
+		NOT = { has_global_variable = cash_crop_chosen }
 	}
 	
 	option = {
 		name = dvg_cuba.5.a
 		default_option = yes
 		
+		s:STATE_CUBA.region_state:CUB = {
+			add_modifier = {
+				name = dvg_cuban_plantation_prioritize_tobacco
+				days = -1
+			}
+		}
+		
+		set_global_variable = cash_crop_chosen
+		
 		ai_chance = {
-			base = 1
+			base = 10
+		}
+	}
+	option = {
+		name = dvg_cuba.5.b
+		
+		s:STATE_CUBA.region_state:CUB = {
+			add_modifier = {
+				name = dvg_cuban_plantation_prioritize_sugar
+				days = -1
+			}
+		}
+		
+		set_global_variable = cash_crop_chosen
+		
+		ai_chance = {
+			base = 10
+		}
+	}
+	option = {
+		name = dvg_cuba.5.c
+		
+		s:STATE_CUBA.region_state:CUB = {
+			add_modifier = {
+				name = dvg_cuban_plantation_diversified_crop
+				days = -1
+			}
+		}
+		set_global_variable = cash_crop_chosen
+		
+		ai_chance = {
+			base = 80
 		}
 	}
 }
@@ -184,11 +248,22 @@ dvg_cuba.6 = {
 	duration = 3
 	
 	trigger = {
+		exists = c:CUB
+		this = c:CUB
+		c:CUB = { is_subject_of = c:SPA }
+		year = 1850
+		has_global_variable = castro_return
+		NOT = { has_global_variable = dead_castro }
+		NOT = { has_global_variable = active_cuban_revolution }
+		NOT = { has_global_variable = cuban_shattered }
 	}
 	
 	option = {
 		name = dvg_cuba.6.a
 		default_option = yes
+		
+		remove_global_variable = castro_return
+		set_global_variable = castro_infighting
 		
 		ai_chance = {
 			base = 1
@@ -215,11 +290,22 @@ dvg_cuba.7 = {
 	duration = 3
 	
 	trigger = {
+		exists = c:CUB
+		this = c:CUB
+		c:CUB = { is_subject_of = c:SPA }
+		year = 1860
+		has_global_variable = castro_infighting
+		NOT = { has_global_variable = dead_castro }
+		NOT = { has_global_variable = active_cuban_revolution }
+		NOT = { has_global_variable = cuban_shattered }
 	}
 	
 	option = {
 		name = dvg_cuba.7.a
 		default_option = yes
+		
+		remove_global_variable = castro_infighting
+		set_global_variable = kill_castro
 		
 		ai_chance = {
 			base = 1
@@ -251,22 +337,25 @@ dvg_cuba.8 = {
 		this = c:CUB
 		c:CUB = {
 			NOT = { is_subject_of = c:GCO }
+			has_global_variable = kill_castro
 		}
 		year = 1864
-		c:GCO = {
-			NOT = { has_variable = castro_colombia }
+		c:SPA = { 
+			NOT  = { has_global_variable = cuban_shattered } 
+			NOT = { has_global_variable = active_cuban_revolution }
 		}
-		NOT = { exists = global_var:dead_castro }
+		c:GCO = {
+			NOT = { has_global_variable = castro_colombia }
+		}
+		NOT = { has_global_variable = dead_castro }
 	}
 	
 	option = {
 		name = dvg_cuba.8.a
 		default_option = yes
 		
-		set_global_variable = {
-			name = dead_castro
-			value = 0
-		}
+		remove_global_variable = kill_castro
+		set_global_variable = dead_castro
 		c:GCO = {
 			ig:ig_petty_bourgeoisie = {
 				leader = {
@@ -275,6 +364,7 @@ dvg_cuba.8 = {
 				}
 			}
 		}
+		add_liberty_desire = -5
 		trigger_event = { id = dvg_cuba.10 days = 7 }
 		
 		ai_chance = {
@@ -302,13 +392,25 @@ dvg_cuba.9 = {
 	duration = 3
 	
 	trigger = {
+		exists = c:GCO
+		exists = c:CUB
+		this = c:CUB
+		c:CUB = {
+			NOT = { is_subject_of = c:GCO }
+		}
+		year = 1864
+		c:GCO = {
+			NOT = { has_variable = castro_colombia }
+		}
+		NOT = { has_global_variable = dead_castro }
+		NOT  = { has_global_variable = cuban_shattered }
 	}
 	
 	option = {
 		name = dvg_cuba.9.a
 		default_option = yes
 		
-		trigger_event = { id = dvg_cuba.10 days = 7 }
+		add_liberty_desire = -5
 		
 		ai_chance = {
 			base = 1
@@ -341,6 +443,21 @@ dvg_cuba.10 = {
 		name = dvg_cuba.10.a
 		default_option = yes
 		
+		if = {
+			limit = { s:STATE_CUBA.region_state:CUB = { has_modifier = dvg_cuban_plantation_prioritize_tobacco } }
+			s:STATE_CUBA.region_state:CUB = { 
+				remove_modifier = dvg_cuban_plantation_prioritize_tobacco
+				add_modifier = dvg_cuban_plantation_intensified_tobacco
+			}
+		}
+		else = {
+			limit = { s:STATE_CUBA.region_state:CUB = { has_modifier = dvg_cuban_plantation_prioritize_sugar } }
+			s:STATE_CUBA.region_state:CUB = { 
+				remove_modifier = dvg_cuban_plantation_prioritize_sugar
+				add_modifier = dvg_cuban_plantation_intensified_sugar
+			}
+		}
+		
 		ai_chance = {
 			base = 1
 		}
@@ -365,12 +482,27 @@ dvg_cuba.11 = {
 
 	duration = 3
 	
+	immediate = {
+		every_scope_character = {
+			limit = { has_variable = is_quesada }
+			save_scope_as = scope_quesada
+		}
+	}
+	
 	trigger = {
+		exists = c:CUB
+		this = c:CUB
+		year = 1866
+		has_global_variable = dead_castro
+		NOT = { has_global_variable = remedio_speech }
 	}
 	
 	option = {
 		name = dvg_cuba.11.a
 		default_option = yes
+		
+		add_liberty_desire = 5
+		set_global_variable = remedio_speech
 		
 		ai_chance = {
 			base = 1
@@ -397,11 +529,19 @@ dvg_cuba.12 = {
 	duration = 3
 	
 	trigger = {
+		exists = c:CUB
+		this = c:CUB
+		year = 1868
+		has_global_variable = dead_castro
+		NOT = { has_global_variable = guerra_grande }
 	}
 	
 	option = {
 		name = dvg_cuba.12.a
 		default_option = yes
+		
+		add_liberty_desire = 10
+		set_global_variable = guerra_grande
 		
 		ai_chance = {
 			base = 1
@@ -428,11 +568,19 @@ dvg_cuba.13 = {
 	duration = 3
 	
 	trigger = {
+		exists = c:CUB
+		this = c:CUB
+		year = 1907
+		has_global_variable = guerra_grande
+		NOT = { has_global_variable = active_cuban_revolution }
+		NOT = { has_global_variable = cuban_shattered }
 	}
 	
 	option = {
 		name = dvg_cuba.13.a
 		default_option = yes
+		
+		set_global_variable = its_not_over_cub
 		
 		ai_chance = {
 			base = 1
@@ -459,11 +607,20 @@ dvg_cuba.14 = {
 	duration = 3
 	
 	trigger = {
+		exists = c:CUB
+		this = c:CUB
+		year = 1910
+		has_global_variable = its_not_over_cub
+		NOT = { has_global_variable = active_cuban_revolution }
+		NOT = { has_global_variable = cuban_shattered }
 	}
 	
 	option = {
 		name = dvg_cuba.14.a
 		default_option = yes
+		
+		remove_global_variable = its_not_over_cub
+		set_global_variable = the_revolution_comrade
 		
 		ai_chance = {
 			base = 1
@@ -490,11 +647,21 @@ dvg_cuba.15 = {
 	duration = 3
 	
 	trigger = {
+		exists = c:CUB
+		this = c:CUB
+		year = 1910
+		has_global_variable = cuban_shattered
+		NOT = { has_global_variable = active_cuban_revolution }
+		NOT = { has_global_variable = final_revolution_cub }
+		NOT = { has_global_variable = the_revolution_comrade_two }
 	}
 	
 	option = {
 		name = dvg_cuba.15.a
 		default_option = yes
+		
+		set_global_variable = final_revolution_cub
+		set_global_variable = the_revolution_comrade_two
 		
 		ai_chance = {
 			base = 1
@@ -641,6 +808,8 @@ dvg_cuba.19 = {
 				country = c:CUB
 				type = puppet
 			}
+		}
+		c:SPA = {
 			trigger_event = { id = dvg_cuba.20 }
 		}
 		c:CUB = {
@@ -730,7 +899,8 @@ dvg_cuba.21 = {
 				}
 			}
 		}
-		
+		set_global_variable = active_cuban_revolution
+		set_global_variable = cuban_war_active_castro
 		ai_chance = {
 			base = 1
 		}
@@ -761,6 +931,8 @@ dvg_cuba.22 = {
 	option = {
 		name = dvg_cuba.22.a
 		default_option = yes
+		
+		trigger_event = { id = dvg_gran_colombia.22 days = 31 }
 		
 		ai_chance = {
 			base = 1
@@ -793,6 +965,10 @@ dvg_cuba.23 = {
 		name = dvg_cuba.23.a
 		default_option = yes
 		
+		remove_global_variable = active_cuban_revolution
+		remove_global_variable = cuban_war_active_castro
+		set_global_variable = cuban_shattered
+		
 		ai_chance = {
 			base = 1
 		}
@@ -823,6 +999,10 @@ dvg_cuba.24 = {
 	option = {
 		name = dvg_cuba.24.a
 		default_option = yes
+		
+		c:GCO = {
+			trigger_event = { id = dvg_cuba.25 days = 1 }
+		}
 		
 		ai_chance = {
 			base = 1
@@ -903,22 +1083,15 @@ dvg_cuba.26 = {
 		name = dvg_cuba.26.a
 		default_option = yes
 		
-		c:CUB = {
-			create_diplomatic_play = {
-				name = cuban_war_of_independence
-				target_country = c:SPA
-				war = no
-				type = dp_independence
-			}
-		}
-		c:CUB = {
-			add_journal_entry = {
-				type = je_cuban_war_of_independence
-			}
-		}
+		
 		c:SPA = {
 			trigger_event = { id = dvg_cuba.28 days = 7 }
 		}
+		every_country = {
+			limit = { has_global_variable = cuban_supporter }
+			trigger_event = { id = dvg_cuba.27 days = 8 }
+		}
+		set_global_variable = cuban_war_active_republican
 		ai_chance = {
 			base = 1
 		}
@@ -950,6 +1123,15 @@ dvg_cuba.27 = {
 		name = dvg_cuba.27.a
 		default_option = yes
 		
+		random_diplomatic_play = {
+			limit = {
+				any_scope_play_involved = { this = c:CUB }
+				any_scope_play_involved = { this = c:SPA }
+				is_diplomatic_play_type = dp_independence
+			}
+			add_target_backers = { root }
+		}
+		
 		ai_chance = {
 			base = 1
 		}
@@ -980,6 +1162,20 @@ dvg_cuba.28 = {
 	option = {
 		name = dvg_cuba.28.a
 		default_option = yes
+		
+		c:CUB = {
+			create_diplomatic_play = {
+				name = cuban_war_of_independence
+				target_country = c:SPA
+				war = no
+				type = dp_independence
+			}
+		}
+		c:CUB = {
+			add_journal_entry = {
+				type = je_cuban_war_of_independence
+			}
+		}
 		
 		add_journal_entry = {
 			type = je_cuban_war_of_independence_SPA
@@ -1016,6 +1212,14 @@ dvg_cuba.29 = {
 		name = dvg_cuba.29.a
 		default_option = yes
 		
+		every_country = {
+			limit = {
+				has_global_variable = cuban_supporter
+			}
+			trigger_event = { id = dvg_cuba.30 }
+		}
+		remove_global_variable = cuban_war_active_republican
+		
 		ai_chance = {
 			base = 1
 		}
@@ -1046,6 +1250,8 @@ dvg_cuba.30 = {
 	option = {
 		name = dvg_cuba.30.a
 		default_option = yes
+		
+		remove_global_variable = cuban_war_active_republican
 		
 		ai_chance = {
 			base = 1
@@ -1078,6 +1284,22 @@ dvg_cuba.31 = {
 		name = dvg_cuba.31.a
 		default_option = yes
 		
+		remove_global_variable = cuban_war_active_republican
+		random_country = {
+			limit = {
+				has_global_variable = cuban_supporter
+				NOT = { c:PLA = ROOT }
+			}
+			trigger_event = { id = dvg_cuba.32 }
+		}
+		random_country = {
+			limit = { 
+				has_global_variable = cuban_supporter
+				c:PLA = ROOT
+			}
+			trigger_event = { id = dvg_cuba.33 }
+		}
+		
 		ai_chance = {
 			base = 1
 		}
@@ -1108,6 +1330,8 @@ dvg_cuba.32 = {
 	option = {
 		name = dvg_cuba.32.a
 		default_option = yes
+		
+		remove_global_variable = cuban_war_active_republican
 		
 		ai_chance = {
 			base = 1
@@ -1140,8 +1364,21 @@ dvg_cuba.33 = {
 		name = dvg_cuba.33.a
 		default_option = yes
 		
+		create_diplomatic_play = {
+			target_country = c:CUB
+			war = no
+			type = dp_make_dominion
+		}
+		
 		ai_chance = {
 			base = 1
+		}
+	}
+	option = {
+		name = dvg_cuba.33.b
+		
+		ai_chance = {
+			base = 0
 		}
 	}
 }
@@ -1165,12 +1402,51 @@ dvg_cuba.34 = {
 	duration = 3
 	
 	trigger = {
+		OR = {
+			AND = {
+				exists = c:SPA
+				this = c:SPA
+			}
+			AND = {
+				exists = c:IBE
+				this = c:IBE
+			}
+			AND = {
+				exists = c:SPC
+				this = c:SPC
+			}
+		}
+		exists = c:CUB
+		c:CUB = { is_subject_of = root }
+		has_global_variable = dead_castro
+		has_global_variable = the_revolution_comrade
+		year = 1910
 	}
 	
 	option = {
 		name = dvg_cuba.34.a
 		default_option = yes
 		
+		trigger_event = { id = dvg_cuba.36 days = 3 }
+		c:CUB = {
+			activate_law = law_type:law_council_republic
+			activate_law = law_type:law_autocracy
+			activate_law = law_type:law_closed_borders
+			activate_law = law_type:law_slavery_banned
+			activate_law = law_type:law_old_age_pension
+			activate_law = law_type:law_state_atheism
+			activate_law = law_type:law_public_health_insurance
+			activate_law = law_type:law_outlawed_dissent
+			activate_law = law_type:law_militarized_police_force
+			activate_law = law_type:law_worker_protections
+			activate_law = law_type:law_secret_police
+			activate_law = law_type:law_mass_conscription
+			activate_law = law_type:law_command_economy
+			activate_law = law_type:law_collectivized_agriculture
+			activate_law = law_type:law_protectionism
+		}
+		remove_global_variable = the_revolution_comrade
+		set_global_variable = active_cuban_revolution
 		ai_chance = {
 			base = 1
 		}
@@ -1196,12 +1472,51 @@ dvg_cuba.35 = {
 	duration = 3
 	
 	trigger = {
+		OR = {
+			AND = {
+				exists = c:SPA
+				this = c:SPA
+			}
+			AND = {
+				exists = c:IBE
+				this = c:IBE
+			}
+			AND = {
+				exists = c:SPC
+				this = c:SPC
+			}
+		}
+		exists = c:CUB
+		c:CUB = { is_subject_of = root }
+		has_global_variable = dead_castro
+		has_global_variable = the_revolution_comrade_two
+		year = 1910
 	}
 	
 	option = {
 		name = dvg_cuba.35.a
 		default_option = yes
 		
+		trigger_event = { id = dvg_cuba.37 days = 3 }
+		c:CUB = {
+			activate_law = law_type:law_council_republic
+			activate_law = law_type:law_autocracy
+			activate_law = law_type:law_closed_borders
+			activate_law = law_type:law_slavery_banned
+			activate_law = law_type:law_old_age_pension
+			activate_law = law_type:law_state_atheism
+			activate_law = law_type:law_public_health_insurance
+			activate_law = law_type:law_outlawed_dissent
+			activate_law = law_type:law_militarized_police_force
+			activate_law = law_type:law_worker_protections
+			activate_law = law_type:law_secret_police
+			activate_law = law_type:law_mass_conscription
+			activate_law = law_type:law_command_economy
+			activate_law = law_type:law_collectivized_agriculture
+			activate_law = law_type:law_protectionism
+		}
+		remove_global_variable = the_revolution_comrade_two
+		set_global_variable = active_cuban_revolution
 		ai_chance = {
 			base = 1
 		}
@@ -1233,6 +1548,21 @@ dvg_cuba.36 = {
 		name = dvg_cuba.36.a
 		default_option = yes
 		
+		c:CUB = {
+			create_diplomatic_play = {
+				name = cuban_war_of_independence
+				target_country = root
+				war = no
+				type = dp_independence
+				
+				add_war_goal = {
+					holder = root
+					target_country = c:CUB
+					type = regime_change
+				}
+			}
+		}
+		set_global_variable = active_cuban_revolution
 		ai_chance = {
 			base = 1
 		}
@@ -1270,9 +1600,15 @@ dvg_cuba.37 = {
 				target_country = c:SPA
 				war = no
 				type = dp_independence
+				
+				add_war_goal = {
+					holder = root
+					target_country = c:CUB
+					type = annex_country
+				}
 			}
 		}
-		
+		set_global_variable = cuban_war_active_communist
 		ai_chance = {
 			base = 1
 		}
@@ -1303,6 +1639,9 @@ dvg_cuba.38 = {
 	option = {
 		name = dvg_cuba.38.a
 		default_option = yes
+		
+		remove_global_variable = active_cuban_revolution
+		remove_global_variable = cuban_war_active_communist
 		
 		ai_chance = {
 			base = 1
@@ -1335,6 +1674,9 @@ dvg_cuba.39 = {
 		name = dvg_cuba.39.a
 		default_option = yes
 		
+		remove_global_variable = active_cuban_revolution
+		remove_global_variable = cuban_war_active_communist
+		
 		ai_chance = {
 			base = 1
 		}
@@ -1360,12 +1702,158 @@ dvg_cuba.40 = {
 	duration = 3
 	
 	trigger = {
+		OR = {
+			AND = {
+				exists = c:SPA
+				this = c:SPA
+			}
+			AND = {
+				exists = c:IBE
+				this = c:IBE
+			}
+			AND = {
+				exists = c:SPC
+				this = c:SPC
+			}
+		}
+		
+		exists = c:CUB
+		OR = {
+			has_government_type = gov_council_republic
+			has_government_type = gov_council_dictatorship
+		}
+		c:CUB = { 
+			is_subject_of = root 
+			NOR = {
+				has_government_type = gov_council_dictatorship
+				has_government_type = gov_council_republic
+			}
+		}
+		NOT = { is_at_war = yes }
+		NOT = { has_global_variable = cuban_war_active_castro }
+		NOT = { has_global_variable = cuban_war_active_republican }
+		NOT = { has_global_variable = cuban_war_active_communist }
 	}
 	
 	option = {
 		name = dvg_cuba.40.a
 		default_option = yes
 		
+		if = {
+			limit = { has_government_type = gov_council_republic }
+			c:CUB = {
+				activate_law = law_type:law_council_republic
+				activate_law = law_type:law_universal_suffrage
+				activate_law = law_type:law_closed_borders
+				activate_law = law_type:law_slavery_banned
+				activate_law = law_type:law_old_age_pension
+				activate_law = law_type:law_state_atheism
+				activate_law = law_type:law_public_health_insurance
+				activate_law = law_type:law_outlawed_dissent
+				activate_law = law_type:law_militarized_police_force
+				activate_law = law_type:law_worker_protections
+				activate_law = law_type:law_secret_police
+				activate_law = law_type:law_mass_conscription
+				activate_law = law_type:law_command_economy
+				activate_law = law_type:law_collectivized_agriculture
+				activate_law = law_type:law_protectionism
+			}
+		}
+		else = {
+			c:CUB = {
+				activate_law = law_type:law_council_republic
+				activate_law = law_type:law_autocracy
+				activate_law = law_type:law_closed_borders
+				activate_law = law_type:law_slavery_banned
+				activate_law = law_type:law_old_age_pension
+				activate_law = law_type:law_state_atheism
+				activate_law = law_type:law_public_health_insurance
+				activate_law = law_type:law_outlawed_dissent
+				activate_law = law_type:law_militarized_police_force
+				activate_law = law_type:law_worker_protections
+				activate_law = law_type:law_secret_police
+				activate_law = law_type:law_mass_conscription
+				activate_law = law_type:law_command_economy
+				activate_law = law_type:law_collectivized_agriculture
+				activate_law = law_type:law_protectionism
+			}
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_cuba.41 = {
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_cuba.41.t
+	desc = dvg_cuba.41.d
+	flavor = dvg_cuba.41.f
+	
+	event_image = {
+		video = "ep1_transfer_of_authority"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/ep1/transfer_of_authority"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+	
+	trigger = {
+		exists = c:CUB
+		this = c:CUB
+		NOT = { is_subject_of = c:SPA }
+		NOT = { is_at_war = yes }
+		NOT = { has_global_variable = CUB_gov_set }
+	}
+	
+	option = {
+		name = dvg_cuba.41.a
+		default_option = yes
+		
+		if = {
+			limit = { 
+				NOT = { has_global_variable = dead_castro }
+			}
+			activate_law = law_type:law_presidential_republic
+			activate_law = law_type:law_autocracy
+			activate_law = law_type:law_censorship
+		}
+		else_if = {
+			limit = { 
+				 has_global_variable = dead_castro
+				 year < 1910
+			}
+			activate_law = law_type:law_presidential_republic
+			activate_law = law_type:law_census_voting
+			activate_law = law_type:law_right_of_assembly
+		}
+		else = {
+			limit = { 
+				 has_global_variable = dead_castro
+				 year >= 1910
+			}
+			activate_law = law_type:law_council_republic
+			activate_law = law_type:law_autocracy
+			activate_law = law_type:law_closed_borders
+			activate_law = law_type:law_slavery_banned
+			activate_law = law_type:law_old_age_pension
+			activate_law = law_type:law_state_atheism
+			activate_law = law_type:law_public_health_insurance
+			activate_law = law_type:law_outlawed_dissent
+			activate_law = law_type:law_militarized_police_force
+			activate_law = law_type:law_worker_protections
+			activate_law = law_type:law_secret_police
+			activate_law = law_type:law_mass_conscription
+			activate_law = law_type:law_command_economy
+			activate_law = law_type:law_collectivized_agriculture
+			activate_law = law_type:law_protectionism
+		}
+		set_global_variable = CUB_gov_set
 		ai_chance = {
 			base = 1
 		}

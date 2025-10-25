@@ -266,10 +266,6 @@ dvg_persia.3 = { #Shekhbizin Introduction
 	option = {
 		name = dvg_persia.3.a
 		default_option = yes
-		add_modifier = {
-                    name = dvg_modifier_qashqai
-                    months = -1
-                }
 		add_journal_entry = {
 			type = je_qashqai_revolt
 		}
@@ -338,7 +334,8 @@ dvg_persia.4 = { #Qashqai Revolt
 		name = dvg_persia.4.a
 		default_option = yes
 		
-		remove_modifier = dvg_modifier_qashqai
+		deactivate_law = law_type:law_qashqai_confederacy
+		activate_law = law_type:law_oligarchy
 		
 		remove_primary_culture = cu:qashqai
 
@@ -379,7 +376,8 @@ dvg_persia.4 = { #Qashqai Revolt
 	option = {
 		name = dvg_persia.4.b
 		
-		remove_modifier = dvg_modifier_qashqai
+		deactivate_law = law_type:law_qashqai_confederacy
+		activate_law = law_type:law_oligarchy
 		
 		remove_primary_culture = cu:qashqai
 		
@@ -418,7 +416,8 @@ dvg_persia.4 = { #Qashqai Revolt
 	}
 	option = {
 		name = dvg_persia.4.c
-		remove_modifier = dvg_modifier_qashqai
+		deactivate_law = law_type:law_qashqai_confederacy
+		activate_law = law_type:law_oligarchy
 		remove_primary_culture = cu:qashqai
 		ig:ig_armed_forces = {
 				set_interest_group_name = ig_armed_forces
@@ -625,7 +624,18 @@ dvg_persia.7 = { #GP Demands Qeshm
 	    
 	}
 	immediate = {
-		c:SPA = { save_scope_as = scope_SPA }
+		if = {
+			limit = { exists = c:SPA }
+			c:SPA = { save_scope_as = scope_SPA }
+		}
+		else_if = {
+			limit = { exists = c:IBE }
+			c:IBE = { save_scope_as = scope_SPA }
+		}
+		else = {
+			limit = { exists = c:SPC }
+			c:SPC = { save_scope_as = scope_SPA }
+		}
 		c:SHZ = { save_scope_as = scope_SHZ }
 	
 	}
@@ -644,17 +654,54 @@ dvg_persia.7 = { #GP Demands Qeshm
 			name = dvg_small_research_value
 			days = 600
 		}
-		s:STATE_LARISTAN = {
-			set_owner_of_provinces = {
-				country = c:SPA
-				provinces = { "x0170A0" }
+		if = {
+			limit = { exists = c:SPA }
+			s:STATE_LARISTAN = {
+				set_owner_of_provinces = {
+					country = c:SPA
+					provinces = { "x0170A0" }
+				}
+				region_state:SPA={
+					create_building={
+						building="building_port"
+						level=1
+						reserves=1
+						activate_production_methods={ "pm_basic_port" } ##Divergences change
+					}
+				}
 			}
-			region_state:SPA={
-				create_building={
-					building="building_port"
-					level=1
-					reserves=1
-					activate_production_methods={ "pm_basic_port" } ##Divergences change
+		}
+		else_if = {
+			limit = { exists = c:IBE }
+			s:STATE_LARISTAN = {
+				set_owner_of_provinces = {
+					country = c:IBE
+					provinces = { "x0170A0" }
+				}
+				region_state:IBE={
+					create_building={
+						building="building_port"
+						level=1
+						reserves=1
+						activate_production_methods={ "pm_basic_port" } ##Divergences change
+					}
+				}
+			}
+		}
+		else = {
+			limit = { exists = c:SPC }
+			s:STATE_LARISTAN = {
+				set_owner_of_provinces = {
+					country = c:SPC
+					provinces = { "x0170A0" }
+				}
+				region_state:SPC={
+					create_building={
+						building="building_port"
+						level=1
+						reserves=1
+						activate_production_methods={ "pm_basic_port" } ##Divergences change
+					}
 				}
 			}
 		}
@@ -671,13 +718,24 @@ dvg_persia.7 = { #GP Demands Qeshm
 		name = dvg_persia.7.b
 		default_option = yes
 		
-		
-	c:SPA = {trigger_event = {
-			id = dvg_persia.8
-		}
+		if = {
+			limit = { exists = c:SPA }
+			c:SPA = {
+				trigger_event = { id = dvg_persia.8 }
 			}
-		
-		
+		}
+		else_if = {
+			limit = { exists = c:IBE }
+			c:IBE = {
+				trigger_event = { id = dvg_persia.8 }
+			}
+		}
+		else = {
+			limit = { exists = c:SPC }
+			c:SPC = {
+				trigger_event = { id = dvg_persia.8 }
+			}
+		}
 		
 	ai_chance = {
 			base = 90
@@ -1448,11 +1506,73 @@ dvg_persia.19 = {    #Ismaili
 	}
 	
 	option = {
-		name = dvg_persia.18.a
+		name = dvg_persia.19.a
 		default_option = yes
 			
 	
 	 ai_chance = {
+			base = 100
+		}
+	}
+}
+
+
+
+dvg_persia.20 = {    #Armenian Status?
+	type = country_event
+	placement = ROOT
+
+	title = dvg_persia.20.t
+	desc = dvg_persia.20.d
+	flavor = dvg_persia.20.f
+	
+	event_image = {
+		video = "gfx/event_pictures/middleeast_islam.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	    
+	}
+	immediate = {
+	
+
+	}
+	
+	option = {
+		name = dvg_persia.20.a
+		default_option = yes
+
+		add_primary_culture = cu:armenian
+
+		set_variable = azb_culture_multicultural
+			
+	
+		 ai_chance = {
+			base = 100
+		}
+	}
+
+	option = {
+		name = dvg_persia.20.b
+
+		
+		every_scope_state = {
+			add_modifier = {
+				name = dvg_assimilate
+				months = 120
+				is_decaying = yes
+			}
+		}
+			
+	
+		 ai_chance = {
 			base = 100
 		}
 	}

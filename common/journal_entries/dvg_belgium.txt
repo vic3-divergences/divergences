@@ -1,1 +1,1244 @@
-﻿
+﻿je_seven_sisters = {
+	icon = "gfx/interface/icons/invention_icons/nationalism.dds"
+
+	group = je_group_crises
+
+	immediate = {
+		
+	}
+
+	is_shown_when_inactive = {
+		country_has_primary_culture = cu:septiman
+	}
+	
+
+	possible = {
+		country_has_primary_culture = cu:septiman
+	}
+	scripted_button = je_belgium_unite_button
+
+	on_yearly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					has_technology_researched = empiricism
+					NOT = {
+						has_variable = constitutional_convention
+					}
+					exists = c:CNF
+					c:CNF = ROOT
+					is_subject = no
+				}
+				trigger_event = {
+					id = dvg_belgium.5
+				}
+				set_variable = constitutional_convention
+
+			}
+			if = {
+				limit = {
+					has_technology_researched = nationalism
+					NOT = {
+						has_variable = belgian_conference
+					}
+					is_subject = yes
+				}
+				trigger_event = {
+					id = dvg_belgium.8
+				}
+				set_variable = belgian_conference
+
+			}
+			
+		}
+		
+	}
+
+	complete = {
+		custom_tooltip = {
+			text = belgian_formed_tt
+			AND = {
+				exists = c:BLC
+				c:BLC = ROOT
+			}
+		}
+			
+	}
+
+	on_complete = {
+		trigger_event = { id = dvg_belgium.7 }
+		if = {
+			limit = {
+				exists = c:PLA
+			}
+			c:PLA = {
+				trigger_event = { id = dvg_belgium.9 }
+
+			}
+		}
+		set_global_variable = belgium_united
+		call_election = {
+			months = 1
+		}
+	}
+	on_weekly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					NOT = {
+						any_subject_or_below = {
+							is_player = yes
+						}
+					}
+				}
+				every_subject_or_below = {
+					limit = {
+						is_ai = yes
+					}
+					add_liberty_desire = -0.15
+				}
+			}
+		}
+	}
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					has_technology_researched = nationalism
+					NOT = {
+						has_variable = belgian_destiny
+					}
+				}
+				set_variable = belgian_destiny
+				trigger_event = {
+					id = dvg_belgium.8
+				}
+			}
+		}
+		random_events = {
+			10 = 0
+			1 = dvg_belgium.41
+			1 = dvg_belgium.66
+		}
+		
+		
+	}
+	fail = {
+		has_variable = constitutional_convention
+		
+		OR = {
+			AND = {
+				any_scope_state = {
+					count < 3
+					state_region = {
+						is_homeland = cu:septiman
+					}
+				}
+				NOT = {
+					any_subject_or_below = {
+						country_has_primary_culture = cu:septiman
+					}
+					
+				}
+			}
+			
+			any_country = {
+				count >= 3
+				liberty_desire > 75
+				country_has_primary_culture = cu:septiman
+				is_subject_of = ROOT
+				has_attitude = {
+					who = ROOT
+					attitude = rebellious
+				}
+			}
+			
+		}
+		
+		
+		
+	}
+	on_fail = {
+		trigger_event = {
+			id = dvg_belgium.65
+		}
+	}
+	
+	should_be_pinned_by_default = yes
+}
+
+je_sanacomie = {
+	icon = "gfx/interface/icons/invention_icons/nationalism.dds"
+
+	group = je_group_crises
+
+	immediate = {
+		
+	}
+
+	is_shown_when_inactive = {
+	}
+	
+
+	possible = {
+		
+	}
+
+	
+
+	complete = {
+		 OR = {
+            owns_entire_state_region = STATE_SANACOMIE
+            any_country = {
+                is_subject_of = ROOT
+                owns_entire_state_region = STATE_SANACOMIE
+            }
+        }
+	}
+
+	on_complete = {
+		trigger_event = { id = dvg_belgium.27 }	
+
+		hidden_effect = {
+			if = {
+				limit = {
+					c:VIN = {
+						has_variable = conservative_vinland
+					}
+				}
+				c:VIN = {
+					trigger_event = {
+						id = dvg_skraeling.8
+					}
+				}
+			}
+		}
+	}
+	on_monthly_pulse = {
+		random_events = {
+			15 = 0
+			2 = dvg_belgium.6
+			10 = dvg_belgium.25
+		}
+		effect = {
+			if = {
+				limit = {
+					exists = c:LIB
+					c:LIB = {
+						any_scope_state = {
+							state_region = s:STATE_SANACOMIE
+						}
+					}
+					is_diplomatic_play_committed_participant = no
+					NOT = {
+						has_variable = lib_vs_blc
+					}
+				}
+				trigger_event = {
+					id = dvg_belgium.69
+				}
+				set_variable = lib_vs_blc
+			}
+			if = {
+				limit = {
+					exists = c:LOU
+					c:LOU = {
+						any_scope_state = {
+							state_region = s:STATE_SANACOMIE
+						}
+					}
+					is_diplomatic_play_committed_participant = no
+					NOT = {
+						has_variable = lou_vs_blc
+					}
+				}
+				change_relations = {
+					country = c:LOU
+					value = 50
+				}
+				set_variable = lou_vs_blc
+			}
+			
+		}
+		
+	}
+	fail = {
+		
+		NOT = {
+			 OR = {
+			any_scope_state = {
+					state_region = s:STATE_SANACOMIE
+				}
+            any_country = {
+                is_subject_of = ROOT
+              any_scope_state = {
+					state_region = s:STATE_SANACOMIE
+			}	
+            }
+        	}
+		}
+	
+	}
+
+	on_fail = {
+		c:PLA = {
+			trigger_event = {
+				id = dvg_belgium.26
+			}
+		}
+		trigger_event = {
+			id = dvg_belgium.28
+		}
+		hidden_effect = {
+			if = {
+				limit = {
+					c:VIN = {
+						has_variable = conservative_vinland
+					}
+				}
+				c:VIN = {
+					trigger_event = {
+						id = dvg_skraeling.8
+					}
+				}
+			}
+			
+		}
+	}
+
+	invalid = {
+		AND = {
+			c:PLA = {
+				NOT = {
+					any_scope_state = {
+						state_region = s:STATE_SANACOMIE
+					}
+				}
+			}
+			NOT = {
+				any_scope_state = {
+					state_region = s:STATE_SANACOMIE
+				}
+				any_subject_or_below = {
+					any_scope_state = {
+						state_region = s:STATE_SANACOMIE
+					}
+				}
+			}
+
+		}
+		
+	}
+	on_invalid = {
+		hidden_effect = {
+			if = {
+				limit = {
+					c:VIN = {
+						has_variable = conservative_vinland
+					}
+				}
+				c:VIN = {
+					trigger_event = {
+						id = dvg_skraeling.8
+					}
+				}
+			}
+		}
+	}
+	
+	should_be_pinned_by_default = yes
+}
+
+
+je_belgian_confederacy = {
+	icon = "gfx/interface/icons/invention_icons/nationalism.dds"
+
+	group = je_group_internal_affairs
+
+	immediate = {
+	}
+
+	is_shown_when_inactive = {
+
+
+	}
+	
+
+	possible = {
+		
+	}
+
+	
+
+	complete = {
+		scope:journal_entry = { is_goal_complete = yes }
+		NOT = {
+			has_journal_entry = je_sanacomie
+		}
+	}
+
+	on_complete = {
+	}
+
+	on_weekly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					has_variable = recently_lost_war
+					
+				}
+				change_variable = {
+					name = dvg_belgian_var
+					subtract = 1
+				}
+			}
+			if = {
+				limit = {
+					has_modifier = declared_bankruptcy
+				}
+				change_variable = {
+					name = dvg_belgian_var
+					subtract = 1
+				}
+			}
+			if = {
+				limit = {
+					any_interest_group = {
+						is_insurrectionary = yes
+					}
+				}
+				change_variable = {
+					name = dvg_belgian_var
+					subtract = 1
+				}
+			}
+			if = {
+				limit = {
+					any_scope_state = {
+						count > 3
+						turmoil < 0.50
+					}
+				}
+				change_variable = {
+					name = dvg_belgian_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					owns_entire_state_region = STATE_SANACOMIE
+				}
+				change_variable = {
+					name = dvg_belgian_var
+					add = 1
+				}
+			}
+
+			if = {
+				limit = {
+					exists = c:LOU
+					c:LOU = {
+						has_truce_with = ROOT
+					}
+					has_variable = lou_revolted
+					
+				}
+				change_variable = {
+					name = dvg_belgian_var
+					subtract = 1
+				}
+			}
+		}
+		
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			if = {
+			
+				limit = {
+					NOT = {
+						exists = c:CHV
+						exists = c:CFS
+					}
+					OR = {
+						s:STATE_HAUTE_VALOISIE.region_state:BLC = {
+							turmoil > 0.50
+						}
+						s:STATE_FLANDRE_SUPERIEURE.region_state:BLC = {
+							turmoil > 0.50
+						}
+					}
+					
+					
+				}
+				trigger_event = {
+					id = dvg_belgium.29
+				}
+			}
+			if = {
+			
+				limit = {
+					NOT = {
+						exists = c:CHV
+						exists = c:CFS
+					}
+					OR = {
+						s:STATE_PHILIPPA.region_state:BLC = {
+							turmoil > 0.50
+						}
+						s:STATE_CAROLINE.region_state:BLC = {
+							turmoil > 0.50
+						}
+					}
+					
+					
+				}
+				trigger_event = {
+					id = dvg_belgium.31
+				}
+			}
+			if = {
+			
+				limit = {
+					NOT = {
+						exists = c:CBV
+					}
+					s:STATE_BASSE_VALOISIE.region_state:BLC = {
+						turmoil > 0.50
+					}
+					any_scope_state = {
+						owner = ROOT
+						is_incorporated = yes
+						state_region = {
+							is_homeland = cu:septiman 
+						}
+						count < 4
+					}
+				}
+				trigger_event = {
+					id = dvg_belgium.32
+				}
+			}
+		}
+		
+	}
+
+
+	fail = {
+		custom_tooltip = {
+			text = blc_fail_tt
+			this = { var:dvg_belgian_var <= 0 }
+		}
+		any_scope_state = {
+			state_region = {
+				is_homeland = cu:septiman
+			}
+			count <= 3
+		}
+	}
+
+	on_fail = {
+		trigger_event = {
+			id = dvg_belgium.28
+		}
+		set_global_variable = belgium_collapsed
+		if = {
+			limit = {
+				NOT = {
+					exists = c:CNF
+				}
+				any_scope_state = {
+					state_region = s:STATE_NOUVELLE_FLANDRE
+					is_capital = yes
+				}
+			}
+			change_tag = CNF
+		}
+		if = {
+			limit = {
+				exists = c:CNF
+				c:CNF = {
+					is_ai = yes
+				}
+			}
+			annex = c:CNF
+			change_tag = CNF
+		}
+		
+	}
+
+	invalid = {
+		
+	}
+	current_value = {
+		value = var:dvg_belgian_var
+	}
+
+	progressbar = yes
+	goal_add_value = 700
+	
+	should_be_pinned_by_default = yes
+}
+
+je_cbv_monarchy = {
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	group = je_group_foreign_affairs
+
+
+	immediate = {
+
+
+	}
+
+	is_shown_when_inactive = {
+
+	}
+	
+
+	possible = {
+		
+	}
+
+	complete = {
+		custom_tooltip = {
+			text = cbv_tt
+			OR = {
+				NOT = {
+					exists = c:NFL
+					exists = c:BLC
+				}
+				owns_entire_state_region = STATE_NOUVELLE_FLANDRE
+			}
+			
+		}
+	}
+	on_complete = {
+		trigger_event = {
+			id = dvg_belgium.34
+		}
+	}
+}
+
+je_restore_blc = {
+
+	group = je_group_foreign_affairs
+
+
+	immediate = {
+
+
+	}
+
+	is_shown_when_inactive = {
+		has_technology_researched = nationalism
+		any_country = {
+			country_has_primary_culture = cu:septiman
+			country_is_in_north_america = yes
+			count > 2
+		}
+		country_has_primary_culture = cu:septiman
+		has_global_variable = belgium_united
+		has_global_variable = belgium_collapsed
+	}
+	
+
+	possible = {
+		any_country = {
+			country_has_primary_culture = cu:septiman
+			country_is_in_north_america = yes
+			count > 1
+			is_at_war = yes
+		}
+		
+	}
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					any_scope_state = {
+						count > 3
+						state_region = {
+							is_homeland = cu:septiman
+						}
+					}
+					NOT = {
+						has_variable = belgium_bloodlust
+					}
+				}
+				set_variable = belgium_bloodlust
+				every_country = {
+					limit = {
+						NOT = {
+							has_variable = belgium_bloodlust
+							has_variable = join_belgium_maybe
+						}
+						country_has_primary_culture = cu:septiman
+						country_is_in_north_america = yes
+					}
+					trigger_event = {
+						id = dvg_belgium.38
+					}
+				}
+				
+			}
+
+			if = {
+				limit = {
+					NOT = {
+						exists = c:CBV
+					}
+					NOT = {
+						has_variable = cbv_destroyed
+					}
+					has_global_variable = cbv_declared
+				}
+				set_variable = cbv_destroyed
+				trigger_event = {
+					id = dvg_belgium.33
+				}
+			}
+		}
+		}
+	
+
+	complete = {
+		custom_tooltip = {
+			text = restore_blc_tt
+			exists = c:BLC
+			c:BLC = ROOT
+			NOT = {
+				exists = c:CBV
+				exists = c:CHV
+				exists = c:CSC
+				exists = c:CPH
+				exists = c:CNL
+				exists = c:CNF
+			}
+		}
+	}
+	on_complete = {
+		trigger_event = {
+			id = dvg_belgium.34
+		}
+	}
+
+}
+
+je_wylde_rytt = {
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	group = je_group_internal_affairs
+
+	scripted_button = je_belgium_beatroosters_button
+
+	immediate = {
+		ig:ig_industrialists = {
+			save_scope_as = industrialists_scope
+		}
+		ig:ig_trade_unions = {
+			save_scope_as = trade_unions_scope
+		}
+		ig:ig_intelligentsia = {
+			save_scope_as = intelligentsia_scope
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_technology_researched = labor_movement
+				}
+			}
+			add_technology_researched = labor_movement
+		}
+
+		if = {
+			limit = {
+				NOT = {
+					has_technology_researched = joint_stock_companies
+				}
+			}
+			add_technology_researched = joint_stock_companies
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_technology_researched = corporatism
+				}
+			}
+			add_technology_researched = corporatism
+		}
+
+		
+	}
+	on_yearly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					ig:ig_industrialists = {
+						is_powerful = yes 
+					}
+				}
+				change_variable = {
+					name = blc_corpo_var
+					add = 5
+				}
+			}
+			if = {
+				limit = {
+					ig:ig_industrialists = {
+						is_marginal = yes
+					}
+				}
+				change_variable = {
+					name = blc_corpo_var
+					subtract = 10
+				}
+			}
+
+			if = {
+				limit = {
+					NOT = {
+						has_variable = maline_strike
+					}
+					ig:ig_trade_unions = {
+						ig_approval < 0
+					}
+					has_technology_researched = labor_movement
+				}
+
+				trigger_event = {
+					id = dvg_belgium.46
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_variable = maline_strike
+					}
+					scope:journal_entry = { is_goal_complete = yes }
+				}
+				trigger_event = {
+					id = dvg_belgium.46
+				}
+			}
+			
+			
+		}
+	}
+	on_weekly_pulse = {
+		effect = {
+			if = {
+				limit = {
+				has_modifier = dvg_modifier_cnf_beatingroosters
+				}
+				change_variable = {
+				name = blc_corpo_var
+				subtract = 1
+				}
+			}
+		}
+	}
+		
+	is_shown_when_inactive = {
+		
+	}
+	
+
+	possible = {
+		
+	}
+
+	progressbar = yes
+
+	goal_add_value = 100
+
+
+	complete = {
+		AND = {
+			custom_tooltip = {
+            text = je_belgium_wild_ride_strike_tooltip
+            has_variable = maline_strike
+        }
+			scope:journal_entry = { is_goal_complete = yes }
+			ig:ig_industrialists = {
+				is_powerful = yes
+			}
+		}
+
+	}
+	on_complete = {
+		trigger_event = {
+			id = dvg_belgium.47
+		}
+	}
+	timeout = 3650
+
+	fail = {
+		has_law = law_type:law_secret_police
+		institution_investment_level = {
+			institution = institution_home_affairs
+			value > 2
+		}
+		ig:ig_industrialists = {
+			is_in_government = no
+			is_powerful = no
+		}
+	}
+	on_fail = {
+		custom_tooltip = {
+            text = 	je_wild_ride_fail_tooltip
+        }
+		trigger_event = {
+			id = dvg_belgium.63
+		}
+	}
+
+	on_timeout = {
+		custom_tooltip = {
+            text = 	je_wild_ride_fail_tooltip
+        }
+		trigger_event = {
+			id = dvg_belgium.63
+		}
+	}
+
+
+	current_value = {
+		value = var:blc_corpo_var
+	}
+	should_be_pinned_by_default = yes
+
+}
+
+je_exists_lou = {
+
+	group = je_group_foreign_affairs
+
+
+	immediate = {
+
+
+	}
+
+	is_shown_when_inactive = {
+		
+	}
+	
+
+	possible = {
+		
+	}
+
+	complete = {
+		exists = c:LOU
+	}
+	on_complete = {
+		
+	}
+
+}
+
+je_nieuweu_cursus = {
+	icon = "gfx/interface/icons/event_icons/event_scales.dds"
+	group = je_group_internal_affairs
+
+
+	immediate = {
+		set_variable = {
+			name = salan_var
+			value = 0
+		}
+		ideology:ideology_enclavist = {
+			save_scope_as = salanism_scope
+		}
+		ig:ig_industrialists = {
+			save_scope_as = industrialists_scope
+		}
+		ig:ig_intelligentsia = {
+			save_scope_as = intelligentsia_scope
+		}
+		
+	}
+
+	is_shown_when_inactive = {
+		
+	}
+	
+
+	possible = {
+		
+	}
+	progressbar = yes
+
+	goal_add_value = 350
+
+	on_weekly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					authority > 777
+				radical_fraction = {
+				value < 0.20
+				}
+				NOT = {
+				any_interest_group = {
+					count > 2
+					is_marginal = no
+					is_revolutionary = yes
+				}
+				}
+				}
+				change_variable = {
+					name = salan_var
+					add = 1
+				}
+			}
+		}
+		
+	}
+	complete = {
+		authority > 777
+		OR = {
+			any_interest_group = {
+				count >= 2
+				is_powerful = yes
+				ig_approval > 10
+			}
+			any_interest_group = {
+				count >= 2
+				is_marginal = no
+				ig_approval > 10
+			}
+		}
+		radical_fraction = {
+			value < 0.20
+		}
+		NOT = {
+			any_interest_group = {
+				count > 2
+				is_marginal = no
+				is_revolutionary = yes
+			}
+		}
+	}
+	on_complete = {
+		trigger_event = {
+			id = dvg_belgium.51
+		}
+		every_scope_character = {
+			limit = {
+				has_trait = immortal
+			}
+			remove_trait = immortal
+		}
+	}
+	timeout = 3650
+	on_timeout = {
+		every_scope_character = {
+			limit = {
+				has_trait = immortal
+			}
+			remove_trait = immortal
+		}
+		trigger_event = {
+			id = dvg_belgium.51
+		}
+	}
+	fail = {
+		radical_fraction = {
+			value >= 0.40
+		}
+		any_interest_group = {
+			count > 2
+			is_marginal = no
+			is_revolutionary = yes
+		}
+	}
+	on_fail = {
+		trigger_event = {
+			id = dvg_belgium.50
+		}
+		every_scope_character = {
+			limit = {
+				has_trait = immortal
+			}
+			remove_trait = immortal
+		}
+	}
+	should_be_pinned_by_default = yes
+}
+
+je_manifest_destiny_blc = {
+	icon = "gfx/interface/icons/law_icons/frontier_colonization.dds"
+
+	group = je_group_crises
+
+	
+
+	is_shown_when_inactive = {
+
+		
+	}
+
+	possible = {
+		   
+	}
+	immediate = {
+		random_primary_culture = {
+			save_scope_as = primary_culture_scope
+		}
+		
+	}
+	scripted_button = je_settlers_button
+	scripted_button = je_claim_button
+
+	on_monthly_pulse = {
+		effect = {
+			random_state = {
+				limit = {
+					NOT = {
+						owner = ROOT
+					}
+					has_modifier = dvg_fiducies_development
+				}
+				save_scope_as = foreign_neighbor_state
+			}
+			if = {
+				limit = {
+					has_modifier = dvg_sponsor_settlers
+				}
+				random_scope_pop = {
+					limit = {
+						culture = cu:septiman
+					}
+					move_pop = scope:foreign_neighbor_state
+				}
+			}
+		}
+	}
+
+	on_yearly_pulse = {
+		effect = {
+			every_scope_state = {
+				limit = {
+					state_region = {
+						state_is_in_north_america = yes
+						NOT = {
+							is_homeland = cu:septiman
+						}
+					}
+					culture_percent_state = {
+						target = cu:septiman  
+						value >= 0.50
+					}
+				}
+				state_region = {
+					add_homeland = cu:septiman
+				}
+			}
+		}
+		
+	}
+
+	complete = {
+		any_scope_state = {
+			count > 14
+			is_incorporated = yes
+			state_is_in_north_america = yes
+			is_isolated_from_market = no
+		}
+		OR = {
+			owns_entire_state_region = STATE_GANIGIALAND
+			owns_entire_state_region = STATE_ERIESLAND
+		}
+		
+	
+	}
+
+	on_complete = {
+
+		every_scope_state = {
+			limit = {
+				state_is_in_north_america = yes
+				owner = ROOT
+				NOT = {
+					state_region = {
+						is_homeland = cu:septiman
+					}
+				}
+			}
+			state_region = {
+				add_homeland = cu:septiman
+			}
+		}
+	}
+	fail = {
+		OR = {
+			has_law = law_type:law_no_colonial_affairs
+			country_rank < rank_value:minor_power
+			custom_tooltip = {
+				text = blc_fail_tt
+				OR = {
+					has_global_variable = belgium_no_confidence
+					NOT = {
+						exists = c:BLC
+					}
+				}
+				any_scope_state = {
+					is_incorporated = yes
+					count < 3
+				}
+			}
+		}
+		
+	}
+	should_be_pinned_by_default = yes
+	can_revolution_inherit = yes
+}
+
+
+je_arcadia_blc = {
+
+	group = je_group_foreign_affairs
+
+	is_shown_when_inactive = {
+
+		exists = c:BLC
+		c:BLC = ROOT
+	}
+	possible = {
+		has_technology_researched = pan-nationalism
+	}
+
+	immediate = {
+		
+	}
+
+	complete = {
+		exists = c:ARC
+		c:ARC = ROOT
+	}
+	on_complete = {
+
+		add_modifier = unification_prestige
+		
+
+		#if = {
+		#	limit = {
+		#		exists = c:VIN
+		#		any_neighbouring_state = {
+		#			owner = c:VIN
+		#		}
+		#	}
+		#	c:VIN = {
+		#		trigger_event = {
+		#			id = dvg_belgium.25
+		#		}
+		#	}
+		#}
+
+		
+	}
+
+}
+

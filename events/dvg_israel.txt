@@ -1,0 +1,354 @@
+﻿namespace = dvg_israel
+#Existence of a Jewish country
+dvg_israel.1 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_israel.1.t
+	desc = dvg_israel.1.d
+	flavor = dvg_israel.1.f
+
+	event_image = {
+		video = "europenorthamerica_judaism"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	immediate = {
+		random_country = {
+			limit = {
+				NOT = {
+					country_has_state_religion = rel:jewish
+				}
+			}
+			save_scope_as = goyim_country
+		}
+	}
+
+	#Israel Starting Event
+
+	option = {
+		name = dvg_israel.1.a
+		default_option = yes
+		
+		if = {
+			limit = {
+				NOT = {
+					has_law = law_type:law_total_separation
+				}
+			}
+			activate_law = law_type:law_total_separation
+		}
+		create_diplomatic_catalyst = {
+			type = catalyst_event_positive
+			target = scope:goyim_country
+		}
+
+		add_radicals = {
+			value = 0.30
+			religion = rel:jewish
+		}
+	}
+
+	option = {
+		name = dvg_israel.1.b
+		create_incident = {
+			country = THIS
+			value = 15
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_law = law_type:law_state_religion
+				}
+			}
+			activate_law = law_type:law_state_religion
+		}
+		every_neighbouring_state = {
+			
+			owner = {
+				if = {
+					limit = {
+						OR = {
+							has_attitude = {
+							who = ROOT
+							attitude = belligerent
+							}
+							has_attitude = {
+							who = ROOT
+							attitude = domineering
+							}
+							has_attitude = {
+							who = ROOT
+							attitude = wary
+							}
+							has_attitude = {
+							who = ROOT
+							attitude = defiant
+							}
+							has_attitude = {
+							who = ROOT
+							attitude = rebellious
+							}
+						}
+
+					}
+					trigger_event = dvg_israel.3
+				}
+			}
+		}
+		create_diplomatic_catalyst = {
+			type = catalyst_event_negative
+			target = scope:goyim_country
+		}
+		
+		add_radicals = {
+			value = 0.20
+		}
+	}
+}
+#Establishment of Israel, Jewish refugees
+dvg_israel.2 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_israel.2.t
+	desc = dvg_israel.2.d
+	flavor = dvg_israel.2.f
+
+	event_image = {
+		video = "europenorthamerica_judaism"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+
+	immediate = {
+		random_neighbouring_state = {
+			limit = {
+				NOT = {
+					owner = ROOT
+				}
+			}
+			owner = {
+				save_scope_as = neighbor_country
+			}
+			save_scope_as = neighbor_state
+		}
+		random_country = {
+			limit = {
+				any_scope_pop = {
+					has_pop_culture = ashkenazi
+				}
+			}
+			save_scope_as = ashkenazi_country
+		}
+		random_country = {
+			limit = {
+				any_scope_pop = {
+					has_pop_culture = sephardic
+				}
+			}
+			save_scope_as = sephardic_country
+		}
+		random_country = {
+			limit = {
+				any_scope_pop = {
+					has_pop_culture = mizrahi
+				}
+			}
+			save_scope_as = mizrahi_country
+		}
+	}
+
+
+	
+	option = {
+		name = dvg_israel.2.a
+		default_option = yes
+		
+		add_loyalists = {
+			value = 0.10
+		}
+	}
+	option = {
+		name = dvg_israel.2.b
+		
+		create_incident = {
+			country = THIS
+			value = 10
+		}
+		every_country = {
+			limit = {
+				any_scope_pop = {
+					has_pop_religion = jewish
+				}
+			}
+			random_scope_pop = {
+				limit = {
+					religion = rel:jewish
+				}
+				move_pop = s:STATE_PALESTINE.region_state:ISR
+			}
+		}
+		s:STATE_PALESTINE.region_state:ISR = {
+			create_mass_migration = {
+			origin = scope:ashkenazi_country
+			culture = cu:ashkenazi
+			}
+			create_mass_migration = {
+			origin = scope:ashkenazi_country
+			culture = cu:sephardic
+			}
+			create_mass_migration = {
+			origin = scope:mizrahi_country
+			culture = cu:mizrahi
+			}
+		}
+		
+
+
+		ai_chance = {
+			base = 50
+		}
+	}
+
+	option = {
+		name = dvg_israel.2.c
+		
+		create_incident = {
+			country = THIS
+			value = 20
+		}
+		every_neighbouring_state = {
+			owner = {
+				trigger_event = dvg_israel.3
+			}
+		}
+		every_country = {
+			limit = {
+				any_scope_pop = {
+					has_pop_religion = jewish
+				}
+			}
+			random_scope_pop = {
+				limit = {
+					religion = rel:jewish
+				}
+				move_pop = s:STATE_PALESTINE.region_state:ISR
+			}
+		}
+		s:STATE_PALESTINE.region_state:ISR = {
+			create_mass_migration = {
+			origin = scope:ashkenazi_country
+			culture = cu:ashkenazi
+			}
+			create_mass_migration = {
+			origin = scope:ashkenazi_country
+			culture = cu:sephardic
+			}
+			create_mass_migration = {
+			origin = scope:mizrahi_country
+			culture = cu:mizrahi
+			}
+		}
+		every_scope_pop = {
+			limit = {
+				NOT = {
+					religion = rel:jewish
+					culture = {
+						has_discrimination_trait = tradition_israelite
+					}
+				}
+				pop_acceptance < 30
+			}
+			move_pop = scope:neighbor_state
+		}
+
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+#Destroy Israel Event
+dvg_israel.3 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_israel.3.t
+	desc = dvg_israel.3.d
+	flavor = dvg_israel.3.f
+
+	event_image = {
+		video = "europenorthamerica_judaism"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		
+	}
+	immediate = {
+		random_country = {
+			limit = {
+				country_has_state_religion = rel:jewish
+			}
+			save_scope_as = jewish_country
+		}
+		random_primary_culture = {
+			limit = {
+				NOT = {
+					has_discrimination_trait = tradition_israelite
+				}
+			}
+			save_scope_as = goyim_culture
+		}
+	}
+
+	#israel Starting Event
+
+	option = {
+		name = dvg_israel.3.a
+		default_option = yes
+
+		create_diplomatic_play = {
+			type = dp_annex_war
+			target_country = scope:jewish_country
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+	option = {
+		name = dvg_israel.3.b
+		
+		add_radicals = {
+			value = 0.20
+			culture = scope:goyim_culture
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}

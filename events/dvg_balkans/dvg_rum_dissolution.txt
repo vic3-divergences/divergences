@@ -32,13 +32,7 @@ dvg_rum_dissolution.1 = {
 			limit = {
 				exists = c:SER
 			}
-			s:STATE_SERBIA.region_state:BSG= { 
-				add_claim = c:SER
-			}
-			s:STATE_SERBIA.region_state:RUM= { 
-				add_claim = c:SER
-			}
-			s:STATE_BOSNIA = {
+			s:STATE_SERBIA = { 
 				add_claim = c:SER
 			}
 		}
@@ -145,9 +139,16 @@ dvg_rum_dissolution.1 = {
 		name = dvg_rum_dissolution.1.a
 		default_option = yes
 
+
+		every_subject_or_below = {
+			set_country_type = unrecognized
+		}
+
+
 		add_modifier = {
 			name = modifier_army_dissaproves
-			months = 60
+			months = 30
+			is_decaying = yes
 		}
 		add_radicals = {
 			value = 0.25
@@ -225,13 +226,31 @@ dvg_rum_dissolution.1 = {
 			country = c:CIR
 			type = protectorate
 		}
+	
+
+		c:WRE = {
+			create_diplomatic_play = {
+				type = dp_annex_war
+				target_country = c:GRE
+				war = yes
+
+				add_war_goal = {
+					holder = c:GRE
+					type = annex_country
+					target_country = c:WRE
+				}
+				
+			
+			}
+		}
+		
 
 		### Transferation of states!
 
-		s:STATE_THESSALIA.region_state:WRE = { set_state_owner = c:GRE }
-		s:STATE_ATTICA.region_state:WRE = { set_state_owner = c:GRE }
-		s:STATE_CRETE.region_state:WRE = { set_state_owner = c:GRE }
-		s:STATE_WESTERN_THRACE.region_state:WRE = { set_state_owner = c:ERE }
+		#s:STATE_THESSALIA.region_state:WRE = { set_state_owner = c:GRE }
+		#s:STATE_ATTICA.region_state:WRE = { set_state_owner = c:GRE }
+		#s:STATE_CRETE.region_state:WRE = { set_state_owner = c:GRE }
+		#s:STATE_WESTERN_THRACE.region_state:WRE = { set_state_owner = c:ERE }
 		
 		### Set Constantinople as capital of ERE
 		set_capital = STATE_WESTERN_THRACE
@@ -255,7 +274,7 @@ dvg_rum_dissolution.1 = {
 			state = s:STATE_DOBRUDJA.region_state:WRE
 			state = s:STATE_NORTHERN_THRACE.region_state:WRE
 			state = s:STATE_BULGARIA.region_state:WRE
-			state = s:STATE_NORTHERN_SERBIA.region_state:WRE
+			state = s:STATE_WESTERN_SERBIA.region_state:WRE
 		}
 
 		### Creation of Macedonia
@@ -286,18 +305,29 @@ dvg_rum_dissolution.1 = {
 		name = dvg_rum_dissolution.1.b
 		
 		add_radicals = {
+			value = 0.33
+		}
+		add_modifier = {
+			name = modifier_army_bolstered
+			months = 60
+			is_decaying = yes
+		}
+		add_modifier = {
+			name = army_resources_modifier
+			months = 60
+			is_decaying = yes
+		}
+		add_loyalists = {
 			value = 0.20
+			pop_type = soldiers
 		}
-		every_subject_or_below = {
-			add_radicals = {
-				value = 0.50
-			}
+		add_loyalists = {
+			value = 0.40
+			pop_type = officers
 		}
-
 		ai_chance = {
 			base = 1
 		}	
-
 	}
 	option = {
 		name = dvg_rum_dissolution.1.c
@@ -310,9 +340,6 @@ dvg_rum_dissolution.1 = {
 			}
 			
 		}
-		
-		
-
 		every_subject_or_below = {
 			limit = {
 				has_attitude = {
@@ -334,11 +361,57 @@ dvg_rum_dissolution.1 = {
 				}
 			}
 		}
-
-
 		ai_chance = {
 			base = 1
 		}	
 	}
+}
 
+
+dvg_rum_dissolution.2 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_rum_dissolution.2.t
+	desc = dvg_rum_dissolution.2.d
+	flavor = dvg_rum_dissolution.2.f
+	
+	event_image = {
+		video = "gfx/event_pictures/europenorthamerica_gold_prospectors.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+	c:TUS = { save_scope_as = scope_TUS }
+	c:ALD = { save_scope_as = scope_ALD  }
+	}
+	
+	option = {
+		name = dvg_aragon.1.a
+		default_option = yes
+
+		hidden_effect = {
+			trigger_event = {
+				id = dvg_aragon.2
+				days = 365
+			}
+		}
+		change_relations = {
+			country = c:TUS
+			value = -20
+		}
+		ai_chance = {
+			base = 100
+		
+		}
+	}
 }

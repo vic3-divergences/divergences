@@ -1,0 +1,6793 @@
+﻿namespace = dvg_spain
+
+# The Revolution of 1808 and its Consequences
+dvg_spain.1 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.1.t
+	desc = dvg_spain.1.d
+	flavor = dvg_spain.1.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	immediate = {
+		set_capital = STATE_TOLEDO
+	}
+	trigger = {
+	}
+	
+	
+	# Vive!
+	option = {
+		name = dvg_spain.1.a
+		default_option = yes
+		
+		trigger_event = { id = dvg_spain.2 days = 7 }
+		trigger_event = { id = dvg_spain.3 days = 31 }
+		
+		add_loyalists = {
+			value = 0.05
+			culture = cu:portuguese
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+# The Nova Reconquista
+dvg_spain.2 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.2.t
+	desc = dvg_spain.2.d
+	flavor = dvg_spain.2.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	immediate = {
+		cu:spanish = {
+			save_scope_as = castilian_culture
+		}
+		s:STATE_CASTILE.region_state:SPA = {
+			save_scope_as = castile_state
+		}
+		s:STATE_TOLEDO.region_state:SPA = {
+			save_scope_as = madrid_state
+		}
+		s:STATE_ESTREMADURA.region_state:SPA = {
+			save_scope_as = lisbon_state
+		}
+	}
+	trigger = {
+	}
+	
+	# 
+	option = {
+		name = dvg_spain.2.a
+		default_option = yes
+		
+		add_loyalists = {
+			value = 0.05
+			culture = cu:portuguese
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+# The Nova Reconquista
+dvg_spain.3 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.3.t
+	desc = dvg_spain.3.d
+	flavor = dvg_spain.3.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+	
+	trigger = {
+	}
+	
+	# For God, for King, for Country, destroy Colombia!
+	option = {
+		name = dvg_spain.3.a
+		default_option = yes
+		
+		c:SPA = {
+			create_diplomatic_play = {
+				name = colombian_war_of_independence
+				target_country = c:GCO
+				war = yes
+				type = dp_rebellion_annex
+				
+				add_war_goal = {
+					holder = c:GCO
+					type = independence
+					target_country = c:SPA
+				}
+			}
+		}
+		c:GCO = { 
+			trigger_event = { id = dvg_gran_colombia.2 }
+		}
+		c:QUI = {
+			add_journal_entry = {
+				type = je_colombian_war_of_independence_QUI
+			}
+		}
+		add_journal_entry = {
+			type = je_colombian_war_of_independence_SPA
+		}
+		add_radicals = {
+			value = 0.1
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+	#We must end the carnage and preserve what we have left.
+	option = {
+		name = dvg_spain.3.b
+		
+		c:GCO = { 
+			remove_modifier = dvg_war_preparation
+		}
+		remove_diplomatic_pact = {
+			country = c:GCO
+			type = protectorate
+		}
+		c:SPA = {
+			create_bidirectional_truce = {
+				country = c:GCO
+				months = 48
+			}
+			change_infamy = -50
+		}
+		add_radicals = {
+			value = 0.1
+		}
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+# Truce with Colombian Alliance?
+dvg_spain.4 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.4.t
+	desc = dvg_spain.4.d
+	flavor = dvg_spain.4.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		year = 1840
+		c:SPA = ROOT
+		exists = c:GCO
+		c:SPA = {
+			has_war_with = c:GCO
+			NOT = { has_truce_with = c:GCO }
+		}
+	}
+	
+	immediate = {
+	}
+	
+	# Sign truce
+	option = {
+		name = dvg_spain.4.a
+		default_option = yes
+		set_global_variable = {
+			name = dvg_SPA_truce_of_1840
+			value = yes
+		}
+		every_diplomatic_play = {
+			limit = {
+				initiator_is = c:SPA
+				target_is = c:GCO
+			}
+			end_play = yes
+		}
+		remove_diplomatic_pact = {
+			country = c:GCO
+			type = protectorate
+		}
+		c:SPA = {
+			create_bidirectional_truce = {
+				country = c:GCO
+				months = 48
+			}
+			change_infamy = -50
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+	
+	# Continue the war
+	option = {
+		name = dvg_spain.4.b
+		
+		set_variable = herreria_invite
+		
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+
+# An Armistice to End All Colombian Wars
+dvg_spain.5 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.5.t
+	desc = dvg_spain.5.d
+	flavor = dvg_spain.5.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+		c:SPA = {
+			create_bidirectional_truce = {
+				country = c:GCO
+				months = 48
+			}
+			change_infamy = -50
+		}
+	}
+	
+	# All who have served the Crown have plowed the sea…
+	option = {
+		name = dvg_spain.5.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+# The Nova Reconquista Completed!
+dvg_spain.6 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.6.t
+	desc = dvg_spain.6.d
+	flavor = dvg_spain.6.f
+	
+	event_image = {
+		video = "votp_monarch_holding_court"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/votp/monarch_holding_court"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	
+	# God willed it, and in His sign we have conquered!
+	option = {
+		name = dvg_spain.6.a
+		default_option = yes
+		add_loyalists = {
+			value = 0.2
+			pop_type = aristocrats
+		}
+		custom_tooltip = {
+			text = reform_new_spain_tt
+			if = {
+				limit = { exists = s:STATE_MEXICO.region_state:SPA }
+				create_country = {
+					tag = GCO
+					origin = this
+					state = s:STATE_MEXICO.region_state:SPA
+					state = s:STATE_VERACRUZ.region_state:SPA
+					state = s:STATE_GUERRERO.region_state:SPA
+					state = s:STATE_OAXACA.region_state:SPA
+					state = s:STATE_DURANGO.region_state:SPA
+					state = s:STATE_YUCATAN.region_state:SPA
+					state = s:STATE_JALISCO.region_state:SPA
+					state = s:STATE_SINALOA.region_state:SPA
+					state = s:STATE_BAJIO.region_state:SPA
+					state = s:STATE_ZACATECAS.region_state:SPA
+					state = s:STATE_CHIAPAS.region_state:SPA
+					state = s:STATE_BAHIA.region_state:SPA
+					state = s:STATE_SANTA_CATARINA.region_state:SPA
+					state = s:STATE_TEJAS.region_state:SPA
+					state = s:STATE_RIO_GRANDE.region_state:SPA
+					state = s:STATE_BAJA_CALIFORNIA.region_state:SPA
+					
+					on_created = {
+						set_country_type = colonial
+						activate_law = law_type:law_presidential_republic
+						create_character = {
+							first_name = Velasco
+							last_name = de_Iturbide
+							culture = cu:mexican
+							birth_date = 1794.1.1
+							noble = yes
+							ruler = yes
+							interest_group = ig_landowners
+							ideology = ideology_royalist
+						}
+						create_character = {
+							first_name = Manuel
+							last_name = Diaz
+							culture = cu:mexican
+							birth_date = 1810.1.1
+							is_general = yes
+							ig_leader = yes
+							interest_group = ig_armed_forces
+							ideology = ideology_republican_leader
+							
+						}
+						trigger_event = { id = dvg_gran_colombia.4 }
+						c:SPA = {
+							create_diplomatic_pact = {
+								country = c:GCO
+								type = colony
+							}
+							change_relations = {
+								country = c:GCO
+								value = 100
+							}
+						}
+					}
+				}
+			}
+			if = {
+				limit = { exists = s:STATE_GUATEMALA.region_state:SPA }
+				create_country = {
+					tag = UCA
+					origin = this
+					state = s:STATE_GUATEMALA.region_state:SPA
+					state = s:STATE_SAN_SALVADOR.region_state:SPA
+					state = s:STATE_MANAGUA.region_state:SPA
+					state = s:STATE_COSTA_RICA.region_state:SPA
+					state = s:STATE_PANAMA.region_state:SPA
+					
+					on_created = {
+						set_country_type = colonial
+						activate_law = law_type:law_presidential_republic
+						c:SPA = {
+							create_diplomatic_pact = {
+								country = c:UCA
+								type = colony
+							}
+							change_relations = {
+								country = c:UCA
+								value = 100
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		if = {
+			limit = { #Preventing the player from getting the JE if they already formed Hispania manually
+				NAND = {
+					exists = c:SPC
+					this = c:SPC
+				}
+			}
+			add_journal_entry =  {
+				type = je_uma_gran_comunidade
+			}
+		}
+		
+		trigger_event = { id = dvg_spain.7 days = 7 }
+		ai_chance = {
+			base = 100
+		}
+	}
+	# Let's divide Colombia
+	option = {
+		name = dvg_spain.6.b
+		add_loyalists = {
+			value = 0.2
+			pop_type = aristocrats
+		}
+		custom_tooltip = {
+			text = partition_new_spain_tt
+			if = {
+				limit = { exists = s:STATE_MEXICO.region_state:SPA }
+				create_country = {
+					tag = MEX
+					origin = this
+					state = s:STATE_MEXICO.region_state:SPA
+					state = s:STATE_VERACRUZ.region_state:SPA
+					state = s:STATE_GUERRERO.region_state:SPA
+					state = s:STATE_OAXACA.region_state:SPA
+					state = s:STATE_DURANGO.region_state:SPA
+					state = s:STATE_YUCATAN.region_state:SPA
+					state = s:STATE_JALISCO.region_state:SPA
+					state = s:STATE_SINALOA.region_state:SPA
+					state = s:STATE_BAJIO.region_state:SPA
+					state = s:STATE_ZACATECAS.region_state:SPA
+					state = s:STATE_CHIAPAS.region_state:SPA
+					
+					on_created = {
+						set_country_type = colonial
+						activate_law = law_type:law_presidential_republic
+						create_character = {
+							first_name = Velasco
+							last_name = de_Iturbide
+							culture = cu:mexican
+							birth_date = 1794.1.1
+							noble = yes
+							ruler = yes
+							interest_group = ig_landowners
+							ideology = ideology_royalist
+						}
+						create_character = {
+							first_name = Manuel
+							last_name = Diaz
+							culture = cu:mexican
+							birth_date = 1810.1.1
+							is_general = yes
+							ig_leader = yes
+							interest_group = ig_armed_forces
+							ideology = ideology_republican_leader
+							
+							on_created = {
+								set_variable = is_manuel_diaz
+							}
+							
+						}
+						trigger_event = { id = dvg_gran_colombia.4 }
+						c:SPA = {
+							create_diplomatic_pact = {
+								country = c:MEX
+								type = colony
+							}
+							change_relations = {
+								country = c:MEX
+								value = 100
+							}
+						}
+					}
+				}
+			}
+			if = {
+				limit = { exists = s:STATE_GUATEMALA.region_state:SPA }
+				create_country = {
+					tag = UCA
+					origin = this
+					state = s:STATE_GUATEMALA.region_state:SPA
+					state = s:STATE_SAN_SALVADOR.region_state:SPA
+					state = s:STATE_MANAGUA.region_state:SPA
+					state = s:STATE_COSTA_RICA.region_state:SPA
+					state = s:STATE_PANAMA.region_state:SPA
+					
+					on_created = {
+						set_country_type = colonial
+						activate_law = law_type:law_presidential_republic
+						c:SPA = {
+							create_diplomatic_pact = {
+								country = c:UCA
+								type = colony
+							}
+							change_relations = {
+								country = c:UCA
+								value = 100
+							}
+						}
+					}
+				}
+			}
+			if = {
+				limit = { exists = s:STATE_BAHIA.region_state:SPA }
+				create_country = {
+					tag = LUS
+					origin = this
+					state = s:STATE_BAHIA.region_state:SPA
+					state = s:STATE_SANTA_CATARINA.region_state:SPA
+					state = s:STATE_TEJAS.region_state:SPA
+					state = s:STATE_RIO_GRANDE.region_state:SPA
+					state = s:STATE_BAJA_CALIFORNIA.region_state:SPA
+					
+					on_created = {
+						set_country_type = colonial
+						activate_law = law_type:law_presidential_republic
+						c:SPA = {
+							create_diplomatic_pact = {
+								country = c:LUS
+								type = colony
+							}
+							change_relations = {
+								country = c:LUS
+								value = 100
+							}
+						}
+					}
+				}
+			}
+		}
+		if = {
+			limit = { #Preventing the player from getting the JE if they already formed Hispania manually
+				NAND = {
+					exists = c:SPC
+					this = c:SPC
+				}
+			}
+			add_journal_entry =  {
+				type = je_uma_gran_comunidade_2
+			}
+		}
+		
+		trigger_event = { id = dvg_spain.7 days = 7 }
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+
+# The Restoration of New Spain
+dvg_spain.7 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.7.t
+	desc = dvg_spain.7.d
+	flavor = dvg_spain.7.f
+	
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+	
+	trigger = {
+	}
+	
+	# I am the State, and I am victorious! 
+	option = {
+		name = dvg_spain.7.a
+		default_option = yes
+		if = {
+			limit = {
+				exists = c:GCO
+				c:GCO = { is_subject_of = c:SPA}
+			}
+			c:GCO = {
+				add_liberty_desire = 10
+			}
+		}
+		else = {
+			c:MEX = {
+				add_liberty_desire = 10
+			}
+			c:LUS = {
+				add_liberty_desire = 10
+			}
+			c:UCA = {
+				add_liberty_desire = 10
+			}
+		}
+		add_journal_entry = {
+			type = je_centralize_spain_SPA
+		}
+		add_journal_entry = {
+			type = je_SPA_instability
+		}
+		set_variable = dvg_SPA_clear_initial_chain
+		set_global_variable = SPA_intro_clear
+		ai_chance = {
+			base = 40
+		}
+	}
+	# Some reforms will help consolidate public trust.
+	option = {
+		name = dvg_spain.7.b
+		
+		if = {
+			limit = {
+				exists = c:GCO
+				c:GCO = { is_subject_of = c:SPA}
+			}
+			c:GCO = {
+				add_liberty_desire = -10
+			}
+		}
+		else = {
+			c:MEX = {
+				add_liberty_desire = -10
+			}
+			c:LUS = {
+				add_liberty_desire = -10
+			}
+			c:UCA = {
+				add_liberty_desire = -10
+			}
+		}
+		activate_law = law_type:law_landed_voting
+		add_journal_entry = {
+			type = je_centralize_spain_SPA
+		}
+		add_journal_entry = {
+			type = je_SPA_instability
+		}
+		set_variable = dvg_SPA_clear_initial_chain
+		set_global_variable = SPA_intro_clear
+		ai_chance = {
+			base = 60
+		}
+	}
+}
+#The Herrerian Independence War
+dvg_spain.8 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.8.t
+	desc = dvg_spain.8.d
+	flavor = dvg_spain.8.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+
+	trigger = {
+	}
+	
+	
+	# Viva o Rey, viva Espanha!
+	option = {
+		name = dvg_spain.8.a
+		default_option = yes
+		add_loyalists = {
+			value = 0.25
+		}
+		add_journal_entry = {
+			type = je_herrerian_revolution_SPA
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+# Herreria Victory
+dvg_spain.9 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.9.t
+	desc = dvg_spain.9.d
+	flavor = dvg_spain.9.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	
+	# Meu Deus, meu Deus, por que me abandonaste?
+	option = {
+		name = dvg_spain.9.a
+		default_option = yes
+		remove_diplomatic_pact = {
+			country = c:GRA
+			type = dominion
+		}
+		c:SPA = {
+			create_bidirectional_truce = {
+				country = c:GRA
+				months = 48
+			}
+			change_infamy = -50
+		}
+		trigger_event = { id = dvg_spain.15 days = 7 }
+		c:GCO = {
+			trigger_event = { id = dvg_gran_colombia.15 days = 7 }
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+# The Treaty of Lisbon
+dvg_spain.10 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.10.t
+	desc = dvg_spain.10.d
+	flavor = dvg_spain.10.f
+
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		year = 1845
+		c:SPA = ROOT
+		exists = c:SAN
+		c:SPA = {
+			has_war_with = c:SAN
+			NOT = { has_truce_with = c:SAN }
+		}
+	}
+	
+	
+	# Meu Deus, meu Deus, por que me abandonaste?
+	option = {
+		name = dvg_spain.10.a
+		default_option = yes
+		
+		remove_diplomatic_pact = {
+			country = c:GRA
+			type = dominion
+		}
+		c:SPA = {
+			create_bidirectional_truce = {
+				country = c:GRA
+				months = 48
+			}
+			change_infamy = -50
+		}
+		c:SPA = {
+			create_bidirectional_truce = {
+				country = c:SAN
+				months = 48
+			}
+			change_infamy = -50
+		}
+		trigger_event = { id = dvg_spain.15 days = 7 }
+		c:GCO = {
+			trigger_event = { id = dvg_gran_colombia.15 days = 7 }
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+# Peace in New Granada
+dvg_spain.11 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.11.t
+	desc = dvg_spain.11.d
+	flavor = dvg_spain.11.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	
+	# Meu Deus, meu Deus, por que me abandonaste?
+	option = {
+		name = dvg_spain.11.a
+		default_option = yes
+		
+		remove_diplomatic_pact = {
+			country = c:GRA
+			type = dominion
+		}
+		c:SPA = {
+			create_bidirectional_truce = {
+				country = c:GRA
+				months = 48
+			}
+			change_infamy = -50
+		}
+		trigger_event = { id = dvg_spain.15 days = 7 }
+		c:GCO = {
+			trigger_event = { id = dvg_gran_colombia.15 days = 7 }
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+# Granada Reconquered!
+dvg_spain.12 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.12.t
+	desc = dvg_spain.12.d
+	flavor = dvg_spain.12.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+	}
+	
+	# At least we may celebrate this victory.
+	option = {
+		name = dvg_spain.12.a
+		default_option = yes
+		trigger_event = { id = dvg_spain.13 days = 7 }
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+# The Winds of Change
+dvg_spain.13 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.13.t
+	desc = dvg_spain.13.d
+	flavor = dvg_spain.13.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+		add_journal_entry = {
+			type = je_centralize_spain_SPA
+		}
+		add_journal_entry = {
+			type = je_SPA_instability
+		}
+	}
+	
+	#We cannot dishonor the men who died for the royal cause!
+	option = {
+		name = dvg_spain.13.a
+		default_option = yes
+		
+		trigger_event = { id = dvg_spain.14 days = 7 }
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+	
+	#If it is the only way to prevent more fratricide…
+	option = {
+		name = dvg_spain.13.b
+		
+		activate_law = law_type:law_landed_voting
+		set_variable = dvg_SPA_clear_initial_chain
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+}
+
+#The Dumbfounded King
+dvg_spain.14 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.14.t
+	desc = dvg_spain.14.d
+	flavor = dvg_spain.14.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	
+	# Well, I’ve always wanted to spend time in Paris…
+	option = {
+		name = dvg_spain.14.a
+		default_option = yes
+		ruler = { kill_character = yes }
+		activate_law = law_type:law_wealth_voting
+		change_variable = {
+			name = dvg_centralization_var
+			add = 2
+		}
+		change_variable = {
+			name = dvg_instability_var
+			add = 2
+		}
+		set_variable = dvg_SPA_clear_initial_chain
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#The Lisbon Insurrection
+dvg_spain.15 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.15.t
+	desc = dvg_spain.15.d
+	flavor = dvg_spain.15.f
+
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+		add_journal_entry = {
+			type = je_centralize_spain_SPA
+		}
+		add_journal_entry = {
+			type = je_SPA_instability
+		}
+		ig:ig_intelligentsia = {
+			leader = { save_scope_as = is_sales }
+		}
+	}
+	
+	
+	# This is a catastrophe!
+	option = {
+		name = dvg_spain.15.a
+		default_option = yes
+		add_radicals = {
+			value = 0.1
+		}
+		trigger_event = { id = dvg_spain.16 days = 7 }
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+# The Toledo Junta
+dvg_spain.16 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.16.t
+	desc = dvg_spain.16.d
+	flavor = dvg_spain.16.f
+
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+	}
+	
+	# castile angered
+	option = {
+		name = dvg_spain.16.a
+		default_option = yes
+		
+		set_variable = dvg_toledo_junta
+		
+		trigger_event = { id = dvg_spain.17 days = 7 }
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#Anarchy Looms
+dvg_spain.17 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.17.t
+	desc = dvg_spain.17.d
+	flavor = dvg_spain.17.f
+
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+		ig:ig_intelligentsia = {
+			leader = { save_scope_as = is_sales }
+		}
+	}
+	
+	
+	# Between Scylla and Charybdis lies Hispania…
+	option = {
+		name = dvg_spain.17.a
+		default_option = yes
+		trigger_event = { id = dvg_spain.18 days = 7 }
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+# In the Palace of the King
+dvg_spain.18 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.18.t
+	desc = dvg_spain.18.d
+	flavor = dvg_spain.18.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+	}
+	
+	# Publishing a royal charter is our only hope – make it so.
+	option = {
+		name = dvg_spain.18.a
+		default_option = yes
+		
+		activate_law = law_type:law_landed_voting
+		trigger_event = { id = dvg_spain.19 days = 7 }
+		ai_chance = {
+			base = 0.5
+		}
+	}
+	# Let’s give this unwashed mob a whiff of grapeshot!
+	option = {
+		name = dvg_spain.18.b
+		default_option = yes
+		trigger_event = { id = dvg_spain.22 days = 7 }
+		ai_chance = {
+			base = 0.5
+		}
+	}
+}
+
+# The Lisbon Ultimatum
+dvg_spain.19 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.19.t
+	desc = dvg_spain.19.d
+	flavor = dvg_spain.19.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+		ig:ig_intelligentsia = {
+			leader = { save_scope_as = is_sales }
+		}
+	}
+	
+	# Better a constitutional kingdom than no kingdom at all.
+	option = {
+		name = dvg_spain.19.a
+		default_option = yes
+		
+		if = {
+			limit = { has_technology_researched = egalitarianism }
+			activate_law = law_type:law_universal_suffrage
+		}
+		else = {
+			activate_law = law_type:law_census_voting
+		}
+		activate_law = law_type:law_right_of_assembly
+		
+		trigger_event = { id = dvg_spain.20 days = 7 }
+		ai_chance = {
+			base = 0.5
+		}
+	}
+	
+	# The army will show these traitors the price of their impudence!
+	option = {
+		name = dvg_spain.19.b
+		
+		trigger_event = { id = dvg_spain.22 days = 7 }
+		
+		ai_chance = {
+			base = 0.5
+		}
+	}
+}
+
+# A Question of Capitals
+dvg_spain.20 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.20.t
+	desc = dvg_spain.20.d
+	flavor = dvg_spain.20.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+	}
+	
+	# No, why would we give the traitors another reward?
+	option = {
+		name = dvg_spain.20.a
+		default_option = yes
+		add_loyalists = {
+			value = 0.35
+			culture = cu:spanish
+		}
+		add_radicals = {
+			value = 0.35
+			culture = cu:portuguese
+		}
+		trigger_event = { id = dvg_spain.21 days = 7 }
+		ai_chance = {
+			base = 0.5
+		}
+	}
+	# Yes, it will simplify matters in the long run.
+	option = {
+		name = dvg_spain.20.b
+		default_option = yes
+		
+		set_capital = STATE_ESTREMADURA
+		add_loyalists = {
+			value = 0.35
+			culture = cu:portuguese
+		}
+		add_radicals = {
+			value = 0.35
+			culture = cu:spanish
+		}
+		set_variable = dvg_SPA_clear_initial_chain
+		ai_chance = {
+			base = 0.5
+		}
+	}
+}
+
+# The Lisbon Massacre
+dvg_spain.21 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.21.t
+	desc = dvg_spain.21.d
+	flavor = dvg_spain.21.f
+
+	event_image = {
+		video = "votp_cops_march"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/votp/cops_march"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+		ig:ig_intelligentsia = {
+			leader = { save_scope_as = is_sales }
+		}
+	}
+	
+	# An inauspicious beginning, to be sure…
+	option = {
+		name = dvg_spain.21.a
+		default_option = yes
+		change_variable = {
+			name = dvg_centralization_var
+			add = -1
+		}
+		change_variable = {
+			name = dvg_instability_var
+			add = 1
+		}
+		set_variable = dvg_SPA_clear_initial_chain
+		ig:ig_intelligentsia = {
+			leader = { kill_character = yes }
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+# Segura's coup
+dvg_spain.22 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.22.t
+	desc = dvg_spain.22.d
+	flavor = dvg_spain.22.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+	}
+	
+	# What shall they do with their newfound power?
+	option = {
+		name = dvg_spain.22.a
+		default_option = yes
+		
+		ruler = { kill_character = yes }
+		heir = { kill_character = yes }
+		activate_law = law_type:law_presidential_republic
+		trigger_event = { id = dvg_spain.23 days = 7 }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+# The Spanish Revolution
+dvg_spain.23 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.23.t
+	desc = dvg_spain.23.d
+	flavor = dvg_spain.23.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+	}
+	
+	# Like the sun upon the sky, we greet the rising of the Republic!
+	option = {
+		name = dvg_spain.23.a
+		default_option = yes
+		
+		activate_law = law_type:law_wealth_voting
+		activate_law = law_type:law_appointed_bureaucrats
+		trigger_event = { id = dvg_spain.24 days = 3 }
+		set_variable = dvg_SPA_clear_initial_chain
+		set_variable = dvg_SPA_wait_DUA
+		c:DUA = {
+			trigger_event = { id = dvg_spain.25 days = 31 }
+		}
+		change_variable = {
+			name = dvg_centralization_var
+			add = 3
+		}
+		change_variable = {
+			name = dvg_instability_var
+			add = 3
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+# Generic Tensions
+dvg_spain.24 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.24.t
+	desc = dvg_spain.24.d
+	flavor = dvg_spain.24.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+	}
+	
+	# We must tear down this whole rotten system!
+	option = {
+		name = dvg_spain.24.a
+		default_option = yes
+		add_loyalists = {
+			value = 0.2
+			culture = cu:portuguese
+		}
+		set_variable = SPA_Fueros #Bypassing the Asturias Trial and Fuero events at a huge cost if you win or avoid the DUA invasion!
+		change_variable = {
+			name = dvg_centralization_var
+			add = 2
+		}
+		change_variable = {
+			name = dvg_instability_var
+			add = 3
+		}
+		
+		ai_chance = {
+			base = 80
+		}
+	}
+	
+	# Abolition would be far too dangerous at this time.
+	option = {
+		name = dvg_spain.24.b
+		add_loyalists = {
+			value = 0.2
+			culture = cu:spanish
+		}
+		ai_chance = {
+			base = 20
+		}
+	}
+}
+
+# Spaniards in Paris
+dvg_spain.25 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.25.t
+	desc = dvg_spain.25.d
+	flavor = dvg_spain.25.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+	}
+	
+	# We shall destroy the revolution and save Spain like our forefathers!
+	option = {
+		name = dvg_spain.25.a
+		default_option = yes
+		
+		create_diplomatic_play = {
+			war = yes
+			target_country = c:SPA
+			type = dp_regime_change
+		}
+		trigger_event = { id = dvg_spain.27 days = 7 }
+		c:SPA = {
+			trigger_event = { id = dvg_spain.26 days = 7 }
+		}
+		ai_chance = {
+			base = 70
+		}
+	}
+	# A major European war would be horrendous, recognize the Republic.
+	option = {
+		name = dvg_spain.25.b
+		
+		c:SPA = {
+			trigger_event = { id = dvg_spain.31 days = 7 }
+		}
+		ai_chance = {
+			base = 30
+		}
+	}
+}
+
+# The Second Peninsular War
+dvg_spain.26 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.26.t
+	desc = dvg_spain.26.d
+	flavor = dvg_spain.26.f
+
+	event_image = {
+		video = "europenorthamerica_springtime_of_nations"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/springtime_of_nations"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+	}
+	
+	# Não passaram!
+	option = {
+		name = dvg_spain.26.a
+		default_option = yes
+		add_loyalists = {
+			value = 0.5
+		}
+		add_journal_entry = {
+			type = je_second_peninsular_war_SPA
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+# Navarre Defies Us!
+dvg_spain.27 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.27.t
+	desc = dvg_spain.27.d
+	flavor = dvg_spain.27.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+	}
+	
+	# We will not be bullied by a speck upon the map!
+	option = {
+		name = dvg_spain.27.a
+		default_option = yes
+		
+		c:NAV = {
+			trigger_event = { id = dvg_navarre.3 }
+		}
+		
+		ai_chance = {
+			base = 60
+		}
+	}
+	# The mightiest nation in the world is above such pettiness.
+	option = {
+		name = dvg_spain.27.b
+		default_option = yes
+		
+		c:NAV = {
+			trigger_event = { id = dvg_navarre.5 }
+		}
+		
+		ai_chance = {
+			base = 40
+		}
+	}
+}
+
+# The Republic Triumphant
+dvg_spain.28 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.28.t
+	desc = dvg_spain.28.d
+	flavor = dvg_spain.28.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# Like Athens against Persia, democracy has defeated tyranny!
+	option = {
+		name = dvg_spain.28.a
+		default_option = yes
+		
+		c:DUA = {
+			trigger_event = { id = dvg_spain.29 days = 7 }
+		}
+		c:CUB = {
+			trigger_event = { id = dvg_cuba.2 days = 14 }
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+# L’humiliation
+dvg_spain.29 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.29.t
+	desc = dvg_spain.29.d
+	flavor = dvg_spain.29.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# Merde!
+	option = {
+		name = dvg_spain.29.a
+		default_option = yes
+		
+		add_radicals = {
+			value = medium_radicals
+			culture = cu:occitan
+		}
+		if = {
+			limit = { NOT = { has_variable = english_path } }
+			add_radicals = {
+				value = medium_radicals
+				culture = cu:british
+			}
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+# A Catástrofe
+dvg_spain.30 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.30.t
+	desc = dvg_spain.30.d
+	flavor = dvg_spain.30.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	immediate = {
+		if = {
+			limit = { NOT = { has_law = law_type:law_monarchy} }
+			activate_law = law_type:law_monarchy
+		}
+		if = {
+			limit = { NOT = { has_law = law_type:law_landed_voting } }
+			activate_law = law_type:law_landed_voting
+		}
+		create_character = {
+			historical = yes
+			first_name = Afonso
+			last_name = de_Lorena-Avis
+			ruler = yes
+			noble = yes
+			culture = cu:portuguese
+			religion = catholic
+			birth_date = 1800.10.10
+			interest_group = ig_landowners
+			ideology = ideology_royalist
+			traits = {
+			}
+			on_created = {
+				set_variable = is_married
+				set_character_as_ruler = yes
+			}
+		}
+		create_character = {
+			historical = yes
+			first_name = Pedro
+			last_name = de_Lorena-Avis
+			heir = yes
+			noble = yes
+			culture = cu:portuguese
+			religion = catholic
+			birth_date = 1830.10.10
+			interest_group = ig_landowners
+			ideology = ideology_royalist
+		}
+	}
+	trigger = {
+	}
+	
+	# Os fortes fazem o que querem e os fracos sofrem o que devem.
+	option = {
+		name = dvg_spain.30.a
+		default_option = yes
+		
+		if = {
+			limit = { has_variable = SPA_Fueros }
+			remove_variable = SPA_Fueros
+			
+			change_variable = {
+				name = dvg_centralization_var
+				add = -5
+			}
+			change_variable = {
+				name = dvg_instability_var
+				add = -1
+			}
+		}
+		else = {
+			change_variable = {
+				name = dvg_centralization_var
+				add = -3
+			}
+			change_variable = {
+				name = dvg_instability_var
+				add = 2
+			}
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+# The Dual Monarchy Pursues Diplomacy
+dvg_spain.31 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.31.t
+	desc = dvg_spain.31.d
+	flavor = dvg_spain.31.f
+
+	event_image = {
+		video = "unspecific_signed_contract"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/signed_contract"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# The Anglois lion sleeps tonight.
+	option = {
+		name = dvg_spain.31.a
+		default_option = yes
+		
+		change_relations = {
+			country = c:DUA
+			value = 100
+		}
+		c:CUB = {
+			trigger_event = { id = dvg_cuba.2 days = 14 }
+		}
+		set_variable = dvg_SPA_clear_initial_chain
+		remove_variable = dvg_SPA_wait_DUA
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+# The Future of Spain
+dvg_spain.32 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.32.t
+	desc = dvg_spain.32.d
+	flavor = dvg_spain.32.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		exists = c:SPA
+		this = c:SPA
+		has_variable = dvg_SPA_clear_initial_chain
+		NOR = {
+			has_variable = dvg_SPA_wait_DUA
+			exists = c:DUA
+		}
+	}
+	
+	# À frente!
+	option = {
+		name = dvg_spain.32.a
+		default_option = yes
+		
+		remove_variable = dvg_SPA_clear_initial_chain
+		if = {
+			limit = { has_variable = dvg_SPA_wait_DUA }
+			remove_variable = dvg_SPA_wait_DUA
+		}
+		
+		add_loyalists = {
+			value = 0.3
+		}
+		if = {
+			limit = {
+				OR = {
+					has_government_type = gov_parliamentary_democracy
+					has_government_type = gov_presidential_democracy
+				}
+			}
+			set_variable = dvg_SPA_republic
+		}
+		set_global_variable = SPA_intro_clear
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+# The Decline and Fall of the Madrid Economy
+dvg_spain.33 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.33.t
+	desc = dvg_spain.33.d
+	flavor = dvg_spain.33.f
+
+	event_image = {
+		video = "unspecific_vandalized_storefront"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/vandalized_storefront"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		exists = c:SPA
+		this = c:SPA
+		s:STATE_ESTREMADURA.region_state:SPA = { is_capital = yes }
+		NOT = { has_variable = dvg_madrid_is_dead }
+	}
+	
+	# I never liked Madrid much, anyway.
+	option = {
+		name = dvg_spain.33.a
+		default_option = yes
+		
+		add_radicals = {
+			value = 0.3
+			culture = cu:spanish
+		}
+		set_variable = dvg_madrid_is_dead
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.34 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.34.t
+	desc = dvg_spain.34.d
+	flavor = dvg_spain.34.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		OR = {
+			AND = {
+				exists = c:SPA
+				this = c:SPA
+			}
+			AND = {
+				exists = c:IBE
+				this = c:IBE
+			}
+			AND = {
+				exists = c:SPC
+				this = c:SPC
+			}
+		}
+		has_global_variable = SPA_intro_clear
+		NOR = {
+			has_variable = SPA_ChurchLandEvent
+			has_variable = SPA_ChurchLandResolved
+		}
+	}
+	
+	# A solution will have to be found.
+	option = {
+		name = dvg_spain.34.a
+		default_option = yes
+		
+		trigger_event = { id = dvg_spain.35 days = 14 }
+		set_variable = SPA_ChurchLandEvent
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.35 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.35.t
+	desc = dvg_spain.35.d
+	flavor = dvg_spain.35.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# Jesus lived among beggars, surely monks can as well.
+	option = {
+		name = dvg_spain.35.a
+		default_option = yes
+		
+		add_radicals = {
+			value = 0.3
+		}
+		trigger_event = { id = dvg_spain.36 days = 7 }
+		
+		ai_chance = {
+			base = 50
+		}
+	}
+	# And consign our souls to Hell? Never!
+	option = {
+		name = dvg_spain.35.b
+		
+		add_loyalists = {
+			value = 0.3
+			pop_type = clergymen
+		}
+		remove_variable = SPA_ChurchLandEvent
+		set_variable = SPA_ChurchLandResolved
+		
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+dvg_spain.36 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.36.t
+	desc = dvg_spain.36.d
+	flavor = dvg_spain.36.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# Dismiss the legate, and enact the confiscations as soon as possible.
+	option = {
+		name = dvg_spain.36.a
+		default_option = yes
+		add_radicals = {
+			value = 0.3
+		}
+		trigger_event = { id = dvg_spain.37 days = 7 }
+		
+		ai_chance = {
+			base = 30
+		}
+	}
+	# We will attend a meeting in Rome for negotiations.
+	option = {
+		name = dvg_spain.36.b
+		
+		trigger_event = { id = dvg_spain.38 days = 7 }
+		ai_chance = {
+			base = 70
+		}
+	}
+	# This was a mistake, cancel the confiscations.
+	option = {
+		name = dvg_spain.36.c
+		
+		remove_variable = SPA_ChurchLandEvent
+		set_variable = SPA_ChurchLandResolved
+		
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+dvg_spain.37 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.37.t
+	desc = dvg_spain.37.d
+	flavor = dvg_spain.37.f
+
+	event_image = {
+		video = "southamerica_christianity"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/christianity"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# Surely nobody actually believes this drivel…!
+	option = {
+		name = dvg_spain.37.a
+		default_option = yes
+		
+		add_radicals = {
+			value = 0.3
+			interest_group = ig:ig_devout
+		}
+		activate_law = law_type:law_total_separation
+		
+		remove_variable = SPA_ChurchLandEvent
+		set_variable = SPA_ChurchLandResolved
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.38 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.38.t
+	desc = dvg_spain.38.d
+	flavor = dvg_spain.38.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# Spain is a Catholic nation and we shall not deny it.
+	option = {
+		name = dvg_spain.38.a
+		
+		add_loyalists = {
+			value = 0.3
+			pop_type = clergymen
+		}
+		remove_variable = SPA_ChurchLandEvent
+		set_variable = SPA_ChurchLandResolved
+		
+		ai_chance = {
+			base = 30
+		}
+	}
+	# Try to concoct a maze of meaningless prose to satisfy him instead.
+	option = {
+		name = dvg_spain.38.b
+		default_option = yes
+		
+		random_list = {
+			40 = { trigger_event = { id = dvg_spain.39 days = 3 } }
+			60 = { trigger_event = { id = dvg_spain.40 days = 3 } }
+		}
+		
+		ai_chance = {
+			base = 70
+		}
+	}
+}
+dvg_spain.39 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.39.t
+	desc = dvg_spain.39.d
+	flavor = dvg_spain.39.f
+
+	event_image = {
+		video = "southamerica_christianity"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/christianity"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# How ungrateful of him.
+	option = {
+		name = dvg_spain.39.a
+		default_option = yes
+		
+		add_radicals = {
+			value = 0.3
+		}
+		change_relations = {
+			country = c:PAP
+			value = -100
+		}
+		remove_variable = SPA_ChurchLandEvent
+		set_variable = SPA_ChurchLandResolved
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.40 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.40.t
+	desc = dvg_spain.40.d
+	flavor = dvg_spain.40.f
+
+	event_image = {
+		video = "unspecific/signed_contract"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/signed_contract"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# And His “Holiness” is none the wiser.
+	option = {
+		name = dvg_spain.40.a
+		
+		activate_law = law_type:law_freedom_of_conscience
+		change_relations = {
+			country = c:PAP
+			value = 100
+		}
+		remove_variable = SPA_ChurchLandEvent
+		set_variable = SPA_ChurchLandResolved
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.41 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.41.t
+	desc = dvg_spain.41.d
+	flavor = dvg_spain.41.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		OR = {
+			AND = {
+				exists = c:SPA
+				this = c:SPA
+			}
+			AND = {
+				exists = c:IBE
+				this = c:IBE
+			}
+			AND = {
+				exists = c:SPC
+				this = c:SPC
+			}
+		}
+		year = 1850
+		has_global_variable = SPA_intro_clear
+		NOT = { has_variable = SPA_Ivrea }
+	}
+	
+	# Censorship is illiberal, but in this case may be needed.
+	option = {
+		name = dvg_spain.41.a
+		default_option = yes
+		
+		change_variable = {
+			name = dvg_centralization_var
+			add = 1
+		}
+		set_variable = SPA_Ivrea
+		
+		ai_chance = {
+			base = 50
+		}
+	}
+	# What harm can one book, from TOLEDO of all places, do?
+	option = {
+		name = dvg_spain.41.b
+		default_option = yes
+		
+		change_variable = {
+			name = dvg_instability_var
+			add = 1
+		}
+		set_variable = SPA_Ivrea
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+dvg_spain.42 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.42.t
+	desc = dvg_spain.42.d
+	flavor = dvg_spain.42.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		exists = c:SPA
+		this = c:SPA
+		year = 1860
+		has_variable = SPA_Ivrea
+		NOR = {
+			has_variable = SPA_Asturias_Trial
+			has_variable = SPA_Fueros
+		}
+	}
+	
+	# Why did the judge permit this travesty!?
+	option = {
+		name = dvg_spain.42.a
+		default_option = yes
+		
+		trigger_event = { id = dvg_spain.43 days = 14 }
+		set_variable = SPA_Asturias_Trial
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.43 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.43.t
+	desc = dvg_spain.43.d
+	flavor = dvg_spain.43.f
+
+	event_image = {
+		video = "unspecific_ruler_speaking_to_people"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/ruler_speaking_to_people"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# A retrial is clearly needed, but the fueros can stay.
+	option = {
+		name = dvg_spain.43.a
+		default_option = yes
+		
+		remove_variable = SPA_Asturias_Trial
+		set_variable = SPA_Fueros
+		
+		ai_chance = {
+			base = 50
+		}
+	}
+	# The time has come to tear down the whole rotten system!
+	option = {
+		name = dvg_spain.43.a
+		default_option = yes
+		
+		trigger_event = { id = dvg_spain.44 days = 7 }
+		
+		remove_variable = SPA_Asturias_Trial
+		set_variable = SPA_Fueros
+		
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+dvg_spain.44 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.44.t
+	desc = dvg_spain.44.d
+	flavor = dvg_spain.44.f
+
+	event_image = {
+		video = "unspecific_ruler_speaking_to_people"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/ruler_speaking_to_people"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# Discard the manifesto, and pass the bill ending the fueros!
+	option = {
+		name = dvg_spain.44.a
+		default_option = yes
+		
+		add_loyalists = {
+			value = 0.3
+			culture = cu:portuguese
+		}
+		add_radicals = {
+			value = 0.3
+			culture = cu:spanish
+		}
+		change_variable = {
+			name = dvg_instability_var
+			add = 3
+		}
+		change_variable = {
+			name = dvg_centralization_var
+			add = 2
+		}
+		
+		ai_chance = {
+			base = 35
+		}
+	}
+	# Adopt the manifesto and use it to draft a new bill.
+	option = {
+		name = dvg_spain.44.a
+		
+		add_loyalists = {
+			value = 0.3
+			culture = cu:spanish
+		}
+		add_radicals = {
+			value = 0.3
+			culture = cu:portuguese
+		}
+		change_variable = {
+			name = dvg_centralization_var
+			add = 1
+		}
+		
+		ai_chance = {
+			base = 65
+		}
+	}
+}
+dvg_spain.45 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.45.t
+	desc = dvg_spain.45.d
+	flavor = dvg_spain.45.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		OR = {
+			AND = {
+				exists = c:SPA
+				this = c:SPA
+			}
+			AND = {
+				exists = c:IBE
+				this = c:IBE
+			}
+			AND = {
+				exists = c:SPC
+				this = c:SPC
+			}
+		}
+		year = 1865
+		has_variable = SPA_Fueros
+		has_variable = SPA_ChurchLandResolved
+		this = { var:dvg_centralization_var >= 5 }
+		NOT = { has_variable = dvg_castile_crisis }
+	}
+	
+	# We must and shall suppress these treasonous lies!
+	option = {
+		name = dvg_spain.45.a
+		default_option = yes
+		
+		change_variable = {
+			name = dvg_instability_var
+			add = 1
+		}
+		change_variable = {
+			name = dvg_centralization_var
+			add = 3
+		}
+		set_variable = dvg_castile_crisis
+		
+		ai_chance = {
+			base = 70
+		}
+	}
+	# The delusions of eastern Spaniards do not concern us.
+	option = {
+		name = dvg_spain.45.b
+		default_option = yes
+		
+		change_variable = {
+			name = dvg_instability_var
+			add = 2
+		}
+		set_variable = dvg_castile_crisis
+		
+		ai_chance = {
+			base = 30
+		}
+	}
+}
+dvg_spain.46 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.46.t
+	desc = dvg_spain.46.d
+	flavor = dvg_spain.46.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		OR = {
+			AND = {
+				exists = c:SPA
+				this = c:SPA
+			}
+			AND = {
+				exists = c:IBE
+				this = c:IBE
+			}
+			AND = {
+				exists = c:SPC
+				this = c:SPC
+			}
+		}
+		year = 1865
+		has_variable = SPA_Fueros
+		has_variable = SPA_ChurchLandResolved
+		this = { var:dvg_centralization_var < 5 }
+		NOT = { has_variable = dvg_castile_crisis }
+	}
+	
+	# Federalism, not centralism, will save Spain from separation!
+	option = {
+		name = dvg_spain.46.a
+		default_option = yes
+		
+		change_variable = {
+			name = dvg_instability_var
+			add = 1
+		}
+		change_variable = {
+			name = dvg_centralization_var
+			add = -1
+		}
+		set_variable = dvg_castile_crisis
+		
+		ai_chance = {
+			base = 70
+		}
+	}
+	# The delusions of eastern Spaniards do not concern us.
+	option = {
+		name = dvg_spain.46.b
+		default_option = yes
+		
+		change_variable = {
+			name = dvg_instability_var
+			add = 2
+		}
+		set_variable = dvg_castile_crisis
+		ai_chance = {
+			base = 30
+		}
+	}
+}
+dvg_spain.47 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.47.t
+	desc = dvg_spain.47.d
+	flavor = dvg_spain.47.f
+
+	event_image = {
+		video = "unspecific_trains"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/trains"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		OR = {
+			AND = {
+				exists = c:SPA
+				this = c:SPA
+			}
+			AND = {
+				exists = c:IBE
+				this = c:IBE
+			}
+			AND = {
+				exists = c:SPC
+				this = c:SPC
+			}
+		}
+		year = 1870
+		has_technology_researched = railways
+		NOT = { has_global_variable = spa_railways }
+	}
+	
+	# Trains shall pull the east into modernity!
+	option = {
+		name = dvg_spain.47.a
+		default_option = yes
+		
+		set_global_variable = spa_railways
+		
+		ai_chance = {
+			base = 50
+		}
+	}
+	# Let us bring trains to enlightened people, not ignorant farmers.
+	option = {
+		name = dvg_spain.47.b
+		
+		set_global_variable = spa_railways
+		
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+dvg_spain.48 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.48.t
+	desc = dvg_spain.48.d
+	flavor = dvg_spain.48.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		OR = {
+			AND = {
+				exists = c:SPA
+				this = c:SPA
+			}
+			AND = {
+				exists = c:IBE
+				this = c:IBE
+			}
+			AND = {
+				exists = c:SPC
+				this = c:SPC
+			}
+		}
+		year = 1870
+		has_variable = dvg_castile_crisis
+		NOR = {
+			has_global_variable = dvg_castile_stage_two
+			has_global_variable = dvg_spanish_civil_war_over
+			has_global_variable = dvg_spain_civil_war_averted
+			has_variable = dvg_castile_crisis_1870
+		}
+	}
+	
+	# The Spanish Civil War
+	option = {
+		name = dvg_spain.48.a
+		default_option = yes
+		
+		change_variable = {
+			name = dvg_instability_var
+			add = 3
+		}
+		set_variable = dvg_castile_crisis_1870
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.49 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.49.t
+	desc = dvg_spain.49.d
+	flavor = dvg_spain.49.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		OR = {
+			AND = {
+				exists = c:SPA
+				this = c:SPA
+			}
+			AND = {
+				exists = c:IBE
+				this = c:IBE
+			}
+			AND = {
+				exists = c:SPC
+				this = c:SPC
+			}
+		}
+		year = 1880
+		has_variable = dvg_castile_crisis
+		NOR = {
+			has_global_variable = dvg_castile_stage_two
+			has_global_variable = dvg_spanish_civil_war_over
+			has_global_variable = dvg_spain_civil_war_averted
+			has_variable = dvg_castile_crisis_1880
+		}
+	}
+	
+	# The Spanish Civil War
+	option = {
+		name = dvg_spain.49.a
+		default_option = yes
+		
+		change_variable = {
+			name = dvg_instability_var
+			add = 3
+		}
+		set_variable = dvg_castile_crisis_1880
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.50 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.50.t
+	desc = dvg_spain.50.d
+	flavor = dvg_spain.50.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		OR = {
+			AND = {
+				exists = c:SPA
+				this = c:SPA
+			}
+			AND = {
+				exists = c:IBE
+				this = c:IBE
+			}
+			AND = {
+				exists = c:SPC
+				this = c:SPC
+			}
+		}
+		year = 1890
+		has_variable = dvg_castile_crisis
+		NOR = {
+			has_global_variable = dvg_castile_stage_two
+			has_global_variable = dvg_spanish_civil_war_over
+			has_global_variable = dvg_spain_civil_war_averted
+			has_variable = dvg_castile_crisis_1890
+		}
+	}
+	
+	# The Spanish Civil War
+	option = {
+		name = dvg_spain.50.a
+		default_option = yes
+		
+		change_variable = {
+			name = dvg_instability_var
+			add = 4
+		}
+		set_variable = dvg_castile_crisis_1890
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.51 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.51.t
+	desc = dvg_spain.51.d
+	flavor = dvg_spain.51.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		OR = {
+			AND = {
+				exists = c:SPA
+				this = c:SPA
+			}
+			AND = {
+				exists = c:IBE
+				this = c:IBE
+			}
+			AND = {
+				exists = c:SPC
+				this = c:SPC
+			}
+		}
+		year = 1900
+		has_variable = dvg_castile_crisis
+		NOR = {
+			has_global_variable = dvg_castile_stage_two
+			has_global_variable = dvg_spanish_civil_war_over
+			has_global_variable = dvg_spain_civil_war_averted
+			has_variable = dvg_castile_crisis_1900
+		}
+	}
+	
+	# The Spanish Civil War
+	option = {
+		name = dvg_spain.51.a
+		default_option = yes
+		
+		change_variable = {
+			name = dvg_instability_var
+			add = 4
+		}
+		set_variable = dvg_castile_crisis_1900
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.52 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.52.t
+	desc = dvg_spain.52.d
+	flavor = dvg_spain.52.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		OR = {
+			AND = {
+				exists = c:SPA
+				this = c:SPA
+			}
+			AND = {
+				exists = c:IBE
+				this = c:IBE
+			}
+			AND = {
+				exists = c:SPC
+				this = c:SPC
+			}
+		}
+		has_government_type = gov_council_dictatorship
+		NOR = {
+			has_global_variable = dvg_castile_stage_two
+			has_global_variable = dvg_spanish_civil_war_over
+			has_global_variable = dvg_spain_civil_war_averted
+			has_variable = dvg_SPA_communist
+		}
+	}
+	
+	# The Spanish Civil War
+	option = {
+		name = dvg_spain.52.a
+		default_option = yes
+		
+		change_variable = {
+			name = dvg_instability_var
+			add = 10
+		}
+		change_variable = {
+			name = dvg_centralization_var
+			add = 6
+		}
+		set_variable = dvg_SPA_communist
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.53 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.53.t
+	desc = dvg_spain.53.d
+	flavor = dvg_spain.53.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		OR = {
+			AND = {
+				exists = c:SPA
+				this = c:SPA
+			}
+			AND = {
+				exists = c:IBE
+				this = c:IBE
+			}
+			AND = {
+				exists = c:SPC
+				this = c:SPC
+			}
+		}
+		OR = {
+			has_government_type = gov_fascist_state
+			has_government_type = gov_fascist_corporate_state
+		}
+		NOR = {
+			has_global_variable = dvg_castile_stage_two
+			has_global_variable = dvg_spanish_civil_war_over
+			has_global_variable = dvg_spain_civil_war_averted
+			has_variable = dvg_SPA_fascist
+		}
+	}
+	
+	# The Spanish Civil War
+	option = {
+		name = dvg_spain.53.a
+		default_option = yes
+		
+		change_variable = {
+			name = dvg_instability_var
+			add = 20
+		}
+		change_variable = {
+			name = dvg_centralization_var
+			add = 20
+		}
+		set_variable = dvg_SPA_fascist
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.54 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.54.t
+	desc = dvg_spain.54.d
+	flavor = dvg_spain.54.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		OR = {
+			AND = {
+				exists = c:SPA
+				this = c:SPA
+			}
+			AND = {
+				exists = c:IBE
+				this = c:IBE
+			}
+			AND = {
+				exists = c:SPC
+				this = c:SPC
+			}
+		}
+		OR = {
+			has_government_type = gov_presidential_democracy
+			has_government_type = gov_parliamentary_democracy
+		}
+		has_global_variable = SPA_intro_clear
+		NOT = { has_variable = dvg_SPA_republic }
+		NOR = {
+			has_global_variable = dvg_castile_stage_two
+			has_global_variable = dvg_spanish_civil_war_over
+			has_global_variable = dvg_spain_civil_war_averted
+			has_variable = dvg_SPA_republic
+		}
+	}
+	
+	# The Spanish Civil War
+	option = {
+		name = dvg_spain.54.a
+		default_option = yes
+		
+		change_variable = {
+			name = dvg_instability_var
+			add = 3
+		}
+		change_variable = {
+			name = dvg_centralization_var
+			add = 3
+		}
+		set_variable = dvg_SPA_republic
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+#The Autonomy Bill
+dvg_spain.55 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.55.t
+	desc = dvg_spain.55.d
+	flavor = dvg_spain.55.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		OR = {
+			AND = {
+				exists = c:SPA
+				this = c:SPA
+			}
+			AND = {
+				exists = c:IBE
+				this = c:IBE
+			}
+			AND = {
+				exists = c:SPC
+				this = c:SPC
+			}
+		}
+		this = { var:dvg_instability_var >= 4 }
+		this = { var:dvg_instability_var < 8 }
+		has_variable = dvg_castile_crisis
+		NOR = {
+			has_global_variable = dvg_castile_stage_two
+			has_global_variable = dvg_spanish_civil_war_over
+		}
+	}
+	
+	# Pass the bill as it is, we need a solution!
+	option = {
+		name = dvg_spain.56.a
+		default_option = yes
+		
+		change_variable = {
+			name = dvg_instability_var
+			add = 1
+		}
+		
+		ai_chance = {
+			base = 70
+		}
+	}
+	# Pass the bill with the amendment, this is already dangerous.
+	option = {
+		name = dvg_spain.56.b
+		
+		change_variable = {
+			name = dvg_centralization_var
+			add = 1
+		}
+		ai_chance = {
+			base = 30
+		}
+	}
+}
+dvg_spain.56 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.56.t
+	desc = dvg_spain.56.d
+	flavor = dvg_spain.56.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	immediate = {
+		cu:spanish = {
+			save_scope_as = castilian_culture
+		}
+		cu:portuguese = {
+			save_scope_as = spanish_culture
+		}
+		s:STATE_TOLEDO.region_state:SPA = {
+			save_scope_as = madrid_state
+		}
+	}
+	trigger = {
+		OR = {
+			AND = {
+				exists = c:SPA
+				this = c:SPA
+			}
+			AND = {
+				exists = c:IBE
+				this = c:IBE
+			}
+			AND = {
+				exists = c:SPC
+				this = c:SPC
+			}
+		}
+		this = { var:dvg_instability_var >= 8 }
+		this = { var:dvg_instability_var < 12 }
+		has_variable = dvg_castile_crisis
+		NOR = {
+			has_global_variable = dvg_castile_stage_two
+			has_global_variable = dvg_spanish_civil_war_over
+		}
+	}
+	
+	# What we need are events to rally Spanish unity, not division.
+	option = {
+		name = dvg_spain.56.a
+		default_option = yes
+		
+		change_variable = {
+			name = dvg_instability_var
+			add = 1
+		}
+		
+		ai_chance = {
+			base = 70
+		}
+	}
+	# Yes, let’s curtail this radicalism at once!
+	option = {
+		name = dvg_spain.56.b
+		
+		change_variable = {
+			name = dvg_centralization_var
+			add = 1
+		}
+		ai_chance = {
+			base = 30
+		}
+	}
+}
+dvg_spain.57 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.57.t
+	desc = dvg_spain.57.d
+	flavor = dvg_spain.57.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		OR = {
+			AND = {
+				exists = c:SPA
+				this = c:SPA
+			}
+			AND = {
+				exists = c:IBE
+				this = c:IBE
+			}
+			AND = {
+				exists = c:SPC
+				this = c:SPC
+			}
+		}
+		this = { var:dvg_instability_var >= 12 }
+		has_variable = dvg_castile_crisis
+		NOR = {
+			has_global_variable = dvg_castile_stage_two
+			has_global_variable = dvg_spanish_civil_war_over
+		}
+	}
+	
+	# The Spanish Civil War
+	option = {
+		name = dvg_spain.57.a
+		default_option = yes
+		
+		if = {
+			limit = { this = { var:dvg_centralization_var >= 8 } }
+			trigger_event = { id = dvg_spain.60 }
+		}
+		else_if = {
+			limit = { 
+				this = { var:dvg_centralization_var >= 3 } 
+				this = { var:dvg_centralization_var < 8 }
+			}
+			trigger_event = { id = dvg_spain.59 }
+		}
+		else = {
+			limit = { this = { var:dvg_centralization_var < 3 } }
+			trigger_event = { id = dvg_spain.58 }
+		}
+		set_global_variable = dvg_castile_stage_two
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.58 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.58.t
+	desc = dvg_spain.58.d
+	flavor = dvg_spain.58.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# The Spanish Civil War
+	option = {
+		name = dvg_spain.58.a
+		default_option = yes
+		
+		trigger_event = { id = dvg_spain.61 }
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.59 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.59.t
+	desc = dvg_spain.59.d
+	flavor = dvg_spain.59.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# The Spanish Civil War
+	option = {
+		name = dvg_spain.59.a
+		default_option = yes
+		
+		trigger_event = { id = dvg_spain.61 }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.60 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.60.t
+	desc = dvg_spain.60.d
+	flavor = dvg_spain.60.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# The Spanish Civil War
+	option = {
+		name = dvg_spain.60.a
+		default_option = yes
+		
+		trigger_event = { id = dvg_spain.61 }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.61 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.61.t
+	desc = dvg_spain.61.d
+	flavor = dvg_spain.61.f
+
+	event_image = {
+		video = "europenorthamerica_springtime_of_nations"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/springtime_of_nations"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	immediate = {
+		if = {
+			limit = { exists = s:STATE_ASTURIAS.region_state:SPA }
+			create_country = {
+				tag = ATR
+				origin = this
+				state = s:STATE_ASTURIAS.region_state:SPA
+				state = s:STATE_NAVARRA.region_state:SPA
+				on_created = {
+					add_primary_culture = cu:basque
+					activate_law = law_type:law_presidential_republic
+					activate_law = law_type:law_autocracy
+					
+					create_character = {
+						historical = yes
+						first_name = Ruben_2
+						last_name = Mascarenhas
+						culture = cu:spanish
+						religion = catholic
+						ruler = yes
+						ideology = ideology_jingoist_leader
+						interest_group = ig_armed_forces
+						birth_date = 1810.10.21
+					}
+				}
+			}
+		}
+		c:ATR = {
+			ruler = { save_scope_as = atr_ruler }
+		}
+	}
+	trigger = {
+	}
+	
+	# Rebel scum!
+	option = {
+		name = dvg_spain.61.a
+		default_option = yes
+		
+		if = {
+			limit = { this = { var:dvg_centralization_var >= 8 } }
+			trigger_event = { id = dvg_spain.62 days = 7 }
+		}
+		else = {
+			limit = { this = { var:dvg_centralization_var < 8 } }
+			trigger_event = { id = dvg_spain.63 days = 7 }
+		}
+		s:STATE_ASTURIAS = { add_claim = ROOT }
+		s:STATE_NAVARRA = { add_claim = ROOT }
+		ai_chance = {
+			base = 1
+		}
+	}
+	# ¡Viva el Señorío de Vizcaya! #blue (Play as the north)#!
+	option = {
+		name = dvg_spain.61.b
+		
+		play_as = c:ATR
+		
+		c:SPA = {
+			if = {
+				limit = { this = { var:dvg_centralization_var >= 8 } }
+				trigger_event = { id = dvg_spain.62 days = 7 }
+			}
+			else = {
+				limit = { this = { var:dvg_centralization_var < 8 } }
+				trigger_event = { id = dvg_spain.63 days = 7 }
+			}
+		}
+		s:STATE_ASTURIAS = { add_claim = ROOT }
+		s:STATE_NAVARRA = { add_claim = ROOT }
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+dvg_spain.62 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.62.t
+	desc = dvg_spain.62.d
+	flavor = dvg_spain.62.f
+
+	event_image = {
+		video = "europenorthamerica_springtime_of_nations"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/springtime_of_nations"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	immediate = {
+		if = {
+			limit = { exists = s:STATE_GALICIA.region_state:SPA }
+			s:STATE_GALICIA.region_state:SPA = { set_state_owner = c:ATR }
+			c:ATR = { add_primary_culture = cu:galician }
+		}
+	}
+	trigger = {
+	}
+	
+	# Você também, meu filho, sentirá o gosto do poder...
+	option = {
+		name = dvg_spain.62.a
+		default_option = yes
+		
+		s:STATE_GALICIA = { add_claim = ROOT }
+		
+		trigger_event = { id = dvg_spain.64 }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.63 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.63.t
+	desc = dvg_spain.63.d
+	flavor = dvg_spain.63.f
+
+	event_image = {
+		video = "europenorthamerica_springtime_of_nations"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/springtime_of_nations"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	immediate = {
+		if = {
+			limit = { exists = s:STATE_GALICIA.region_state:SPA }
+			create_country = {
+				tag = GLI
+				origin = this
+				state = s:STATE_GALICIA.region_state:SPA
+				
+				on_created = {
+					activate_law = law_type:law_monarchy
+					create_character = {
+						historical = yes
+						noble = yes
+						first_name = Diego_Amancio
+						last_name = de_Gondomar
+						culture = cu:galician
+						religion = catholic
+						ruler = yes
+						ideology = ideology_royalist
+						interest_group = ig_landowners
+						birth_date = 1810.10.21
+					}
+				}
+			}
+		}
+		c:GLI = { ruler = { save_scope_as = gli_ruler } }
+	}
+	trigger = {
+	}
+	
+	# Rebel scum!
+	option = {
+		name = dvg_spain.63.a
+		default_option = yes
+		
+		s:STATE_GALICIA = { add_claim = ROOT }
+		trigger_event = { id = dvg_spain.64 }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.64 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.64.t
+	desc = dvg_spain.64.d
+	flavor = dvg_spain.64.f
+
+	event_image = {
+		video = "europenorthamerica_springtime_of_nations"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/springtime_of_nations"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	immediate = {
+		if = {
+			limit = { exists = s:STATE_ANDALUSIA.region_state:SPA }
+			create_country = {
+				tag = ANL
+				origin = this
+				state = s:STATE_ANDALUSIA.region_state:SPA
+				state = s:STATE_GRANADA.region_state:SPA
+				
+				on_created = {
+					activate_law = law_type:law_presidential_republic
+					activate_law = law_type:law_universal_suffrage
+					activate_law = law_type:law_right_of_assembly
+					create_character = {
+						historical = yes
+						first_name = Raul
+						last_name = Pinto
+						culture = cu:portuguese
+						religion = catholic
+						ruler = yes
+						ig_leader = yes
+						ideology = ideology_republican_leader
+						interest_group = ig_rural_folk
+						birth_date = 1810.10.21
+					}
+				}
+			}
+		}
+		c:ANL = { 
+			ruler = { save_scope_as = anl_ruler } 
+			ig:ig_rural_folk = { add_ruling_interest_group = yes }
+		}
+	}
+	trigger = {
+	}
+	
+	# Rebel scum!
+	option = {
+		name = dvg_spain.64.a
+		default_option = yes
+		
+		if = {
+			limit = { NOT = { has_variable = dvg_toledo_junta } }
+			trigger_event = { id = dvg_spain.65 }
+		}
+		else = {
+			limit = { has_variable = dvg_toledo_junta }
+			trigger_event = { id = dvg_spain.66 }
+		}
+		s:STATE_ANDALUSIA = { add_claim = ROOT }
+		s:STATE_GRANADA = { add_claim = ROOT }
+		ai_chance = {
+			base = 1
+		}
+	}
+	# ¡Tierra y Libertad! #blue (Play as the south)#!
+	option = {
+		name = dvg_spain.64.b
+		
+		play_as = c:ANL
+		c:SPA = {
+			if = {
+				limit = { NOT = { has_variable = dvg_toledo_junta } }
+				trigger_event = { id = dvg_spain.65 }
+			}
+			else = {
+				limit = { has_variable = dvg_toledo_junta }
+				trigger_event = { id = dvg_spain.66 }
+			}
+		}
+		s:STATE_ANDALUSIA = { add_claim = ROOT }
+		s:STATE_GRANADA = { add_claim = ROOT }
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+dvg_spain.65 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.65.t
+	desc = dvg_spain.65.d
+	flavor = dvg_spain.65.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# The Spanish Civil War
+	option = {
+		name = dvg_spain.65.a
+		default_option = yes
+		
+		if = {
+			limit = {
+				s:STATE_ESTREMADURA.region_state:SPA = { is_capital = yes }
+			}
+			trigger_event = { id = dvg_spain.67 days = 7 }
+		}
+		else = {
+			limit = {
+				s:STATE_TOLEDO.region_state:SPA = { is_capital = yes }
+			}
+			trigger_event = { id = dvg_spain.68 days = 7 }
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.66 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.66.t
+	desc = dvg_spain.66.d
+	flavor = dvg_spain.66.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# The Spanish Civil War
+	option = {
+		name = dvg_spain.66.a
+		default_option = yes
+		
+		if = {
+			limit = {
+				s:STATE_ESTREMADURA.region_state:SPA = { is_capital = yes }
+			}
+			trigger_event = { id = dvg_spain.67 days = 7 }
+		}
+		else = {
+			limit = {
+				s:STATE_TOLEDO.region_state:SPA = { is_capital = yes }
+			}
+			trigger_event = { id = dvg_spain.68 days = 7 }
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.67 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.67.t
+	desc = dvg_spain.67.d
+	flavor = dvg_spain.67.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# The Spanish Civil War
+	option = {
+		name = dvg_spain.67.a
+		default_option = yes
+		
+		trigger_event = { id = dvg_spain.69 }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.68 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.68.t
+	desc = dvg_spain.68.d
+	flavor = dvg_spain.68.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# The Spanish Civil War
+	option = {
+		name = dvg_spain.68.a
+		default_option = yes
+		
+		set_capital = STATE_ESTREMADURA
+		trigger_event = { id = dvg_spain.69 }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.69 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.69.t
+	desc = dvg_spain.69.d
+	flavor = dvg_spain.69.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	immediate = {
+		if = {
+			limit = { exists = s:STATE_TOLEDO.region_state:SPA }
+			create_country = {
+				tag = CAS
+				origin = this
+				state = s:STATE_TOLEDO.region_state:SPA
+				state = s:STATE_CASTILE.region_state:SPA
+				state = s:STATE_CARTAGENA.region_state:SPA
+				
+				on_created = {
+					activate_law = law_type:law_presidential_republic
+					activate_law = law_type:law_autocracy
+					
+					create_character = {
+						historical = yes
+						first_name = Ruben_2
+						last_name = Guerrero
+						culture = cu:spanish
+						religion = catholic
+						ruler = yes
+						ideology = ideology_jingoist_leader
+						interest_group = ig_armed_forces
+						birth_date = 1810.10.21
+					}
+				}
+			}
+			c:CAS = { set_capital = STATE_TOLEDO }
+		}
+	}
+	trigger = {
+	}
+	
+	# Viva Espanha!
+	option = {
+		name = dvg_spain.69.a
+		default_option = yes
+		
+		if = {
+			limit = { this = { var:dvg_centralization_var < 5 } }
+			trigger_event = { id = dvg_spain.70 days = 7 }
+		}
+		else = {
+			limit = { this = { var:dvg_centralization_var >= 5 } }
+			trigger_event = { id = dvg_spain.71 days = 7 }
+		}
+		s:STATE_TOLEDO = { 
+			add_claim = ROOT
+			add_claim = c:ATR
+			add_claim = c:ANL
+		}
+		s:STATE_CASTILE = { 
+			add_claim = ROOT
+			add_claim = c:ATR
+			add_claim = c:ANL
+		}
+		s:STATE_CARTAGENA = { 
+			add_claim = ROOT
+			add_claim = c:ATR
+			add_claim = c:ANL
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+	# Play as Castile
+	option = {
+		name = dvg_spain.69.b
+		
+		play_as = c:CAS
+		
+		c:SPA = {
+			if = {
+				limit = { this = { var:dvg_centralization_var < 5 } }
+				trigger_event = { id = dvg_spain.70 days = 7 }
+			}
+			else = {
+				limit = { this = { var:dvg_centralization_var >= 5 } }
+				trigger_event = { id = dvg_spain.71 days = 7 }
+			}
+		}
+		s:STATE_TOLEDO = { 
+			add_claim = ROOT
+			add_claim = c:ATR
+			add_claim = c:ANL
+		}
+		s:STATE_CASTILE = { 
+			add_claim = ROOT
+			add_claim = c:ATR
+			add_claim = c:ANL
+		}
+		s:STATE_CARTAGENA = { 
+			add_claim = ROOT
+			add_claim = c:ATR
+			add_claim = c:ANL
+		}
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+dvg_spain.70 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.70.t
+	desc = dvg_spain.70.d
+	flavor = dvg_spain.70.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# The Spanish Civil War
+	option = {
+		name = dvg_spain.70.a
+		default_option = yes
+		
+		c:CAS = {
+			trigger_event = { id = dvg_spain.72 days = 7 }
+			set_variable = dvg_CAS_low_centralization
+		}
+		s:STATE_BADAJOZ = { 
+			add_claim = c:CAS
+			add_claim = c:ATR
+			add_claim = c:ANL
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.71 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.71.t
+	desc = dvg_spain.71.d
+	flavor = dvg_spain.71.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# The Spanish Civil War
+	option = {
+		name = dvg_spain.71.a
+		default_option = yes
+		
+		if = {
+			limit = { exists = s:STATE_BADAJOZ.region_state:SPA }
+			s:STATE_BADAJOZ.region_state:SPA = { set_state_owner = c:CAS }
+			s:STATE_BADAJOZ = { 
+				add_claim = ROOT
+				add_claim = c:ATR
+				add_claim = c:ANL
+			}
+		}
+		c:CAS = {
+			trigger_event = { id = dvg_spain.72 days = 7 }
+			set_variable = dvg_CAS_high_centralization
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.72 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.72.t
+	desc = dvg_spain.72.d
+	flavor = dvg_spain.72.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# Republican Castile
+	option = {
+		name = dvg_spain.72.a
+		default_option = yes
+		
+		activate_law = law_type:law_universal_suffrage
+		activate_law = law_type:law_right_of_assembly
+		trigger_event = { id = dvg_spain.73 }
+		if = {
+			limit = { has_variable = dvg_CAS_high_centralization }
+			remove_variable = dvg_CAS_high_centralization
+		}
+		else = {
+			limit = { has_variable = dvg_CAS_low_centralization }
+			remove_variable = dvg_CAS_low_centralization
+		}
+		set_variable = CAS_federal_republic
+		ai_chance = {
+			base = 25
+			modifier = {
+				trigger = {
+					c:SPA = { has_law = law_type:law_monarchy }
+				}
+				add = 25
+			}
+			modifier = {
+				trigger = { has_variable = dvg_CAS_low_centralization }
+				add = 25
+			}
+			modifier = {
+				trigger = { has_variable = dvg_CAS_high_centralization }
+				add = -12.5
+			}
+		}
+	}
+	# Monarchist Castile
+	option = {
+		name = dvg_spain.72.b
+		
+		activate_law = law_type:law_monarchy
+		
+		ig:ig_landowners = {
+			leader = {
+				set_character_as_ruler = yes
+				remove_as_interest_group_leader = yes
+			}
+		}
+		ruler = {
+			set_as_interest_group_leader = yes
+		}
+		
+		c:SPA = {
+			trigger_event = { id = dvg_spain.79 days = 7 }
+		}
+		if = {
+			limit = { has_variable = dvg_CAS_high_centralization }
+			remove_variable = dvg_CAS_high_centralization
+		}
+		else = {
+			limit = { has_variable = dvg_CAS_low_centralization }
+			remove_variable = dvg_CAS_low_centralization
+		}
+		set_variable = CAS_traditional
+		ai_chance = {
+			base = 50
+			modifier = {
+				trigger = {
+					OR = {
+						has_variable = dvg_CAS_low_centralization
+						has_variable = dvg_CAS_high_centralization
+					}
+				}
+				add = -25
+			}
+		}
+	}
+	# Castile remains a Junta
+	option = {
+		name = dvg_spain.72.c
+		
+		trigger_event = { id = dvg_spain.74 }
+		set_variable = CAS_independence
+		
+		if = {
+			limit = { has_variable = dvg_CAS_high_centralization }
+			remove_variable = dvg_CAS_high_centralization
+		}
+		else = {
+			limit = { has_variable = dvg_CAS_low_centralization }
+			remove_variable = dvg_CAS_low_centralization
+		}
+		
+		ai_chance = {
+			base = 25
+			modifier = {
+				trigger = {
+					c:SPA = { NOT = { has_law = law_type:law_monarchy } }
+				}
+				add = 25
+			}
+			modifier = {
+				trigger = { has_variable = dvg_CAS_high_centralization }
+				add = 25
+			}
+			modifier = {
+				trigger = { has_variable = dvg_CAS_low_centralization }
+				add = -12.5
+			}
+		}
+	}
+}
+dvg_spain.73 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.73.t
+	desc = dvg_spain.73.d
+	flavor = dvg_spain.73.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# Send the offer
+	option = {
+		name = dvg_spain.73.a
+		default_option = yes
+		
+		c:ANL = {
+			trigger_event = { id = dvg_spain.76 days = 7 }
+		}
+		
+		ai_chance = {
+			base = 50
+		}
+	}
+	# The Spanish Civil War
+	option = {
+		name = dvg_spain.73.b
+		
+		c:SPA = {
+			trigger_event = { id = dvg_spain.79 days = 7 }
+		}
+		
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+dvg_spain.74 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.74.t
+	desc = dvg_spain.74.d
+	flavor = dvg_spain.74.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# Make the offer to ATR
+	option = {
+		name = dvg_spain.74.a
+		default_option = yes
+		
+		c:ATR = {
+			trigger_event = { id = dvg_spain.75 days = 7 }
+		}
+		
+		ai_chance = {
+			base = 50
+		}
+	}
+	# No thanks
+	option = {
+		name = dvg_spain.74.b
+		
+		c:SPA = {
+			trigger_event = { id = dvg_spain.79 days = 7 }
+		}
+		
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+dvg_spain.75 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.75.t
+	desc = dvg_spain.75.d
+	flavor = dvg_spain.75.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# Yes
+	option = {
+		name = dvg_spain.75.a
+		default_option = yes
+		
+		if = {
+			limit = { is_player = yes }
+			play_as = c:CAS
+			c:CAS = { annex_with_incorporation = c:ATR }
+		}
+		else = {
+			limit = { is_player = no }
+			c:CAS = { annex_with_incorporation = c:ATR }
+		}
+		if = {
+			limit = {
+				c:SPA = { coa_def_republic_flag_trigger = yes }
+			}
+			c:SPA = { trigger_event = { id = dvg_spain.77 days = 1 } }
+		}
+		else = {
+			c:SPA = {
+				trigger_event = { id = dvg_spain.79 days = 7 }
+			}
+		}
+		ai_chance = {
+			base = 100
+		}
+	}
+	# No Thank you
+	option = {
+		name = dvg_spain.75.a
+		default_option = yes
+		
+		c:SPA = {
+			trigger_event = { id = dvg_spain.79 days = 7 }
+		}
+		
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+dvg_spain.76 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.76.t
+	desc = dvg_spain.76.d
+	flavor = dvg_spain.76.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# Yes
+	option = {
+		name = dvg_spain.76.a
+		default_option = yes
+		
+		if = {
+			limit = { is_player = yes }
+			play_as = c:CAS
+			c:CAS = { annex_with_incorporation = c:ANL }
+		}
+		else = {
+			limit = { is_player = no }
+			c:CAS = { annex_with_incorporation = c:ANL }
+		}
+		c:SPA = {
+			trigger_event = { id = dvg_spain.79 days = 7 }
+		}
+		ai_chance = {
+			base = 100
+		}
+	}
+	# No
+	option = {
+		name = dvg_spain.76.b
+		default_option = yes
+		
+		c:SPA = {
+			trigger_event = { id = dvg_spain.79 days = 7 }
+		}
+		
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+dvg_spain.77 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.77.t
+	desc = dvg_spain.77.d
+	flavor = dvg_spain.77.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# Send offer to Andalusia
+	option = {
+		name = dvg_spain.77.a
+		default_option = yes
+		
+		c:ANL = {
+			trigger_event = { id = dvg_spain.78 days = 1 }
+		}
+		
+		ai_chance = {
+			base = 80
+		}
+	}
+	# No offer
+	option = {
+		name = dvg_spain.77.a
+		default_option = yes
+		
+		trigger_event = { id = dvg_spain.79 days = 1 }
+		
+		ai_chance = {
+			base = 20
+		}
+	}
+}
+dvg_spain.78 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.78.t
+	desc = dvg_spain.78.d
+	flavor = dvg_spain.78.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# ANL accepts the offer
+	option = {
+		name = dvg_spain.78.a
+		default_option = yes
+		
+		if = {
+			limit = { is_player = yes }
+			change_tag = SPA
+			c:SPA = {
+				trigger_event = { id = dvg_spain.79 days = 7 }
+				annex_with_incorporation = c:ANL
+			}
+		}
+		else = {
+			limit = { is_player = no }
+			annex_with_incorporation = c:ANL
+			trigger_event = { id = dvg_spain.79 days = 7 }
+		}
+		
+		ai_chance = {
+			base = 75
+			
+		}
+	}
+	#No Thank you
+	option = {
+		name = dvg_spain.78.b
+		
+		trigger_event = { id = dvg_spain.79 days = 7 }
+		
+		ai_chance = {
+			base = 25
+		}
+	}
+}
+dvg_spain.79 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.79.t
+	desc = dvg_spain.79.d
+	flavor = dvg_spain.79.f
+
+	event_image = {
+		video = "europenorthamerica_before_the_battle"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/before_the_battle"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# God help us all.
+	option = {
+		name = dvg_spain.79.a
+		default_option = yes
+		
+		trigger_event = { id = dvg_spain.80 days = 31 }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.80 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.80.t
+	desc = dvg_spain.80.d
+	flavor = dvg_spain.80.f
+
+	event_image = {
+		video = "europenorthamerica_american_civil_war"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/american_civil_war"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# The Spanish Civil War
+	option = {
+		name = dvg_spain.80.a
+		default_option = yes
+		
+		if = {
+			limit = { has_variable = CAS_independence }
+			create_diplomatic_play = {
+				target_country = c:CAS
+				war = yes
+				type = dp_rebellion_annex
+			}
+			c:CAS = {
+				add_journal_entry = {
+					type = je_castilian_war_of_independence
+				}
+			}
+		}
+		else_if = {
+			limit = { 
+				has_variable = CAS_independence
+				exists = s:STATE_BADAJOZ.region_state:SPA
+			}
+			create_diplomatic_play = {
+				target_country = c:CAS
+				war = yes
+				type = dp_rebellion_annex
+				
+				add_war_goal = {
+					holder = c:CAS
+					type = return_state
+					target_state = s:STATE_BADAJOZ.region_state:SPA
+					target_country = c:SPA
+				}
+			}
+			c:CAS = {
+				add_journal_entry = {
+					type = je_castilian_war_of_independence
+				}
+			}
+		}
+		else = {
+			create_diplomatic_play = {
+				target_country = c:CAS
+				war = yes
+				type = dp_rebellion_annex
+				
+				add_war_goal = {
+					holder = c:CAS
+					type = annex_country
+					target_country = c:SPA
+				}
+			}
+			c:CAS = {
+				add_journal_entry = {
+					type = je_spanish_civil_war_CAS
+				}
+			}
+			s:STATE_ALENTEJO = { add_claim = c:CAS }
+			s:STATE_BEIRA = { add_claim = c:CAS }
+			s:STATE_ESTREMADURA = { add_claim = c:CAS }
+			s:STATE_AZORES = { add_claim = c:CAS }
+			
+		}
+		
+		hidden_effect = {
+			if = {
+				limit = { exists = c:GLI }
+				create_diplomatic_play = {
+					target_country = c:GLI
+					war = yes
+					type = dp_rebellion_annex
+				}
+			}
+			if = {
+				limit = { 
+					exists = c:ATR
+					exists = c:ANL
+				}
+				create_diplomatic_play = {
+					target_country = c:ATR
+					war = yes
+					type = dp_rebellion_annex
+				}
+				create_diplomatic_play = {
+					target_country = c:ANL
+					war = yes
+					type = dp_rebellion_annex
+					
+					add_war_goal = {
+						holder = c:ANL
+						type = annex_country
+						target_country = c:SPA
+					}
+				}
+				c:ATR = {
+					trigger_event = { id = dvg_spain.81 }
+					add_journal_entry = {
+						type = je_castilian_war_of_independence_ATR
+					}
+				}
+				c:ANL = {
+					trigger_event = { id = dvg_spain.81 }
+					add_journal_entry = { type = je_spanish_civil_war_ANL }
+				}
+				c:CAS = {
+					trigger_event = { id = dvg_spain.84 }
+				}
+				s:STATE_ALENTEJO = { add_claim = c:ANL }
+				s:STATE_BEIRA = { add_claim = c:ANL }
+				s:STATE_ESTREMADURA = { add_claim = c:ANL }
+				s:STATE_AZORES = { add_claim = c:ANL }
+			}
+			else_if = {
+				limit = { 
+					exists = c:ATR 
+					NOT = { exists = c:ANL }
+				}
+				create_diplomatic_play = {
+					target_country = c:ATR
+					war = yes
+					type = dp_rebellion_annex
+				}
+				c:ATR = {
+					add_journal_entry = {
+						type = je_castilian_war_of_independence_ATR
+					}
+				}
+				c:CAS = {
+					trigger_event = { id = dvg_spain.82 }
+				}
+			}
+			else = {
+				limit = { 
+					exists = c:ANL 
+					NOT = { exists = c:ATR }
+				}
+				create_diplomatic_play = {
+					target_country = c:ANL
+					war = yes
+					type = dp_rebellion_annex
+					
+					add_war_goal = {
+						holder = c:ANL
+						type = annex_country
+						target_country = c:SPA
+					}
+				}
+				c:CAS = {
+					trigger_event = { id = dvg_spain.83 }
+				}
+				c:ANL = {
+					add_journal_entry = { type = je_spanish_civil_war_ANL }
+				}
+				s:STATE_ALENTEJO = { add_claim = c:ANL }
+				s:STATE_BEIRA = { add_claim = c:ANL }
+				s:STATE_ESTREMADURA = { add_claim = c:ANL }
+				s:STATE_AZORES = { add_claim = c:ANL }
+			}
+		}
+		
+		add_journal_entry = {
+			type = je_spanish_civil_war_SPA
+		}
+		set_variable = dvg_spanish_civil_war
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.81 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.81.t
+	desc = dvg_spain.81.d
+	flavor = dvg_spain.81.f
+
+	event_image = {
+		video = "europenorthamerica_american_civil_war"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/american_civil_war"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# Onwards!
+	option = {
+		name = dvg_spain.81.a
+		default_option = yes
+		
+		c:ATR = {
+			create_diplomatic_play = {
+				target_country = c:ANL
+				war = yes
+				type = dp_rebellion_annex
+				
+				add_war_goal = {
+					holder = c:ANL
+					type = annex_country
+					target_country = c:ATR
+				}
+			}
+		}
+		s:STATE_ASTURIAS = { add_claim = c:ANL }
+		s:STATE_NAVARRA = { add_claim = c:ANL }
+		s:STATE_GALICIA = { add_claim = c:ANL }
+		s:STATE_ANDALUSIA = { add_claim = c:ATR }
+		s:STATE_GRANADA = { add_claim = c:ATR }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.82 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.82.t
+	desc = dvg_spain.82.d
+	flavor = dvg_spain.82.f
+
+	event_image = {
+		video = "europenorthamerica_american_civil_war"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/american_civil_war"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# The Spanish Civil War
+	option = {
+		name = dvg_spain.82.a
+		default_option = yes
+		
+		create_diplomatic_play = {
+			target_country = c:ATR
+			war = yes
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:ATR
+				type = annex_country
+				target_country = c:CAS
+			}
+		}
+		s:STATE_ASTURIAS = { add_claim = c:CAS }
+		s:STATE_NAVARRA = { add_claim = c:CAS }
+		s:STATE_GALICIA = { add_claim = c:CAS }
+		s:STATE_ANDALUSIA = { add_claim = c:ATR }
+		s:STATE_GRANADA = { add_claim = c:ATR }
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.83 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.83.t
+	desc = dvg_spain.83.d
+	flavor = dvg_spain.83.f
+
+	event_image = {
+		video = "europenorthamerica_american_civil_war"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/american_civil_war"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# The Spanish Civil War
+	option = {
+		name = dvg_spain.83.a
+		default_option = yes
+		
+		create_diplomatic_play = {
+			target_country = c:ANL
+			war = yes
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:CAS
+				type = annex_country
+				target_country = c:ANL
+			}
+		}
+		s:STATE_ASTURIAS = { add_claim = c:ANL }
+		s:STATE_NAVARRA = { add_claim = c:ANL }
+		s:STATE_GALICIA = { add_claim = c:ANL }
+		s:STATE_ANDALUSIA = { add_claim = c:CAS }
+		s:STATE_GRANADA = { add_claim = c:CAS }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.84 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.84.t
+	desc = dvg_spain.84.d
+	flavor = dvg_spain.84.f
+
+	event_image = {
+		video = "europenorthamerica_american_civil_war"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/american_civil_war"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# The Spanish Civil War
+	option = {
+		name = dvg_spain.84.a
+		default_option = yes
+		
+		create_diplomatic_play = {
+			target_country = c:ATR
+			war = yes
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:ATR
+				type = annex_country
+				target_country = c:CAS
+			}
+		}
+		create_diplomatic_play = {
+			target_country = c:ANL
+			war = yes
+			type = dp_rebellion_annex
+			
+			add_war_goal = {
+				holder = c:ANL
+				type = annex_country
+				target_country = c:CAS
+			}
+		}
+		s:STATE_ASTURIAS = { add_claim = ROOT }
+		s:STATE_NAVARRA = { add_claim = ROOT }
+		s:STATE_GALICIA = { add_claim = ROOT }
+		s:STATE_ANDALUSIA = { add_claim = ROOT }
+		s:STATE_GRANADA = { add_claim = ROOT }
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.85 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.85.t
+	desc = dvg_spain.85.d
+	flavor = dvg_spain.85.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# The sun rises once more upon Espanha
+	option = {
+		name = dvg_spain.85.a
+		default_option = yes
+		
+		remove_variable = dvg_spanish_civil_war
+		set_global_variable = dvg_spanish_civil_war_over
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.86 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.86.t
+	desc = dvg_spain.86.d
+	flavor = dvg_spain.86.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# Una España todas las personas
+	option = {
+		name = dvg_spain.86.a
+		default_option = yes
+		
+		if = {
+			limit = { NOT = { country_has_primary_culture = cu:spanish } }
+			add_primary_culture = cu:spanish
+		}
+		add_primary_culture = cu:galician
+		
+		s:STATE_ARAGON = {
+			add_claim = ROOT
+		}
+		s:STATE_BALEARES = {
+			add_claim = ROOT
+		}
+		s:STATE_CATALONIA = {
+			add_claim = ROOT
+		}
+		s:STATE_VALENCIA = {
+			add_claim = ROOT
+		}
+		if = {
+			limit = {
+				NOR = {
+					AND = {
+						exists = c:IBE
+						this = c:IBE
+					}
+					AND = {
+						exists = c:SPC
+						this = c:SPC
+					}
+				}
+			}
+			add_journal_entry = {
+				type = je_form_iberia
+			}
+		}
+		if = {
+			limit = { NOT = { has_global_variable = dvg_spanish_civil_war_over } }
+			set_global_variable = dvg_spain_civil_war_averted
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.87 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.87.t
+	desc = dvg_spain.87.d
+	flavor = dvg_spain.87.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# Uma Espanha, com liberdade e justiça para todos
+	option = {
+		name = dvg_spain.87.a
+		default_option = yes
+		
+		if = {
+			limit = { NOT = { country_has_primary_culture = cu:spanish } }
+			add_primary_culture = cu:spanish
+		}
+		add_primary_culture = cu:galician
+		if = {
+			limit = { NOT = { has_global_variable = dvg_spanish_civil_war_over } }
+			set_global_variable = dvg_spain_civil_war_averted
+		}
+		s:STATE_ARAGON = {
+			add_claim = ROOT
+		}
+		s:STATE_BALEARES = {
+			add_claim = ROOT
+		}
+		s:STATE_CATALONIA = {
+			add_claim = ROOT
+		}
+		s:STATE_VALENCIA = {
+			add_claim = ROOT
+		}
+		if = {
+			limit = {
+				NOR = {
+					AND = {
+						exists = c:IBE
+						this = c:IBE
+					}
+					AND = {
+						exists = c:SPC
+						this = c:SPC
+					}
+				}
+			}
+			add_journal_entry = {
+				type = je_form_iberia
+			}
+		}
+		set_global_variable = dvg_spain_status_quo
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.88 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.88.t
+	desc = dvg_spain.88.d
+	flavor = dvg_spain.88.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# A Espanha, indivisa!
+	option = {
+		name = dvg_spain.88.a
+		default_option = yes
+		
+		if = {
+			limit = { NOT = { has_global_variable = dvg_spanish_civil_war_over } }
+			set_global_variable = dvg_spain_civil_war_averted
+		}
+		set_global_variable = dvg_spain_centralized
+		s:STATE_ARAGON = {
+			add_claim = ROOT
+		}
+		s:STATE_BALEARES = {
+			add_claim = ROOT
+		}
+		s:STATE_CATALONIA = {
+			add_claim = ROOT
+		}
+		s:STATE_VALENCIA = {
+			add_claim = ROOT
+		}
+		if = {
+			limit = {
+				NOR = {
+					AND = {
+						exists = c:IBE
+						this = c:IBE
+					}
+					AND = {
+						exists = c:SPC
+						this = c:SPC
+					}
+				}
+			}
+			add_journal_entry = {
+				type = je_form_iberia
+			}
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.89 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.89.t
+	desc = dvg_spain.89.d
+	flavor = dvg_spain.89.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# Spain will be Castilian at last.
+	option = {
+		name = dvg_spain.89.a
+		default_option = yes
+		
+		trigger_event = { id = dvg_spain.90 }
+		
+		s:STATE_ARAGON = {
+			add_claim = ROOT
+		}
+		s:STATE_BALEARES = {
+			add_claim = ROOT
+		}
+		s:STATE_CATALONIA = {
+			add_claim = ROOT
+		}
+		s:STATE_VALENCIA = {
+			add_claim = ROOT
+		}
+		if = {
+			limit = {
+				NOR = {
+					AND = {
+						exists = c:IBE
+						this = c:IBE
+					}
+					AND = {
+						exists = c:SPC
+						this = c:SPC
+					}
+				}
+			}
+			add_journal_entry = {
+				type = je_form_iberia
+			}
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.90 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.90.t
+	desc = dvg_spain.90.d
+	flavor = dvg_spain.90.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# ¿Una España?
+	option = {
+		name = dvg_spain.90.a
+		default_option = yes
+		
+		s:STATE_ANDALUSIA = {
+			remove_homeland = cu:portuguese
+		}
+		s:STATE_ASTURIAS = {
+			remove_homeland = cu:portuguese
+		}
+		s:STATE_BADAJOZ = {
+			remove_homeland = cu:portuguese
+		}
+		s:STATE_CASTILE = {
+			remove_homeland = cu:portuguese
+		}
+		s:STATE_CARTAGENA = {
+			remove_homeland = cu:portuguese
+		}
+		s:STATE_GRANADA= {
+			remove_homeland = cu:portuguese
+		}
+		s:STATE_TOLEDO = {
+			remove_homeland = cu:portuguese
+		}
+		s:STATE_ARAGON = {
+			add_claim = ROOT
+		}
+		s:STATE_BALEARES = {
+			add_claim = ROOT
+		}
+		s:STATE_CATALONIA = {
+			add_claim = ROOT
+		}
+		s:STATE_VALENCIA = {
+			add_claim = ROOT
+		}
+		if = {
+			limit = {
+				NOR = {
+					AND = {
+						exists = c:IBE
+						this = c:IBE
+					}
+					AND = {
+						exists = c:SPC
+						this = c:SPC
+					}
+				}
+			}
+			add_journal_entry = {
+				type = je_form_iberia
+			}
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.91 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.91.t
+	desc = dvg_spain.91.d
+	flavor = dvg_spain.91.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# ¡Ave Maria!
+	option = {
+		name = dvg_spain.91.a
+		default_option = yes
+		
+		s:STATE_ANDALUSIA = {
+			remove_homeland = cu:portuguese
+		}
+		s:STATE_ASTURIAS = {
+			remove_homeland = cu:portuguese
+		}
+		s:STATE_BADAJOZ = {
+			remove_homeland = cu:portuguese
+		}
+		s:STATE_CASTILE = {
+			remove_homeland = cu:portuguese
+		}
+		s:STATE_CARTAGENA = {
+			remove_homeland = cu:portuguese
+		}
+		s:STATE_GRANADA= {
+			remove_homeland = cu:portuguese
+		}
+		s:STATE_TOLEDO = {
+			remove_homeland = cu:portuguese
+		}
+		s:STATE_ARAGON = {
+			add_claim = ROOT
+		}
+		s:STATE_BALEARES = {
+			add_claim = ROOT
+		}
+		s:STATE_CATALONIA = {
+			add_claim = ROOT
+		}
+		s:STATE_VALENCIA = {
+			add_claim = ROOT
+		}
+		if = {
+			limit = {
+				NOR = {
+					AND = {
+						exists = c:IBE
+						this = c:IBE
+					}
+					AND = {
+						exists = c:SPC
+						this = c:SPC
+					}
+				}
+			}
+			add_journal_entry = {
+				type = je_form_iberia
+			}
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.92 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.92.t
+	desc = dvg_spain.92.d
+	flavor = dvg_spain.92.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# May Spain’s death be our regeneration!
+	option = {
+		name = dvg_spain.92.a
+		default_option = yes
+		
+		s:STATE_ANDALUSIA = {
+			remove_homeland = cu:portuguese
+		}
+		s:STATE_ASTURIAS = {
+			remove_homeland = cu:portuguese
+		}
+		s:STATE_BADAJOZ = {
+			remove_homeland = cu:portuguese
+		}
+		s:STATE_CASTILE = {
+			remove_homeland = cu:portuguese
+		}
+		s:STATE_CARTAGENA = {
+			remove_homeland = cu:portuguese
+		}
+		s:STATE_GRANADA= {
+			remove_homeland = cu:portuguese
+		}
+		s:STATE_TOLEDO = {
+			remove_homeland = cu:portuguese
+		}
+		s:STATE_ARAGON = {
+			add_claim = ROOT
+		}
+		s:STATE_BALEARES = {
+			add_claim = ROOT
+		}
+		s:STATE_CATALONIA = {
+			add_claim = ROOT
+		}
+		s:STATE_VALENCIA = {
+			add_claim = ROOT
+		}
+		if = {
+			limit = {
+				NOR = {
+					AND = {
+						exists = c:IBE
+						this = c:IBE
+					}
+					AND = {
+						exists = c:SPC
+						this = c:SPC
+					}
+				}
+			}
+			add_journal_entry = {
+				type = je_form_iberia
+			}
+		}
+		c:SPA = {
+			trigger_event = { id = dvg_spain.93 }
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.93 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.93.t
+	desc = dvg_spain.93.d
+	flavor = dvg_spain.93.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# Spain’s story may be over, but the story of her children is not.
+	option = {
+		name = dvg_spain.93.a
+		default_option = yes
+		
+		set_global_variable = dvg_spain_collapsed
+		if = {
+			limit = { exists = c:DUA }
+			c:DUA = {
+				trigger_event = { id = dvg_spain.98 }
+			}
+		}
+		else = {
+			limit = { 
+				NOT = { exists = c:DUA } 
+			}
+			random_country = {
+				limit = { owns_entire_state_region = STATE_HOME_COUNTIES }
+				trigger_event = { id = dvg_spain.99 }
+			}
+		}
+		add_journal_entry = {
+			type = je_reform_spain
+		}
+		if = { #In case ANL manages to white peace Lisbon and the Junta
+			limit = { exists = c:ANL }
+			c:ANL = {
+				add_journal_entry = {
+					type = je_reform_spain
+				}
+			}
+		}
+		change_tag = POR
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.94 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.94.t
+	desc = dvg_spain.94.d
+	flavor = dvg_spain.94.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# Let us all bask in the light of the future!
+	option = {
+		name = dvg_spain.94.a
+		default_option = yes
+		
+		add_primary_culture = cu:portuguese
+		add_primary_culture = cu:galician
+		
+		trigger_event = { id = dvg_spain.96 }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.95 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.95.t
+	desc = dvg_spain.95.d
+	flavor = dvg_spain.95.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# Together, we are strong!
+	option = {
+		name = dvg_spain.95.a
+		default_option = yes
+		
+		set_global_variable = ANL_faction_collapse
+		trigger_event = { id = dvg_spain.96 }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.96 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.96.t
+	desc = dvg_spain.96.d
+	flavor = dvg_spain.96.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# A new Spain for a new era!
+	option = {
+		name = dvg_spain.96.a
+		default_option = yes
+		
+		change_tag = SPA
+		if = {
+			limit = { NOT = { country_has_primary_culture = cu:spanish } }
+			add_primary_culture = cu:spanish
+		}
+		add_primary_culture = cu:galician
+		if = {
+			limit = {
+				NOR = {
+					AND = {
+						exists = c:IBE
+						this = c:IBE
+					}
+					AND = {
+						exists = c:SPC
+						this = c:SPC
+					}
+				}
+			}
+			add_journal_entry = {
+				type = je_form_iberia
+			}
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.97 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.97.t
+	desc = dvg_spain.97.d
+	flavor = dvg_spain.97.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		exists = c:SPA
+		this = c:SPA
+		has_global_variable = ANL_faction_collapse
+		is_at_war = no
+	}
+	
+	# The Communists are defeated
+	option = {
+		name = dvg_spain.97.a
+		default_option = yes
+		
+		remove_global_variable = ANL_faction_collapse
+		
+		ai_chance = {
+			base = 35
+		}
+	}
+	# The revolution is victorious
+	option = {
+		name = dvg_spain.97.b
+		
+		ig:ig_trade_unions = {
+			add_ruling_interest_group = yes
+		}
+		ig:ig_landowners = {
+			remove_ruling_interest_group = yes
+		}
+		activate_law = law_type:law_council_republic
+		activate_law = law_type:law_autocracy
+		activate_law = law_type:law_closed_borders
+		activate_law = law_type:law_slavery_banned
+		activate_law = law_type:law_old_age_pension
+		activate_law = law_type:law_state_atheism
+		activate_law = law_type:law_public_health_insurance
+		activate_law = law_type:law_outlawed_dissent
+		activate_law = law_type:law_militarized_police_force
+		activate_law = law_type:law_worker_protections
+		activate_law = law_type:law_secret_police
+		activate_law = law_type:law_mass_conscription
+		activate_law = law_type:law_command_economy
+		activate_law = law_type:law_collectivized_agriculture
+		activate_law = law_type:law_protectionism
+		
+		ai_chance = {
+			base = 65
+		}
+	}
+}
+dvg_spain.98 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.98.t
+	desc = dvg_spain.98.d
+	flavor = dvg_spain.98.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# Keep calm and carry on.
+	option = {
+		name = dvg_spain.98.a
+		default_option = yes
+		
+		every_state = {
+			limit = {
+				c:POR ?= owner
+				NOT = { region = sr:region_iberia }
+			}
+			set_state_owner = c:DUA
+		}
+		every_country = {
+			limit = {
+				is_subject_of = c:POR
+				NOT = { capital.region = sr:region_iberia }
+			}
+			trigger_event = { id = dvg_spain.100 }
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.99 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.99.t
+	desc = dvg_spain.99.d
+	flavor = dvg_spain.99.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# Keep calm and carry on.
+	option = {
+		name = dvg_spain.99.a
+		default_option = yes
+		
+		every_state = {
+			limit = {
+				c:POR ?= owner
+				NOT = { region = sr:region_iberia }
+			}
+			set_state_owner = root
+		}
+		every_country = {
+			limit = {
+				is_subject_of = c:POR
+				NOT = { capital.region = sr:region_iberia }
+			}
+			trigger_event = { id = dvg_spain.100 }
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.100 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.100.t
+	desc = dvg_spain.100.d
+	flavor = dvg_spain.100.f
+
+	event_image = {
+		video = "ep1_transfer_of_authority"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/ep1/transfer_of_authority"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# Free at last!
+	option = {
+		name = dvg_spain.100.a
+		default_option = yes
+		
+		if = {
+			limit = { is_subject_type = subject_type_colony }
+			c:POR = {
+				remove_diplomatic_pact = {
+					country = root
+					type = colony
+				}
+			}
+		}
+		else_if = {
+			limit = { is_subject_type = subject_type_protectorate }
+			c:POR = {
+				remove_diplomatic_pact = {
+					country = root
+					type = protectorate
+				}
+			}
+		}
+		else_if = {
+			limit = { is_subject_type = subject_type_dominion }
+			c:POR = {
+				remove_diplomatic_pact = {
+					country = root
+					type = dominion
+				}
+			}
+		}
+		else_if = {
+			limit = { is_subject_type = subject_type_chartered_company }
+			c:POR = {
+				remove_diplomatic_pact = {
+					country = root
+					type = chartered_company
+				}
+			}
+		}
+		else = {
+			limit = { is_subject_type = subject_type_personal_union }
+			c:POR = {
+				remove_diplomatic_pact = {
+					country = root
+					type = personal_union
+				}
+			}
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.101 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.101.t
+	desc = dvg_spain.101.d
+	flavor = dvg_spain.101.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		exists = c:SPA
+		this = c:SPA
+		OR = {
+			AND = {
+				c:GCO = { 
+					liberty_desire >=50
+					is_subject_of = c:SPA 
+				}
+				c:UCA = { 
+					liberty_desire >=50
+					is_subject_of = c:SPA 
+				}
+			}
+			AND = {
+				c:MEX = { 
+					liberty_desire >=50
+					is_subject_of = c:SPA 
+				}
+				c:LUS = { 
+					liberty_desire >=50
+					is_subject_of = c:SPA 
+				}
+				c:UCA = { 
+					liberty_desire >=50
+					is_subject_of = c:SPA 
+				}
+			}
+		}
+		
+		country_rank < rank_value:great_power
+		NOT = { has_global_variable = new_spain_warning }
+	}
+	
+	# We will not falter!
+	option = {
+		name = dvg_spain.101.a
+		default_option = yes
+		
+		set_global_variable = new_spain_warning
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.102 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.102.t
+	desc = dvg_spain.102.d
+	flavor = dvg_spain.102.f
+
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	immediate = {
+		every_character = {
+			limit = { has_variable = is_manuel_diaz }
+			save_scope_as = scope_manuel_diaz
+		}
+	}
+	trigger = {
+	}
+	
+	# And thus ends the tale of the Spanish Empire.
+	option = {
+		name = dvg_spain.102.a
+		default_option = yes
+		
+		change_variable = {
+			name = dvg_centralization_var
+			add = 3
+		}
+		change_variable = {
+			name = dvg_instability_var
+			add = 3
+		}
+		if = {
+			limit = {
+				exists = c:GCO
+				c:GCO = { is_subject_of = c:SPA }
+			}
+			c:GCO = {
+				ruler = { kill_character = yes }
+				scope:scope_manuel_diaz = {
+					set_character_as_ruler = yes
+				}
+			}
+			remove_diplomatic_pact = {
+				country = c:GCO
+				type = colony
+			}
+		}
+		else = {
+			c:MEX = {
+				ruler = { kill_character = yes }
+				scope:scope_manuel_diaz = {
+					set_character_as_ruler = yes
+				}
+			}
+			remove_diplomatic_pact = {
+				country = c:MEX
+				type = colony
+			}
+			remove_diplomatic_pact = {
+				country = c:LUS
+				type = colony
+			}
+			remove_diplomatic_pact = {
+				country = c:UCA
+				type = colony
+			}
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.103 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.103.t
+	desc = dvg_spain.103.d
+	flavor = dvg_spain.103.f
+
+	event_image = {
+		video = "votp_monarch_holding_court"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/votp/monarch_holding_court"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# A commonwealth upon which the sun shall never again set!
+	option = {
+		name = dvg_spain.103.a
+		default_option = yes
+		
+		add_primary_culture = cu:lusitanian
+		add_primary_culture = cu:mexican
+		
+		change_tag = SPC
+		if = {
+			limit = {
+				exists = c:GCO
+				c:GCO = { is_subject_of = root }
+			}
+			annex_with_incorporation = c:GCO
+		}
+		else = {
+			annex_with_incorporation = c:MEX
+			annex_with_incorporation = c:LUS
+		}
+		
+		add_modifier = {
+			name = dvg_emperor_of_the_indias
+			days = -1
+		}
+		trigger_event = { id = dvg_spain.104 }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.104 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.104.t
+	desc = dvg_spain.104.d
+	flavor = dvg_spain.104.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# Thy brother was dead, and is alive again: was lost, and is found.
+	option = {
+		name = dvg_spain.104.a
+		default_option = yes
+		
+		if = {
+			limit = { NOT = { country_has_primary_culture = cu:spanish } }
+			add_primary_culture = cu:spanish
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.105 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.105.t
+	desc = dvg_spain.105.d
+	flavor = dvg_spain.105.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		exists = c:SPA
+		this = c:SPA
+		is_at_war = no
+		year = 1860
+		NOT = { has_variable = denied_independence }
+	}
+	
+	# This can only be good for the empire.
+	option = {
+		name = dvg_spain.105.a
+		default_option = yes
+		
+		remove_diplomatic_pact = {
+			country = c:GRA
+			type = colony
+		}
+		change_relations = {
+			country = c:GRA
+			value = 100
+		}
+		ai_chance = {
+			base = 80
+			
+			modifier = {
+				trigger = {
+					OR = {
+						has_government_type = gov_council_dictatorship
+						has_government_type = gov_fascist_state
+						has_government_type = gov_fascist_corporate_state
+						has_government_type = gov_presidential_dictatorship
+						has_government_type = gov_junta
+					}
+				}
+				add = -80
+			}
+			modifier = {
+				trigger = {
+					has_government_type = gov_absolute_kingdom
+				}
+				add = -60
+			}
+			modifier = {
+				trigger = {
+					OR = {
+						has_government_type = gov_presidential_democracy
+						has_government_type = gov_parliamentary_democracy
+						has_government_type = gov_constitutional_kingdom
+						has_government_type = gov_council_republic
+					}
+				}
+				add = 40
+			}
+		}
+	}
+	#No, they shall remain under our direct control.
+	option = {
+		name = dvg_spain.105.b
+		
+		set_variable = denied_independence
+		
+		change_relations = {
+			country = c:GRA
+			value = -50
+		}
+		c:GRA = {
+			add_liberty_desire = 25
+		}
+		ai_chance = {
+			base = 20
+			
+			modifier = {
+				trigger = {
+					has_government_type = gov_absolute_kingdom
+				}
+				add = 15
+			}
+			modifier = {
+				trigger = {
+					OR = {
+						has_government_type = gov_presidential_democracy
+						has_government_type = gov_parliamentary_democracy
+						has_government_type = gov_constitutional_kingdom
+						has_government_type = gov_council_republic
+					}
+				}
+				add = -10
+			}
+		}
+	}
+	# Onwards to New Granada!
+	option = {
+		name = dvg_spain.105.c
+		
+		remove_diplomatic_pact = {
+			country = c:GRA
+			type = colony
+		}
+		c:SPA = {
+			change_relations = {
+				country = c:GRA
+				value = 100
+			}
+		}
+		play_as = c:GRA
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+dvg_spain.106 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.106.t
+	desc = dvg_spain.106.d
+	flavor = dvg_spain.106.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		exists = c:SPA
+		this = c:SPA
+		is_at_war = no
+		year = 1860
+		NOT = { has_variable = denied_independence }
+	}
+	
+	# This can only be good for the empire.
+	option = {
+		name = dvg_spain.106.a
+		default_option = yes
+		
+		remove_diplomatic_pact = {
+			country = c:CUB
+			type = colony
+		}
+		change_relations = {
+			country = c:CUB
+			value = 100
+		}
+		
+		ai_chance = {
+			base = 80
+			
+			modifier = {
+				trigger = {
+					OR = {
+						has_government_type = gov_council_dictatorship
+						has_government_type = gov_fascist_state
+						has_government_type = gov_fascist_corporate_state
+						has_government_type = gov_presidential_dictatorship
+						has_government_type = gov_junta
+					}
+				}
+				add = -80
+			}
+			modifier = {
+				trigger = {
+					OR = {
+						has_government_type = gov_absolute_kingdom
+						has_government_type = gov_absolute_empire
+						has_government_type = gov_empire
+						has_government_type = gov_kingdom
+						has_government_type = gov_feudal_kingdom
+						has_government_type = gov_feudal_empire
+					}
+				}
+				add = -60
+			}
+			modifier = {
+				trigger = {
+					OR = {
+						has_government_type = gov_presidential_democracy
+						has_government_type = gov_parliamentary_democracy
+						has_government_type = gov_constitutional_kingdom
+						has_government_type = gov_constitutional_empire
+						has_government_type = gov_council_republic
+					}
+				}
+				add = 40
+			}
+		}
+	}
+	#No, they shall remain under our direct control.
+	option = {
+		name = dvg_spain.105.b
+		
+		change_relations = {
+			country = c:CUB
+			value = -50
+		}
+		c:CUB = {
+			add_liberty_desire = 25
+		}
+		ai_chance = {
+			base = 20
+			
+			modifier = {
+				trigger = {
+					OR = {
+						has_government_type = gov_absolute_kingdom
+						has_government_type = gov_absolute_empire
+						has_government_type = gov_empire
+						has_government_type = gov_kingdom
+						has_government_type = gov_feudal_kingdom
+						has_government_type = gov_feudal_empire
+					}
+				}
+				add = 15
+			}
+			modifier = {
+				trigger = {
+					OR = {
+						has_government_type = gov_presidential_democracy
+						has_government_type = gov_parliamentary_democracy
+						has_government_type = gov_constitutional_kingdom
+						has_government_type = gov_constitutional_empire
+						has_government_type = gov_council_republic
+					}
+				}
+				add = -10
+			}
+		}
+	}
+	# Onwards to Cuba!
+	option = {
+		name = dvg_spain.106.c
+		
+		remove_diplomatic_pact = {
+			country = c:CUB
+			type = colony
+		}
+		c:SPA = {
+			change_relations = {
+				country = c:CUB
+				value = 100
+			}
+		}
+		play_as = c:CUB
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+dvg_spain.107 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.107.t
+	desc = dvg_spain.107.d
+	flavor = dvg_spain.107.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# We shall finish what Pizarro started!
+	option = {
+		name = dvg_spain.107.a
+		default_option = yes
+		
+		create_diplomatic_play = {
+			target_country = c:TWT
+			war = yes
+			type = dp_annex_war
+			
+			add_war_goal = {
+				holder = c:TWT
+				type = annex_country
+				target_country = c:QUI
+			}
+		}
+		add_journal_entry = {
+			type = je_the_last_andine_war_SPA
+		}
+		c:TWT = {
+			trigger_event = { id = dvg_spain.108 }
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.108 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.108.t
+	desc = dvg_spain.108.d
+	flavor = dvg_spain.108.f
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# Onwards, to war!
+	option = {
+		name = dvg_spain.108.a
+		default_option = yes
+		
+		add_journal_entry = {
+			type = je_the_last_andine_war_TWT
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.109 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.109.t
+	desc = dvg_spain.109.d
+	flavor = dvg_spain.109.f
+
+	event_image = {
+		video = "votp_monarch_holding_court"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/votp/monarch_holding_court"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	immediate = {
+		c:QUI = {
+			every_scope_character = {
+				limit = { has_variable = is_juan_pablo }
+				save_scope_as = scope_juan_pablo
+			}
+		}
+		if = {
+			limit = { exists = s:STATE_NEAR_COLLASUYU.region_state:SPA }
+			create_country = {
+				tag = QUL
+				origin = this
+				state = s:STATE_ANTISUYU.region_state:SPA
+				state = s:STATE_ATACAMA.region_state:SPA
+				state = s:STATE_CATAMARCA.region_state:SPA
+				state = s:STATE_CHARCAS.region_state:SPA
+				state = s:STATE_KUCHICHAY.region_state:SPA
+				state = s:STATE_NEAR_COLLASUYU.region_state:SPA
+				state = s:STATE_TILCARA.region_state:SPA
+				state = s:STATE_TIWANAKU.region_state:SPA
+				
+				on_created = {
+					add_primary_culture = cu:portuguese
+					set_state_religion = rel:catholic
+					set_country_type = colonial
+					
+					c:SPA = {
+						create_diplomatic_pact = {
+							country = c:QUL
+							type = colony
+						}
+					}
+				}
+			}
+		}
+	}
+	trigger = {
+	}
+	
+	# Plus Ultra!
+	option = {
+		name = dvg_spain.109.a
+		default_option = yes
+		
+		s:STATE_CUNTISUYU.region_state:SPA = {
+			set_state_owner = c:QUI
+		}
+		s:STATE_CUZCO.region_state:SPA = {
+			set_state_owner = c:QUI
+		}
+		s:STATE_NEAR_ANTISUYU.region_state:SPA = {
+			set_state_owner = c:QUI
+		}
+		c:QUI = {
+			scope:scope_juan_pablo = {
+				transfer_character = c:QUL
+				set_character_as_ruler = yes
+			}
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_spain.110 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain.110.t
+	desc = dvg_spain.110.d
+	flavor = dvg_spain.110.f
+
+	event_image = {
+		video = "votp_monarch_holding_court"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/votp/monarch_holding_court"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# Fortune favours the bold!
+	option = {
+		name = dvg_spain.110.a
+		default_option = yes
+		
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}

@@ -1,5 +1,5 @@
 ﻿je_dvg_greek_nationalism = {
-	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	icon = "gfx/interface/icons/invention_icons/nationalism.dds"
 	
 	group = je_group_historical_content
 
@@ -9,15 +9,30 @@
 				is_homeland = cu:greek
 			}
 		}
-		exists = c:VEN
-		c:VEN = ROOT
+		#exists = c:VEN
+		#c:VEN = ROOT
 		any_scope_character = {
 			has_variable = zimisces_var
+		}
+		
+		NAND = {
+			exists = c:GRE
+			c:GRE = ROOT
 		}
 	}
 
 	possible = {
-		has_technology_researched = nationalism
+		OR = {
+			has_technology_researched = nationalism
+			AND = {
+				exists = c:GRE
+				c:GRE = {
+					has_technology_researched = nationalism
+				}
+			}
+			
+
+		}
 	}
 
 	immediate = {
@@ -31,7 +46,7 @@
 				
 			}
 			trigger_event = {
-				id = dvg_ven.201
+				id = dvg_greece.201
 			}
 
 		}
@@ -40,52 +55,126 @@
 			value = 0
 		}
 	}
+	on_weekly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					exists = c:GRE
+					
+					c:GRE = {
+						ruler = {
+							NOT = {
+								has_variable = zimisces_var
+							}
+						}
+						any_scope_character = {
+							has_variable = zimisces_var
+						}
+					}
+				}
+				
+			}
+		}
+		
+	}
 	on_monthly_pulse = {
 		effect = {
 			if = {
 				limit = {
-					cu:greek = {
-			 culture_is_discriminated_in = ROOT 
-			}	
+					cultural_acceptance_base = { target = cu:greek value < acceptance_status_4 }	
+					exists = c:GRE
 				}
-				change_variable = {
-					name = greece_var
-					add = 1
+				c:GRE = {
+					add_liberty_desire = 0.10
 				}
 			}
 			if = {
 				limit = {
-					cu:greek = {
-				culture_secession_progress = {
-					target = ROOT
-					value > 0.5
-				}	
+					cultural_acceptance_base = { target = cu:greek value >= acceptance_status_4 }
+					exists = c:GRE
 				}
-				
-						}
-				change_variable = {
-					name = greece_var
-					add = 24
+				c:GRE = {
+					add_liberty_desire = -0.20
 				}
 			}
+			if = {
+				limit = {
+					country_has_voting_franchise = yes
+					
+					exists = c:GRE
+				}
+				c:GRE = {
+					add_liberty_desire = -0.20
+				}
+			}
+			
 			if = {
 				limit = {
 					NOT = {
 						exists = c:GRE
 						has_variable = greece_to_liberate
-
 					}
 				}
 				set_variable = greece_to_liberate
+
+				
+			}
+			if = {
+				limit = {
+					has_variable = council_start
+					NOT = {
+						has_variable = greece_citizen_var
+					}
+				}
 				trigger_event = {
-					id = dvg_ven.205
+					id = dvg_greece.210
+				}
+				
+			}
+			if = {
+				limit = {
+					has_variable = council_start
+					NOT = {
+						has_variable = greece_voting_var
+					}
+				}
+				trigger_event = {
+					id = dvg_greece.211
 				}
 			}
+			if = {
+			#Greek Integration
+
+				limit = {
+					has_variable = council_start
+					has_variable= greece_citizen_var
+					OR = {
+						has_variable = greece_voting_var
+						has_law = law_type:law_census_voting
+					}	
+					OR = {
+						has_variable= greece_citizen_var
+						cultural_acceptance_base = { target = cu:greek value >= acceptance_status_4 }
+					}
+					
+				}
+				trigger_event = {
+					id = dvg_greece.212
+				}
+			}
+			#Greek Revolt
+			
 		}
 	}
 	
 
 	complete = {
+		c:GRE = {
+			liberty_desire > 90
+		}
+		has_variable = council_start
+		has_variable = greece_voting_var
+		has_variable= greece_citizen_var
 		
 	}
 
@@ -96,18 +185,108 @@
 				has_state_in_state_region = STATE_CYPRUS
 			}
 			trigger_event = {
-				id = dvg_ven.202
+				id = dvg_greece.203
 			}
 		}
 	}
+	fail = {
+		NOT = {
+			cultural_acceptance_base = { target = cu:greek value >= acceptance_status_4 }
+			
+			has_law = law_type:law_oligarchy
+			has_law = law_type:law_autocracy
+		}
+		c:GRE = {
+			liberty_desire < 25
+		}
 
-	weight = 20
+	}
+	invalid = {
+		OR = {
+			has_variable = council_cancelled
+			AND = {
+				exists = c:GRE
+				is_diplomatic_play_enemy_of = c:GRE
+			}
+			NOT = {
+				any_scope_state = {
+					state_region = {
+						is_homeland = cu:greek
+					}
+				}
+				any_subject_or_below = {
+					country_has_primary_culture = cu:greek
+				}
+			}
+		}
+		
+		
+	}
+	on_fail = {
+		trigger_event = {
+			id = dvg_greece.212
+		}
+	}
+
+	weight = 500
 	should_be_pinned_by_default = yes
-	progressbar = yes
 	goal_add_value = {
 		value = 48
 	}
+	timeout = 180
+	on_timeout = {
+		trigger_event = {
+			id = dvg_greece.203
+		}
+	}
+	
 }
+
+#je_rum_greece_war = {
+#	icon = "gfx/interface/icons/event_icons/event_military.dds"
+#	
+#	group = je_group_historical_content
+#
+#	is_shown_when_inactive = {
+#		exists = c:WRE
+#		exists = c:GRE
+#		OR = {
+#			ROOT = c:WRE
+#			ROOT = c:GRE
+#		}
+#	}
+#
+#	possible = {
+#		c:WRE = {
+#			is_diplomatic_play_enemy_of = c:GRE
+#		}
+#	}
+#
+#	immediate = {
+#		trigger_event = {
+#			id = dvg_greece.1
+#		}
+#	}
+#
+#	
+#
+#	complete = {
+#		is_diplomatic_play_committed_participant = no
+#		is_subject = no
+#	}
+#
+#	on_complete = {
+#		
+#	}
+#	invalid = {
+#		NOT = {
+#			exists = c:WRE
+#		}
+#	}
+#
+#	weight = 20
+#	should_be_pinned_by_default = yes
+#}
 
 je_own_greece = {
 	icon = "gfx/interface/icons/event_icons/event_military.dds"
@@ -126,20 +305,116 @@ je_own_greece = {
 	}
 
 	
-
 	complete = {
-		OR = {
-			c:GRE = {
-				is_subject_of = ROOT
-			}
-			AND = {
-				owns_entire_state_region = STATE_ATTICA
+		custom_tooltip = {
+			text = greece_exist_tt
+
+			NOT = {
+				exists = c:GRE
 			}
 		}
+			
+			
+		
 	}
 
 	on_complete = {
+		trigger_event = {
+			id = dvg_greece.217
+		}
+	}
+	fail = {
+		NOT = {
+			exists = c:MCD
+		}
+	}
+	on_fail = {
+		c:GRE = {
+			trigger_event = {
+				id = dvg_greece.218
+			}
+		}
+
+	}
+
+	weight = 20
+	should_be_pinned_by_default = yes
+}
+
+je_zimisces_revolt = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	
+	group = je_group_historical_content
+
+	is_shown_when_inactive = {
+		exists = c:GRE
+		exists = c:VEN
+		c:GRE = ROOT
+		any_scope_character = {
+			has_variable = zimisces_var
+		}
+	}
+
+	possible = {
+		is_diplomatic_play_enemy_of = c:VEN
+
+
+	}
+
+	immediate = {
 		
+	}
+	
+	complete = {
+		is_diplomatic_play_committed_participant = no
+		is_subject = no
+	}
+
+	on_complete = {
+		c:VEN = {
+			trigger_event = {
+				id = dvg_greece.209
+			}
+		}
+		if = {
+			limit = {
+				any_scope_character = {
+					has_variable = zimisces_var
+				}
+			}
+			trigger_event = {
+				id = dvg_greece.214 
+			}
+		}
+		
+	
+	}
+	fail = {
+		OR = {
+			is_subject = yes
+			NOT = {
+				exists = ROOT
+			}
+		}
+		NOT = {
+			any_scope_state = {
+				state_region = {
+					is_homeland = cu:greek
+				}
+			}
+		}
+	}
+	on_fail = {
+		c:VEN = {
+			trigger_event = {
+				id = dvg_greece.216
+			}
+		}
+	}
+	invalid = {
+		NOT = {
+			exists = c:VEN
+		}
 	}
 
 	weight = 20

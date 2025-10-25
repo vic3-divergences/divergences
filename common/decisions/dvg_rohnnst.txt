@@ -1,8 +1,8 @@
 ﻿dvg_integrate_new_lands_rohnnst = {
 
 	is_shown = {
-		root = c:RHN
 		exists = c:RHN
+		c:RHN = ROOT
 		root = {
 			OR = {
 				AND = {
@@ -118,8 +118,8 @@
 
 dvg_greater_rohnnst = {
 	is_shown = {
-		root = c:RHN
 		exists = c:RHN
+		c:RHN = ROOT
 		NOT = {
 			is_subject = yes
 		}	
@@ -165,5 +165,93 @@ dvg_greater_rohnnst = {
 			add_claim = ROOT
 		}
 		set_variable = dvg_greater_rohnnst_name
+	}
+}
+
+dvg_attack_rohnnst = {
+	is_shown = {
+		exists = c:RHN
+		NOT = {
+			c:RHN = ROOT
+		}
+		is_ai = yes
+		NOT = {
+			has_variable = rhn_attacked
+		}
+		any_neighbouring_state = {
+			owner = c:RHN
+		}
+	}
+    possible = {
+		NOT = {
+			c:RHN = {
+				has_truce_with = ROOT
+				is_ai = yes
+			}
+		}
+		has_technology_researched = nationalism
+	}
+
+    when_taken = {
+		save_temporary_scope_value_as = {
+			name = war_reparations_amount
+			value = {
+				value = income
+				multiply = define:NDiplomacy|DEFAULT_WAR_REPARATIONS_MONEY_TRANSFER
+			}
+		}
+		set_variable = rhn_attacked
+		create_diplomatic_play = {
+			type = dp_annex_war
+			target_country = c:RHN
+			add_war_goal = {
+				holder = c:RHN
+				target_country = ROOT
+				type = enforce_treaty_article
+				article = {
+					article = money_transfer
+					source_country = ROOT
+					target_country = c:RHN
+					inputs = {
+						{ quantity = scope:war_reparations_amount }
+					}
+				}
+			}
+		}
+    }
+
+	ai_chance = {
+		value = 100
+	}
+}
+
+
+dvg_embrace_cree = {
+	is_shown = {
+		exists = c:RHN
+		c:RHN = ROOT
+
+		NOT = {
+			country_has_primary_culture = cu:cree
+		}
+	}
+    possible = {
+		cultural_acceptance_base = {
+			target = cu:cree
+			value > acceptance_status_3
+		}
+		any_scope_state = {
+			state_region = {
+				is_homeland = cu:cree
+			}
+		}
+	}
+
+    when_taken = {
+		add_primary_culture = cu:cree
+    }
+
+	ai_chance = {
+		value = 100
 	}
 }

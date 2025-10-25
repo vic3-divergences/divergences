@@ -53,20 +53,19 @@
 
 	lawgroup_welfare = {
 		law_no_social_security = neutral
-		law_no_social_security = disaprove
 		law_poor_laws = neutral
 		law_wage_subsidies = approve
 		law_old_age_pension = strongly_approve
 	}
 
-	possible = {
+	country_trigger = {
 		# no monarchists in countries with strong republican tradition
 		owner = {
 			AND = {
 				exists = c:TWT
 				OR = {
 					c:TWT = this
-					civil_war_origin_country = c:TWT
+					civil_war_origin_country ?= c:TWT
 				}
 			}
 			NOR = {
@@ -75,28 +74,16 @@
 				}
 			}
 		}
-		scope:interest_group = { 
-			OR = {
-				is_interest_group_type = ig_industrialists
-				is_interest_group_type = ig_petty_bourgeoisie
-				is_interest_group_type = ig_intelligentsia
-				is_interest_group_type = ig_armed_forces
-				is_interest_group_type = ig_landowners
-				is_interest_group_type = ig_devout
-			}
-		}
-		scope:interest_group = {
-			NOR = {
-				has_variable = communist_ig_var
-				has_variable = chose_vanguardism
-				has_variable = chose_fascism
-				has_variable = chose_conservatism
-				has_variable = chose_ethno_nationalism
-			}
-		}
+	}
+	interest_group_leader_trigger = {
+		ideology_llapa_valid_trigger = yes
+	}
+	non_interest_group_leader_trigger = {
+		NOT = { has_role = agitator }
+		ideology_llapa_valid_trigger = yes
 	}
 
-	leader_weight = {
+	interest_group_leader_weight = {
 		value = 200
 		# less likely in a theocracy
 		if = {
@@ -113,21 +100,17 @@
 				owner = {
 					NOT = { has_law = law_type:law_monarchy }
 				}
-				scope:interest_group = {
-					ig_approval > 0
-				}
+				ig_approval > 0
 			}
 			add = -100
 		}
 
 		if = {
 			limit = {
-				scope:interest_group = {
-					OR = {
-						is_interest_group_type = ig_petty_bourgeoisie
-						is_interest_group_type = ig_intelligentsia
-						is_interest_group_type = ig_rural_folk
-					}
+				OR = {
+					is_interest_group_type = ig_petty_bourgeoisie
+					is_interest_group_type = ig_intelligentsia
+					is_interest_group_type = ig_rural_folk
 				}
 				owner = {
 					OR = {
@@ -143,9 +126,7 @@
 
 		if = {
 			limit = {
-				scope:interest_group = {
-					is_interest_group_type = ig_landowners
-				}
+				is_interest_group_type = ig_landowners
 			}
 			add = 25
 		}
@@ -163,11 +144,36 @@
 				owner = {
 					NOT = { has_law = law_type:law_monarchy }
 				}
-				scope:interest_group = {
-					ig_approval < 0
-				}
+				ig_approval < 0
 			}
 			add = 25
+		}
+		if = {
+			limit = {
+				OR = {
+					has_variable = communist_ig_var
+					has_variable = chose_vanguardism
+					has_variable = chose_fascism
+					has_variable = chose_conservatism
+					has_variable = chose_ethno_nationalism
+				}
+			}
+			multiply = 0.1
+		}
+	}
+	non_interest_group_leader_weight = {
+		value = 100
+		if = {
+			limit = {
+				OR = {
+					has_variable = communist_ig_var
+					has_variable = chose_vanguardism
+					has_variable = chose_fascism
+					has_variable = chose_conservatism
+					has_variable = chose_ethno_nationalism
+				}
+			}
+			multiply = 0.1
 		}
 	}
 }

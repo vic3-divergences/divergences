@@ -43,6 +43,19 @@
 			country = ROOT
 			value = 20
 		}
+		every_country = {
+			limit = {
+				any_scope_state = {
+					state_region = {
+						is_homeland = cu:afro_arcadian
+					}
+				}
+			}
+			add_radicals = {
+				value = 0.40
+				culture = cu:afro_arcadian
+			}
+		}
 		set_global_variable = {
 				name = afroarcadian_liberation
 				value = 0
@@ -50,63 +63,10 @@
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
-dvg_spread_homeland_cadien = {
-	is_shown = {
-		
-		country_has_primary_culture = cu:cadien
-
-		any_scope_state = {
-			culture_percent_state = {
-				culture = cu:cadien
-				value >= 0.33
-			}
-			state_region = {
-				NOT = {
-					is_homeland = cu:cadien
-				}
-			}
-		}
-	}
-
-    possible = {
-		has_technology_researched = nationalism
-		has_technology_researched = romanticism
-	}
-		
-		
-
-    when_taken = {
-		every_scope_state = {
-			limit = {
-				culture_percent_state = {
-					culture = cu:cadien
-					value >= 0.33
-				}
-				state_region = {
-					NOT = {
-						is_homeland = cu:cadien
-					}
-				}
-				state_is_in_north_america = yes
-			}
-			state_region = {
-				add_homeland = cu:cadien
-			}
-		}
-		
-	
-		
-		
-    }
-
-	ai_chance = {
-		base = 100
-	}
-}
 dvg_manifest_destiny_cadien = {
 	is_shown = {
 		
@@ -116,7 +76,6 @@ dvg_manifest_destiny_cadien = {
 			has_variable = manifested_destiny_plantagenia
 		}
 	}
-
     possible = {
 		has_technology_researched = nationalism
 		has_technology_researched = romanticism
@@ -169,6 +128,16 @@ dvg_manifest_destiny_cadien = {
 		}
 		if = {
 			limit = {
+				NOT = {
+					has_journal_entry = je_manifest_destiny_pla
+				}
+			}
+			add_journal_entry = {
+				type = je_manifest_destiny_pla
+			}
+		}
+		if = {
+			limit = {
 				OR = {
 					ruler = {
 						has_ideology = ideology:ideology_jingoist_leader
@@ -193,14 +162,15 @@ dvg_manifest_destiny_cadien = {
 				add_claim = ROOT
 			}
 		}
-		add_journal_entry = {
-			type = je_manifest_destiny_pla
+		create_incident = {
+			country = THIS
+			value = 15
 		}
 		set_variable = manifested_destiny_plantagenia
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
@@ -208,7 +178,10 @@ dvg_embrace_afro_arcadian = {
 	is_shown = {
 		
 		any_primary_culture = {
-			has_discrimination_trait = francophone
+			OR = {
+				has_discrimination_trait = language_francophone
+				has_discrimination_trait = language_burgundian
+			}
 		}
 		country_is_in_north_america = yes
 		has_law = law_type:law_slavery_banned
@@ -222,8 +195,8 @@ dvg_embrace_afro_arcadian = {
 		
 		has_technology_researched = human_rights
 		cu:afro_arcadian = {
-			NOT = {
-				culture_is_discriminated_in = ROOT
+			root = {
+				cultural_acceptance_base = { target = prev value >= acceptance_status_5 }
 			}
 		}
 		any_interest_group = {
@@ -261,59 +234,322 @@ dvg_embrace_afro_arcadian = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
-dvg_isolation_failsafe = {
+
+
+dvg_manifest_destiny_septiman = {
 	is_shown = {
 		
-		is_subject = yes
-		overlord = {
-			is_ai = yes
-		}
-		is_ai = yes
+		country_has_primary_culture = cu:septiman
 
+		NOT = {
+			has_variable = manifested_destiny_septiman
+		}
+	}
+    possible = {
+		has_technology_researched = nationalism
+		has_technology_researched = romanticism
+		country_rank >= rank_value:minor_power
+		is_subject = no
+		is_at_war = no 
+		NOT = {
+			has_law = law_type:law_no_colonial_affairs
+		}
+	}
+    when_taken = {
+		create_incident = {
+			country = THIS
+			value = 5
+		}
+		every_state = {
+			limit = {
+				
+				state_region = {
+					
+				is_homeland = cu:septiman
+					
+				}
+				NOT = {
+					owner = ROOT
+				}
+				state_is_in_north_america = yes
+			}
+			state_region = {
+					
+				add_claim = ROOT
+					
+			}	
+			
+		}
+		
+		if = {
+			limit = {
+				NOT = {
+					has_journal_entry = je_manifest_destiny_blc
+				}
+			}
+			add_journal_entry = {
+				type = je_manifest_destiny_blc
+			}
+		}
+		
+		set_variable = manifested_destiny_septiman
+    }
+
+	ai_chance = {
+		value = 100
+	}
+}
+
+dvg_join_belgium = {
+	is_shown = {
+		
+		exists = c:BLC
+		NOT = {
+			c:BLC = ROOT
+		}
+		any_primary_culture = {
+			OR = {
+				has_discrimination_trait = language_francophone
+				has_discrimination_trait = language_burgundian
+			}
+		}
+		country_is_in_north_america = yes
+		NOT = {
+			has_law = law_type:law_monarchy
+		}
 	}
 
     possible = {
-		
-		any_scope_state = {
-			is_capital = yes
-			is_isolated_from_market = yes
+
+		has_technology_researched = pan-nationalism
+		c:BLC = {
+			relations:root >= relations_threshold:amicable
 		}
-		is_diplomatic_play_committed_participant = no
+		OR = {
+			c:BLC = {
+				has_attitude = {
+					who = ROOT
+					attitude = protective
+				}
+			}
+			has_attitude = {
+				who = c:BLC
+				attitude = genial
+			}
+		}
+		
 		
 	}
 		
 		
 
     when_taken = {
+		set_variable = blc_joiner
+		c:BLC = {
+			trigger_event = dvg_plantagenia.45
+		}
 		
-		make_independent = yes
-
-		if = {
-			limit = {
-				has_law = law_type:law_closed_borders
-			}
-			activate_law = law_type:law_migration_controls
-		}
-
-		if = {
-			limit = {
-				has_law = law_type:law_isolationism
-			}
-			activate_law = law_type:law_protectionism
-		}
-		add_modifier = {
-			name = dvg_approval_buff
-			months = 30
-			is_decaying = yes
-		}
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
+
+dvg_buy_athesia = {
+	is_shown = {
+		country_is_in_north_america = yes
+		OR = {
+			has_interest_marker_in_region = sr:region_caribbean
+			has_interest_marker_in_region = sr:region_dixie
+		}
+
+		NOT = {
+			owns_entire_state_region = STATE_ATHESIA
+			ROOT = {is_subject = yes}
+		}
+		AND = {
+			exists = c:ATH
+			c:ATH = {
+				is_ai = yes
+				is_subject_of = c:VEN
+			}
+		}
+		
+	}
+
+    possible = {
+
+		gold_reserves > 100000
+		c:VEN = {
+			country_rank < rank_value:major_power 
+			relations:root >= relations_threshold:amicable
+			OR = {
+				has_attitude = {
+					who = ROOT
+					attitude = genial
+				}
+				has_attitude = {
+					who = ROOT
+					attitude = loyal
+				}
+
+			}
+		}
+		NOT = {
+			has_law = law_type:law_no_colonial_affairs
+		}
+	}		
+
+    when_taken = {
+		
+		c:VEN = {
+			add_modifier = {
+				name = dvg_falklands_sale
+				months = 12
+			}
+		}
+
+		add_modifier = {
+			name = dvg_falklands_buy
+			months = 12
+			
+		}
+		
+		annex = c:ATH
+	 }
+
+	ai_chance = {
+		value = 100
+	}
+}
+dvg_aid_cuba_pla = {
+	is_shown = {
+		AND = {
+			exists = c:PLA
+			this = c:PLA
+			is_subject = no
+			NOR = {
+				owns_entire_state_region = STATE_CUBA
+				c:CUB = { is_subject_of = c:PLA }
+			}
+		}
+		NOR = {
+			owns_entire_state_region = STATE_CUBA
+			c:CUB = { is_subject_of = c:PLA }
+		}
+		NOT = { has_global_variable = CUB_global_revolution }
+	}
+	possible = {
+		NOR = {
+			owns_entire_state_region = STATE_CUBA
+			c:CUB = { is_subject_of = c:PLA }
+		}
+		is_at_war = no
+		navy_size >= 20
+		country_rank = rank_value:great_power
+	}
+	when_taken = {
+		c:SPA = {
+			trigger_event = { id = dvg_cuba.17 }
+		}
+		set_variable = cuban_supporter
+		set_global_variable = CUB_global_revolution
+	}
+}
+dvg_aid_cuba_arcadia = {
+	is_shown = {
+		AND = {
+			exists = c:ARC
+			this = c:ARC
+			is_subject = no
+			NOR = {
+				owns_entire_state_region = STATE_CUBA
+				c:CUB = { is_subject_of = c:ARC }
+			}
+		}
+		NOR = {
+			owns_entire_state_region = STATE_CUBA
+			c:CUB = { is_subject_of = c:ARC }
+		}
+		NOT = { has_global_variable = CUB_global_revolution }
+	}
+	possible = {
+		NOR = {
+			owns_entire_state_region = STATE_CUBA
+			c:CUB = { is_subject_of = c:ARC }
+		}
+		is_at_war = no
+		navy_size >= 20
+		country_rank = rank_value:great_power
+	}
+	when_taken = {
+		c:SPA = {
+			trigger_event = { id = dvg_cuba.18 }
+		}
+		set_variable = cuban_supporter
+		set_global_variable = CUB_global_revolution
+	}
+}
+
+dvg_decision_move_capital_to_tripoli = {
+	is_shown = {
+		any_scope_state = {
+			state_region = s:STATE_SANACOMIE
+		}
+		this = c:ARC
+		exists = c:ARC
+	}
+
+	possible = {
+		NOT = {
+			capital = {
+				state_region = s:STATE_SANACOMIE
+			}
+		}
+		owns_entire_state_region = STATE_SANACOMIE
+		gold_reserves >= 100000
+	}
+
+	when_taken = {
+		add_treasury = -100000
+		set_capital = STATE_SANACOMIE
+		set_global_variable = {
+			name = tripoli_made_capital_var
+			value = 0
+		}
+		if = {
+            limit = {
+                any_scope_state = {
+                    state_region = s:STATE_SANACOMIE
+                }
+            }
+            set_capital = STATE_SANACOMIE
+			add_modifier = {
+				name = modifier_tripoli_made_capital
+				days = long_modifier_time
+			}
+            s:STATE_SANACOMIE = {
+                random_scope_state = {
+                    set_hub_name = {
+                        type = city
+                        name = HUB_NAME_STATE_SANACOMIE_city_tripoli
+                    }
+                }
+            }
+        }
+		add_loyalists = {
+			culture = cu:cadien
+			value = small_radicals
+		}
+	}
+
+	ai_chance = {
+		value = 10
+	}
+}

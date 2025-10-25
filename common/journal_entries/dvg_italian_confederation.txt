@@ -42,10 +42,10 @@
 				this = c:TUS
 			}
 			trigger_event = { id = dvg_italian_confederation.2 }
-			set_variable = {
-				name = italian_delay
-				months = 4
-			}
+			#set_variable = {
+			#	name = italian_delay
+			#	months = 4
+			#}
 		}
 
 		set_strategy = ai_strategy_unify_north_italy
@@ -79,5 +79,170 @@
 	}
 
 	weight = 1000
+	should_be_pinned_by_default = yes
+}
+
+je_italian_building = {
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	group = je_group_historical_content
+
+	is_shown_when_inactive = {
+		NOT = {
+			country_has_primary_culture = cu:italian
+		}
+		exists = c:ITA
+		c:ITA = ROOT
+	}
+	possible = {
+		has_technology_researched = nationalism
+		
+	}
+
+	immediate = {
+
+		if = {
+			limit = {
+				exists = scope:actor
+				scope:actor = {
+					was_formed_from = VEN
+				}
+			}
+			set_variable = venetians_integrated
+			every_country = {
+				every_scope_pop = {
+					limit = {
+						culture = cu:venetian
+					}
+					change_pop_culture = {
+						target = cu:italian
+						value = 1
+					}
+				}
+			}
+		}
+
+		if = {
+			limit = {
+				exists = scope:actor
+				scope:actor = {
+					was_formed_from = SIC
+				}
+			}
+			set_variable = south_italians_integrated
+			every_country = {
+				every_scope_pop = {
+					limit = {
+						culture = cu:south_italian
+					}
+					change_pop_culture = {
+						target = cu:italian
+						value = 1
+					}
+				}
+			}
+		}
+		
+		cu:south_italian = {
+			save_scope_as = south_italian_culture
+		}
+		cu:central_italian = {
+			save_scope_as = central_italian_culture
+		}
+		cu:venetian = {
+			save_scope_as = venetian_culture
+		}
+		cu:north_italian = {
+			save_scope_as = north_italian_culture
+		}
+		cu:italian = {
+			save_scope_as = italian_culture
+		}
+	}
+
+	complete = {
+		has_technology_researched = nationalism
+		custom_tooltip = {
+			text = je_italian_nation_building_integrate_venetian_complete_tt
+			has_variable = venetians_integrated
+		}
+		custom_tooltip = {
+			text = je_italian_nation_building_integrate_south_italian_complete_tt
+			has_variable = south_italians_integrated
+		}
+		custom_tooltip = {
+			text = je_italian_nation_building_integrate_central_italian_complete_tt
+			has_variable = central_italians_integrated
+		}
+		custom_tooltip = {
+			text = je_italian_nation_building_integrate_north_italian_complete_tt
+			has_variable = north_italians_integrated
+		}
+	}
+
+	on_complete = {
+		#trigger_event = { id = dvg_italy.7 } #This event does not exist
+		#set_global_variable = italian_culture
+		add_loyalists = {
+			value = 0.20
+		}
+		add_modifier = {
+			name = dvg_nation_built
+		}
+		remove_primary_culture = cu:central_italian
+		remove_primary_culture = cu:north_italian
+		remove_primary_culture = cu:south_italian
+		remove_primary_culture = cu:venetian
+		add_primary_culture = cu:italian
+
+		every_country = {
+			limit = {
+				country_has_primary_culture = cu:central_italian
+			}
+			remove_primary_culture = cu:central_italian
+			add_primary_culture = cu:italian
+
+		}
+		every_country = {
+			limit = {
+				country_has_primary_culture = cu:north_italian
+			}
+			remove_primary_culture = cu:north_italian
+			add_primary_culture = cu:italian
+		}
+		every_country = {
+			limit = {
+				country_has_primary_culture = cu:south_italian
+			}
+			remove_primary_culture = cu:south_italian
+			add_primary_culture = cu:italian
+		}
+	}
+
+	fail = {
+		AND = {
+			exists = c:VEN
+			exists = c:SAV
+			exists = c:SIC
+			exists = c:PAP
+			exists = c:TUS
+		}
+
+	}
+	invalid = {
+		has_variable = cancel_integration
+	}
+
+	
+
+	scripted_button = je_italian_nation_building_integrate_venetian
+	scripted_button = je_italian_nation_building_integrate_south_italian
+	scripted_button = je_italian_nation_building_integrate_central_italian
+	scripted_button = je_italian_nation_building_integrate_north_italian
+	scripted_button = je_cancel_integration
+
+
+	weight = 100
+
 	should_be_pinned_by_default = yes
 }

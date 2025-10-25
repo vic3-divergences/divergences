@@ -1,13 +1,86 @@
-﻿dvg_noongar_colony = {
+﻿dvg_zhourao_unite = {
 	is_shown = {
-		has_game_rule = australia_railroaded
-		exists = c:NNG
+		country_has_primary_culture = cu:zhourao
+
+		is_subject = yes
+		OR = {
+			AND = {
+				is_subject = yes
+				top_overlord = {
+					THIS = root.top_overlord
+				}
+			}
+			AND = {
+				is_subject = no
+				any_neighbouring_state = {
+					owner = {
+						country_has_primary_culture = cu:zhourao
+						is_ai = yes
+						NOT = { THIS = ROOT }
+						
+					}
+				}
+			}
+			
+		}
+		
+	}
+
+	possible = {
+		is_at_war = no
+		has_technology_researched = nationalism
+		
+		NOT = { has_modifier = australia_test_modifier }
+		any_neighbouring_state = {
+			owner = {
+				relations:root >= relations_threshold:amicable
+				OR = {
+					country_has_primary_culture = cu:zhourao
+					NOT = {
+						has_law = law_type:law_monarchy
+					}
+
+				}
+				is_ai = yes
+				NOT = { THIS = ROOT }
+				
+				this.gdp < root.gdp
+				
+			}
+		}
+		#custom_tooltip = {
+			#text = unite_australia_je_aus_tt
+			
+		#}
+	}
+	when_taken = {
+		hidden_effect = {
+			trigger_event = { id = dvg_zhourao.17 popup = yes }
+		}
+		add_modifier = {
+			name = australia_test_modifier
+			days = short_modifier_time
+		}
+	}
+
+	ai_chance = {
+		value = 0
+		if  = {
+			limit = { has_technology_researched = pan-nationalism }
+			add = 100
+		}		
+	}
+}
+
+dvg_noongar_colony = {
+	is_shown = {
+				exists = c:NNG
 		root = {
 			has_state_in_state_region = STATE_NOONGAR
 		}
 		NOT = {
 			OR = {
-				root = c:NNG
+				c:NNG = ROOT
 				has_variable = dvg_colony_nng
 				#has_journal_entry = je_noongar_colony
 			}
@@ -26,14 +99,13 @@
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
 dvg_pitjantjajara_colony = {
 	is_shown = {
-		has_game_rule = australia_railroaded
-		exists = c:PJT
+				exists = c:PJT
 		OR = {
 			has_state_in_state_region = STATE_PITJANTJAJARA
 			owns_entire_state_region = STATE_YOLNGU
@@ -66,78 +138,82 @@ dvg_pitjantjajara_colony = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
 dvg_yolngu_colony = {
 	is_shown = {
-		has_game_rule = australia_railroaded
 		exists = c:GRJ
 		root = {
 			has_state_in_state_region = STATE_YOLNGU
 		}
 		NOT = {
 			OR = {
-				root = c:GRJ
+				c:GRJ = ROOT
 				has_variable = dvg_colony_yln
 			}
 		}
 	}
-
-    possible = {
-		custom_tooltip = {
-			text = margere_colony_tt
-			OR = {
+	
+	possible = {
+		OR = {
+			custom_tooltip = {
+				text = margere_colony_1_tt
 				year >= 1850
-				AND = {
-					OR = {
-						AND = {
-							exists = c:YLN
-							root = c:YLN
+			}
+			AND = {
+				custom_tooltip = {
+					text = margere_colony_2_tt
+					switch = {
+						trigger = ROOT
+						c:YLN = {
+							NOR = {
+								exists = c:NGL
+								exists = c:GWG
+								exists = c:MKS
+							}
 						}
-						AND = {
-							exists = c:NGL
-							root = c:NGL
+						c:NGL = {
+							NOR = {
+								exists = c:NGL
+								exists = c:YLN
+								exists = c:MKS
+							}
 						}
-						AND = {
-							exists = c:GWG
-							root = c:GWG
+						c:GWG = {
+							NOR = {
+								exists = c:NGL
+								exists = c:YLN
+								exists = c:MKS
+							}
 						}
-						AND = {
-							exists = c:MKS
-							root = c:MKS
+						c:MKS = {
+							NOR = {
+								exists = c:NGL
+								exists = c:GWG
+								exists = c:YLN
+							}
 						}
 					}
-					exists = c:DUA
+				}
+				custom_tooltip = {
+					text = margere_colony_3_tt
 					NOT = {
-						c:DUA = {
+						c:DUA ?= {
 							has_state_in_state_region = STATE_YOLNGU
 						}
 					}
 				}
-				#AND = {
-				#	OR = {
-				#		AND = {
-				#			exists = c:YLN
-				#			root = c:YLN
-				#		}
-				#		AND = {
-				#			exists = c:NGL
-				#			root = c:NGL
-				#		}
-				#		AND = {
-				#			exists = c:GWG
-				#			root = c:GWG
-				#		}
-				#	}
-				#}
 			}
 		}
 	}
 
-    when_taken = {
-		trigger_event = { id = dvg_oceania.5 popup = yes }
+	when_taken = {
+		trigger_event = { 
+			id = dvg_oceania.5 
+			popup = yes 
+		}
 		hidden_effect = {
 			set_variable = dvg_colony_yln
 		}
@@ -148,23 +224,22 @@ dvg_yolngu_colony = {
 				add_homeland = cu:moluccan
 			}
 		}
-    }
+	}
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
 dvg_papua_west_colony = {
 	is_shown = {
-		has_game_rule = australia_railroaded
-		exists = c:PPU
+				exists = c:PPU
 		root = {
 			has_state_in_state_region = STATE_WESTERN_NEW_GUINEA
 		}
 		NOT = {
 
-			root = c:PPU
+			c:PPU = ROOT
 			owns_entire_state_region = STATE_WESTERN_NEW_GUINEA
 
 		}
@@ -192,21 +267,20 @@ dvg_papua_west_colony = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
 
 dvg_papua_east_colony = {
 	is_shown = {
-		has_game_rule = australia_railroaded
-		exists = c:PPU
+				exists = c:PPU
 		root = {
 			has_state_in_state_region = STATE_WENCHENG
 		}
 		NOT = {
 
-			root = c:PPU
+			c:PPU = ROOT
 			owns_entire_state_region = STATE_EASTERN_NEW_GUINEA
 
 		}
@@ -235,16 +309,15 @@ dvg_papua_east_colony = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
 dvg_darwin_seizure = {
 	is_shown = {
-		has_game_rule = australia_railroaded
-		exists = c:MKS
+				exists = c:MKS
 		exists = c:DUA
-		root = c:DUA
+		c:DUA = ROOT
 		c:MKS = {
 			has_state_in_state_region = STATE_YOLNGU
 		}
@@ -267,19 +340,18 @@ dvg_darwin_seizure = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
 dvg_nunga_colony = {
 	is_shown = {
-		has_game_rule = australia_railroaded
-		exists = c:NUN
+				exists = c:NUN
 		root = {
 			has_state_in_state_region = STATE_PITJANTJAJARA
 		}
 		NOT = {
-			root = c:NUN
+			c:NUN = ROOT
 		}
 		NOT = {
 			has_variable = dvg_colony_nunga
@@ -298,14 +370,13 @@ dvg_nunga_colony = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
 dvg_yamatji_colony = {
 	is_shown = {
-		has_game_rule = australia_railroaded
-		exists = c:YMT
+				exists = c:YMT
 		OR = {
 			AND = {
 				exists = c:BEI
@@ -314,7 +385,7 @@ dvg_yamatji_colony = {
 					has_state_in_state_region = STATE_COOMALONG
 					is_subject_of = c:BRG
 				}
-				root = c:BRG
+				c:BRG = ROOT
 			}
 			AND = {
 				root = {
@@ -323,11 +394,11 @@ dvg_yamatji_colony = {
 				NOT = {
 					AND = {
 						exists = c:BEI
-						root = c:BEI
+						c:BEI = ROOT
 					}
 					AND = {
 						exists = c:BRG
-						root = c:BRG
+						c:BRG = ROOT
 					}
 				}
 			}
@@ -339,7 +410,7 @@ dvg_yamatji_colony = {
 					AND = {
 						exists = c:BEI
 						exists = c:BRG
-						root = c:BRG
+						c:BRG = ROOT
 						NOT = {
 							c:BEI = {
 								is_subject_of = c:BRG
@@ -348,7 +419,7 @@ dvg_yamatji_colony = {
 					}
 					AND = {
 						exists = c:BRG
-						root = c:BRG
+						c:BRG = ROOT
 						NOT = {
 							exists = c:BEI
 						}
@@ -359,14 +430,14 @@ dvg_yamatji_colony = {
 			
 		NOT = {
 			OR = {
-				root = c:YMT
+				c:YMT = ROOT
 				has_variable = dvg_colony_yama
 			}
 		}
 	}
 
     possible = {
-		year >= 1845
+		has_technology_researched = quinine
 	}
 
     when_taken = {
@@ -377,7 +448,7 @@ dvg_yamatji_colony = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
@@ -403,7 +474,7 @@ dvg_wadjiginy_protectorate_annex = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
@@ -443,7 +514,7 @@ dvg_attack_northern_hongshan = {
 			has_variable = dvg_attacked_north
 		}
 		exists = c:DUA
-		root = c:DUA
+		c:DUA = ROOT
 	}
 
     possible = {
@@ -518,14 +589,16 @@ dvg_attack_northern_hongshan = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
 dvg_kauri_colony = {
 	is_shown = {
-		has_game_rule = australia_railroaded
-		exists = c:KAU
+				exists = c:KAU
+				c:KAU = {
+					is_ai = yes
+				}
 		OR = {
 			AND = {
 				NOT = {
@@ -549,7 +622,7 @@ dvg_kauri_colony = {
 					}
 				}
 				exists = c:ZHR
-				root = c:ZHR
+				c:ZHR = ROOT
 			}
 			AND = {
 				has_variable = dvg_yongjia
@@ -557,9 +630,12 @@ dvg_kauri_colony = {
 		}
 		NOT = {
 			OR = {
-				root = c:KAU
+				c:KAU = ROOT
 				has_variable = dvg_colony_kau
 			}
+		}
+		NOT = {
+			exists = c:ZHR
 		}
 	}
 
@@ -575,7 +651,7 @@ dvg_kauri_colony = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
@@ -587,9 +663,10 @@ dvg_embrace_the_koori = {
 				has_variable = dvg_yaluo_tribute_force
 			}
 			AND = {
-				has_global_variable = dvg_accepted_koori
 				NOT = {
 					country_has_primary_culture = cu:aborigine
+					country_has_primary_culture = cu:aborigine_chinese
+
 				}
 				was_formed_from = YLO
 			}
@@ -598,6 +675,10 @@ dvg_embrace_the_koori = {
 
     possible = {
 		OR = {
+			AND = {
+				has_law = law_type:law_cultural_exclusion
+                has_law = law_type:law_census_voting
+			}
 			AND = {
 				has_variable = dvg_yaluo_open_lists
 				has_variable = dvg_yaluo_tribute_force
@@ -615,7 +696,40 @@ dvg_embrace_the_koori = {
     when_taken = {
 		remove_variable = dvg_yaluo_open_lists
 		remove_variable = dvg_yaluo_tribute_force
-		add_primary_culture = cu:aborigine
+		if = {
+			limit = {
+				has_game_rule = no_breakaway
+			}
+			add_primary_culture = cu:aborigine
+
+		}
+		if = {
+			limit = {
+				has_game_rule = breakaway
+			}
+			add_primary_culture = cu:aborigine_chinese
+			every_scope_pop = {
+				limit = {
+					culture = cu:aborigine
+					religion = rel:mahayana
+				}
+				change_pop_culture = {
+				
+					target = cu:aborigine_chinese
+					value = 1
+				}
+			}
+			every_scope_state = {
+				limit = {
+					 state_region = {
+						is_homeland = cu:aborigine
+					 }
+				}
+				state_region = {
+					add_homeland = cu:aborigine_chinese
+				}
+			}			
+		}
 		hidden_effect = {
 			if = {
 				limit = {
@@ -629,14 +743,14 @@ dvg_embrace_the_koori = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
 dvg_yaluo_ask_scandinavia_for_help = {
 	is_shown = {
 		exists = c:YLO
-		root = c:YLO
+		c:YLO = ROOT
 		has_global_variable = dvg_yaluo_open_to_scandinavia
 		NOT = {
 			has_variable = dvg_asked_scandi
@@ -652,10 +766,11 @@ dvg_yaluo_ask_scandinavia_for_help = {
 		c:SCA = {
 			trigger_event = { id = dvg_carlshavn.2 popup = yes }
 		}
+		
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
@@ -665,17 +780,17 @@ dvg_integrate_the_guli = {
 		OR = {
 			AND = {
 				exists = c:YLO
-				root = c:YLO
+				c:YLO = ROOT
 			}
 			AND = {
 				exists = c:ZHR
-				root = c:ZHR
+				c:ZHR = ROOT
 			}
 		}
 	}
 
     possible = {
-		year >= 1850
+		has_technology_researched = egalitarianism
 		NOT = { 
 			has_variable = dvg_asked_guli
 		}
@@ -694,7 +809,7 @@ dvg_integrate_the_guli = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
@@ -702,7 +817,7 @@ dvg_push_southwards = {
 	is_shown = {
 		exists = c:YAL
 		NOT = {
-			root = c:YAL
+			c:YAL = ROOT
 		}
 		root = {
 			has_state_in_state_region = STATE_WENCHENG
@@ -713,7 +828,13 @@ dvg_push_southwards = {
 	}
 
     possible = {
-		year >= 1850
+		NOT = {
+			has_law = law_type:law_no_colonial_affairs
+		}
+		NOT = {
+			has_truce_with = c:YAL
+		}
+		
 	}
 
     when_taken = {
@@ -721,7 +842,7 @@ dvg_push_southwards = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
@@ -737,7 +858,12 @@ dvg_wiradjuri_war = {
 	}
 
     possible = {
-		year >= 1850
+		NOT = {
+			has_law = law_type:law_no_colonial_affairs
+		}	
+		NOT = {
+			has_truce_with = c:WIR
+		}
 	}
 
     when_taken = {
@@ -745,14 +871,14 @@ dvg_wiradjuri_war = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
 dvg_new_zealand = {
 	is_shown = {
 		exists = c:BRG
-		root = c:BRG
+		c:BRG = ROOT
 		root = {
 			has_state_in_state_region = STATE_NOONGAR
 			country_or_subject_owns_entire_state_region = STATE_COOMALONG
@@ -770,7 +896,7 @@ dvg_new_zealand = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
@@ -778,7 +904,7 @@ dvg_new_zealand_integrations = {
 	is_shown = {
 		exists = c:BRG
 		exists = c:NVZ
-		root = c:BRG
+		c:BRG = ROOT
 		root = {
 			OR = {
 				has_state_in_state_region = STATE_NOONGAR
@@ -833,7 +959,7 @@ dvg_new_zealand_integrations = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
@@ -841,7 +967,7 @@ dvg_propose_to_yaluo = {
 	is_shown = {
 		exists = c:SCA
 		exists = c:YLO
-		root = c:SCA
+		c:SCA = ROOT
 		NOT = {
 			has_variable = dvg_scandi_proposed
 		}
@@ -861,14 +987,14 @@ dvg_propose_to_yaluo = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
 dvg_stay_catholic = {
 	is_shown = {
 		exists = c:ZHR
-		root = c:ZHR
+		c:ZHR = ROOT
 		rel:catholic = {
 			is_state_religion = c:ZHR
 		}
@@ -888,7 +1014,7 @@ dvg_stay_catholic = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
@@ -896,7 +1022,7 @@ dvg_declare_war_on_yaluo = {
 	is_shown = {
 		exists = c:MJN
 		exists = c:YLO
-		root = c:MJN
+		c:MJN = ROOT
 		OR = {
 			c:MJN = {
 				is_player = yes
@@ -916,7 +1042,10 @@ dvg_declare_war_on_yaluo = {
 	}
 
     possible = {
-		year >= 1855
+		OR = {
+			year >= 1855
+			has_technology_researched = nationalism
+		}
 	}
 
     when_taken = {
@@ -927,7 +1056,7 @@ dvg_declare_war_on_yaluo = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
@@ -935,7 +1064,7 @@ dvg_declare_war_on_mianjin = {
 	is_shown = {
 		exists = c:YLO
 		exists = c:MJN
-		root = c:YLO
+		c:YLO = ROOT
 		OR = {
 			NOT = {
 				c:MJN = {
@@ -957,7 +1086,10 @@ dvg_declare_war_on_mianjin = {
 	}
 
     possible = {
-		year >= 1855
+		OR = {
+			year >= 1855
+			has_technology_researched = nationalism
+		}
 	}
 
     when_taken = {
@@ -968,7 +1100,7 @@ dvg_declare_war_on_mianjin = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
@@ -976,7 +1108,7 @@ dvg_declare_war_on_the_marra = {
 	is_shown = {
 		exists = c:YLN
 		exists = c:GWG
-		root = c:YLN
+		c:YLN = ROOT
 		NOT = {
 			has_variable = dvg_the_yolngu_war_hongshan_variable
 		}
@@ -1017,7 +1149,7 @@ dvg_declare_war_on_the_marra = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
@@ -1027,14 +1159,14 @@ dvg_declare_war_on_the_wadjiginy = {
 		OR = {
 			AND = {
 				exists = c:GWG
-				root = c:GWG
+				c:GWG = ROOT
 				NOT = {
 					exists = c:YLN
 				}
 			}
 			AND = {
 				exists = c:YLN
-				root = c:YLN
+				c:YLN = ROOT
 				NOT = {
 					exists = c:GWG
 				}
@@ -1107,7 +1239,7 @@ dvg_declare_war_on_the_wadjiginy = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
@@ -1139,7 +1271,7 @@ dvg_declare_war_on_the_wadjiginy = {
 #    }
 #
 #	ai_chance = {
-#		base = 100
+#		value = 100
 #	}
 #}
 #
@@ -1168,7 +1300,7 @@ dvg_declare_war_on_the_wadjiginy = {
 #    }
 #
 #	ai_chance = {
-#		base = 100
+#		value = 100
 #	}
 #}
 #
@@ -1197,7 +1329,7 @@ dvg_declare_war_on_the_wadjiginy = {
 #    }
 #
 #	ai_chance = {
-#		base = 100
+#		value = 100
 #	}
 #}
 
@@ -1206,7 +1338,7 @@ dvg_southern_attack_again = {
 		exists = c:ZSA
 		exists = c:YLO
 		exists = c:MJN
-		root = c:ZSA
+		c:ZSA = ROOT
 		NOT = {
 			is_subject = yes
 			has_journal_entry = je_red_prince
@@ -1228,7 +1360,7 @@ dvg_southern_attack_again = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
@@ -1236,7 +1368,7 @@ dvg_support_luoxi = {
 	is_shown = {
 		exists = c:ZSA
 		exists = c:JAP
-		root = c:JAP
+		c:JAP = ROOT
 		has_variable = dvg_red_prince_breakout
 		NOT = {
 			has_variable = dvg_sent_aid_to_luoxi	
@@ -1257,7 +1389,7 @@ dvg_support_luoxi = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
@@ -1265,7 +1397,7 @@ dvg_support_lushou = {
 	is_shown = {
 		exists = c:ZSA
 		exists = c:DUA
-		root = c:DUA
+		c:DUA = ROOT
 		has_variable = dvg_red_prince_breakout
 		NOT = {
 			has_variable = dvg_sent_aid_to_lushou	
@@ -1286,32 +1418,21 @@ dvg_support_lushou = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
 dvg_press_west_zhourao = {
 	is_shown = {
 		exists = c:ZHR
-		root = c:ZHR
+		c:ZHR = ROOT
+		
+		
 		NOT = {
-			owns_entire_state_region = STATE_NOONGAR
-			owns_entire_state_region = STATE_COOMALONG
-			owns_entire_state_region = STATE_PITJANTJAJARA
-			owns_entire_state_region = STATE_OODNATTA
-			owns_entire_state_region = STATE_YONGJIA
-			owns_entire_state_region = STATE_YOLNGU
-			owns_entire_state_region = STATE_YONGLING
-			owns_entire_state_region = STATE_QINGSHUI
-			owns_entire_state_region = STATE_GUANSHAN
-			owns_entire_state_region = STATE_XINXIANG
-			owns_entire_state_region = STATE_ZHENG_HE
-			owns_entire_state_region = STATE_WEIHUAI
-			owns_entire_state_region = STATE_TAITUNG
-			owns_entire_state_region = STATE_WEIZHOU
-			owns_entire_state_region = STATE_JINZHOU
-			owns_entire_state_region = STATE_WENCHENG
-			#owns_entire_state_region = STATE_PARLEVAR
+			has_global_variable = dvg_zhr_begun_press_west
+		}
+		NOT = {
+			has_variable = zhourao_uniter
 		}
 		OR = {
 			NOT = {
@@ -1324,6 +1445,7 @@ dvg_press_west_zhourao = {
 	}
 
     possible = {
+		has_technology_researched = nationalism
 		custom_tooltip = {
 			text = dvg_no_mianjin_zhusha_or_yaluo_tt
 			NOT = {
@@ -1341,6 +1463,10 @@ dvg_press_west_zhourao = {
 			}
 			add_journal_entry = { type = je_zhr_reconsolidate_control }
 		}
+		set_variable = {
+			name = zhourao_uniter
+			value = 0
+		}
 		if = {
 			limit = {
 				NOT = {
@@ -1350,10 +1476,20 @@ dvg_press_west_zhourao = {
 			add_journal_entry = { type = je_zhr_press_west }
 			set_global_variable = dvg_zhr_begun_press_west
 		}
+		every_state_region = {
+			limit = {
+				is_homeland = cu:aborigine
+			}
+			add_claim = ROOT
+		}
+		create_incident = {
+			country = ROOT
+			value = 10
+		}
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
@@ -1363,15 +1499,15 @@ dvg_songyan_society = {
 		OR = {
 			AND = {
 				exists = c:ZHR
-				root = c:ZHR
+				c:ZHR = ROOT
 			}
 			AND = {
 				exists = c:YLO
-				root = c:YLO
+				c:YLO = ROOT
 			}
 			AND = {
 				exists = c:MJN
-				root = c:MJN
+				c:MJN = ROOT
 			}
 		}
 		has_variable = dvg_red_prince_breakout
@@ -1381,8 +1517,7 @@ dvg_songyan_society = {
 	}
 
     possible = {
-		exists = c:ZHR
-		root = c:ZHR
+		
 		has_variable = dvg_red_prince_breakout
 	}
 
@@ -1396,62 +1531,114 @@ dvg_songyan_society = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
 
-dvg_join_zhourao = {
+dvg_join_mianjin = {
 	is_shown = {
-		exists = c:ZSA
-		root = c:ZSA
-		exists = c:ZHR
-		has_variable = dvg_songyan_society_zsa
+		exists = c:XXG
+		c:XXG = ROOT
+		exists = c:MJN
+		NOT = {
+			has_variable = to_join_zhr
+		}
+		country_has_primary_culture = cu:zhourao
 	}
 
     possible = {
-		exists = c:ZSA
-		root = c:ZSA
-		has_variable = dvg_songyan_society_zsa
+		OR = {
+			has_global_variable = mjn_good
+			AND = {
+				exists = c:MJN
+				c:MJN = {
+					relations:root >= relations_threshold:cordial
+				}
+			}
+		}
 	}
 
     when_taken = { #change event number
-		play_as = c:ZHR
-		c:ZHR = {
-			trigger_event = { id = dvg_zhourao.1002 }
-			annex = c:ZSA
+		set_variable = to_join_zhr
+		play_as = c:MJN
+		c:MJN = {
+			trigger_event = {
+				id = dvg_zhourao.508
+			}
 		}
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
 dvg_join_zhourao = {
 	is_shown = {
 		exists = c:ZSA
-		root = c:ZSA
-		exists = c:ZHR
-		has_variable = dvg_songyan_society_zsa
+		c:ZSA = ROOT
+		OR = {
+			has_variable = dvg_songyan_society_zsa
+			NOT = {
+				has_law = law_type:law_monarchy
+				has_law = law_type:law_theocracy
+			}
+		}
+		OR = {
+			exists = c:YLO
+			exists = c:ZHR
+		}
 	}
 
     possible = {
 		exists = c:ZSA
-		root = c:ZSA
-		has_variable = dvg_songyan_society_zsa
+		c:ZSA = ROOT
+		OR = {
+			has_variable = dvg_songyan_society_zsa
+			has_technology_researched = nationalism
+		}
+		is_diplomatic_play_committed_participant = no
+		OR = {
+			c:YLO = {
+				country_has_voting_franchise = yes
+			}
+			c:ZHR = {
+				country_has_voting_franchise = yes
+			}
+		}
+		
 	}
 
     when_taken = { #change event number
-		play_as = c:ZHR
-		c:ZHR = {
-			trigger_event = { id = dvg_zhourao.1002 }
-			annex = c:ZSA
+		remove_variable = dvg_songyan_society_zsa
+		if = {
+			limit = {
+				exists = c:YLO
+				NOT = {
+					exists = c:ZHR
+				}
+			}
+			c:YLO = {
+				trigger_event = { id = dvg_zhourao.1002 }
+
+			}
+		}
+		if = {
+			limit = {
+				exists = c:ZHR
+				NOT = {
+					exists = c:YLO
+				}
+			}
+			c:YLO = {
+				trigger_event = { id = dvg_zhourao.1002 }
+			}
 		}
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 dvg_populating_zhourao_add_je = {
@@ -1473,7 +1660,7 @@ dvg_populating_zhourao_add_je = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
@@ -1523,20 +1710,20 @@ dvg_zhourao_malaya = {
 		}
 		create_incident = {
 			country = THIS
-			value = 10
+			value = 17
 		}
 
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
 dvg_makassar_zhourao = {
 	is_shown = {
 		exists = c:MKS
-		root = c:MKS
+		c:MKS = ROOT
 		
 		NOT = {
 			has_global_variable = makassar_claim_zhourao
@@ -1570,7 +1757,7 @@ dvg_makassar_zhourao = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 #For Makassar
@@ -1597,15 +1784,19 @@ dvg_embrace_hongshan = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 dvg_hongshan_liberation = {
 	is_shown = {
 		
-		country_has_primary_culture = cu:aborigine
+		any_primary_culture = {
+			has_discrimination_trait = heritage_australian
+		}
 
 		NOT = { has_global_variable = aborigine_liberation }
+
+		NOT = { has_variable = zhourao_uniter }
 	
 		NOT = {
 			country_has_primary_culture = cu:moluccan
@@ -1639,6 +1830,10 @@ dvg_hongshan_liberation = {
 			country = ROOT
 			value = 12
 		}
+		set_variable = {
+			name = zhourao_uniter
+			value = 0
+		}
 		set_global_variable = {
 				name = aborigine_liberation
 				value = 0
@@ -1646,14 +1841,15 @@ dvg_hongshan_liberation = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
 dvg_oodnatta_colony = {
 	is_shown = {
-		has_game_rule = australia_railroaded
 		exists = c:NUN
+		has_game_rule = australia_railroaded
+
 		OR = {
 			root = {
 				has_state_in_state_region = STATE_OODNATTA
@@ -1665,7 +1861,7 @@ dvg_oodnatta_colony = {
 		
 		NOT = {
 			OR = {
-				root = c:NUN
+				c:NUN = ROOT
 				has_variable = dvg_colony_ood
 				#has_journal_entry = je_noongar_colony
 			}
@@ -1684,13 +1880,13 @@ dvg_oodnatta_colony = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 dvg_pitjantjajara_colony = {
 	is_shown = {
-		has_game_rule = australia_railroaded
-		exists = c:PJT
+				exists = c:PJT
+				has_game_rule = australia_railroaded
 		OR = {
 			root = {
 				has_state_in_state_region = STATE_OODNATTA
@@ -1702,7 +1898,7 @@ dvg_pitjantjajara_colony = {
 		
 		NOT = {
 			OR = {
-				root = c:NUN
+				c:NUN = ROOT
 				has_variable = dvg_colony_pjt
 				#has_journal_entry = je_noongar_colony
 			}
@@ -1721,7 +1917,414 @@ dvg_pitjantjajara_colony = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
+	}
+}
+#For Australie 
+
+dvg_embrace_aboriginal = {
+	is_shown = {
+		any_scope_state = {
+			state_region = {
+				is_homeland = cu:aborigine
+			}
+			is_capital = yes
+		}
+		has_game_rule = breakaway
+		NOT = {
+			country_has_primary_culture = cu:aborigine_french
+		}
+		any_primary_culture = {
+			has_discrimination_trait = language_francophone
+		}
+	}
+
+    possible = {
+		has_technology_researched = civilizing_mission
+		has_technology_researched = human_rights
+		OR = {
+			has_law = law_type:law_cultural_exclusion
+
+		}
+	}
+
+    when_taken = {
+		add_primary_culture = cu:aborigine_french
+		every_scope_pop = {
+			limit = {
+				culture = cu:aborigine
+				religion = rel:protestant
+			}
+			change_pop_culture = { target = cu:aborigine_french value = 1 }
+		}
+		every_scope_pop = {
+			limit = {
+				culture = cu:aborigine
+				religion = rel:catholic
+			}
+			change_pop_culture = { target = cu:aborigine_french value = 1 }
+		}
+    }
+
+	ai_chance = {
+		value = 100
+	}
+}
+australia_unite_aus = {
+	is_shown = {
+		any_primary_culture = {
+			has_discrimination_trait = language_francophone
+		}
+		any_scope_state = {
+			state_region = {
+				is_homeland = cu:verlander
+			}
+			is_capital = yes
+		}
+
+		is_subject = yes
+		any_neighbouring_state = {
+			owner = {
+				any_primary_culture = {
+					has_discrimination_trait = language_francophone
+				}
+				is_ai = yes
+				is_subject = yes
+				NOT = { THIS = ROOT }
+				top_overlord = {
+					THIS = root.top_overlord
+				}
+			}
+		}
+	}
+
+	possible = {
+		is_at_war = no
+		has_technology_researched = nationalism
+		top_overlord = {
+			relations:root >= relations_threshold:amicable
+		}
+		NOT = { has_modifier = australia_test_modifier }
+		custom_tooltip = {
+			text = unite_australia_je_aus_tt
+			any_neighbouring_state = {
+				owner = {
+					relations:root >= relations_threshold:amicable
+					OR = {
+						country_has_primary_culture = cu:verlander
+						country_has_primary_culture = cu:burgundian
+						country_has_primary_culture = cu:anglois
+						country_has_primary_culture = cu:french
+					}
+					is_ai = yes
+					is_subject = yes
+					NOT = { THIS = ROOT }
+					top_overlord = {
+						THIS = root.top_overlord
+					}
+					this.gdp < root.gdp
+				}
+			}
+		}
+	}
+	when_taken = {
+		custom_tooltip = unite_australia_tt
+		hidden_effect = {
+			#trigger_event = { id = can_aus.3 popup = yes }
+		}
+		add_modifier = {
+			name = australia_test_modifier
+			days = short_modifier_time
+		}
+	}
+
+	ai_chance = {
+		value = 0
+		if = {
+			limit = { has_technology_researched = pan-nationalism }
+			add = 100
+		}		
 	}
 }
 
+dvg_build_fence = {
+	is_shown = {
+		any_scope_state = {
+			state_region = {
+				is_homeland = cu:aborigine
+			}
+		}
+		NOT = {
+			has_variable = dingo_fence
+		}
+	}
+
+    possible = {
+		has_technology_researched = field_works
+	}
+
+    when_taken = { #change event number
+		set_variable = dingo_fence
+		add_modifier = {
+			name = highest_standards_construction
+			months = 12
+			is_decaying = yes
+		}
+    }
+
+	ai_chance = {
+		value = 100
+	}
+}
+dvg_zhourao_protection = {
+	is_shown = {
+		country_has_primary_culture = cu:zhourao
+
+		OR = {
+			has_variable = recently_lost_war
+			has_variable = recent_capitulation
+			any_interest_group = {
+				is_insurrectionary = yes
+			}
+		}
+		any_neighbouring_state = {
+			owner = {
+				country_has_primary_culture = cu:zhourao
+			}
+			
+		}		
+		NOT = {
+			has_variable = zhourao_protectee
+		}
+		is_subject = no
+		
+	}
+
+	possible = {
+		is_at_war = no
+		has_technology_researched = nationalism
+		custom_tooltip = {
+			text = je_one_kongsi_goal
+			any_neighbouring_state = {
+				state_region = {
+					is_homeland = cu:zhourao
+				}
+				owner = {
+					relations:root >= relations_threshold:amicable
+					country_has_primary_culture = cu:zhourao
+					NOT = { THIS = ROOT }
+					OR = {
+						this.gdp > root.gdp
+						country_rank > root.country_rank
+						naval_power_projection > root.naval_power_projection
+						army_power_projection > root.army_power_projection
+					}
+					
+				}
+			}
+		}
+		
+		#custom_tooltip = {
+			#text = unite_australia_je_aus_tt
+			
+		#}
+	}
+	when_taken = {
+		set_variable = zhourao_protectee
+
+		random_country = {
+			limit = {
+				is_adjacent_to_country = ROOT
+				relations:root >= relations_threshold:amicable
+				country_has_primary_culture = cu:zhourao
+				OR = {
+					this.gdp > root.gdp
+					country_rank > root.country_rank
+					naval_power_projection > root.naval_power_projection
+					army_power_projection > root.army_power_projection
+				}
+			}
+			trigger_event = { id = dvg_zhourao.18 popup = yes }
+		}	
+		
+	}
+
+	ai_chance = {
+		value = 100
+	}
+}
+
+dvg_oceania_claim = {
+	is_shown = {
+
+		NOT = {
+			has_variable = oceania_claimer
+		}
+
+		OR = {
+			any_scope_state = {
+				state_region = {
+					is_homeland = cu:zhourao
+				}
+				is_capital = yes
+			}
+			any_primary_culture = {
+				has_discrimination_trait = heritage_polynesian
+			}
+			any_primary_culture = {
+				has_discrimination_trait_group = heritage_group_indigenous_oceanic
+			}
+
+		}
+		
+	}
+
+    possible = {
+		OR = {
+			has_technology_researched = civilizing_mission
+			any_primary_culture = {
+				has_discrimination_trait = heritage_polynesian
+			}
+			any_primary_culture = {
+				has_discrimination_trait_group = heritage_group_indigenous_oceanic
+			}
+		}
+		is_country_type = recognized
+		has_technology_researched = pan-nationalism
+		naval_power_projection >= 100 
+	}
+
+    when_taken = {
+
+		set_variable = oceania_claimer
+		
+		add_journal_entry = { type = je_zhrzsa_indonesia_first_step }
+		every_state_region = {
+			limit = {
+			OR = {
+				is_homeland = cu:melanesian
+				is_homeland = cu:polynesian
+				is_homeland = cu:maori
+			}
+			}
+			add_claim = ROOT
+		}
+		create_incident = {
+			country = THIS
+			value = 12
+		}
+
+    }
+
+	ai_chance = {
+		value = 100
+	}
+}
+
+dvg_become_chougie = {
+	is_shown = {
+		owns_entire_state_region = STATE_YOLNGU
+		NOT = {
+			exists = c:CGI
+
+			any_scope_state = {
+				state_is_in_europe = yes
+			}
+		}
+		AND = {
+			any_primary_culture = {
+				has_discrimination_trait = language_francophone
+			}
+			any_primary_culture = {
+				has_discrimination_trait_group = heritage_group_european
+			}
+		}
+		NOT = {
+			exists = c:AST
+			c:AST = ROOT
+		}
+		
+	}
+    possible = {
+		any_scope_state = {
+			state_region = s:STATE_YOLNGU
+			is_capital = yes
+		}
+	}
+
+    when_taken = { #change event number
+		add_primary_culture = cu:verlander
+		change_tag = CGI
+    }
+
+	ai_chance = {
+		value = 100
+	}
+} 
+
+dvg_expand_zhourao = {
+	is_shown = {
+		has_variable = oceania_claimer
+		exists = c:ZHR
+		c:ZHR = ROOT
+		any_scope_state = {
+			region = sr:region_zhourao
+			NOT = {
+				state_region = {
+					is_homeland = cu:zhourao
+				}
+			}
+			any_neighbouring_state = {
+				state_region = {
+					is_homeland = cu:zhourao
+				}
+			}
+		}
+	}
+
+    possible = {
+
+		NOT = {
+			has_law = law_type:law_no_colonial_affairs
+		}
+		any_scope_state = {
+			region = sr:region_oceania
+			NOT = {
+				state_region = {
+					is_homeland = cu:zhourao
+				}
+			}
+			culture_percent_state = {
+				target = cu:zhourao
+				value > 0.50
+			}
+		}
+	}
+
+    when_taken = {
+       every_scope_state = {
+			limit = {
+				culture_percent_state = {
+				target = cu:zhourao
+				value > 0.50
+			}
+			region = sr:region_oceania
+				NOT = {
+				state_region = {
+					is_homeland = cu:zhourao
+				}
+				}
+				
+
+			}
+			state_region = {
+				add_homeland = cu:zhourao
+			}
+	   }
+	  
+    }
+
+	ai_chance = {
+		value = 100
+	}
+}

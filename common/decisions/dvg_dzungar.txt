@@ -14,13 +14,13 @@
 		}
 		OR = {
 		any_primary_culture = {
-							has_discrimination_trait = sinosphere
+							has_discrimination_trait = tradition_sinosphere
 						}
 		any_primary_culture = {
-							has_discrimination_trait = east_asian_heritage
+							has_discrimination_trait_group = heritage_group_east_asian
 						}
 		any_primary_culture = {
-							has_discrimination_trait = mongol_language
+							has_discrimination_trait_group = language_group_mongolic
 						}
 
 			}
@@ -42,10 +42,10 @@
 		}
 		OR = {
 		  any_primary_culture = {
-				has_discrimination_trait = sinosphere
+				has_discrimination_trait = tradition_sinosphere
 			}
 		   any_primary_culture = {
-				has_discrimination_trait = han_chinese
+				has_discrimination_trait = heritage_han
 			}
 		ROOT = {
 			culture_percent_country = {
@@ -68,7 +68,7 @@
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
@@ -100,27 +100,18 @@ dvg_dzu_tib_union = {
 		has_law = law_type:law_cultural_exclusion
 		NOT = {has_journal_entry = je_galdan_khan}
 		has_technology_researched = pan-nationalism
-			c:TIB = {
-				is_at_war = no
-				
-				market = {
-					owner = ROOT
-				}
-				
-				has_law = law_type:law_theocracy
-				
-				owner = {
-					is_ai = yes
+		c:TIB = {
+			is_at_war = no
+			has_law = law_type:law_theocracy
+			owner = {
+				is_ai = yes
 					
-					relations:root >= relations_threshold:amicable
+				relations:root >= relations_threshold:amicable
 					
-					this.gdp < root.gdp
-				}
-				
+				this.gdp < root.gdp
+			}
 		}
-		
 	}
-		
 
     when_taken = {
 		trigger_event = { id = dvg_dzungaria.7 popup = yes }
@@ -131,7 +122,7 @@ dvg_dzu_tib_union = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
@@ -141,10 +132,10 @@ dvg_annex_siberia = {
 		NOT = { is_country_type = decentralized }
 		exists = c:SIB
 
-
+		has_game_rule = siberia_railroaded
 
 		any_primary_culture = {
-			has_discrimination_trait = north_asian_heritage
+			has_discrimination_trait_group = heritage_group_north_asian
 		}
 		any_neighbouring_state = {
 			owner = {is_country_type = decentralized}
@@ -175,7 +166,7 @@ dvg_annex_siberia = {
 					is_ai = yes			
 					is_country_type = decentralized
 					any_primary_culture = {
-						has_discrimination_trait = north_asian_heritage
+						has_discrimination_trait_group = heritage_group_north_asian
 						
 					}
 					any_scope_state = {
@@ -190,6 +181,14 @@ dvg_annex_siberia = {
 			limit = {
 				exists = c:SBR
 			}
+			save_temporary_scope_value_as = {
+				name = war_reparations_amount
+				value = {
+					value = income
+					multiply = define:NDiplomacy|DEFAULT_WAR_REPARATIONS_MONEY_TRANSFER
+				}
+			}
+			
 			create_diplomatic_play = {
 				type = dp_annex_war
 				target_country = c:SBR
@@ -197,7 +196,15 @@ dvg_annex_siberia = {
 				add_war_goal = {
 					holder = c:SBR
 					target_country = ROOT
-					type = war_reparations
+					type = enforce_treaty_article
+					article = {
+						article = money_transfer
+						source_country = ROOT
+						target_country = c:SBR
+						inputs = {
+							{ quantity = scope:war_reparations_amount }
+						}
+					}
 				}
 			}
 		}
@@ -209,7 +216,7 @@ dvg_annex_siberia = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 dvg_annex_yakutia = {
@@ -217,10 +224,10 @@ dvg_annex_yakutia = {
 	
 		NOT = { is_country_type = decentralized }
 		exists = c:YAK
-
+		has_game_rule = siberia_railroaded
 
 		any_primary_culture = {
-			has_discrimination_trait = north_asian_heritage
+			has_discrimination_trait_group = heritage_group_north_asian
 		}
 		any_neighbouring_state = {
 			owner = {is_country_type = decentralized}
@@ -252,7 +259,7 @@ dvg_annex_yakutia = {
 					is_ai = yes			
 					is_country_type = decentralized
 					any_primary_culture = {
-						has_discrimination_trait = north_asian_heritage
+						has_discrimination_trait_group = heritage_group_north_asian
 					}
 					any_scope_state = {
 						region = sr:region_east_siberia
@@ -268,9 +275,10 @@ dvg_annex_yakutia = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
+
 dvg_tib_dzu_union = {
 	is_shown = {
 	
@@ -297,27 +305,19 @@ dvg_tib_dzu_union = {
 		has_law = law_type:law_state_religion
 		has_law = law_type:law_cultural_exclusion
 		has_technology_researched = pan-nationalism
-			c:DZU = {
-				is_at_war = no
+		c:DZU = {
+			is_at_war = no
+			has_law = law_type:law_state_religion
 				
-				market = {
-					owner = ROOT
-				}
-				
-				has_law = law_type:law_state_religion
-				
-				owner = {
-					is_ai = yes
+			owner = {
+				is_ai = yes
 					
-					relations:root >= relations_threshold:amicable
+				relations:root >= relations_threshold:amicable
 					
-					this.gdp < root.gdp
-				}
-				
+				this.gdp < root.gdp
+			}
 		}
-		
 	}
-		
 
     when_taken = {
 		trigger_event = { id = dvg_dzungaria.8 popup = yes }
@@ -328,8 +328,51 @@ dvg_tib_dzu_union = {
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
 
+dvg_accept_mizrahi = {
+	is_shown = {
+		OR = {
+			country_is_in_middle_east = yes
+			country_is_in_central_asia = yes
+		}
+		any_scope_state = {
+			state_region = {
+				is_homeland = cu:mizrahi
+			}
+		}
+		any_scope_pop = {
+			culture = cu:mizrahi
+			OR = {
+				religion = {
+					has_discrimination_trait = heritage_islamic
+				}
+				religion = {
+					has_discrimination_trait = heritage_christian
+				}
+				religion = {
+					has_discrimination_trait = heritage_jewish
+				}
+			}
+		}
+	}
+
+    possible = {
+		cultural_acceptance_base = {
+			target = cu:mizrahi
+			value > acceptance_status_3
+		}
+		has_law = law_type:law_cultural_exclusion
+	}
+
+    when_taken = {
+		add_primary_culture = cu:mizrahi
+    }
+
+	ai_chance = {
+		value = 100
+	}
+}

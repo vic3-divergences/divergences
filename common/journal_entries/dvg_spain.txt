@@ -4,12 +4,7 @@
 	group = je_group_foreign_affairs
 	
 	complete = {
-		c:GCO = {
-			is_subject = yes
-			is_at_war = no
-			NOT = { has_modifier = dvg_war_preparation }
-			has_truce_with = c:SPA
-		}
+		owns_entire_state_region = STATE_MEXICO
 	}
 	
 	fail = {
@@ -17,10 +12,7 @@
 			is_subject = no
 			is_at_war = no
 			NOT = { has_modifier = dvg_war_preparation }
-			has_truce_with = c:SPA
-		}
-		c:GRA = {
-			is_subject = no
+			has_truce_with = root
 		}
 	}
 	
@@ -33,9 +25,63 @@
 	}
 	
     on_fail = {
-		trigger_event = { id = dvg_spain.7 }
+		trigger_event = { id = dvg_spain.5 }
 	}
 	
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+je_herrerian_revolution_SPA = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	
+	group = je_group_foreign_affairs
+	
+	on_yearly_pulse = {
+		events = { dvg_spain.10 }	# Treaty of Lisbon
+	}
+	
+	complete = {
+		country_or_subject_owns_entire_state_region = STATE_ZULIA
+		country_or_subject_owns_entire_state_region = STATE_MIRANDA
+		country_or_subject_owns_entire_state_region = STATE_GUAVIARE
+		country_or_subject_owns_entire_state_region = STATE_ANGOSTURA
+		country_or_subject_owns_entire_state_region = STATE_BOLIVAR
+		country_or_subject_owns_entire_state_region = STATE_ANTIOQUIA
+		country_or_subject_owns_entire_state_region = STATE_CUNDINAMARCA
+		country_or_subject_owns_entire_state_region = STATE_CAUCA
+	}
+	invalid = {
+		c:SAN = {
+			is_at_war = no
+			has_truce_with = root
+		}
+		c:GRA = {
+			is_subject = yes
+			is_at_war = no
+			has_truce_with = root
+		}
+	}
+	fail = {
+		NOT = {
+			country_or_subject_owns_entire_state_region = STATE_ZULIA
+			country_or_subject_owns_entire_state_region = STATE_MIRANDA
+			country_or_subject_owns_entire_state_region = STATE_GUAVIARE
+			country_or_subject_owns_entire_state_region = STATE_ANGOSTURA
+			country_or_subject_owns_entire_state_region = STATE_BOLIVAR
+			country_or_subject_owns_entire_state_region = STATE_ANTIOQUIA
+			country_or_subject_owns_entire_state_region = STATE_CUNDINAMARCA
+			country_or_subject_owns_entire_state_region = STATE_CAUCA
+		}
+	}
+	on_complete = {
+		trigger_event = { id = dvg_spain.12 }
+	}
+	on_invalid = {
+		trigger_event = { id = dvg_spain.11 }
+	}
+	on_fail = {
+		trigger_event = { id = dvg_spain.9 }
+	}
 	weight = 100
 	should_be_pinned_by_default = yes
 }
@@ -46,10 +92,10 @@ je_cuban_great_game_SPA = {
 	
 	complete = {
 		c:CUB = {
-			is_subject_of = c:SPA
+			is_subject_of = root
 			is_at_war = no
 		}
-		c:SPA = {
+		root = {
 			has_truce_with = c:CUB
 		}
 	}
@@ -59,7 +105,7 @@ je_cuban_great_game_SPA = {
 			is_subject_of = c:GCO
 			is_at_war = no
 		}
-		c:SPA = {
+		root = {
 			has_truce_with = c:CUB
 		}
 	}
@@ -81,9 +127,14 @@ je_cuban_war_of_independence_SPA = {
 	group = je_group_foreign_affairs
 	
 	complete = {
-		c:CUB = {
-			is_subject_of = c:SPA
-			is_at_war = no
+		OR = {
+			AND = {
+				c:CUB = {
+					is_subject_of = root
+					is_at_war = no
+				}
+			}
+			owns_entire_state_region = STATE_CUBA
 		}
 	}
 	
@@ -95,238 +146,252 @@ je_cuban_war_of_independence_SPA = {
 	}
 
 	on_complete = {
-		trigger_event = { id = dvg_cuba.29 }
+		if = {
+			limit = { NOT = { has_global_variable = cuban_war_active_communist } }
+			trigger_event = { id = dvg_cuba.29 }
+		}
+		else = {
+			limit = { has_global_variable = cuban_war_active_communist }
+			trigger_event = { id = dvg_cuba.38 }
+		}
 	}
 	
 	on_fail = {
-		trigger_event = { id = dvg_cuba.31 }
+		if = {
+			limit = { NOT = { has_global_variable = cuban_war_active_communist } }
+			trigger_event = { id = dvg_cuba.31 }
+		}
+		else = {
+			limit = { has_global_variable = cuban_war_active_communist }
+			trigger_event = { id = dvg_cuba.39 }
+		}
 	}
 	
 	weight = 100
 	should_be_pinned_by_default = yes
 }
-je_reconquer_new_spain = {
-	icon = "gfx/interface/icons/event_icons/event_map.dds"
+# je_reconquer_new_spain = {
+	# icon = "gfx/interface/icons/event_icons/event_map.dds"
 	
-	group = je_group_foreign_affairs
+	# group = je_group_foreign_affairs
 
-	invalid = {
-		has_variable = remove_many_spanish_jes_var
-	}
+	# invalid = {
+		# has_variable = remove_many_spanish_jes_var
+	# }
 	
-	complete = {
-		custom_tooltip = {
-			text = dvg_reconquer_new_spain_tt
-			OR = {
-				OR = {
-					AND = {
-						exists = c:UCA
-						c:UCA = {
-							is_subject_of = ROOT
-						}
-						exists = c:MEX
-						c:MEX = {
-							is_subject_of = ROOT
-						}
-						exists = c:LUS
-						c:LUS = {
-							is_subject_of = ROOT
-						}
-					}
-					AND = {
-						exists = c:GCO
-						c:GCO = {
-							is_subject_of = ROOT
-						}
-						NOT = {
-							exists = c:LUS
-						}
-						NOT = {
-							exists = c:UCA
-						}
-					}
-					AND = {
-						exists = c:UCA
-						c:UCA = {
-							is_subject_of = ROOT
-						}
-						exists = c:MEX
-						c:MEX = {
-							is_subject_of = ROOT
-						}
-						NOT = {
-							exists = c:LUS
-						}
-					}
-					AND = {
-						exists = c:UCA
-						c:UCA = {
-							is_subject_of = ROOT
-						}
-						exists = c:GCO
-						c:GCO = {
-							is_subject_of = ROOT
-						}
-						NOT = {
-							exists = c:LUS
-						}
-					}
-				}
-				NOT = {
-					exists = c:LUS
-					exists = c:GCO
-					exists = c:UCA
-					exists = c:MEX
-				}
-			}
+	# complete = {
+		# custom_tooltip = {
+			# text = dvg_reconquer_new_spain_tt
+			# OR = {
+				# OR = {
+					# AND = {
+						# exists = c:UCA
+						# c:UCA = {
+							# is_subject_of = ROOT
+						# }
+						# exists = c:MEX
+						# c:MEX = {
+							# is_subject_of = ROOT
+						# }
+						# exists = c:LUS
+						# c:LUS = {
+							# is_subject_of = ROOT
+						# }
+					# }
+					# AND = {
+						# exists = c:GCO
+						# c:GCO = {
+							# is_subject_of = ROOT
+						# }
+						# NOT = {
+							# exists = c:LUS
+						# }
+						# NOT = {
+							# exists = c:UCA
+						# }
+					# }
+					# AND = {
+						# exists = c:UCA
+						# c:UCA = {
+							# is_subject_of = ROOT
+						# }
+						# exists = c:MEX
+						# c:MEX = {
+							# is_subject_of = ROOT
+						# }
+						# NOT = {
+							# exists = c:LUS
+						# }
+					# }
+					# AND = {
+						# exists = c:UCA
+						# c:UCA = {
+							# is_subject_of = ROOT
+						# }
+						# exists = c:GCO
+						# c:GCO = {
+							# is_subject_of = ROOT
+						# }
+						# NOT = {
+							# exists = c:LUS
+						# }
+					# }
+				# }
+				# NOT = {
+					# exists = c:LUS
+					# exists = c:GCO
+					# exists = c:UCA
+					# exists = c:MEX
+				# }
+			# }
 			
-		}
-	}
+		# }
+	# }
 	
 
-	on_complete = {
-		trigger_event = { id = dvg_spain.8 }
-	}
+	# on_complete = {
+		# trigger_event = { id = dvg_spain.8 }
+	# }
 
-	weight = 100
-	should_be_pinned_by_default = yes
-}
+	# weight = 100
+	# should_be_pinned_by_default = yes
+# }
 
-je_rebuild_spain = {
-	icon = "gfx/interface/icons/event_icons/event_map.dds"
+# je_rebuild_spain = {
+	# icon = "gfx/interface/icons/event_icons/event_map.dds"
 	
-	group = je_group_internal_affairs
+	# group = je_group_internal_affairs
 
-	invalid = {
-		has_variable = remove_many_spanish_jes_var
-	}
+	# invalid = {
+		# has_variable = remove_many_spanish_jes_var
+	# }
 	
-	complete = {
-		AND = {
-			NOT = {
-				has_law = law_type:law_serfdom
-				has_law = law_type:law_land_based_taxation
-			}
-		}
-	}
+	# complete = {
+		# AND = {
+			# NOT = {
+				# has_law = law_type:law_serfdom
+				# has_law = law_type:law_land_based_taxation
+			# }
+		# }
+	# }
 	
-	fail = {
-		OR = {
-			AND = {
-				year > 1848
-				NOT = {
-					has_modifier = dvg_army_reform_spain
-				}
-			}
-			year > 1860
-		}
-	}
+	# fail = {
+		# OR = {
+			# AND = {
+				# year > 1848
+				# NOT = {
+					# has_modifier = dvg_army_reform_spain
+				# }
+			# }
+			# year > 1860
+		# }
+	# }
 
 
-	on_complete = {
-		trigger_event = { id = dvg_spain.9 }
-		remove_modifier = dvg_fallen_kingdom
-	}
+	# on_complete = {
+		# trigger_event = { id = dvg_spain.9 }
+		# remove_modifier = dvg_fallen_kingdom
+	# }
 	
-    on_fail = {
-		trigger_event = { id = dvg_spain.10 }
-	}
+    # on_fail = {
+		# trigger_event = { id = dvg_spain.10 }
+	# }
 
-	weight = 100
-	should_be_pinned_by_default = yes
-}
+	# weight = 100
+	# should_be_pinned_by_default = yes
+# }
 
-je_a_new_empire_in_an_old_world = {
-	icon = "gfx/interface/icons/event_icons/event_map.dds"
+# je_a_new_empire_in_an_old_world = {
+	# icon = "gfx/interface/icons/event_icons/event_map.dds"
 	
-	group = je_group_internal_affairs
+	# group = je_group_internal_affairs
 	
-	invalid = {
-		has_variable = remove_many_spanish_jes_var
-	}
+	# invalid = {
+		# has_variable = remove_many_spanish_jes_var
+	# }
 	
-	complete = {
-		custom_tooltip = {
-			text = a_new_empire_in_an_old_world_tooltip
-			OR = {
-				has_variable = dvg_spain_africa
-				has_variable = dvg_spain_india
-			}
-		}
-	}
+	# complete = {
+		# custom_tooltip = {
+			# text = a_new_empire_in_an_old_world_tooltip
+			# OR = {
+				# has_variable = dvg_spain_africa
+				# has_variable = dvg_spain_india
+			# }
+		# }
+	# }
 
-	on_complete = {
-		custom_tooltip = {
-			text = a_new_empire_in_an_old_world_remove_modifier_tooltip
-			remove_modifier = dvg_fallen_kingdom_less_bad
-		}
-	}
+	# on_complete = {
+		# custom_tooltip = {
+			# text = a_new_empire_in_an_old_world_remove_modifier_tooltip
+			# remove_modifier = dvg_fallen_kingdom_less_bad
+		# }
+	# }
 
-	weight = 100
-	should_be_pinned_by_default = yes
-}
+	# weight = 100
+	# should_be_pinned_by_default = yes
+# }
 
-je_spanish_africa = {
-	icon = "gfx/interface/icons/event_icons/event_africa_scramble.dds"
+# je_spanish_africa = {
+	# icon = "gfx/interface/icons/event_icons/event_africa_scramble.dds"
 	
-	group = je_group_foreign_affairs
+	# group = je_group_foreign_affairs
 	
-	invalid = {
-		has_variable = remove_many_spanish_jes_var
-	}
+	# invalid = {
+		# has_variable = remove_many_spanish_jes_var
+	# }
 	
-	complete = {
-		AND = {
-			owns_entire_state_region = STATE_INNER_MOROCCO
-			owns_entire_state_region = STATE_MARRAKECH
-			owns_entire_state_region = STATE_AL_RIF
-			owns_entire_state_region = STATE_FEZ
-			owns_entire_state_region = STATE_LINDI
-			owns_entire_state_region = STATE_ZANZIBAR
-			owns_entire_state_region = STATE_TANGANYIKA
-			owns_entire_state_region = STATE_KENYA
-			owns_entire_state_region = STATE_RIFT_VALLEY
-			owns_entire_state_region = STATE_UGANDA
-		}
-	}
+	# complete = {
+		# AND = {
+			# owns_entire_state_region = STATE_INNER_MOROCCO
+			# owns_entire_state_region = STATE_MARRAKECH
+			# owns_entire_state_region = STATE_AL_RIF
+			# owns_entire_state_region = STATE_FEZ
+			# owns_entire_state_region = STATE_LINDI
+			# owns_entire_state_region = STATE_ZANZIBAR
+			# owns_entire_state_region = STATE_TANGANYIKA
+			# owns_entire_state_region = STATE_KENYA
+			# owns_entire_state_region = STATE_RIFT_VALLEY
+			# owns_entire_state_region = STATE_UGANDA
+		# }
+	# }
 
-	on_complete = {
-		set_variable = dvg_spain_africa
-	}
+	# on_complete = {
+		# set_variable = dvg_spain_africa
+	# }
 
-	weight = 100
-	should_be_pinned_by_default = yes
-}
+	# weight = 100
+	# should_be_pinned_by_default = yes
+# }
 
-je_spanish_india = {
-	icon = "gfx/interface/icons/event_icons/event_map.dds"
+# je_spanish_india = {
+	# icon = "gfx/interface/icons/event_icons/event_map.dds"
 	
-	group = je_group_foreign_affairs
+	# group = je_group_foreign_affairs
 
-	invalid = {
-		has_variable = remove_many_spanish_jes_var
-	}
+	# invalid = {
+		# has_variable = remove_many_spanish_jes_var
+	# }
 
-	complete = {
-		AND = {
-			owns_entire_state_region = STATE_PEGU
-			owns_entire_state_region = STATE_BURMA
-			owns_entire_state_region = STATE_SHAN_STATES
-			owns_entire_state_region = STATE_KACHIN
-			owns_entire_state_region = STATE_ASSAM
-			owns_entire_state_region = STATE_NORTH_BENGAL
-			owns_entire_state_region = STATE_SOUTH_BENGAL
-		}
-	}
+	# complete = {
+		# AND = {
+			# owns_entire_state_region = STATE_PEGU
+			# owns_entire_state_region = STATE_BURMA
+			# owns_entire_state_region = STATE_SHAN_STATES
+			# owns_entire_state_region = STATE_KACHIN
+			# owns_entire_state_region = STATE_ASSAM
+			# owns_entire_state_region = STATE_NORTH_BENGAL
+			# owns_entire_state_region = STATE_SOUTH_BENGAL
+		# }
+	# }
 
-	on_complete = {
-		set_variable = dvg_spain_india
-		trigger_event = { id = dvg_spain.14 }
-	}
+	# on_complete = {
+		# set_variable = dvg_spain_india
+		# trigger_event = { id = dvg_spain.14 }
+	# }
 
-	weight = 100
-	should_be_pinned_by_default = yes
-}
+	# weight = 100
+	# should_be_pinned_by_default = yes
+# }
 
 #je_spanish_china = {
 #	icon = "gfx/interface/icons/event_icons/event_map.dds"
@@ -380,339 +445,339 @@ je_spanish_india = {
 #	should_be_pinned_by_default = yes
 #}
 
-je_integrate_castille = {
-	icon = "gfx/interface/icons/event_icons/event_map.dds"
+# je_integrate_castille = {
+	# icon = "gfx/interface/icons/event_icons/event_map.dds"
 	
-	group = je_group_internal_affairs
+	# group = je_group_internal_affairs
 
-	is_shown_when_inactive = {
-		exists = c:SPA
-		c:SPA = root
-	}
+	# is_shown_when_inactive = {
+		# exists = c:SPA
+		# c:SPA = root
+	# }
 
-	invalid = {
-		has_variable = remove_many_spanish_jes_var
-	}
+	# invalid = {
+		# has_variable = remove_many_spanish_jes_var
+	# }
 
-	possible = {
-		has_technology_researched = pan-nationalism
-		is_subject = no
-	}
+	# possible = {
+		# has_technology_researched = pan-nationalism
+		# is_subject = no
+	# }
 
-	complete = {
-		AND = {
-			has_law = law_type:law_national_supremacy
-			custom_tooltip = {
-				text = dvg_own_castille_tt
-				owns_entire_state_region = STATE_TOLEDO
-				owns_entire_state_region = STATE_CASTILE
-				owns_entire_state_region = STATE_ASTURIAS
-				owns_entire_state_region = STATE_CARTAGENA
-				owns_entire_state_region = STATE_GRANADA
-				owns_entire_state_region = STATE_BADAJOZ
-				owns_entire_state_region = STATE_ANDALUSIA
-			}
-			cu:spanish = {
-				culture_secession_progress = {
-					target = ROOT
-					value < 0.4
-				}
-			}
-			custom_tooltip = {
-				text = dvg_spain_castille_tt
-				OR = {
-					has_variable = dvg_spain_castille
-					year > 1860
-				}#temp hotfix
-			}
-		}
-	}
+	# complete = {
+		# AND = {
+			# has_law = law_type:law_national_supremacy
+			# custom_tooltip = {
+				# text = dvg_own_castille_tt
+				# owns_entire_state_region = STATE_TOLEDO
+				# owns_entire_state_region = STATE_CASTILE
+				# owns_entire_state_region = STATE_ASTURIAS
+				# owns_entire_state_region = STATE_CARTAGENA
+				# owns_entire_state_region = STATE_GRANADA
+				# owns_entire_state_region = STATE_BADAJOZ
+				# owns_entire_state_region = STATE_ANDALUSIA
+			# }
+			# cu:spanish = {
+				# culture_secession_progress = {
+					# target = ROOT
+					# value < 0.4
+				# }
+			# }
+			# custom_tooltip = {
+				# text = dvg_spain_castille_tt
+				# OR = {
+					# has_variable = dvg_spain_castille
+					# year > 1860
+				# }#temp hotfix
+			# }
+		# }
+	# }
 	
-	fail = {
-#		NOT = {
-#			custom_tooltip = {
-#				text = dvg_no_castille_tt
-#				owns_entire_state_region = STATE_TOLEDO
-#				owns_entire_state_region = STATE_CASTILE
-#				owns_entire_state_region = STATE_ASTURIAS
-#				owns_entire_state_region = STATE_CARTAGENA
-#				owns_entire_state_region = STATE_GRANADA
-#				owns_entire_state_region = STATE_BADAJOZ
-#				owns_entire_state_region = STATE_ANDALUSIA
-#			}
-#			c:SPA = {
-#				is_at_war = yes
-#			}
-#		}
-	}
+	# fail = {
+# #		NOT = {
+# #			custom_tooltip = {
+# #				text = dvg_no_castille_tt
+# #				owns_entire_state_region = STATE_TOLEDO
+# #				owns_entire_state_region = STATE_CASTILE
+# #				owns_entire_state_region = STATE_ASTURIAS
+# #				owns_entire_state_region = STATE_CARTAGENA
+# #				owns_entire_state_region = STATE_GRANADA
+# #				owns_entire_state_region = STATE_BADAJOZ
+# #				owns_entire_state_region = STATE_ANDALUSIA
+# #			}
+# #			c:SPA = {
+# #				is_at_war = yes
+# #			}
+# #		}
+	# }
 
 
-	on_complete = {
-		custom_tooltip = {
-			text = dvg_spain_castille_integrated_tt
-			if = {
-				limit = { has_variable = dvg_spain_end_castillian_mega }
-				trigger_event = { id = dvg_spain.20 }
-			}
-			if = {
-				limit = {
-					NOT = {
-						has_variable = dvg_spain_end_castillian_mega
-					}
-				}
-				trigger_event = { id = dvg_spain.15 }
-			}
-		}
-	}
+	# on_complete = {
+		# custom_tooltip = {
+			# text = dvg_spain_castille_integrated_tt
+			# if = {
+				# limit = { has_variable = dvg_spain_end_castillian_mega }
+				# trigger_event = { id = dvg_spain.20 }
+			# }
+			# if = {
+				# limit = {
+					# NOT = {
+						# has_variable = dvg_spain_end_castillian_mega
+					# }
+				# }
+				# trigger_event = { id = dvg_spain.15 }
+			# }
+		# }
+	# }
 	
-    on_fail = {
-	}
+    # on_fail = {
+	# }
 
-	weight = 100
-}
+	# weight = 100
+# }
 
-je_integrate_portugal = { #make decision instead.
-	icon = "gfx/interface/icons/event_icons/event_map.dds"
+# je_integrate_portugal = { #make decision instead.
+	# icon = "gfx/interface/icons/event_icons/event_map.dds"
 	
-	group = je_group_internal_affairs
+	# group = je_group_internal_affairs
 
-	is_shown_when_inactive = {
-		exists = c:SPA
-		c:SPA = root
-	}
+	# is_shown_when_inactive = {
+		# exists = c:SPA
+		# c:SPA = root
+	# }
 
-	invalid = {
-		has_variable = remove_many_spanish_jes_var
-	}
+	# invalid = {
+		# has_variable = remove_many_spanish_jes_var
+	# }
 
-	possible = {
-		has_technology_researched = pan-nationalism
-		is_subject = no
-	}
+	# possible = {
+		# has_technology_researched = pan-nationalism
+		# is_subject = no
+	# }
 
-	complete = {
-		AND = {
-			has_law = law_type:law_national_supremacy
-			custom_tooltip = {
-				text = dvg_own_galicia_tt
-				owns_entire_state_region = STATE_ESTREMADURA
-				owns_entire_state_region = STATE_BEIRA
-				owns_entire_state_region = STATE_ALENTEJO
-				owns_entire_state_region = STATE_GALICIA
-			}
-			cu:galician = {
-				culture_secession_progress = {
-					target = ROOT
-					value < 0.4
-				}
-			}
-			custom_tooltip = {
-				text = dvg_spain_galicia_tt
-				OR = {
-					has_variable = dvg_spain_galicia
-					year > 1860
-				}#temp hotfix
-			}
-		}
-	}
+	# complete = {
+		# AND = {
+			# has_law = law_type:law_national_supremacy
+			# custom_tooltip = {
+				# text = dvg_own_galicia_tt
+				# owns_entire_state_region = STATE_ESTREMADURA
+				# owns_entire_state_region = STATE_BEIRA
+				# owns_entire_state_region = STATE_ALENTEJO
+				# owns_entire_state_region = STATE_GALICIA
+			# }
+			# cu:galician = {
+				# culture_secession_progress = {
+					# target = ROOT
+					# value < 0.4
+				# }
+			# }
+			# custom_tooltip = {
+				# text = dvg_spain_galicia_tt
+				# OR = {
+					# has_variable = dvg_spain_galicia
+					# year > 1860
+				# }#temp hotfix
+			# }
+		# }
+	# }
 	
-	fail = {
-#		NOT = {
-#			custom_tooltip = {
-#				text = dvg_no_galicia_tt
-#				owns_entire_state_region = STATE_ESTREMADURA
-#				owns_entire_state_region = STATE_BEIRA
-#				owns_entire_state_region = STATE_ALENTEJO
-#				owns_entire_state_region = STATE_GALICIA
-#				c:SPA = {
-#					is_at_war = yes
-#				}
-#			}
-#		}
-	}
+	# fail = {
+# #		NOT = {
+# #			custom_tooltip = {
+# #				text = dvg_no_galicia_tt
+# #				owns_entire_state_region = STATE_ESTREMADURA
+# #				owns_entire_state_region = STATE_BEIRA
+# #				owns_entire_state_region = STATE_ALENTEJO
+# #				owns_entire_state_region = STATE_GALICIA
+# #				c:SPA = {
+# #					is_at_war = yes
+# #				}
+# #			}
+# #		}
+	# }
 
 
-	on_complete = {
-		trigger_event = { id = dvg_spain.17 }
-	}
+	# on_complete = {
+		# trigger_event = { id = dvg_spain.17 }
+	# }
 	
-    on_fail = {
-	}
+    # on_fail = {
+	# }
 
-	weight = 100
-}
+	# weight = 100
+# }
 
-je_army_reform_spain = {
-	icon = "gfx/interface/icons/event_icons/event_military.dds"
+# je_army_reform_spain = {
+	# icon = "gfx/interface/icons/event_icons/event_military.dds"
 	
-	group = je_group_internal_affairs
+	# group = je_group_internal_affairs
 	
-	complete = {
-		AND = {
-			NOT = {
-				has_law = law_type:law_peasant_levies
-				has_law = law_type:law_national_militia
-			}
-			has_technology_researched = napoleonic_warfare
-		}
-		custom_tooltip = {
-			text = dvg_spain_no_irregularstt
-			NOT = {
-				any_scope_building = {
-					has_active_production_method = pm_no_organization
-				}
-			}
-		}
-	}
+	# complete = {
+		# AND = {
+			# NOT = {
+				# has_law = law_type:law_peasant_levies
+				# has_law = law_type:law_national_militia
+			# }
+			# has_technology_researched = napoleonic_warfare
+		# }
+		# custom_tooltip = {
+			# text = dvg_spain_no_irregularstt
+			# NOT = {
+				# any_scope_building = {
+					# has_active_production_method = pm_no_organization
+				# }
+			# }
+		# }
+	# }
 	
-	fail = {
-		year > 1850
-	}
+	# fail = {
+		# year > 1850
+	# }
 
 
-	on_complete = {
-		trigger_event = { id = dvg_spain.11 }
-	}
+	# on_complete = {
+		# trigger_event = { id = dvg_spain.11 }
+	# }
 	
-	on_fail = {
-		trigger_event = { id = dvg_spain.12 }
-	}
+	# on_fail = {
+		# trigger_event = { id = dvg_spain.12 }
+	# }
 	
 
-	weight = 100
-	should_be_pinned_by_default = yes
-}
+	# weight = 100
+	# should_be_pinned_by_default = yes
+# }
 
-je_castillian_tensions = {
-	icon = "gfx/interface/icons/event_icons/event_skull.dds"
+# je_castillian_tensions = {
+	# icon = "gfx/interface/icons/event_icons/event_skull.dds"
 	
-	group = je_group_crises
+	# group = je_group_crises
 
-	invalid = {
-		has_variable = remove_many_spanish_jes_var
-	}
+	# invalid = {
+		# has_variable = remove_many_spanish_jes_var
+	# }
 
-	complete = {
-		year > 1860
-		custom_tooltip = {
-			text =  dvg_spain_tensions_low_tt
-			scope:journal_entry = {
-				is_goal_complete = no
-			}
-		}
-	}
+	# complete = {
+		# year > 1860
+		# custom_tooltip = {
+			# text =  dvg_spain_tensions_low_tt
+			# scope:journal_entry = {
+				# is_goal_complete = no
+			# }
+		# }
+	# }
 
-	fail = {
-		OR = {
-			AND = {
-				year < 1860
-				custom_tooltip = {
-					text =  dvg_spain_tensions_high_tt
-					scope:journal_entry = {
-						is_goal_complete = yes
-					}
-					has_variable = dvg_spain_castille
-				}
-			}
-		}
-	}
+	# fail = {
+		# OR = {
+			# AND = {
+				# year < 1860
+				# custom_tooltip = {
+					# text =  dvg_spain_tensions_high_tt
+					# scope:journal_entry = {
+						# is_goal_complete = yes
+					# }
+					# has_variable = dvg_spain_castille
+				# }
+			# }
+		# }
+	# }
 	
-	on_yearly_pulse = {
-		random_events = {
-			45 = 0
-			25 = dvg_spain.22 #Dilemma, recognition of Castillian Spanish?
-			15 = dvg_spain.24 #Dilemma, status of the Crown of Castile
-			35 = dvg_spain.25 #Generic
-			10 = dvg_spain.26 #Mateo
-		}
-	}
+	# on_yearly_pulse = {
+		# random_events = {
+			# 45 = 0
+			# 25 = dvg_spain.22 #Dilemma, recognition of Castillian Spanish?
+			# 15 = dvg_spain.24 #Dilemma, status of the Crown of Castile
+			# 35 = dvg_spain.25 #Generic
+			# 10 = dvg_spain.26 #Mateo
+		# }
+	# }
 
-	on_complete = {
-		trigger_event = {
-			id = dvg_spain.18
-		}
-	}
+	# on_complete = {
+		# trigger_event = {
+			# id = dvg_spain.18
+		# }
+	# }
 
-	on_fail = {
-		trigger_event = { id = dvg_spain.16 }
-	}
+	# on_fail = {
+		# trigger_event = { id = dvg_spain.16 }
+	# }
 
-	current_value = {
-		value = var:dvg_castillian_tensions_var
-	}
+	# current_value = {
+		# value = var:dvg_castillian_tensions_var
+	# }
 
-	goal_add_value = {
-		add = 5
-	}
+	# goal_add_value = {
+		# add = 5
+	# }
 
-	progressbar = yes
+	# progressbar = yes
 
-	weight = 1000
-	should_be_pinned_by_default = yes
-}
+	# weight = 1000
+	# should_be_pinned_by_default = yes
+# }
 
-je_keep_castillian_tensions_low = {
-	icon = "gfx/interface/icons/event_icons/event_map.dds"
+# je_keep_castillian_tensions_low = {
+	# icon = "gfx/interface/icons/event_icons/event_map.dds"
 
-	group = je_group_internal_affairs
+	# group = je_group_internal_affairs
 
-	complete = {
-		year > 1860
-	}
+	# complete = {
+		# year > 1860
+	# }
 
-	invalid = {
-		has_variable = remove_many_spanish_jes_var
-	}
+	# invalid = {
+		# has_variable = remove_many_spanish_jes_var
+	# }
 
-	fail = {
-		AND = {
-			custom_tooltip = {
-				text =  dvg_spain_keep_tensions_low_tt
-				any_scope_state = {
-					state_region = s:STATE_CARTAGENA
-					turmoil > 0.4
-				}
-				any_scope_state = {
-					state_region = s:STATE_TOLEDO
-					turmoil > 0.4
-				}
-				any_scope_state = {
-					state_region = s:STATE_CASTILE
-					turmoil > 0.4
-				}
-				any_scope_state = {
-					state_region = s:STATE_GRANADA
-					turmoil > 0.4
-				}
-				any_scope_state = {
-					state_region = s:STATE_ANDALUSIA
-					turmoil > 0.4
-				}
-				any_scope_state = {
-					state_region = s:STATE_BADAJOZ
-					turmoil > 0.4
-				}
-				any_scope_state = {
-					state_region = s:STATE_ASTURIAS
-					turmoil > 0.4
-				}
-			}
-		}
-	}
+	# fail = {
+		# AND = {
+			# custom_tooltip = {
+				# text =  dvg_spain_keep_tensions_low_tt
+				# any_scope_state = {
+					# state_region = s:STATE_CARTAGENA
+					# turmoil > 0.4
+				# }
+				# any_scope_state = {
+					# state_region = s:STATE_TOLEDO
+					# turmoil > 0.4
+				# }
+				# any_scope_state = {
+					# state_region = s:STATE_CASTILE
+					# turmoil > 0.4
+				# }
+				# any_scope_state = {
+					# state_region = s:STATE_GRANADA
+					# turmoil > 0.4
+				# }
+				# any_scope_state = {
+					# state_region = s:STATE_ANDALUSIA
+					# turmoil > 0.4
+				# }
+				# any_scope_state = {
+					# state_region = s:STATE_BADAJOZ
+					# turmoil > 0.4
+				# }
+				# any_scope_state = {
+					# state_region = s:STATE_ASTURIAS
+					# turmoil > 0.4
+				# }
+			# }
+		# }
+	# }
 
-	on_complete = {
-	}
+	# on_complete = {
+	# }
 
-	on_fail = {
-		change_variable = {
-			name = dvg_castillian_tensions_var
-			add = 1
-		}
-	}
+	# on_fail = {
+		# change_variable = {
+			# name = dvg_castillian_tensions_var
+			# add = 1
+		# }
+	# }
 
-	weight = 100
-	should_be_pinned_by_default = yes
-}
+	# weight = 100
+	# should_be_pinned_by_default = yes
+# }
 
 #je_urbanize_castile = {
 #	icon = "gfx/interface/icons/event_icons/event_skull.dds"
@@ -767,3 +832,473 @@ je_keep_castillian_tensions_low = {
 #	weight = 100
 #	should_be_pinned_by_default = yes
 #}
+je_uma_gran_comunidade = {
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+	
+	group = je_group_internal_affairs
+	
+	on_yearly_pulse = {
+		events = { dvg_spain.101 } #Warning the player about Spain's rank value
+	}
+	complete = {
+		country_rank >= rank_value:great_power
+		c:GCO = {
+			is_subject_of = root
+			is_subject_type = subject_type_colony
+			liberty_desire <= 10
+		}
+	}
+	
+	fail = {
+		country_rank < rank_value:great_power
+		c:GCO = {
+			is_subject_of = root
+			liberty_desire >= 75
+		}
+	}
+
+	
+
+	on_complete = {
+		trigger_event = { id = dvg_spain.103 }
+	}
+	
+	on_fail = {
+		trigger_event = { id = dvg_spain.102 }
+	}
+
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+je_uma_gran_comunidade_2 = {
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+	
+	group = je_group_internal_affairs
+	
+	on_yearly_pulse = {
+		events = { dvg_spain.101 } #Warning the player about Spain's rank value
+	}
+	complete = {
+		country_rank >= rank_value:great_power
+		c:MEX = {
+			is_subject_of = root
+			is_subject_type = subject_type_colony
+			liberty_desire <= 10
+		}
+		c:LUS = {
+			is_subject_of = root
+			is_subject_type = subject_type_colony
+			liberty_desire <= 10
+		}
+	}
+	
+	fail = {
+		country_rank < rank_value:great_power
+		c:MEX = {
+			is_subject_of = root
+			liberty_desire >= 75
+		}
+		c:LUS = {
+			is_subject_of = root
+			liberty_desire >= 75
+		}
+	}
+
+	
+
+	on_complete = {
+		trigger_event = { id = dvg_spain.103 }
+	}
+	
+	on_fail = {
+		trigger_event = { id = dvg_spain.102 }
+	}
+
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+je_second_peninsular_war_SPA = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	group = je_group_historical_content
+	
+	complete = {
+		NOT = { has_law = law_type:law_monarchy }
+		is_at_war = no
+		has_truce_with = c:DUA
+	}
+
+	fail = {
+		has_law = law_type:law_monarchy
+		is_at_war = no
+		has_truce_with = c:DUA
+	}
+	
+	on_complete = {
+		trigger_event = { id = dvg_spain.28 }
+	}
+
+	on_fail = {
+		trigger_event = { id = dvg_spain.30 }
+	}
+	
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+je_centralize_spain_SPA = {
+	icon = "gfx/interface/icons/event_icons/event_icons/event_map.dds"
+	
+	group = je_group_internal_affairs
+	
+	immediate = {
+		set_variable = {
+			name = dvg_centralization_var
+			value = 0
+		}
+	}
+	current_value = {
+		value = var:dvg_centralization_var
+	}
+	goal_add_value = {
+		value = 20
+	}
+	
+	on_yearly_pulse = {
+		events = {
+			dvg_spain.34 #Church Land event chain
+			dvg_spain.41 #Ivrea Chronicles
+			dvg_spain.42 #Asturias Trial event chain
+			dvg_spain.45 #Birth of Castilian Nationalism (High Centralization)
+			dvg_spain.46 #Birth of Castilian Nationalism (Low Centralization)
+			dvg_spain.47 #Railroad
+		}
+	}
+	progressbar = yes
+	
+	complete = {
+		OR = {
+			AND = {
+				custom_tooltip = {
+					text = centralization_success
+					this = { var:dvg_centralization_var >= 8 }
+				}
+				has_technology_researched = nationalism
+			}
+			AND = {
+				custom_tooltip = {
+					text = centralization_meh
+					this = { var:dvg_centralization_var < 8 }
+					this = { var:dvg_centralization_var >= 3 }
+				}
+				cultural_acceptance_base = { target = cu:spanish value >= acceptance_status_4 }
+			}
+			AND = {
+				custom_tooltip = {
+					text = centralization_fail
+					this = { var:dvg_centralization_var < 3 }
+				}
+				cultural_acceptance_base = { target = cu:spanish value >= acceptance_status_5 }
+			}
+		}
+		country_rank >= rank_value:great_power
+	}
+	invalid = {
+		
+	}
+	fail = {
+		
+	}
+	
+	on_complete = {
+		if = {
+			limit = {
+				this = { var:dvg_centralization_var >= 8 }
+				has_technology_researched = nationalism
+			}
+			trigger_event = { id = dvg_spain.88 }
+		}
+		else_if = {
+			limit = {
+				this = { var:dvg_centralization_var < 8 }
+				this = { var:dvg_centralization_var >= 3 }
+				cultural_acceptance_base = { target = cu:spanish value >= acceptance_status_4 }
+			}
+			trigger_event = { id = dvg_spain.87 }
+		}
+		else = {
+			limit = {
+				this = { var:dvg_centralization_var < 3 }
+				cultural_acceptance_base = { target = cu:spanish value >= acceptance_status_5 }
+			}
+			trigger_event = { id = dvg_spain.86 }
+		}
+	}
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+je_SPA_instability = {
+	icon = "gfx/interface/icons/event_icons/event_icons/event_map.dds"
+	
+	group = je_group_internal_affairs
+	
+	immediate = {
+		set_variable = {
+			name = dvg_instability_var
+			value = 0
+		}
+	}
+	current_value = {
+		value = var:dvg_instability_var
+	}
+	goal_add_value = {
+		value = 20
+	}
+	on_yearly_pulse = {
+		events = {
+			dvg_spain.48 #1870 - Still haven't solved the stability issue yet
+			dvg_spain.49 #1880
+			dvg_spain.50 #1890
+			dvg_spain.51 #1900
+			dvg_spain.55 #Autonomy Bill event
+			dvg_spain.56 #Castilian protest event
+			dvg_spain.57 #Spanish Civil War event chain
+		}
+	}
+	
+	complete = {
+		OR = {
+			custom_tooltip = {
+				text = spanish_civil_war_averted
+				NOT = { has_variable = dvg_spanish_civil_war }
+				has_global_variable = dvg_spain_civil_war_averted
+			}
+			custom_tooltip = {
+				text = spanish_civil_war_over
+				has_global_variable = dvg_spanish_civil_war_over
+			}
+		}
+	}
+	
+	progressbar = yes
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+je_spanish_civil_war_SPA = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	
+	group = je_group_crises
+	
+	complete = {
+		owns_entire_state_region = STATE_ALENTEJO
+		owns_entire_state_region = STATE_ANDALUSIA
+		owns_entire_state_region = STATE_ASTURIAS
+		owns_entire_state_region = STATE_AZORES
+		owns_entire_state_region = STATE_BADAJOZ
+		owns_entire_state_region = STATE_BEIRA
+		owns_entire_state_region = STATE_CASTILE
+		owns_entire_state_region = STATE_CARTAGENA
+		owns_entire_state_region = STATE_ESTREMADURA
+		owns_entire_state_region = STATE_GALICIA
+		owns_entire_state_region = STATE_GRANADA
+		owns_entire_state_region = STATE_TOLEDO
+		is_at_war = no
+	}
+	on_complete = {
+		trigger_event = { id = dvg_spain.85 }
+	}
+	
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+je_spanish_civil_war_CAS = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	
+	group = je_group_crises
+	
+	complete = {
+		owns_entire_state_region = STATE_ALENTEJO
+		owns_entire_state_region = STATE_ANDALUSIA
+		owns_entire_state_region = STATE_ASTURIAS
+		owns_entire_state_region = STATE_AZORES
+		owns_entire_state_region = STATE_BADAJOZ
+		owns_entire_state_region = STATE_BEIRA
+		owns_entire_state_region = STATE_CASTILE
+		owns_entire_state_region = STATE_CARTAGENA
+		owns_entire_state_region = STATE_ESTREMADURA
+		owns_entire_state_region = STATE_GALICIA
+		owns_entire_state_region = STATE_GRANADA
+		owns_entire_state_region = STATE_TOLEDO
+		is_at_war = no
+	}
+	on_complete = {
+		if = {
+			limit = { has_variable = CAS_traditional }
+			trigger_event = { id = dvg_spain.89 }
+		}
+		else = {
+			limit = { has_variable = CAS_federal_republic }
+			trigger_event = { id = dvg_spain.94 }
+		}
+	}
+	
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+je_spanish_civil_war_ANL = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	
+	group = je_group_crises
+	
+	complete = {
+		owns_entire_state_region = STATE_ALENTEJO
+		owns_entire_state_region = STATE_ANDALUSIA
+		owns_entire_state_region = STATE_ASTURIAS
+		owns_entire_state_region = STATE_AZORES
+		owns_entire_state_region = STATE_BADAJOZ
+		owns_entire_state_region = STATE_BEIRA
+		owns_entire_state_region = STATE_CASTILE
+		owns_entire_state_region = STATE_CARTAGENA
+		owns_entire_state_region = STATE_ESTREMADURA
+		owns_entire_state_region = STATE_GALICIA
+		owns_entire_state_region = STATE_GRANADA
+		owns_entire_state_region = STATE_TOLEDO
+		is_at_war = no
+	}
+	on_complete = {
+		trigger_event = { id = dvg_spain.95 }
+	}
+	
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+je_castilian_war_of_independence = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	
+	group = je_group_crises
+	
+	complete = {
+		c:CAS = {
+			is_subject = no
+			is_at_war = no
+		}
+	}
+    on_complete = {
+		trigger_event = { id = dvg_spain.91 }
+	}
+	
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+je_castilian_war_of_independence_ATR = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	
+	group = je_group_crises
+	
+	complete = {
+		c:ATR = {
+			is_subject = no
+			is_at_war = no
+		}
+	}
+    on_complete = {
+		trigger_event = { id = dvg_spain.92 }
+	}
+	
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+je_the_last_andine_war_SPA = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	
+	group = je_group_foreign_affairs
+	
+	complete = {
+		country_or_subject_owns_entire_state_region = STATE_LIMA
+		country_or_subject_owns_entire_state_region = STATE_CAJAMARCA
+		country_or_subject_owns_entire_state_region = STATE_ECUADOR
+		country_or_subject_owns_entire_state_region = STATE_PASTAZA
+		country_or_subject_owns_entire_state_region = STATE_NEAR_ANTISUYU
+		country_or_subject_owns_entire_state_region = STATE_CUZCO
+		country_or_subject_owns_entire_state_region = STATE_CUNTISUYU
+		is_at_war = no
+	}
+	on_complete = {
+		trigger_event = { id = dvg_spain.109 }
+	}
+	
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+je_reform_spain = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	
+	group = je_group_crises
+	
+	complete = {
+		country_or_subject_owns_entire_state_region = STATE_ALENTEJO
+		country_or_subject_owns_entire_state_region = STATE_ANDALUSIA
+		country_or_subject_owns_entire_state_region = STATE_ASTURIAS
+		country_or_subject_owns_entire_state_region = STATE_AZORES
+		country_or_subject_owns_entire_state_region = STATE_BADAJOZ
+		country_or_subject_owns_entire_state_region = STATE_BEIRA
+		country_or_subject_owns_entire_state_region = STATE_CASTILE
+		country_or_subject_owns_entire_state_region = STATE_CARTAGENA
+		country_or_subject_owns_entire_state_region = STATE_ESTREMADURA
+		country_or_subject_owns_entire_state_region = STATE_GALICIA
+		country_or_subject_owns_entire_state_region = STATE_GRANADA
+		country_or_subject_owns_entire_state_region = STATE_TOLEDO
+	}
+	on_complete = {
+		change_tag = SPA
+		remove_global_variable = dvg_spain_collapsed
+		if = {
+			limit = { c:GLI = { is_subject_of = root } }
+			annex_with_incorporation = c:GLI
+		}
+		if = {
+			limit = { c:ANL = { is_subject_of = root } }
+			annex_with_incorporation = c:ANL
+		}
+		if = {
+			limit = { c:CAS = { is_subject_of = root } }
+			annex_with_incorporation = c:CAS
+		}
+		if = {
+			limit = { c:ATR = { is_subject_of = root } }
+			annex_with_incorporation = c:ATR
+		}
+		if = {
+			limit = { c:POR = { is_subject_of = root } }
+			annex_with_incorporation = c:POR
+		}
+		trigger_event = { id = dvg_spain.86 }
+	}
+}
+je_form_iberia = { #Intended for SPA and CAS
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	
+	group = je_group_foreign_affairs
+	
+	complete = {
+		owns_entire_state_region = STATE_NAVARRA
+		owns_entire_state_region = STATE_ARAGON
+		owns_entire_state_region = STATE_CATALONIA
+		owns_entire_state_region = STATE_VALENCIA
+		owns_entire_state_region = STATE_BALEARES
+	}
+	
+	on_complete = {
+		change_tag = IBE
+		if = {
+			limit = { NOT = { country_has_primary_culture = cu:basque } }
+			add_primary_culture = cu:basque
+		}
+		if = {
+			limit = { NOT = { country_has_primary_culture = cu:navarragon } }
+			add_primary_culture = cu:navarragon
+		}
+		if = {
+			limit = { NOT = { country_has_primary_culture = cu:catalan } }
+			add_primary_culture = cu:catalan
+		}
+	}
+}

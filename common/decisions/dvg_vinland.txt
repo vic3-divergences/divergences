@@ -1,45 +1,226 @@
-﻿dvg_vinland_independence = {
+﻿dvg_skraeling_integration = {
 	is_shown = {
+		country_is_in_north_america = yes
 		exists = c:VIN
-		exists = c:SCA
-		root = c:VIN
+		exists = c:SKR
+		OR = {
+			c:VIN = {
+				has_law = law_type:law_multicultural
+			}
+			any_primary_culture = {
+				has_discrimination_trait_group = heritage_group_indigenous_american
+			}
+		}
 		NOT = {
-			has_variable = dvg_the_yolngu_war_hongshan_variable
+			has_variable = skr_to_integrate
+		}
+	}
+    possible = {
+		OR = {
+			has_technology_researched = pan-nationalism
+			any_country = {
+				country_is_in_north_america = yes
+				NOT = {
+					has_law = law_type:law_no_colonial_affairs
+				}
+			}
+			
 		}
 		c:VIN = {
-			is_subject_of = c:SCA
+			NOT = {
+				has_truce_with = c:SKR
+			}
 		}
-		is_diplomatic_play_committed_participant = no
+		c:SKR = {
+			OR = {
+				AND = {
+					is_subject_of = c:VIN
+					liberty_desire < 25
+				}
+				calc_true_if = {
+					amount = 3
+					any_scope_treaty = {
+						binds = c:VIN
+						any_scope_article = {
+							has_type = alliance
+						}
+					}
+					any_scope_treaty = {
+						binds = c:VIN
+						any_scope_article = {
+							has_type = defensive_pact
+						}
+					}
 
-	}
-
-    possible = {
-		has_technology_researched = nationalism
-		c:SCA = {
-			is_at_war = no
+					AND = {
+						has_variable = recently_lost_war
+						is_country_type = unrecognized
+					}
+				}
+				
+			}
 		}
-		NOT = {has_truce_with = c:SCA}
-		is_diplomatic_play_committed_participant = no
-
 	}
 
     when_taken = {
+		set_variable = skr_to_integrate
+		c:SKR = {
+			trigger_event = {
+				id = dvg_skraeling.24
+			}
+		}
 		
-			create_diplomatic_play = {
-				
-			
-				target_country = c:SCA
+    }
+	ai_chance = {
+		value = 100
+	}
+}
 
-				war = no
-				
-				type = dp_independence
+dvg_vinland_treachery = {
+	is_shown = {
+		exists = c:VIN
+		exists = c:SCA
+		c:VIN = ROOT
+		is_subject_of = c:SCA
+		NOT = {
+			is_diplomatic_play_enemy_of = c:SCA
+		}
+		has_journal_entry = je_vinland_independence
+	}
+	possible = {
+		OR = {
+			any_diplomatic_play = {
+				initiator_is = c:SCA
+				target_is = c:SKR
+			}
+			any_diplomatic_play = {
+				initiator_is = c:SCA
+				target_is = c:MSG
+			}
+
+		}
+		
+	}
+	when_taken = {
+		every_diplomatic_play = {
+			limit = {
+				initiator_is = c:SCA
+				target_is = c:SKR
+			}
+			add_target_backers = {
+				c:VIN
+			}
+			if = {
+				limit = {
+					c:MSG = {
+						liberty_desire > 75
+						is_ai = yes
+						has_attitude = {
+							who = c:VIN
+							attitude > disinterested
+						}
+					}
+				}
+				add_target_backers = {
+					c:MSG
+				}
+				add_war_goal = {
+					holder = c:MSG
+					type = independence
+					target_country = c:SCA
+				}
 				
 				
 			}
+		}
+		every_diplomatic_play = {
+			limit = {
+				initiator_is = c:SCA
+				target_is = c:MSG
+			}
+			add_target_backers = {
+				c:VIN
+			}
+			add_war_goal = {
+				holder = c:VIN
+				type = independence
+			}
+			if = {
+				limit = {
+					c:SKR = {
+						liberty_desire > 75
+						is_ai = yes
+						has_attitude = {
+							who = c:VIN
+							attitude > disinterested
+						}
+					}
+				}
+				add_target_backers = {
+					c:SKR
+				}
+				add_war_goal = {
+					holder = c:SKR
+					type = independence
+					target_country = c:SCA
+				}
+			}
+		}
+	}
+}
+
+dvg_masgirland_annexation = {
+	is_shown = {
+		exists = c:MSG
+		exists = c:VIN
+		OR = {
+			this = c:MSG
+			this = c:VIN
+		}
 		
+		c:MSG = {
+			is_subject = yes
+			is_ai = yes
+		}
+		
+	}
+
+    possible = {
+		c:MSG = {
+			is_diplomatic_play_committed_participant = no
+			OR = {
+				OR = {
+					has_attitude = {
+						who = c:VIN
+						attitude = genial
+					}
+					has_attitude = {
+						who = c:VIN
+						attitude = loyal
+					}
+				}
+				
+			}
+		}
+		
+		c:VIN = {
+			is_diplomatic_play_committed_participant = no
+			country_rank > rank_value:insignificant_power
+		}
+		NOT = {
+			has_truce_with = c:VIN
+		}
+	}
+
+    when_taken = {
+		c:VIN = {
+			trigger_event = {
+				id = dvg_vinland.22
+			}
+		}
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }

@@ -1,1170 +1,1219 @@
-﻿namespace = garibaldi_events
+﻿# namespace = garibaldi_events
 
-# Garibaldi Arrives
-garibaldi_events.1 = {
-	type = country_event
-	placement = root
-	event_image = {
-		video = "votp_garibaldi"
-	}
+# # Garibaldi Arrives
+# garibaldi_events.1 = {
+	# type = country_event
+	# placement = root
+	# event_image = {
+		# video = "votp_garibaldi"
+	# }
 
-	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	# on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
 
-	icon = "gfx/interface/icons/event_icons/bicorne_hat.dds"
+	# icon = "gfx/interface/icons/event_icons/bicorne_hat.dds"
 
-	title = garibaldi_events.1.t
-	desc = garibaldi_events.1.d
-	flavor = garibaldi_events.1.f
+	# title = garibaldi_events.1.t
+	# desc = garibaldi_events.1.d
+	# flavor = garibaldi_events.1.f
 
-	cooldown = { months = short_modifier_time }
+	# cooldown = { days = short_modifier_time }
 
-	duration = 3
+	# duration = 3
 
-	dlc = dlc004
+	# dlc = dlc004
 
-	trigger = {
-		has_dlc_feature = voice_of_the_people_content
-		year <= 1862 # Garibaldi was (sadly) not immortal
-		NOT = {
-			has_variable = rejected_garibaldi
-		}
-		NOT = {
-			any_scope_character = {
-				has_variable = garibaldi_var
-			}
-		}
-		OR = { # Either Garibaldi is "dead" or he is an exile
-			NOT = {
-				any_character_in_exile_pool = {
-					has_variable = garibaldi_var
-				}
-				any_character = {
-					has_variable = garibaldi_var
-				}
-			}
-			any_character_in_exile_pool = {
-				has_variable = garibaldi_var
-			}
-		}
-		OR = {
-			AND = { # You're a nation fighting the good cause (defensive war)
-				OR = {
-					has_law = law_type:law_anarchy
-					has_law = law_type:law_universal_suffrage
-					has_law = law_type:law_census_voting
-					has_law = law_type:law_wealth_voting
-					has_law = law_type:law_landed_voting
-				}
-				any_diplomatic_play = {
-					is_war = yes
-					target = root
-					initiator = {
-						OR = {
-							has_law = law_type:law_autocracy
-							has_law = law_type:law_oligarchy
-							has_law = law_type:law_single_party_state
-						}
-					}
-				}
-			}
-			AND = { # You're fighting for Italy
-				any_diplomatic_play = {
-					is_war = yes
-					OR = {
-						AND = {
-							initiator = {
-								any_primary_culture = {
-									has_discrimination_trait = italophone
-								}
-								this = root
-							}
-							target = {
-								NOT = {
-									any_primary_culture = {
-										has_discrimination_trait = italophone
-									}			
-								}
-								any_scope_state = {
-									state_region = {
-										OR = {
-											is_homeland = cu:north_italian
-											is_homeland = cu:south_italian
-										}
-									}
-								}
-							}
-						}
-						AND = {
-							target = {
-								any_primary_culture = {
-									has_discrimination_trait = italophone
-								}
-								this = root
-							}
-							initiator = {
-								NOT = {
-									any_primary_culture = {
-										has_discrimination_trait = italophone
-									}			
-								}
-							}
-						}
-					}
-				}
-			}
-			# AND = { # You're fighting the Ragamuffin War against Brazil
-			# 	c:PNI ?= this
-			# 	year <= 1839
-			# 	any_diplomatic_play = {
-			# 		is_war = yes
-			# 		any_scope_play_involved = {
-			# 			c:BRZ ?= this
-			# 			has_war_with = root
-			# 		}
-			# 	}
+	# trigger = {
+		# has_dlc_feature = voice_of_the_people_content
+		# year <= 1862 # Garibaldi was (sadly) not immortal
+		# NOT = {
+			# has_variable = rejected_garibaldi
+		# }
+		# NOT = {
+			# any_scope_character = {
+				# has_variable = garibaldi_var
 			# }
-		}
-	}
+		# }
+		# OR = { # Either Garibaldi is "dead" or he is an exile
+			# NOT = {
+				# has_global_variable = garibaldi_is_alive_global_var
+			# }
+			# any_character_in_exile_pool = {
+				# has_variable = garibaldi_var
+			# }
+		# }
+		# OR = {
+			# AND = { # You're a nation fighting the good cause (defensive war OR democratically-inclined revolution/secession)
+				# OR = {
+					# has_law_or_variant = law_type:law_anarchy
+					# has_law_or_variant = law_type:law_universal_suffrage
+					# has_law_or_variant = law_type:law_census_voting
+					# has_law_or_variant = law_type:law_wealth_voting
+					# has_law_or_variant = law_type:law_landed_voting
+				# }
+				# OR = {
+					# AND = {
+						# OR = {
+							# is_revolutionary = yes
+							# is_secessionist = yes
+						# }
+						# any_diplomatic_play = {
+							# is_war = yes
+							# initiator = root
+							# target = {
+								# OR = {
+									# has_law_or_variant = law_type:law_autocracy
+									# has_law_or_variant = law_type:law_oligarchy
+									# has_law_or_variant = law_type:law_single_party_state
+								# }
+							# }
+						# }
+					# }
+					# AND = {
+						# any_diplomatic_play = {
+							# is_war = yes
+							# target = root
+							# initiator = {
+								# is_secessionist = no
+								# # Garibaldi should only care to get involved defensively against significant revolutions
+								# OR = {
+									# is_revolutionary = no
+									# country_rank >= rank_value:major_power
+								# }
+								# # Garibaldi shouldn't be in the business of defending big powers against small ones
+								# OR = {
+									# is_revolutionary = yes
+									# country_rank >= root.country_rank
+								# }
+								# OR = {
+									# has_law_or_variant = law_type:law_autocracy
+									# has_law_or_variant = law_type:law_oligarchy
+									# has_law_or_variant = law_type:law_single_party_state
+								# }
+							# }
+						# }
+					# }
+				# }
+			# }
+			# AND = { # You're fighting for Italy
+				# any_diplomatic_play = {
+					# is_war = yes
+					# OR = {
+						# AND = {
+							# initiator = {
+								# any_primary_culture = {
+									# has_discrimination_trait = heritage_italic
+								# }
+								# this = root
+							# }
+							# target = {
+								# NOT = {
+									# any_primary_culture = {
+										# has_discrimination_trait = heritage_italic
+									# }
+								# }
+								# any_scope_state = {
+									# state_region = {
+										# OR = {
+											# is_homeland = cu:north_italian
+											# is_homeland = cu:south_italian
+										# }
+									# }
+								# }
+							# }
+						# }
+						# AND = {
+							# initiator = {
+								# any_primary_culture = {
+									# has_discrimination_trait = heritage_italic
+								# }
+								# this = root
+								# is_secessionist = yes
+							# }
+						# }
+						# AND = {
+							# target = {
+								# any_primary_culture = {
+									# has_discrimination_trait = heritage_italic
+								# }
+								# this = root
+							# }
+							# initiator = {
+								# NOT = {
+									# any_primary_culture = {
+										# has_discrimination_trait = heritage_italic
+									# }
+								# }
+							# }
+						# }
+					# }
+				# }
+			# }
+			# AND = { # You're fighting the Ragamuffin War against Brazil
+				# c:PNI ?= this
+				# year <= 1839
+				# any_diplomatic_play = {
+					# is_war = yes
+					# any_scope_play_involved = {
+						# c:BRZ ?= this
+						# has_war_with = root
+					# }
+				# }
+			# }
+		# }
+	# }
 
-	immediate = {
-		if = {
-			limit = {
-				NOT = {
-					any_character_in_exile_pool = {
-						has_variable = garibaldi_var
-					}
-					any_character = {
-						has_variable = garibaldi_var
-					}
-				}
-			}
-			create_character = {
-				template = garibaldi_character_template
-				on_created = {
-					set_variable = garibaldi_var
-					set_variable = {
-						name = garibaldi_cooldown_var
-						months = short_modifier_time
-					}
-				}
-				save_scope_as = garibaldi_scope
-			}
-		}
-		else_if = {
-			random_character_in_exile_pool = {
-				limit = {
-					has_variable = garibaldi_var
-				}
-				transfer_character = root
-				save_scope_as = garibaldi_scope
-				set_variable = {
-					name = garibaldi_cooldown_var
-					months = short_modifier_time
-				}
-			}
-		}
-		if = {
-			limit = { exists = global_var:garibaldi_fame_var }
-			change_global_variable = {
-				name = garibaldi_fame_var
-				add = 1
-			}
-		}
-		else = {
-			set_global_variable = {
-				name = garibaldi_fame_var
-				value = 1
-			}
-		}
-		if = {
-			limit = {
-				any_diplomatic_play = {
-					is_war = yes
-					target = root
-				}
-			}
-			random_diplomatic_play = {
-				limit = {
-					is_war = yes
-					target = root					
-				}
-				initiator = {
-					save_scope_as = garibaldi_spawn_foe_scope
-				}
-			}
-		}
-		else_if = {
-			limit = {
-				any_diplomatic_play = {
-					is_war = yes
-					initiator = root
-				}
-			}
-			random_diplomatic_play = {
-				limit = {
-					is_war = yes
-					initiator = root					
-				}
-				target = {
-					save_scope_as = garibaldi_spawn_foe_scope
-				}
-			}			
-		}
-		save_scope_as = garibaldi_new_home
-	}
+	# immediate = {
+		# if = {
+			# limit = {
+				# NOT = {
+					# any_character_in_exile_pool = {
+						# has_variable = garibaldi_var
+					# }
+					# any_character = {
+						# has_variable = garibaldi_var
+					# }
+				# }
+			# }
+			# create_character = {
+				# template = garibaldi_character_template
+				# on_created = {
+					# set_variable = garibaldi_var
+					# set_variable = {
+						# name = garibaldi_cooldown_var
+						# days = short_modifier_time
+					# }
+					# save_scope_as = garibaldi_scope
+				# }
+			# }
+		# }
+		# else_if = {
+			# random_character_in_exile_pool = {
+				# limit = {
+					# has_variable = garibaldi_var
+				# }
+				# transfer_character = root
+				# save_scope_as = garibaldi_scope
+				# set_variable = {
+					# name = garibaldi_cooldown_var
+					# days = short_modifier_time
+				# }
+			# }
+		# }
+		# if = {
+			# limit = { exists = global_var:garibaldi_fame_var }
+			# change_global_variable = {
+				# name = garibaldi_fame_var
+				# add = 1
+			# }
+		# }
+		# else = {
+			# set_global_variable = {
+				# name = garibaldi_fame_var
+				# value = 1
+			# }
+		# }
+		# if = {
+			# limit = {
+				# any_diplomatic_play = {
+					# is_war = yes
+					# target = root
+				# }
+			# }
+			# random_diplomatic_play = {
+				# limit = {
+					# is_war = yes
+					# target = root
+				# }
+				# initiator = {
+					# save_scope_as = garibaldi_spawn_foe_scope
+				# }
+			# }
+		# }
+		# else_if = {
+			# limit = {
+				# any_diplomatic_play = {
+					# is_war = yes
+					# initiator = root
+				# }
+			# }
+			# random_diplomatic_play = {
+				# limit = {
+					# is_war = yes
+					# initiator = root
+				# }
+				# target = {
+					# save_scope_as = garibaldi_spawn_foe_scope
+				# }
+			# }
+		# }
+		# save_scope_as = garibaldi_new_home
+	# }
 
-	option = {
-		name = garibaldi_events.1.a
-		default_option = yes
-		scope:garibaldi_scope = {
-			add_character_role = general
-		}
-		if = {
-			limit = {
-				global_var:garibaldi_fame_var = 1
-				scope:garibaldi_scope = { 
-					NOT = {
-						has_modifier = garibaldi_popularity_modifier_tier_1 
-					}
-				}
-			}
-			scope:garibaldi_scope = {
-				add_modifier = garibaldi_popularity_modifier_tier_1
-			}
-		}
-		if = {
-			limit = {
-				global_var:garibaldi_fame_var = 2
-				scope:garibaldi_scope = {
-					NOT = { 
-						has_modifier = garibaldi_popularity_modifier_tier_2
-					}
-				}
-			}
-			scope:garibaldi_scope = {
-				if = {
-					limit = {
-						has_modifier = garibaldi_popularity_modifier_tier_1
-					}
-					hidden_effect = { 
-						remove_modifier = garibaldi_popularity_modifier_tier_1
-					}
-				}
-				add_modifier = garibaldi_popularity_modifier_tier_2
-			}
-		}
-		if = {
-			limit = {
-				global_var:garibaldi_fame_var = 3
-				scope:garibaldi_scope = {
-					NOT = { 
-						has_modifier = garibaldi_popularity_modifier_tier_3
-					}
-				}
-			}
-			scope:garibaldi_scope = {
-				if = {
-					limit = {
-						has_modifier = garibaldi_popularity_modifier_tier_2
-					}
-					hidden_effect = { 
-						remove_modifier = garibaldi_popularity_modifier_tier_2
-					}
-				}
-				add_modifier = garibaldi_popularity_modifier_tier_3
-			}
-		}
-		if = {
-			limit = {
-				global_var:garibaldi_fame_var = 4
-				scope:garibaldi_scope = {
-					NOT = { 
-						has_modifier = garibaldi_popularity_modifier_tier_4
-					}
-				}
-			}
-			scope:garibaldi_scope = {
-				if = {
-					limit = {
-						has_modifier = garibaldi_popularity_modifier_tier_3
-					}
-					hidden_effect = { 
-						remove_modifier = garibaldi_popularity_modifier_tier_3
-					}
-				}
-				add_modifier = garibaldi_popularity_modifier_tier_4
-			}
-		}
-		if = {
-			limit = {
-				global_var:garibaldi_fame_var >= 5
-				scope:garibaldi_scope = {
-					NOT = { 
-						has_modifier = garibaldi_popularity_modifier_tier_5
-					}
-				}
-			}
-			scope:garibaldi_scope = {
-				if = {
-					limit = {
-						has_modifier = garibaldi_popularity_modifier_tier_4
-					}
-					hidden_effect = { 
-						remove_modifier = garibaldi_popularity_modifier_tier_4
-					}
-				}
-				add_modifier = garibaldi_popularity_modifier_tier_5
-			}
-		}
-		if = {
-			limit = {
-				global_var:garibaldi_fame_var >= 2
-				scope:garibaldi_scope = {
-					has_trait = basic_offensive_planner
-				}
-			}
-			scope:garibaldi_scope = {
-				random_list = {
-					50 = {
-						hidden_effect = { 
-							remove_trait = basic_offensive_planner
-						}
-						add_trait = experienced_offensive_planner
-					}
-					50 = {
-					}
-				}
-			}
-		}
-		if = {
-			limit = {
-				global_var:garibaldi_fame_var >= 4
-				scope:garibaldi_scope = {
-					has_trait = experienced_offensive_planner
-				}
-			}
-			scope:garibaldi_scope = {
-				random_list = {
-					50 = {
-						hidden_effect = { 
-							remove_trait = experienced_offensive_planner
-						}
-						add_trait = expert_offensive_planner
-					}
-					50 = {
-					}
-				}
-			}
-		}
+	# cancellation_trigger = {
+		# OR = {
+			# NOT = {
+				# exists = scope:garibaldi_scope
+			# }
+			# scope:garibaldi_scope = {
+				# is_character_alive = no
+			# }
+		# }
+	# }
 
-		every_country = {
-			limit = {
-				OR = {
-					ROOT = {
-						is_player = yes
-					}
-					has_diplomatic_relevance = ROOT
-					has_variable = garibaldi_has_been_here
-				}
-			}
-			post_notification = garibaldi_is_here
-		}
+	# option = {
+		# name = garibaldi_events.1.a
+		# default_option = yes
+		# scope:garibaldi_scope ?= {
+			# add_character_role = general
+		# }
+		# if = {
+			# limit = {
+				# global_var:garibaldi_fame_var = 1
+				# scope:garibaldi_scope ?= {
+					# NOT = {
+						# has_modifier = garibaldi_popularity_modifier_tier_1
+					# }
+				# }
+			# }
+			# scope:garibaldi_scope ?= {
+				# add_modifier = garibaldi_popularity_modifier_tier_1
+			# }
+		# }
+		# if = {
+			# limit = {
+				# global_var:garibaldi_fame_var = 2
+				# scope:garibaldi_scope ?= {
+					# NOT = {
+						# has_modifier = garibaldi_popularity_modifier_tier_2
+					# }
+				# }
+			# }
+			# scope:garibaldi_scope ?= {
+				# if = {
+					# limit = {
+						# has_modifier = garibaldi_popularity_modifier_tier_1
+					# }
+					# hidden_effect = {
+						# remove_modifier = garibaldi_popularity_modifier_tier_1
+					# }
+				# }
+				# add_modifier = garibaldi_popularity_modifier_tier_2
+			# }
+		# }
+		# if = {
+			# limit = {
+				# global_var:garibaldi_fame_var = 3
+				# scope:garibaldi_scope ?= {
+					# NOT = {
+						# has_modifier = garibaldi_popularity_modifier_tier_3
+					# }
+				# }
+			# }
+			# scope:garibaldi_scope ?= {
+				# if = {
+					# limit = {
+						# has_modifier = garibaldi_popularity_modifier_tier_2
+					# }
+					# hidden_effect = {
+						# remove_modifier = garibaldi_popularity_modifier_tier_2
+					# }
+				# }
+				# add_modifier = garibaldi_popularity_modifier_tier_3
+			# }
+		# }
+		# if = {
+			# limit = {
+				# global_var:garibaldi_fame_var = 4
+				# scope:garibaldi_scope ?= {
+					# NOT = {
+						# has_modifier = garibaldi_popularity_modifier_tier_4
+					# }
+				# }
+			# }
+			# scope:garibaldi_scope ?= {
+				# if = {
+					# limit = {
+						# has_modifier = garibaldi_popularity_modifier_tier_3
+					# }
+					# hidden_effect = {
+						# remove_modifier = garibaldi_popularity_modifier_tier_3
+					# }
+				# }
+				# add_modifier = garibaldi_popularity_modifier_tier_4
+			# }
+		# }
+		# if = {
+			# limit = {
+				# global_var:garibaldi_fame_var >= 5
+				# scope:garibaldi_scope ?= {
+					# NOT = {
+						# has_modifier = garibaldi_popularity_modifier_tier_5
+					# }
+				# }
+			# }
+			# scope:garibaldi_scope ?= {
+				# if = {
+					# limit = {
+						# has_modifier = garibaldi_popularity_modifier_tier_4
+					# }
+					# hidden_effect = {
+						# remove_modifier = garibaldi_popularity_modifier_tier_4
+					# }
+				# }
+				# add_modifier = garibaldi_popularity_modifier_tier_5
+			# }
+		# }
+		# if = {
+			# limit = {
+				# global_var:garibaldi_fame_var >= 2
+				# scope:garibaldi_scope ?= {
+					# has_trait = basic_offensive_planner
+				# }
+			# }
+			# scope:garibaldi_scope ?= {
+				# random_list = {
+					# 50 = {
+						# hidden_effect = {
+							# remove_trait = basic_offensive_planner
+						# }
+						# add_trait = experienced_offensive_planner
+					# }
+					# 50 = {
+					# }
+				# }
+			# }
+		# }
+		# if = {
+			# limit = {
+				# global_var:garibaldi_fame_var >= 4
+				# scope:garibaldi_scope ?= {
+					# has_trait = experienced_offensive_planner
+				# }
+			# }
+			# scope:garibaldi_scope ?= {
+				# random_list = {
+					# 50 = {
+						# hidden_effect = {
+							# remove_trait = experienced_offensive_planner
+						# }
+						# add_trait = expert_offensive_planner
+					# }
+					# 50 = {
+					# }
+				# }
+			# }
+		# }
 
-		hidden_effect = {
-			if = {
-				limit = {
-					NOT = { has_variable = garibaldi_has_been_here }
-				}
-				set_variable = garibaldi_has_been_here
-			}
-		}
-	}
-	option = {
-		name = garibaldi_events.1.b
-		set_variable = rejected_garibaldi
-		if = {
-			limit = {
-				any_interest_group = {
-					OR = {
-						is_interest_group_type = ig_rural_folk
-						is_interest_group_type = ig_trade_unions
-						is_interest_group_type = ig_intelligentsia
-						is_interest_group_type = ig_petty_bourgeoisie
-						is_interest_group_type = ig_armed_forces
-					}
-					is_marginal = no
-					leader = {
-						OR = {
-							has_ideology = ideology:ideology_radical
-							has_ideology = ideology:ideology_social_democrat
-							has_ideology = ideology:ideology_communist
-							has_ideology = ideology:ideology_republican_leader
-						}
-					}
-				}
-			}
-			every_interest_group = {
-				limit = {
-					OR = {
-						is_interest_group_type = ig_rural_folk
-						is_interest_group_type = ig_trade_unions
-						is_interest_group_type = ig_intelligentsia
-						is_interest_group_type = ig_petty_bourgeoisie
-						is_interest_group_type = ig_armed_forces
-					}
-					is_marginal = no
-					leader = {
-						OR = {
-							has_ideology = ideology:ideology_radical
-							has_ideology = ideology:ideology_social_democrat
-							has_ideology = ideology:ideology_communist
-							has_ideology = ideology:ideology_republican_leader
-						}
-					}
-				}
-				add_modifier = {
-					name = rejected_garibaldi_modifier
-					months = normal_modifier_time
-				}
-			}
-		}
-		if = {
-			limit = {
-				any_scope_character = {
-					has_variable = garibaldi_var
-				}
-			}
-			scope:garibaldi_scope = {
-				exile_character = yes
-				clean_up_exile_character_roles = yes
-			}
-		}
-	}
-}
-# Garibaldi Fucks Off
-garibaldi_events.2 = {
-	type = country_event
-	placement = root
-	event_image = {
-		video = "votp_garibaldi"
-	}
+		# every_country = {
+			# limit = {
+				# OR = {
+					# ROOT = {
+						# is_player = yes
+					# }
+					# has_diplomatic_relevance = ROOT
+					# has_variable = garibaldi_has_been_here
+				# }
+			# }
+			# post_notification = garibaldi_is_here
+		# }
 
-	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+		# hidden_effect = {
+			# if = {
+				# limit = {
+					# NOT = { has_variable = garibaldi_has_been_here }
+				# }
+				# set_variable = garibaldi_has_been_here
+			# }
+		# }
+	# }
+	# option = {
+		# name = garibaldi_events.1.b
+		# set_variable = rejected_garibaldi
+		# if = {
+			# limit = {
+				# any_interest_group = {
+					# OR = {
+						# is_interest_group_type = ig_rural_folk
+						# is_interest_group_type = ig_trade_unions
+						# is_interest_group_type = ig_intelligentsia
+						# is_interest_group_type = ig_petty_bourgeoisie
+						# is_interest_group_type = ig_armed_forces
+					# }
+					# is_marginal = no
+					# leader = {
+						# OR = {
+							# has_ideology = ideology:ideology_radical
+							# has_ideology = ideology:ideology_social_democrat
+							# has_ideology = ideology:ideology_communist
+							# has_ideology = ideology:ideology_republican_leader
+						# }
+					# }
+				# }
+			# }
+			# every_interest_group = {
+				# limit = {
+					# OR = {
+						# is_interest_group_type = ig_rural_folk
+						# is_interest_group_type = ig_trade_unions
+						# is_interest_group_type = ig_intelligentsia
+						# is_interest_group_type = ig_petty_bourgeoisie
+						# is_interest_group_type = ig_armed_forces
+					# }
+					# is_marginal = no
+					# leader = {
+						# OR = {
+							# has_ideology = ideology:ideology_radical
+							# has_ideology = ideology:ideology_social_democrat
+							# has_ideology = ideology:ideology_communist
+							# has_ideology = ideology:ideology_republican_leader
+						# }
+					# }
+				# }
+				# add_modifier = {
+					# name = rejected_garibaldi_modifier
+					# days = normal_modifier_time
+				# }
+			# }
+		# }
+		# if = {
+			# limit = {
+				# any_scope_character = {
+					# has_variable = garibaldi_var
+				# }
+			# }
+			# scope:garibaldi_scope ?= {
+				# exile_character = yes
+				# clean_up_exile_character_roles = yes
+			# }
+		# }
+	# }
+# }
+# # Garibaldi Fucks Off
+# garibaldi_events.2 = {
+	# type = country_event
+	# placement = root
+	# event_image = {
+		# video = "votp_garibaldi"
+	# }
 
-	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
+	# on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
 
-	title = garibaldi_events.2.t
-	desc = {
-		first_valid = {
-			triggered_desc = {
-				desc = garibaldi_events.2.d_1
-				trigger = {
-					any_diplomatic_play = {
-						is_war = yes
-						OR = {
-							AND = {
-								initiator = {
-									any_primary_culture = {
-										has_discrimination_trait = italophone
-									}
-									NOT = { 
-										has_variable = rejected_garibaldi 
-									}
-								}
-								target = {
-									NOT = {
-										any_primary_culture = {
-											has_discrimination_trait = italophone
-										}			
-									}
-									any_scope_state = {
-										state_region = {
-											OR = {
-												is_homeland = cu:north_italian
-												is_homeland = cu:south_italian
-											}
-										}
-									}
-								}
-							}
-							AND = {
-								target = {
-									any_primary_culture = {
-										has_discrimination_trait = italophone
-									}
-									NOT = { 
-										has_variable = rejected_garibaldi 
-									}
-								}
-								initiator = {
-									NOT = {
-										any_primary_culture = {
-											has_discrimination_trait = italophone
-										}			
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-			triggered_desc = {
-				desc = garibaldi_events.2.d_2
-				trigger = {
-					NOT = {
-						any_diplomatic_play = {
-							is_war = yes
-							OR = {
-								AND = {
-									initiator = {
-										any_primary_culture = {
-											has_discrimination_trait = italophone
-										}
-										NOT = { 
-											has_variable = rejected_garibaldi 
-										}
-									}
-									target = {
-										NOT = {
-											any_primary_culture = {
-												has_discrimination_trait = italophone
-											}			
-										}
-										any_scope_state = {
-											state_region = {
-												OR = {
-													is_homeland = cu:north_italian
-													is_homeland = cu:south_italian
-												}
-											}
-										}
-									}
-								}
-								AND = {
-									target = {
-										any_primary_culture = {
-											has_discrimination_trait = italophone
-										}
-										NOT = { 
-											has_variable = rejected_garibaldi 
-										}
-									}
-									initiator = {
-										NOT = {
-											any_primary_culture = {
-												has_discrimination_trait = italophone
-											}			
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	flavor = garibaldi_events.2.f
+	# icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
 
-	cooldown = { months = short_modifier_time }
+	# title = garibaldi_events.2.t
+	# desc = {
+		# first_valid = {
+			# triggered_desc = {
+				# desc = garibaldi_events.2.d_1
+				# trigger = {
+					# any_diplomatic_play = {
+						# is_war = yes
+						# OR = {
+							# AND = {
+								# initiator = {
+									# any_primary_culture = {
+										# has_discrimination_trait = heritage_italic
+									# }
+									# NOT = {
+										# has_variable = rejected_garibaldi
+									# }
+								# }
+								# target = {
+									# NOT = {
+										# any_primary_culture = {
+											# has_discrimination_trait = heritage_italic
+										# }
+									# }
+									# any_scope_state = {
+										# state_region = {
+											# OR = {
+												# is_homeland = cu:north_italian
+												# is_homeland = cu:south_italian
+											# }
+										# }
+									# }
+								# }
+							# }
+							# AND = {
+								# target = {
+									# any_primary_culture = {
+										# has_discrimination_trait = heritage_italic
+									# }
+									# NOT = {
+										# has_variable = rejected_garibaldi
+									# }
+								# }
+								# initiator = {
+									# NOT = {
+										# any_primary_culture = {
+											# has_discrimination_trait = heritage_italic
+										# }
+									# }
+								# }
+							# }
+						# }
+					# }
+				# }
+			# }
+			# triggered_desc = {
+				# desc = garibaldi_events.2.d_2
+				# trigger = {
+					# NOT = {
+						# any_diplomatic_play = {
+							# is_war = yes
+							# OR = {
+								# AND = {
+									# initiator = {
+										# any_primary_culture = {
+											# has_discrimination_trait = heritage_italic
+										# }
+										# NOT = {
+											# has_variable = rejected_garibaldi
+										# }
+									# }
+									# target = {
+										# NOT = {
+											# any_primary_culture = {
+												# has_discrimination_trait = heritage_italic
+											# }
+										# }
+										# any_scope_state = {
+											# state_region = {
+												# OR = {
+													# is_homeland = cu:north_italian
+													# is_homeland = cu:south_italian
+												# }
+											# }
+										# }
+									# }
+								# }
+								# AND = {
+									# target = {
+										# any_primary_culture = {
+											# has_discrimination_trait = heritage_italic
+										# }
+										# NOT = {
+											# has_variable = rejected_garibaldi
+										# }
+									# }
+									# initiator = {
+										# NOT = {
+											# any_primary_culture = {
+												# has_discrimination_trait = heritage_italic
+											# }
+										# }
+									# }
+								# }
+							# }
+						# }
+					# }
+				# }
+			# }
+		# }
+	# }
+	# flavor = garibaldi_events.2.f
 
-	duration = 3
+	# cooldown = { days = short_modifier_time }
 
-	dlc = dlc004
+	# duration = 3
 
-	trigger = {
-		has_dlc_feature = voice_of_the_people_content
-		any_scope_character = {
-			has_variable = garibaldi_var
-		}
-		OR = {
-			AND = {
-				is_at_war = no
-				NOR = { 
-					c:ITA ?= this
-					any_primary_culture = {
-						has_discrimination_trait = italophone
-					}
-				}
-				any_scope_character = {
-					has_variable = garibaldi_var
-					NOT = {
-						has_variable = garibaldi_cooldown_var
-					}
-				}
-			}
-			AND = {
-				any_diplomatic_play = {
-					is_war = yes
-					OR = {
-						AND = {
-							initiator = {
-								NOT = { this = root }
-								any_primary_culture = {
-									has_discrimination_trait = italophone
-								}
-								NOT = { 
-									has_variable = rejected_garibaldi 
-								}
-							}
-							target = {
-								NOT = {
-									any_primary_culture = {
-										has_discrimination_trait = italophone
-									}			
-								}
-								any_scope_state = {
-									state_region = {
-										OR = {
-											is_homeland = cu:north_italian
-											is_homeland = cu:south_italian
-										}
-									}
-								}
-							}
-						}
-						AND = {
-							target = {
-								NOT = { this = root }
-								any_primary_culture = {
-									has_discrimination_trait = italophone
-								}
-								NOT = { 
-									has_variable = rejected_garibaldi 
-								}
-							}
-							initiator = {
-								NOT = {
-									any_primary_culture = {
-										has_discrimination_trait = italophone
-									}			
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+	# dlc = dlc004
 
-	cancellation_trigger = {
-		NOT = {
-			exists = scope:garibaldi_scope
-		}
-		scope:garibaldi_scope = {
-			is_character_alive = no
-		}
-	}
+	# trigger = {
+		# has_dlc_feature = voice_of_the_people_content
+		# any_scope_character = {
+			# has_variable = garibaldi_var
+		# }
+		# OR = {
+			# AND = {
+				# is_at_war = no
+				# NOR = {
+					# c:ITA ?= this
+					# any_primary_culture = {
+						# has_discrimination_trait = heritage_italic
+					# }
+				# }
+				# any_scope_character = {
+					# has_variable = garibaldi_var
+					# NOT = {
+						# has_variable = garibaldi_cooldown_var
+					# }
+				# }
+			# }
+			# AND = {
+				# any_diplomatic_play = {
+					# is_war = yes
+					# OR = {
+						# AND = {
+							# initiator = {
+								# NOT = { this = root }
+								# any_primary_culture = {
+									# has_discrimination_trait = heritage_italic
+								# }
+								# NOT = {
+									# has_variable = rejected_garibaldi
+								# }
+							# }
+							# target = {
+								# NOT = {
+									# any_primary_culture = {
+										# has_discrimination_trait = heritage_italic
+									# }
+								# }
+								# any_scope_state = {
+									# state_region = {
+										# OR = {
+											# is_homeland = cu:north_italian
+											# is_homeland = cu:south_italian
+										# }
+									# }
+								# }
+							# }
+						# }
+						# AND = {
+							# target = {
+								# NOT = { this = root }
+								# any_primary_culture = {
+									# has_discrimination_trait = heritage_italic
+								# }
+								# NOT = {
+									# has_variable = rejected_garibaldi
+								# }
+							# }
+							# initiator = {
+								# NOT = {
+									# any_primary_culture = {
+										# has_discrimination_trait = heritage_italic
+									# }
+								# }
+							# }
+						# }
+					# }
+				# }
+			# }
+		# }
+	# }
 
-	immediate = {
-		random_scope_character = {
-			limit = {
-				has_variable = garibaldi_var
-			}
-			save_scope_as = garibaldi_scope
-		}
-		if = {
-			limit = {
-				any_diplomatic_play = {
-					is_war = yes
-					target = {
-						NOT = { this = root }
-						any_primary_culture = {
-							has_discrimination_trait = italophone
-						}
-					}
-					initiator = {
-						NOT = {
-							any_primary_culture = {
-								has_discrimination_trait = italophone
-							}			
-						}
-					}
-				}
-			}
-			random_diplomatic_play = {
-				limit = {
-					is_war = yes
-					target = {
-						NOT = { this = root }
-						any_primary_culture = {
-							has_discrimination_trait = italophone
-						}
-					}
-					initiator = {
-						NOT = {
-							any_primary_culture = {
-								has_discrimination_trait = italophone
-							}			
-						}
-					}	
-				}
-				target = {
-					save_scope_as = garibaldi_italian_nation_scope
-				}
-				initiator = {
-					save_scope_as = garibaldi_foreign_nation_scope
-				}
-			}
-		}
-		else_if = {
-			limit = {
-				any_diplomatic_play = {
-					is_war = yes
-					initiator = {
-						NOT = { this = root }
-						any_primary_culture = {
-							has_discrimination_trait = italophone
-						}
-					}
-					target = {
-						NOT = {
-							any_primary_culture = {
-								has_discrimination_trait = italophone
-							}			
-						}
-						any_scope_state = {
-							state_region = {
-								OR = {
-									is_homeland = cu:north_italian
-									is_homeland = cu:south_italian
-								}
-							}
-						}
-					}
-				}
-			}
-			random_diplomatic_play = {
-				limit = {
-					is_war = yes
-					initiator = {
-						NOT = { this = root }
-						any_primary_culture = {
-							has_discrimination_trait = italophone
-						}
-					}
-					target = {
-						NOT = {
-							any_primary_culture = {
-								has_discrimination_trait = italophone
-							}			
-						}
-						any_scope_state = {
-							state_region = {
-								OR = {
-									is_homeland = cu:north_italian
-									is_homeland = cu:south_italian
-								}
-							}
-						}
-					}	
-				}
-				initiator = {
-					save_scope_as = garibaldi_italian_nation_scope
-				}
-				target = {
-					save_scope_as = garibaldi_foreign_nation_scope
-				}
-			}
-		}
-		save_scope_as = garibaldi_old_home
-	}
+	# cancellation_trigger = {
+		# OR = {
+			# NOT = {
+				# exists = scope:garibaldi_scope
+			# }
+			# scope:garibaldi_scope = {
+				# is_character_alive = no
+			# }
+		# }
+	# }
 
-	option = {
-		name = garibaldi_events.2.a
-		default_option = yes
-		if = {
-			limit = {
-				scope:garibaldi_scope = {
-					has_modifier = italian_legionaries_modifier
-				}
-			}
-			scope:garibaldi_scope = {
-				remove_modifier = italian_legionaries_modifier
-			}
-		}
-		if = {
-			limit = {
-				any_scope_building = {
-					has_modifier = italian_legion_barracks_modifier
-				}
-			}
-			every_scope_building = {
-				limit = {
-					has_modifier = italian_legion_barracks_modifier
-				}
-				remove_modifier = italian_legion_barracks_modifier
-			}
-		}
-		scope:garibaldi_scope = {
-			exile_character = yes
-			clean_up_exile_character_roles = yes
-		}
-		if = {
-			limit = {
-				any_diplomatic_play = {
-					is_war = yes
-					target = {
-						NOT = { this = root }
-						any_primary_culture = {
-							has_discrimination_trait = italophone
-						}
-					}
-					initiator = {
-						NOT = {
-							any_primary_culture = {
-								has_discrimination_trait = italophone
-							}			
-						}
-					}
-				}
-			}
-			random_diplomatic_play = {
-				limit = {
-					is_war = yes
-					target = {
-						NOT = { this = root }
-						any_primary_culture = {
-							has_discrimination_trait = italophone
-						}
-					}
-					initiator = {
-						NOT = {
-							any_primary_culture = {
-								has_discrimination_trait = italophone
-							}			
-						}
-					}	
-				}
-				target = {
-					trigger_event = garibaldi_events.1
-				}
-			}
-		}
-		else_if = {
-			limit = {
-				any_diplomatic_play = {
-					is_war = yes
-					initiator = {
-						NOT = { this = root }
-						any_primary_culture = {
-							has_discrimination_trait = italophone
-						}
-					}
-					target = {
-						NOT = {
-							any_primary_culture = {
-								has_discrimination_trait = italophone
-							}			
-						}
-						any_scope_state = {
-							state_region = {
-								OR = {
-									is_homeland = cu:north_italian
-									is_homeland = cu:south_italian
-								}
-							}
-						}
-					}
-				}
-			}
-			random_diplomatic_play = {
-				limit = {
-					is_war = yes
-					initiator = {
-						NOT = { this = root }
-						any_primary_culture = {
-							has_discrimination_trait = italophone
-						}
-					}
-					target = {
-						NOT = {
-							any_primary_culture = {
-								has_discrimination_trait = italophone
-							}			
-						}
-						any_scope_state = {
-							state_region = {
-								OR = {
-									is_homeland = cu:north_italian
-									is_homeland = cu:south_italian
-								}
-							}
-						}
-					}	
-				}
-				initiator = {
-					trigger_event = garibaldi_events.1
-				}
-			}
-		}
+	# immediate = {
+		# random_scope_character = {
+			# limit = {
+				# has_variable = garibaldi_var
+			# }
+			# save_scope_as = garibaldi_scope
+		# }
+		# if = {
+			# limit = {
+				# any_diplomatic_play = {
+					# is_war = yes
+					# target = {
+						# NOT = { this = root }
+						# any_primary_culture = {
+							# has_discrimination_trait = heritage_italic
+						# }
+					# }
+					# initiator = {
+						# NOT = {
+							# any_primary_culture = {
+								# has_discrimination_trait = heritage_italic
+							# }
+						# }
+					# }
+				# }
+			# }
+			# random_diplomatic_play = {
+				# limit = {
+					# is_war = yes
+					# target = {
+						# NOT = { this = root }
+						# any_primary_culture = {
+							# has_discrimination_trait = heritage_italic
+						# }
+					# }
+					# initiator = {
+						# NOT = {
+							# any_primary_culture = {
+								# has_discrimination_trait = heritage_italic
+							# }
+						# }
+					# }
+				# }
+				# target = {
+					# save_scope_as = garibaldi_italian_nation_scope
+				# }
+				# initiator = {
+					# save_scope_as = garibaldi_foreign_nation_scope
+				# }
+			# }
+		# }
+		# else_if = {
+			# limit = {
+				# any_diplomatic_play = {
+					# is_war = yes
+					# initiator = {
+						# NOT = { this = root }
+						# any_primary_culture = {
+							# has_discrimination_trait = heritage_italic
+						# }
+					# }
+					# target = {
+						# NOT = {
+							# any_primary_culture = {
+								# has_discrimination_trait = heritage_italic
+							# }
+						# }
+						# any_scope_state = {
+							# state_region = {
+								# OR = {
+									# is_homeland = cu:north_italian
+									# is_homeland = cu:south_italian
+								# }
+							# }
+						# }
+					# }
+				# }
+			# }
+			# random_diplomatic_play = {
+				# limit = {
+					# is_war = yes
+					# initiator = {
+						# NOT = { this = root }
+						# any_primary_culture = {
+							# has_discrimination_trait = heritage_italic
+						# }
+					# }
+					# target = {
+						# NOT = {
+							# any_primary_culture = {
+								# has_discrimination_trait = heritage_italic
+							# }
+						# }
+						# any_scope_state = {
+							# state_region = {
+								# OR = {
+									# is_homeland = cu:north_italian
+									# is_homeland = cu:south_italian
+								# }
+							# }
+						# }
+					# }
+				# }
+				# initiator = {
+					# save_scope_as = garibaldi_italian_nation_scope
+				# }
+				# target = {
+					# save_scope_as = garibaldi_foreign_nation_scope
+				# }
+			# }
+		# }
+		# save_scope_as = garibaldi_old_home
+	# }
 
-		every_country = {
-			limit = {
-				OR = {
-					ROOT = {
-						is_player = yes
-					}
-					has_diplomatic_relevance = ROOT
-					has_variable = garibaldi_has_been_here
-					scope:garibaldi_italian_nation_scope ?= this
-					scope:garibaldi_foreign_nation_scope ?= this
-				}
-			}
-			post_notification = garibaldi_skedaddles
-		}
-	}
-}
-# Italian Legion of Volunteers
-garibaldi_events.3 = {
-	type = country_event
-	placement = scope:italian_legion_state_scope
-	event_image = {
-		video = "votp_garibaldi"
-	}
+	# option = {
+		# name = garibaldi_events.2.a
+		# default_option = yes
+		# if = {
+			# limit = {
+				# scope:garibaldi_scope = {
+					# has_modifier = italian_legionaries_modifier
+				# }
+			# }
+			# scope:garibaldi_scope = {
+				# remove_modifier = italian_legionaries_modifier
+			# }
+		# }
+		# if = {
+			# limit = {
+				# any_scope_building = {
+					# has_modifier = italian_legion_barracks_modifier
+				# }
+			# }
+			# every_scope_building = {
+				# limit = {
+					# has_modifier = italian_legion_barracks_modifier
+				# }
+				# remove_modifier = italian_legion_barracks_modifier
+			# }
+		# }
+		# scope:garibaldi_scope = {
+			# exile_character = yes
+			# clean_up_exile_character_roles = yes
+		# }
+		# if = {
+			# limit = {
+				# any_diplomatic_play = {
+					# is_war = yes
+					# target = {
+						# NOT = { this = root }
+						# any_primary_culture = {
+							# has_discrimination_trait = heritage_italic
+						# }
+					# }
+					# initiator = {
+						# NOT = {
+							# any_primary_culture = {
+								# has_discrimination_trait = heritage_italic
+							# }
+						# }
+					# }
+				# }
+			# }
+			# random_diplomatic_play = {
+				# limit = {
+					# is_war = yes
+					# target = {
+						# NOT = { this = root }
+						# any_primary_culture = {
+							# has_discrimination_trait = heritage_italic
+						# }
+					# }
+					# initiator = {
+						# NOT = {
+							# any_primary_culture = {
+								# has_discrimination_trait = heritage_italic
+							# }
+						# }
+					# }
+				# }
+				# target = {
+					# trigger_event = garibaldi_events.1
+				# }
+			# }
+		# }
+		# else_if = {
+			# limit = {
+				# any_diplomatic_play = {
+					# is_war = yes
+					# initiator = {
+						# NOT = { this = root }
+						# any_primary_culture = {
+							# has_discrimination_trait = heritage_italic
+						# }
+					# }
+					# target = {
+						# NOT = {
+							# any_primary_culture = {
+								# has_discrimination_trait = heritage_italic
+							# }
+						# }
+						# any_scope_state = {
+							# state_region = {
+								# OR = {
+									# is_homeland = cu:north_italian
+									# is_homeland = cu:south_italian
+								# }
+							# }
+						# }
+					# }
+				# }
+			# }
+			# random_diplomatic_play = {
+				# limit = {
+					# is_war = yes
+					# initiator = {
+						# NOT = { this = root }
+						# any_primary_culture = {
+							# has_discrimination_trait = heritage_italic
+						# }
+					# }
+					# target = {
+						# NOT = {
+							# any_primary_culture = {
+								# has_discrimination_trait = heritage_italic
+							# }
+						# }
+						# any_scope_state = {
+							# state_region = {
+								# OR = {
+									# is_homeland = cu:north_italian
+									# is_homeland = cu:south_italian
+								# }
+							# }
+						# }
+					# }
+				# }
+				# initiator = {
+					# trigger_event = garibaldi_events.1
+				# }
+			# }
+		# }
 
-	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+		# every_country = {
+			# limit = {
+				# OR = {
+					# ROOT = {
+						# is_player = yes
+					# }
+					# has_diplomatic_relevance = ROOT
+					# has_variable = garibaldi_has_been_here
+					# scope:garibaldi_italian_nation_scope ?= this
+					# scope:garibaldi_foreign_nation_scope ?= this
+				# }
+			# }
+			# post_notification = garibaldi_skedaddles
+		# }
+	# }
+# }
+# # Italian Legion of Volunteers
+# garibaldi_events.3 = {
+	# type = country_event
+	# placement = scope:italian_legion_state_scope
+	# event_image = {
+		# video = "votp_garibaldi"
+	# }
 
-	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	# on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
 
-	title = garibaldi_events.3.t
-	desc = garibaldi_events.3.d
-	flavor = garibaldi_events.3.f
+	# icon = "gfx/interface/icons/event_icons/event_military.dds"
 
-	duration = 3
+	# title = garibaldi_events.3.t
+	# desc = garibaldi_events.3.d
+	# flavor = garibaldi_events.3.f
 
-	dlc = dlc004
+	# duration = 3
 
-	trigger = {
-		NOT = {
-			has_variable = italian_legion_var
-		}
-		has_dlc_feature = voice_of_the_people_content
-		any_scope_character = {
-			has_variable = garibaldi_var
-		}
-		any_scope_state = {
-			any_scope_pop = {
-				culture = {
-					has_discrimination_trait = italophone
-				}
-			}
-		}
-		any_diplomatic_play = {
-			is_war = yes
-			OR = {
-				initiator = root
-				target = root
-			}
-		}
-	}
+	# dlc = dlc004
 
-	immediate = {
-		set_variable = italian_legion_var
-		random_scope_character = {
-			limit = {
-				has_role = general
-				has_variable = garibaldi_var
-			}
-			save_scope_as = garibaldi_scope
-		}
-		random_scope_state = {
-			limit = {
-				any_scope_pop = {
-					culture = {
-						has_discrimination_trait = italophone
-					}
-				}
-			}
-			save_scope_as = italian_legion_state_scope
-		}
-		if = {
-			limit = {
-				scope:italian_legion_state_scope = {
-					any_scope_building = {
-						is_building_type = building_barracks
-					}
-				}
-			}
-			scope:italian_legion_state_scope = {
-				random_scope_building = {
-					limit = {
-						is_building_type = building_barracks
-					}
-					save_scope_as = italian_legion_barracks_scope
-				}
-			}
-		}
-		if = {
-			limit = {
-				any_diplomatic_play = {
-					is_war = yes
-					target = root
-				}
-			}
-			random_diplomatic_play = {
-				limit = {
-					is_war = yes
-					target = root					
-				}
-				initiator = {
-					save_scope_as = italian_legion_foe_scope
-				}
-			}
-		}
-		else_if = {
-			limit = {
-				any_diplomatic_play = {
-					is_war = yes
-					initiator = root
-				}
-			}
-			random_diplomatic_play = {
-				limit = {
-					is_war = yes
-					initiator = root					
-				}
-				target = {
-					save_scope_as = italian_legion_foe_scope
-				}
-			}			
-		}
-	}
+	# trigger = {
+		# NOT = {
+			# has_variable = italian_legion_var
+		# }
+		# has_dlc_feature = voice_of_the_people_content
+		# any_scope_character = {
+			# has_variable = garibaldi_var
+		# }
+		# any_scope_state = {
+			# any_scope_pop = {
+				# culture = {
+					# has_discrimination_trait = heritage_italic
+				# }
+			# }
+		# }
+		# any_diplomatic_play = {
+			# is_war = yes
+			# OR = {
+				# initiator = root
+				# target = root
+			# }
+		# }
+	# }
 
-	option = {
-		name = garibaldi_events.3.a
-		default_option = yes
-		scope:garibaldi_scope = {
-			add_modifier = {
-				name = italian_legionaries_modifier
-				months = normal_modifier_time
-			}
-		}	
-	}
-	
-	option = {
-		name = garibaldi_events.3.b
-		trigger = {
-			scope:italian_legion_state_scope = {
-				any_scope_building = {
-					is_building_type = building_barracks
-				}
-			}
-		}
-		scope:italian_legion_barracks_scope = {
-			add_modifier = {
-				name = italian_legion_barracks_modifier
-				months = normal_modifier_time
-			}
-		}
-	}
-}
-# Garibaldi Riles Up Peasants
-garibaldi_events.4 = {
-	type = country_event
-	placement = root
-	event_image = {
-		video = "votp_garibaldi"
-	}
+	# immediate = {
+		# set_variable = italian_legion_var
+		# random_scope_character = {
+			# limit = {
+				# has_role = general
+				# has_variable = garibaldi_var
+			# }
+			# save_scope_as = garibaldi_scope
+		# }
+		# random_scope_state = {
+			# limit = {
+				# any_scope_pop = {
+					# culture = {
+						# has_discrimination_trait = heritage_italic
+					# }
+				# }
+			# }
+			# save_scope_as = italian_legion_state_scope
+		# }
+		# if = {
+			# limit = {
+				# scope:italian_legion_state_scope = {
+					# any_scope_building = {
+						# is_building_type = building_barracks
+					# }
+				# }
+			# }
+			# scope:italian_legion_state_scope = {
+				# random_scope_building = {
+					# limit = {
+						# is_building_type = building_barracks
+					# }
+					# save_scope_as = italian_legion_barracks_scope
+				# }
+			# }
+		# }
+		# if = {
+			# limit = {
+				# any_diplomatic_play = {
+					# is_war = yes
+					# target = root
+				# }
+			# }
+			# random_diplomatic_play = {
+				# limit = {
+					# is_war = yes
+					# target = root
+				# }
+				# initiator = {
+					# save_scope_as = italian_legion_foe_scope
+				# }
+			# }
+		# }
+		# else_if = {
+			# limit = {
+				# any_diplomatic_play = {
+					# is_war = yes
+					# initiator = root
+				# }
+			# }
+			# random_diplomatic_play = {
+				# limit = {
+					# is_war = yes
+					# initiator = root
+				# }
+				# target = {
+					# save_scope_as = italian_legion_foe_scope
+				# }
+			# }
+		# }
+	# }
 
-	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	# option = {
+		# name = garibaldi_events.3.a
+		# default_option = yes
+		# scope:garibaldi_scope = {
+			# add_modifier = {
+				# name = italian_legionaries_modifier
+				# days = normal_modifier_time
+			# }
+		# }
+	# }
 
-	icon = "gfx/interface/icons/event_icons/event_protest.dds"
+	# option = {
+		# name = garibaldi_events.3.b
+		# trigger = {
+			# scope:italian_legion_state_scope = {
+				# any_scope_building = {
+					# is_building_type = building_barracks
+				# }
+			# }
+		# }
+		# scope:italian_legion_barracks_scope = {
+			# add_modifier = {
+				# name = italian_legion_barracks_modifier
+				# days = normal_modifier_time
+			# }
+		# }
+	# }
+# }
+# # Garibaldi Riles Up Peasants
+# garibaldi_events.4 = {
+	# type = country_event
+	# placement = root
+	# event_image = {
+		# video = "votp_garibaldi"
+	# }
 
-	title = garibaldi_events.4.t
-	desc = garibaldi_events.4.d
-	flavor = garibaldi_events.4.f
+	# on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
 
-	cooldown = { months = normal_modifier_time }
+	# icon = "gfx/interface/icons/event_icons/event_protest.dds"
 
-	duration = 3
+	# title = garibaldi_events.4.t
+	# desc = garibaldi_events.4.d
+	# flavor = garibaldi_events.4.f
 
-	dlc = dlc004
+	# cooldown = { days = normal_modifier_time }
 
-	trigger = {
-		has_dlc_feature = voice_of_the_people_content
-		any_scope_character = {
-			has_variable = garibaldi_var
-		}
-		any_scope_state = {
-			is_incorporated = yes
-			any_scope_pop = {
-				is_pop_type = farmers
-			}
-		}
-		any_diplomatic_play = {
-			is_war = yes
-			any_scope_play_involved = {
-				has_war_with = root
-			}
-		}
-		ig:ig_rural_folk = {
-			is_marginal	= no
-		}
-	}
+	# duration = 3
 
-	immediate = {
-		random_scope_character = {
-			limit = {
-				has_variable = garibaldi_var
-			}
-			save_scope_as = garibaldi_scope
-		}
-		random_scope_state = {
-			limit = {
-				is_incorporated = yes
-					any_scope_pop = {
-					is_pop_type = farmers
-				}
-			}
-			save_scope_as = garibaldi_peasants_state_scope
-		}
-		random_diplomatic_play = {
-			limit = {
-				is_war = yes
-				any_scope_play_involved = {
-					has_war_with = root
-				}
-			}
-			random_scope_play_involved = {
-				limit = {
-					has_war_with = root
-				}
-				save_scope_as = garibaldi_peasants_foe_scope
-			}
-		}
-	}
+	# dlc = dlc004
 
-	option = {
-		name = garibaldi_events.4.a
-		default_option = yes
-		ig:ig_rural_folk = {
-			add_modifier = {
-				name = emboldened_peasantry_modifier
-				months = normal_modifier_time
-			}
-		}
-		scope:garibaldi_peasants_state_scope = {
-			add_radicals = {
-				pop_type = farmers
-				value = small_radicals
-			}
-		}
-	}
+	# trigger = {
+		# has_dlc_feature = voice_of_the_people_content
+		# any_scope_character = {
+			# has_variable = garibaldi_var
+		# }
+		# any_scope_state = {
+			# is_incorporated = yes
+			# any_scope_pop = {
+				# is_pop_type = farmers
+			# }
+		# }
+		# any_diplomatic_play = {
+			# is_war = yes
+			# any_scope_play_involved = {
+				# has_war_with = root
+			# }
+		# }
+		# ig:ig_rural_folk ?= {
+			# is_marginal	= no
+		# }
+	# }
 
-	option = {
-		name = garibaldi_events.4.b
-		highlighted_option = yes
-		random_list = {
-			80 = {
-				scope:garibaldi_scope = {
-					exile_character = yes
-					clean_up_exile_character_roles = yes
-				}
-				set_variable = rejected_garibaldi
-			}
-			20 = {
-			}
-		}
-	}
-}
+	# immediate = {
+		# random_scope_character = {
+			# limit = {
+				# has_variable = garibaldi_var
+			# }
+			# save_scope_as = garibaldi_scope
+		# }
+		# random_scope_state = {
+			# limit = {
+				# is_incorporated = yes
+					# any_scope_pop = {
+					# is_pop_type = farmers
+				# }
+			# }
+			# save_scope_as = garibaldi_peasants_state_scope
+		# }
+		# random_diplomatic_play = {
+			# limit = {
+				# is_war = yes
+				# any_scope_play_involved = {
+					# has_war_with = root
+				# }
+			# }
+			# random_scope_play_involved = {
+				# limit = {
+					# has_war_with = root
+				# }
+				# save_scope_as = garibaldi_peasants_foe_scope
+			# }
+		# }
+	# }
+
+	# option = {
+		# name = garibaldi_events.4.a
+		# default_option = yes
+		# ig:ig_rural_folk ?= {
+			# add_modifier = {
+				# name = emboldened_peasantry_modifier
+				# days = normal_modifier_time
+			# }
+		# }
+		# scope:garibaldi_peasants_state_scope = {
+			# add_radicals_in_state = {
+				# pop_type = farmers
+				# value = small_radicals
+			# }
+		# }
+	# }
+
+	# option = {
+		# name = garibaldi_events.4.b
+		# highlighted_option = yes
+		# random_list = {
+			# 80 = {
+				# scope:garibaldi_scope = {
+					# exile_character = yes
+					# clean_up_exile_character_roles = yes
+				# }
+				# set_variable = rejected_garibaldi
+			# }
+			# 20 = {
+			# }
+		# }
+	# }
+# }

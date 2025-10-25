@@ -1,14 +1,14 @@
 ﻿boh_german_confederation = {
 	is_shown = {
 		exists = c:GER
-		root = c:GER
+		c:GER = ROOT
 		was_formed_from = BOH
 		NOT = { has_variable = boh_german_confederation }
 	}
 
 	possible = {
 		exists = c:GER
-		root = c:GER
+		c:GER = ROOT
 	}
 	
     when_taken = {
@@ -17,7 +17,92 @@
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
+dvg_ger_accept_balters = {
+	is_shown = {
+		OR = {
+			AND = {
+				exists = c:GER
+				c:GER = ROOT
+			}
+			AND = {
+				exists = c:HLR
+				c:HLR = ROOT
+			}
+		}
+		NOT = { has_variable = dvg_ger_balters_accepted }
+	}
+
+	possible = {
+		OR = {
+			AND = {
+				exists = c:GER
+				c:GER = ROOT
+			}
+			AND = {
+				exists = c:HLR
+				c:HLR = ROOT
+			}
+		}
+	}
+    when_taken = {
+		IF = {
+			limit = {
+				c:GER = ROOT
+			}
+			add_primary_culture = cu:balters
+		}
+		IF = {
+			limit = {
+				c:HLR = ROOT
+			}
+			add_primary_culture = cu:balters
+		}
+		set_variable = dvg_ger_balters_accepted
+
+		every_subject_or_below = {
+			limit = { 
+				is_subject_of = ROOT
+				country_has_primary_culture = cu:balters
+			}
+			save_scope_as = subject_to_annex
+			ROOT = {
+				annex = scope:subject_to_annex
+			}
+		}
+    }
+
+	ai_chance = {
+		value = 100
+	}
+}
+
+dvg_polish_jews = {
+	is_shown = {
+		exists = c:PLC
+		c:PLC = ROOT
+		NOT = {
+			country_has_primary_culture = cu:ashkenazi
+		}
+	}
+
+	possible = {
+		has_law = law_type:law_cultural_exclusion
+		has_technology_researched = human_rights
+		cultural_acceptance_base = {
+			target = cu:ashkenazi
+			value > acceptance_status_3
+		}
+	}
+	
+    when_taken = {
+		add_primary_culture = cu:ashkenazi
+    }
+
+	ai_chance = {
+		value = 100
+	}
+}

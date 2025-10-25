@@ -1,0 +1,425 @@
+﻿je_springtime_of_the_peoples = {
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+
+	group = je_group_crises
+
+	is_shown_when_inactive = {
+		NOT = {
+			has_global_variable = peoples_springtime_happened
+		}
+		has_technology_researched = mass_communication
+		country_is_in_europe = yes
+		NOT = {
+			has_variable = had_red_summer_var
+		}
+	}
+
+	possible = {
+		has_technology_researched = egalitarianism
+		custom_tooltip = {
+			text = peoples_springtime_underway_tt
+			has_global_variable = peoples_springtime_happening
+		}
+	}
+
+	immediate = {
+		if = {
+			limit = {
+				NOT = {
+					any_political_movement = {
+						OR = {
+							is_political_movement_type = movement_radical
+							is_political_movement_type = movement_german_national
+							is_political_movement_type = movement_irish_national
+							is_political_movement_type = movement_british_national
+							is_political_movement_type = movement_italian_national
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					OR = {
+						country_has_primary_culture = cu:north_german
+						country_has_primary_culture = cu:south_german
+					}
+				}
+				create_political_movement = { type = movement_german_national }
+			}
+			else_if = {
+				limit = {
+					OR = {
+						country_has_primary_culture = cu:north_italian
+						country_has_primary_culture = cu:south_italian
+					}
+				}
+				create_political_movement = { type = movement_italian_national }
+			}
+			else_if = {
+				limit = {
+					OR = {
+						country_has_primary_culture = cu:burgundian
+					}
+				}
+				create_political_movement = { type = movement_burgundian_national }
+			}
+			else_if = {
+				limit = {
+					OR = {
+						country_has_primary_culture = cu:french
+					}
+				}
+				create_political_movement = { type = movement_french_national }
+			}
+			else = {
+				create_political_movement = { type = movement_radical }
+			}
+		}
+		random_political_movement = {
+			limit = {
+				OR = {
+					is_political_movement_type = movement_german_national
+					is_political_movement_type = movement_irish_national
+					is_political_movement_type = movement_british_national
+					is_political_movement_type = movement_italian_national
+					is_political_movement_type = movement_radical
+				}
+			}
+			save_scope_as = radical_movement_scope
+		}
+		if = {
+			limit = {
+				NOT = {
+					any_political_movement = {
+						is_political_movement_type = movement_liberal
+					}
+				}
+			}
+			create_political_movement = { type = movement_liberal }
+		}
+		random_political_movement = {
+			limit = {
+				is_political_movement_type = movement_liberal
+			}
+			save_scope_as = liberal_movement_scope
+		}
+		set_variable = { name = springtime_timer_var value = 0 }
+		trigger_event = { id = 1848.4 popup = yes }
+
+		springtime_save_conservative_laws = yes
+	}
+
+	custom_completion_header = je_springtime_of_the_peoples_complete_header
+
+	complete = {
+		AND = {
+			OR = {
+				custom_tooltip = {
+					text = had_springtime_revolution_tt
+					has_variable = had_springtime_revolution
+				}
+				any_interest_group = {
+					is_in_government = yes
+					OR = {
+						has_ideology = ideology:ideology_liberal
+						leader = { has_ideology = ideology:ideology_radical }
+					}
+				}
+			}
+			OR = {
+				has_law_or_variant = law_type:law_wealth_voting
+				has_law_or_variant = law_type:law_census_voting
+				has_law_or_variant = law_type:law_universal_suffrage
+			}
+		}
+	}
+
+	custom_on_completion_header = je_springtime_of_the_peoples_on_complete_header
+
+	on_complete = {
+		set_variable = {
+			name = completed_peoples_springtime
+		}
+		trigger_event = { id = peoples_springtime.10 }
+	}
+
+	event_outcome_completed_desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = event_effects_peoples_springtime.10_tt
+			}
+		}
+	}
+
+	custom_failure_header = je_springtime_of_the_peoples_fail_header
+
+	fail = {
+		trigger_if = {
+			limit = {
+				exists = var:springtime_timer_var
+			}
+			custom_tooltip = {
+				text = springtime_of_the_peoples_timer_tt
+				var:springtime_timer_var >= 10
+			}
+		}
+		trigger_else = {
+			custom_tooltip = {
+				text = springtime_of_the_peoples_timer_dummy_tt
+				always = no
+			}
+		}
+		scope:radical_movement_scope ?= {
+			political_movement_support <= 0.10
+			is_being_suppressed = yes
+		}
+		custom_tooltip = {
+			text = no_radical_agitators_or_politicians_tt
+			NOT = {
+				any_scope_character = {
+					OR = {
+						has_role = politician
+						has_role = agitator
+					}
+					has_ideology = ideology:ideology_radical
+				}
+			}
+		}
+	}
+
+	custom_on_failure_header = je_springtime_of_the_peoples_on_fail_header
+
+	on_fail = {
+		set_variable = {
+			name = completed_peoples_springtime
+		}
+		trigger_event = { id = peoples_springtime.8 }
+	}
+
+	event_outcome_failed_desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = event_effects_peoples_springtime.8_tt
+			}
+		}
+	}
+
+	on_timeout = {
+		trigger_event = { id = peoples_springtime.8 }
+	}
+
+	event_outcome_timeout_desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = event_effects_peoples_springtime.8_tt
+			}
+		}
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					AND = {
+						scope:radical_movement_scope ?= {
+							political_movement_support <= 0.10
+							is_being_suppressed = yes
+						}
+						NOT = {
+							any_interest_group = {
+								leader = { has_ideology = ideology:ideology_radical }
+								is_marginal = no
+							}
+							any_scope_character = {
+								has_ideology = ideology:ideology_radical
+								has_role = agitator
+							}
+						}
+					}
+				}
+				change_variable = { name = springtime_timer_var add = 1 }
+			}
+			else = {
+				set_variable = { name = springtime_timer_var value = 0 }
+			}
+		}
+		events = {
+			1848.5
+			peoples_springtime.9
+		}
+		random_events = {
+			100 = 0
+			10 = peoples_springtime.3
+			10 = peoples_springtime.4
+			10 = peoples_springtime.5
+		}
+	}
+
+	invalid = {
+		has_global_variable = peoples_springtime_happened
+	}
+
+	weight = 10000
+	should_be_pinned_by_default = yes
+
+	transferable = no
+	can_revolution_inherit = no
+
+	timeout = 1095
+}
+
+je_red_summer = {
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+
+	group = je_group_crises
+
+	scripted_progress_bar = red_summer_progress_bar
+	scripted_progress_bar = red_summer_counter_revolution_progress_bar
+
+	immediate = {
+		set_variable = had_red_summer_var
+		random_primary_culture = {
+			save_scope_as = primary_culture_scope
+		}
+	}
+
+	status_desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = blank_tt
+				trigger = {
+					NOT = {
+						has_journal_entry = je_red_summer
+					}
+				}
+			}
+			triggered_desc = {
+				desc = liberals_in_government_tt
+				trigger = {
+					any_interest_group = {
+						is_in_government = yes
+						OR = {
+							has_ideology = ideology:ideology_liberal
+							leader = {
+								OR = {
+									has_liberal_ideology = yes
+									has_progressive_ideology = yes
+									has_socialist_ideology = yes
+								}
+							}
+						}
+					}
+				}
+			}
+			triggered_desc = {
+				desc = liberals_out_of_government_tt
+				trigger = {
+					NOT = {
+						any_interest_group = {
+							is_in_government = yes
+							OR = {
+								has_ideology = ideology:ideology_liberal
+								leader = {
+									OR = {
+										has_liberal_ideology = yes
+										has_progressive_ideology = yes
+										has_socialist_ideology = yes
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	modifiers_while_active = {
+		modifier_red_summer
+	}
+
+	custom_completion_header = je_springtime_of_the_peoples_complete_header
+
+	complete = {
+		OR = {
+			custom_tooltip = {
+				text = red_summer_liberal_victory_tt
+				red_summer_liberal_victory_trigger = yes
+			}
+			red_summer_liberal_victory_trigger = yes
+			custom_tooltip = {
+				text = red_summer_radical_victory_tt
+				red_summer_radical_victory_trigger = yes
+			}
+			red_summer_radical_victory_trigger = yes
+		}
+	}
+
+	custom_on_completion_header = je_springtime_of_the_peoples_on_complete_header
+
+	on_complete = {
+		custom_tooltip = {
+			text = on_liberal_victory_tt
+			if = {
+				limit = {
+					red_summer_liberal_victory_trigger = yes
+				}
+				trigger_event = { id = peoples_springtime.71 popup = yes }
+			}
+		}
+		custom_tooltip = {
+			text = on_radical_victory_tt
+			if = {
+				limit = {
+					red_summer_radical_victory_trigger = yes
+				}
+				trigger_event = { id = peoples_springtime.7 popup = yes }
+			}
+		}
+	}
+
+	event_outcome_completed_desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = red_summer_on_complete_tt
+			}
+		}
+	}
+
+	custom_failure_header = je_springtime_of_the_peoples_fail_header
+	
+	fail = {
+		custom_tooltip = {
+			text = red_summer_fail_tt
+			scope:journal_entry = { "scripted_bar_progress(red_summer_counter_revolution_progress_bar)" >= 100 }
+		}
+	}
+
+	custom_on_failure_header = je_springtime_of_the_peoples_on_fail_header
+
+	on_fail = {
+		trigger_event = { id = peoples_springtime.8 popup = yes }
+	}
+
+	event_outcome_failed_desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = event_effects_peoples_springtime.8_tt
+			}
+		}
+	}
+
+	on_monthly_pulse = {
+
+	}
+
+	invalid = {
+		has_global_variable = peoples_springtime_happened
+	}
+
+	weight = 9000
+	should_be_pinned_by_default = yes
+
+	transferable = no
+	can_revolution_inherit = no
+}

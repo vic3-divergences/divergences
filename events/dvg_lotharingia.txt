@@ -105,8 +105,17 @@ dvg_lotharingia.2 = {
 		activate_law = law_type:law_hereditary_bureaucrats
 		
 		ruler = { remove_trait = immortal }
+		hidden_effect = {
+			if = {
+				limit = {
+					country_turmoil > 0.40 
+				}
+				trigger_event = { id = dvg_lotharingia.5 popup = yes days = 10 }
+			}
+		}
 		
-		c:LOT = { trigger_event = { id = dvg_lotharingia.5 popup = yes days = 10 } }
+		
+		
 
 		ai_chance = {
 			base = 40
@@ -169,7 +178,7 @@ dvg_lotharingia.2 = {
 		default_option = yes
 		add_modifier = {
 			name = modifier_army_purged
-			months = normal_modifier_time
+			days = normal_modifier_time
 		}
 		ruler = { kill_character = yes }
 		
@@ -233,7 +242,8 @@ dvg_lotharingia.3 = {
 
 	duration = 3
 
-	trigger = { root.average_sol >= 12
+	immediate = { 
+		set_variable = benevolent_dictatorship
 	}
 	
 	
@@ -249,10 +259,6 @@ dvg_lotharingia.3 = {
 				name = aigle_var
 				add = -10
 			}
-		
-		
-		
-
 		ai_chance = {
 			base = 50
 		}
@@ -266,11 +272,10 @@ dvg_lotharingia.3 = {
 		}
 		
 		
-		
 		change_variable = {
 				name = aigle_var
 				add = -10
-			}
+		}
 		
 
 		ai_chance = {
@@ -308,7 +313,7 @@ dvg_lotharingia.4 = {
 		default_option = yes
 		add_modifier = {
 			name = modifier_army_purged
-			months = normal_modifier_time
+			days = normal_modifier_time
 		}
 		ruler = { exile_character = yes }
 		
@@ -405,35 +410,32 @@ dvg_lotharingia.5 = { #Split Lotharingia up into warlord states
 		remove_global_variable = atlantia_indepdendent
 		
 		set_variable = chinese_central_government
-		
-		
-		s:STATE_LIBREVILLE = {
-			add_claim = c:ATL
-		}
-		s:STATE_LIBREVILLE = {
-			add_claim = c:LOT
-		}
-s:STATE_NOUVELLE_ALSACE = {
-			add_claim = c:LOT
-		}
-s:STATE_BOURGOGNE_DU_SUD = {
-			add_claim = c:LOT
-		}
-s:STATE_TRANSFLEUVE = {
-			add_claim = c:LOT
-		}
-s:STATE_BRUXELLES_SUR_ODON = {
-			add_claim = c:LOT
-		}	
 
-s:STATE_MARCHES_OUEST = {
+		if = {
+			limit = {
+				has_state_in_state_region = STATE_BOURGOGNE_DU_SUD
+			}
+			set_capital = STATE_BOURGOGNE_DU_SUD
+			change_tag = ODO
+		}
+		
+		
+		every_state_region = {
+			limit = {
+				NOT = {
+					any_scope_state = {
+						owner = root
+					}
+				}
+				is_homeland = cu:lotharian
+			}
 			add_claim = c:LOT
 		}
 		
 		if = {
 			limit = { exists = s:STATE_BOURGOGNE_DU_SUD.region_state:LOT }
 			create_country = { #Odonia
-				tag = ODO
+				tag = LOT
 				origin = this
 				state = s:STATE_BOURGOGNE_DU_SUD.region_state:LOT
 				state = s:STATE_TRANSFLEUVE.region_state:LOT
@@ -443,7 +445,7 @@ s:STATE_MARCHES_OUEST = {
 					set_variable = warlord_state
 				}
 			}
-			c:ODO = { save_scope_as = scope_ODO
+			c:LOT = { save_scope_as = scope_ODO
 			change_relations = {
 				country = c:ATL
 				value = 50
@@ -501,6 +503,30 @@ s:STATE_MARCHES_OUEST = {
 			
 			
 		}
+		if = {
+			limit = { exists = s:STATE_AVALON.region_state:LOT
+			NOT = {exists = c:BEO}
+			}
+			create_country = { #Beornia
+				tag = BEO
+				origin = this
+				state = s:STATE_AVALON.region_state:LOT
+				state = s:STATE_GODWINSON.region_state:LOT
+				state = s:STATE_EOFERWIC.region_state:LOT
+				state = s:STATE_WESSEX.region_state:LOT
+				state = s:STATE_NEW_CORNWALL.region_state:LOT
+				state = s:STATE_NEW_LONDON.region_state:LOT
+				state = s:STATE_NORTHUMBRIA.region_state:LOT
+
+				on_created = {
+					warlord_setup_effect = yes
+					set_variable = warlord_state
+				}
+			}
+			c:BEO = { save_scope_as = scope_BEO }
+			
+			
+		}
 
 		if = {
 			limit = { exists = s:STATE_MARCHES_OUEST.region_state:LOT }
@@ -547,6 +573,7 @@ s:STATE_MARCHES_OUEST = {
 					is_subject_type = subject_type_dominion
 					is_subject_type = subject_type_puppet
 				}
+				liberty_desire > 50
 			}
 			
 			make_independent = yes
@@ -653,7 +680,7 @@ s:STATE_MARCHES_OUEST = {
 			
 			add_war_goal = {
 				holder = c:NEA
-				type = war_reparations
+				type = humiliation
 				target_country = c:LOT
 			}
 		}
@@ -710,7 +737,7 @@ s:STATE_MARCHES_OUEST = {
 			
 			add_war_goal = {
 				holder = c:NEA
-				type = war_reparations
+				type = humiliation
 				target_country = c:LOT
 			}
 		}
@@ -767,7 +794,7 @@ s:STATE_MARCHES_OUEST = {
 			
 			add_war_goal = {
 				holder = c:NEA
-				type = war_reparations
+				type = humiliation
 				target_country = c:LOT
 			}
 		}
@@ -824,7 +851,7 @@ s:STATE_MARCHES_OUEST = {
 			
 			add_war_goal = {
 				holder = c:NEA
-				type = war_reparations
+				type = humiliation
 				target_country = c:LOT
 			}
 		}
@@ -880,7 +907,7 @@ s:STATE_MARCHES_OUEST = {
 			
 			add_war_goal = {
 				holder = c:NEA
-				type = war_reparations
+				type = humiliation
 				target_country = c:LOT
 			}
 		}
@@ -932,24 +959,24 @@ dvg_lotharingia.6 = {
 		default_option = yes
 		add_modifier = {
 			name = modifier_army_bolstered
-			months = normal_modifier_time
+			days = normal_modifier_time
 		}
 
 		add_modifier = {
 			name = china_authority
-			months = normal_modifier_time
+			days = normal_modifier_time
 		}
 		add_modifier = {
 			name = warlord_legitimacy
-			months = normal_modifier_time
+			days = normal_modifier_time
 		}
 		add_modifier = {
 			name = order_restored
-			months = normal_modifier_time
+			days = normal_modifier_time
 		}
 		add_modifier = {
 			name = reclaimed_states
-			months = normal_modifier_time
+			days = normal_modifier_time
 		}
 			
 		change_infamy = -10
@@ -972,19 +999,19 @@ dvg_lotharingia.6 = {
 
 		add_modifier = {
 			name = china_authority
-			months = normal_modifier_time
+			days = normal_modifier_time
 		}
 		add_modifier = {
 			name = warlord_legitimacy
-			months = normal_modifier_time
+			days = normal_modifier_time
 		}
 		add_modifier = {
 			name = order_restored
-			months = normal_modifier_time
+			days = normal_modifier_time
 		}
 		add_modifier = {
 			name = reclaimed_states
-			months = normal_modifier_time
+			days = normal_modifier_time
 		}
 			
 		change_infamy = -10
@@ -1127,7 +1154,7 @@ dvg_lotharingia.8 = {
 		
 		add_modifier = {
 			name = warlord_legitimacy
-			months = normal_modifier_time
+			days = normal_modifier_time
 		}
 		
 		add_loyalists = {
@@ -1200,19 +1227,19 @@ dvg_lotharingia.9 = {
 		
 		add_modifier = {
 			name = china_authority
-			months = normal_modifier_time
+			days = normal_modifier_time
 		}
 		add_modifier = {
 			name = warlord_legitimacy
-			months = normal_modifier_time
+			days = normal_modifier_time
 		}
 		add_modifier = {
 			name = order_restored
-			months = normal_modifier_time
+			days = normal_modifier_time
 		}
 		add_modifier = {
 			name = reclaimed_states
-			months = normal_modifier_time
+			days = normal_modifier_time
 		}
 		change_relations = {
 				country = c:TWT
@@ -1377,23 +1404,26 @@ dvg_lotharingia.11 = {
 	option = {
 		name = dvg_lotharingia.11.c
 
-		 change_relations = {
+		change_relations = {
 				country = c:ATL
 				value = -15
 			}
-		 change_relations = {
+		change_relations = {
 				country = c:LOT
 				value = -30
-			}
+		}
+		create_treaty = {
+			#name = treaty_name_not_set_yet
+			first_country = c:BRG
+			second_country = c:NEA
 
-		c:BRG = {
-			create_diplomatic_pact = {
-				country = c:NEA
-				type = customs_union
-			}
-			create_diplomatic_pact = {
-				country = c:NEA
-				type = defensive_pact
+			is_draft = no
+			binding_period = { years = 5 }
+
+			articles_to_create = {
+				{ # Defensive Pact
+					article = defensive_pact
+				}
 			}
 		}
 		
@@ -1458,7 +1488,7 @@ dvg_lotharingia.12 = { #A statue made of the king
 		}
 		set_variable = {
 			name = ruler_statue_cooldown
-			months = very_long_modifier_time #20 years
+			days = very_long_modifier_time #20 years
 		}
 	}
 
@@ -1466,7 +1496,7 @@ dvg_lotharingia.12 = { #A statue made of the king
 		name = dvg_lotharingia.12.a
 		add_modifier = {
 			name = modifier_statue_of_ruler #prestige
-			months = normal_modifier_time
+			days = normal_modifier_time
 		}
 		change_variable = {
 				name = aigle_var
@@ -1483,7 +1513,7 @@ dvg_lotharingia.12 = { #A statue made of the king
 		scope:statue_state = {
 			set_variable = {
 				name = ruler_statue_var
-				months = normal_modifier_time
+				days = normal_modifier_time
 			}
 			add_radicals_in_state = {
   				value = small_radicals
@@ -1546,7 +1576,7 @@ dvg_lotharingia.13 = { #Statue torn down
 			}
 			add_modifier = {
 				name = modifier_ig_approve_statue_removal
-				months = normal_modifier_time
+				days = normal_modifier_time
 			}
 		}
 		if = {
@@ -1573,7 +1603,7 @@ dvg_lotharingia.13 = { #Statue torn down
 			}
 			add_modifier = {
 				name = modifier_ig_approve_no_statue_removal
-				months = normal_modifier_time
+				days = normal_modifier_time
 			}
 		}
 	}
@@ -1592,7 +1622,7 @@ dvg_lotharingia.13 = { #Statue torn down
 		capital = {
 			set_variable = {
 				name = ruler_statue_var
-				months = normal_modifier_time
+				days = normal_modifier_time
 			}
 			add_radicals_in_state = {
 				value = small_radicals
@@ -1673,7 +1703,7 @@ dvg_lotharingia.14 = {
 			
 			add_war_goal = {
 				holder = c:LOT
-				type = war_reparations
+				type = humiliation
 				target_country = c:BLT
 			}
 		}
@@ -2036,4 +2066,106 @@ dvg_lotharingia.20 = { #Create D'Anton
 			}
 		}
 	}
+}
+
+dvg_lotharingia.21 = { 
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = "gfx/event_pictures/southamerica_election.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	title = dvg_lotharingia.21.t
+	desc = dvg_lotharingia.21.d
+	flavor = dvg_lotharingia.1.a.21.f
+
+	duration = 1
+
+	trigger = {
+	}
+
+	immediate = {
+		c:BEO = { save_scope_as = scope_BEO}
+	}
+
+	option = {
+		name = dvg_lotharingia.21.a
+		default_option = yes
+		
+		add_radicals = {
+			value = 0.20
+			culture = cu:lotharian
+		}
+		add_loyalists = {
+			value = 0.10
+			culture = cu:beornian
+		}
+
+		add_journal_entry = {
+			type = je_anglo_lotharingia
+		}
+		
+		change_tag = BLT
+		add_primary_culture = cu:beornian
+		
+		set_capital = STATE_TRANSFLEUVE
+		
+		change_variable = {
+				name = aigle_var
+				add = 10
+		}
+		ai_chance = {
+			base = 100
+		}
+	}	
+	option = {
+		name = dvg_lotharingia.21.b
+		
+	
+
+		add_journal_entry = {
+			type = je_beornia_revolt
+		}
+		
+		every_scope_state = {
+			limit = {
+				state_region = {
+					is_homeland = cu:beornian
+				}
+			}
+			state_region = {
+				add_homeland = cu:lotharian
+			}
+			random_scope_pop = {
+				change_pop_culture = {
+					target = cu:lotharian
+					value = 0.25
+				}
+			}
+		}
+		add_radicals = {
+			value = 0.40
+			culture = cu:beornian
+		}
+		add_loyalists = {
+			value = 0.15
+			culture = cu:lotharian
+		}
+
+		add_journal_entry = {
+			type = je_anglo_lotharingia
+		}		
+		change_variable = {
+				name = aigle_var
+				add = 10
+		}
+		ai_chance = {
+			base = 100
+		}
+	}	
 }

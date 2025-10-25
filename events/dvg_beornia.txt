@@ -633,7 +633,7 @@ dvg_beornia.7 = { #Sell Falklands
 						months = 12
 						
 					}
-				}
+		}
 		change_relations = {
 				country = c:BEO
 				value = 30
@@ -678,28 +678,50 @@ dvg_beornia.8 = { #Odonia or Lotharingia
 	immediate = {
 		c:LOT = { save_scope_as = scope_LOT}
 		c:ODO = { save_scope_as = scope_ODO}	
+		random_country = {
+			limit = {
+				country_is_in_south_america = yes
+				ruler = {
+					has_variable = chef_de_aigle_var
+				}
+			}
+			save_scope_as = aigle_country
+		}
+		every_country = {
+			limit = {
+				is_diplomatic_play_enemy_of = scope:aigle_country
+			}
+			save_scope_as = aigle_enemy
+		}
 	}
 
 	option = {
 		name = dvg_beornia.8.a
 		default_option = yes
 		
-		s:STATE_TRANSFLEUVE = { 
-			add_claim = ROOT
+		create_incident = {
+			country = THIS
+			value = 12
 		}
 		
 		create_diplomatic_play = {
-			target_country = c:ODO
-			war = no
-			type = dp_return_state
-			target_state = s:STATE_TRANSFLEUVE.region_state:ODO
+			type = dp_rebellion_annex
+			target_country = scope:aigle_enemy
 
 			add_war_goal = {
-				holder = c:ODO
-				type = war_reparations
-				target_country = c:BEO
+				holder = scope:aigle_enemy
+				type = independence
 			}
-			
+		}
+
+		create_diplomatic_play = {
+			type = dp_rebellion_annex
+			target_country = scope:aigle_country
+
+			add_war_goal = {
+				holder = scope:aigle_enemy
+				type = annex_country
+			}
 		}
 		
 		
@@ -708,19 +730,41 @@ dvg_beornia.8 = { #Odonia or Lotharingia
 		}
 	}
 	option = {
+		#Help De Aigle
+		trigger = {
+			any_country = {
+				country_is_in_south_america = yes
+				ruler = {
+					has_variable = chef_de_aigle_var
+				}
+			}
+			c:LOT = {
+				is_ai = yes
+			}
+		}
 		name = dvg_beornia.8.b
-		change_relations = {
-				country = c:ODO
-				value = 40
-			}
-	    change_relations = {
-				country = c:LOT
-				value = -30
-			}
+		
 		create_diplomatic_pact = {
-			country = c:ODO
+			country = scope:aigle_country
 			type = protectorate
+		}
+		every_diplomatic_play = {
+			limit = {
+				initiator_is = scope:aigle_country
 			}
+			add_initiator_backers = {
+				ROOT
+			}
+		}
+		every_diplomatic_play = {
+			limit = {
+				target_is = scope:aigle_country
+			}
+			add_target_backers = {
+				ROOT
+			} 
+		}
+		
 		
 		ai_chance = {
 			base = 01
@@ -728,14 +772,13 @@ dvg_beornia.8 = { #Odonia or Lotharingia
 	}
 	option = {
 		name = dvg_beornia.8.c
-		create_diplomatic_pact = {
-			country = c:LOT
-			type = protectorate
+		scope:aigle_country = {
+			set_owes_obligation_to = {
+				country = ROOT
+				setting = yes
+			}
 		}
-		create_incident = {
-			country = THIS
-			value = 3
-		}
+
 		ai_chance = {
 			base = 99
 		}
@@ -936,7 +979,7 @@ dvg_beornia.10 = { #Cattle Barons Thwarted
 			exile_character = yes
 		}
 		ig:ig_landowners = {
-			remove_ideology = ideology_stratocratic
+			remove_ideology = ideology_hierarchic
 			add_ideology = ideology_plutocratic
 		}
 		add_loyalists = {
@@ -1336,7 +1379,7 @@ dvg_beornia.15 = {
 
 			add_war_goal = {
 				holder = c:PTG
-				type = war_reparations
+				type = humiliation
 				target_country = c:BEO
 			}
 			
@@ -2033,7 +2076,8 @@ dvg_beornia.22 = {
 						birth_date = 1812.6.12
 						culture = cu:beornian
 						interest_group = ig_landowners
-						ideology = ideology_jacksonian_democrat
+						#ideology = ideology_jacksonian_democrat # dvg does not have this ideology
+						ideology = ideology_moderate
 						traits = {
 							innovative				
 							charismatic
@@ -2050,7 +2094,8 @@ dvg_beornia.22 = {
 						birth_date = 1819.5.08
 						culture = cu:beornian
 						interest_group = ig_armed_forces
-						ideology = ideology_jacksonian_democrat
+						#ideology = ideology_jacksonian_democrat # dvg does not have this ideology
+						ideology = ideology_moderate
 						traits = {
 							meticulous 
 							mountain_commander
@@ -2076,7 +2121,7 @@ dvg_beornia.22 = {
 					
 					ig:ig_landowners = { 
 					set_interest_group_name = ig_parish_pioneers
-					remove_ideology = ideology_stratocratic
+					remove_ideology = ideology_hierarchic
 					add_ideology = ideology_republican_paternalistic
 					}
 				}
@@ -2109,7 +2154,7 @@ dvg_beornia.22 = {
 
 				add_war_goal = {
 					holder = c:NME
-					type = war_reparations
+					type = humiliation
 					target_country = c:BEO
 				}
 				
@@ -2150,7 +2195,7 @@ dvg_beornia.22 = {
 
 				add_war_goal = {
 					holder = c:NME
-					type = war_reparations
+					type = humiliation
 					target_country = c:BEO
 				}
 				

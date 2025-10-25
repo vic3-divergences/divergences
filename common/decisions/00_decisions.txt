@@ -11,7 +11,7 @@
 			NOT = { has_variable = revive_olympics_decision_taken }
 		}
 	}
-	
+
 	when_taken = {
 		set_variable = {
 			name = revive_olympics_decision_taken
@@ -20,21 +20,27 @@
 		add_modifier = {
 			name = modifier_olympic_games
 		}
+		add_modifier = {
+			name = modifier_olympic_games_bureaucracy
+			days = short_modifier_time
+		}
 	}
 
 	ai_chance = {
-		base = 0
-		modifier = {
-			trigger = { bureaucracy > 0 }
+		value = 0
+		if = {
+			limit = { bureaucracy > 0 }
 			add = 5
 		}
-		modifier = {
-			OR = {
-				is_diplomatic_play_committed_participant = yes
-				is_at_war = yes
+		if = {
+			limit = {
+				OR = {
+					is_diplomatic_play_committed_participant = yes
+					is_at_war = yes
+				}
 			}
-			add = -1000
-		}		
+			multiply = 0
+		}
 	}
 }
 
@@ -56,7 +62,7 @@ lowlands_land_reclamation = {
 		has_technology_researched = watertube_boiler
 		bureaucracy > 200
 	}
-	
+
 	when_taken = {
 		if = {
 			limit = {
@@ -85,16 +91,60 @@ lowlands_land_reclamation = {
 	}
 
 	ai_chance = {
-		base = 5
-		modifier = {
-			OR = {
-				is_diplomatic_play_committed_participant = yes
-				is_at_war = yes
+		value = 5
+		if = {
+			limit = {
+				OR = {
+					is_diplomatic_play_committed_participant = yes
+					is_at_war = yes
+				}
 			}
-			add = -1000
-		}		
+			multiply = 0
+		}
 	}
 }
+
+dvg_migration_default = {
+	is_shown = {
+		OR = {
+			has_game_rule = default_open_borders
+			has_game_rule = default_closed_borders
+		}
+		year = 1836
+		NOT = {
+			has_variable = migration_decided
+			year > 1836
+
+		}
+	}
+
+    possible = {
+		
+	}
+
+    when_taken = {
+		set_variable = migration_decided
+		if = {
+			limit = {
+				has_game_rule = default_open_borders
+			}
+			activate_law = law_type:law_no_migration_controls
+		}
+
+		if = {
+			limit = {
+				has_game_rule = default_closed_borders
+			}
+			activate_law = law_type:law_closed_borders
+		}
+    }
+
+	ai_chance = {
+		value = 100
+	}
+}
+
+
 
 # abolish_tangena_ordeal = {
 	# is_shown = {
@@ -122,6 +172,6 @@ lowlands_land_reclamation = {
 	# }
 
 	# ai_chance = {
-		# base = 100
+		# value = 100
 	# }
 # }

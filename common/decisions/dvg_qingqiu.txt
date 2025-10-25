@@ -1,8 +1,8 @@
 ﻿dvg_integrate_east_qq = {
 
 	is_shown = {
-		root = c:QIN
 		exists = c:QIN
+		c:QIN = ROOT
 		root = {
 			OR = {
 				AND = {
@@ -142,8 +142,8 @@
 dvg_integrate_north_qq = {
 
 	is_shown = {
-		root = c:QIN
 		exists = c:QIN
+		c:QIN = ROOT
 		root = {
 			OR = {
 				AND = {
@@ -157,7 +157,7 @@ dvg_integrate_north_qq = {
 				OR = {
 					AND = {
 						has_state_in_state_region = STATE_TERRES_ROUGES
-						s:STATE_COMANCHERIE = {
+						s:STATE_TERRES_ROUGES = {
 							NOT = {
 								is_homeland = cu:qingqiuan
 							}
@@ -251,6 +251,8 @@ dvg_integrate_north_qq = {
     }
 }
 
+
+
 dvg_embrace_rhonnst = {
 
 	is_shown = {
@@ -267,7 +269,10 @@ dvg_embrace_rhonnst = {
 	
 	possible = {
 		country_is_in_north_america = yes
-		has_law = law_type:law_cultural_exclusion
+		OR = {
+			has_law = law_type:law_cultural_exclusion
+			has_law = law_type:law_multicultural 
+		}
 		any_scope_state = {
 			state_region = {
 				is_homeland = cu:rohnnst
@@ -281,7 +286,132 @@ dvg_embrace_rhonnst = {
 		set_variable = dvg_qq_embraced_rohnnst_var
     }
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
+
+dvg_attack_blf = {
+	is_shown = {
+		exists = c:BLF
+		NOT = {
+			c:BLF = ROOT
+		}
+		is_ai = yes
+		NOT = {
+			has_variable = blf_attacked
+		}
+		any_neighbouring_state = {
+			owner = c:BLF
+		}
+	}
+
+    possible = {
+		NOT = {
+			c:BLF = {
+				has_truce_with = ROOT
+				is_ai = yes
+			}
+		}
+		has_technology_researched = civilizing_mission
+	}
+
+    when_taken = {
+		set_variable = blf_attacked
+		save_temporary_scope_value_as = {
+			name = war_reparations_amount
+			value = {
+				value = income
+				multiply = define:NDiplomacy|DEFAULT_WAR_REPARATIONS_MONEY_TRANSFER
+			}
+		}
+
+			
+		
+		create_diplomatic_play = {
+			type = dp_annex_war
+			target_country = c:BLF
+			add_war_goal = {
+				holder = c:BLF
+				target_country = ROOT
+				type = enforce_treaty_article
+				article = {
+					article = money_transfer
+					source_country = ROOT
+					target_country = c:BLF
+					inputs = {
+						{ quantity = scope:war_reparations_amount }
+					}
+				}
+			}
+		}
+    }
+
+	ai_chance = {
+		value = 100
+	}
+}
+dvg_manifest_destiny_qin = {
+	is_shown = {
+		exists = c:QIN
+		c:QIN = ROOT
+		NOT = {
+			has_variable = manifested_destiny_qingqiu
+		}
+		
+	}
+
+    possible = {
+		has_technology_researched = nationalism
+		has_technology_researched = romanticism
+		country_rank >= rank_value:minor_power
+		is_subject = no
+		is_at_war = no 
+		NOT = {
+			has_law = law_type:law_no_colonial_affairs
+		}
+	}
+
+    when_taken = {
+		set_variable = manifested_destiny_qingqiu
+		create_incident = {
+			country = THIS
+			value = 8
+		}
+		every_state = {
+			limit = {
+				OR = {
+					state_region = {
+						is_homeland = cu:navajo
+					}
+					state_region = {
+						is_homeland = cu:paiute
+					}
+					state_region = {
+						is_homeland = cu:nez_perce
+					}
+					state_region = {
+						is_homeland = cu:athabaskan
+					}
+					state_region = {
+						is_homeland = cu:kaiganese
+					}
+				}
+				
+				NOT = {
+					owner = ROOT
+				}
+				state_is_in_north_america = yes
+			}
+			state_region = {
+					
+				add_claim = ROOT	
+			}	
+		}
+		
+    }
+
+	ai_chance = {
+		value = 100
+	}
+}

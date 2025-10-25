@@ -1,4 +1,4 @@
-﻿ideology_anglois = {
+﻿ideology_dvg_anglois = {
 	icon = "gfx/interface/icons/ideology_icons/ideology_leader/ideology_leader_orleanist.dds"
 
 	character_ideology = yes
@@ -28,7 +28,6 @@
 		law_mass_conscription = neutral
 		law_professional_army = approve
 		law_national_militia = disapprove
-		law_peasant_levies = approve
 	}
 	
 	lawgroup_economic_system = {	
@@ -41,22 +40,22 @@
 	}
 
 	lawgroup_citizenship = {
+		law_subjecthood = strongly_approve
 		law_ethnostate = approve
-		law_national_supremacy = strongly_approve
+		law_national_supremacy = approve
 		law_racial_segregation = disapprove
 		law_cultural_exclusion = strongly_disapprove
 		law_multicultural = strongly_disapprove	
 	}
 
-	possible = {
-		NOT = { has_role = agitator }
+	country_trigger = {
 		# no monarchists in countries with strong republican tradition
 		owner = {
 			AND = {
 				exists = c:DUA
 				OR = {
 					c:DUA = this
-					civil_war_origin_country = c:DUA
+					civil_war_origin_country ?= c:DUA
 				}
 			}
 			NOR = {
@@ -65,28 +64,16 @@
 				}
 			}
 		}
-		scope:interest_group = { 
-			OR = {
-				is_interest_group_type = ig_industrialists
-				is_interest_group_type = ig_petty_bourgeoisie
-				is_interest_group_type = ig_intelligentsia
-				is_interest_group_type = ig_armed_forces
-				is_interest_group_type = ig_landowners
-				is_interest_group_type = ig_devout
-			}
-		}
-		scope:interest_group = {
-			NOR = {
-				has_variable = communist_ig_var
-				has_variable = chose_vanguardism
-				has_variable = chose_fascism
-				has_variable = chose_conservatism
-				has_variable = chose_ethno_nationalism
-			}
-		}
+	}
+	interest_group_leader_trigger = {
+		ideology_dvg_anglois_valid_trigger = yes
+	}
+	non_interest_group_leader_trigger = {
+		NOT = { has_role = agitator }
+		ideology_dvg_anglois_valid_trigger = yes
 	}
 
-	leader_weight = {
+	interest_group_leader_weight = {
 		value = 200
 		# less likely in a theocracy
 		if = {
@@ -103,21 +90,17 @@
 				owner = {
 					NOT = { has_law = law_type:law_monarchy }
 				}
-				scope:interest_group = {
-					ig_approval > 0
-				}
+				ig_approval > 0
 			}
 			add = -100
 		}
 
 		if = {
 			limit = {
-				scope:interest_group = {
-					OR = {
-						is_interest_group_type = ig_petty_bourgeoisie
-						is_interest_group_type = ig_intelligentsia
-						is_interest_group_type = ig_industrialists
-					}
+				OR = {
+					is_interest_group_type = ig_petty_bourgeoisie
+					is_interest_group_type = ig_intelligentsia
+					is_interest_group_type = ig_industrialists
 				}
 				owner = {
 					OR = {
@@ -133,9 +116,7 @@
 
 		if = {
 			limit = {
-				scope:interest_group = {
-					is_interest_group_type = ig_landowners
-				}
+				is_interest_group_type = ig_landowners
 			}
 			add = 25
 		}
@@ -153,171 +134,42 @@
 				owner = {
 					NOT = { has_law = law_type:law_monarchy }
 				}
-				scope:interest_group = {
-					ig_approval < 0
-				}
+				ig_approval < 0
 			}
 			add = 25
 		}
-	}
-}
-
-ideology_french = {
-	icon = "gfx/interface/icons/ideology_icons/ideology_leader/ideology_leader_legitimist.dds"
-
-	character_ideology = yes
-
-	lawgroup_governance_principles = {
-		law_monarchy = strongly_approve
-		law_presidential_republic = approve
-		law_parliamentary_republic = approve
-		law_theocracy = disapprove
-		law_council_republic = strongly_disapprove
-	}
-
-	lawgroup_distribution_of_power = {
-		law_autocracy = disapprove
-		law_oligarchy = neutral
-		law_landed_voting = approve	
-		law_wealth_voting = approve	
-		law_census_voting = neutral		
-		law_universal_suffrage = disapprove
-		law_anarchy = strongly_disapprove
-		law_single_party_state = disapprove
-		law_technocracy = strongly_disapprove
-	}
-
-	lawgroup_church_and_state = {
-		law_state_religion = approve
-		law_freedom_of_conscience = disapprove
-		law_total_separation = strongly_disapprove
-		law_state_atheism = strongly_disapprove
-	}
-
-	lawgroup_free_speech = {
-		law_protected_speech = strongly_disapprove
-		law_right_of_assembly = disapprove
-		law_censorship = approve
-		law_outlawed_dissent = strongly_approve
-	}
-
-	lawgroup_citizenship = {
-		law_ethnostate = disapprove
-		law_national_supremacy = disapprove
-		law_racial_segregation = approve
-		law_cultural_exclusion = approve
-		law_multicultural = disapprove	
-	}
-
-	lawgroup_economic_system = {	
-		law_laissez_faire = neutral
-		law_interventionism = approve
-		law_agrarianism = approve
-		law_traditionalism = approve	
-		law_cooperative_ownership = strongly_disapprove	
-		law_command_economy = strongly_disapprove
-	}
-
-	possible = {
-		NOT = { has_role = agitator }
-		# no monarchists in countries with strong republican tradition
-		owner = {
-			AND = {
-				exists = c:DUA
+		if = {
+			limit = {
 				OR = {
-					c:DUA = this
-					civil_war_origin_country = c:DUA
+					has_variable = communist_ig_var
+					has_variable = chose_vanguardism
+					has_variable = chose_fascism
+					has_variable = chose_conservatism
+					has_variable = chose_ethno_nationalism
 				}
 			}
-			NOR = {
-				AND = {
-					OR = {
-						has_variable = anglois_path
-						has_variable = english_path
-					}
-				}
-			}
-		}
-		scope:interest_group = { 
-			OR = {
-				is_interest_group_type = ig_rural_folk
-				is_interest_group_type = ig_petty_bourgeoisie
-				is_interest_group_type = ig_intelligentsia
-				is_interest_group_type = ig_armed_forces
-				is_interest_group_type = ig_landowners
-				is_interest_group_type = ig_devout
-			}
-		}
-		scope:interest_group = {
-			NOR = {
-				has_variable = communist_ig_var
-				has_variable = chose_vanguardism
-				has_variable = chose_fascism
-				has_variable = chose_conservatism
-				has_variable = chose_ethno_nationalism
-			}
+			multiply = 0.1
 		}
 	}
-
-	leader_weight = {
-		value = 200
-		# less likely in a theocracy
+	non_interest_group_leader_weight = {
+		value = 100
 		if = {
 			limit = {
-				owner = {
-					has_law = law_type:law_theocracy
+				OR = {
+					has_variable = communist_ig_var
+					has_variable = chose_vanguardism
+					has_variable = chose_fascism
+					has_variable = chose_conservatism
+					has_variable = chose_ethno_nationalism
 				}
 			}
-			add = -75
-		}
-		# less likely if IG is happy in a republic
-		if = {
-			limit = {
-				owner = {
-					NOT = { has_law = law_type:law_monarchy }
-				}
-				scope:interest_group = {
-					ig_approval > 0
-				}
-			}
-			add = -100
-		}
-
-		if = {
-			limit = {
-				scope:interest_group = {
-					is_interest_group_type = ig_petty_bourgeoisie
-					is_interest_group_type = ig_intelligentsia
-					is_interest_group_type = ig_rural_folk
-				}
-			}
-			add = 50
-		}
-
-		if = {
-			limit = {
-				has_culture = cu:french
-			}
-			add = 100
-		}
-
-		# reduced unhappy modifier if it's not a monarchy
-		if = {
-			limit = {
-				owner = {
-					NOT = { has_law = law_type:law_monarchy }
-				}
-				scope:interest_group = {
-					ig_approval < 0
-				}
-			}
-			add = 25
+			multiply = 0.1
 		}
 	}
 }
 
-ideology_english = {
-	icon = "gfx/interface/icons/ideology_icons/ideology_leader/ideology_leader_legitimist.dds"
+ideology_dvg_english = {
+	icon = "gfx/interface/icons/ideology_icons/english_integrationist.dds"
 
 	character_ideology = yes
 
@@ -356,6 +208,7 @@ ideology_english = {
 	}
 
 	lawgroup_citizenship = {
+		law_subjecthood = disapprove
 		law_ethnostate = disapprove
 		law_national_supremacy = disapprove
 		law_racial_segregation = approve
@@ -370,101 +223,63 @@ ideology_english = {
 		law_traditionalism = disapprove	
 		law_cooperative_ownership = strongly_disapprove	
 		law_command_economy = strongly_disapprove
+	}	
+}
+
+ideology_dvg_french = {
+	icon = "gfx/interface/icons/ideology_icons/ideology_leader/ideology_leader_legitimist.dds"
+
+	character_ideology = yes
+
+	lawgroup_governance_principles = {
+		law_monarchy = strongly_approve
+		law_presidential_republic = approve
+		law_parliamentary_republic = approve
+		law_theocracy = disapprove
+		law_council_republic = strongly_disapprove
 	}
 
-	possible = {
-		NOT = { has_role = agitator }
-		# no monarchists in countries with strong republican tradition
-		owner = {
-			AND = {
-				exists = c:DUA
-				OR = {
-					c:DUA = this
-					civil_war_origin_country = c:DUA
-				}
-			}
-			NOR = {
-				AND = {
-					OR = {
-						has_variable = anglois_path
-						has_variable = french_path
-					}
-				}
-			}
-		}
-		scope:interest_group = { 
-			OR = {
-				is_interest_group_type = ig_industrialists
-				is_interest_group_type = ig_petty_bourgeoisie
-				is_interest_group_type = ig_intelligentsia
-				is_interest_group_type = ig_armed_forces
-				is_interest_group_type = ig_landowners
-			}
-		}
-		scope:interest_group = {
-			NOR = {
-				has_variable = communist_ig_var
-				has_variable = chose_vanguardism
-				has_variable = chose_fascism
-				has_variable = chose_conservatism
-				has_variable = chose_ethno_nationalism
-			}
-		}
+	lawgroup_distribution_of_power = {
+		law_autocracy = disapprove
+		law_oligarchy = neutral
+		law_landed_voting = approve	
+		law_wealth_voting = approve	
+		law_census_voting = neutral		
+		law_universal_suffrage = disapprove
+		law_anarchy = strongly_disapprove
+		law_single_party_state = disapprove
+		law_technocracy = strongly_disapprove
 	}
 
-	leader_weight = {
-		value = 200
-		# less likely in a theocracy
-		if = {
-			limit = {
-				owner = {
-					has_law = law_type:law_theocracy
-				}
-			}
-			add = -75
-		}
-		# less likely if IG is happy in a republic
-		if = {
-			limit = {
-				owner = {
-					NOT = { has_law = law_type:law_monarchy }
-				}
-				scope:interest_group = {
-					ig_approval > 0
-				}
-			}
-			add = -100
-		}
-
-		if = {
-			limit = {
-				scope:interest_group = {
-					is_interest_group_type = ig_petty_bourgeoisie
-					is_interest_group_type = ig_intelligentsia
-					is_interest_group_type = ig_industrialists
-				}
-			}
-			add = 50
-		}
-
-		if = {
-			limit = {
-				has_culture = cu:british
-			}
-			add = 100
-		}
-
-		# reduced unhappy modifier if it's not a monarchy
-		if = {
-			limit = {
-				owner = {
-					NOT = { has_law = law_type:law_monarchy }
-				}
-				scope:interest_group = {
-					ig_approval < 0
-				}
-			}
-			add = 25
-		}
+	lawgroup_church_and_state = {
+		law_state_religion = approve
+		law_freedom_of_conscience = disapprove
+		law_total_separation = strongly_disapprove
+		law_state_atheism = strongly_disapprove
 	}
+
+	lawgroup_free_speech = {
+		law_protected_speech = strongly_disapprove
+		law_right_of_assembly = disapprove
+		law_censorship = approve
+		law_outlawed_dissent = strongly_approve
+	}
+
+	lawgroup_citizenship = {
+		law_subjecthood = disapprove
+		law_ethnostate = disapprove
+		law_national_supremacy = disapprove
+		law_racial_segregation = approve
+		law_cultural_exclusion = approve
+		law_multicultural = disapprove	
+	}
+
+	lawgroup_economic_system = {	
+		law_laissez_faire = neutral
+		law_interventionism = strongly_approve
+		law_agrarianism = disapprove
+		law_traditionalism = disapprove	
+		law_cooperative_ownership = strongly_disapprove	
+		law_command_economy = strongly_disapprove
+	}	
 }

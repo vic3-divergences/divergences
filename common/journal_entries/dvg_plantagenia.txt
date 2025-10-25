@@ -61,9 +61,12 @@
 			if = {
 				limit = {
 					OR = {
-						c:CNF = {
+						any_country = {
+							country_has_primary_culture = cu:septiman
 							owns_entire_state_region = STATE_SANACOMIE
 						}
+						
+						
 						has_variable = recently_lost_war
 					}
 					NOT = {
@@ -72,6 +75,7 @@
 				}
 				change_variable = { name = plantapoints subtract = 1 }
 				set_variable = pla_war_loser
+				
 			}
 			if = {
 				limit = {
@@ -529,7 +533,6 @@ je_pla_slavery = {
 	is_shown_when_inactive = {
 		exists = c:PLA
 		c:PLA = ROOT
-		year = 1990
 	}
 	possible = {
 		NOT = {
@@ -569,13 +572,26 @@ je_pla_slavery = {
 			}
 			if = {
 				limit = {
-					cu:afro_arcadian = {
-						culture_is_discriminated_in = ROOT
+					cultural_acceptance_base = {
+						target = cu:afro_arcadian
+						value < acceptance_status_3
 					}
 				}
 				change_variable = {
 					name = liberien_var
 					add = 1
+				}
+			}
+			if = {
+				limit = {
+					cultural_acceptance_base = {
+						target = cu:afro_arcadian
+						value > acceptance_status_3
+					}
+				}
+				change_variable = {
+					name = liberien_var
+					subtract = 1
 				}
 			}
 			if = {
@@ -658,6 +674,10 @@ je_pla_slavery = {
 						has_variable = pla_reform_law_enacted
 					}
 				}
+				change_variable = {
+					name = liberien_var
+					subtract = 5
+				}
 				trigger_event = {
 					id = dvg_plantagenia.5
 				}
@@ -681,7 +701,9 @@ je_pla_slavery = {
 			if = {
 				limit = {
 					this = { var:liberien_var >= 100 }
-					
+					NOT = {
+						has_variable = liberty_battalions
+					}
 				}
 				trigger_event = {
 					id = dvg_plantagenia.34
@@ -745,6 +767,7 @@ je_pla_slavery = {
 
 	complete = {
 		scope:journal_entry = { is_goal_complete = yes }
+		has_technology_researched = nationalism
 	}
 	on_complete = {
 		trigger_event = {
@@ -978,7 +1001,7 @@ je_unify_planta = {
 		}
 	}
 	should_be_pinned_by_default = yes
-	inheritable = no
+	#inheritable = no
 }
 
 je_manifest_destiny_pla = {
@@ -998,6 +1021,7 @@ je_manifest_destiny_pla = {
 	possible = {
 		   
 	}
+
 	on_yearly_pulse = {
 		effect = {
 			every_scope_state = {
@@ -1265,7 +1289,197 @@ je_manifest_destiny_pla = {
 		has_law = law_type:law_no_colonial_affairs
 	}
 	should_be_pinned_by_default = yes
-	inheritable = yes
+	#inheritable = yes
+}
+
+je_lou_insurgency = {
+	group = je_group_internal_affairs
+
+	is_shown_when_inactive = {
+		any_scope_state = {
+			state_region = s:STATE_LOUISIANE_ROYALE
+		}
+		exists = c:PLA
+		c:PLA = ROOT
+	}
+	possible = {
+		has_global_variable = lou_to_liberate
+	}
+	immediate = {
+		set_variable = {
+			name = lou_var
+			value = 0
+		}
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					any_scope_state = {
+						state_region = s:STATE_LOUISIANE_ROYALE
+						turmoil > 0.33
+						radical_fraction = {
+						value > 0.33
+					}
+					}
+					var:lou_var < 20
+				}
+				change_variable = {
+					name = lou_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					has_variable = diverted_troops_1
+					var:lou_var < 20
+
+				}
+				change_variable = {
+					name = lou_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					has_variable = diverted_troops_2
+					var:lou_var < 20
+
+				}
+				change_variable = {
+					name = lou_var
+					add = 2
+				}
+			}
+			if = {
+				limit = {
+					institution_investment_level = {
+						institution = institution_police
+						value > 0
+					}
+					var:lou_var < 20
+
+				}
+				change_variable = {
+					name = lou_var
+					subtract = 1
+				}
+			}
+			if = {
+				limit = {
+					institution_investment_level = {
+						institution = institution_home_affairs
+						value > 0
+					}
+					var:lou_var > 0
+
+				}
+				change_variable = {
+					name = lou_var
+					subtract = 1
+				}
+			}
+			if = {
+				limit = {
+					is_ai = yes
+
+				}
+				change_variable = {
+					name = lou_var
+					add = 2
+				}
+			}
+		}
+		
+	}
+	complete = {
+		OR = {
+			scope:journal_entry = {
+				is_goal_complete = yes
+			}
+			is_diplomatic_play_committed_participant = yes
+		}
+		OR = {
+			has_variable = diverted_troops_1
+			has_variable = diverted_troops_2
+		}
+	}
+	on_complete = {
+		if = {
+			limit = {
+				has_variable = diverted_troops_1
+			}
+
+			trigger_event = {
+				id = dvg_belgium.22
+			}
+			remove_variable = diverted_troops_1
+		}
+		if = {
+			limit = {
+				has_variable = diverted_troops_2
+			}
+
+			trigger_event = {
+				id = dvg_belgium.23
+			}
+			remove_variable = diverted_troops_2
+
+		}
+		
+	}
+
+	fail = {
+		OR = {
+			AND = {
+				is_diplomatic_play_enemy_of = c:BLC
+				NOT = {
+					has_variable = diverted_troops_1
+				}
+				has_variable = diverted_troops_2
+			}
+			AND = {
+				has_law = law_type:law_secret_police
+				institution_investment_level = {
+					institution = institution_home_affairs
+					value > 1
+				}
+			}
+			AND = {
+				NOT = {
+					has_law = law_type:law_no_police
+				}
+				institution_investment_level = {
+					institution = institution_police
+					value > 3
+				}
+			}
+		}
+	}
+	on_fail = {
+		trigger_event = {
+			id = dvg_belgium.20
+		}
+	}
+
+	timeout = 2555
+
+	progressbar = yes
+
+	current_value = {
+		value = root.var:lou_var
+	}
+	goal_add_value = 20
+
+	invalid = {
+		NOT = {
+			any_scope_state = {
+				state_region = s:STATE_LOUISIANE_ROYALE
+			}
+		}
+	}
+
 }
 
 

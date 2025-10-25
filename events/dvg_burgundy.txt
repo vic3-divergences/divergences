@@ -27,24 +27,25 @@ dvg_burgundy.1 = {
 
 	immediate = {
 
-		every_scope_character = {
-			limit = {
-				has_variable = jean_var
+		c:BRG = { save_scope_as = scope_BRG }
+		c:BOH = { save_scope_as = scope_BOH }
+		c:DUA = { save_scope_as = scope_DUA }
+
+		
+		c:BRG = {
+			random_scope_character = {
+				limit = {
+					is_ruler = yes
+				}
+				save_scope_as = statue_ruler
 			}
-			save_scope_as = scope_jean
+			random_scope_character = {
+				limit = {
+					is_heir = yes
+				}
+				save_scope_as = scope_jean
+			}
 		}
-
-		c:BRG = {	save_scope_as = scope_BRG}
-		c:BOH = {	save_scope_as = scope_BOH}
-		c:DUA = {	save_scope_as = scope_DUA}
-
-		
-		c:BRG = {ruler = {
-			save_scope_as = statue_ruler
-		}
-		}
-		
-		
 	}
 	
 	# Vive!
@@ -208,6 +209,15 @@ dvg_burgundy.4 = {
 			culture = cu:rheinish
 			value = 0.20
 		}
+		if = {
+			limit = {
+				exists = c:RHI
+				c:RHI = {
+					is_subject_of = c:BRG
+				}
+			}
+			add_liberty_desire = 7
+		}
 		
 
 		ai_chance = {
@@ -290,7 +300,6 @@ dvg_burgundy.6 = {
 		NOT = {
 			has_global_variable = verdun_anniversary
 		}
-
 	}
 	immediate = {
 		c:RHI = {
@@ -341,6 +350,16 @@ dvg_burgundy.6 = {
 				value = -15
 			}
 		}
+		if = {
+			limit = {
+				exists = c:RHI
+				c:RHI = {
+					is_subject_of = c:BRG
+				}
+			}
+			add_liberty_desire = 10
+		}
+
 		add_radicals = {
 			value = 0.15
 			religion = rel:catholic
@@ -351,6 +370,7 @@ dvg_burgundy.6 = {
 			religion = rel:protestant
 			culture = cu:burgundian
 		}
+
 		
 
 		ai_chance = {
@@ -460,6 +480,7 @@ dvg_burgundy.8 = {
 
 	trigger = { 
 
+		exists = c:RHI
 
 	}
 	immediate = {
@@ -547,12 +568,13 @@ dvg_burgundy.10 = {
 
 	trigger = { 
 
-
+		exists = c:RHI
 	}
 	immediate = {
 		c:RHI = {
 			save_scope_as = scope_RHI
 		}
+		set_global_variable = dvg_cologne_meeting
 	}
 	
 	
@@ -567,6 +589,15 @@ dvg_burgundy.10 = {
 		change_relations = {
 			country = c:RHI
 			value = -15
+		}
+		if = {
+			limit = {
+				exists = c:RHI
+				c:RHI = {
+					is_subject_of = c:BRG
+				}
+			}
+			add_liberty_desire = 5
 		}
 
 		ai_chance = {
@@ -596,10 +627,26 @@ dvg_burgundy.11 = {
 	duration = 3
 
 	trigger = { 
-
+		OR = {
+			any_scope_state = {
+				state_region = {
+					is_homeland = cu:rheinish
+				}
+			}
+			exists = c:RHI
+		}
 
 	}
 	immediate = {
+		random_scope_state = {
+			limit = {
+				state_region = {
+					is_homeland = cu:rheinish
+				}
+				
+			}
+			save_scope_as = rheinish_state
+		}
 		if = {
 			
 			limit = {
@@ -613,36 +660,33 @@ dvg_burgundy.11 = {
 					exists = c:RHI
 			}
 			}
-			every_scope_state = {
-				limit = {		
-					state_region = {
-						is_homeland = cu:rheinish
-					}
-				}
-				set_state_owner = c:RHI
+			create_country = {
+				tag = RHI
+				origin = THIS
+				state = scope:rheinish_state
 			}
+			
+			
 		}
-		s:STATE_RHINELAND.region_state:BRG = {
-			set_state_owner = c:RHI
-		}
-		s:STATE_ALSACE.region_state:BRG = {
-			set_state_owner = c:RHI
-		}
+		
 		
 		c:RHI = {
 			save_scope_as = scope_RHI
-			set_country_type = unrecognized
 			change_relations = {
 				country = c:BOH
 				value = 50
 			}
 			change_relations = {
+				country = c:FRA
+				value = 50
+			}
+			change_relations = {
 				country = c:DUA
-				value = 20
+				value = 50
 			}
 			change_relations = {
 				country = c:PAP
-				value = 20
+				value = 50
 			}
 			change_relations = {
 				country = c:BRG
@@ -651,6 +695,7 @@ dvg_burgundy.11 = {
 			trigger_event = {
 				id = dvg_burgundy.12
 			}
+			
 		}
 
 	}
@@ -660,9 +705,19 @@ dvg_burgundy.11 = {
 		name = dvg_burgundy.11.a
 		default_option = yes
 
+		every_scope_state = {
+				
+			limit = {		
+				state_region = {
+					is_homeland = cu:rheinish
+				}
+			}
+			set_state_owner = c:RHI
+		}
+
 		c:RHI = {
 			create_diplomatic_play = {
-				type = dp_force_recognition
+				type = dp_independence
 				target_country = c:BRG
 
 				add_war_goal = {
@@ -693,6 +748,15 @@ dvg_burgundy.11 = {
 				name = dvg_burg_nether_var
 				add = 20
 			}
+		}
+		every_scope_state = {
+				
+			limit = {		
+				state_region = {
+					is_homeland = cu:rheinish
+				}
+			}
+			set_state_owner = c:RHI
 		}
 		add_journal_entry = {
 			type = je_reconquer_rhine
@@ -956,7 +1020,7 @@ dvg_burgundy.15 = {
 					has_technology_researched = nationalism
 				}
 				any_primary_culture = {
-					has_discrimination_trait = german_culture_group
+					has_discrimination_trait = language_germanophone
 				}
 			}
 			add_technology_researched = nationalism
@@ -980,7 +1044,7 @@ dvg_burgundy.15 = {
 					has_technology_researched = nationalism
 				}
 				any_primary_culture = {
-					has_discrimination_trait = german_culture_group
+					has_discrimination_trait = language_germanophone
 				}
 			}
 			add_technology_researched = nationalism
@@ -1014,7 +1078,7 @@ dvg_burgundy.15 = {
 					has_technology_researched = nationalism
 				}
 				any_primary_culture = {
-					has_discrimination_trait = german_culture_group
+					has_discrimination_trait = language_germanophone
 				}
 			}
 			add_technology_researched = nationalism
@@ -1446,7 +1510,7 @@ dvg_burgundy.22 = {
 			value = 0.30
 		}
 		change_relations = {
-			country = c:BIC
+			country = c:BEI
 			value = -30
 		}
 		if = {
@@ -1475,13 +1539,7 @@ dvg_burgundy.22 = {
 			}
 		}
 		random_country = {
-			limit = {
-				cu:ashkenazi = {
-					NOT = {
-						culture_is_discriminated_in = ROOT
-					}
-				}
-			}
+			limit = { cultural_acceptance_base = { target = cu:ashkenazi value >= acceptance_status_4 } }
 			
 		}
 
@@ -1823,7 +1881,6 @@ dvg_burgundy.25 = {
 				state = s:STATE_HESSE.region_state:BRG
 				state = s:STATE_BADEN.region_state:BRG
 				state = s:STATE_WURTTEMBERG.region_state:BRG
-				state = s:STATE_PALATINATE.region_state:BRG
 				state = s:STATE_ALSACE.region_state:BRG
 	
 			}
@@ -2525,7 +2582,7 @@ dvg_burgundy.34 = {
 			
 		} 
 		ig:ig_landowners = {
-			remove_ideology = ideology_stratocratic
+			remove_ideology = ideology_hierarchic
 			add_ideology = ideology_jeanist
 		} 
 		add_modifier = {
@@ -2682,9 +2739,6 @@ dvg_burgundy.36 = {
 			s:STATE_RHINELAND.region_state:BRG = {
 				set_state_owner = c:PBG
 			}
-			s:STATE_PALATINATE.region_state:BRG = {
-				set_state_owner = c:PBG
-			}
 			s:STATE_BADEN.region_state:BRG = {
 				set_state_owner = c:PBG
 			}
@@ -2811,6 +2865,7 @@ dvg_burgundy.37 = {
 				type = annex_country
 			}
 		}
+		set_variable = burgundy_civilwar_began
 		hidden_effect = {
 			trigger_event = {
 				id = dvg_burgundy.36
@@ -2867,13 +2922,14 @@ dvg_burgundy.38 = {
 			limit = {
 				has_ideology = ideology:ideology_jeanist_leader
 			}
-			set_ideology = ideology:ideology_royalist
+			exile_character = yes
 		}
 		every_interest_group = {
 			limit = {
 				has_ideology = ideology:ideology_jeanist
 			}
-			exile_character = yes
+			remove_ideology = ideology_jeanist
+			add_ideology = ideology_royalist
 		}
 		
 		
@@ -3209,7 +3265,7 @@ dvg_burgundy.43 = {
 
 			add_war_goal = {
 				holder = c:NET
-				type = war_reparations
+				type = humiliation
 				target_country = c:BRG
 			}
 

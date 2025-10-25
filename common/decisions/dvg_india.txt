@@ -1,14 +1,12 @@
 ﻿
 dvg_bharat_subcontinent = {
 	is_shown = {
-
-	
 		any_primary_culture = {
-			has_discrimination_trait = south_asian_heritage
+			has_discrimination_trait_group = heritage_group_south_asian
 		}
 
 		any_primary_culture = {
-			has_discrimination_trait = hindustani
+			has_discrimination_trait = language_hindustani
 		}
 		NOT = {
 			has_global_variable = dvg_bharata
@@ -31,7 +29,8 @@ dvg_bharat_subcontinent = {
 		
 		every_state_region = {
 			limit = {
-				region = sr:region_north_india
+				region = sr:region_indus
+				region = sr:region_ganges
 			}
 			add_claim = ROOT
 		}
@@ -39,8 +38,8 @@ dvg_bharat_subcontinent = {
 		set_global_variable = dvg_bharata
 
 }
-ai_chance = {
-		base = 100
+	ai_chance = {
+		value = 100
 	}
 }
 
@@ -48,11 +47,11 @@ dvg_dravidia = {
 	is_shown = {
 	
 		any_primary_culture = {
-			has_discrimination_trait = south_asian_heritage
+			has_discrimination_trait_group = language_group_dravidian
 		}
 
 		any_primary_culture = {
-			has_discrimination_trait = hindustani
+			has_discrimination_trait = language_hindustani
 		}
 		NOT = {
 			has_global_variable = dvg_dravidia
@@ -85,7 +84,7 @@ dvg_dravidia = {
 
 	}
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
@@ -93,10 +92,12 @@ dvg_sikh_embrace = {
 	is_shown = {
 	
 		has_variable = dvg_sikh_accepted
+		cu:panjabi = {
+			root = {
+				cultural_acceptance_base = { target = prev value >= acceptance_status_5 }
+			}
+		}
 		NOT = {
-			cu:panjabi = {
-				culture_is_discriminated_in = ROOT 
-		   }
 		   has_variable = dvg_convert_sikh
 		   exists = c:PAN
 		}
@@ -106,14 +107,22 @@ dvg_sikh_embrace = {
 		
 		NOT = {
 			has_modifier = decision_cooldown
+			ruler = {
+				has_trait = bigoted
+			}
 		}
 		any_interest_group = {
 			leader = {
-				has_religion = rel:sikh
+				religion = rel:sikh
 			}
 			is_powerful = yes
 		}
-		has_law = law_type:law_religious_autonomys
+		religion_percent_country = {
+			target = rel:sikh
+			value > 0.25
+		}
+
+		has_law = law_type:law_state_religion
 	}
 
     when_taken = {
@@ -124,12 +133,151 @@ dvg_sikh_embrace = {
 		set_variable = dvg_convert_sikh
 	}
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
+dvg_tamil_embrace = {
+	is_shown = {
+	
+		culture_percent_country = {
+			target = cu:tamil
+			value > 0.05
+		}
+		NOT = {
+			country_has_primary_culture = cu:tamil
+		}
+		OR = {
+			country_is_in_india = yes
+			country_is_in_southeast_asia = yes
+			is_country_type = colonial
+			
+		}
+		religion = {
+			has_discrimination_trait = heritage_dharmic
+		}
+	}
 
+    possible = {
 
+		OR = {
+			culture_percent_country = {
+				target = cu:tamil
+				value > 0.25
+			}
+			has_law = law_type:law_multicultural
+		}
+		
+		any_scope_state = {
+			state_region = {
+				is_homeland = cu:tamil
+			}
+		}
+		has_technology_researched = egalitarianism
+		cultural_acceptance_base = {
+			target = cu:tamil
+			value > acceptance_status_3
+		}
+	}
 
+    when_taken = {
 
+		add_primary_culture = cu:tamil
+	}
+	ai_chance = {
+		value = 100
+	}
+}
 
+dvg_become_ceylon = {
+	is_shown = {
+		country_has_primary_culture = cu:sinhala
+		NOT = {
+			exists = c:CEY
+		}
+	}
+
+    possible = {
+
+		has_technology_researched = nationalism
+
+		NOT = {
+			exists = c:TME
+		}
+
+	}
+
+    when_taken = {
+
+		change_tag = CEY
+
+	}
+	ai_chance = {
+		value = 100
+	}
+}
+
+dvg_become_hindustan = {
+	is_shown = {
+		any_primary_culture = {
+			has_discrimination_trait = language_hindustani
+		}
+		NOT = {
+			exists = c:MUG
+			exists = c:HND
+		}
+	}
+
+    possible = {
+
+		has_technology_researched = nationalism
+
+		NOT = {
+			exists = c:TME
+		}
+		calc_true_if = {
+			amount > 3
+			country_or_subject_owns_entire_state_region = STATE_DELHI
+			country_or_subject_owns_entire_state_region = STATE_AWADH
+			country_or_subject_owns_entire_state_region = STATE_BIHAR
+			country_or_subject_owns_entire_state_region = STATE_JHARKHAND
+			country_or_subject_owns_entire_state_region = STATE_NORTH_BENGAL
+			country_or_subject_owns_entire_state_region = STATE_SOUTH_BENGAL
+			country_or_subject_owns_entire_state_region = STATE_SINDH
+			country_or_subject_owns_entire_state_region = STATE_RAJPUTANA
+		}
+	}
+		
+		
+	
+
+    when_taken = {
+
+		change_tag = HND
+
+		if = {
+			limit = {
+				NOT = {
+					country_has_primary_culture = cu:hindustani
+				}
+			}
+			add_primary_culture = cu:hindustani
+		}
+
+		every_subject_or_below = {
+			limit = {
+				any_primary_culture = {
+					has_discrimination_trait = language_hindustani
+				}
+				NOT = {
+					country_has_primary_culture = cu:hindustani
+				}
+			}
+			add_primary_culture = cu:hindustani
+		}
+
+	}
+	ai_chance = {
+		value = 100
+	}
+}

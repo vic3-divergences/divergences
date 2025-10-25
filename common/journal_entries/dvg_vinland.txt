@@ -1,0 +1,488 @@
+﻿je_vinland_independence = {
+	group = je_group_internal_affairs
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	immediate = {
+		c:SCA = {
+			save_scope_as = scope_SCA
+		}
+
+		c:VIN = {
+			save_scope_as = scope_VIN
+		}
+	}
+
+	is_shown_when_inactive = {
+		exists = c:VIN
+		exists = c:SCA
+		root = c:VIN
+		c:SCA = {
+			is_ai = yes
+		}
+		
+	
+		c:VIN = {
+			is_subject_of = c:SCA
+		}
+		is_diplomatic_play_committed_participant = no
+
+	}
+    possible = {
+		is_subject = yes
+
+	}
+
+	
+
+    complete = {
+		is_subject = no
+    }
+	on_complete = {
+		ig:ig_industrialists = {
+			remove_ideology = ideology_colonialist
+			add_ideology = ideology_modernizer
+		}
+		trigger_event = {
+			id = dvg_vinland.17
+		}	
+	}
+	fail = {
+		liberty_desire < 10
+		has_attitude = {
+			who = c:SCA
+			attitude = loyal
+		}
+	}
+
+	should_be_pinned_by_default = yes
+
+}
+
+je_skraelingr = {
+	icon = "gfx/interface/icons/invention_icons/nationalism.dds"
+
+	group = je_group_internal_affairs
+
+	immediate = {
+		set_variable = {
+			name = dvg_skr_var
+			value = 0
+		} 
+	}
+
+	is_shown_when_inactive = {
+
+
+	}
+	
+
+	possible = {
+		
+	}
+	complete = {
+		OR = {
+			scope:journal_entry = { is_goal_complete = yes }
+			is_country_type = recognized
+			has_technology_researched = pan-nationalism
+		}
+		authority > 400
+		any_scope_state = {
+			count > 3
+			turmoil < 0.50
+			is_incorporated = yes
+		}
+	}
+
+	on_complete = {
+		trigger_event = {
+			id = dvg_skraeling.30
+		}
+	}
+
+	on_weekly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					has_variable = recently_lost_war
+					
+				}
+				change_variable = {
+					name = dvg_skr_var
+					subtract = 1
+				}
+			}
+			if = {
+				limit = {
+					liberty_desire > 75
+				}
+				change_variable = {
+					name = dvg_skr_var
+					subtract = 1
+				}
+			}
+			if = {
+				limit = {
+					any_interest_group = {
+						is_insurrectionary = yes
+					}
+				}
+				change_variable = {
+					name = dvg_skr_var
+					subtract = 1
+				}
+			}
+			if = {
+				limit = {
+					any_scope_state = {
+						count > 3
+						turmoil < 0.50
+					}
+				}
+				change_variable = {
+					name = dvg_skr_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					authority > 400
+				}
+				change_variable = {
+					name = dvg_skr_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					authority < 0
+				}
+				change_variable = {
+					name = dvg_skr_var
+					add = 1
+				}
+			}
+		}
+		
+	}
+	on_monthly_pulse = {
+		effect = {
+			
+			
+			}
+	}
+		
+	
+
+
+	fail = {
+		OR = {
+			authority < 0
+			radical_fraction = {
+				value > 0.55
+			}
+		}
+		government_legitimacy < 50
+		any_scope_state = {
+			turmoil > 0.55
+			count > 3
+			is_incorporated = yes
+		}
+	}
+
+	on_fail = {
+		trigger_event = {
+			id = dvg_skraeling.16
+		}
+	}
+
+	invalid = {
+		
+	}
+	current_value = {
+		value = var:dvg_skr_var
+	}
+
+	progressbar = yes
+	goal_add_value = 700
+	
+	should_be_pinned_by_default = yes
+}
+
+je_great_crane = {
+	icon = "gfx/interface/icons/event_icons/event_empty_chair.dds"
+	
+	group = je_group_historical_content
+
+	is_shown_when_inactive = {
+	
+	}
+	possible = {
+		
+	}
+	
+	complete = {
+		OR = {
+			has_law = law_type:law_theocracy
+			AND ={
+				ruler = {
+					has_variable = great_crane_var
+				}
+				ig:ig_devout = {
+					is_powerful = yes
+					is_in_government = yes
+				}
+			}
+		}
+	}
+
+	on_complete = {
+		set_state_religion = rel:protestant
+	}
+
+	fail = {
+		custom_tooltip = {
+		text = great_crane_tt
+		NOT = {
+			any_scope_character = {
+				has_variable = great_crane_var
+			}
+		}
+		}
+		
+	}
+	on_fail = {
+	}
+	should_be_pinned_by_default = yes
+	weight = 5000
+}
+
+je_skraeling_missions = {
+	icon = "gfx/interface/icons/religion_icons/catholic.dds"
+
+	group = je_group_historical_content
+
+	scripted_button = dvg_ban_missionaries_button_skr
+
+	is_shown_when_inactive = {
+	
+	}
+
+	possible = {
+		
+	}
+
+	immediate = {
+		custom_tooltip = {
+			text = missionary_activities_begin_tt
+			trigger_event = {
+				id = heavenly.1
+			}
+		}
+		every_scope_state = {
+			limit = {
+				any_neighbouring_state = {
+					is_treaty_port = yes
+					owner = {
+						religion = {
+							has_discrimination_trait = heritage_christian
+						}
+					}
+				}
+			}
+			set_variable = open_to_missionaries_state
+		}
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			
+			if = {
+				limit = {
+					has_law = law_type:law_no_migration_controls
+					any_scope_state = {
+						NOT = {
+							has_variable = open_to_missionaries_state
+						}
+					}
+				}
+				every_scope_state = {
+					limit = {
+						NOT = {
+							has_variable = open_to_missionaries_state
+						}
+					}
+					set_variable = open_to_missionaries_state
+				}
+			}
+			else = {
+				every_scope_state = {
+					limit = {
+						any_neighbouring_state = {
+							is_treaty_port = yes
+							owner = {
+								religion = {
+									has_discrimination_trait = heritage_christian
+								}
+							}
+						}
+						NOT = {
+							has_variable = open_to_missionaries_state
+						}
+					}
+					set_variable = open_to_missionaries_state
+				}
+			}
+		}
+		random_events = {
+			20 = 0
+			5 = dvg_skraeling.27
+			5 = dvg_skraeling.28
+		}
+	}
+
+	complete = {
+		ig:ig_intelligentsia = {
+			is_powerful = yes
+			is_in_government = yes
+		}
+	}
+	on_complete = {
+		set_state_religion = rel:catholic
+		ig:ig_devout = {
+			set_interest_group_name = ig_catholic_church
+		}
+		trigger_event = {
+			id = dvg_skraeling.31
+		}
+		change_relations = {
+			country = c:PLA
+			value = 30
+		}
+		change_relations = {
+			country = c:CHE
+			value = 30
+		}
+	}
+
+	fail = {
+		OR = {
+			has_global_variable = skr_banned_missions
+			ig:ig_intelligentsia = {
+				is_powerful = yes
+				OR = {
+					is_insurrectionary = yes
+					ig_approval < -15
+				}
+			}
+		}
+		
+	}
+	on_fail = {
+		if = {
+			limit = {
+				NOT = {
+					has_global_variable = skr_banned_missions
+				}
+			}
+			trigger_event = {
+				id = dvg_skraeling.14
+			}
+		}
+
+		if = {
+			limit = {
+				has_global_variable = skr_banned_missions
+			}
+			trigger_event = {
+				id = dvg_skraeling.31
+			}
+		}
+	
+	}
+
+	weight = 10000
+	should_be_pinned_by_default = yes
+}
+
+je_arcadia_afn = {
+
+	group = je_group_foreign_affairs
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	is_shown_when_inactive = {
+		exists = c:VIN
+		root = c:VIN
+	}
+
+	possible = {
+		has_technology_researched = pan-nationalism
+		country_rank > rank_value:insignificant_power
+	}
+
+	immediate = {
+		trigger_event = {
+			id = dvg_vinland.24
+		}
+	}
+
+	complete = {
+		exists = c:AFN
+		c:AFN = ROOT
+	}
+	on_complete = {
+		trigger_event = {
+			id = dvg_vinland.25
+		}
+		set_variable = united_arcadia
+	}
+	invalid = {
+		has_variable = no_afn
+	}
+	weight = 10000
+	should_be_pinned_by_default = yes
+}
+
+je_vinland_annex_skr = {
+	group = je_group_internal_affairs
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	immediate = {
+		c:SKR = {
+			save_scope_as = scope_SKR
+		}
+
+		c:VIN = {
+			save_scope_as = scope_VIN
+		}
+	}
+
+    complete = {
+		NOT = {
+			exists = c:SKR
+		}
+    }
+	on_complete = {
+		trigger_event = {
+			id = dvg_skraeling.12
+		}	
+	}
+	fail = {
+		has_global_variable = skraeling_revolt
+		c:SKR = {
+			has_truce_with = ROOT
+			NOT = {
+				is_subject_of = ROOT
+			}
+		}
+	}
+	on_fail = {
+		c:SKR = {
+			trigger_event = {
+				id = dvg_skraeling.11
+			}
+		}
+	}
+
+	should_be_pinned_by_default = yes
+
+}
