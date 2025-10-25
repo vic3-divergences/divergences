@@ -76,6 +76,94 @@ je_code_indigenat = {
 	transferable = yes
 }
 
+je_seminole_wars = {
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+
+	group = je_group_internal_affairs
+
+	complete = {
+		owns_entire_state_region = STATE_ATHESIA
+		NOT = { exists = c:SML }
+	}
+
+	on_complete = {
+		show_as_tooltip = {
+			if = {
+				limit = {
+					c:CHE ?= { is_subject_of = c:ARC }
+					exists = s:STATE_LES_PAINS.region_state:CHE
+				}
+				custom_tooltip = {
+					text = je_seminole_wars_removal
+					s:STATE_ATHESIA.region_state:ARC ?= {
+						every_scope_pop = {
+							limit = {
+								culture = cu:muskogean
+							}
+							move_pop = s:STATE_LES_PAINS.region_state:CHE
+						}
+					}
+				}
+			}
+			else = {
+				s:STATE_ATHESIA.region_state:ARC ?= {
+					add_modifier = {
+						name = dvg_arthesian_resettlement
+						days = long_modifier_time
+					}
+				}
+			}
+		}
+		trigger_event = { id = indigenat_resettlement.7 }
+	}
+
+	immediate = {
+		c:SML = {
+			save_scope_as = seminoles
+		}
+		cu:muskogean = {
+			save_scope_as = seminole_peoples
+		}
+		s:STATE_ATHESIA = {
+			save_scope_as = les_pains_state
+		}
+		c:CHE = {
+			save_scope_as = indian_territory
+		}
+		s:STATE_ATHESIA.region_state:ARC = {
+			save_scope_as = flarda
+		}
+	}
+
+	fail = {
+		OR = {
+			c:SML ?= {
+				owns_entire_state_region = STATE_ATHESIA
+			}
+			c:MSC ?= {
+				owns_entire_state_region = STATE_ATHESIA
+			}
+		}
+	}
+
+	on_fail = {
+		s:STATE_ATHESIA = {
+			remove_claim = c:ARC
+		}
+	}
+
+	on_monthly_pulse = {
+	}
+	on_yearly_pulse = {
+	}
+
+	weight = 100
+
+	should_be_pinned_by_default = yes
+}
+
+#Trans-Continental
+
 je_trans_continental_railway = {
 	icon = "gfx/interface/icons/event_icons/event_industry.dds"
 
