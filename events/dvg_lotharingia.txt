@@ -1510,16 +1510,20 @@ dvg_lotharingia.12 = { #A statue made of the king
 		name = dvg_lotharingia.12.a
 		add_modifier = {
 			name = modifier_statue_of_ruler #prestige
-			days = normal_modifier_time
 		}
-		change_variable = {
-				name = aigle_var
-				add = 10
-			}
+		
 		add_loyalists = {
 			value = 0.15
 			culture = cu:beornian
 		}
+		cu:lotharian = {
+			add_fervor = -10
+		}
+		cu:beornian = {
+			add_fervor = -10
+		}
+		
+		
 		change_relations = {
 				country = c:BEO
 				value = 10
@@ -1601,7 +1605,8 @@ dvg_lotharingia.13 = { #Statue torn down
 				country = c:BEO
 				value = -20
 			}
-			}
+		}
+		remove_modifier = modifier_statue_of_ruler
 		
 	}
 
@@ -1759,10 +1764,24 @@ dvg_lotharingia.15 = {
 
 	trigger = {
 	    has_journal_entry = je_lotharian_house_of_cards
-
 		has_variable = aigle_var
-		this = { var:aigle_var >= 140 }
-
+		OR = {
+			radical_fraction = {
+			value > 0.40
+			}
+			AND = {
+				has_modifier = dvg_fragile_country
+				OR = {
+					cu:atlantian = {
+						culture_current_fervor > 49
+					}
+					cu:lotharian = {
+						culture_current_fervor > 49
+					}
+				}
+			}
+		}
+		
 		has_technology_researched = mass_communication
 	}
 	
@@ -2384,6 +2403,8 @@ dvg_lotharingia.24 = {
 	}
 }
 
+#Anglican Privileges
+
 dvg_lotharingia.25 = {
 	type = country_event
 	placement = ROOT
@@ -2435,6 +2456,9 @@ dvg_lotharingia.25 = {
 			type = catalyst_event_negative
 			target = scope:scope_BEO
 		}
+		cu:beornian = {
+			add_fervor = 10
+		}
 	}
 
 	option = {
@@ -2458,9 +2482,115 @@ dvg_lotharingia.25 = {
 			value = 0.25
 			interest_group = ig:ig_devout
 		}
+		cu:beornian = {
+			add_fervor = -10
+		}
 	}
 }
 
+#Anglican in Paraguay
+
+dvg_lotharingia.26 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_lotharingia.26.t
+	desc = dvg_lotharingia.26.d
+	flavor = dvg_lotharingia.26.f
+	
+	event_image = {
+		video = "unspecific_politicians_arguing"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+		
+		any_scope_state = {
+			state_region = {
+				is_homeland = cu:guarani
+			}
+			any_scope_pop = {
+				culture = cu:beornian
+			}
+		}
+
+	}
+	immediate = {
+		random_country = {
+			limit = {
+				country_has_primary_culture = cu:beornian
+			}
+			save_scope_as = scope_BEO
+		}
+	}
+	
+	
+	# Vive!
+	option = {
+		name = dvg_lotharingia.26.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 100
+		}
+		create_diplomatic_catalyst = {
+			type = catalyst_event_negative
+			target = scope:scope_BEO
+		}
+		cu:beornian = {
+			add_fervor = 10
+		}
+		cu:guarani = {
+			add_fervor = -10
+		}
+		cu:lotharian = {
+			add_fervor = -10
+		}
+	}
+
+	option = {
+		name = dvg_lotharingia.26.b
+		default_option = yes
+		
+		create_diplomatic_catalyst = {
+			type = catalyst_event_positive
+			target = scope:scope_BEO
+		}
+		random_scope_state = {
+			limit = {
+				is_homeland = cu:guarani
+			}
+			add_modifier = {
+			name = missionary_schools_hospitals
+			}
+		}
+		add_loyalists = {
+			value = 0.10
+			religion = rel:protestant
+		}
+		add_loyalists = {
+			value = 0.25
+			interest_group = ig:ig_devout
+		}
+		cu:guarani = {
+			add_fervor = 10
+		}
+		cu:lotharian = {
+			add_fervor = 10
+		}
+		cu:beornian = {
+			add_fervor = -10
+		}
+	}
+}
+
+#Help Equinoxea
 dvg_lotharingia.27 = {
 	type = country_event
 	placement = ROOT
@@ -2511,6 +2641,9 @@ dvg_lotharingia.27 = {
 			value = 0.15
 			culture = cu:afro_american
 		}
+		cu:afro_amerigan = {
+			add_fervor = 15
+		}
 
 
 		ai_chance = {
@@ -2527,6 +2660,18 @@ dvg_lotharingia.27 = {
 		add_loyalists = {
 			value = 0.10
 			culture = cu:afro_american
+		}
+		cu:afro_amerigan = {
+			add_fervor = -15
+		}
+		cu:equinoxien = {
+			add_fervor = -15
+		}
+		cu:lotharian = {
+			add_fervor = 10
+		}
+		cu:antarctican = {
+			add_fervor = 10
 		}
 		create_diplomatic_catalyst = {
 			type = catalyst_event_positive
@@ -2676,9 +2821,11 @@ dvg_lotharingia.28 = {
 	duration = 1
 
 	trigger = {
-	    
+	    NOR = {
+			has_variable = white_lot_favored
+			has_variable = guarani_lot_favored
+		}
 	}
-	
 	
 	# Favor Whites!
 	option = {
@@ -2690,6 +2837,12 @@ dvg_lotharingia.28 = {
 		add_radicals = {
 			value = 0.20
 			culture = cu:guarani
+		}
+		cu:guarani = {
+			add_fervor = 20
+		}
+		cu:lotharian = {
+			add_fervor = -10
 		}
 
 		add_radicals = {
@@ -2708,6 +2861,7 @@ dvg_lotharingia.28 = {
 	#Favor Indigenous
 	option = {
 		name = dvg_lotharingia.28.b
+		set_variable = guarani_lot_favored
 		
 		if = {
 			limit = {
