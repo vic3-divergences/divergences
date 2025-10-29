@@ -2173,6 +2173,7 @@ je_black_knights = {
 	on_monthly_pulse = {
 		effect = {
 			if = {
+
 				limit = {
 					AND = {
 						scope:radical_movement_scope ?= {
@@ -2196,6 +2197,59 @@ je_black_knights = {
 			else = {
 				set_variable = { name = springtime_timer_var value = 0 }
 			}
+			if = {
+				limit = {
+					has_technology_researched = pan-nationalism
+					NOT = {
+						has_variable = pro_amerigan_hbe
+						has_variable = anti_amerigan_hbe
+					}
+				}
+				trigger_event = {
+					id = dvg_hbe.56
+				}
+			}
+			if = {
+				limit = {
+					has_variable = anti_amerigan_hbe
+				}
+				random_scope_pop = {
+					limit = {
+						OR = {
+							culture = {
+							has_discrimination_trait = language_francophone
+							}
+							culture = {
+							has_discrimination_trait = language_creole
+							}
+						}
+						
+						pop_radical_fraction > 0.50
+					}
+					change_pop_culture = {
+						target = cu:amerigan
+						value = 1
+					}
+				}
+			}
+			if = {
+				limit = {
+					has_variable = pro_amerigan_hbe
+				}
+				random_scope_pop = {
+					limit = {
+						culture = {
+							has_discrimination_trait = heritage_euro_amerigan
+						}
+						pop_radical_fraction < 0.10
+					}
+					change_pop_culture = {
+						target = cu:beornian
+						value = 1
+					}
+				}
+			}
+			
 		}
 		events = {
 			1848.5
@@ -2213,13 +2267,39 @@ je_black_knights = {
 
 	complete = {
 		
-		scope:journal_entry = {
-			
+		any_political_movement = {
+			OR = {
+				movement_is_liberal = yes
+				movement_is_socialist = yes
+			}
+			is_insurrectionary = yes
+		}
+		OR = {
+			any_civil_war = {
+				is_civil_war_type = revolution
+				civil_war_progress >= 0.75
+			}
+			capital = {
+				is_in_revolt = yes
+			}
 		}
 	}
 
     on_complete = {
-		trigger_event = { id = dvg_hbe.7 popup = yes  }	
+		if = {
+			limit = {
+				NOT = {
+					has_technology_researched = pan-nationalism
+				}
+			}
+			trigger_event = { id = dvg_hbe.7 popup = yes  }	
+		}
+		if = {
+			limit = {
+				has_technology_researched = pan-nationalism
+			}
+			trigger_event = { id = dvg_hbe.52 popup = yes  }	
+		}
     }	
 
 	timeout = 2000
