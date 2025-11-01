@@ -1534,8 +1534,7 @@ dvg_lotharingia.13 = { #Statue torn down
 		}
 	}
 }
-
-
+#Dissolution of BLT
 dvg_lotharingia.14 = {
 	type = country_event
 	placement = ROOT
@@ -1556,36 +1555,84 @@ dvg_lotharingia.14 = {
 	duration = 1
 
 	trigger = {
-	    
+	    NOR = {
+			exists = c:BEO
+			exists = c:LOT
+		}
 	}
 
 	immediate = {
+		random_scope_state = {
+			limit = {
+				state_region = {
+					is_homeland = cu:beornian
+				}
+			}
+			save_scope_as = BEO_state
+		}
+		random_scope_state = {
+			limit = {
+				state_region = {
+					is_homeland = cu:lotharian
+				}
+			}
+			save_scope_as = LOT_state
+		}
+
 		if = {
-			limit = { exists = s:STATE_AVALON.region_state:BLT }
+			limit = { 
+				cu:lotharian = {
+					culture_current_fervor > 49
+				}
+			}
 			create_country = { #Lotharingia
 				tag = LOT
 				origin = this
-				state = s:STATE_LORRAINE_ATLANTIQUE.region_state:BLT
-				state = s:STATE_NOUVELLE_ALSACE.region_state:BLT
-				state = s:STATE_LIBREVILLE.region_state:BLT
-				state = s:STATE_BOURGOGNE_DU_SUD.region_state:BLT
-				state = s:STATE_BRUXELLES_SUR_ODON.region_state:BLT
-				state = s:STATE_MARCHES_OUEST.region_state:BLT
-				state = s:STATE_COTE_DU_CAFE.region_state:BLT
+				state = scope:LOT_state
 
-				on_created = {
-					set_variable = warlord_state
-				}
 			}
 			
 			c:LOT = { save_scope_as = scope_LOT
-			
-			activate_law = law_type:law_parliamentary_republic
-			
-				
+						activate_law = law_type:law_parliamentary_republic
+			}
+		}	
+		
+		if = {
+			limit = { 
+				cu:beornian = {
+					culture_current_fervor > 49
+				}
+			}
+			create_country = { #Lotharingia
+				tag = BEO
+				origin = this
+				state = scope:BEO_state
+
 			}
 			
-			
+			c:BEO = { save_scope_as = scope_BEO
+				activate_law = law_type:law_theocracy
+				create_character = {
+					first_name = "John"
+					last_name = "Faith"
+					ruler = yes
+					historical = yes 
+					birth_date = 1806.7.04
+					interest_group = ig_rural_folk
+					ideology = ideology_ethno_nationalist
+					traits = {
+						pious
+						wrathful
+						bigoted
+						firebrand
+						plains_commander
+						celebrity_commander
+					}
+					on_created = {
+						set_variable = john_faith_var
+					}
+				}
+			}
 		}	
 	}
 	
@@ -1594,9 +1641,25 @@ dvg_lotharingia.14 = {
 	option = {
 		name = dvg_lotharingia.14.a
 		default_option = yes
-		
-		create_diplomatic_play = {
-			name = new_alsace_independence
+
+		if = {
+			limit = {
+				exists = c:LOT
+			}
+			every_scope_state = {
+			limit = {
+				is_capital = no
+				state_region = {
+					is_homeland = cu:lotharian
+				}
+				culture_percent_state = {
+					target = cu:lotharian
+					value > 0.35
+				}
+			}
+			set_state_owner = c:LOT
+			}
+			create_diplomatic_play = {
 		
 			target_country = c:LOT
 			
@@ -1604,13 +1667,47 @@ dvg_lotharingia.14 = {
 			
 			type = dp_rebellion_annex
 			
-			add_war_goal = {
+				add_war_goal = {
 				holder = c:LOT
-				type = humiliation
+				type = independence
 				target_country = c:BLT
+				}
+			}
+		}
+		if = {
+			limit = {
+				exists = c:BEO
+			}
+			every_scope_state = {
+			limit = {
+				is_capital = no
+				state_region = {
+					is_homeland = cu:beornian
+				}
+				culture_percent_state = {
+					target = cu:beornian
+					value > 0.35
+				}
+			}
+			set_state_owner = c:BEO
+			}
+			create_diplomatic_play = {
+		
+			target_country = c:BEO
+			
+			war = yes
+			
+			type = dp_rebellion_annex
+			
+				add_war_goal = {
+				holder = c:BEO
+				type = independence
+				target_country = c:BLT
+				}
 			}
 		}
 
+		
 		ai_chance = {
 			base = 20
 		}
@@ -1619,13 +1716,35 @@ dvg_lotharingia.14 = {
 		name = dvg_lotharingia.14.b
 		default_option = yes
 		
-		change_tag = BEO
+		if = {
+			limit = {
+				exists = c:LOT
+			}
+			remove_primary_culture = cu:lotharian
+			change_relations = {
+				country = c:LOT
+				value = 30
+			}
+		}
+
+		if = {
+			limit = {
+				exists = c:BEO
+			}
+			remove_primary_culture = cu:beornian
+			change_relations = {
+				country = c:BEO
+				value = 30
+			}
+		}
+
 
 		ai_chance = {
 			base = 80
 		}
 	}
 }
+
 # De Aigle criticized
 dvg_lotharingia.15 = {
 	type = country_event
@@ -2435,7 +2554,6 @@ dvg_lotharingia.26 = {
 			add_fervor = -10
 		}
 	}
-
 	option = {
 		name = dvg_lotharingia.26.b
 		default_option = yes
@@ -2796,6 +2914,199 @@ dvg_lotharingia.28 = {
 		
 		ai_chance = {
 			base = 100
+		}
+	}
+}
+
+#National Language
+
+dvg_lotharingia.29 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_lotharingia.29.t
+	desc = dvg_lotharingia.29.d
+	flavor = dvg_lotharingia.29.f
+	
+	event_image = {
+		video = "unspecific_politicians_arguing"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+		
+	}
+	immediate = {
+		
+	}
+	
+	
+	# Vive!
+	option = {
+		name = dvg_lotharingia.29.a
+		default_option = yes
+		
+		
+		cu:beornian = {
+			add_fervor = 15
+		}
+		cu:lotharian = {
+			add_fervor = -15
+		}
+
+		add_modifier = {
+			name = linguistic_discrimination
+			months = 60
+			is_decaying = yes
+		}
+		
+	}
+
+	option = {
+		name = dvg_lotharingia.29.b
+		default_option = yes
+
+		add_modifier = {
+			name = linguistic_discrimination
+			months = 60
+			is_decaying = yes
+		}
+		
+		cu:beornian = {
+			add_fervor = -15
+		}
+		cu:lotharian = {
+			add_fervor = 15
+		}
+	}
+
+	option = {
+		name = dvg_lotharingia.29.c
+		default_option = yes
+
+		add_modifier = {
+			name = linguistic_freedom
+			months = 60
+			is_decaying = yes
+		}
+		
+		cu:beornian = {
+			add_fervor = 7
+		}
+		cu:lotharian = {
+			add_fervor = 7
+		}
+	}
+}
+
+#Success of Union
+
+dvg_lotharingia.30 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_lotharingia.30.t
+	desc = dvg_lotharingia.30.d
+	flavor = dvg_lotharingia.30.f
+	
+	event_image = {
+		video = "unspecific_politicians_arguing"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+		
+	}
+	immediate = {
+		
+	}
+	
+	
+	# We are Beornians!
+	option = {
+		name = dvg_lotharingia.30.a
+		default_option = yes
+		
+		add_modifier = {
+			name = linguistic_discrimination
+			months = 60
+			is_decaying = yes
+		}
+		custom_tooltip = {
+			text = je_amerigan_nation_building_integrate_lotharian_tt
+			every_country = {
+				every_scope_pop = {
+					limit = { culture = cu:lotharian }
+					change_pop_culture = { target = cu:beornian value = 1 }
+				}
+				
+			}
+			every_state = {
+				limit = {
+						state_region = {
+							is_homeland = cu:lotharian
+
+						}			
+				}
+				state_region = {
+					remove_homeland =  cu:beornian
+				}
+			}
+		}
+	}
+	#We are all Lotharians!
+	option = {
+		name = dvg_lotharingia.29.b
+
+	}
+	#We are Amerigans
+	option = {
+		name = dvg_lotharingia.29.c
+		trigger = {
+			has_technology_researched = pan-nationalism
+			any_scope_state = {
+				state_region = {
+					is_homeland = cu:atlantian
+				}
+			}
+			NOT = {
+				exists = c:AME
+			}
+		}
+		change_tag = AME
+
+		custom_tooltip = {
+			text = je_amerigan_nation_building_integrate_lotharian_tt
+			every_country = {
+				every_scope_pop = {
+					limit = { culture = cu:lotharian }
+					change_pop_culture = { target = cu:amerigan value = 1 }
+				}
+				
+			}
+			every_state = {
+				limit = {
+						state_region = {
+							is_homeland = cu:lotharian
+
+						}			
+				}
+				state_region = {
+					remove_homeland =  cu:lotharian
+				}
+			}
 		}
 	}
 }
