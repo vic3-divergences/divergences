@@ -248,18 +248,17 @@ dvg_lotharingia.3 = {
 	}
 	
 	
+	
 	# Liberte!
 	option = {
 		name = dvg_lotharingia.3.a
 		default_option = yes
 		
 		add_loyalists = {
-			value = 0.5
+			value = 0.10
+			interest_group = ig:ig_intelligentsia
 		}
-		change_variable = {
-				name = aigle_var
-				add = -10
-			}
+		
 		ai_chance = {
 			base = 50
 		}
@@ -269,15 +268,30 @@ dvg_lotharingia.3 = {
 		
 		
 		add_loyalists = {
-			value = 0.5
+			value = 0.10
+			interest_group = ig:ig_landowners
 		}
-		
-		
-		change_variable = {
-				name = aigle_var
-				add = -10
+		ROOT = {
+			every_interest_group = {
+				limit = {
+					has_ideology = ideology:ideology_caudillismo
+				}
+				remove_ideology = ideology_caudillismo
+				add_ideology = ideology_royalist
+			}
 		}
-		
+		if = {
+			limit = {
+				ig:ig_intelligentsia = {
+					ig_approval > 10
+				}
+			}
+			ig:ig_intelligentsia = {
+				leader = {
+					set_ideology = ideology:ideology_humanitarian_royalist
+				}
+			}
+		}
 
 		ai_chance = {
 			base = 50
@@ -1302,7 +1316,6 @@ dvg_lotharingia.11 = {
 	}
 	option = {
 		name = dvg_lotharingia.11.c
-
 		change_relations = {
 				country = c:ATL
 				value = -15
@@ -2655,11 +2668,10 @@ dvg_lotharingia.27 = {
 	option = {
 		name = dvg_lotharingia.27.b
 
-		
 
 		add_loyalists = {
 			value = 0.10
-			culture = cu:afro_american
+			culture = cu:afro_amerigan
 		}
 		cu:afro_amerigan = {
 			add_fervor = -15
@@ -3107,6 +3119,198 @@ dvg_lotharingia.30 = {
 					remove_homeland =  cu:lotharian
 				}
 			}
+		}
+	}
+}
+
+
+dvg_lotharingia.31 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_lotharingia.31.t
+	desc = dvg_lotharingia.31.d
+	flavor = dvg_lotharingia.31.f
+
+	duration = 3
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	trigger = {
+		any_neighbouring_state = {
+				owner = c:AMA
+		}
+	}
+
+	immediate = {
+		random_scope_state = {
+			limit = {
+				any_neighbouring_state = {
+				owner = c:AMA
+				}
+			}
+			save_scope_as = border_state
+		}
+		random_primary_culture = {
+			limit = {
+				has_discrimination_trait = heritage_euro_amerigan
+			}
+			save_scope_as = primary_culture_scope
+		}
+	}
+	
+	option = {
+		name = dvg_lotharingia.31.a
+		default_option = yes
+		
+		add_radicals = {
+			value = 0.15
+			culture = cu:afro_amerigan
+		}
+		add_loyalists = {
+			value = 0.10
+			culture = scope:primary_culture_scope
+		}
+		cu:afro_amerigan = {
+			add_fervor = 10
+		}
+		change_relations = {
+			country = c:AMA
+			value = 20
+		}
+		
+	}
+
+
+	option = {
+		name = dvg_lotharingia.31.b
+		
+		scope:border_state = {
+			create_mass_migration = {
+				origin = c:AMA
+				culture = cu:afro_amerigan
+			}
+		}
+		if = {
+			limit = {
+				has_law = law_type:law_closed_borders
+			}
+			activate_law = law_type:law_migration_controls
+		}
+		add_radicals = {
+			value = 0.10
+			culture = scope:primary_culture_scope
+		}
+		scope:primary_culture_scope = {
+			add_fervor = 5
+		}
+		change_relations = {
+			country = c:AMA
+			value = -20
+		}
+		ruler = {
+			add_modifier = {
+				name = merciful_ruler
+				months = 60
+				is_decaying = yes
+			}
+		}
+	}
+}
+
+#NEA White Supremacist Revolt
+dvg_lotharingia.32 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_lotharingia.32.t
+	desc = dvg_lotharingia.32.d
+	flavor = dvg_lotharingia.32.f
+	
+	event_image = {
+		video = "middleeast_courtroom_upheaval"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+		exists = c:LOT
+		
+	}
+	immediate = {
+		if = {
+			limit = { exists = s:STATE_NOUVELLE_ALSACE.region_state:LOT }
+			create_country = { #Nouvelle Alsace
+				tag = NEA
+				origin = this
+				state = s:STATE_NOUVELLE_ALSACE.region_state:LOT
+				state = s:STATE_LIBREVILLE.region_state:LOT
+
+				on_created = {
+					set_variable = warlord_state
+				}
+			}
+			c:NEA = {
+				 save_scope_as = scope_NEA
+				if = {
+					limit = {
+						exists = c:ANT
+					}
+					change_relations = {
+						country = c:ANT
+						value = 50
+					}
+					create_diplomatic_catalyst = {
+						type = catalyst_event_positive
+						target = c:ANT
+					}
+				}
+			}
+		}
+	}
+	
+	# Favor Whites!
+	option = {
+
+		name = dvg_lotharingia.32.a
+		default_option = yes
+
+		
+		create_diplomatic_play = {
+			type = dp_rebellion_annex
+			target_country = c:NEA
+		}
+		
+		ai_chance = {
+			base = 100
+		}
+	}
+	#Favor Indigenous
+	option = {
+		name = dvg_lotharingia.32.b
+
+		create_diplomatic_play = {
+			type = dp_rebellion_annex
+			target_country = c:NEA
+		}
+		
+		play_as = c:NEA
+
+		
+		ai_chance = {
+			base = 100
 		}
 	}
 }
