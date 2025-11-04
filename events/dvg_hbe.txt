@@ -1485,27 +1485,33 @@ dvg_hbe.13 = { #Lotharian vs Beornian Settlers in Chaco
 				is_under_colonization = yes
 				is_split_state = yes
 			}
+			
 		}
-		exists = c:LOT
-
-		c:LOT = {
-			any_scope_state = {
+		any_neighbouring_state = {
 			state_region = s:STATE_GRAND_CHACO
-			OR = {
-				is_split_state = yes
-				is_under_colonization = yes
-			}
+			owner = {
+				NOT = {
+					country_has_primary_culture = cu:beornian
+					is_country_type = decentralized
+				}
+				
 			}
 		}
-		NOT = {
-			has_variable = chaco_disputed
-		}
+		
 	}
 
 	immediate = {	
 		set_variable = chaco_disputed
-		c:LOT = {
-			save_scope_as = scope_LOT
+		random_neighbouring_state = {
+			limit = {
+				state_region = s:STATE_GRAND_CHACO
+			}
+			owner = {
+				save_scope_as = scope_LOT
+				random_primary_culture = {
+					save_scope_as = neighbor_culture
+				}
+			}
 		}
 	}
 
@@ -1527,7 +1533,7 @@ dvg_hbe.13 = { #Lotharian vs Beornian Settlers in Chaco
 		
 		s:STATE_GRAND_CHACO = {
 			add_claim = c:BEO
-			add_claim = c:LOT
+			add_claim = scope:scope_LOT
 			add_modifier = {
 				name = border_sovereignity_questioned
 				months = 12
@@ -1537,11 +1543,11 @@ dvg_hbe.13 = { #Lotharian vs Beornian Settlers in Chaco
 				limit = {
 					NOT = {
 						s:STATE_GRAND_CHACO = {
-							is_homeland = cu:lotharian
+							is_homeland = scope:neighbor_culture
 						}
 					}
 				}
-				add_homeland = cu:lotharian
+				add_homeland = scope:neighbor_culture
 			}
 			if = {
 				limit = {
@@ -1588,6 +1594,9 @@ dvg_hbe.13 = { #Lotharian vs Beornian Settlers in Chaco
 			name = parisher_var
 			add = 15
 			}
+		}
+		cu:beornian = {
+			add_fervor = 10
 		}
 		random_scope_state = {
 			limit = {
