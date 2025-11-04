@@ -1260,7 +1260,11 @@ dvg_lotharingia.11 = {
 	duration = 1
 
 	trigger = {
-	    year = 1836
+	}
+	immediate = {
+		every_interest_group_in_government = {
+				save_scope_as = government_ig_scope
+		}
 	}
 	
 	
@@ -1272,8 +1276,11 @@ dvg_lotharingia.11 = {
 		change_relations = {
 				country = c:ATL
 				value = 50
-			}
-		 
+		}
+		create_diplomatic_catalyst = {
+			type = catalyst_event_positive
+			target = c:ATL
+		}
 
 		
 		ai_chance = {
@@ -1284,22 +1291,22 @@ dvg_lotharingia.11 = {
 		#Closer Ties to Burgundy
 		name = dvg_lotharingia.11.b
 		remove_primary_culture = cu:lotharian
+		add_primary_culture = cu:burgundian
 		change_relations = {
-				country = c:ATL
-				value = -15
-			}
-		 change_relations = {
-				country = c:LOT
-				value = -30
-			}
-
-		c:BRG = {
-			create_diplomatic_pact = {
-				country = c:NEA
-				type = puppet
-			}
+				country = c:BRG
+				value = 30
 		}
-		play_as = c:BRG
+		create_political_lobby = {  
+			type = lobby_pro_country
+			target = c:BRG
+
+			add_interest_group = scope:government_ig_scope
+		}
+
+		create_diplomatic_catalyst = {
+			type = catalyst_event_positive
+			target = c:BRG
+		}
 
 		ai_chance = {
 			base = 15
@@ -1309,13 +1316,25 @@ dvg_lotharingia.11 = {
 	option = {
 		#Retake Lotharingia
 		name = dvg_lotharingia.11.c
-		change_relations = {
-				country = c:ATL
-				value = -15
+
+		remove_primary_culture = cu:atlantian
+
+		create_diplomatic_catalyst = {
+			type = catalyst_event_negative
+			target = c:LOT
+		}
+		create_diplomatic_catalyst = {
+			type = catalyst_event_negative
+			target = c:ATL
+		}
+		
+		every_state_region = {
+			limit = {
+				state_region = {
+					is_homeland = cu:lotharian
+				}
 			}
-		change_relations = {
-				country = c:LOT
-				value = -30
+			add_claim = root
 		}
 		
 		ai_chance = {
@@ -3126,6 +3145,7 @@ dvg_lotharingia.30 = {
 	}
 }
 
+#Black Refugees
 
 dvg_lotharingia.31 = {
 	type = country_event
@@ -3225,6 +3245,7 @@ dvg_lotharingia.31 = {
 				is_decaying = yes
 			}
 		}
+		set_variable = black_lot_favored
 	}
 }
 
@@ -3280,6 +3301,19 @@ dvg_lotharingia.32 = {
 						target = c:ANT
 					}
 				}
+				trigger_event = {
+					id = dvg_lotharingia.13
+				}
+				if = {
+					limit = {
+						any_country = {
+							has_journal_entry = je_nouvelle_mali
+						}
+					}
+					trigger_event = {
+						id = dvg_nvm.4 days = 30
+					}
+				}
 			}
 		}
 	}
@@ -3300,7 +3334,146 @@ dvg_lotharingia.32 = {
 			base = 100
 		}
 	}
-	#Favor Indigenous
+	#Play as NEA
+	option = {
+		name = dvg_lotharingia.32.b
+
+		create_diplomatic_play = {
+			type = dp_rebellion_annex
+			target_country = c:NEA
+		}
+		
+		play_as = c:NEA
+
+		
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+
+#Allies of color?
+dvg_lotharingia.33 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_lotharingia.33.t
+	desc = dvg_lotharingia.33.d
+	flavor = dvg_lotharingia.33.f
+	
+	event_image = {
+		video = "middleeast_courtroom_upheaval"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+		exists = c:LOT
+		
+	}
+	immediate = {
+		
+	}
+	
+	# Favor Whites!
+	option = {
+
+		name = dvg_lotharingia.33.a
+		default_option = yes
+
+		
+		
+		ai_chance = {
+			base = 100
+		}
+	}
+	
+}
+
+
+#Afro Amerigan Revolt
+dvg_lotharingia.34 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_lotharingia.34.t
+	desc = dvg_lotharingia.34.d
+	flavor = dvg_lotharingia.34.f
+	
+	event_image = {
+		video = "middleeast_courtroom_upheaval"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+		exists = c:LOT
+		exists = s:STATE_LIBREVILLE.region_state:NEA
+		NOT = {
+				any_country = {
+					has_journal_entry = je_nouvelle_mali
+				}
+		}
+	}
+	immediate = {
+		if = {
+			limit = { 
+			
+			}	
+			create_country = { #Nouvelle Alsace
+				tag = BRS
+				origin = this
+				state = s:STATE_LIBREVILLE.region_state:NEA
+
+			}
+			c:BRS = {
+				 save_scope_as = scope_BRS
+				if = {
+					limit = {
+						exists = c:ANT
+					}
+					change_relations = {
+						country = c:ANT
+						value = -50
+					}
+					create_diplomatic_catalyst = {
+						type = catalyst_event_negative
+						target = c:ANT
+					}
+				}
+			}
+		}
+		
+	}
+	
+	# Favor Whites!
+	option = {
+
+		name = dvg_lotharingia.32.a
+		default_option = yes
+
+		
+		create_diplomatic_play = {
+			type = dp_rebellion_annex
+			target_country = c:NEA
+		}
+		
+		ai_chance = {
+			base = 100
+		}
+	}
+	#Play as NEA
 	option = {
 		name = dvg_lotharingia.32.b
 
