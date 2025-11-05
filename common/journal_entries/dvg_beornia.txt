@@ -285,8 +285,7 @@ je_new_mercia_revolt = {
 				}
 			}
 			if = {
-				limit = { has_journal_entry = je_new_mercia_independent }
-				
+				limit = { has_journal_entry = je_new_mercia_independent }			
 				every_scope_state = {
 					limit = {
 						owner = c:TWT
@@ -294,10 +293,8 @@ je_new_mercia_revolt = {
 					random_scope_pop = {
 						limit = { culture = cu:aimara }
 						change_pop_culture = { target = cu:quechua value = 0.25 }
-					}
-					
-				}
-				
+					}	
+				}	
 			}
 			
 			
@@ -1585,6 +1582,18 @@ je_beo_parishers = {
 					add = 1
 				}
 			}
+			if = {
+				limit = {
+					ig:ig_rural_folk = {
+						ig_approval > 5
+					}
+					var:parisher_var > 0
+				}
+				change_variable = {
+					name = parisher_var
+					subtract = 1
+				}
+			}
 
 			if = {
 				limit = {
@@ -1596,6 +1605,18 @@ je_beo_parishers = {
 				change_variable = {
 					name = parisher_var
 					add = 1
+				}
+			}
+			if = {
+				limit = {
+					ig:ig_armed_forces = {
+						ig_approval > 5
+					}
+					var:parisher_var > 0
+				}
+				change_variable = {
+					name = parisher_var
+					subtract = 1
 				}
 			}
 
@@ -1613,6 +1634,19 @@ je_beo_parishers = {
 			}
 			if = {
 				limit = {
+					ig:ig_devout = {
+						ig_approval > 5
+					}
+					var:parisher_var > 0
+				}
+				change_variable = {
+					name = parisher_var
+					subtract = 1
+				}
+			}
+
+			if = {
+				limit = {
 					cu:beornian = {
 					culture_current_fervor > 40
 					}
@@ -1623,8 +1657,18 @@ je_beo_parishers = {
 					add = 1
 				}
 			}
-
-			
+			if = {
+				limit = {
+					cu:beornian = {
+					culture_current_fervor < 40
+					}
+					var:parisher_var > 0
+				}
+				change_variable = {
+					name = parisher_var
+					subtract = 1
+				}
+			}
 		}
 	}
 
@@ -1659,6 +1703,22 @@ je_beo_parishers = {
     }
 	fail = {	
 		OR = {
+			calc_true_if = {
+				amount > 2
+				ig:ig_rural_folk = {
+						ig_approval < 0
+				}
+
+				ig:ig_devout = {
+						ig_approval < -5
+				}
+				ig:ig_armed_forces = {
+						ig_approval < -5
+				}
+				cu:beornian = {
+					culture_current_fervor > 40
+				}
+			}
 			AND = {
 				var:parisher_var < 1 
 				custom_tooltip = {
@@ -1743,6 +1803,41 @@ je_beo_presbyterians = {
 		effect = {
 			if = {
 				limit = {
+					NOT = {
+						any_scope_state = {
+						state_region = s:STATE_AVALON
+						is_capital = yes
+						}
+						has_variable = capital_moved
+					}
+								
+				}
+				set_variable = capital_moved
+
+				change_variable = {
+					name = presbyterian_var
+					add = 25
+				}
+			}
+
+			if = {
+				limit = {
+					
+					any_scope_state = {
+						state_region = s:STATE_AVALON
+						is_capital = yes
+					}
+					has_variable = capital_moved			
+				}
+				remove_variable = capital_moved
+
+				change_variable = {
+					name = presbyterian_var
+					subtract = 25
+				}
+			}
+			if = {
+				limit = {
 					ig:ig_intelligentsia = {
 						ig_approval < 0
 					}
@@ -1754,7 +1849,19 @@ je_beo_presbyterians = {
 					add = 1
 				}
 			}
+			if = {
+				limit = {
+					ig:ig_intelligentsia = {
+						ig_approval > 5
+					}
+					var:presbyterian_var > 0
 
+				}
+				change_variable = {
+					name = presbyterian_var
+					subtract = 1
+				}
+			}
 			if = {
 				limit = {
 					ig:ig_devout = {
@@ -1767,7 +1874,6 @@ je_beo_presbyterians = {
 					add = 1
 				}
 			}
-
 			if = {
 				limit = {
 					ig:ig_devout = {
@@ -1785,13 +1891,26 @@ je_beo_presbyterians = {
 			if = {
 				limit = {
 					ig:ig_petty_bourgeoisie = {
-						ig_approval < -5
+						ig_approval < 0
 					}
 					var:presbyterian_var < 100
 				}
 				change_variable = {
 					name = presbyterian_var
 					add = 1
+				}
+			}
+			if = {
+				limit = {
+					ig:ig_petty_bourgeoisie = {
+						ig_approval > 10
+					}
+					var:presbyterian_var > 0
+
+				}
+				change_variable = {
+					name = presbyterian_var
+					subtract = 1
 				}
 			}
 			
@@ -1849,7 +1968,24 @@ je_beo_presbyterians = {
 				var:new_hbe_var > 9
 			}
 			}
-			
+		}
+		calc_true_if = {
+			amount > 2
+
+			ig:ig_petty_bourgeoisie = {
+						ig_approval > 10
+			}
+
+			ig:ig_devout = {
+						ig_approval > 5
+			}
+			ig:ig_intelligentsia = {
+						ig_approval > 5
+			}
+			average_sol_for_religion = {
+				target = rel:protestant
+				value > average_expected_sol
+			}
 		}
 	}
 	on_fail = {
