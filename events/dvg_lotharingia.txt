@@ -46,6 +46,7 @@ dvg_lotharingia.1 = {
 			add = 20
 		}
 
+
 		add_modifier = {
 			name = modifier_army_bolstered 
 			months = 240
@@ -1413,12 +1414,11 @@ dvg_lotharingia.12 = { #A statue made of the king
 			culture = cu:beornian
 		}
 		cu:lotharian = {
-			add_fervor = -10
+			add_fervor = -5
 		}
 		cu:beornian = {
-			add_fervor = -10
+			add_fervor = -5
 		}
-		
 		
 		change_relations = {
 				country = c:BEO
@@ -2877,11 +2877,18 @@ dvg_lotharingia.28 = {
 		}
 		cu:guarani = {
 			add_fervor = 20
+			
+		}
+		start_national_awakening = {
+			culture = cu:guarani
+			months = 120
 		}
 		cu:lotharian = {
 			add_fervor = -10
+			
 		}
-
+		
+		
 		add_radicals = {
 			value = 0.20
 			culture = cu:amazonian
@@ -3272,8 +3279,16 @@ dvg_lotharingia.32 = {
 	trigger = {
 		exists = c:LOT
 		
+		cu:lotharian = {
+			culture_current_fervor > 40
+		}
+		has_technology_researched = nationalism
+		NOT = {
+			has_variable = NEA_revolted
+		}
 	}
 	immediate = {
+		set_variable = NEA_revolted
 		if = {
 			limit = { exists = s:STATE_NOUVELLE_ALSACE.region_state:LOT }
 			create_country = { #Nouvelle Alsace
@@ -3300,6 +3315,7 @@ dvg_lotharingia.32 = {
 						type = catalyst_event_positive
 						target = c:ANT
 					}
+					activate_law = law_type:law_racial_segregation
 				}
 				trigger_event = {
 					id = dvg_lotharingia.13
@@ -3329,6 +3345,25 @@ dvg_lotharingia.32 = {
 			type = dp_rebellion_annex
 			target_country = c:NEA
 		}
+
+		hidden_effect = {
+			c:NEA = {
+
+			}
+			if = {
+			limit = {
+				cu:afro_american = {
+					culture_current_fervor > 40
+				}
+			}
+			c:NEA = {
+				trigger_event = {
+				id = dvglotharingia.34 days = 40
+				}
+			}
+			
+			}
+		}
 		
 		ai_chance = {
 			base = 100
@@ -3344,6 +3379,25 @@ dvg_lotharingia.32 = {
 		}
 		
 		play_as = c:NEA
+
+		hidden_effect = {
+			c:NEA = {
+
+			}
+			if = {
+			limit = {
+				cu:afro_american = {
+					culture_current_fervor > 40
+				}
+			}
+			c:NEA = {
+				trigger_event = {
+				id = dvglotharingia.34 days = 40
+				}
+			}
+			
+			}
+		}
 
 		
 		ai_chance = {
@@ -3381,10 +3435,22 @@ dvg_lotharingia.33 = {
 		
 	}
 	
-	# Favor Whites!
+	# 
 	option = {
 
 		name = dvg_lotharingia.33.a
+		default_option = yes
+
+		
+		
+		ai_chance = {
+			base = 100
+		}
+	}
+
+	option = {
+
+		name = dvg_lotharingia.33.b
 		default_option = yes
 
 		
@@ -3421,9 +3487,13 @@ dvg_lotharingia.34 = {
 		exists = c:LOT
 		exists = s:STATE_LIBREVILLE.region_state:NEA
 		NOT = {
-				any_country = {
+			any_country = {
 					has_journal_entry = je_nouvelle_mali
-				}
+			}
+			has_variable = afro_amerigan_revolted
+		}
+		cu:afro_amerigan = {
+			culture_current_fervor > 40
 		}
 	}
 	immediate = {
@@ -3431,7 +3501,7 @@ dvg_lotharingia.34 = {
 			limit = { 
 			
 			}	
-			create_country = { #Nouvelle Alsace
+			create_country = { #Bresil
 				tag = BRS
 				origin = this
 				state = s:STATE_LIBREVILLE.region_state:NEA
@@ -3480,6 +3550,113 @@ dvg_lotharingia.34 = {
 		create_diplomatic_play = {
 			type = dp_rebellion_annex
 			target_country = c:NEA
+		}
+		
+		play_as = c:NEA
+
+		
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+#Guarani Revolt
+dvg_lotharingia.35 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_lotharingia.35.t
+	desc = dvg_lotharingia.35.d
+	flavor = dvg_lotharingia.35.f
+	
+	event_image = {
+		video = "middleeast_courtroom_upheaval"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+		exists = c:LOT
+		exists = s:STATE_LIBREVILLE.region_state:NEA
+		NOT = {
+			has_variable = guarani_revolted
+		}
+		has_technology_researched = nationalism
+	}
+	immediate = {
+		set_variable = guarani_revolted
+		if = {
+			limit = { 
+			
+			}	
+			create_country = { #Nouvelle Alsace
+				tag = TGI
+				origin = this
+				state = s:STATE_LIBREVILLE.region_state:NEA
+
+			}
+			c:TGI = {
+				 save_scope_as = scope_TGI
+				if = {
+					limit = {
+						exists = c:BEO
+					}
+					change_relations = {
+						country = c:BEO
+						value = -25
+					}
+					create_diplomatic_catalyst = {
+						type = catalyst_event_negative
+						target = c:BEO
+					}
+				}
+				if = {
+					limit = {
+						exists = c:TWT
+					}
+					change_relations = {
+						country = c:BEO
+						value = 21
+					}
+					create_diplomatic_catalyst = {
+						type = catalyst_event_positive
+						target = c:TWT
+					}
+				}
+			}
+		}
+		
+	}
+	
+	# Favor Whites!
+	option = {
+
+		name = dvg_lotharingia.32.a
+		default_option = yes
+
+		
+		create_diplomatic_play = {
+			type = dp_rebellion_annex
+			target_country = c:TGI
+		}
+		
+		ai_chance = {
+			base = 100
+		}
+	}
+	#Play as NEA
+	option = {
+		name = dvg_lotharingia.32.b
+
+		create_diplomatic_play = {
+			type = dp_rebellion_annex
+			target_country = c:TGI
 		}
 		
 		play_as = c:NEA
