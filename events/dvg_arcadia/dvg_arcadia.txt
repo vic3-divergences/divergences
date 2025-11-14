@@ -1,0 +1,671 @@
+namespace = native_resettlement
+
+# Code de I'indigénat
+# Indigenous Code is proposed in the Federal Parliament
+indigenat_resettlement.1 = {
+	type = country_event
+
+	icon = "gfx/interface/icons/event_icons/event_scales.dds"
+	event_image = {
+		video = "europenorthamerica_native_american"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	placement = s:STATE_PAYS_TSALAGI.region_state:ARC
+
+	title = indigenat_resettlement.1.t
+	desc = indigenat_resettlement.1.d
+	flavor = indigenat_resettlement.1.f
+
+	duration = 3
+
+	trigger = {
+		exists = c:ARC
+		exists = c:CHE
+		c:ARC = ROOT
+		NOT = { has_variable = indian_removal_var }
+		c:CHE = { is_subject_of = c:ARC }
+		owns_entire_state_region = STATE_PAYS_TSALAGI
+		ruler = {
+			has_trait = bigoted
+		}
+	}
+
+	immediate = {
+		set_variable = indian_removal_var
+		ruler = {
+			save_scope_as = indian_removal_president
+		}
+		c:CHE = {
+			save_scope_as = indian_territory_scope
+		}
+		cu:cherokee = {
+			save_scope_as = cherokee_culture
+		}
+	}
+
+	option = {
+		name = indigenat_resettlement.1.a
+		default_option = yes
+		add_journal_entry = {
+			type = je_indian_removal
+		}
+	}
+
+	cancellation_trigger = {
+		NOT = {
+			exists = c:CHE
+		}
+	}
+}
+
+# Debois Legresse Protests the Preposition of Parliament
+indigenat_resettlement.2 = {
+	type = country_event
+	icon = "gfx/interface/icons/event_icons/event_scales.dds"
+	event_image = {
+		video = "europenorthamerica_native_american"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	title = indigenat_resettlement.2.t
+	desc = indigenat_resettlement.2.d
+	flavor = indigenat_resettlement.2.f
+
+	duration = 3
+
+	trigger = {
+		NOT = { has_variable = debois_petition }
+		NOT = { has_variable = trail_of_tears_stall }
+	}
+
+	immediate = {
+		set_variable = debois_petition
+		cu:cherokee = {
+			save_scope_as = cherokee_culture
+		}
+		c:CHE = {
+			save_scope_as = indian_territory_scope
+		}
+		if = {
+			limit = {
+				any_interest_group = {
+					leader = {
+						OR = {
+							has_trait = bigoted
+						}
+					}
+				}
+			}
+			random_interest_group = {
+				limit = {
+					leader = {
+						OR = {
+							has_trait = bigoted
+						}
+					}
+				}
+				save_scope_as = code_indigenat_scope
+			}
+		}
+	}
+
+	option = {
+		name = indigenat_resettlement.2.a
+		default_option = yes
+		if = {
+			limit = {
+				exists = scope:code_indigenat_scope
+			}
+			scope:code_indigenat_scope = {
+				add_modifier = {
+					name = ARC_rejected_debois_petition
+					days = normal_modifier_time
+				}
+			}
+		}
+	}
+
+	option = {
+		name = indigenat_resettlement.2.b
+		if = {
+			limit = {
+				OR = {
+					is_enacting_law = law_type:law_multicultural
+					is_enacting_law = law_type:law_no_colonial_affairs
+				}
+			}
+			add_enactment_modifier = { # enactment success chance
+				name = dvg_debois_enactment 
+			}
+		}
+		if = {
+			limit = {
+				exists = scope:jackson_scope
+			}
+			scope:jackson_scope = {
+				add_modifier = {
+					name = dvg_arc_accepted_debois_petition
+					days = normal_modifier_time
+				}
+			}
+		}
+		custom_tooltip = {
+			text = trail_of_tears_stalled
+			set_variable = {
+				name = trail_of_tears_stall
+				months = 36
+			}
+		}
+	}
+}
+
+# Preparing for Removal
+indigenat_resettlement.3 = {
+	type = country_event
+	placement = scope:indian_removal_state
+
+	icon = "gfx/interface/icons/event_icons/event_skull.dds"
+	event_image = {
+		video = "europenorthamerica_native_american"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	title = indigenat_resettlement.3.t
+	desc = indigenat_resettlement.3.d
+	flavor = indigenat_resettlement.3.f
+
+	duration = 3
+
+	cooldown = { days = 270 }
+
+	trigger = {
+		NOT = { has_variable = trail_of_tears_stall }
+		has_journal_entry = je_code_indigenat
+		any_scope_state = {
+			any_scope_pop = {
+				culture = cu:cherokee
+			}
+		}
+	}
+
+	immediate = {
+		set_variable = {
+			name = trail_of_tears_stall
+			months = 12
+		}
+		random_scope_state = {
+			limit = {
+				any_scope_pop = {
+					culture = cu:cherokee
+				}
+			}
+			save_scope_as = indian_removal_state
+		}
+		c:CHE = {
+			save_scope_as = indian_territory_scope
+			capital = {
+				save_scope_as = STATE_LES_PAINS
+			}
+		}
+		cu:cherokee = {
+			save_scope_as = cherokee_culture
+		}
+	}
+
+	option = { # For the good of the nation, use force
+		name = indigenat_resettlement.3.a
+		default_option = yes
+		scope:indian_removal_state = {
+			kill_population_percent_in_state = {
+				percent = 0.45
+				culture = cu:cherokee
+			}
+			every_scope_pop = {
+				limit = {
+					culture = cu:cherokee
+				}
+				move_pop = scope:STATE_LES_PAINS
+			}
+		}
+		custom_tooltip = {
+			text = indian_removal_force_tt
+			set_variable = { # affects severity of trail of tears
+				name = indian_removal_force
+				value = 2
+				months = 36
+			}
+		}
+	}
+	option = { # pay their way
+		name = indigenat_resettlement.3.b
+		scope:indian_removal_state = {
+			kill_population_percent_in_state = {
+				percent = 0.15
+				culture = cu:cherokee
+			}
+			every_scope_pop = {
+				limit = {
+					culture = cu:cherokee
+				}
+				move_pop = scope:STATE_LES_PAINS
+			}
+		}
+		add_modifier = {
+			name = dvg_arc_paying_removal_costs
+			multiplier = money_amount_multiplier_very_small
+			days = short_modifier_time
+		}
+		custom_tooltip = {
+			text = indian_removal_normal_tt
+			set_variable = { # affects severity of trail of tears
+				name = indian_removal_force
+				value = 1
+				months = 36
+			}
+		}
+	}
+}
+
+# The Trail of Tears
+indigenat_resettlement.4 = {
+	type = country_event
+	placement = scope:les_pains_state
+
+	event_image = {
+		video = "asia_poor_people_moving"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+
+	icon = "gfx/interface/icons/event_icons/event_skull.dds"
+
+	title = indigenat_resettlement.4.t
+	desc = indigenat_resettlement.4.d
+	flavor = indigenat_resettlement.4.f
+
+	duration = 3
+
+	trigger = {
+		has_variable = indian_removal_force
+		c:CHE = {
+			capital = {
+				NOT = {
+					has_modifier = trail_of_tears_modifier
+				}
+				any_scope_pop = {
+					culture = cu:cherokee
+				}
+			}
+		}
+	}
+
+	immediate = {
+		c:CHE = {
+			capital = {
+				save_scope_as = STATE_LES_PAINS
+			}
+		}
+		cu:cherokee = {
+			save_scope_as = cherokee_culture
+		}
+	}
+
+	option = { # we did what we could
+		name = indigenat_resettlement.4.a
+		trigger = {
+			OR = {
+				root.var:indian_removal_force < 2
+				NOT = {
+					has_variable = indian_removal_force
+				}
+			}
+		}
+		default_option = yes
+		scope:les_pains_state = {
+			add_modifier = { # cherokee sol
+				name = trail_of_tears_modifier
+				days = normal_modifier_time
+			}
+		}
+		if = {
+			limit = {
+				OR = {
+					is_enacting_law = law_type:law_multicultural
+                    is_enacting_law = law_type:cultural_exclusion
+					is_enacting_law = law_type:law_no_colonial_affairs
+				}
+			}
+			add_enactment_modifier = { # enactment success chance
+				name = trail_of_tears_enactment
+			}
+		}
+	}
+
+	option = { # their blood is on our hands
+		name = indigenat_resettlement.4.b
+		trigger = {
+			root.var:indian_removal_force >= 2
+		}
+		default_option = yes
+		scope:les_pains_state = {
+			add_modifier = { # cherokee sol
+				name = trail_of_tears_modifier
+				days = normal_modifier_time
+				multiplier = 2
+			}
+		}
+	}
+}
+
+# The Clearing of the East
+indigenat_resettlement.5 = {
+	type = country_event
+
+	icon = "gfx/interface/icons/event_icons/event_skull.dds"
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	title = indigenat_resettlement.5.t
+	desc = indigenat_resettlement.5.d
+	flavor = indigenat_resettlement.5.f
+
+	duration = 3
+
+	immediate = {
+		c:CHE = {
+			save_scope_as = indian_territory_scope
+		}
+		cu:cherokee = {
+			save_scope_as = cherokee_culture
+		}
+	}
+
+	option = {
+		name = indigenat_resettlement.5.a
+		default_option = yes
+		if = {
+			limit = {
+				any_interest_group = {
+					is_marginal = no
+					leader = {
+						OR = {
+							has_trait = bigoted
+							has_ideology = ideology:ideology_jingoist_leader
+						}
+					}
+				}
+			}
+			random_interest_group = {
+				limit = {
+					leader = {
+						OR = {
+							has_trait = bigoted
+							has_ideology = ideology:ideology_jingoist_leader
+						}
+					}
+				}
+				add_modifier = {
+					name = indian_removal_approval
+					days = normal_modifier_time
+				}
+			}
+		}
+		if = {
+			limit = {
+				any_interest_group = {
+					is_marginal = no
+					leader = {
+						has_ideology = ideology:ideology_pacifist
+					}
+				}
+			}
+			random_interest_group = {
+				limit = {
+					is_marginal = no
+					leader = {
+						has_ideology = ideology:ideology_pacifist
+					}
+				}
+				add_modifier = {
+					name = indian_removal_approval
+					days = normal_modifier_time
+					multiplier = -1
+				}
+			}
+		}
+	}
+}
+
+indigenat_resettlement.6 = {
+	type = country_event
+
+	icon = "gfx/interface/icons/event_icons/event_scales.dds"
+	event_image = {
+		video = "europenorthamerica_native_american"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	title = indigenat_resettlement.6.t
+	desc = indigenat_resettlement.6.d
+	flavor = indigenat_resettlement.6.f
+
+	duration = 3
+
+	trigger = {
+		# triggered by je_code_indigenat
+	}
+
+	immediate = {
+		if = {
+			limit = {
+				has_law = law_type:law_no_colonial_affairs
+                has_law = law_type:law_cultural_exclusion
+			}
+			law_type:law_no_colonial_affairs = {
+				save_scope_as = pronativelaw
+			}
+		}
+		else = {
+			law_type:law_multicultural = {
+				save_scope_as = pronativelaw
+			}
+		}
+		cu:cherokee = {
+			save_scope_as = cherokee_culture
+		}
+	}
+
+	option = {
+		name = indigenat_resettlement.6.a
+		default_option = yes
+		if = {
+			limit = {
+				has_law_or_variant = law_type:law_multicultural
+				c:CHE = {
+					is_player = no
+				}
+			}
+			annex = c:CHE
+		}
+		else = {
+			add_modifier = {
+				name = dvg_native_arcadian_rights
+				days = long_modifier_time
+			}
+		}
+	}
+}
+
+indigenat_resettlement.7 = {
+	type = country_event
+
+	icon = "gfx/interface/icons/event_icons/event_scales.dds"
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	placement = s:STATE_ATHESIA.region_state:ARC
+
+	title = indigenat_resettlement.7.t
+	desc = indigenat_resettlement.7.d
+	flavor = indigenat_resettlement.7.f
+
+	duration = 3
+
+	trigger = {
+		# triggered by je_seminole_wars
+	}
+
+	immediate = {
+		c:SEQ = {
+			save_scope_as = indian_territory_scope
+		}
+		cu:muskogean = {
+			save_scope_as = seminole_people
+		}
+	}
+
+	option = {
+		name = indigenat_resettlement.7.a
+		default_option = yes
+
+		if = {
+			limit = {
+				c:CHE ?= { is_subject_of = c:ARC }
+				exists = s:STATE_LES_PAINS.region_state:CHE
+			}
+			s:STATE_ATHESIA.region_state:ARC ?= {
+				every_scope_pop = {
+					limit = {
+						culture = cu:muskogean
+					}
+					move_pop = s:STATE_LES_PAINS.region_state:CHE
+				}
+			}
+		}
+		else = {
+			s:STATE_ATHESIA.region_state:ARC ?= {
+				add_modifier = {
+					name = dvg_arthesian_resettlement
+					days = long_modifier_time
+				}
+			}
+		}
+	}
+}
+
+#Arcadia Unification
+
+dvg_arcadia.1 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_arcadia.1.t
+	desc = dvg_arcadia.1.d
+	flavor = dvg_arcadia.1.f
+
+	event_image = {
+		video = "gfx/event_pictures/europenorthamerica_london_center.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	immediate = {
+		c:arc = {
+			save_scope_as = scope_ARC
+		}
+	}
+
+	#ARCADIA Starting Event
+
+	option = {
+		name = dvg_arcadia.1.a
+		default_option = yes
+		add_loyalists = {
+			value = 0.25
+		}
+
+		trigger_event = {
+			id = indigenat_resettlement.1 days = 60
+		}
+		
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+# Transcontinental
+transcontinental_railways.2 = {
+	type = country_event
+	event_image = {
+		video = "unspecific_trains"
+	}
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	duration = 3
+	placement = scope:california_scope
+
+	title = transcontinental_railways.2.t
+	desc = transcontinental_railways.2.d
+	flavor = transcontinental_railways.2.f
+
+	trigger = {
+	}
+
+	immediate = {
+		random_scope_state = {
+			limit = {
+				state_region = s:STATE_CALIFORNIA
+			}
+			save_scope_as = california_scope
+		}
+	}
+
+	option = { # settle the great plains
+		name = transcontinental_railways.2.a
+		every_scope_state = {
+			limit = {
+				region = sr:region_great_plains
+				has_building = building_railway
+			}
+			add_modifier = {
+				name = great_plains_settlement
+				days = normal_modifier_time
+			}
+		}
+	}
+	option = { # settle california
+		name = transcontinental_railways.2.b
+		default_option = yes
+		every_scope_state = {
+			limit = {
+				region = sr:region_pacific_coast
+				has_building = building_railway
+			}
+			add_modifier = {
+				name = great_plains_settlement
+				days = normal_modifier_time
+			}
+		}
+	}
+}
