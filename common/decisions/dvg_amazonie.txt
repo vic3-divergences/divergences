@@ -273,7 +273,9 @@ dvg_annex_bresil = {
 dvg_embrace_afro_amerigans = {
     is_shown = {
 
-        country_has_primary_culture = cu:amerigan
+        any_primary_culture = {
+            has_discrimination_trait = amerigan_group
+        }
 
         NOT = {
             country_has_primary_culture = cu:afro_amerigan
@@ -281,18 +283,22 @@ dvg_embrace_afro_amerigans = {
         NOT = {
             country_has_primary_culture = cu:antarctican
         }
-
+        any_scope_state = {
+            state_region = {
+                    is_homeland = cu:afro_amerigan 
+            }
+        }
     }
 
     possible = {
 
         has_law = law_type:law_slavery_banned
         has_technology_researched = human_rights
-        cu:afro_amerigan = {
-            root = {
-				cultural_acceptance_base = { target = prev value >= acceptance_status_5 }
-			}
+        cultural_acceptance_base = {
+            target = cu:afro_amerigan
+            value > acceptance_status_3
         }
+       
     }
 
     when_taken = {
@@ -307,10 +313,14 @@ dvg_embrace_afro_amerigans = {
 
 dvg_demand_fugitives_atlantia = {
     is_shown = {
-        exists = c:ATL
-        exists = c:AMA
-        any_neighbouring_state = {
-            owner = c:ATL
+        country_has_primary_culture = cu:antarctican
+         any_neighbouring_state = {
+            owner = {
+                has_law = law_type:law_slavery_banned
+                NOT = {
+                    has_truce_with = ROOT
+                }
+            }
         }
         this = c:AMA
         NOT = { has_law = law_type:law_slavery_banned }
@@ -318,36 +328,44 @@ dvg_demand_fugitives_atlantia = {
 
         }
         NOT = { has_global_variable = amazonie_atlantia_demand }
-
+        has_technology_researched = nationalism
     }
 
     possible = {
-
-        NOT = {
-            has_truce_with = c:ATL
-            c:ATL = {	is_subject_of = ROOT }
-        }
-        c:ATL = {has_law = law_type:law_slavery_banned
-        relations:root < relations_threshold:cordial
-        cu:afro_amerigan = {
-            c:ATL = {
-				cultural_acceptance_base = { target = prev value < acceptance_status_5 }
-			}
-        }
-
+        is_diplomatic_play_committed_participant = no
+         any_neighbouring_state = {
+            owner = {
+                has_law = law_type:law_slavery_banned
+                NOT = {
+                    has_truce_with = ROOT
+                }
+            }
+         }
     }
-}
+
 
 when_taken = {
-    c:ATL = { trigger_event = { id = dvg_amazonie.7 popup = yes } }
+    random_neighbouring_state = {
+        limit = {
+            owner = {
+                has_law = law_type:law_slavery_banned
+                NOT = {
+                    has_truce_with = ROOT
+                }
+            }
+        }
+        owner = {
+            trigger_event = { id = dvg_amazonie.7 popup = yes }
+        }
+    }
 
     set_global_variable = amazonie_atlantia_demand
 
 }
 
-ai_chance = {
+ ai_chance = {
     value = 100
-}
+ }
 }
 
 dvg_seize_para = {
@@ -373,7 +391,6 @@ dvg_seize_para = {
         }
         c:GRA = {
             is_at_war = yes
-            relations:root < 0
         }
 
     }
@@ -403,3 +420,112 @@ dvg_seize_para = {
     }
 }
 
+dvg_condemn_slavery = {
+    is_shown = {
+       exists = c:PAP
+       c:PAP = ROOT
+       has_law = law_type:law_theocracy
+       NOT = {
+        has_global_variable = slavery_catholic_bad
+       }
+    }
+
+
+    possible = {
+        OR = {
+            ruler = {
+            law_stance = {
+                law = law_type:law_slavery_banned
+                value > neutral
+            }
+            }
+            any_interest_group = {
+               is_powerful = yes
+               is_in_government = yes
+               law_stance = {
+                law = law_type:law_slavery_banned
+                value > neutral
+                }
+            }
+        }
+        
+    }
+
+    when_taken = {
+        set_global_variable = slavery_catholic_bad
+        every_country = {
+            limit = {
+                country_has_state_religion = rel:catholic
+            }
+            trigger_event = {
+                id = dvg_amazonie.34
+            }
+        }
+    }
+
+    ai_chance = {
+        value = 100
+    }
+}
+
+dvg_eqx_lot_aid = {
+    is_shown = {
+       exists = c:EQX
+       exists = c:LOT
+       c:EQX = ROOT
+       NOT = {
+         has_variable = eqx_lot_aid_request
+       }
+    }
+
+
+    possible = {
+        is_diplomatic_play_enemy_of = c:AMA
+
+    }
+
+    when_taken = {
+        set_variable = eqx_lot_aid_request
+        c:LOT = {
+            trigger_event = {
+                id = dvg_lotharingia.27
+            }
+        }
+    }
+
+    ai_chance = {
+        value = 100
+    }
+}
+
+dvg_kill_plu = {
+    is_shown = {
+       exists = c:PLU
+       NOT = {
+        has_variable = plu_dealt
+       }
+       any_scope_state = {
+        state_is_in_south_america = yes
+       }
+    }
+
+
+    possible = {
+        any_neighbouring_state = {
+            owner = c:PLU
+        }
+    }
+
+    when_taken = {
+        set_variable = plu_dealt
+        create_diplomatic_play = {
+            type = dp_rebellion_annex
+            target_country = c:PLU
+
+        }
+    }
+
+    ai_chance = {
+        value = 100
+    }
+}

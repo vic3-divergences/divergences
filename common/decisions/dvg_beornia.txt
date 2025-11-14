@@ -194,36 +194,41 @@ dvg_beo_lot_union = {
 		
 		exists = c:LOT
 		
-		has_law = law_type:law_monarchy
 		
-		c:LOT = {has_law = law_type:law_monarchy }
-	}
-
-	potential = {
-		power_bloc ?= {
-			scope:target_country.power_bloc ?= this
-		}
 	}
 
     possible = {
-		has_technology_researched = pan-nationalism
-			c:LOT = {
-				is_at_war = no
-				
+		OR = {
+			has_technology_researched = pan-nationalism
+			AND = {
 				has_law = law_type:law_monarchy
-				
-				owner = {
-					is_ai = yes
-					
-					relations:root >= relations_threshold:amicable
-					
-					
-					
-					this.gdp < root.gdp
+				custom_tooltip = {
+				text = aigle_cavendish_tt
+				OR = {
+				ruler = {
+					has_variable = is_edward
 				}
-				
+				ruler = {
+					has_variable = is_richard
+				}
+				ruler = {
+					has_variable = is_richard
+				}
+				ruler = {
+					has_variable = chef_de_aigle_var
+				}
+				}
+				}
+			}
+			
+			
 		}
 		
+		c:LOT = {
+			is_in_same_power_bloc = c:BEO
+
+			relations:root >= relations_threshold:amicable
+		}
 	}
 		
 
@@ -258,27 +263,35 @@ dvg_lot_beo_union = {
 	}
 
     possible = {
-		has_technology_researched = pan-nationalism
-			c:BEO = {
-			
-			
-				market = {
-					owner = ROOT
-				}
-				is_at_war = no
+		OR = {
+			has_technology_researched = pan-nationalism
+			AND = {
 				has_law = law_type:law_monarchy
-				owner = {
-					is_ai = yes
-					
-					relations:root >= relations_threshold:amicable
-					
-					
-					this.gdp < root.gdp
-					
+				custom_tooltip = {
+				text = aigle_cavendish_tt
+				OR = {
+				ruler = {
+					has_variable = is_edward
 				}
-				
-				
+				ruler = {
+					has_variable = is_richard
+				}
+				ruler = {
+					has_variable = is_richard
+				}
+				ruler = {
+					has_variable = chef_de_aigle_var
+				}
+				}
+				}
+			}
+			
+			
 		}
+		c:BEO = {
+				is_in_same_power_bloc = c:LOT
+				relations:root >= relations_threshold:amicable
+			}
 		
 	}
 		
@@ -297,29 +310,32 @@ dvg_establish_new_mercia = {
 	is_shown = {
 		exists = c:BEO
 		this = c:BEO
-		NOT = { exists = global_var:new_mercia }
+		NOT = { has_global_variable = new_mercia }
 	}
 
     possible = {
 		OR = {
-		owns_entire_state_region = STATE_COLLASUYU
-		owns_entire_state_region = STATE_NEAR_COLLASUYU
+		exists = s:STATE_COLLASUYU.region_state:BEO
+		exists = s:STATE_NEAR_COLLASUYU.region_state:BEO
 		}
 	}
 
     when_taken = {
 		
-		s:STATE_COLLASUYU = { 
-			 add_homeland = cu:beornian
-		}
-		s:STATE_NEAR_COLLASUYU = { 
-			 add_homeland = cu:beornian
-		}
-		s:STATE_CATAMARCA = { 
-			 add_homeland = cu:beornian
-		}
-		s:STATE_KUCHICHAY = { 
-			 add_homeland = cu:beornian
+		every_scope_state = {
+			limit = {
+				state_region = {
+					is_homeland = cu:aimara
+				}
+				NOT = {
+					state_region = {
+					is_homeland = cu:beornian
+					}
+				}
+			}
+			state_region = {
+				add_homeland = cu:beornian
+			}
 		}
 		s:STATE_COLLASUYU.region_state:BEO = {
 			add_modifier = {
@@ -350,7 +366,7 @@ dvg_establish_new_mercia = {
 		set_global_variable = {
 				name = new_mercia
 				value = 0
-			}
+		}
 		
 		
     }
@@ -365,7 +381,7 @@ dvg_rennovating_camelot = {
 		exists = c:BEO
 		this = c:BEO
 		
-		NOT = { exists = global_var:camelot_renovated }
+		NOT = { has_global_variable = camelot_renovated }
 	}
 
     possible = {
@@ -377,6 +393,8 @@ dvg_rennovating_camelot = {
 	}
 
     when_taken = {
+
+
 		s:STATE_AVALON.region_state:BEO = {
 			add_modifier = {
 			name = dvg_rennovated_city
@@ -392,7 +410,23 @@ dvg_rennovating_camelot = {
 		set_global_variable = {
 				name = camelot_renovated
 				value = 0
+		}
+		if = {
+			limit = {
+				ruler = {
+					NOT = {
+						has_trait = aesthete
+					}
+				}
 			}
+				ruler = {
+				add_trait = aesthete
+				}
+			
+		}
+		ruler = {
+			add_modifier = architect_of_change
+		}
     }
 
 	ai_chance = {
@@ -414,7 +448,9 @@ dvg_falklands_purchase = {
 			has_variable = falklands_purchase_var
 		}
 		c:SCA = {
-			owns_entire_state_region = STATE_SOUTH_ATLANTIC_ISLANDS
+			any_scope_state = {
+				state_region = s:STATE_SOUTH_ATLANTIC_ISLANDS 
+			}
 			is_subject = no
 			is_player = no
 		}
@@ -425,11 +461,29 @@ dvg_falklands_purchase = {
 		taking_loans = no
 		is_at_war = no
 		gold_reserves > 100000
-		c:SCA = {
-			relations:root >= 0
-			is_at_war = no
-			taking_loans = yes
-			
+		OR = {
+			has_global_variable = sca_beo_marriage
+			c:SCA = {
+				country_rank < rank_value:major_power
+			}
+			c:SCA = {
+				has_attitude = {
+					who = c:BEO
+					attitude = genial
+				}
+			}
+			c:SCA = {
+				has_attitude = {
+					who = c:BEO
+					attitude = cooperative
+				}
+			}
+			c:SCA = {
+				has_attitude = {
+					who = c:BEO
+					attitude = loyal
+				}
+			}
 		}
 	}
 
@@ -471,19 +525,19 @@ dvg_embrace_aimara = {
 
 	is_shown = {
 		exists = c:NME
-		this = c:NME
+		c:NME = this
 	}
 	
 	possible = {
 	
-	 
-	has_law = law_type:law_multicultural
-	
+	 cu:aimara = {
+		cultural_acceptance_base = {
+			target = THIS
+			value > acceptance_status_3
 		}
+	 }
 	
-	
-	
-	
+	}
 	
 	when_taken = {
 		add_primary_culture = cu:aimara
@@ -505,14 +559,23 @@ dvg_drug_treatment = {
 	
 	possible = {
 	
-	 institution_investment_level = {
+	 	institution_investment_level = {
 					 institution = institution_health_system
 					 value = 3
 				 }
-	NOT = { has_law = law_type:law_no_police
+		NOT = { has_law = law_type:law_no_police
 		}
 	
-	bureaucracy > 0
+		bureaucracy > 0
+
+		NOT = {
+			custom_tooltip = {
+				text = richard_tt
+			}
+			ruler = {
+				has_variable = is_richard
+			}
+		}
 	
 	}
 	
@@ -594,68 +657,27 @@ dvg_beornia_aigle = {
 
 dvg_proclaim_hbe = {
 	is_shown = {
-		exists = c:BEO
-		this = c:BEO
-		NOT = { has_game_rule = plausible_formable_nations 
-			
-		}
+		exists = c:HBE
+		this = c:HBE
 		is_player = yes
-		
+
+		NOT = {
+			has_global_variable = hbe_attack_ameriga
+		}
 	}
+
 
     possible = {
 		
-		OR = {
-		country_rank >= rank_value:major_power
-		custom_tooltip = {
-			text = dvg_beornia_primo_tt
-		NOT = {
-		any_country = {
-			country_is_in_south_america = yes 
+		has_journal_entry = je_ameriga_conquer
 
-			country_rank > root.country_rank
-		}
-		}
-		}
-		}
-		has_law = law_type:law_monarchy
-		has_law = law_type:law_autocracy
-		has_law = law_type:law_professional_army
-		
-		
-		
-		NOT = { has_law = law_type:law_multicultural
-				has_law = law_type:law_cultural_exclusion
-				has_law = law_type:law_total_separation
-				has_law = law_type:law_protected_speech
-				has_law = law_type:law_right_of_assembly
-				has_law = law_type:law_state_atheism
-		}
-		NOT = {
-		
-		has_journal_entry = je_cattle_barons_wrath
-				
-		has_journal_entry = je_anglo_summit
-		
-		}
-		custom_tooltip = {
-			text = not_lost_war_tt
-			NOR = {
-				has_variable = recently_lost_war
-				AND = {
-					has_variable = recently_had_war
-					NOT = {
-						has_variable = recently_won_war
-					}
-				}
-			}
-		}
-		
-	
+
 	}
 
     when_taken = {
-		trigger_event = { id = dvg_beornia.18 }
+		trigger_event = {
+			id = dvg_beornia.18
+		}
     }
 
 	ai_chance = {
@@ -669,36 +691,38 @@ dvg_heisenberg = {
 		this = c:HBE
 		cu:north_german = {
 			root = {
-				cultural_acceptance_base = { target = prev value >= acceptance_status_5 }
+				cultural_acceptance_base = { target = prev value > acceptance_status_3 }
 			}
 		}
-	NOT = { exists = global_var:breaking_bad }
+		NOT = { has_global_variable = breaking_bad }
 	
 	
-	NOT = { has_game_rule = plausible_formable_nations 
-			
+		NOT = { has_game_rule = plausible_formable_nations 
+			is_banning_goods = g:opium
 		}
-	 
-	 
+		OR = {
+			capital.market = {
+			mg:opium = { market_goods_pricier > 0.40 }
+			}
+			any_primary_culture = {
+			has_cultural_obsession = opium
+			}
+			has_variable = coke_okay
+		}
 		
 	}
 	
 	possible = {
 	
-	OR = {
+		has_technology_researched = fractional_distillation
+		has_technology_researched = pharmaceuticals
+
+		capital.market = {
+			mg:opium = { market_goods_pricier > 0.20 }
+		}
+		
+		NOT = { has_law = law_type:law_no_schools }		
 	
-	AND = {
-	has_technology_researched = fractional_distillation
-	
-	has_technology_researched = telephone
-	
-	has_technology_researched = pharmaceuticals
-	
-	NOT = { has_law = law_type:law_no_schools }
-	
-	}
-	
-	}
 	}
 	
 	when_taken = {
@@ -731,14 +755,22 @@ dvg_demand_transfleuve = {
 
     possible = {
 
-		c:LOT = {owes_obligation_to = c:BEO
 		
-				
-
+			c:LOT = {
+				OR = {
+					has_attitude = {
+					who = c:BEO
+					attitude = genial
+					}
+					has_attitude = {
+					who = c:BEO
+					attitude = cooperative
+					}
 				}
-
-
-
+				
+			}
+			
+		
 		
 		NOT = {is_diplomatic_play_enemy_of = c:LOT}
 
@@ -892,16 +924,24 @@ dvg_beornia_aid = {
 }
 dvg_attack_gps = {
 	is_shown = {
-		exists = c:HBE
-		this = c:HBE
-		NOT = {
+		OR = {
+			AND = {	
+				exists = c:HBE
+			this = c:HBE
+			NOT = {
 			has_global_variable = hbe_vs_gps
+			}
+			}
+			infamy > 150
 		}
+		
 	}
 
     possible = {
 		is_diplomatic_play_committed_participant = no
-
+		OR = {
+			has_journal_entry = je_world_conquer
+		}
 	}
 
     when_taken = {
@@ -915,16 +955,139 @@ dvg_attack_gps = {
 			}
 						
 			}
-			
-			
 			save_scope_as = hbe_target
 			
 			trigger_event = { id = dvg_hbe.1  }
-			}
+		}
 			set_global_variable = hbe_vs_gps
 
     }
 
+	ai_chance = {
+		value = 100
+	}
+}
+
+
+dvg_pr_campaign = {
+
+	is_shown = {
+		is_player = yes
+		has_technology_researched = mass_communication
+	}
+	
+	possible = {
+	
+		NOR = {
+			has_modifier = pr_campaign_expenses
+			ruler = {
+				has_modifier = pr_campaign
+			}
+		}
+		has_technology_researched = camera
+	}
+	when_taken = {
+		ruler = {
+			add_modifier = {
+				name = pr_campaign
+			}
+		}
+		add_modifier = {
+				name = pr_campaign_expenses
+		}
+    }
+	ai_chance = {
+		value = 100
+	}
+}
+
+dvg_pr_campaign_cancel = {
+
+	is_shown = {
+		has_modifier = pr_campaign_expenses
+
+	}
+	
+	possible = {
+	
+		has_modifier = pr_campaign_expenses
+
+	}
+	when_taken = {
+		ruler = {
+			remove_modifier = pr_campaign
+			add_modifier = {
+				name = pr_campaign
+				months = 12
+				is_decaying = yes
+			}
+		}
+		remove_modifier = pr_campaign_expenses
+    }
+	ai_chance = {
+		value = 100
+	}
+}
+
+drugs_4_beornia = {
+
+	is_shown = {
+		exists = c:BEO
+		is_ai = yes
+		NOT = {
+			c:BEO = this
+			c:BEO = {
+				has_variable = opium_wars_target
+			}
+		}
+		OR = {
+			has_global_variable = carolean_victory
+			c:BEO = {
+				has_law = law_type:law_industry_banned
+			}
+			c:BEO = {
+				has_law = law_type:law_agrarianism
+			}
+		}
+		OR = {
+			has_interest_marker_in_region = region_la_plata
+
+			AND = {
+				has_interest_marker_in_region = region_andes
+				c:BEO = {
+					any_scope_state = {
+						region = sr:region_andes 
+					}
+				}
+			}
+		}
+	}
+	
+	possible = {
+		any_scope_state = {
+			has_building = building_opium_plantation
+		}
+		capital.market = {
+			NOT = {
+				mg:opium = { market_goods_pricier < 0.20 }
+			}
+		}
+
+		has_technology_researched = pharmaceuticals
+	}
+	when_taken = {
+		
+
+		c:BEO = {
+			set_variable = opium_wars_target
+
+			change_relations = {
+				country = ROOT
+				value = -10
+			}
+		}
+		set_variable = opium_wars_aggressor
+    }
 	ai_chance = {
 		value = 100
 	}
