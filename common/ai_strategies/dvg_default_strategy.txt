@@ -3747,4 +3747,221 @@
 	diplomatic_play_boldness = {
 		value = 50
 	}
+	diplomatic_play_support = {
+		value = 0
+
+		### German Leadership War
+		if = {
+			# Non-Germans should stay out of the leadership war unless they have a good reason to intervene
+			limit = {
+				scope:diplomatic_play_type = play_type:dp_leadership_germany
+				NOR = {
+					country_has_primary_culture = cu:north_german
+					country_has_primary_culture = cu:south_german
+				}
+			}
+
+			if = {
+				limit = {
+					NOR = {
+						any_scope_treaty = {
+							binds = scope:country
+							any_scope_article = {
+								has_type = alliance
+							}
+						}
+						AND = {
+							NOT = { exists = scope:is_initiator }
+							OR = {
+								any_scope_treaty = {
+									binds = scope:country
+									any_scope_article = {
+										has_type = defensive_pact
+									}
+								}
+								any_scope_treaty = {
+									binds = scope:country
+									any_scope_article = {
+										has_type = guarantee_independence
+									}
+								}
+							}
+						}
+					}
+
+					scope:enemy_country = {
+						NOR = {
+							play_participant_has_war_goal_of_type_against = {
+								type = conquer_state
+								target = scope:country
+							}
+							play_participant_has_war_goal_of_type_against = {
+								type = make_protectorate
+								target = scope:country
+							}
+							play_participant_has_war_goal_of_type_against = {
+								type = liberate_country
+								target = scope:country
+							}
+							play_participant_has_war_goal_of_type_against = {
+								type = liberate_subject
+								target = scope:country
+							}
+							play_participant_has_war_goal_of_type_against = {
+								type = transfer_subject
+								target = scope:country
+							}
+							play_participant_has_war_goal_of_type_against = {
+								type = take_treaty_port
+								target = scope:country
+							}
+						}
+					}
+				}
+
+				add = {
+					value = -200
+					desc = "german_leadership_neutrality"
+				}
+			}
+		}
+
+		### Risorgimento
+
+		if = {
+			limit = {
+				exists = scope:is_initiator
+				scope:diplomatic_play_type = play_type:dp_secession
+				root = {
+					has_variable = risorgimento_unifying_stance
+				}
+				scope:country = {
+					OR = {
+						country_has_primary_culture = cu:north_italian
+						country_has_primary_culture = cu:south_italian
+						country_has_primary_culture = cu:catalan
+						country_has_primary_culture = cu:venetian
+					}
+				}
+				scope:enemy_country = {
+					NOR = {
+						country_has_primary_culture = cu:north_italian
+						country_has_primary_culture = cu:south_italian
+						country_has_primary_culture = cu:catalan
+						country_has_primary_culture = cu:venetian
+					}
+				}
+			}
+			add = {
+				value = 150
+				desc = "risorgimento_support"
+			}
+		}
+		
+
+		if = { # The Balkan League countries supporting each other against the Ottomans.
+			limit = {
+				has_journal_entry = je_the_balkan_league
+				scope:country = {
+					has_journal_entry = je_the_balkan_league
+				}
+				scope:enemy_country = {
+					c:TUR ?= this
+				}
+			}
+			add = {
+				value = 1000
+				desc = "support_for_balkan_league"
+			}
+		}
+
+		if = { # Modernised Japan and Russia will defend Dzungar from one another
+			limit = {
+				c:RUS ?= this
+				scope:country = {
+					country_has_primary_culture = cu:mongol
+				}
+				scope:enemy_country = {
+					country_has_primary_culture = cu:japanese
+				}
+			}
+			add = {
+				value = 50
+				desc = "defending_korea"
+			}
+		}
+
+		if = { # Modernised Japan and Russia will defend Dzungar from one another
+			limit = {
+				c:JAP ?= this
+				NOT = {
+					has_law_or_variant = law_type:law_isolationism
+					has_law_or_variant = law_type:law_closed_borders
+				}
+				scope:country = {
+					country_has_primary_culture = cu:mongol
+				}
+				scope:enemy_country = {
+					country_has_primary_culture = cu:russian
+				}
+			}
+			add = {
+				value = 50
+				desc = "defending_korea"
+			}
+		}
+
+		if = { # Chinese unification warlord coalitions
+			limit = {
+				has_journal_entry = je_reunify_china
+				scope:country = {
+					has_journal_entry = je_reunify_china
+				}
+				scope:enemy_country = {
+					has_journal_entry = je_reunify_china
+					this.country_rank >= scope:country.country_rank
+			 	}
+			}
+			add = {
+				value = 25
+				desc = "alignment_politics"
+			}
+		}
+
+		if = { # AMA and LOT will defend Atlantia from one another
+			limit = {
+				c:AMA ?= this
+				scope:country = {
+					country_has_primary_culture = cu:atlantian
+				}
+				scope:enemy_country = {
+					country_has_primary_culture = cu:lotharian
+				}
+			}
+			add = {
+				value = 50
+				desc = "defending_atlantia"
+			}
+		}
+
+		if = { # AMA and LOT will defend Atlantia from one another
+			limit = {
+				c:LOT ?= this
+				NOT = {
+					has_law_or_variant = law_type:law_isolationism
+					has_law_or_variant = law_type:law_closed_borders
+				}
+				scope:country = {
+					country_has_primary_culture = cu:atlantian
+				}
+				scope:enemy_country = {
+					country_has_primary_culture = cu:antarctican
+				}
+			}
+			add = {
+				value = 50
+				desc = "defending_atlantia"
+			}
+		}
+	}
 }

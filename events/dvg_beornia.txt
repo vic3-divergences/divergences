@@ -25,7 +25,18 @@ dvg_beornia.1 = { #Intro Event
 	
 	immediate = { 
 		
-		
+			c:LOT = {
+				save_scope_as = scope_LOT
+			}
+
+			c:BRG = {
+				save_scope_as = scope_BRG
+			}
+
+			c:DUA = {
+				save_scope_as = scope_DUA
+			}
+
 			ig:ig_landowners = {
 					save_scope_as = cattle_barons_ig
 					leader = {
@@ -55,7 +66,7 @@ dvg_beornia.1 = { #Intro Event
 		}
 	
 	
-	# Vive!
+	# Beornia Start
 	option = {
 		name = dvg_beornia.1.a
 		default_option = yes
@@ -63,11 +74,13 @@ dvg_beornia.1 = { #Intro Event
 		add_journal_entry = {
 			type = je_cattle_barons_wrath
 		}
+		add_journal_entry = {
+			type = je_king_edward
+		}
 
 		add_primary_culture = cu:british
 		
 		hidden_effect = {
-			trigger_event = { id = dvg_beornia.2 days =  1480 }
 			
 			trigger_event = { id = dvg_beornia.4 days =  500 }
 			
@@ -76,7 +89,7 @@ dvg_beornia.1 = { #Intro Event
 			trigger_event = { id = dvg_beornia.21 days = 465 }
 		}
 		add_loyalists = {
-			value = 0.20
+			value = 0.05
 			culture = cu:beornian
 		}
 		change_relations = {
@@ -109,10 +122,25 @@ dvg_beornia.2 = { #Border Raids
 	duration = 3
 
 	trigger = {
+		
 	}
 	
 	immediate =  {
 		c:TWT = { save_scope_as = scope_TWT}
+		every_scope_character = {
+			limit = {
+				has_ideology = ideology:ideology_jacksonian_democrat
+			}
+			kill_character = yes
+		}
+		set_global_variable = twt_beo_raid
+
+		ig:ig_landowners = {
+			save_scope_as = landowners_ig
+		}
+		ig:ig_rural_folk = {
+			save_scope_as = rural_folk_ig
+		}
 	}
 	
 	# Border Raids
@@ -123,9 +151,29 @@ dvg_beornia.2 = { #Border Raids
 		change_infamy = 2
 		
 		add_radicals = {
-			value = 0.30
+			value = 0.20
 			culture = cu:beornian
 		}
+		ig:ig_landowners = {
+			add_modifier = {
+				name = modifier_ig_dissaproves
+				months = 30
+				is_decaying = yes
+			}			
+
+		}
+		if = {
+			limit = {
+			has_journal_entry = je_cattle_barons_wrath 
+
+			}
+			change_variable = {
+			name = cattle_barons_var
+			add = 2
+		}
+		}
+
+		
 
 		change_relations = {
 				country = c:TWT
@@ -165,19 +213,19 @@ dvg_beornia.2 = { #Border Raids
 		}
 		
 		add_radicals = {
-			value = 0.30
+			value = 0.20
 			culture = cu:quechua
 		}
 		add_radicals = {
-			value = 0.30
+			value = 0.20
 			culture = cu:aimara
 		}
 		add_radicals = {
-			value = 0.30
+			value = 0.20
 			culture = cu:guarani
 		}
 		add_loyalists = {
-			value = 0.30
+			value = 0.20
 			culture = cu:beornian
 		}
 		
@@ -271,6 +319,9 @@ dvg_beornia.3 = { #Border Raids TWT
 				target_country = c:TWT
 			}
 		}
+		ai_chance = {
+			base = 70
+		}
 	}
 
 	option = {
@@ -362,7 +413,7 @@ dvg_beornia.3 = { #Border Raids TWT
 		}
 		
 		ai_chance = {
-			base = 100
+			base = 30
 		}
 	}
 }
@@ -391,7 +442,16 @@ dvg_beornia.4 = { #Immigration Policy
 	}
 	
 	immediate = { 
-		
+		random_state = {
+			limit = {
+				state_region = {
+					is_homeland = cu:scottish
+				}
+			}
+			owner = {
+				save_scope_as = scope_scotstate
+			}
+		}
 		
 		ig:ig_landowners = {
 				save_scope_as = cattle_barons_ig
@@ -430,14 +490,29 @@ dvg_beornia.4 = { #Immigration Policy
 		activate_law = law_type:law_closed_borders
 		
 		
-		
 		add_loyalists = {
-			value = 0.50
-			culture = cu:beornian
+			value = 0.15
+			interest_group = ig:ig_landowners
+		}
+
+		add_radicals = {
+			value = 0.20
+			interest_group = ig:ig_industrialists
+		}
+		add_radicals = {
+			value = 0.10
+			interest_group = ig:ig_intelligentsia
 		}
 		
 		ai_chance = {
 			base = 100
+		}
+		ruler = {
+			add_modifier = {
+				name = sovereignty_defender
+				months = 60
+				is_decaying = yes
+			}
 		}
 	}
 	option = {
@@ -447,8 +522,32 @@ dvg_beornia.4 = { #Immigration Policy
 		activate_law = law_type:law_migration_controls
 		
 		add_loyalists = {
-			value = 0.20
-			culture = cu:beornian
+			value = 0.10
+			interest_group = ig:ig_trade_unions
+		}
+
+		add_loyalists = {
+			value = 0.10
+			interest_group = ig:ig_devout
+		}
+		add_loyalists = {
+			value = 0.05
+			interest_group = ig:ig_landowners
+		}
+
+		add_radicals = {
+			value = 0.10
+			interest_group = ig:ig_industrialists
+		}
+
+		random_scope_state = {
+			limit = {
+				available_jobs > 2000
+			}
+			create_mass_migration = {
+			origin = scope:scope_scotstate
+			culture = cu:scottish
+			}
 		}
 		
 		trigger_event = { id = dvg_beornia.13 days = 1920 }
@@ -460,18 +559,45 @@ dvg_beornia.4 = { #Immigration Policy
 	option = {
 		name = dvg_beornia.4.c
 
+		random_scope_state = {
+			limit = {
+				available_jobs > 2000
+			}
+			create_mass_migration = {
+			origin = scope:scope_scotstate
+			culture = cu:scottish
+			}
+		}
+
+		random_scope_state = {
+			limit = {
+				arable_land > 30
+			}
+			create_mass_migration = {
+			origin = c:LOT
+			culture = cu:lotharian
+			}
+		}
+
 		
 		change_variable = {
 				name = cattle_barons_var
-				add = 3
-			}
+				add = 2
+		}
 		
 		activate_law = law_type:law_no_migration_controls
+		
 		
 		add_radicals = {
 			value = 0.20
 			culture = cu:beornian
 		}
+		add_modifier = {
+			name = dvg_favored_foreigners
+			months = 60
+			is_decaying = yes
+		}
+		
 		
 		trigger_event = { id = dvg_beornia.13 days = 1365 }
 		
@@ -504,30 +630,94 @@ dvg_beornia.5 = { #BLT Union
 
 	immediate =  {
 	c:LOT = { save_scope_as = scope_LOT}
+
 	}
 
 	option = {
 		name = dvg_beornia.5.a
 		default_option = yes
+		
+		c:LOT = { 
+				add_radicals = {
+				value = 0.20
+				culture = cu:lotharian
+			}
+		}
 		c:BEO = {
 			annex = c:LOT
 		}
 		add_primary_culture = cu:lotharian
 		
 		add_radicals = {
-			value = 0.30
+			value = 0.20
 			culture = cu:beornian
 		}
 		
 		change_tag = BLT
+		add_journal_entry = {
+			type = je_anglo_lotharingia
+		}
+		cu:beornian = {
+			add_fervor = 20
+		}
+		cu:lotharian = {
+			add_fervor = 20
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_beo_presbyterians
+			}
+
+			change_variable = {
+				name = presbyterian_var
+				add = 35
+			}
+		}
+		trigger_event = {
+			id = dvg_lotharingia.29 days = 30
+		}
+	}
+	option = {
+		name = dvg_beornia.5.b
+		default_option = yes
+		
 		c:LOT = { 
 				add_radicals = {
-				value = 0.30
+				value = 0.10
 				culture = cu:lotharian
 			}
 		}
+		c:BEO = {
+			create_diplomatic_pact = {
+				country = c:LOT
+				type = personal_union
+			}
+		}
+		
+		add_radicals = {
+			value = 0.10
+			culture = cu:beornian
+		}
+		
 		add_journal_entry = {
 			type = je_anglo_lotharingia
+		}
+		cu:beornian = {
+			add_fervor = 10
+		}
+		cu:lotharian = {
+			add_fervor = 10
+		}
+
+		if = {
+			limit = {
+				has_journal_entry = je_beo_presbyterians
+			}
+
+			change_variable = {
+				name = presbyterian_var
+				add = 35
+			}
 		}
 	}
 }
@@ -564,7 +754,7 @@ dvg_beornia.6 = { #BLT union
 			annex = c:BEO
 		}
 		add_radicals = {
-			value = 0.30
+			value = 0.20
 			culture = cu:lotharian
 		}
 
@@ -573,10 +763,11 @@ dvg_beornia.6 = { #BLT union
 		}
 		
 		change_tag = BLT
+
 		add_primary_culture = cu:beornian
 		c:BEO = { 
 				add_radicals = {
-				value = 0.40
+				value = 0.10
 				culture = cu:beornian
 			}
 		}
@@ -585,12 +776,58 @@ dvg_beornia.6 = { #BLT union
 		add_journal_entry = {
 			type = je_anglo_lotharingia
 		}
-		
 		change_variable = {
 				name = aigle_var
 				add = 10
 		}
+		trigger_event = {
+			id = dvg_lotharingia.29 days = 30
+		}
 
+	}
+	option = {
+		name = dvg_beornia.6.b
+		default_option = yes
+		
+		c:LOT = { 
+				add_radicals = {
+				value = 0.10
+				culture = cu:lotharian
+			}
+		}
+		c:LOT = {
+			create_diplomatic_pact = {
+				country = c:BEO
+				type = personal_union
+			}
+		}
+		
+		add_radicals = {
+			value = 0.10
+			culture = cu:beornian
+		}
+		
+		
+		add_journal_entry = {
+			type = je_anglo_lotharingia
+		}
+		cu:beornian = {
+			add_fervor = 10
+		}
+		cu:lotharian = {
+			add_fervor = 10
+		}
+
+		if = {
+			limit = {
+				has_journal_entry = je_beo_presbyterians
+			}
+
+			change_variable = {
+				name = presbyterian_var
+				add = 35
+			}
+		}
 	}	
 }
 
@@ -633,6 +870,33 @@ dvg_beornia.7 = { #Sell Falklands
 						months = 12
 						
 					}
+			if = {
+				limit = {
+					has_journal_entry = je_beo_presbyterians
+				}
+				change_variable = {
+					name = presbyterian_var
+					add = 10
+				}
+			}
+			if = {
+				limit = {
+					has_journal_entry = je_cattle_barons_wrath
+				}
+				change_variable = {
+					name = cattle_barons_var
+					subtract = 10
+				}
+			}
+			if = {
+				limit = {
+					has_journal_entry = je_beo_hbe
+				}
+				change_variable = {
+					name = new_hbe_var
+					add = 1
+				}
+			}
 		}
 		change_relations = {
 				country = c:BEO
@@ -689,38 +953,107 @@ dvg_beornia.8 = { #Odonia or Lotharingia
 		}
 		every_country = {
 			limit = {
-				is_diplomatic_play_enemy_of = scope:aigle_country
+				country_has_primary_culture = cu:lotharian
+				NOT = {
+					ruler = {
+						has_variable = chef_de_aigle_var
+					}
+				}
 			}
 			save_scope_as = aigle_enemy
 		}
+		scope:aigle_country = {
+			ruler = {
+				save_scope_as = scope_de_aigle
+			}
+		}
+		
 	}
 
 	option = {
 		name = dvg_beornia.8.a
 		default_option = yes
-		
+		#Unite Lotharingia
+
 		create_incident = {
 			country = THIS
 			value = 12
 		}
 		
-		create_diplomatic_play = {
-			type = dp_rebellion_annex
-			target_country = scope:aigle_enemy
+		if = {
+			limit = {
+				exists = c:LOT
+			}
+			create_diplomatic_play = {
+				type = dp_rebellion_annex
+				target_country = c:LOT
 
-			add_war_goal = {
-				holder = scope:aigle_enemy
-				type = independence
+				add_war_goal = {
+				holder = c:LOT
+				type = annex_country
+				target_country = ROOT
+				}
 			}
 		}
 
-		create_diplomatic_play = {
-			type = dp_rebellion_annex
-			target_country = scope:aigle_country
+		if = {
+			limit = {
+				exists = c:ODO
+			}
+			create_diplomatic_play = {
+				type = dp_rebellion_annex
+				target_country = c:ODO
 
-			add_war_goal = {
-				holder = scope:aigle_enemy
+				add_war_goal = {
+				holder = c:ODO
 				type = annex_country
+				target_country = ROOT
+				}
+			}
+		}
+		if = {
+			limit = {
+				exists = c:NEA
+			}
+			create_diplomatic_play = {
+				type = dp_rebellion_annex
+				target_country = c:NEA
+
+				add_war_goal = {
+				holder = c:NEA
+				type = annex_country
+				target_country = ROOT
+				}
+			}
+		}
+		if = {
+			limit = {
+				exists = c:PRG
+			}
+			create_diplomatic_play = {
+				type = dp_rebellion_annex
+				target_country = c:PRG
+
+				add_war_goal = {
+				holder = c:PRG
+				type = annex_country
+				target_country = ROOT
+				}
+			}
+		}
+		if = {
+			limit = {
+				exists = c:TGI
+			}
+			create_diplomatic_play = {
+				type = dp_rebellion_annex
+				target_country = c:TGI
+
+				add_war_goal = {
+				holder = c:TGI
+				type = annex_country
+				target_country = ROOT
+				}
 			}
 		}
 		
@@ -730,7 +1063,8 @@ dvg_beornia.8 = { #Odonia or Lotharingia
 		}
 	}
 	option = {
-		#Help De Aigle
+		name = dvg_beornia.8.b
+		#Shield De Aigle
 		trigger = {
 			any_country = {
 				country_is_in_south_america = yes
@@ -738,11 +1072,14 @@ dvg_beornia.8 = { #Odonia or Lotharingia
 					has_variable = chef_de_aigle_var
 				}
 			}
-			c:LOT = {
+			scope:aigle_enemy = {
 				is_ai = yes
 			}
+			scope:aigle_country = {
+				is_ai = yes
+				is_diplomatic_play_committed_participant = yes
+			}
 		}
-		name = dvg_beornia.8.b
 		
 		create_diplomatic_pact = {
 			country = scope:aigle_country
@@ -771,11 +1108,29 @@ dvg_beornia.8 = { #Odonia or Lotharingia
 		}
 	}
 	option = {
+		#Help De Aigle
 		name = dvg_beornia.8.c
-		scope:aigle_country = {
-			set_owes_obligation_to = {
-				country = ROOT
-				setting = yes
+		trigger = {
+			exists = c:ODO
+			exists = c:LOT
+			
+		}
+		if = {
+			limit = {
+				scope:aigle_country = {
+					is_diplomatic_play_committed_participant = no
+				}
+				
+			}
+			
+			scope:aigle_country = {
+				create_diplomatic_play = {
+					type = dp_annex_war
+					target_country = c:LOT
+				}
+				add_initiator_backers = {
+					c:BEO
+				}
 			}
 		}
 
@@ -842,6 +1197,15 @@ dvg_beornia.9 = { #Cattle Barons Coup
 		default_option = yes
 		
 		set_strategy = ai_strategy_plantation_economy
+		if = {
+			limit = {
+				NOT = {
+					has_global_variable = carolean_victory
+				}
+			}
+			set_global_variable = carolean_victory
+		}
+
 
 		trigger_event = { id = dvg_beornia.26 days =  365 }
 
@@ -867,11 +1231,19 @@ dvg_beornia.9 = { #Cattle Barons Coup
 			set_interest_group_name = ig_industrialists
 			remove_ideology = ideology_patriotic
 		}
-		ig:ig_landowners = {
+		if = {
+			limit = {
+				NOT = {
+					has_law = law_type:law_monarchy
+				}
+			}
+			ig:ig_landowners = {
 			
 			remove_ideology = ideology_patriarchal
 			add_ideology = ideology_caudillismo
+			}
 		}
+		
 		ig:ig_armed_forces = {
 			set_interest_group_name = ig_armed_forces
 			remove_ideology = ideology_moralist
@@ -880,10 +1252,22 @@ dvg_beornia.9 = { #Cattle Barons Coup
 			set_character_as_ruler = yes
 			remove_trait = immortal
 		}
+		add_loyalists = {
+			value = 0.15
+			culture = cu:beornian
+		}
+		every_scope_character = {
+			limit = {
+				NOT = {
+					culture = cu:beornian
+				}
+			}
+			exile_character = yes
+		}
 		create_character = {
 			heir = yes
 			historical = yes
-			first_name = Richard
+			first_name = Victor
 			last_name = Cavendish
 			birth_date = 1816.05.12
 			ideology = ideology_ethno_nationalist
@@ -970,6 +1354,7 @@ dvg_beornia.10 = { #Cattle Barons Thwarted
 		}
 
 	option = {
+		set_global_variable = edwardian_victory
 		name = dvg_beornia.10.a
 		default_option = yes
 		
@@ -979,11 +1364,11 @@ dvg_beornia.10 = { #Cattle Barons Thwarted
 			exile_character = yes
 		}
 		ig:ig_landowners = {
-			remove_ideology = ideology_hierarchic
+			remove_ideology = ideology_stratocratic
 			add_ideology = ideology_plutocratic
 		}
 		add_loyalists = {
-			value = 0.30
+			value = 0.20
 			culture = cu:beornian
 		}
 		add_modifier = {
@@ -1068,7 +1453,7 @@ dvg_beornia.11 = {
                 }
 		
 		add_loyalists = {
-			value = 0.50
+			value = 0.10
 			culture = cu:beornian
 		}
 		trigger_event = { id = dvg_beornia.16 days =  365 }
@@ -1290,7 +1675,6 @@ dvg_beornia.14 = {
 		
 		add_loyalists = {
 			value = 50
-			
 		}
 		add_primary_culture = cu:scandinavian
 		
@@ -1324,7 +1708,7 @@ dvg_beornia.14 = {
 		change_relations = {
 				country = c:SCA
 				value = 50
-			}
+		}
 			
 		activate_law = law_type:law_professional_army
 		
@@ -1437,7 +1821,7 @@ dvg_beornia.16 = {
 		default_option = yes
 		
 		add_radicals = {
-			value = 0.30
+			value = 0.20
 			
 		}
 		
@@ -1456,7 +1840,7 @@ dvg_beornia.16 = {
 		}
 	}	
 }
-
+#Install de Aigle
 dvg_beornia.17 = {
 	type = country_event
 	placement = ROOT
@@ -1512,6 +1896,7 @@ dvg_beornia.17 = {
 			ig_leader = yes
 			birth_date = 1812.6.12
 			culture = cu:lotharian
+			historical = yes
 			interest_group = ig_landowners
 			ideology = ideology_authoritarian
 			traits = {
@@ -1525,7 +1910,7 @@ dvg_beornia.17 = {
 			on_created = {
 				set_variable = chef_de_aigle_var
 			}
-		}
+		    }
 				
 				
 			}
@@ -1625,66 +2010,45 @@ dvg_beornia.18 = {
 
 	trigger = {
 	}
+	
 
 	immediate = {
-		
+		every_subject_or_below = {
+			limit = {
+				country_is_in_south_america = yes
+			}
+			c:HBE = {
+				annex = prev
+			}
+		}
+		set_global_variable = hbe_attack_ameriga
 	}
 
 	option = {
 		name = dvg_beornia.18.a
 		
-		ruler = { set_ideology = ideology:ideology_fascist }
 		
-		ruler = { add_trait = persistent 
-			  add_trait = psychological_affliction
-			}
+		
 		
 		default_option = yes
 		
 		add_journal_entry = {
 			type = je_ameriga_conquer
 		}
-		every_subject_or_below = {
-			limit = { 
-				is_subject_of = ROOT
-				country_is_in_south_america = yes
-			}
-			save_scope_as = subject_to_annex
-			ROOT = {
-				annex = scope:subject_to_annex
-			}
-		}
-		change_infamy = -9999
-
-		change_infamy = 99
+		
+	
 		
 		add_modifier = {
                     name = dvg_geass
                     months = -1
                 }
 		
-		ig:ig_armed_forces = {
-			
-			set_interest_group_name = ig_honorary_britannians
-		}
-		ig:ig_landowners = {
-			remove_ideology = ideology_patriarchal
-			add_ideology = ideology_britannian_paternalistic
-			set_interest_group_name = ig_landed_gentry
-		}
-		ig:ig_devout = {
-			remove_ideology = ideology_patriarchal
-			add_ideology = ideology_britannian_paternalistic
-			set_interest_group_name = ig_britannian_church
-		}
+		
 		
 		
 		change_tag = HBE
 		
 		c:HBE = {save_scope_as = hbe_scope
-		
-		
-		
 		
 		
 		}
@@ -1705,11 +2069,13 @@ dvg_beornia.18 = {
 				}
 				
 			
-			scope:hbe_scope = { create_diplomatic_play = {
+			scope:hbe_scope = { 
+				
+				create_diplomatic_play = {
 			
 				target_country = scope:hbe_target
 				
-				war = no
+
 				
 				type = dp_annex_war
 
@@ -1718,91 +2084,26 @@ dvg_beornia.18 = {
 				type = contain_threat
 				target_country = c:HBE
 				}
-			}
+				}
 
 			}
-			
-			
-			
-			
+						
 			trigger_event = { id = dvg_beornia.19  }
 	    }
+
+		change_infamy = -9999
+
+		change_infamy = 99
+
+		every_diplomatic_play = {
+			limit = {
+				initiator_is = c:HBE
+			}
+			add_escalation = 75
+		}
 	
 	}
-	option = {
-		name = dvg_beornia.18.b
-		
-		ruler = { set_ideology = ideology:ideology_fascist }
-		
-		
-		add_journal_entry = {
-			type = je_ameriga_conquer
-		}
-		every_subject_or_below = {
-			limit = { 
-				is_subject_of = ROOT
-				country_is_in_south_america = yes
-			}
-			save_scope_as = subject_to_annex
-			ROOT = {
-				annex = scope:subject_to_annex
-			}
-		}
-		
-		add_modifier = {
-                    name = dvg_geass
-                    months = -1
-                }
-		
-		ig:ig_armed_forces = {
-			
-			set_interest_group_name = ig_honorary_britannians
-		}
-		ig:ig_landowners = {
-			remove_ideology = ideology_patriarchal
-			add_ideology = ideology_britannian_paternalistic
-			set_interest_group_name = ig_landed_gentry
-		}
-		ig:ig_devout = {
-			remove_ideology = ideology_patriarchal
-			add_ideology = ideology_britannian_paternalistic
-			set_interest_group_name = ig_britannian_church
-		}
-		create_incident = {
-			country = root
-			value = 25
-		}
-		
-		
-		change_tag = HBE
-		
-		c:HBE = {save_scope_as = hbe_scope
 	
-		}
-		
-			every_country = {
-			limit = { 
-			
-			NOT = { country_has_primary_culture = cu:beornian }
-			country_is_in_south_america = yes
-						
-			}
-			
-			save_scope_as = hbe_target
-			
-			change_relations = {
-					country = ROOT
-					value = -30
-				}
-				
-			
-			
-			
-			
-			
-			trigger_event = { id = dvg_beornia.19  }
-		}
-	}
 }	
 
 dvg_beornia.19 = {
@@ -1914,7 +2215,7 @@ dvg_beornia.20 = {
 		}
 	}		
 }
-
+#Agricultural Policy
 dvg_beornia.21 = {
 	type = country_event
 	placement = ROOT
@@ -1935,15 +2236,12 @@ dvg_beornia.21 = {
 	duration = 1
 
 	trigger = {
-	   
+		
 	}
 	
 	immediate = { 
-		
-		
-	
-		
-		}
+
+	}
 	
 	
 	# Vive!
@@ -1951,19 +2249,29 @@ dvg_beornia.21 = {
 		name = dvg_beornia.21.a
 		default_option = yes
 		
-		activate_law = law_type:law_tenant_farmers
+		start_enactment = law_type:law_tenant_farmers
 		
-		
+		add_loyalists = {
+			value = 0.35
+			interest_group = ig:ig_landowners
+		}
 		
 		
 		add_radicals = {
-			value = 0.10
+			pop_type = peasants
+			value = 0.15
 			culture = cu:beornian
 		}
-		change_variable = {
+		if = {
+			limit = {
+				has_journal_entry = je_new_mercia_independent
+			}
+			change_variable = {
 					name = new_mercia_var
 					add = 5
-				}
+			}
+		}
+		
 		
 		
 		
@@ -1997,14 +2305,16 @@ dvg_beornia.21 = {
 		name = dvg_beornia.21.c
 		default_option = yes
 		
-		
-		
-		activate_law = law_type:law_homesteading
-		
+		start_enactment = law_type:law_homesteading
 		
 		add_loyalists = {
-			value = 0.10
-			culture = cu:beornian
+			value = 0.15
+			strata = lower
+		}
+
+		add_radicals = {
+			value = 0.35
+			interest_group = ig:ig_landowners
 		}
 		
 		
@@ -2014,7 +2324,7 @@ dvg_beornia.21 = {
 		}
 	}
 }
-
+#NME separation
 dvg_beornia.22 = {
 	type = country_event
 	placement = ROOT
@@ -2042,7 +2352,13 @@ dvg_beornia.22 = {
 			leader = {
 				save_scope_as = rural_folk_leader
 			}
-		}		
+		}	
+		ig:ig_industrialists = {
+			save_scope_as = rural_folk_ig
+			leader = {
+				save_scope_as = rural_folk_leader
+			}
+		}	
 		if = {
 			limit = { exists = s:STATE_NEAR_COLLASUYU.region_state:BEO }
 				create_country = { #New Mercia
@@ -2060,30 +2376,90 @@ dvg_beornia.22 = {
 					}
 				}
 				c:NME = { save_scope_as = scope_NME
-					activate_law = law_type:law_parliamentary_republic
+					activate_law = law_type:law_laissez_faire
 					activate_law = law_type:law_homesteading
 					activate_law = law_type:law_census_voting
 					activate_law = law_type:law_appointed_bureaucrats
 					activate_law = law_type:law_freedom_of_conscience
+					activate_law = law_type:law_no_migration_controls
+					activate_law = law_type:law_subjecthood
+
+
+					add_modifier = dvg_modifier_industrialists_bolstered
+
+					create_diplomatic_catalyst = {
+						type = catalyst_event_positive
+						target = c:SCA
+					}
+					create_diplomatic_catalyst = {
+						type = catalyst_event_positive
+						target = c:BRG
+					}
+					if = {
+						limit = {
+							exists = c:TWT
+						}
+						create_diplomatic_catalyst = {
+						type = catalyst_event_positive
+						target = c:TWT
+						}
+						change_relations = {
+							country = c:TWT
+							value = 30
+						}
+						set_owes_obligation_to = {
+							country = c:TWT
+							setting = yes
+						}
+					}
+					#Adventuring Richard
+					create_character = {
+			
+						first_name = Richard
+						last_name = Cavendish
+						historical = yes
+						ruler = yes
+						ig_leader = yes
+						birth_date = 1835.12.25
+						dna = dna_lord_wellington
+						culture = cu:beornian
+						religion = rel:atheist
+						interest_group = ig_industrialists
+						ideology = ideology_adventurer
+						traits = {
+							basic_entrepreneur
+							explorer
+							surveyor
+							erudite
+							hedonist
+						}
+						on_created = {
+               			set_variable = {
+                    	name = is_richard
+                		}
+            			}
+					}
+
+
 					create_character = {
 			
 						first_name = Jackson
 						last_name = Bryan
 						historical = yes
-						ruler = yes
 						dna = dna_andrew_jackson
 						ig_leader = yes
-						birth_date = 1812.6.12
+						birth_date = 1825.6.12
 						culture = cu:beornian
-						interest_group = ig_landowners
-						#ideology = ideology_jacksonian_democrat # dvg does not have this ideology
-						ideology = ideology_moderate
+						interest_group = ig_rural_folk
+						ideology = ideology_jacksonian_democrat 
 						traits = {
 							innovative				
 							charismatic
 							cocaine_addiction
+							forest_commander
 						}
 					}
+
 					create_character = {
 			
 						first_name = Theodore
@@ -2091,7 +2467,7 @@ dvg_beornia.22 = {
 						historical = yes
 						is_general = yes
 						ig_leader = yes
-						birth_date = 1819.5.08
+						birth_date = 1825.5.08
 						culture = cu:beornian
 						interest_group = ig_armed_forces
 						#ideology = ideology_jacksonian_democrat # dvg does not have this ideology
@@ -2121,7 +2497,7 @@ dvg_beornia.22 = {
 					
 					ig:ig_landowners = { 
 					set_interest_group_name = ig_parish_pioneers
-					remove_ideology = ideology_hierarchic
+					remove_ideology = ideology_stratocratic
 					add_ideology = ideology_republican_paternalistic
 					}
 				}
@@ -2154,11 +2530,11 @@ dvg_beornia.22 = {
 
 				add_war_goal = {
 					holder = c:NME
-					type = humiliation
+					type = independence
 					target_country = c:BEO
 				}
 				
-			}
+		}
 		ai_chance = {
 			base = 100
 		} 
@@ -2170,6 +2546,24 @@ dvg_beornia.22 = {
 			country = c:NME
 			type = dominion
 		} 
+		c:NME = {
+			random_scope_state = {
+				create_mass_migration = {
+				origin = c:BEO
+				culture = cu:beornian
+				}
+			}
+		}
+		add_radicals = {
+			value = 0.20
+			interest_group = ig:ig_landowners
+		}
+
+		add_loyalists = {
+			value = 0.20
+			interest_group = ig:ig_industrialists
+		}
+
 		ai_chance = {
 			base = 100
 		}
@@ -2179,6 +2573,11 @@ dvg_beornia.22 = {
 		ai_chance = {
 			base = 100
 		} 
+		c:NME = {
+			add_journal_entry = {
+				type = je_new_mercia_independent
+			}
+		}
 		random_scope_pop = {
 					limit = {
 						culture = cu:beornian
@@ -2484,4 +2883,784 @@ dvg_beornia.26 = {
 			base = 100
 		}
 		}
+}
+
+#Golden Age of Beornia
+dvg_beornia.27 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_beornia.27.t
+	desc = dvg_beornia.27.d
+	flavor = dvg_beornia.27.f
+	
+	event_image = {
+		video = "europenorthamerica_london_center"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/sick_people_in_a_field_hospital"
+
+	icon = "gfx/interface/icons/event_icons/event_skull.dds"
+
+	duration = 1
+
+	trigger = {
+		
+	}
+	
+	immediate = { 
+		ig:ig_landowners = {
+			save_scope_as = cattle_barons_ig
+			leader = {
+				save_scope_as = landowners_leader
+			}
+		}
+		ig:ig_rural_folk = {
+			save_scope_as = rural_folk_ig
+			leader = {
+				save_scope_as = rural_folk_leader
+			}
+		}
+		ig:ig_devout = {
+			save_scope_as = devout_ig
+			leader = {
+				save_scope_as = devout_leader
+			}
+		}		
+		ig:ig_industrialists = {
+			save_scope_as = industrialists_ig
+			leader = {
+				save_scope_as = industrialists_leader
+			}
+		}	
+		random_country = {
+			limit = {
+				scope:rank > rank_value:minor_power
+				country_is_in_europe = yes
+			}
+			save_scope_as = investor_country
+			random_primary_culture = {
+				save_scope_as = migrant_culture
+			}
+		}
+	}
+	option = {
+		name = dvg_beornia.27.a
+		default_option = yes
+
+		add_modifier = {
+			name = dvg_modifier_industrialists_bolstered
+			months = 241 
+			is_decaying = yes
+		}
+		
+		random_scope_state = {
+			limit = {
+				is_incorporated = yes
+			}
+			create_mass_migration = {
+				origin = scope:investor_country
+				culture = scope:migrant_culture
+			}
+		}
+		create_diplomatic_catalyst = {
+			type = catalyst_event_positive
+			target = scope:investor_country
+		}
+		change_relations = {
+			country = scope:investor_country
+			value = 20
+		}
+		
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+#Illegal Mines
+
+dvg_beornia.28 = {
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = "southamerica_child_labor"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/signed_contract"
+
+	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
+
+	title = dvg_beornia.28.t
+	desc = dvg_beornia.28.d
+	flavor = dvg_beornia.28.f
+
+	duration = 1
+
+	trigger = {
+		
+		any_scope_state = {
+			has_potential_resource = bg_lead_mining
+		}
+	}
+
+	immediate = {
+		
+		if = {
+			limit = {
+				any_scope_state = {
+				has_potential_resource = bg_lead_mining
+				}
+			}
+			random_scope_state = {
+				limit = {
+					has_potential_resource = bg_lead_mining
+				}
+				create_building = {
+				building = building_sulfur_mine
+				}
+				save_scope_as = sussy_state
+			}
+		}
+	}
+
+	option = {
+		name = dvg_beornia.28.a
+		default_option = yes
+
+		scope:sussy_state = {
+			add_modifier = {
+                    name = dvg_modifier_industrialists_bolstered
+                    months = 36
+        	}
+			add_radicals = {
+			value = 0.25
+			}
+			remove_building = building_sulfur_mine
+		}
+		
+	}
+	option = {
+		name = dvg_beornia.28.b
+		
+		scope:sussy_state = {
+			add_modifier = {
+                    name = dvg_modifier_industrialists_bolstered
+                    months = 36
+        	}
+		}
+		set_variable = mining_okay
+	}	
+}
+
+#Illegal Factories
+dvg_beornia.29 = {
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = "unspecific_factory_closed"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/signed_contract"
+
+	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
+
+	title = dvg_beornia.29.t
+	desc = dvg_beornia.29.d
+	flavor = dvg_beornia.29.f
+
+	duration = 1
+
+	trigger = {
+		
+		any_scope_state = {
+			has_potential_resource = bg_lead_mining
+		}
+	}
+
+	immediate = {
+		
+		if = {
+			limit = {
+				any_scope_state = {
+				has_potential_resource = bg_lead_mining
+				}
+			}
+			random_scope_state = {
+				limit = {
+					has_potential_resource = bg_lead_mining
+				}
+				create_building = {
+				building = building_sulfur_mine
+				}
+				save_scope_as = sussy_state
+			}
+		}
+	}
+
+	option = {
+		name = dvg_beornia.29.a
+		default_option = yes
+
+		scope:sussy_state = {
+			add_modifier = {
+                    name = dvg_modifier_industrialists_bolstered
+                    months = 36
+        	}
+			add_radicals = {
+			value = 0.25
+			}
+			remove_building = building_sulfur_mine
+		}
+		
+	}
+	option = {
+		name = dvg_beornia.29.b
+		
+		scope:sussy_state = {
+			add_modifier = {
+                    name = dvg_modifier_industrialists_bolstered
+                    months = 36
+        	}
+		}
+		if = {
+			limit = {
+				has_law = law_type:law_industry_banned
+			}
+			activate_law = law_type:law_laissez_faire
+		}
+		set_variable = mining_okay
+	}	
+}
+
+#Cocaine. Silver and Snow
+
+dvg_beornia.30 = {
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = europenorthamerica_opium_smoker
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/signed_contract"
+
+	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
+
+	title = dvg_beornia.30.t
+	desc = dvg_beornia.30.d
+	flavor = dvg_beornia.30.f
+
+	duration = 1
+
+	trigger = {
+		
+	}
+
+	immediate = {
+		cu:beornian = {
+			add_cultural_obsession = opium
+		}
+		if = {
+			limit = {
+				any_scope_state = {
+				has_potential_resource = bg_opium_plantations
+				}
+			}
+			random_scope_state = {
+				limit = {
+					has_potential_resource = bg_opium_plantations
+				}
+				create_building = {
+				building = building_opium_plantation
+				}
+				save_scope_as = sussy_state
+			}
+		}
+		random_scope_state = {
+			add_modifier = opium_addiction
+			months = 3
+		}
+	}
+
+	option = {
+		name = dvg_beornia.30.a
+		default_option = yes
+
+		scope:sussy_state = {
+			add_modifier = {
+                    name = dvg_modifier_industrialists_bolstered
+                    months = 36
+        	}
+			add_radicals = {
+			value = 0.25
+			}
+			remove_building = building_opium_plantation
+		}
+		set_variable = coke_banned
+		add_banned_goods = g:opium
+	}
+	option = {
+		name = dvg_beornia.30.b
+
+		cu:beornian = {
+			add_cultural_obsession = opium
+		}
+		random_scope_state = {
+			add_modifier = opium_addiction_state_mod
+		}
+		
+		scope:sussy_state = {
+			add_modifier = {
+                    name = dvg_modifier_industrialists_bolstered
+                    months = 36
+        	}
+		}
+		set_variable = coke_okay
+	}	
+}
+
+#Seeping Snow, Drug Trade
+
+dvg_beornia.31 = {
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = europenorthamerica_opium_smoker
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/signed_contract"
+
+	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
+
+	title = dvg_beornia.31.t
+	desc = dvg_beornia.31.d
+	flavor = dvg_beornia.31.f
+
+	duration = 1
+
+	trigger = {
+		
+	}
+
+	immediate = {
+		
+	}
+
+	option = {
+		name = dvg_beornia.31.a
+		default_option = yes
+		
+		
+		
+	}
+	option = {
+		name = dvg_beornia.31.b
+
+	}	
+}
+
+#New Mercia Destiny
+
+dvg_beornia.32 = {
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = ip3_agitator_reading_manifesto
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/signed_contract"
+
+	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
+
+	title = dvg_beornia.32.t
+	desc = dvg_beornia.32.d
+	flavor = dvg_beornia.32.f
+
+	duration = 1
+
+	trigger = {
+		
+	}
+
+	immediate = {
+		
+	}
+
+	option = {
+		name = dvg_beornia.32.a
+		trigger = {
+			is_player = yes
+		}
+
+		create_incident = {
+			country = root
+			value = 15
+		}
+		
+		if = {
+			limit = {
+				any_scope_character = {
+					has_variable = is_richard
+				}
+			}
+			activate_law = law_type:law_monarchy
+			random_scope_character = {
+				limit = {
+					has_variable = is_richard
+				}
+				set_character_as_ruler = yes
+			}
+			if = {
+				limit = {
+					has_game_rule = all_formable_nations
+				}
+				random_scope_character = {
+				limit = {
+					has_variable = is_richard
+				}
+				add_trait = immortal
+				}
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					any_scope_character = {
+						has_variable = is_richard
+					}
+				}
+			}
+			create_character = {
+
+            historical = yes
+            first_name = "Richard"
+            last_name = "Cavendish"
+            noble = yes
+            heir = yes
+            dna = dna_lord_wellington
+            interest_group = ig_industrialists
+            ideology = ideology_moderate
+            birth_date = 1829.01.01
+            
+            traits = {
+                hedonist
+            }
+            on_created = {
+                set_variable = {
+                    name = is_richard
+                }
+            }
+
+        	}
+		}
+		every_state_region = {
+			limit = {
+				state_region = {
+					is_homeland = cu:beornian
+				}
+			}
+			state_region = {
+				add_claim = ROOT
+			}
+		}
+		add_journal_entry = {
+			type = je_beornia_replace
+		}
+		cu:beornian = {
+			add_fervor = 20
+		}
+	}
+	option = {
+		name = dvg_beornia.32.b
+		default_option = yes
+
+
+		random_interest_group = {
+			limit = {
+				is_marginal = no
+			}
+			leader = {
+				set_ideology = ideology:ideology_adventurer
+			}
+		}
+
+
+
+		add_loyalists = {
+			value = 0.10
+		}
+
+
+	}	
+}
+
+ #Richard returns to Camelot, New Mercia takeover
+
+dvg_beornia.33 = {
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = unspecific_military_parade
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/signed_contract"
+
+	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
+
+	title = dvg_beornia.33.t
+	desc = dvg_beornia.33.d
+	flavor = dvg_beornia.33.f
+
+	duration = 1
+
+	trigger = {
+		
+	}
+
+	immediate = {
+		
+	}
+
+	option = {
+		name = dvg_beornia.33.a
+		default_option = yes
+		
+		add_loyalists = {
+			culture = cu:beornian
+			value = 0.20
+		}
+		
+	}
+	option = {
+		name = dvg_beornia.33.b
+
+		add_primary_culture = cu:lotharian
+
+		add_radicals = {
+			culture = cu:beornian
+			value = 0.20
+		}
+	}	
+}
+
+ #Overthrow Beornia's government
+
+dvg_beornia.34 = {
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = europenorthamerica_opium_smoker
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/signed_contract"
+
+	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
+
+	title = dvg_beornia.34.t
+	desc = dvg_beornia.34.d
+	flavor = dvg_beornia.34.f
+
+	duration = 1
+
+	trigger = {
+		exists = c:BEO
+		c:BEO = {
+			is_banning_goods = g:opium
+			any_scope_state = {
+			radical_fraction = {
+				value > 0.25
+			}
+			}
+		}
+	}
+
+	immediate = {
+		set_global_variable = decide_coke
+	}
+
+	option = {
+		name = dvg_beornia.33.a
+		default_option = yes
+		
+		create_diplomatic_catalyst = {
+			type = catalyst_event_negative
+			target = c:BEO
+		}
+		c:BEO = {
+			trigger_event = {
+			id = dvg_beornia.34
+			days = 60
+			}
+		}
+		
+		
+	}
+	option = {
+		name = dvg_beornia.33.b
+
+		change_relations = {
+			country = c:BEO
+			value = 20
+		}
+	}	
+}
+
+#Cookers' Revolt
+
+dvg_beornia.35 = {
+	type = country_event
+	placement = ROOT
+	event_image = {
+		video = europenorthamerica_opium_smoker
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/signed_contract"
+
+	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
+
+	title = dvg_beornia.35.t
+	desc = dvg_beornia.35.d
+	flavor = dvg_beornia.35.f
+
+	duration = 1
+
+	trigger = {
+		exists = c:BEO
+		c:BEO = {
+			is_banning_goods = g:opium
+			any_scope_state = {
+			radical_fraction = {
+				value > 0.25
+			}
+			}
+		}
+	}
+
+	immediate = {
+		random_scope_state = {
+			limit = {
+				radical_fraction = {
+				value > 0.25
+				}
+			}
+			save_scope_as = sussy_state
+		}
+		
+		create_country = {
+			tag = NME
+			origin = THIS
+			state = scope:sussy_state
+		}
+		c:NME = {
+			add_modifier = {
+				name = dvg_modifier_industrialists_bolstered
+				months = 120
+				is_decaying = yes
+			}
+			activate_law = law_type:law_free_trade
+			if = {
+				limit = {
+					is_banning_goods = g:opium
+				}
+				remove_banned_goods = g:opium
+			}
+			create_character = {
+			
+			first_name = Richard
+			last_name = Cavendish
+			historical = yes
+			ruler = yes
+			ig_leader = yes
+			birth_date = 1835.12.25
+			dna = dna_lord_wellington
+			culture = cu:beornian
+			religion = rel:atheist
+			interest_group = ig_industrialists
+			ideology = ideology_adventurer
+			traits = {
+				basic_entrepreneur
+				explorer
+				surveyor
+				erudite
+				hedonist
+			}
+			on_created = {
+			set_variable = {
+			name = is_richard
+			}
+			}
+			}
+			
+
+		}
+	}
+
+	option = {
+		name = dvg_beornia.35.a
+		default_option = yes
+		
+		play_as = c:NME
+		
+		every_scope_state = {
+			limit = {
+				radical_fraction = {
+					value > 0.50
+				}
+			}
+			set_state_owner = c:NME
+		}
+		
+		c:NME = {
+			add_journal_entry = {
+				type = je_beornia_replace
+			}
+			create_diplomatic_play = {
+				type = dp_annex_war
+				target_country = c:BEO
+
+				add_war_goal = {
+					holder = c:BEO
+					type = annex_country
+				}
+			}
+		}
+		hidden_effect = {
+			random_country = {
+			limit = {
+				has_variable = opium_wars_aggressor
+			}
+			create_diplomatic_catalyst = {
+				type = catalyst_event_positive
+				target = c:NME
+			}
+			change_relations = {
+				country = c:NME
+				value = 50
+			}
+			}
+		}
+		
+
+	}
+	option = {
+		name = dvg_beornia.34.b
+
+		every_scope_state = {
+			limit = {
+				radical_fraction = {
+					value > 0.50
+				}
+			}
+			set_state_owner = c:NME
+		}
+	}	
 }
