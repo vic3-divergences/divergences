@@ -1,4 +1,30 @@
-﻿beo_england_seperatist_button = {
+﻿
+
+capture_zero_button = {
+    name = "capture_zero_button"
+    desc = "capture_zero_button_desc"
+
+    visible = {
+       always = yes
+    }
+
+    possible = {
+        authority > 100
+		NOT = {
+			has_modifier = dvg_catching_zero
+		}
+		NOR = {
+			has_law_or_variant = law_type:law_no_police
+			has_law_or_variant = law_type:law_no_home_affairs
+		}
+	}
+    effect = {
+		add_modifier = dvg_catching_zero
+	}
+}
+
+
+beo_england_seperatist_button = {
     name = "beo_english_button"
     desc = "beo_english_button_desc"
 
@@ -114,6 +140,394 @@ beo_cancel_agitation_button = {
 	}
     effect = {
 		set_global_variable = beo_reclaim_cancelled
+	}
+}
+
+beo_hbe_button = {
+    name = "beo_declare_communion"
+    desc = "beo_declare_communion_desc"
+
+    visible = {
+        has_journal_entry = je_beornian_awakening
+		has_game_rule = all_formable_nations
+    }
+
+    possible = {
+        AND = {
+            has_journal_entry = je_beornian_awakening
+			has_journal_entry = je_beo_parishers
+			has_journal_entry = je_beo_presbyterians
+        }
+		NOT = {
+			has_law = law_type:law_total_separation
+			has_law = law_type:law_state_atheism
+			country_has_primary_culture = cu:lotharian
+			has_journal_entry = je_anglo_lotharingia
+		}
+        authority > 500
+        ruler = {
+            popularity > 100
+        }
+		
+	}
+    effect = {
+        trigger_event = {
+            id = dvg_hbe.17
+        }
+		add_modifier = making_communion
+	}
+}
+
+pendragon_fortress_button = {
+	name = "pendragon_fortress_button"
+	desc = "pendragon_fortress_button_desc"
+
+	visible = {
+		NOT = {
+			has_global_variable = pendragon_fortress_global_var
+		}
+	}
+
+	possible = {
+		any_scope_state = {
+			any_scope_building = {
+				is_building_type = building_construction_sector
+				level >= 4
+			}
+		}
+	}
+
+	effect = {
+		trigger_event = { id = dvg_hbe.19 popup = yes }
+		
+		set_global_variable = pendragon_fortress_global_var
+		show_as_tooltip = {
+			random_scope_state = {
+				limit = {
+					is_capital = yes
+				}
+				add_modifier = {
+					name = humanita_fortress_modifier
+					days = very_long_modifier_time
+				}
+			}
+		}
+	}
+}
+
+army_git_good_button = {
+	name = "good_beo_army_button"
+	desc = "good_beo_army_button_desc"
+
+	visible = {
+		any_scope_state = {
+            state_region = {
+                is_homeland = cu:beornian
+            }
+        }
+		NOT = {
+			has_global_variable = paraguay_army_reform_global_var
+		}
+	}
+
+	possible = {
+		NOT = {
+			has_modifier = dvg_modifier_armed_forces_bolstered
+			has_global_variable = beornian_army_reform_global_var
+		}
+		OR = {
+			has_law = law_type:law_professional_army
+			has_law = law_type:law_mass_conscription
+		}
+		NOR = {
+			any_scope_building = {
+				is_building_type = building_barracks
+				has_active_production_method = pm_no_organization
+			}
+			any_military_formation = {
+				filter = {
+					is_army = yes
+				}
+				any_combat_unit = {
+					has_unit_type = unit_type:combat_unit_type_irregular_infantry
+				}
+				OR = {
+				has_mobilization_option = mobilization_option:mobilization_option_liquor
+				has_mobilization_option = mobilization_option:mobilization_option_tobacco
+				}
+		
+				NOR = {
+					has_mobilization_option = mobilization_option:mobilization_option_field_hospitals
+					has_mobilization_option = mobilization_option:mobilization_option_first_aid
+				}
+				percent >= 0.50
+			}
+		}
+	}
+
+	effect = {
+		set_global_variable = beornian_army_reform_global_var
+		custom_tooltip = choose_one_of_tt
+
+		change_variable = {
+			name = new_hbe_var
+			add = 1
+		}
+		add_radicals = {
+			value = 0.20
+			interest_group = ig:ig_armed_forces
+		}
+
+		ig:ig_devout = {
+			add_modifier = {
+				name = modifier_ig_approves
+				months = 12
+				is_decaying = yes
+			}		
+		}
+		add_modifier = modifier_army_bolstered
+		
+	}
+}
+
+ragnarok_connection_button = {
+	name = "ragnarok_button"
+	desc = "ragnarok_button_desc"
+
+	visible = {
+		
+		any_scope_state = {
+			OR = {
+				state_region = s:STATE_SOUTH_ATLANTIC_ISLANDS
+				state_region = s:STATE_LANDS_END
+			}
+		}
+	}
+
+	possible = {
+		NOT = {
+			has_global_variable = ragnarok_var
+		}
+		any_scope_state = {
+			OR = {
+				state_region = s:STATE_SOUTH_ATLANTIC_ISLANDS
+				state_region = s:STATE_LANDS_END
+			}
+
+			any_scope_building = {
+				is_building_type = building_construction_sector
+				level >= 3
+			}
+			any_scope_building = {
+				is_building_type = building_barracks
+				level >= 3
+			}
+			any_scope_building = {
+				is_building_type = building_naval_base
+				level >= 3
+			}
+		}
+		OR = {
+			owns_entire_state_region = STATE_SOUTH_ATLANTIC_ISLANDS
+			owns_entire_state_region = STATE_LANDS_END
+		}		
+	}
+
+	effect = {
+		trigger_event = { id = dvg_hbe.21 popup = yes }
+		
+		set_global_variable = ragnarok_var
+			random_scope_state = {
+				limit = {
+					state_region = s:STATE_SOUTH_ATLANTIC_ISLANDS
+				}
+				add_modifier = {
+					name = ragnarok_modifier
+				}
+			}
+			random_scope_state = {
+				limit = {
+					state_region = s:STATE_LANDS_END
+				}
+				add_modifier = {
+					name = ragnarok_modifier
+				}
+			}
+	}
+}
+
+
+relocate_capital_hbe_button = {
+	name = "ragnarok_button"
+	desc = "ragnarok_button_desc"
+
+	visible = {
+		OR = {
+			any_scope_state = {
+			state_region = s:STATE_SOUTH_ATLANTIC_ISLANDS
+			is_capital = no
+			}
+			
+		}
+		
+	}
+
+	possible = {
+		is_at_war = yes
+		OR = {
+			enemy_occupation > 50
+			enemy_contested_wargoals = {
+ 			target = scope:war
+ 			value > 0.50
+			}
+		}
+	}
+
+	effect = {
+		trigger_event = { id = dvg_hbe.21 popup = yes }
+		
+		set_global_variable = ragnarok_var
+			random_scope_state = {
+				limit = {
+					state_region = s:STATE_SOUTH_ATLANTIC_ISLANDS
+				}
+				add_modifier = {
+					name = ragnarok_modifier
+				}
+		}
+	}
+}
+
+kill_john_faith_button = {
+    name = "kill_john_faith_button"
+    desc = "kill_john_faith_button_desc"
+
+    visible = {
+       any_scope_character = {
+		has_variable = john_faith_var
+	   }
+    }
+
+    possible = {
+        authority > 100
+		NOT = {
+			has_modifier = martyrizing_modifier
+		}
+	}
+    effect = {
+		trigger_event = {
+			id = dvg_hbe.44
+		}
+		add_modifier = {
+			name = martyrizing_modifier
+			months = 6
+			is_decaying = yes
+		}
+		
+		custom_tooltip = {
+			text = less_parish_tt
+			if = {
+				limit = {
+					has_journal_entry = je_beo_parishers
+				}
+				change_variable = {
+					name = parisher_var
+					subtract = 15
+				}
+			}
+		}
+		hidden_effect = {
+			trigger_event = {
+            id = dvg_hbe.24 days = 180
+        	}
+		}
+        
+	}
+}
+
+kill_robin_hood_button = {
+    name = "kill_robin_hood"
+    desc = "kill_robin_hood_desc"
+
+    visible = {
+       any_scope_character = {
+			has_variable = robin_hood_var
+
+	   }
+    }
+
+    possible = {
+        authority > 100
+	}
+    effect = {
+		add_radicals = {
+			value = 0.10
+			interest_group = ig:ig_rural_folk
+		}
+		random_scope_character = {
+			limit = {
+				has_variable = robin_hood_var
+			}
+			kill_character = yes
+		}
+		
+		custom_tooltip = {
+			text = less_parish_tt
+			trigger_event = {
+				id = dvg_hbe.46
+			}
+		}
+		
+        
+	}
+}
+
+consolidate_churches_button = {
+    name = "consolidate_churches_button"
+    desc = "consolidate_churches_button_desc"
+
+    visible = {
+		has_journal_entry = je_beornian_awakening
+    }
+
+    possible = {
+        NOT = {
+			has_modifier = {
+				name = decision_cooldown
+			}
+			has_law_or_variant = law_type:law_no_police
+		}
+	}
+    effect = {
+		random_scope_state = {
+			add_radicals = {
+				pop_type = clergymen
+				value = 0.15
+			}
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_beo_presbyterians
+			}
+			change_variable = {
+				name = presbyterian_var
+				subtract = 10
+			}
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_beo_parishers
+			}
+			change_variable = {
+				name = parisher_var
+				subtract = 10
+			}
+		}
+
+		add_modifier = {
+			name = decision_cooldown
+			months = 6
+		}
 	}
 }
 

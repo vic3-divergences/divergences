@@ -1,6 +1,7 @@
 ﻿
 namespace = dvg_lotharingia
-
+ 
+ #Lotharingia Primer
 
 dvg_lotharingia.1 = {
 	type = country_event
@@ -45,6 +46,7 @@ dvg_lotharingia.1 = {
 			add = 20
 		}
 
+
 		add_modifier = {
 			name = modifier_army_bolstered 
 			months = 240
@@ -61,7 +63,7 @@ dvg_lotharingia.1 = {
 	}
 }
 
-
+ #De Aigle Successor
 
 dvg_lotharingia.2 = {
 	type = country_event
@@ -143,7 +145,7 @@ dvg_lotharingia.2 = {
 			interest_group = ig_landowners
 			ig_leader = yes
 			ideology = ideology_moderate
-			birth_date = 1800.6.20
+			birth_date = 1811.6.20
 			traits = {
 				
 				romantic
@@ -204,7 +206,7 @@ dvg_lotharingia.2 = {
 			interest_group = ig_landowners
 			ig_leader = yes
 			ideology = ideology_moderate
-			birth_date = 1800.6.20
+			birth_date = 1811.6.20
 			traits = {
 				
 				romantic
@@ -222,7 +224,7 @@ dvg_lotharingia.2 = {
 		}
 	}
 }
-
+#Benevolent Dictatorship
 dvg_lotharingia.3 = {
 	type = country_event
 	placement = ROOT
@@ -247,18 +249,17 @@ dvg_lotharingia.3 = {
 	}
 	
 	
+	
 	# Liberte!
 	option = {
 		name = dvg_lotharingia.3.a
 		default_option = yes
 		
 		add_loyalists = {
-			value = 0.5
+			value = 0.10
+			interest_group = ig:ig_intelligentsia
 		}
-		change_variable = {
-				name = aigle_var
-				add = -10
-			}
+		
 		ai_chance = {
 			base = 50
 		}
@@ -268,22 +269,37 @@ dvg_lotharingia.3 = {
 		
 		
 		add_loyalists = {
-			value = 0.5
+			value = 0.10
+			interest_group = ig:ig_landowners
 		}
-		
-		
-		change_variable = {
-				name = aigle_var
-				add = -10
+		ROOT = {
+			every_interest_group = {
+				limit = {
+					has_ideology = ideology:ideology_caudillismo
+				}
+				remove_ideology = ideology_caudillismo
+				add_ideology = ideology_royalist
+			}
 		}
-		
+		if = {
+			limit = {
+				ig:ig_intelligentsia = {
+					ig_approval > 10
+				}
+			}
+			ig:ig_intelligentsia = {
+				leader = {
+					set_ideology = ideology:ideology_humanitarian_royalist
+				}
+			}
+		}
 
 		ai_chance = {
 			base = 50
 		}
 	}
 }
-
+#Lotharingia for Liberty
 dvg_lotharingia.4 = {
 	type = country_event
 	placement = ROOT
@@ -339,8 +355,8 @@ dvg_lotharingia.4 = {
 			commander_rank = default
 			interest_group = ig_intelligentsia
 			ig_leader = yes
-			ideology = ideology_republican_leader
-			birth_date = 1797.6.10
+			ideology = ideology_liberal_leader
+			birth_date = 1811.6.20
 			traits = {
 				
 				inspirational_orator
@@ -359,7 +375,7 @@ dvg_lotharingia.4 = {
 			commander_rank = default
 			interest_group = ig_landowners
 			ig_leader = yes
-			ideology = ideology_moderate
+			ideology = ideology_republican_leader
 			birth_date = 1800.6.20
 			traits = {
 				
@@ -379,7 +395,7 @@ dvg_lotharingia.4 = {
 	}
 }
 
-dvg_lotharingia.5 = { #Split Lotharingia up into warlord states
+dvg_lotharingia.5 = { #Cards Fall Apart Split Lotharingia up into warlord states
 	type = country_event
 	placement = root
 	duration = 3
@@ -407,70 +423,65 @@ dvg_lotharingia.5 = { #Split Lotharingia up into warlord states
 		
 		set_global_variable = lotharingia_shatters
 
-		remove_global_variable = atlantia_indepdendent
-		
-		set_variable = chinese_central_government
-
 		if = {
 			limit = {
-				has_state_in_state_region = STATE_BOURGOGNE_DU_SUD
+				has_global_variable = atlantia_independent
 			}
-			set_capital = STATE_BOURGOGNE_DU_SUD
-			change_tag = ODO
-		}
-		
+			remove_global_variable = atlantia_independent
+		}		
 		
 		every_state_region = {
 			limit = {
-				NOT = {
-					any_scope_state = {
-						owner = root
-					}
-				}
-				is_homeland = cu:lotharian
+				state_region = {
+					is_homeland = cu:lotharian
+				}			
 			}
-			add_claim = c:LOT
+			state_region = {
+				add_claim = ROOT
+			}
 		}
-		
 		if = {
-			limit = { exists = s:STATE_BOURGOGNE_DU_SUD.region_state:LOT }
-			create_country = { #Odonia
+			limit = {
+				NOT = {
+					exists = c:ODO
+				}
+			}
+			change_tag = ODO
+	
+		
+			if = {
+			limit = { exists = s:STATE_LORRAINE_ATLANTIQUE.region_state:ODO }
+			create_country = { 
 				tag = LOT
 				origin = this
-				state = s:STATE_BOURGOGNE_DU_SUD.region_state:LOT
-				state = s:STATE_TRANSFLEUVE.region_state:LOT
+				state = s:STATE_LORRAINE_ATLANTIQUE.region_state:ODO
+				state = s:STATE_BRUXELLES_SUR_ODON.region_state:ODO
+				state = s:STATE_SERMOISE_SUR_ODON.region_state:ODO
 
 				on_created = {
-					warlord_setup_effect = yes
 					set_variable = warlord_state
 				}
 			}
 			c:LOT = { save_scope_as = scope_ODO
 			change_relations = {
 				country = c:ATL
-				value = 50
+				value = -50
 			}
 			}
-			if = {
-				limit = { exists = s:STATE_BOURGOGNE_DU_SUD.region_state:LOT }
-				s:STATE_BOURGOGNE_DU_SUD.region_state:LOT = { set_state_owner = c:ODO }
-			}
-			if = {
-				limit = { exists = s:STATE_TRANSFLEUVE.region_state:LOT }
-				s:STATE_TRANSFLEUVE.region_state:LOT = { set_state_owner = c:ODO }
+			
 			}
 		}
+		
 
 		if = {
-			limit = { exists = s:STATE_NOUVELLE_ALSACE.region_state:LOT }
+			limit = { exists = s:STATE_NOUVELLE_ALSACE.region_state:ODO }
 			create_country = { #Nouvelle Alsace
 				tag = NEA
 				origin = this
-				state = s:STATE_NOUVELLE_ALSACE.region_state:LOT
-				state = s:STATE_LIBREVILLE.region_state:LOT
+				state = s:STATE_NOUVELLE_ALSACE.region_state:ODO
+				state = s:STATE_LIBREVILLE.region_state:ODO
 
 				on_created = {
-					warlord_setup_effect = yes
 					set_variable = warlord_state
 				}
 			}
@@ -480,22 +491,21 @@ dvg_lotharingia.5 = { #Split Lotharingia up into warlord states
 				value = 50
 			}
 			change_relations = {
-				country = c:ODO
+				country = c:LOT
 				value = 50
 			}
 			}
 		}
 
 		if = {
-			limit = { exists = s:STATE_COTE_DU_CAFE.region_state:LOT }
+			limit = { exists = s:STATE_COTE_DU_CAFE.region_state:ODO }
 			create_country = { #Atlantia
 				tag = ATL 
 				origin = this
-				state = s:STATE_COTE_DU_CAFE.region_state:LOT
-				state = s:STATE_GOUAS.region_state:LOT
+				state = s:STATE_COTE_DU_CAFE.region_state:ODO
+				state = s:STATE_GOUAS.region_state:ODO
 
 				on_created = {
-					warlord_setup_effect = yes
 					set_variable = warlord_state
 				}
 			}
@@ -504,22 +514,21 @@ dvg_lotharingia.5 = { #Split Lotharingia up into warlord states
 			
 		}
 		if = {
-			limit = { exists = s:STATE_AVALON.region_state:LOT
+			limit = { exists = s:STATE_AVALON.region_state:ODO
 			NOT = {exists = c:BEO}
 			}
 			create_country = { #Beornia
 				tag = BEO
 				origin = this
-				state = s:STATE_AVALON.region_state:LOT
-				state = s:STATE_GODWINSON.region_state:LOT
-				state = s:STATE_EOFERWIC.region_state:LOT
-				state = s:STATE_WESSEX.region_state:LOT
-				state = s:STATE_NEW_CORNWALL.region_state:LOT
-				state = s:STATE_NEW_LONDON.region_state:LOT
-				state = s:STATE_NORTHUMBRIA.region_state:LOT
+				state = s:STATE_AVALON.region_state:ODO
+				state = s:STATE_GODWINSON.region_state:ODO
+				state = s:STATE_EOFERWIC.region_state:ODO
+				state = s:STATE_WESSEX.region_state:ODO
+				state = s:STATE_NEW_CORNWALL.region_state:ODO
+				state = s:STATE_NEW_LONDON.region_state:ODO
+				state = s:STATE_NORTHUMBRIA.region_state:ODO
 
 				on_created = {
-					warlord_setup_effect = yes
 					set_variable = warlord_state
 				}
 			}
@@ -529,19 +538,30 @@ dvg_lotharingia.5 = { #Split Lotharingia up into warlord states
 		}
 
 		if = {
-			limit = { exists = s:STATE_MARCHES_OUEST.region_state:LOT }
+			limit = { 
+				OR = {
+					cu:guarani = {
+						culture_current_fervor > 49
+					}
+					has_variable = white_lot_favored
+				}
+				NOT = {
+					any_country = {
+						country_has_primary_culture = cu:guarani
+					}
+				}
+			}
 			create_country = { #Taragui
 				tag = TGI
 				origin = this
-				state = s:STATE_CHACO_BOREAL.region_state:LOT
-				state = s:STATE_MARCHES_OUEST.region_state:LOT
-				state = s:STATE_GRAND_CHACO.region_state:LOT
-				state = s:STATE_EOFERWIC.region_state:LOT
-				state = s:STATE_NORTHUMBRIA.region_state:LOT
-				state = s:STATE_AMAZONIE_INFERIEURE.region_state:LOT
+				state = s:STATE_CHACO_BOREAL.region_state:ODO
+				state = s:STATE_MARCHES_OUEST.region_state:ODO
+				state = s:STATE_GRAND_CHACO.region_state:ODO
+				state = s:STATE_EOFERWIC.region_state:ODO
+				state = s:STATE_NORTHUMBRIA.region_state:ODO
+				state = s:STATE_AMAZONIE_INFERIEURE.region_state:ODO
 
 				on_created = {
-					warlord_setup_effect = yes
 					set_variable = warlord_state
 				}
 			}
@@ -560,8 +580,14 @@ dvg_lotharingia.5 = { #Split Lotharingia up into warlord states
 			}
 			}
 		}
-
-		
+		if = {
+			limit = {
+				any_scope_country = {
+					country_has_primary_culture = cu:guarani
+				}
+			}
+			save_scope_as = scope_TGI
+		}
 
 		every_subject_or_below = {
 			limit = {
@@ -605,7 +631,7 @@ dvg_lotharingia.5 = { #Split Lotharingia up into warlord states
 					has_variable = var_warlord_four
 				}
 			}
-			save_scope_as = scope_random_warlord_two
+			save_scope_as = scope_NEA
 			set_variable = var_warlord_two
 			}
 		
@@ -638,12 +664,40 @@ dvg_lotharingia.5 = { #Split Lotharingia up into warlord states
 					has_variable = var_warlord_three
 				}
 			}
-			save_scope_as = scope_random_warlord_four
+			save_scope_as = scope_TGI
 			set_variable = var_warlord_four
 			}
 			
 		}
+	}
+	option = {
+		default_option = yes
+		name = dvg_lotharingia.5.a
+		
+		create_diplomatic_play = {
+			type = dp_rebellion_annex
+			target_country = c:LOT
 
+			add_war_goal = {
+				holder = c:LOT
+				type = annex_country
+				target_country = ROOT
+			}
+		}
+
+
+		create_diplomatic_play = {
+			type = dp_rebellion_annex
+
+			target_country = c:NEA
+
+			add_war_goal = {
+				holder = c:NEA
+				type = independence
+				target_country = ROOT
+			}
+		}
+		
 	}
 
 	option = {
@@ -652,55 +706,32 @@ dvg_lotharingia.5 = { #Split Lotharingia up into warlord states
 			exists = scope:scope_random_warlord_one
 			is_player = yes
 		}
-		c:LOT = {
-		create_diplomatic_play = {
-			name = guarani_independence
+		play_as = c:LOT
 		
-			target_country = c:TGI
-			
-			war = yes
-			
+		create_diplomatic_play = {
 			type = dp_rebellion_annex
-			
+			target_country = c:LOT
+
 			add_war_goal = {
-				holder = c:TGI
-				type = conquer_state
-				target_state = s:STATE_BRUXELLES_SUR_ODON.region_state:LOT
-				target_country = c:LOT
+				holder = c:LOT
+				type = annex_country
+				target_country = ROOT
 			}
 		}
+
+
 		create_diplomatic_play = {
-			name = new_alsace_independence
-		
-			target_country = c:NEA
-			
-			war = yes
-			
 			type = dp_rebellion_annex
-			
+
+			target_country = c:NEA
+
 			add_war_goal = {
 				holder = c:NEA
-				type = humiliation
-				target_country = c:LOT
+				type = independence
+				target_country = ROOT
 			}
 		}
-		create_diplomatic_play = {
-			name = coup_of_odonia
 		
-			target_country = c:ODO
-			
-			war = yes
-			
-			type = dp_rebellion_annex
-			
-			add_war_goal = {
-				holder = c:ODO
-				type = annex_country
-				target_country = c:LOT
-			}
-		}			
-	}
-		play_as = scope:scope_random_warlord_one
 	}
 
 	option = {
@@ -709,55 +740,34 @@ dvg_lotharingia.5 = { #Split Lotharingia up into warlord states
 			exists = scope:scope_random_warlord_two
 			is_player = yes
 		}
-		c:LOT = {
-		create_diplomatic_play = {
-			name = guarani_independence
 		
-			target_country = c:TGI
-			
-			war = no
-			
+
+		create_diplomatic_play = {
 			type = dp_rebellion_annex
-			
+			target_country = c:LOT
+
 			add_war_goal = {
-				holder = c:TGI
-				type = conquer_state
-				target_state = s:STATE_BRUXELLES_SUR_ODON.region_state:LOT
-				target_country = c:LOT
+				holder = c:LOT
+				type = annex_country
+				target_country = ROOT
 			}
 		}
+
+
 		create_diplomatic_play = {
-			name = new_alsace_independence
-		
-			target_country = c:NEA
-			
-			war = no
-			
 			type = dp_rebellion_annex
-			
+
+			target_country = c:NEA
+
 			add_war_goal = {
 				holder = c:NEA
-				type = humiliation
-				target_country = c:LOT
+				type = independence
+				target_country = ROOT
 			}
 		}
-		create_diplomatic_play = {
-			name = coup_of_odonia
-		
-			target_country = c:ODO
-			
-			war = yes
-			
-			type = dp_rebellion_annex
-			
-			add_war_goal = {
-				holder = c:ODO
-				type = annex_country
-				target_country = c:LOT
-			}
-		}			
-	}
-		play_as = scope:scope_random_warlord_two
+
+
+		play_as = c:NEA
 	}
 
 	option = {
@@ -766,168 +776,80 @@ dvg_lotharingia.5 = { #Split Lotharingia up into warlord states
 			exists = scope:scope_random_warlord_three
 			is_player = yes
 		}
-		c:LOT = {
-		create_diplomatic_play = {
-			name = guarani_independence
 		
-			target_country = c:TGI
-			
-			war = no
-			
+		create_diplomatic_play = {
 			type = dp_rebellion_annex
-			
+			target_country = c:LOT
+
 			add_war_goal = {
-				holder = c:TGI
-				type = conquer_state
-				target_state = s:STATE_BRUXELLES_SUR_ODON.region_state:LOT
-				target_country = c:LOT
+				holder = c:LOT
+				type = annex_country
+				target_country = ROOT
 			}
 		}
+
+
 		create_diplomatic_play = {
-			name = new_alsace_independence
-		
-			target_country = c:NEA
-			
-			war = no
-			
 			type = dp_rebellion_annex
-			
+
+			target_country = c:NEA
+
 			add_war_goal = {
 				holder = c:NEA
-				type = humiliation
-				target_country = c:LOT
+				type = independence
+				target_country = ROOT
 			}
 		}
-		create_diplomatic_play = {
-			name = coup_of_odonia
-		
-			target_country = c:ODO
-			
-			war = yes
-			
-			type = dp_rebellion_annex
-			
-			add_war_goal = {
-				holder = c:ODO
-				type = annex_country
-				target_country = c:LOT
-			}
-		}			
-	}
-		play_as = scope:scope_random_warlord_three
+		play_as = c:ATL
 	}
 
 	option = {
 		name = dvg_lotharingia.5.aa
 		trigger = {
-			exists = scope:scope_random_warlord_four
+			exists = scope:scope_TGI
 			is_player = yes
 		}
-		c:LOT = {
-		
 		create_diplomatic_play = {
-			name = coup_of_odonia
-		
-			target_country = c:ODO
-			
-			war = yes
-			
 			type = dp_rebellion_annex
-			
+			war = yes
+			target_country = c:LOT
+
 			add_war_goal = {
-				holder = c:ODO
+				holder = c:LOT
 				type = annex_country
-				target_country = c:LOT
+				target_country = ROOT
 			}
 		}
-	   create_diplomatic_play = {
-			name = new_alsace_independence
-		
-			target_country = c:NEA
-			
-			war = yes
-			
+
+
+		create_diplomatic_play = {
 			type = dp_rebellion_annex
-			
+
+			target_country = c:NEA
+
 			add_war_goal = {
 				holder = c:NEA
-				type = humiliation
-				target_country = c:LOT
+				type = independence
+				target_country = ROOT
 			}
 		}
-	   create_diplomatic_play = {
-			name = guarani_independence
-		
-			target_country = c:TGI
-			
-			war = no
-			
-			type =dp_rebellion_annex
-			
+		create_diplomatic_play = {
+			type = dp_rebellion_annex
+
+			target_country = scope:scope_TGI
+
 			add_war_goal = {
-				holder = c:TGI
-				type = conquer_state
-				target_state = s:STATE_BRUXELLES_SUR_ODON.region_state:LOT
-				target_country = c:LOT
+				holder = scope:scope_TGI
+				type = independence
+				target_country = ROOT
 			}
 		}
-	}
-		play_as = scope:scope_random_warlord_four
+
+		play_as = scope:scope_TGI
+
 	}
 
-	option = {
-		default_option = yes
-		
-		name = dvg_lotharingia.5.a
-		c:LOT = {
-		create_diplomatic_play = {
-			name = guarani_independence
-		
-			target_country = c:TGI
-			
-			war = no
-			
-			type = dp_rebellion_annex
-			
-			add_war_goal = {
-				holder = c:TGI
-				type = conquer_state
-				target_state = s:STATE_BRUXELLES_SUR_ODON.region_state:LOT
-				target_country = c:LOT
-			}
-		}
-		create_diplomatic_play = {
-			name = new_alsace_independence
-		
-			target_country = c:NEA
-			
-			war = no
-			
-			type = dp_rebellion_annex
-			
-			add_war_goal = {
-				holder = c:NEA
-				type = humiliation
-				target_country = c:LOT
-			}
-		}
-		create_diplomatic_play = {
-			name = coup_of_odonia
-		
-			target_country = c:ODO
-			
-			war = no
-			
-			type = dp_rebellion_annex
-			
-			add_war_goal = {
-				holder = c:ODO
-				type = annex_country
-				target_country = c:LOT
-			}
-		}			
-	}
-	}
+	
 }
 
 dvg_lotharingia.6 = {
@@ -1312,11 +1234,17 @@ dvg_lotharingia.10 = {
 				}
 			}
 		}
-		
-		change_variable = {
-				name = aigle_var
-				add = 20
+		cu:lotharian = {
+			add_fervor = -10
+		}
+		ruler = {
+			add_modifier = {
+				name = sovereignty_defender
+				months = 60
+				is_decaying = yes
 			}
+		}
+		
 		scope:atlantia_state = {
 			add_modifier = {
 			name = dvg_atlantia_support
@@ -1347,54 +1275,53 @@ dvg_lotharingia.11 = {
 	duration = 1
 
 	trigger = {
-	    year = 1836
+	}
+	immediate = {
+		every_interest_group_in_government = {
+				save_scope_as = government_ig_scope
+		}
 	}
 	
 	
-	# Vive!
+	# Closer ties to Atlantia
 	option = {
 		name = dvg_lotharingia.11.a
 		default_option = yes
 		remove_primary_culture = cu:lotharian
 		change_relations = {
 				country = c:ATL
-				value = -15
-			}
-		 change_relations = {
-				country = c:LOT
-				value = -30
-			}
-
-		c:BRG = {
-			create_diplomatic_pact = {
-				country = c:NEA
-				type = dominion 
-			}
+				value = 50
 		}
+		create_diplomatic_catalyst = {
+			type = catalyst_event_positive
+			target = c:ATL
+		}
+
 		
 		ai_chance = {
 			base = 30
 		}
 	}
 	option = {
+		#Closer Ties to Burgundy
 		name = dvg_lotharingia.11.b
 		remove_primary_culture = cu:lotharian
+		add_primary_culture = cu:burgundian
 		change_relations = {
-				country = c:ATL
-				value = -15
-			}
-		 change_relations = {
-				country = c:LOT
-				value = -30
-			}
-
-		c:BRG = {
-			create_diplomatic_pact = {
-				country = c:NEA
-				type = puppet
-			}
+				country = c:BRG
+				value = 30
 		}
-		play_as = c:BRG
+		create_political_lobby = {  
+			type = lobby_pro_country
+			target = c:BRG
+
+			add_interest_group = scope:government_ig_scope
+		}
+
+		create_diplomatic_catalyst = {
+			type = catalyst_event_positive
+			target = c:BRG
+		}
 
 		ai_chance = {
 			base = 15
@@ -1402,29 +1329,27 @@ dvg_lotharingia.11 = {
 		
 	}
 	option = {
+		#Retake Lotharingia
 		name = dvg_lotharingia.11.c
 
-		change_relations = {
-				country = c:ATL
-				value = -15
-			}
-		change_relations = {
-				country = c:LOT
-				value = -30
+		remove_primary_culture = cu:atlantian
+
+		create_diplomatic_catalyst = {
+			type = catalyst_event_negative
+			target = c:LOT
 		}
-		create_treaty = {
-			#name = treaty_name_not_set_yet
-			first_country = c:BRG
-			second_country = c:NEA
-
-			is_draft = no
-			binding_period = { years = 5 }
-
-			articles_to_create = {
-				{ # Defensive Pact
-					article = defensive_pact
+		create_diplomatic_catalyst = {
+			type = catalyst_event_negative
+			target = c:ATL
+		}
+		
+		every_state_region = {
+			limit = {
+				state_region = {
+					is_homeland = cu:lotharian
 				}
 			}
+			add_claim = root
 		}
 		
 		ai_chance = {
@@ -1496,16 +1421,19 @@ dvg_lotharingia.12 = { #A statue made of the king
 		name = dvg_lotharingia.12.a
 		add_modifier = {
 			name = modifier_statue_of_ruler #prestige
-			days = normal_modifier_time
 		}
-		change_variable = {
-				name = aigle_var
-				add = 10
-			}
+		
 		add_loyalists = {
 			value = 0.15
 			culture = cu:beornian
 		}
+		cu:lotharian = {
+			add_fervor = -5
+		}
+		cu:beornian = {
+			add_fervor = -5
+		}
+		
 		change_relations = {
 				country = c:BEO
 				value = 10
@@ -1587,7 +1515,8 @@ dvg_lotharingia.13 = { #Statue torn down
 				country = c:BEO
 				value = -20
 			}
-			}
+		}
+		remove_modifier = modifier_statue_of_ruler
 		
 	}
 
@@ -1630,8 +1559,7 @@ dvg_lotharingia.13 = { #Statue torn down
 		}
 	}
 }
-
-
+#Dissolution of BLT
 dvg_lotharingia.14 = {
 	type = country_event
 	placement = ROOT
@@ -1652,37 +1580,84 @@ dvg_lotharingia.14 = {
 	duration = 1
 
 	trigger = {
-	    
+	    NOR = {
+			exists = c:BEO
+			exists = c:LOT
+		}
 	}
 
 	immediate = {
+		random_scope_state = {
+			limit = {
+				state_region = {
+					is_homeland = cu:beornian
+				}
+			}
+			save_scope_as = BEO_state
+		}
+		random_scope_state = {
+			limit = {
+				state_region = {
+					is_homeland = cu:lotharian
+				}
+			}
+			save_scope_as = LOT_state
+		}
+
 		if = {
-			limit = { exists = s:STATE_AVALON.region_state:BLT }
+			limit = { 
+				cu:lotharian = {
+					culture_current_fervor > 49
+				}
+			}
 			create_country = { #Lotharingia
 				tag = LOT
 				origin = this
-				state = s:STATE_LORRAINE_ATLANTIQUE.region_state:BLT
-				state = s:STATE_NOUVELLE_ALSACE.region_state:BLT
-				state = s:STATE_LIBREVILLE.region_state:BLT
-				state = s:STATE_BOURGOGNE_DU_SUD.region_state:BLT
-				state = s:STATE_BRUXELLES_SUR_ODON.region_state:BLT
-				state = s:STATE_MARCHES_OUEST.region_state:BLT
-				state = s:STATE_COTE_DU_CAFE.region_state:BLT
+				state = scope:LOT_state
 
-				on_created = {
-					warlord_setup_effect = yes
-					set_variable = warlord_state
-				}
 			}
 			
 			c:LOT = { save_scope_as = scope_LOT
-			
-			activate_law = law_type:law_parliamentary_republic
-			
-				
+						activate_law = law_type:law_parliamentary_republic
+			}
+		}	
+		
+		if = {
+			limit = { 
+				cu:beornian = {
+					culture_current_fervor > 49
+				}
+			}
+			create_country = { #Lotharingia
+				tag = BEO
+				origin = this
+				state = scope:BEO_state
+
 			}
 			
-			
+			c:BEO = { save_scope_as = scope_BEO
+				activate_law = law_type:law_theocracy
+				create_character = {
+					first_name = "John"
+					last_name = "Faith"
+					ruler = yes
+					historical = yes 
+					birth_date = 1806.7.04
+					interest_group = ig_rural_folk
+					ideology = ideology_ethno_nationalist
+					traits = {
+						pious
+						wrathful
+						bigoted
+						firebrand
+						plains_commander
+						celebrity_commander
+					}
+					on_created = {
+						set_variable = john_faith_var
+					}
+				}
+			}
 		}	
 	}
 	
@@ -1691,9 +1666,25 @@ dvg_lotharingia.14 = {
 	option = {
 		name = dvg_lotharingia.14.a
 		default_option = yes
-		
-		create_diplomatic_play = {
-			name = new_alsace_independence
+
+		if = {
+			limit = {
+				exists = c:LOT
+			}
+			every_scope_state = {
+			limit = {
+				is_capital = no
+				state_region = {
+					is_homeland = cu:lotharian
+				}
+				culture_percent_state = {
+					target = cu:lotharian
+					value > 0.35
+				}
+			}
+			set_state_owner = c:LOT
+			}
+			create_diplomatic_play = {
 		
 			target_country = c:LOT
 			
@@ -1701,13 +1692,47 @@ dvg_lotharingia.14 = {
 			
 			type = dp_rebellion_annex
 			
-			add_war_goal = {
+				add_war_goal = {
 				holder = c:LOT
-				type = humiliation
+				type = independence
 				target_country = c:BLT
+				}
+			}
+		}
+		if = {
+			limit = {
+				exists = c:BEO
+			}
+			every_scope_state = {
+			limit = {
+				is_capital = no
+				state_region = {
+					is_homeland = cu:beornian
+				}
+				culture_percent_state = {
+					target = cu:beornian
+					value > 0.35
+				}
+			}
+			set_state_owner = c:BEO
+			}
+			create_diplomatic_play = {
+		
+			target_country = c:BEO
+			
+			war = yes
+			
+			type = dp_rebellion_annex
+			
+				add_war_goal = {
+				holder = c:BEO
+				type = independence
+				target_country = c:BLT
+				}
 			}
 		}
 
+		
 		ai_chance = {
 			base = 20
 		}
@@ -1716,13 +1741,35 @@ dvg_lotharingia.14 = {
 		name = dvg_lotharingia.14.b
 		default_option = yes
 		
-		change_tag = BEO
+		if = {
+			limit = {
+				exists = c:LOT
+			}
+			remove_primary_culture = cu:lotharian
+			change_relations = {
+				country = c:LOT
+				value = 30
+			}
+		}
+
+		if = {
+			limit = {
+				exists = c:BEO
+			}
+			remove_primary_culture = cu:beornian
+			change_relations = {
+				country = c:BEO
+				value = 30
+			}
+		}
+
 
 		ai_chance = {
 			base = 80
 		}
 	}
 }
+
 # De Aigle criticized
 dvg_lotharingia.15 = {
 	type = country_event
@@ -1745,10 +1792,24 @@ dvg_lotharingia.15 = {
 
 	trigger = {
 	    has_journal_entry = je_lotharian_house_of_cards
-
 		has_variable = aigle_var
-		this = { var:aigle_var >= 140 }
-
+		OR = {
+			radical_fraction = {
+			value > 0.40
+			}
+			AND = {
+				has_modifier = dvg_fragile_country
+				OR = {
+					cu:atlantian = {
+						culture_current_fervor > 49
+					}
+					cu:lotharian = {
+						culture_current_fervor > 49
+					}
+				}
+			}
+		}
+		
 		has_technology_researched = mass_communication
 	}
 	
@@ -1764,7 +1825,6 @@ dvg_lotharingia.15 = {
 			culture = cu:lotharian
 		}
 
-		c:ATL = { trigger_event = { id = dvg_lotharingia.16 popup = yes days = 15 } }
 
 		ai_chance = {
 			base = 100
@@ -1870,7 +1930,6 @@ dvg_lotharingia.17 = {
 				state = s:STATE_TRANSFLEUVE.region_state:LOT
 
 				on_created = {
-					warlord_setup_effect = yes
 					set_variable = warlord_state
 				}
 			}
@@ -1890,15 +1949,14 @@ dvg_lotharingia.17 = {
 			}
 		}
 		if = {
-			limit = { exists = s:STATE_NOUVELLE_ALSACE.region_state:LOT }
+			limit = { exists = s:STATE_NOUVELLE_ALSACE.region_state:ODO }
 			create_country = { #Nouvelle Alsace
 				tag = NEA
 				origin = this
-				state = s:STATE_NOUVELLE_ALSACE.region_state:LOT
-				state = s:STATE_LIBREVILLE.region_state:LOT
+				state = s:STATE_NOUVELLE_ALSACE.region_state:ODO
+				state = s:STATE_LIBREVILLE.region_state:ODO
 
 				on_created = {
-					warlord_setup_effect = yes
 					set_variable = warlord_state
 				}
 			}
@@ -2168,4 +2226,1458 @@ dvg_lotharingia.21 = {
 			base = 100
 		}
 	}	
+}
+
+dvg_lotharingia.22 = { #Man of God
+	type = country_event
+	placement = ROOT
+
+	title = dvg_lotharingia.20.t
+	desc = dvg_lotharingia.20.d
+	flavor = dvg_lotharingia.20.f
+	
+	event_image = {
+		video = "unspecific_politicians_arguing"
+	}
+
+	trigger = {
+
+	}
+
+	option = {
+		name = dvg_lotharingia.20.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 100
+		}
+		if = {
+			limit = {
+				has_law = law_type:law_autocracy
+				has_law = law_type:law_presidential_republic
+			}
+			ig:ig_devout = {
+				remove_ideology = ideology_moralist
+				add_ideology = ideology_caudillismo
+			}
+		}
+		add_loyalists = {
+			value = 0.20
+			religion = rel:protestant
+		}
+
+		if = {
+			limit = {
+				has_law = law_type:law_autocracy
+			}
+			ruler = {
+				add_modifier = war_hero_cult
+				if = {
+					limit = {
+						NOT = {
+							has_trait = pious
+						}
+					}
+					add_trait = pious
+				}
+			}
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_lotharian_house_of_cards
+			}
+			change_variable = {
+				name = aigle_var
+				subtract = 30
+			}
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_equinoxea_insurgency
+			}
+			change_variable = {
+				name = equinoxea_var
+				subtract = 30
+			}
+		}
+		if = {
+			limit = {
+				has_journal_entry = je_beo_hbe
+			}
+			change_variable = {
+				name = new_hbe_var
+				add = 1
+			}
+		}
+	}
+}
+
+#Great Awakening dies out
+dvg_lotharingia.23 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_lotharingia.23.t
+	desc = dvg_lotharingia.23.d
+	flavor = dvg_lotharingia.23.f
+	
+	event_image = {
+		video = "southamerica_election"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+	    
+	}
+	
+	
+	# Vive!
+	option = {
+		name = dvg_lotharingia.23.a
+		default_option = yes
+
+		if = {
+			limit = {
+				NOT = {
+					has_law = law_type:law_total_separation
+				}
+			}
+			activate_law = law_type:law_total_separation
+		}
+		
+		
+		ai_chance = {
+			base = 100
+		}
+		
+	}
+
+	option = {
+		name = dvg_lotharingia.23.b
+		trigger = {
+			OR = {
+				any_interest_group = {
+				law_stance = {
+					law = law_type:law_state_atheism
+					value > neutral
+				}
+			}
+				exists = movement_type:movement_nihilist
+				exists = movement_type:movement_positivist
+			}
+			
+		}
+
+		set_state_religion = rel:atheist
+		every_scope_state = {
+			convert_population = {
+					target = rel:atheist
+					value = 0.10
+			}
+		}
+		
+		ai_chance = {
+			base = 100
+		}
+		
+	}
+}
+
+dvg_lotharingia.24 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_lotharingia.24.t
+	desc = dvg_lotharingia.24.d
+	flavor = dvg_lotharingia.24.f
+	
+	event_image = {
+		video = "unspecific_politicians_arguing"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+	    
+	}
+	
+	
+	# Vive!
+	option = {
+		name = dvg_lotharingia.19.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 100
+		}
+		add_modifier = {
+			name = great_awakening_modifier
+			months = 24
+			is_decaying = yes
+		}
+	}
+}
+
+#Anglican Privileges
+
+dvg_lotharingia.25 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_lotharingia.25.t
+	desc = dvg_lotharingia.25.d
+	flavor = dvg_lotharingia.25.f
+	
+	event_image = {
+		video = "unspecific_politicians_arguing"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+		any_country = {
+			country_has_primary_culture = cu:beornian
+		}
+		any_scope_state = {
+			NOT = {
+				has_modifier = missionary_schools_hospitals
+			}
+		}
+	}
+	immediate = {
+		random_country = {
+			limit = {
+				country_has_primary_culture = cu:beornian
+			}
+			save_scope_as = scope_BEO
+		}
+	}
+	
+	
+	# Vive!
+	option = {
+		name = dvg_lotharingia.25.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 100
+		}
+		create_diplomatic_catalyst = {
+			type = catalyst_event_negative
+			target = scope:scope_BEO
+		}
+		cu:beornian = {
+			add_fervor = 10
+		}
+	}
+
+	option = {
+		name = dvg_lotharingia.25.b
+		default_option = yes
+		
+		create_diplomatic_catalyst = {
+			type = catalyst_event_positive
+			target = scope:scope_BEO
+		}
+		random_scope_state = {
+			add_modifier = {
+			name = missionary_schools_hospitals
+			}
+		}
+		add_loyalists = {
+			value = 0.10
+			religion = rel:protestant
+		}
+		add_loyalists = {
+			value = 0.25
+			interest_group = ig:ig_devout
+		}
+		cu:beornian = {
+			add_fervor = -10
+		}
+	}
+}
+
+#Anglican in Paraguay
+
+dvg_lotharingia.26 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_lotharingia.26.t
+	desc = dvg_lotharingia.26.d
+	flavor = dvg_lotharingia.26.f
+	
+	event_image = {
+		video = "unspecific_politicians_arguing"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+		
+		any_scope_state = {
+			state_region = {
+				is_homeland = cu:guarani
+			}
+			any_scope_pop = {
+				culture = cu:beornian
+			}
+		}
+
+	}
+	immediate = {
+		random_country = {
+			limit = {
+				country_has_primary_culture = cu:beornian
+			}
+			save_scope_as = scope_BEO
+		}
+	}
+	
+	
+	# Vive!
+	option = {
+		name = dvg_lotharingia.26.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 100
+		}
+		create_diplomatic_catalyst = {
+			type = catalyst_event_negative
+			target = scope:scope_BEO
+		}
+		cu:beornian = {
+			add_fervor = 10
+		}
+		cu:guarani = {
+			add_fervor = -10
+		}
+		cu:lotharian = {
+			add_fervor = -10
+		}
+	}
+	option = {
+		name = dvg_lotharingia.26.b
+		default_option = yes
+		
+		create_diplomatic_catalyst = {
+			type = catalyst_event_positive
+			target = scope:scope_BEO
+		}
+		random_scope_state = {
+			limit = {
+				is_homeland = cu:guarani
+			}
+			add_modifier = {
+			name = missionary_schools_hospitals
+			}
+		}
+		add_loyalists = {
+			value = 0.10
+			religion = rel:protestant
+		}
+		add_loyalists = {
+			value = 0.25
+			interest_group = ig:ig_devout
+		}
+		cu:guarani = {
+			add_fervor = 10
+		}
+		cu:lotharian = {
+			add_fervor = 10
+		}
+		cu:beornian = {
+			add_fervor = -10
+		}
+	}
+}
+
+#Help Equinoxea
+dvg_lotharingia.27 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_lotharingia.27.t
+	desc = dvg_lotharingia.27.d
+	flavor = dvg_lotharingia.27.f
+	
+	event_image = {
+		video = "gfx/event_pictures/southamerica_slaves_night.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	    
+	}
+	immediate = {
+	c:EQX = { save_scope_as = scope_EQX }
+	c:AMA = {
+			random_scope_state = {
+				limit = {
+					state_region = s:STATE_FRANCE_ANTARTIQUE
+				}
+				save_scope_as = dvg_amazonie
+			}
+			save_scope_as = scope_AMA
+		}
+	ig:ig_landowners = {
+			save_scope_as = planteurs_ig
+			leader = {
+				save_scope_as = landowners_leader
+			}
+		}
+	}
+	
+	
+	option = {
+		name = dvg_lotharingia.27.a
+		default_option = yes
+		
+		add_radicals = {
+			value = 0.15
+			culture = cu:afro_american
+		}
+		cu:afro_amerigan = {
+			add_fervor = 15
+		}
+		create_bidirectional_truce = {
+			country = c:AMA
+			months = 48
+		}
+		change_relations = {
+			country = c:AMA
+			value = 20
+		}
+
+
+		ai_chance = {
+			base = 100
+		}
+	}
+
+
+	option = {
+		name = dvg_lotharingia.27.b
+
+
+		add_loyalists = {
+			value = 0.10
+			culture = cu:afro_amerigan
+		}
+		cu:afro_amerigan = {
+			add_fervor = -15
+		}
+		cu:equinoxien = {
+			add_fervor = -15
+		}
+		cu:lotharian = {
+			add_fervor = 5
+		}
+		cu:antarctican = {
+			add_fervor = 10
+		}
+		create_diplomatic_catalyst = {
+			type = catalyst_event_positive
+			target = c:EQX
+		}
+		create_treaty = {
+			binding_period = { years = 5  }
+			articles_to_create = { 
+
+				{
+				article = military_assistance
+				source_country = c:LOT
+				target_country = c:EQX
+				}
+			}
+		}
+		c:EQX = {
+			post_notification = lot_help_tt
+			add_modifier = {
+				name = dvg_atlantia_support
+				months = 24
+				is_decaying = yes
+			}	
+		}
+		create_bidirectional_truce = {
+			country = c:AMA
+			months = 48
+		}
+		add_modifier = {
+			name = dvg_atlantia_giving_support
+			months = 24
+			is_decaying = yes
+		}
+		add_radicals = {
+			value = 0.10
+			interest_group = ig:ig_landowners
+		}
+
+		change_relations = {
+			country = c:AMA
+			value = -10
+		}
+		change_relations = {
+			country = c:EQX
+			value = 15
+		}
+		create_incident = {
+			country = THIS
+			value = 10
+		}
+
+		ai_chance = {
+			base = 100
+		}
+	}
+
+	option = {
+		name = dvg_lotharingia.27.c
+
+		add_loyalists = {
+			value = 0.10
+			culture = cu:afro_american
+		}
+		c:EQX = {
+			set_owes_obligation_to = {
+				country = c:LOT
+				setting = yes
+			}
+		}
+		add_radicals = {
+			value = 0.25
+			interest_group = ig:ig_landowners
+		}
+		cu:afro_amerigan = {
+			add_fervor = -15
+		}
+		cu:equinoxien = {
+			add_fervor = -15
+		}
+		cu:lotharian = {
+			add_fervor = 10
+		}
+		cu:antarctican = {
+			add_fervor = 15
+		}
+		if = {
+			limit = {
+				any_diplomatic_play = {
+				initiator_is = c:EQX
+
+				}
+			}
+			every_diplomatic_play = {
+			limit = {
+				initiator_is = c:EQX
+			}
+			add_initiator_backers = {
+				c:LOT
+			}
+			add_escalation = 50
+			}
+			create_incident = {
+			country = THIS
+			value = 15
+			}
+		}
+
+		if = {
+			limit = {
+				any_diplomatic_play = {
+				target_is = c:EQX
+
+				}
+			}
+			every_diplomatic_play = {
+			limit = {
+				target_is = c:EQX
+			}
+			add_target_backers = {
+				c:LOT
+			}
+			add_escalation = 50
+			}
+			create_incident = {
+			country = THIS
+			value = 30
+			}
+		}
+		
+
+		
+		
+
+		change_relations = {
+			country = c:EQX
+			value = 30
+		}
+		
+
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+#Land Dispute
+dvg_lotharingia.28 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_lotharingia.28.t
+	desc = dvg_lotharingia.28.d
+	flavor = dvg_lotharingia.28.f
+	
+	event_image = {
+		video = "middleeast_courtroom_upheaval"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+	    NOR = {
+			has_variable = white_lot_favored
+			has_variable = guarani_lot_favored
+		}
+	}
+	immediate = {
+		
+	}
+	
+	# Favor Whites!
+	option = {
+		set_variable = white_lot_favored
+
+		name = dvg_lotharingia.28.a
+		default_option = yes
+
+		add_radicals = {
+			value = 0.20
+			culture = cu:guarani
+		}
+		cu:guarani = {
+			add_fervor = 20
+			
+		}
+		start_national_awakening = {
+			culture = cu:guarani
+			months = 120
+		}
+		cu:lotharian = {
+			add_fervor = -10
+			
+		}
+		
+		
+		add_radicals = {
+			value = 0.20
+			culture = cu:amazonian
+		}
+		add_loyalists = {
+			value = 0.10
+			culture = cu:lotharian
+		}
+		
+		
+		ai_chance = {
+			base = 100
+		}
+	}
+	#Favor Indigenous
+	option = {
+		name = dvg_lotharingia.28.b
+		set_variable = guarani_lot_favored
+		
+		if = {
+			limit = {
+				NOT = {
+					exists = c:TGI
+				}
+			}
+			create_country = {
+				origin = THIS
+				tag = TGI
+				state = s:STATE_CHACO_BOREAL.region_state:LOT
+				state = s:STATE_MARCHES_OUEST.region_state:LOT
+				state = s:STATE_GRAND_CHACO.region_state:LOT
+				state = s:STATE_NORTHUMBRIA.region_state:LOT
+			}
+
+			c:TGI = {
+				activate_law = law_type:law_migration_controls
+				change_relations = {
+					country = c:LOT
+					value = 50
+				}
+			}
+
+			create_diplomatic_pact = {
+				country = c:TGI
+				type = protectorate
+			}
+
+		}
+
+
+		add_radicals = {
+			value = 0.20
+			culture = cu:lotharian
+		}
+
+		add_loyalists = {
+			value = 0.15
+			culture = cu:amazonian
+		}
+		add_loyalists = {
+			value = 0.15
+			culture = cu:guarani
+		}
+		
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+#National Language
+
+dvg_lotharingia.29 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_lotharingia.29.t
+	desc = dvg_lotharingia.29.d
+	flavor = dvg_lotharingia.29.f
+	
+	event_image = {
+		video = "unspecific_politicians_arguing"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+		
+	}
+	immediate = {
+		
+	}
+	
+	
+	# Vive!
+	option = {
+		name = dvg_lotharingia.29.a
+		default_option = yes
+		
+		
+		cu:beornian = {
+			add_fervor = 15
+		}
+		cu:lotharian = {
+			add_fervor = -15
+		}
+
+		add_modifier = {
+			name = linguistic_discrimination
+			months = 60
+			is_decaying = yes
+		}
+		
+	}
+
+	option = {
+		name = dvg_lotharingia.29.b
+		default_option = yes
+
+		add_modifier = {
+			name = linguistic_discrimination
+			months = 60
+			is_decaying = yes
+		}
+		
+		cu:beornian = {
+			add_fervor = -15
+		}
+		cu:lotharian = {
+			add_fervor = 15
+		}
+	}
+
+	option = {
+		name = dvg_lotharingia.29.c
+		default_option = yes
+
+		add_modifier = {
+			name = linguistic_freedom
+			months = 60
+			is_decaying = yes
+		}
+		
+		cu:beornian = {
+			add_fervor = 7
+		}
+		cu:lotharian = {
+			add_fervor = 7
+		}
+	}
+}
+
+#Success of Union
+
+dvg_lotharingia.30 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_lotharingia.30.t
+	desc = dvg_lotharingia.30.d
+	flavor = dvg_lotharingia.30.f
+	
+	event_image = {
+		video = "unspecific_politicians_arguing"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+		
+	}
+	immediate = {
+		
+	}
+	
+	
+	# We are Beornians!
+	option = {
+		name = dvg_lotharingia.30.a
+		default_option = yes
+		
+		add_modifier = {
+			name = linguistic_discrimination
+			months = 60
+			is_decaying = yes
+		}
+		custom_tooltip = {
+			text = je_amerigan_nation_building_integrate_lotharian_tt
+			every_country = {
+				every_scope_pop = {
+					limit = { culture = cu:lotharian }
+					change_pop_culture = { target = cu:beornian value = 1 }
+				}
+				
+			}
+			every_state = {
+				limit = {
+						state_region = {
+							is_homeland = cu:lotharian
+
+						}			
+				}
+				state_region = {
+					remove_homeland =  cu:beornian
+				}
+			}
+		}
+	}
+	#We are all Lotharians!
+	option = {
+		name = dvg_lotharingia.29.b
+
+	}
+	#We are Amerigans
+	option = {
+		name = dvg_lotharingia.29.c
+		trigger = {
+			has_technology_researched = pan-nationalism
+			any_scope_state = {
+				state_region = {
+					is_homeland = cu:atlantian
+				}
+			}
+			NOT = {
+				exists = c:AME
+			}
+		}
+		change_tag = AME
+
+		custom_tooltip = {
+			text = je_amerigan_nation_building_integrate_lotharian_tt
+			every_country = {
+				every_scope_pop = {
+					limit = { culture = cu:lotharian }
+					change_pop_culture = { target = cu:amerigan value = 1 }
+				}
+				
+			}
+			every_state = {
+				limit = {
+						state_region = {
+							is_homeland = cu:lotharian
+
+						}			
+				}
+				state_region = {
+					remove_homeland =  cu:lotharian
+				}
+			}
+		}
+	}
+}
+
+#Black Refugees
+
+dvg_lotharingia.31 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_lotharingia.31.t
+	desc = dvg_lotharingia.31.d
+	flavor = dvg_lotharingia.31.f
+
+	duration = 3
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	trigger = {
+		any_neighbouring_state = {
+				owner = c:AMA
+		}
+	}
+
+	immediate = {
+		random_scope_state = {
+			limit = {
+				any_neighbouring_state = {
+				owner = c:AMA
+				}
+			}
+			save_scope_as = border_state
+		}
+		random_primary_culture = {
+			limit = {
+				has_discrimination_trait = heritage_euro_amerigan
+			}
+			save_scope_as = primary_culture_scope
+		}
+	}
+	
+	option = {
+		name = dvg_lotharingia.31.a
+		default_option = yes
+		
+		add_radicals = {
+			value = 0.15
+			culture = cu:afro_amerigan
+		}
+		add_loyalists = {
+			value = 0.10
+			culture = scope:primary_culture_scope
+		}
+		cu:afro_amerigan = {
+			add_fervor = 10
+		}
+		change_relations = {
+			country = c:AMA
+			value = 20
+		}
+		
+	}
+
+
+	option = {
+		name = dvg_lotharingia.31.b
+		
+		scope:border_state = {
+			create_mass_migration = {
+				origin = c:AMA
+				culture = cu:afro_amerigan
+			}
+		}
+		if = {
+			limit = {
+				has_law = law_type:law_closed_borders
+			}
+			activate_law = law_type:law_migration_controls
+		}
+		add_radicals = {
+			value = 0.10
+			culture = scope:primary_culture_scope
+		}
+		scope:primary_culture_scope = {
+			add_fervor = 5
+		}
+		change_relations = {
+			country = c:AMA
+			value = -20
+		}
+		ruler = {
+			add_modifier = {
+				name = merciful_ruler
+				months = 60
+				is_decaying = yes
+			}
+		}
+		set_variable = black_lot_favored
+	}
+}
+
+#NEA White Supremacist Revolt
+dvg_lotharingia.32 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_lotharingia.32.t
+	desc = dvg_lotharingia.32.d
+	flavor = dvg_lotharingia.32.f
+	
+	event_image = {
+		video = "middleeast_courtroom_upheaval"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+		exists = c:LOT
+		
+		cu:lotharian = {
+			culture_current_fervor > 40
+		}
+		has_technology_researched = nationalism
+		NOT = {
+			has_variable = NEA_revolted
+		}
+	}
+	immediate = {
+		set_variable = NEA_revolted
+		if = {
+			limit = { exists = s:STATE_NOUVELLE_ALSACE.region_state:LOT }
+			create_country = { #Nouvelle Alsace
+				tag = NEA
+				origin = this
+				state = s:STATE_NOUVELLE_ALSACE.region_state:LOT
+				state = s:STATE_LIBREVILLE.region_state:LOT
+
+				on_created = {
+					set_variable = warlord_state
+				}
+			}
+			c:NEA = {
+				 save_scope_as = scope_NEA
+				if = {
+					limit = {
+						exists = c:ANT
+					}
+					change_relations = {
+						country = c:ANT
+						value = 50
+					}
+					create_diplomatic_catalyst = {
+						type = catalyst_event_positive
+						target = c:ANT
+					}
+					activate_law = law_type:law_racial_segregation
+				}
+				trigger_event = {
+					id = dvg_lotharingia.13
+				}
+				if = {
+					limit = {
+						any_country = {
+							has_journal_entry = je_nouvelle_mali
+						}
+					}
+					trigger_event = {
+						id = dvg_nvm.4 days = 30
+					}
+				}
+			}
+		}
+	}
+	
+	# Favor Whites!
+	option = {
+
+		name = dvg_lotharingia.32.a
+		default_option = yes
+
+		
+		create_diplomatic_play = {
+			type = dp_rebellion_annex
+			target_country = c:NEA
+		}
+
+		hidden_effect = {
+			c:NEA = {
+
+			}
+			if = {
+			limit = {
+				cu:afro_american = {
+					culture_current_fervor > 40
+				}
+			}
+			c:NEA = {
+				trigger_event = {
+				id = dvglotharingia.34 days = 40
+				}
+			}
+			
+			}
+		}
+		
+		ai_chance = {
+			base = 100
+		}
+	}
+	#Play as NEA
+	option = {
+		name = dvg_lotharingia.32.b
+
+		create_diplomatic_play = {
+			type = dp_rebellion_annex
+			target_country = c:NEA
+		}
+		
+		play_as = c:NEA
+
+		hidden_effect = {
+			c:NEA = {
+
+			}
+			if = {
+			limit = {
+				cu:afro_american = {
+					culture_current_fervor > 40
+				}
+			}
+			c:NEA = {
+				trigger_event = {
+				id = dvglotharingia.34 days = 40
+				}
+			}
+			
+			}
+		}
+
+		
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+
+#Allies of color?
+dvg_lotharingia.33 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_lotharingia.33.t
+	desc = dvg_lotharingia.33.d
+	flavor = dvg_lotharingia.33.f
+	
+	event_image = {
+		video = "middleeast_courtroom_upheaval"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+		exists = c:LOT
+		
+	}
+	immediate = {
+		
+	}
+	
+	# 
+	option = {
+
+		name = dvg_lotharingia.33.a
+		default_option = yes
+
+		
+		
+		ai_chance = {
+			base = 100
+		}
+	}
+
+	option = {
+
+		name = dvg_lotharingia.33.b
+		default_option = yes
+
+		
+		
+		ai_chance = {
+			base = 100
+		}
+	}
+	
+}
+
+
+#Afro Amerigan Revolt
+dvg_lotharingia.34 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_lotharingia.34.t
+	desc = dvg_lotharingia.34.d
+	flavor = dvg_lotharingia.34.f
+	
+	event_image = {
+		video = "middleeast_courtroom_upheaval"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+		exists = c:LOT
+		exists = s:STATE_LIBREVILLE.region_state:NEA
+		NOT = {
+			any_country = {
+					has_journal_entry = je_nouvelle_mali
+			}
+			has_variable = afro_amerigan_revolted
+		}
+		cu:afro_amerigan = {
+			culture_current_fervor > 40
+		}
+	}
+	immediate = {
+		if = {
+			limit = { 
+			
+			}	
+			create_country = { #Bresil
+				tag = BRS
+				origin = this
+				state = s:STATE_LIBREVILLE.region_state:NEA
+
+			}
+			c:BRS = {
+				 save_scope_as = scope_BRS
+				if = {
+					limit = {
+						exists = c:ANT
+					}
+					change_relations = {
+						country = c:ANT
+						value = -50
+					}
+					create_diplomatic_catalyst = {
+						type = catalyst_event_negative
+						target = c:ANT
+					}
+				}
+			}
+		}
+		
+	}
+	
+	# Favor Whites!
+	option = {
+
+		name = dvg_lotharingia.32.a
+		default_option = yes
+
+		
+		create_diplomatic_play = {
+			type = dp_rebellion_annex
+			target_country = c:NEA
+		}
+		
+		ai_chance = {
+			base = 100
+		}
+	}
+	#Play as NEA
+	option = {
+		name = dvg_lotharingia.32.b
+
+		create_diplomatic_play = {
+			type = dp_rebellion_annex
+			target_country = c:NEA
+		}
+		
+		play_as = c:NEA
+
+		
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+#Guarani Revolt
+dvg_lotharingia.35 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_lotharingia.35.t
+	desc = dvg_lotharingia.35.d
+	flavor = dvg_lotharingia.35.f
+	
+	event_image = {
+		video = "middleeast_courtroom_upheaval"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+		exists = c:LOT
+		exists = s:STATE_LIBREVILLE.region_state:NEA
+		NOT = {
+			has_variable = guarani_revolted
+		}
+		has_technology_researched = nationalism
+	}
+	immediate = {
+		set_variable = guarani_revolted
+		if = {
+			limit = { 
+			
+			}	
+			create_country = { #Nouvelle Alsace
+				tag = TGI
+				origin = this
+				state = s:STATE_LIBREVILLE.region_state:NEA
+
+			}
+			c:TGI = {
+				 save_scope_as = scope_TGI
+				if = {
+					limit = {
+						exists = c:BEO
+					}
+					change_relations = {
+						country = c:BEO
+						value = -25
+					}
+					create_diplomatic_catalyst = {
+						type = catalyst_event_negative
+						target = c:BEO
+					}
+				}
+				if = {
+					limit = {
+						exists = c:TWT
+					}
+					change_relations = {
+						country = c:BEO
+						value = 21
+					}
+					create_diplomatic_catalyst = {
+						type = catalyst_event_positive
+						target = c:TWT
+					}
+				}
+			}
+		}
+		
+	}
+	
+	# Favor Whites!
+	option = {
+
+		name = dvg_lotharingia.32.a
+		default_option = yes
+
+		
+		create_diplomatic_play = {
+			type = dp_rebellion_annex
+			target_country = c:TGI
+		}
+		
+		ai_chance = {
+			base = 100
+		}
+	}
+	#Play as NEA
+	option = {
+		name = dvg_lotharingia.32.b
+
+		create_diplomatic_play = {
+			type = dp_rebellion_annex
+			target_country = c:TGI
+		}
+		
+		play_as = c:NEA
+
+		
+		ai_chance = {
+			base = 100
+		}
+	}
 }
