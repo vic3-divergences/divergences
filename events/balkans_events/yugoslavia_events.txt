@@ -1,1 +1,257 @@
-﻿
+﻿namespace = yugoslavia
+
+# start event for je_yugoslavia
+yugoslavia.1 = {
+	type = country_event
+	placement = root
+
+	duration = 3
+	dlc = dlc014
+
+	title = yugoslavia.1.t
+	desc = yugoslavia.1.d
+	flavor = yugoslavia.1.f
+
+	event_image = {
+		video = "unspecific_signed_contract"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_newspaper.dds"
+
+	cooldown = { days = very_long_modifier_time }
+
+	trigger = {
+		has_dlc_feature = ip3_content
+		NOT = { has_variable = je_yugoslavia_happened }
+	}
+
+	immediate = {
+		root = {
+			save_scope_as = yugoslavia_seeker_scope
+		}
+		random_primary_culture = {
+			save_scope_as = primary_culture_scope
+		}
+		ruler = { # this is to ensure a ruler won't die during the event but an already immortal ruler doesn't lose immortality at the end of the event
+			if = {
+				limit = {
+					is_immortal = no # checks if the ruler isn't already immortal
+				}
+				set_character_immortal = yes # makes ruler immortal only until the end of this event
+				set_variable = temp_immortality_yug_1
+				save_scope_as = ruler_scope
+			}
+			else = {
+				save_scope_as = ruler_scope
+			}
+		}
+	}
+
+	cancellation_trigger = {
+
+	}
+
+	option = {
+		name = yugoslavia.1.a
+		default_option = yes
+		hidden_effect = {
+			every_country = {
+				limit = {
+					NOT = { THIS = ROOT }
+					OR = {
+						country_has_primary_culture = cu:croat
+						country_has_primary_culture = cu:serb
+						country_has_primary_culture = cu:slovene
+						country_has_primary_culture = cu:bosniak
+					}
+				}
+				post_notification = yugoslavia_seeking_warning
+			}
+		}
+		ordered_diplomatically_relevant_country = {
+			limit = {
+				NOT = { THIS = ROOT }
+				owner = {
+					OR = {
+						country_has_primary_culture = cu:croat
+						country_has_primary_culture = cu:serb
+						country_has_primary_culture = cu:slovene
+						country_has_primary_culture = cu:bosniak
+					}
+					relations:root < relations_threshold:cordial
+				}
+			}
+			order_by = country_rank
+			ROOT = {
+				create_incident = {
+					country = PREV
+					value = 10
+				}
+			}
+		}
+		add_modifier = {
+			name = seeking_yugoslavia
+			days = moderately_long_modifier_time
+		}
+		if = {
+			limit = {
+				ruler = {
+					has_variable = temp_immortality_yug_1
+				}
+			}
+			scope:ruler_scope = {
+				hidden_effect = {
+					set_character_immortal = no # sets ruler back to not immortal
+					remove_variable = temp_immortality_yug_1
+				}
+			}
+		}
+	}
+
+	option = {
+		name = yugoslavia.1.b
+		every_country = {
+			limit = {
+				NOT = { THIS = ROOT }
+				OR = {
+					country_has_primary_culture = cu:croat
+					country_has_primary_culture = cu:serb
+					country_has_primary_culture = cu:slovene
+					country_has_primary_culture = cu:bosniak
+				}
+			}
+			change_relations = { country = ROOT value = 10 }
+		}
+		if = {
+			limit = {
+				ruler = {
+					has_variable = temp_immortality_yug_1
+				}
+			}
+			scope:ruler_scope = {
+				hidden_effect = {
+					set_character_immortal = no # sets ruler back to not immortal
+					remove_variable = temp_immortality_yug_1
+				}
+			}
+		}
+	}
+}
+
+# completion event for je_yugoslavia
+yugoslavia.2 = {
+	type = country_event
+	placement = root
+
+	duration = 3
+	dlc = dlc014
+
+	title = yugoslavia.2.t
+	desc = yugoslavia.2.d
+	flavor = yugoslavia.2.f
+
+	gui_window = event_window_1char_tabloid
+
+	left_icon = scope:ruler_scope
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/misc/1Character_Banner"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	cooldown = { days = normal_modifier_time }
+
+	trigger = {
+		# triggered by je_yugoslavia
+	}
+
+	immediate = {
+		root = {
+			save_scope_as = yug_scope
+		}
+		ruler = {
+			if = { # this is to ensure a ruler won't die during the event but an already immortal ruler doesn't lose immortality at the end of the event
+				limit = {
+					is_immortal = no # checks if the ruler isn't already immortal
+				}
+					set_character_immortal = yes # makes ruler immortal only until the end of this event
+					set_variable = temp_immortality_yug_2
+					save_scope_as = ruler_scope
+			}
+			else = {
+				save_scope_as = ruler_scope
+			}
+		}
+		random_primary_culture = {
+			save_scope_as = primary_culture_scope
+		}
+	}
+
+	cancellation_trigger = {
+
+	}
+
+	option = {
+		name = yugoslavia.2.a
+		default_option = yes
+		hidden_effect = {
+			remove_variable = je_yugoslavia_is_active
+		}
+		add_modifier = {
+			name = unified_yugoslavia
+			days = moderately_long_modifier_time
+		}
+		scope:ruler_scope = {
+			add_modifier = {
+				name = the_unifier_yug
+				days = moderately_long_modifier_time
+			}
+		}
+		if = {
+			limit = {
+				ruler = {
+					has_variable = temp_immortality_yug_2
+				}
+			}
+			scope:ruler_scope = {
+				hidden_effect = {
+					set_character_immortal = no # sets ruler back to not immortal
+					remove_variable = temp_immortality_yug_2
+				}
+			}
+		}
+		if = {
+			limit = {
+				NOR = {
+					has_claim = s:STATE_BOSNIA
+					owns_entire_state_region = STATE_BOSNIA
+				}
+			}
+			s:STATE_BOSNIA = {
+				add_claim = ROOT
+			}
+		}
+		if = {
+			limit = {
+				NOR = {
+					has_claim = s:STATE_ALBANIA
+					owns_entire_state_region = STATE_ALBANIA
+				}
+			}
+			s:STATE_ALBANIA = {
+				add_claim = ROOT
+			}
+		}
+		every_country = {
+			limit = {
+				NOT = {
+					THIS = ROOT
+				}
+				has_interest_marker_in_region = region_balkans
+			}
+			post_notification = yug_unification
+		}
+	}
+}
