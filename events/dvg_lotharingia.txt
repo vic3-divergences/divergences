@@ -462,7 +462,7 @@ dvg_lotharingia.5 = { #Cards Fall Apart Split Lotharingia up into warlord states
 					set_variable = warlord_state
 				}
 			}
-			c:LOT = { save_scope_as = scope_ODO
+			c:LOT = { save_scope_as = scope_LOT
 			change_relations = {
 				country = c:ATL
 				value = -50
@@ -540,12 +540,16 @@ dvg_lotharingia.5 = { #Cards Fall Apart Split Lotharingia up into warlord states
 		if = {
 			limit = { 
 				OR = {
-					cu:guarani = {
-                        OR = {
-							turmoil > 0.39
+					OR = {
+						cu:guarani = {
 							culture_current_fervor > 39
 						}
+						radical_fraction = {
+							culture = cu:guarani
+							value = 0.39
+						}
 					}
+					
 					has_variable = white_lot_favored
 				}
 				NOT = {
@@ -591,86 +595,16 @@ dvg_lotharingia.5 = { #Cards Fall Apart Split Lotharingia up into warlord states
 			}
 			save_scope_as = scope_TGI
 		}
-
-		every_subject_or_below = {
-			limit = {
-				is_subject_of = ROOT
-				country_is_in_south_america = yes
-				OR = {
-					is_subject_type = subject_type_vassal
-					is_subject_type = subject_type_protectorate
-					is_subject_type = subject_type_dominion
-					is_subject_type = subject_type_puppet
-				}
-				liberty_desire > 50
-			}
-			
-			make_independent = yes
-		}
-
 		c:ODO = {
-		 if = {
-			limit = {
-				has_variable = warlord_state
-				NOR = {
-					has_variable = var_warlord_two
-					has_variable = var_warlord_three
-					has_variable = var_warlord_four 
-				}
-			}
-			save_scope_as = scope_random_warlord_one
-			set_variable = var_warlord_one
-			}
-			
+		 	save_scope_as = scope_ODO
 		}
 
 		c:NEA = {
-		if = {
-			limit = {
-				has_variable = warlord_state
-				NOR = {
-					has_variable = var_warlord_one
-					has_variable = var_warlord_three
-					has_variable = var_warlord_four
-				}
-			}
-			save_scope_as = scope_NEA
-			set_variable = var_warlord_two
-			}
-		
+				save_scope_as = scope_NEA
 		}
 
 		c:ATL = {
 			save_scope_as = scope_ATL
-		if = {
-			limit = {
-				has_variable = warlord_state
-				NOR = {
-					has_variable = var_warlord_one
-					has_variable = var_warlord_two
-					has_variable = var_warlord_four
-				}
-			}
-			save_scope_as = scope_random_warlord_three
-			set_variable = var_warlord_three
-			}
-			
-		}
-
-		c:TGI = {
-		if = {
-			limit = {
-				has_variable = warlord_state
-				NOR = {
-					has_variable = var_warlord_one
-					has_variable = var_warlord_two
-					has_variable = var_warlord_three
-				}
-			}
-			save_scope_as = scope_TGI
-			set_variable = var_warlord_four
-			}
-			
 		}
 	}
 	option = {
@@ -701,6 +635,17 @@ dvg_lotharingia.5 = { #Cards Fall Apart Split Lotharingia up into warlord states
 			}
 		}
 		
+		every_state = {
+			limit = {
+				state_region = {
+					is_homeland = cu:lotharian
+				}
+				state_is_in_south_america = yes
+			}
+			state_region = {
+				add_claim = ROOT
+			}
+		}
 	}
 
 	option = {
@@ -756,7 +701,6 @@ dvg_lotharingia.5 = { #Cards Fall Apart Split Lotharingia up into warlord states
 			}
 		}
 
-
 		create_diplomatic_play = {
 			type = dp_rebellion_annex
 
@@ -809,8 +753,11 @@ dvg_lotharingia.5 = { #Cards Fall Apart Split Lotharingia up into warlord states
 	option = {
 		name = dvg_lotharingia.5.aa
 		trigger = {
-			exists = scope:scope_TGI
+			exists = c:MGP
 			is_player = yes
+			any_country = {
+				country_has_primary_culture = cu:guarani
+			}
 		}
 		create_diplomatic_play = {
 			type = dp_rebellion_annex
@@ -836,23 +783,28 @@ dvg_lotharingia.5 = { #Cards Fall Apart Split Lotharingia up into warlord states
 				target_country = ROOT
 			}
 		}
-		create_diplomatic_play = {
+		if = {
+			limit = {
+				exists = c:MGP
+			}
+			create_diplomatic_play = {
 			type = dp_rebellion_annex
 
-			target_country = scope:scope_TGI
+			target_country = c:MGP
 
 			add_war_goal = {
-				holder = scope:scope_TGI
+				holder = c:MGP
 				type = independence
 				target_country = ROOT
 			}
+			}
+			play_as = c:MGP
 		}
+		
+		
 
-		play_as = scope:scope_TGI
 
-	}
-
-	
+	}	
 }
 
 dvg_lotharingia.6 = {
@@ -1809,17 +1761,20 @@ dvg_lotharingia.15 = {
 			AND = {
 				has_modifier = dvg_fragile_country
 				OR = {
+					radical_fraction = {
+								culture = cu:atlantian
+								value > 0.29
+					}
+					radical_fraction = {
+								culture = cu:lotharian
+								value > 0.29
+					}
 					cu:atlantian = {
-						OR = {
-							turmoil > 0.39
-							culture_current_fervor > 39
-						}
+						culture_current_fervor > 29
+
 					}
 					cu:lotharian = {
-                        OR = {
-							turmoil > 0.39
-							culture_current_fervor > 39
-						}
+                       	culture_current_fervor > 29
 					}
 				}
 			}
@@ -3307,31 +3262,39 @@ dvg_lotharingia.32 = {
 
 	trigger = {
 		exists = c:LOT
-		
-		cu:lotharian = {
-			OR = {
-			turmoil > 0.39
+		OR = {
+			cu:lotharian = {
 			culture_current_fervor > 39
 			}
-		}
+			radical_fraction = {
+				value > 0.39
+				culture = cu:lotharian
+			}
+		}	
 		has_technology_researched = nationalism
 		NOT = {
 			has_variable = NEA_revolted
 		}
+		any_scope_state = {
+			state_region = {
+				is_homeland = cu:atlantian 
+			}
+		}
+		cu:alantian.culture_current_fervor < cu:lotharian.culture_current_fervor
 	}
 	immediate = {
 		set_variable = NEA_revolted
 		if = {
-			limit = { exists = s:STATE_NOUVELLE_ALSACE.region_state:LOT }
+			limit = { exists = s:STATE_NOUVELLE_ALSACE.region_state:LOT
+			NOT = {
+				exists = s:STATE_NOUVELLE_ALSACE
+			}
+			}
 			create_country = { #Nouvelle Alsace
 				tag = NEA
 				origin = this
 				state = s:STATE_NOUVELLE_ALSACE.region_state:LOT
 				state = s:STATE_LIBREVILLE.region_state:LOT
-
-				on_created = {
-					set_variable = warlord_state
-				}
 			}
 			c:NEA = {
 				 save_scope_as = scope_NEA
@@ -3384,10 +3347,14 @@ dvg_lotharingia.32 = {
 			}
 			if = {
 			limit = {
-				cu:afro_american = {
-					OR = {
-					turmoil > 0.39
+				OR = {
+					cu:afro_amerigan = {
 					culture_current_fervor > 39
+
+					}
+					radical_fraction = {
+						value > 0.39
+						culture = cu:afro_amerigan
 					}
 				}
 			}
@@ -3421,10 +3388,14 @@ dvg_lotharingia.32 = {
 			}
 			if = {
 			limit = {
-				cu:afro_american = {
-					OR = {
-					turmoil > 0.39
+				OR = {
+					cu:afro_amerigan = {
 					culture_current_fervor > 39
+
+					}
+					radical_fraction = {
+						value > 0.39
+						culture = cu:afro_amerigan
 					}
 				}
 			}
@@ -3530,14 +3501,18 @@ dvg_lotharingia.34 = {
 			}
 			has_variable = afro_amerigan_revolted
 		}
-		cu:afro_amerigan = {
-			OR = {
-				turmoil > 0.39
-				culture_current_fervor > 39
-				}
+		OR = {
+			cu:afro_amerigan = {
+					culture_current_fervor > 39
+			}
+			radical_fraction = {
+						value > 0.39
+						culture = cu:afro_amerigan
+					}
 		}
 	}
 	immediate = {
+		set_variable = afro_amerigan_revolted
 		if = {
 			limit = { 
 			
@@ -3624,26 +3599,44 @@ dvg_lotharingia.35 = {
 
 	trigger = {
 		exists = c:LOT
-		exists = s:STATE_LIBREVILLE.region_state:NEA
+		any_scope_state = {
+			state_region = {
+				is_homeland = cu:guarani
+			}
+		}
 		NOT = {
 			has_variable = guarani_revolted
 		}
 		has_technology_researched = nationalism
+		
 	}
 	immediate = {
 		set_variable = guarani_revolted
+		random_scope_state = {
+			limit = {
+				state_region = {
+					is_homeland = cu:guarani
+				}
+			}
+			save_scope_as = guarani_state
+		}
 		if = {
 			limit = { 
-			
+				NOT = {
+					exists = c:TGI
+				}
 			}	
 			create_country = { #Nouvelle Alsace
 				tag = TGI
 				origin = this
-				state = s:STATE_LIBREVILLE.region_state:NEA
-
+				state = scope:guarani_state	
 			}
 			c:TGI = {
-				 save_scope_as = scope_TGI
+				save_scope_as = scope_TGI
+
+				create_character = {
+					
+				}
 				if = {
 					limit = {
 						exists = c:BEO
@@ -3672,10 +3665,165 @@ dvg_lotharingia.35 = {
 				}
 			}
 		}
-		
 	}
 	
 	# Favor Whites!
+	option = {
+
+		name = dvg_lotharingia.35.a
+		default_option = yes
+
+		
+		create_diplomatic_play = {
+			type = dp_rebellion_annex
+			target_country = c:TGI
+		}
+		every_scope_state = {
+			limit = {
+				state_region = {
+					is_homeland = cu:guarani
+				}
+			}
+			set_state_owner = c:TGI
+		}
+		
+		ai_chance = {
+			base = 100
+		}
+	}
+	#Play as NEA
+	option = {
+		name = dvg_lotharingia.35.b
+
+		create_diplomatic_play = {
+			type = dp_rebellion_annex
+			target_country = c:TGI
+		}
+
+		every_scope_state = {
+			limit = {
+				state_region = {
+					is_homeland = cu:guarani
+				}
+			}
+			set_state_owner = c:TGI
+		}
+		
+		play_as = c:TGI
+
+		
+
+		
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+
+#Atlantian Revolt
+dvg_lotharingia.36 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_lotharingia.36.t
+	desc = dvg_lotharingia.36.d
+	flavor = dvg_lotharingia.36.f
+	
+	event_image = {
+		video = "middleeast_courtroom_upheaval"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+		exists = c:LOT
+		NOT = {
+			exists = c:ATL
+		}
+		any_scope_state = {
+			state_region = {
+				is_homeland = cu:atlantian
+			}
+		}
+		NOT = {
+			has_variable = atlantia_revolted
+		}
+		has_technology_researched = nationalism
+		OR = {
+			cu:atlantian = {
+				culture_current_fervor > 39
+			}
+			radical_fraction = {
+				culture = cu:atlantian
+				value > 0.49
+			}
+		}
+		OR = {
+			cu:alantian.culture_current_fervor > cu:lotharian.culture_current_fervor
+			any_scope_state = {
+				state_region = s:STATE_COTE_DU_CAFE
+				turmoil > 0.30
+			}
+		}
+
+	}
+	immediate = {
+		set_variable = atlantia_revolted
+		random_scope_state = {
+			limit = {
+				state_region = {
+					is_homeland = cu:atlantian
+				}
+			}
+			save_scope_as = atlantian_state
+		}
+		if = {
+			limit = { 
+				NOT = {
+					exists = c:ATL
+				}
+			}	
+			create_country = { #Nouvelle Alsace
+				tag = ATL
+				origin = this
+				state = scope:atlantian_state	
+			}
+			c:ATL = {
+				save_scope_as = scope_ATL
+
+				create_character = {
+				is_general = yes
+				historical = yes
+				first_name = Jonathan
+				last_name = Deuxponts
+				ruler = yes
+				culture = cu:rheinish
+				dna = dna_emperor_norton
+				birth_date = 1805.11.12
+				hq = region_brazil
+				ideology = ideology_moderate
+				interest_group = ig_armed_forces
+					traits = {
+					experienced_artillery_commander
+					stalwart_defender
+					celebrity_commander
+					surveyor
+					}
+					on_created = {
+						save_scope_as = deuxpont_scope
+					}
+				}
+				
+			}
+		}
+	}
+	
+	# Favor LOT!
 	option = {
 
 		name = dvg_lotharingia.32.a
@@ -3684,7 +3832,16 @@ dvg_lotharingia.35 = {
 		
 		create_diplomatic_play = {
 			type = dp_rebellion_annex
-			target_country = c:TGI
+			target_country = c:ATL
+		}
+		every_scope_state = {
+			limit = {
+				state_region = {
+					is_homeland = cu:atlantian
+				}
+				turmoil > 0.30
+			}
+			set_state_owner = c:ATL
 		}
 		
 		ai_chance = {
@@ -3697,10 +3854,19 @@ dvg_lotharingia.35 = {
 
 		create_diplomatic_play = {
 			type = dp_rebellion_annex
-			target_country = c:TGI
+			target_country = c:ATL
+		}
+		every_scope_state = {
+			limit = {
+				state_region = {
+					is_homeland = cu:atlantian
+				}
+				turmoil > 0.30
+			}
+			set_state_owner = c:ATL
 		}
 		
-		play_as = c:NEA
+		play_as = c:ATL
 
 		
 		ai_chance = {
