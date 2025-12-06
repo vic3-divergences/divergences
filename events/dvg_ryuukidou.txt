@@ -153,7 +153,7 @@ dvg_ryuukidou.2 = { #Settling the border
 }
 
 
-dvg_ryuukidou.3 = { #
+dvg_ryuukidou.3 = { #Japan Conversion?
 	type = country_event
 	placement = root
 	title = dvg_ryuukidou.3.t
@@ -163,7 +163,7 @@ dvg_ryuukidou.3 = { #
 	duration = 3
 
 	event_image = {
-		
+		video = "asia_confucianism_shinto"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
@@ -178,17 +178,48 @@ dvg_ryuukidou.3 = { #
 		name = dvg_ryuukidou.3.a
 		default_option = yes
 		
-
+		add_loyalists = {
+			value = 0.15
+		}
+		if = {
+			limit = {
+				is_subject = yes
+			}
+			add_liberty_desire = 15
+		}
+		change_relations = {
+			country = c:JAP
+			value = -15
+		}
 	}
 
 	option = {
 		name = dvg_ryuukidou.3.b
 		
+		set_state_religion = rel:shinto
+
+		add_radicals = {
+			value = 0.10
+		}
+		change_relations = {
+			country = c:JAP
+			value = 15
+		}
+		
+		random_scope_pop = {
+			limit = {
+				culture = cu:japanese
+			}
+			change_pop_religion = {
+				target = rel:shinto
+				value = 1
+			}
+		}
 
 	}
 }
 
-dvg_ryuukidou.4 = { #
+dvg_ryuukidou.4 = { #Japan Railways?
 	type = country_event
 	placement = root
 	title = dvg_ryuukidou.4.t
@@ -198,7 +229,7 @@ dvg_ryuukidou.4 = { #
 	duration = 3
 
 	event_image = {
-		
+		video = "unspecific_trains"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
@@ -206,25 +237,75 @@ dvg_ryuukidou.4 = { #
 	icon = "gfx/interface/icons/event_icons/event_military.dds"
 
 	trigger = {
-	
+		any_scope_state = {
+				OR = {
+					state_region = s:STATE_KAMCHATKA
+					state_region = s:STATE_HOKKAIDO
+					state_region = s:STATE_SAKHALIN
+					state_region = s:STATE_OUTER_MANCHURIA
+				}
+		}
 	}
 
 	option = {
 		name = dvg_ryuukidou.4.a
 		default_option = yes
 		
+		random_scope_state = {
+			limit = {
+				state_region = s:STATE_SAKHALIN
+			}
+			add_modifier = dvg_railway_boost_construction
+		}
 
+		if = {
+			limit = {
+				any_scope_state = {
+					state_region = s:STATE_OUTER_MANCHURIA
+				}
+			}
+			random_scope_state = {
+			limit = {
+				state_region = s:STATE_SAKHALIN
+			}
+			add_modifier = dvg_railway_boost_construction
+			}
+			else = {
+				s:STATE_OUTER_MANCHURIA = {
+					add_claim = ROOT
+				}
+			}
+		}
 	}
 
 	option = {
 		name = dvg_ryuukidou.4.b
+		trigger = {
+			any_scope_state = {
+				OR = {
+					state_region = s:STATE_KAMCHATKA
+					state_region = s:STATE_HOKKAIDO
+				}
+			}
+		}
 		
-
+		random_scope_state = {
+			limit = {
+				state_region = s:STATE_HOKKAIDO
+			}
+			add_modifier = dvg_railway_boost_construction
+		}
+		random_scope_state = {
+			limit = {
+				state_region = s:STATE_KAMCHATKA
+			}
+			add_modifier = dvg_railway_boost_construction
+		}
 	}
 }
 
 
-dvg_ryuukidou.5 = { #
+dvg_ryuukidou.5 = { #Labor Shortages
 	type = country_event
 	placement = root
 	title = dvg_ryuukidou.5.t
@@ -244,18 +325,61 @@ dvg_ryuukidou.5 = { #
 	trigger = {
 	
 	}
+	immediate = {
+		random_country = {
+			limit = {
+				OR = {
+					country_is_in_southeast_asia = yes
+					country_is_in_china = yes
+				}
+			}
+			save_scope_as = migrant_source
+			random_primary_culture = {
+				save_scope_as = migrant_culture
+			}
+		}
+	}
 
 	option = {
 		name = dvg_ryuukidou.5.a
 		default_option = yes
 		
+		add_modifier = {
+			name = dvg_human_trafficking
+			months = 12
+			is_decaying = yes
+		}
 
 	}
 
 	option = {
 		name = dvg_ryuukidou.5.b
-		
 
+		add_modifier = {
+			name = pr_expenses
+			months = 12
+			is_decaying = yes
+		}
+		
+		random_scope_state = {
+			create_mass_migration = {
+				origin = c:JAP
+				culture = cu:japanese
+			}
+		}
+
+	}
+
+
+	option = {
+		name = dvg_ryuukidou.5.c
+		
+		random_scope_state = {
+			create_mass_migration = {
+				origin = scope:migrant_source
+				culture = scope:migrant_culture
+			}
+		}
 	}
 }
 
@@ -270,7 +394,8 @@ dvg_ryuukidou.6 = { #
 	duration = 3
 
 	event_image = {
-		
+		video = "asia_buddhism"
+
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
@@ -304,7 +429,10 @@ dvg_ryuukidou.6 = { #
 	option = {
 		name = dvg_ryuukidou.6.b
 		
-
+		add_radicals = {
+			value = 0.10
+			religion = rel:gelugpa
+		}
 	}
 }
 
