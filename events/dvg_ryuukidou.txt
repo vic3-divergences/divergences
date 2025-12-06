@@ -344,4 +344,162 @@ dvg_ryuukidou.7 = { #
 	}
 }
 
+# Japanese colony absorbs a poorer neighbor
+dvg_ryuukidou.8 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_ryuukidou.8.t
+	desc = dvg_ryuukidou.8.d
+	flavor = dvg_ryuukidou.8.f
+
+	event_image = {
+		video = "ep1_transfer_of_authority"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+
+	immediate = {
+		random_country = {
+			limit = {
+				owner = {
+					is_ai = yes
+					relations:root >= relations_threshold:amicable
+					OR = {
+						country_has_primary_culture = cu:japanese
+						country_has_primary_culture = cu:kaiganese
+					}
+					is_subject = yes
+					NOT = { THIS = ROOT }
+					top_overlord = {
+						THIS = root.top_overlord
+					}
+					this.gdp < root.gdp
+				}
+			}
+			owner = { save_scope_as = canada_annex_scope }
+		}
+		top_overlord = {
+			save_scope_as = canada_overlord_country
+			ruler = {
+				save_scope_as = canada_overlord_ruler
+			}
+		}
+	}
+
+	option = {
+		name = dvg_ryuukidou.8.a
+		default_option = yes
+		hidden_effect = {
+			every_state = {
+				limit = {
+					has_claim_by = scope:canada_annex_scope
+				}
+				state_region = {
+					remove_claim = scope:canada_annex_scope
+					add_claim = ROOT
+				}
+			}
+		}
+		annex_with_incorporation = scope:canada_annex_scope
+	}
+}
+
+# Japan mashes 2 subjects together
+dvg_ryuukidou.9 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_ryuukidou.9.t
+	desc = dvg_ryuukidou.9.d
+	flavor = dvg_ryuukidou.8.f
+
+	event_image = {
+		video = "ep1_power_blocs"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+
+	immediate = {
+		random_subject_or_below = {
+			limit = {
+				OR = {
+					country_has_primary_culture = cu:japanese
+					country_has_primary_culture = cu:kaiganese
+				}
+				relations:root >= relations_threshold:amicable
+				is_ai = yes
+			}
+			save_scope_as = canada_scope_1
+		}
+		random_subject_or_below = {
+			limit = {
+				OR = {
+					country_has_primary_culture = cu:japanese
+					country_has_primary_culture = cu:kaiganese
+				}
+				relations:root >= relations_threshold:amicable
+				is_ai = yes
+				NOT = {
+					scope:canada_scope_1 = THIS
+				}
+			}
+			save_scope_as = canada_scope_2
+		}
+	}
+
+	option = {
+		name = dvg_ryuukidou.9.a
+		default_option = yes
+		if = {
+			limit = {
+				scope:canada_scope_1.gdp > scope:canada_scope_2.gdp
+			}
+			hidden_effect = {
+				every_state = {
+					limit = {
+						has_claim_by = scope:canada_scope_2
+					}
+					state_region = {
+						remove_claim = scope:canada_scope_2
+						add_claim = scope:canada_scope_1
+					}
+				}
+			}
+			scope:canada_scope_1 = {
+				annex_with_incorporation = scope:canada_scope_2
+			}
+		}
+		else = {
+			hidden_effect = {
+				every_state = {
+					limit = {
+						has_claim_by = scope:canada_scope_1
+					}
+					state_region = {
+						remove_claim = scope:canada_scope_1
+						add_claim = scope:canada_scope_2
+					}
+				}
+			}
+			scope:canada_scope_2 = {
+				annex_with_incorporation = scope:canada_scope_1
+			}
+		}
+	}
+}
 
