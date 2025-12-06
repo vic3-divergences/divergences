@@ -3,8 +3,8 @@
 # cost												The cost in AUT to set this Decree on a state (scales with Power Rank)
 # unlocking_technologies							A list of technologies, at least one of which must be known to the country to use this Focus
 # unlocking_laws									A list of laws, at least one which must be active in the country to use this Focus. If the country switches away from all unlocking laws the Focus will be removed
-# country_trigger									A trigger in country context that determines if the Decree is permitted/shown in interface or not; should invalidate the Decree on a weekly basis if found invalid 
-# state_trigger										A trigger in state context that determines if the Decree is permitted or not; should invalidate the Decree on a weekly basis if found invalid 
+# country_trigger									A trigger in country context that determines if the Decree is permitted/shown in interface or not; should invalidate the Decree on a weekly basis if found invalid
+# state_trigger										A trigger in state context that determines if the Decree is permitted or not; should invalidate the Decree on a weekly basis if found invalid
 # ai_weight											Scripted value which determines the chance of getting the Decree by AI
 
 decree_road_maintenance = {
@@ -14,30 +14,30 @@ decree_road_maintenance = {
 		state_infrastructure_from_population_max_add = 20
 		state_construction_mult = 0.10
 	}
-	unlocking_technologies = { 
+	unlocking_technologies = {
 		centralization
 	}
 	cost = 100
 
 	ai_weight = {
-		value = 25		
-		
+		value = 25
+
 		if = {
-			limit = { 
+			limit = {
 				OR = {
-					relative_infrastructure < 1 
+					relative_infrastructure < 1
 					AND = {
 						has_decree = decree_road_maintenance
 						relative_infrastructure < 1.25
 					}
 				}
-			
+
 			}
 			add = 100
 		}
 
 		if = {
-			limit = { 
+			limit = {
 				OR = {
 					relative_infrastructure < 0.5
 					AND = {
@@ -45,27 +45,27 @@ decree_road_maintenance = {
 						relative_infrastructure < 0.75
 					}
 				}
-			
+
 			}
 			add = 100
 		}
 
 		if = {
-			limit = { 
+			limit = {
 				OR = {
-					relative_infrastructure < 0.25 
+					relative_infrastructure < 0.25
 					AND = {
 						has_decree = decree_road_maintenance
 						relative_infrastructure < 0.5
 					}
 				}
-			
+
 			}
 			add = 100
-		}		
-		
+		}
+
 		if = {
-			limit = { 
+			limit = {
 				OR = {
 					relative_infrastructure >= 1.25
 					AND = {
@@ -73,46 +73,46 @@ decree_road_maintenance = {
 						relative_infrastructure >= 1.5
 					}
 				}
-			
+
 			}
 			multiply = 0
-		}			
+		}
 	}
 }
 
 decree_violent_suppression = {
-	texture = "gfx/interface/icons/decree/decree_violent_suppression.dds"		
-	
+	texture = "gfx/interface/icons/decree/decree_violent_suppression.dds"
+
 	unlocking_technologies = {
 		standing_army
 	}
-	
+
 	country_trigger = {
-		NOT = { has_law = law_type:law_guaranteed_liberties }
+		NOT = { has_law_or_variant = law_type:law_guaranteed_liberties }
 	}
 	state_trigger = {
-		turmoil >= 0.25	
+		turmoil >= 0.25
 	}
 	modifier = {
 		state_turmoil_effects_mult = -0.5
 		state_mortality_turmoil_mult = 0.02
 	}
 	cost = 100
-	
+
 	ai_weight = {
 		value = 100
-		
+
 		if = {
-			limit = { 
-				turmoil >= 0.5	
-			
+			limit = {
+				turmoil >= 0.5
+
 			}
 			add = 100
 		}
 		if = {
-			limit = { 
-				turmoil >= 0.75	
-			
+			limit = {
+				turmoil >= 0.75
+
 			}
 			add = 100
 		}
@@ -126,7 +126,7 @@ decree_violent_suppression = {
 				}
 			}
 			multiply = 0.5
-		}	
+		}
 	}
 }
 
@@ -144,40 +144,33 @@ decree_emergency_relief = {
 	}
 
 	state_trigger = {
-		trigger_if = {
-			limit = {
-				has_decree = decree_emergency_relief
+		OR = {
+			has_famine = yes
+			devastation > 0.2
+			ROOT.state_region = {
+				OR = {
+					has_harvest_condition = flood
+					has_harvest_condition = wildfire
+					has_harvest_condition = drought
+					has_harvest_condition = disease_outbreak
+					has_harvest_condition = extreme_winds
+					has_harvest_condition = tsunami
+				}
 			}
 			any_scope_pop = {
 				percent >= 0.2
-
 				is_in_starvation = yes
-			}
-		}
-		trigger_else = {
-			OR = {
-				has_famine = yes
-				devastation > 0.2
-				ROOT.state_region = {
-					OR = {
-						has_harvest_condition = flood
-						has_harvest_condition = wildfire
-						has_harvest_condition = drought
-						has_harvest_condition = disease_outbreak
-						has_harvest_condition = extreme_winds	
-					}
-				}	
 			}
 		}
 	}
 
 	cost = 50
-	
+
 	ai_weight = {
 		value = 0
-		
+
 		if = {
-			limit = { 
+			limit = {
 				average_sol < average_expected_sol
 			}
 			add = 100
@@ -192,7 +185,7 @@ decree_emergency_relief = {
 				}
 			}
 			multiply = 0.5
-		}	
+		}
 	}
 }
 
@@ -202,14 +195,14 @@ decree_promote_social_mobility = {
 	state_trigger = {
 		NOT = {
 			AND = {
-				owner = {
+				owner ?= {
 					OR = {
-						has_law = law_type:law_hindu_caste_enforced
-						has_law = law_type:law_hindu_caste_codified
+						has_law_or_variant = law_type:law_hindu_caste_enforced
+						has_law_or_variant = law_type:law_hindu_caste_codified
 					}
 				}
 				religion_percent_state = {
-					target = rel:hindu  
+					target = rel:hindu
 					value >= 0.3
 				}
 			}
@@ -222,28 +215,34 @@ decree_promote_social_mobility = {
 	}
 
 	cost = 100
-	
+
 	ai_weight = {
 		value = 0
 
 		if = {
-			limit = { 
+			limit = {
 				literacy_rate < 0.25
 			}
 			add = 75
-		}		
+		}
 		if = {
-			limit = { 
+			limit = {
 				literacy_rate < 0.5
 			}
 			add = 75
 		}
 		if = {
-			limit = { 
+			limit = {
 				literacy_rate < 0.75
 			}
 			add = 50
-		}		
+		}
+		if = {
+			limit = {
+				scope:country = { has_journal_entry = je_fang_hu }
+			}
+			add = 1000
+		}
 		if = {
 			limit = {
 				scope:country = {
@@ -266,83 +265,246 @@ decree_promote_social_mobility = {
 				}
 			}
 			multiply = 1.5
-		}			
+		}
 	}
 }
 
 decree_promote_national_values = {
 	texture = "gfx/interface/icons/decree/decree_promote_national_values.dds"
 	unlocking_technologies = {
-		centralization
+		nationalism
 	}
-	state_trigger = {
-		OR = {
-			has_assimilating_pops = yes
-			has_converting_pops = yes
-		}	
+
+	country_trigger = {
+		NOT = { has_law_or_variant = law_type:law_multicultural }
 	}
+
 	modifier = {
-		state_assimilation_mult = 1
-		state_conversion_mult = 1
+		state_assimilation_mult = 0.5
+		state_conversion_mult = 0.5
+		state_allow_assimilation_in_homeland_bool = yes
+		state_radicalism_increases_violent_hostility_mult = 0.5
+		state_radicalism_increases_cultural_erasure_mult = 0.4
+		state_radicalism_increases_open_prejudice_mult = 0.3
 	}
 	cost = 100
-	
+
 	ai_weight = {
 		value = 0
+
 		if = {
 			limit = {
 				scope:country = {
-					OR = {
-						has_strategy = ai_strategy_reactionary_agenda
-						has_strategy = ai_strategy_maintain_mandate_of_heaven
+					NOR = {
+						has_law_or_variant = law_type:law_multicultural
+						has_law_or_variant = law_type:law_subjecthood
 					}
 				}
+				primary_cultures_percent_state <= 0.9
 			}
-			add = 100
+
+			if = { # Colonies
+				limit = {
+					scope:country = {
+						country_is_in_europe = no
+						any_primary_culture = {
+							has_discrimination_trait_group = heritage_group_european
+						}
+						NOR = {
+							has_government_type = gov_chartered_company
+							c:BIC ?= this
+							c:DEI ?= this
+						}
+					}
+				}
+				add = 300
+			}
+			else_if = {
+				limit = {
+					scope:country = {
+						OR = {
+							has_strategy = ai_strategy_reactionary_agenda
+							has_strategy = ai_strategy_conservative_agenda
+							has_strategy = ai_strategy_maintain_mandate_of_heaven
+						}
+					}
+				}
+				add = 100
+			}
+			else_if = {
+				limit = {
+					scope:country = {
+						has_strategy = ai_strategy_nationalist_agenda
+					}
+				}
+				add = 200
+			}
+
+
+			if = {
+				limit = {
+					primary_cultures_percent_state <= 0.1
+				}
+				multiply = 5.0
+			}
+			else_if = {
+				limit = {
+					primary_cultures_percent_state <= 0.3
+				}
+				multiply = 3.0
+			}
+			else_if = {
+				limit = {
+					primary_cultures_percent_state <= 0.5
+				}
+				multiply = 2.0
+			}
+
+			if = {
+				limit = {
+					is_homeland_of_country_cultures = scope:country
+				}
+				multiply = 5.0
+			}
 		}
+
 		if = {
 			limit = {
-				scope:country = {
-					has_strategy = ai_strategy_nationalist_agenda
+				OR = {
+					NOT = { scope:country = { has_law_or_variant = law_type:law_total_separation } }
+					AND = {
+						scope:country = { country_is_in_africa = no }
+						state_is_in_africa = yes
+					}
+				}
+				religion_percent_state = {
+					target = scope:country.religion
+					value <= 0.9
 				}
 			}
-			add = 200
-		}		
+
+			if = {
+				limit = {
+					scope:country = {
+						has_strategy = ai_strategy_conservative_agenda
+					}
+				}
+				add = 50
+			}
+			else_if = {
+				limit = {
+					scope:country = {
+						has_strategy = ai_strategy_reactionary_agenda
+					}
+				}
+				add = 100
+			}
+
+			if = {
+				limit = {
+					scope:country = {
+						OR = {
+							has_law_or_variant = law_type:law_state_religion
+							has_law_or_variant = law_type:law_state_atheism
+						}
+					}
+				}
+				add = 50
+			}
+
+			if = {
+				limit = {
+					religion_percent_state = {
+						target = scope:country.religion
+						value <= 0.1
+					}
+				}
+				multiply = 5.0
+			}
+			else_if = {
+				limit = {
+					religion_percent_state = {
+						target = scope:country.religion
+						value <= 0.3
+					}
+				}
+				multiply = 3.0
+			}
+			else_if = {
+				limit = {
+					religion_percent_state = {
+						target = scope:country.religion
+						value <= 0.5
+					}
+				}
+				multiply = 2.0
+			}
+		}
+
 		if = {
 			limit = {
 				state_population < 100000
 			}
 			multiply = 0
 		}
-		if = {
+		else_if = {
 			limit = {
 				state_population < 300000
 			}
-			multiply = 0.5
-		}	
-		if = {
+			multiply = 2.0
+		}
+		else_if = {
 			limit = {
 				scope:country = {
 					OR = {
-						has_strategy = ai_strategy_reactionary_agenda
-						has_strategy = ai_strategy_conservative_agenda
-						has_strategy = ai_strategy_maintain_mandate_of_heaven
+						has_law = law_type:law_cultural_exclusion
+						has_law = law_type:law_freedom_of_conscience
 					}
 				}
 			}
 			multiply = 0.5
 		}
-		if = {
+		else_if = {
 			limit = {
 				scope:country = {
 					OR = {
-						has_strategy = ai_strategy_progressive_agenda
-						has_strategy = ai_strategy_egalitarian_agenda
+						has_law = law_type:law_multicultural
+						has_law = law_type:law_total_separation
 					}
 				}
 			}
-			multiply = 1.5
-		}		
+			multiply = 0.1
+		}
+
+		if = { # Deliberately placed here since we want the AI to ignore laws for this
+			limit = {
+				scope:country = {
+					has_journal_entry = je_amerigan_nation_building
+				}
+			}
+			add = 500
+		}
+
+		if = {
+			limit = {
+				primary_cultures_percent_state > 0.9
+				religion_percent_state = {
+					target = scope:country.religion
+					value > 0.9
+				}
+			}
+			multiply = 0
+		}
+		else_if = {
+			limit = {
+				primary_cultures_percent_state > 0.5
+				religion_percent_state = {
+					target = scope:country.religion
+					value > 0.5
+				}
+			}
+			multiply = 0.5
+		}
 	}
 }
 
@@ -350,19 +512,19 @@ decree_encourage_manufacturing_industry = {
 	texture = "gfx/interface/icons/decree/decree_encourage_manufacturing_industry.dds"
 	unlocking_technologies = {
 		manufacturies
-	}	
+	}
 	state_trigger = {
-		NOR = { 
+		NOR = {
 			has_decree = decree_encourage_agricultural_industry
 			has_decree = decree_encourage_resource_industry
 		}
-	}	
+	}
 	modifier = {
 		building_group_bg_manufacturing_throughput_add = 0.2
 		building_group_bg_service_throughput_add = 0.2
 	}
 	cost = 100
-	
+
 	ai_weight = {
 		value = 0
 		if = {
@@ -378,7 +540,7 @@ decree_encourage_manufacturing_industry = {
 				any_scope_building = {
 					is_building_group = bg_manufacturing
 					count >= 3
-				}				
+				}
 			}
 			add = 50
 		}
@@ -387,7 +549,7 @@ decree_encourage_manufacturing_industry = {
 				any_scope_building = {
 					is_building_group = bg_manufacturing
 					count >= 5
-				}			
+				}
 			}
 			add = 50
 		}
@@ -398,7 +560,7 @@ decree_encourage_manufacturing_industry = {
 				}
 			}
 			multiply = 1.5
-		}		
+		}
 	}
 }
 
@@ -406,20 +568,20 @@ decree_encourage_agricultural_industry = {
 	texture = "gfx/interface/icons/decree/decree_encourage_agricultural_industry.dds"
 	unlocking_technologies = {
 		enclosure
-	}	
+	}
 	state_trigger = {
-		NOR = { 
-			has_decree = decree_encourage_manufacturing_industry 
+		NOR = {
+			has_decree = decree_encourage_manufacturing_industry
 			has_decree = decree_encourage_resource_industry
 		}
-	}		
+	}
 	modifier = {
 		building_group_bg_agriculture_throughput_add = 0.2
 		building_group_bg_plantations_throughput_add = 0.2
 		building_group_bg_ranching_throughput_add = 0.2
 	}
 	cost = 100
-	
+
 	ai_weight = {
 		value = 0
 		if = {
@@ -429,7 +591,7 @@ decree_encourage_agricultural_industry = {
 						is_building_group = bg_agriculture
 						is_building_group = bg_ranching
 						is_building_group = bg_plantations
-					}				
+					}
 				}
 			}
 			add = 50
@@ -443,7 +605,7 @@ decree_encourage_agricultural_industry = {
 						is_building_group = bg_plantations
 					}
 					count >= 3
-				}		
+				}
 			}
 			add = 50
 		}
@@ -454,9 +616,9 @@ decree_encourage_agricultural_industry = {
 						is_building_group = bg_agriculture
 						is_building_group = bg_ranching
 						is_building_group = bg_plantations
-					}	
+					}
 					count >= 5
-				}			
+				}
 			}
 			add = 50
 		}
@@ -466,11 +628,11 @@ decree_encourage_agricultural_industry = {
 					OR = {
 						has_strategy = ai_strategy_plantation_economy
 						has_strategy = ai_strategy_agricultural_expansion
-					}					
+					}
 				}
 			}
 			multiply = 1.5
-		}		
+		}
 	}
 }
 
@@ -478,13 +640,13 @@ decree_encourage_resource_industry = {
 	texture = "gfx/interface/icons/decree/decree_encourage_resource_industry.dds"
 	unlocking_technologies = {
 		shaft_mining
-	}	
+	}
 	state_trigger = {
-		NOR = { 
-			has_decree = decree_encourage_manufacturing_industry 
+		NOR = {
+			has_decree = decree_encourage_manufacturing_industry
 			has_decree = decree_encourage_agricultural_industry
 		}
-	}		
+	}
 	modifier = {
 		building_group_bg_mining_throughput_add = 0.2
 		building_group_bg_logging_throughput_add = 0.2
@@ -494,7 +656,7 @@ decree_encourage_resource_industry = {
 		building_group_bg_rubber_throughput_add = 0.2
 	}
 	cost = 100
-	
+
 	ai_weight = {
 		value = 0
 		if = {
@@ -506,7 +668,7 @@ decree_encourage_resource_industry = {
 						is_building_group = bg_fishing
 						is_building_group = bg_whaling
 						is_building_group = bg_oil_extraction
-					}				
+					}
 				}
 			}
 			add = 50
@@ -520,9 +682,9 @@ decree_encourage_resource_industry = {
 						is_building_group = bg_fishing
 						is_building_group = bg_whaling
 						is_building_group = bg_oil_extraction
-					}	
+					}
 					count >= 3
-				}			
+				}
 			}
 			add = 50
 		}
@@ -535,20 +697,20 @@ decree_encourage_resource_industry = {
 						is_building_group = bg_fishing
 						is_building_group = bg_whaling
 						is_building_group = bg_oil_extraction
-					}	
+					}
 					count >= 5
-				}			
+				}
 			}
 			add = 50
 		}
 		if = {
 			limit = {
 				scope:country = {
-					has_strategy = ai_strategy_resource_expansion				
+					has_strategy = ai_strategy_resource_expansion
 				}
 			}
 			multiply = 1.5
-		}		
+		}
 	}
 }
 
@@ -561,7 +723,7 @@ decree_greener_grass_campaign = {
 		state_migration_pull_add = 20
 		state_migration_pull_mult = 0.25
 	}
-	unlocking_technologies = { 
+	unlocking_technologies = {
 		romanticism
 	}
 	cost = 100
@@ -569,7 +731,7 @@ decree_greener_grass_campaign = {
 	ai_weight = {
 		value = 0
 		if = {
-			limit = { 
+			limit = {
 				any_scope_building = {
 					is_subsistence_building = yes
 					occupancy < 0.75
@@ -578,7 +740,7 @@ decree_greener_grass_campaign = {
 			add = 50
 		}
 		if = {
-			limit = { 
+			limit = {
 				any_scope_building = {
 					is_subsistence_building = yes
 					occupancy < 0.5
@@ -587,24 +749,41 @@ decree_greener_grass_campaign = {
 			add = 50
 		}
 		if = {
-			limit = { 
+			limit = {
 				any_scope_building = {
 					is_subsistence_building = yes
 					occupancy < 0.25
 				}
 			}
 			add = 50
-		}		
+		}
 		if = {
-			limit = { 
+			limit = {
+				is_incorporated = yes
+				any_scope_building = {
+					is_subsistence_building = yes
+					occupancy < 0.9
+				}
+				scope:country = {
+					OR = {
+						has_journal_entry = je_south_america_migration
+						has_journal_entry = je_central_america_migration
+						has_journal_entry = je_american_west_migration
+					}
+				}
+			}
+			add = 500
+		}
+		if = {
+			limit = {
 				is_incorporated = no
-				scope:country = { NOT = { has_law = law_type:law_colonial_resettlement } } # Already gives a hefty migration bonus
+				scope:country = { NOT = { has_law_or_variant = law_type:law_colonial_resettlement } } # Already gives a hefty migration bonus
 			}
 			multiply = 2.0
-		}		
+		}
 		if = {
-			limit = { 
-				state_unemployment_rate >= 0.1 
+			limit = {
+				state_unemployment_rate >= 0.1
 			}
 			multiply = 0
 		}
@@ -612,7 +791,7 @@ decree_greener_grass_campaign = {
 }
 
 decree_enlistment_efforts = {
-	texture = "gfx/interface/icons/decree/decree_enlistment_efforts.dds"			
+	texture = "gfx/interface/icons/decree/decree_enlistment_efforts.dds"
 	modifier = {
 		state_conscription_rate_add = 0.05
 		building_training_rate_mult = 0.25
@@ -621,7 +800,7 @@ decree_enlistment_efforts = {
 		mandatory_service
 	}
 	cost = 100
-	
+
 	ai_weight = {
 		value = 0
 
@@ -630,16 +809,16 @@ decree_enlistment_efforts = {
 				any_scope_building = {
 					is_building_type = building_barracks
 					count >= 5
-				}				
+				}
 			}
 			add = 25
-		}		
+		}
 		if = {
 			limit = {
 				any_scope_building = {
 					is_building_type = building_barracks
 					count >= 10
-				}				
+				}
 			}
 			add = 50
 		}
@@ -648,7 +827,7 @@ decree_enlistment_efforts = {
 				any_scope_building = {
 					is_building_type = building_barracks
 					count >= 25
-				}			
+				}
 			}
 			add = 75
 		}
@@ -679,10 +858,10 @@ decree_enlistment_efforts = {
 				any_scope_building = {
 					is_building_type = building_naval_base
 					count >= 50
-				}			
+				}
 			}
 			add = 50
-		}		
+		}
 	}
 }
 
