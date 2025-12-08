@@ -571,6 +571,8 @@ je_lotharian_awakening = {
 	on_monthly_pulse = {
 		random_events = {
 			10 = dvg_lotharingia.25
+			10 = dvg_lotharingia.26
+			80 = 0
 		}
 		effect = {
 			if = {
@@ -618,6 +620,30 @@ je_lotharian_awakening = {
 				subtract = 1
 				}
 			}
+			if = {
+				limit = {
+					OR = {
+					has_law = law_type:law_freedom_of_conscience
+					has_law = law_type:law_state_religion
+					}
+				}
+				change_variable = {
+				name = pc_var
+				add = 1
+				}
+			}
+			if = {
+				limit = {
+					OR = {
+					has_law = law_type:law_religious_schools
+					has_law = law_type:law_charitable_health_system 
+					}
+				}
+				change_variable = {
+				name = pc_var
+				add = 1
+				}
+			}
 		}
 	}
 
@@ -625,10 +651,26 @@ je_lotharian_awakening = {
 		trigger_if = {
 			scope:journal_entry = { is_goal_complete = yes }
 		}
-		ig:ig_devout = {
+		calc_true_if = {
+			amount > 3
+
+			ig:ig_devout = {
 			is_in_government = yes
 			ig_approval > 10
+			}
+			ig:ig_devout = {
+				is_powerful = yes
+			}
+			OR = {
+				has_law = law_type:law_freedom_of_conscience
+				has_law = law_type:law_state_religion
+			}
+			OR = {
+				has_law = law_type:law_religious_schools
+				has_law = law_type:law_charitable_health_system 
+			}
 		}
+		
 	}
 	
 	goal_add_value = 100
@@ -641,9 +683,19 @@ je_lotharian_awakening = {
 	fail = {
 		ig:ig_devout = {
 			is_in_government = no
-			ig_approval < -10
-			is_marginal = yes
 		}
+		OR = {
+			ig:ig_devout = {
+				is_marginal = yes
+			}
+			ig:ig_devout = {
+				is_insurrectionary = yes
+			}
+		}
+	}
+	on_fail = {
+
+		
 	}
 	timeout = 7125
 
