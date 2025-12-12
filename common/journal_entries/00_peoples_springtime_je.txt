@@ -1,17 +1,36 @@
 ﻿je_springtime_of_the_peoples = {
 	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
 
-	group = je_group_crises
+	group = je_group_global_international_situations
+
+	should_be_involved = {
+		is_in_geographic_region = geographic_region_europe
+		has_technology_researched = egalitarianism
+	}
+
+	modifiers_while_active = {
+		modifier_springtime_of_the_peoples
+	}
+
+	should_show_when_not_involved = {
+		OR = {
+			is_in_geographic_region = geographic_region_europe
+			country_has_interest_marker_in_europe = yes
+            top_overlord ?= {
+                capital = {
+                    is_in_geographic_region = geographic_region_europe
+                }
+            }
+		}
+	}
 
 	is_shown_when_inactive = {
 		NOT = {
 			has_global_variable = peoples_springtime_happened
 		}
-		has_technology_researched = mass_communication
-		country_is_in_europe = yes
-		NOT = {
-			has_variable = had_red_summer_var
-		}
+		any_country_in_europe = {
+            has_technology_researched = mass_communication
+        }
 	}
 
 	possible = {
@@ -22,7 +41,7 @@
 		}
 	}
 
-	immediate = {
+	immediate_all_involved = {
 		if = {
 			limit = {
 				NOT = {
@@ -111,36 +130,66 @@
 
 	custom_completion_header = je_springtime_of_the_peoples_complete_header
 
-	complete = {
+complete = {
 		AND = {
 			OR = {
 				custom_tooltip = {
-					text = had_springtime_revolution_tt
-					has_variable = had_springtime_revolution
+					text = had_springtime_revolution_tt_no_scope
+					scope:journal_entry = {
+						any_scope_je_involved = {
+							is_player = yes
+							has_variable = had_springtime_revolution
+						}
+					}
 				}
-				any_interest_group = {
-					is_in_government = yes
-					OR = {
-						has_ideology = ideology:ideology_liberal
-						leader = { has_ideology = ideology:ideology_radical }
+				custom_tooltip = {
+					text = has_liberal_or_radical_in_government_tt
+					scope:journal_entry = {
+						any_scope_je_involved = {
+							is_player = yes
+							any_interest_group = {
+								is_in_government = yes
+								OR = {
+									has_ideology = ideology:ideology_liberal
+									leader = { has_ideology = ideology:ideology_radical }
+								}
+							}
+						}
 					}
 				}
 			}
-			OR = {
-				has_law_or_variant = law_type:law_wealth_voting
-				has_law_or_variant = law_type:law_census_voting
-				has_law_or_variant = law_type:law_universal_suffrage
+			custom_tooltip = {
+				text = has_census_voting_or_universal_suffrage_tt
+				scope:journal_entry = {
+					any_scope_je_involved = {
+						is_player = yes
+						OR = {
+							has_law_or_variant = law_type:law_wealth_voting
+							has_law_or_variant = law_type:law_census_voting
+							has_law_or_variant = law_type:law_universal_suffrage
+						}
+					}
+				}
 			}
+		}
+		hidden_trigger = {
+			always = no
 		}
 	}
 
 	custom_on_completion_header = je_springtime_of_the_peoples_on_complete_header
 
 	on_complete = {
-		set_variable = {
-			name = completed_peoples_springtime
+		scope:journal_entry = {
+			random_scope_je_involved = {
+				limit = {
+					is_player = yes
+				}
+				show_as_tooltip = {
+					trigger_event = { id = peoples_springtime.10 }
+				}
+			}
 		}
-		trigger_event = { id = peoples_springtime.10 }
 	}
 
 	event_outcome_completed_desc = {
@@ -154,46 +203,65 @@
 	custom_failure_header = je_springtime_of_the_peoples_fail_header
 
 	fail = {
-		trigger_if = {
-			limit = {
-				exists = var:springtime_timer_var
-			}
-			custom_tooltip = {
-				text = springtime_of_the_peoples_timer_tt
-				var:springtime_timer_var >= 10
-			}
-		}
-		trigger_else = {
-			custom_tooltip = {
-				text = springtime_of_the_peoples_timer_dummy_tt
-				always = no
-			}
-		}
-		scope:radical_movement_scope ?= {
-			political_movement_support <= 0.10
-			is_being_suppressed = yes
-		}
 		custom_tooltip = {
 			text = no_radical_agitators_or_politicians_tt
-			NOT = {
-				any_scope_character = {
-					OR = {
-						has_role = politician
-						has_role = agitator
+			scope:journal_entry = {
+				any_scope_je_involved = {
+					is_player = yes
+					NOT = {
+						any_scope_character = {
+							OR = {
+								has_role = politician
+								has_role = agitator
+							}
+							has_ideology = ideology:ideology_radical
+						}
 					}
-					has_ideology = ideology:ideology_radical
 				}
 			}
+		}
+		custom_tooltip = springtime_of_the_peoples_timer_dummy_tt
+		custom_tooltip = {
+			text = all_radical_movements_suppressed_tt
+			scope:journal_entry = {
+				any_scope_je_involved = {
+					is_player = yes
+					any_political_movement = {
+						OR = {
+							is_political_movement_type = movement_yugoslav_national
+							is_political_movement_type = movement_german_national
+							is_political_movement_type = movement_british_national
+							is_political_movement_type = movement_french_national
+							is_political_movement_type = movement_irish_national
+							is_political_movement_type = movement_italian_national
+							is_political_movement_type = movement_radical
+						}
+						political_movement_support <= 0.10
+						is_being_suppressed = yes
+					}
+					has_variable = springtime_timer_var
+					var:springtime_timer_var >= 12
+				}
+			}
+		}
+		hidden_trigger = {
+			always = no
 		}
 	}
 
 	custom_on_failure_header = je_springtime_of_the_peoples_on_fail_header
 
 	on_fail = {
-		set_variable = {
-			name = completed_peoples_springtime
+		scope:journal_entry = {
+			random_scope_je_involved = {
+				limit = {
+					is_player = yes
+				}
+				show_as_tooltip = {
+					trigger_event = { id = peoples_springtime.8 }
+				}
+			}
 		}
-		trigger_event = { id = peoples_springtime.8 }
 	}
 
 	event_outcome_failed_desc = {
@@ -216,42 +284,57 @@
 		}
 	}
 
+	on_weekly_pulse = {
+		effect = {
+			scope:journal_entry = {
+				every_scope_je_involved = {
+					trigger_event = { id = peoples_springtime.8 }
+					trigger_event = { id = peoples_springtime.9 }
+					trigger_event = { id = peoples_springtime.10 }
+				}
+			}
+		}
+	}
+
 	on_monthly_pulse = {
 		effect = {
-			if = {
-				limit = {
-					AND = {
-						scope:radical_movement_scope ?= {
-							political_movement_support <= 0.10
-							is_being_suppressed = yes
-						}
-						NOT = {
-							any_interest_group = {
-								leader = { has_ideology = ideology:ideology_radical }
-								is_marginal = no
+			scope:journal_entry = {
+				every_scope_je_involved = {
+					trigger_event = { id = 1840.5 }
+					if = {
+						limit = {
+							AND = {
+								scope:radical_movement_scope ?= {
+									political_movement_support <= 0.10
+									is_being_suppressed = yes
+								}
+								NOT = {
+									any_interest_group = {
+										leader = { has_ideology = ideology:ideology_radical }
+										ig_counts_as_marginal = no
+									}
+									any_scope_character = {
+										has_ideology = ideology:ideology_radical
+										has_role = agitator
+									}
+								}
 							}
-							any_scope_character = {
-								has_ideology = ideology:ideology_radical
-								has_role = agitator
-							}
 						}
+						change_variable = { name = springtime_timer_var add = 1 }
+					}
+					else = {
+						set_variable = { name = springtime_timer_var value = 0 }
+					}
+
+					### Event Pulse
+					random_list = {
+						100 = { }
+						10 = { trigger_event = peoples_springtime.3 }
+						10 = { trigger_event = peoples_springtime.4 }
+						10 = { trigger_event = peoples_springtime.5 }
 					}
 				}
-				change_variable = { name = springtime_timer_var add = 1 }
 			}
-			else = {
-				set_variable = { name = springtime_timer_var value = 0 }
-			}
-		}
-		events = {
-			1848.5
-			peoples_springtime.9
-		}
-		random_events = {
-			100 = 0
-			10 = peoples_springtime.3
-			10 = peoples_springtime.4
-			10 = peoples_springtime.5
 		}
 	}
 
@@ -269,7 +352,7 @@
 }
 
 je_red_summer = {
-	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+	icon = "gfx/interface/icons/event_icons/event_protest.dds"
 
 	group = je_group_crises
 
@@ -277,7 +360,6 @@ je_red_summer = {
 	scripted_progress_bar = red_summer_counter_revolution_progress_bar
 
 	immediate = {
-		set_variable = had_red_summer_var
 		random_primary_culture = {
 			save_scope_as = primary_culture_scope
 		}
@@ -300,6 +382,7 @@ je_red_summer = {
 						is_in_government = yes
 						OR = {
 							has_ideology = ideology:ideology_liberal
+							has_ideology = ideology:ideology_proletarian
 							leader = {
 								OR = {
 									has_liberal_ideology = yes
@@ -332,10 +415,6 @@ je_red_summer = {
 				}
 			}
 		}
-	}
-
-	modifiers_while_active = {
-		modifier_red_summer
 	}
 
 	custom_completion_header = je_springtime_of_the_peoples_complete_header
@@ -387,7 +466,7 @@ je_red_summer = {
 	}
 
 	custom_failure_header = je_springtime_of_the_peoples_fail_header
-	
+
 	fail = {
 		custom_tooltip = {
 			text = red_summer_fail_tt
