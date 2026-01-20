@@ -78,3 +78,149 @@ dua_integration_english_button = {
         }
     }
 }
+
+# Neo-Absolutism
+
+dua_neo_absolutism_abolish_feudal_obligations_button = {
+	name = dua_neo_absolutism_abolish_feudal_obligations_button
+	desc = dua_neo_absolutism_abolish_feudal_obligations_button_desc
+
+	visible = {
+		NOT = {
+			has_variable = je_dua_neo_absolutism_marginalized_feudal_obligations_var
+		}
+	}
+
+	possible = {
+		NOT = {
+			has_law = law_type:law_manorialism
+		}
+		NOT = {
+			has_law = law_type:law_states_general
+		}
+	}
+
+	selected = {
+	}
+
+	effect = {
+		set_variable = je_dua_neo_absolutism_marginalized_feudal_obligations_var
+		custom_tooltip = {
+			text = dua_neo_absolutism_constitutional_pressure_progress_bar_decrease_10_tt
+			je:je_dua_neo_absolutism = {
+				add_progress = { value = -10 name = dua_neo_absolutism_constitutional_pressure_progress_bar }
+			}
+		}
+		ig:ig_landowners ?= {
+			add_modifier = {
+				name = modifier_abolished_feudal_obligations
+				days = normal_modifier_time
+			}
+		}
+		ig:ig_rural_folk ?= {
+			add_modifier = {
+				name = modifier_empowered_smallholders
+				days = normal_modifier_time
+			}
+		}
+		add_modifier = {
+			name = modifier_robot_compensation_payments
+			days = normal_modifier_time
+			multiplier = money_amount_multiplier_medium
+		}
+		add_modifier = {
+			name = modifier_bureaucratisation_of_nobles
+			days = normal_modifier_time
+		}
+	}
+
+	ai_chance = {
+		value = 1
+	}
+}
+
+dua_neo_absolutism_papal_concordat_button = {
+	name = dua_neo_absolutism_papal_concordat_button
+	desc = dua_neo_absolutism_papal_concordat_button_desc
+
+	visible = {
+		NOT = {
+			has_variable = dua_neo_absolutism_papal_concordat_var
+		}
+	}
+
+	possible = {
+		NOT = {
+			c:PAP ?= {
+				is_diplomatic_play_enemy_of = root
+			}
+		}
+		OR = {
+			NOT = {
+				exists = c:PAP
+			}
+			c:PAP ?= {
+				relations:root >= relations_threshold:amicable
+			}
+		}
+	}
+
+	selected = {
+	}
+
+	effect = {
+		set_variable = je_dua_neo_absolutism_marginalized_papal_concordat_var
+		custom_tooltip = {
+			text = dua_neo_absolutism_constitutional_pressure_progress_bar_increase_10_tt
+			je:je_dua_neo_absolutism = {
+				add_progress = { value = 10 name = dua_neo_absolutism_constitutional_pressure_progress_bar }
+			}
+		}
+		if = {
+			limit = {
+				exists = c:PAP
+			}
+			change_relations = {
+				country = c:PAP
+				value = 40
+			}
+			if = {
+				limit = {
+					is_power_bloc_leader = yes
+				}
+				root.power_bloc ?= {
+					add_leverage = { target = c:PAP value = 100 }
+				}
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_law = law_type:law_state_religion
+				}
+			}
+			activate_law = law_type:law_state_religion
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_law = law_type:law_religious_schools
+				}
+			}
+			activate_law = law_type:law_religious_schools
+		}
+		add_loyalists = {
+			religion = rel:catholic
+			value = medium_radicals
+		}
+		add_radicals = {
+			religion = rel:protestant
+			value = small_radicals
+		}
+		set_variable = dua_neo_absolutism_papal_concordat_var
+	}
+
+	ai_chance = {
+		value = 1
+	}
+}

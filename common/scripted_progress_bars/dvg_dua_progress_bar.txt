@@ -1,0 +1,197 @@
+dua_neo_absolutism_constitutional_pressure_progress_bar = {
+ 	name = "dua_neo_absolutism_constitutional_pressure_progress_bar"
+ 	desc = "dua_neo_absolutism_constitutional_pressure_progress_bar_desc"
+
+ 	default_bad = yes
+
+ 	monthly_progress = {
+ 		# Advance
+		if = {
+			limit = {
+				has_modifier = declared_bankruptcy
+			}
+			add = {
+				desc = "dua_neo_absolutism_declared_bankruptcy"
+				value = 10
+			}
+		}
+		if = {
+			limit = {
+				taking_loans = yes
+			}
+			add = {
+				desc = "dua_neo_absolutism_taking_loans"
+				value = 1
+			}
+		}
+		if = {
+			limit = {
+				any_scope_state = {
+					turmoil >= 0.10
+				}
+			}
+			add = {
+				desc = "dua_neo_absolutism_radicals"
+				every_scope_state = {
+					limit = {
+						turmoil >= 0.10
+					}
+					add = this.turmoil
+				}
+			}
+		}
+		if = {
+			limit = {
+				any_interest_group = {
+					law_stance = {
+						law = law_type:law_autocracy
+						value < neutral
+					}
+				}
+			}
+			add = {
+				desc = "dua_neo_absolutism_interest_groups_opposing"
+				every_interest_group = {
+					limit = {
+						law_stance = {
+							law = law_type:law_autocracy
+							value < neutral
+						}
+					}
+					add = this.ig_clout
+				}
+			}
+		}
+		if = {
+			limit = {
+				any_political_movement = {
+					OR = {
+						movement_is_liberal = yes
+						movement_is_socialist = yes
+						is_political_movement_type = movement_cultural_minority
+					}
+				}
+			}
+			add = {
+				desc = "dua_neo_absolutism_movement_activism"
+				every_political_movement = {
+					limit = {
+						OR = {
+							movement_is_liberal = yes
+							movement_is_socialist = yes
+							is_political_movement_type = movement_cultural_minority
+						}
+					}
+					add = {
+						value = this.political_movement_radicalism
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				relative_bureaucracy < 0
+			}
+			add = {
+				desc = "dua_neo_absolutism_bureaucracy_deficit"
+				subtract = {
+					root = {
+						value = this.relative_bureaucracy
+					}
+				}
+			}
+		}
+		# Deplete
+		if = {
+			limit = {
+				net_total_income > 0
+			}
+			add = {
+				desc = "dua_neo_absolutism_positive_budget_balance"
+				value = -1
+			}
+		}
+		if = {
+			limit = {
+				any_scope_state = {
+					loyalty >= 0.10
+				}
+			}
+			add = {
+				desc = "dua_neo_absolutism_loyalists"
+				every_scope_state = {
+					limit = {
+						loyalty >= 0.10
+					}
+					subtract = this.loyalty
+				}
+			}
+		}
+		if = {
+			limit = {
+				any_interest_group = {
+					law_stance = {
+						law = law_type:law_autocracy
+						value > neutral
+					}
+				}
+			}
+			add = {
+				desc = "dua_neo_absolutism_interest_groups_supporting"
+				every_interest_group = {
+					limit = {
+						law_stance = {
+							law = law_type:law_autocracy
+							value > neutral
+						}
+					}
+					subtract = this.ig_clout
+				}
+			}
+		}
+		if = {
+			limit = {
+				any_political_movement = {
+					OR = {
+						is_political_movement_type = movement_royalist_absolutist
+						is_political_movement_type = movement_cultural_majority
+						is_political_movement_type = movement_religious_majority
+					}
+				}
+			}
+			add = {
+				desc = "dua_neo_absolutism_movement_activism_2"
+				every_political_movement = {
+					limit = {
+						OR = {
+							is_political_movement_type = movement_royalist_absolutist
+							is_political_movement_type = movement_cultural_majority
+							is_political_movement_type = movement_religious_majority
+						}
+					}
+					subtract = {
+						value = this.political_movement_support
+						multiply = 5
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				relative_bureaucracy > 0
+			}
+			add = {
+				desc = "dua_neo_absolutism_excess_bureaucracy"
+				subtract = {
+					root = {
+						value = this.relative_bureaucracy
+					}
+				}
+			}
+		}
+	}
+
+ 	start_value = 10
+ 	min_value = 0
+ 	max_value = 100
+}
