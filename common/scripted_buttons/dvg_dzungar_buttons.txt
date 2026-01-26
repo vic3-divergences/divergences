@@ -1,0 +1,350 @@
+﻿dvg_convert_islam_button = {
+	name = "dvg_convert_islam_button"
+	desc = "dvg_convert_islam_button_desc"
+
+	visible = { always = yes }
+
+	possible = {
+		NOT = {
+			ruler = {
+				has_religion = rel:sunni
+			}
+		}
+	}
+	effect = {
+		
+	}
+}
+
+ban_opium_button = {
+	name = "ban_opium"
+	desc = "ban_opium_desc"
+
+	visible = { 
+		#has_journal_entry = je_opium_obsession
+		exists = market
+		market.owner = root
+		NOT = { is_banning_goods = g:opium }
+	}
+
+	possible = {
+		#has_journal_entry = je_opium_obsession
+		NOT = { has_law = law_type:law_free_trade }
+		NOT = { has_variable = lost_opium_wars }
+		exists = market	
+	}
+
+	effect = {
+		add_banned_goods = g:opium
+		add_modifier = {
+			name = opium_ban_authority
+		}
+	}
+
+	ai_chance = {
+        value = 0
+		if = {
+			limit = {
+				OR = {
+					has_strategy = ai_strategy_conservative_agenda
+					has_strategy = ai_strategy_reactionary_agenda
+					has_strategy = ai_strategy_maintain_mandate_of_heaven
+				}
+			}
+			add = 10
+		}		 
+    }
+}
+
+
+unban_opium_button = {
+	name = "remove_opium_ban"
+	desc = "remove_opium_ban_desc"
+
+	visible = { 
+		#has_journal_entry = je_opium_obsession
+		is_banning_goods = g:opium
+		exists = market
+		market.owner = root
+	}
+
+	possible = {
+		always = yes
+	}
+
+	effect = {
+		remove_banned_goods = g:opium
+		remove_modifier = opium_ban_authority
+	}
+
+	ai_chance = {
+		value = 0
+		  if = {
+			  limit = {
+				  has_strategy = ai_strategy_progressive_agenda
+			  }
+			  add = 10
+		  }		 
+	 }	
+}
+export_missionaries_button = {
+	name = "export_missionaries"
+	desc = "export_missionaries_desc"
+
+	visible = { 
+		has_journal_entry = je_xijiao_missions_send
+		
+	}
+
+	possible = {
+		NOT = {has_modifier = dvg_exporting_missionaries}
+		has_technology_researched = mass_communication
+
+	}
+
+	effect = {
+		add_modifier = {
+			name = dvg_exporting_missionaries
+			months = 60
+
+		}
+		every_country = {
+			limit = {country_has_primary_culture = cu:han
+			NOT = {country_has_state_religion = rel:taiping}
+			}
+			trigger_event = dvg_xijiao.2
+		}
+		
+	}
+
+	ai_chance = {
+		value = 100
+		 		 
+	 }	
+}
+
+xijiao_rise_up = {
+	name = "riseup_button"
+	desc = "riseup_button_desc"
+
+	visible = { 
+		has_journal_entry = je_xijiao_missions_send
+		has_variable = dvg_xijiao_var
+	}
+
+	possible = {
+		has_technology_researched = mass_communication
+		custom_tooltip = {
+		NOT = {exists = c:TPG}
+		text = je_xijiao_missions_send_goal
+		this = { var:dvg_xijiao_var >= 60 }
+		}
+		OR = {
+			sr:region_south_china = {
+				any_scope_state = {
+				turmoil > 0.33
+			}
+			}
+			sr:region_north_china = {
+				any_scope_state = {
+				turmoil > 0.33
+			}
+			}
+
+		}
+		
+		
+	}
+
+	effect = {
+		set_global_variable = xijiao_revolt
+
+		trigger_event = dvg_xijiao.9
+
+		change_tag = TPG
+	}
+
+	ai_chance = {
+		value = 100
+		 		 
+	 }	
+}
+purge_corruption = {
+	name = "purge_corruption"
+	desc = "purge_corruption_desc"
+
+	visible = { 
+		has_journal_entry = je_decline_of_great_shun_main
+		
+	}
+	possible = {
+		authority >= 888 
+		government_legitimacy >= 88 
+	}
+
+	effect = {
+		remove_modifier = decentralized_navy
+	}
+
+	ai_chance = {
+		value = 100
+		  
+	 }	
+}
+
+annex_chinese_subjects = {
+	name = "annex_chinese_subjects"
+	desc = "annex_chinese_subjects_desc"
+
+	visible = { 
+		any_subject_or_below = {
+			any_primary_culture = {
+				has_discrimination_trait = tradition_sinosphere
+			}
+		}
+		has_technology_researched = nationalism
+	}
+
+	possible = {
+		any_subject_or_below = {
+			any_primary_culture = {
+				has_discrimination_trait = tradition_sinosphere
+			}
+			has_attitude = {
+				who = ROOT
+				attitude = loyal
+			}
+		}
+		NOT = {
+			has_modifier = questioned_mandate
+			has_journal_entry = je_decline_of_great_shun_main
+			has_journal_entry = je_tungning_start
+			has_journal_entry = je_xijiao_missions_send
+		}
+		is_diplomatic_play_committed_participant = no
+		
+
+	}
+
+	effect = {
+		every_country = {
+			if = {
+				limit = {
+					is_ai = yes			
+					country_is_in_china = yes
+					is_subject_of = ROOT
+				}			
+				root = { annex = prev }
+			}
+		}
+	}
+
+	ai_chance = {
+		value = 100
+	 }	
+}
+
+china_unify_play = {
+	name = "china_unify_play"
+	desc = "china_unify_play_desc"
+
+	visible = { 
+		any_country = {
+			country_has_primary_culture = cu:han
+			any_neighbouring_state = {
+				owner = ROOT
+			}
+			is_ai = yes
+		}
+		NOT = {
+			exists = c:CHI
+		}
+	}
+
+	possible = {
+		
+		NOT = {
+			has_modifier = questioned_mandate
+			has_modifier = decision_cooldown
+			has_journal_entry = je_decline_of_great_shun_main
+			has_journal_entry = je_tungning_start
+			has_journal_entry = je_xijiao_missions_send
+		}
+		is_diplomatic_play_committed_participant = no
+		is_at_war = no
+		has_technology_researched = nationalism
+		
+		
+
+	}
+
+	effect = {
+		add_modifier = {
+			name = decision_cooldown
+			months = 30
+		}
+		random_country = {
+			limit = {
+				country_is_in_china = yes
+				any_neighbouring_state = {
+					owner = ROOT
+				}
+				is_ai = yes
+			}
+			save_scope_as = china_target
+		}
+		create_diplomatic_play = {
+			type = dp_unify_china
+			target_country = scope:china_target
+			war = no 
+			add_war_goal = {
+				holder = scope:china_target
+				type = annex_country
+				target_country = ROOT
+			}
+		}
+	}
+
+	ai_chance = {
+		value = 100
+	 }	
+}
+
+dvg_consolidate_mandate = {
+	name = "CHI_mandate_button"
+	desc = "CHI_mandate_button_desc"
+
+	visible = { always = yes }
+
+	possible = {
+	  authority >= 888 
+	  NOT = {
+		has_modifier = consolidating_mandate
+	  }
+	  in_default = no
+	  NOR = {
+		has_law = law_type:law_no_schools
+		has_law = law_type:law_no_home_affairs
+	  }
+	  root.average_sol >= 10 
+	  has_technology_researched = mass_communication
+	}
+	effect = {
+		if = {
+			limit = {
+				has_modifier = questioned_mandate
+			}
+			remove_modifier = questioned_mandate
+		}
+		add_modifier = {
+			name = consolidating_mandate
+			months = 12
+		}
+		every_scope_state = {
+			add_modifier = {
+				name = dvg_assimilate
+				months = 12
+			}
+		}
+	}
+}
