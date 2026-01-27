@@ -1,0 +1,158 @@
+﻿
+je_the_eastern_border_treaty_of_aigun = {
+	name = "je_the_eastern_border_treaty_of_aigun"
+	desc = "je_the_eastern_border_treaty_of_aigun_desc"
+
+	visible = {
+		has_technology_researched = nationalism
+		has_technology_researched = railways
+		NOR = {
+			owns_entire_state_region = STATE_AMUR
+			has_global_variable = rus_bought_amur
+		}
+		AND = {
+			any_scope_state = {
+				state_region = s:STATE_TRANS_BAIKAL
+			}
+			any_scope_state = {
+				state_region = s:STATE_OKHOTSK
+			}
+		}
+		OR = {
+			s:STATE_BUREYIA = {
+			any_scope_state = {
+				is_split_state = no
+				is_capital = no
+				owner = {
+					is_player = no
+					is_country_type = unrecognized
+				OR = {
+				country_has_primary_culture = cu:manchu
+				country_has_primary_culture = cu:han
+				}
+				}
+				}
+				}
+			s:STATE_OUTER_MANCHURIA = {
+				any_scope_state = {
+				is_split_state = no
+				is_capital = no
+				owner = {
+					is_player = no
+					is_country_type = unrecognized
+				OR = {
+				country_has_primary_culture = cu:manchu
+				country_has_primary_culture = cu:han
+				}
+				}
+				}
+			}
+		}
+		
+		
+	}
+
+	ai_chance = {
+		value = 10
+	}
+
+	possible = {
+		sr:region_east_siberia = {
+			save_temporary_scope_as = east_siberia_region
+		}
+		any_country = {
+			OR = {
+				is_subject = no
+				is_subject_of = ROOT
+			}
+			OR = {
+				custom_tooltip = {
+					text = war_with_china_not_russia_tt
+					any_enemy_in_war = {
+						NOT = {
+							c:JAP ?= this
+						}
+					}
+				}
+				custom_tooltip = {
+					text = owes_russia_obligation_tt
+					c:JAP ?= {
+						is_owed_obligation_by = PREV
+					}
+				}
+				
+				country_rank < rank_value:unrecognized_major_power
+			}
+		}
+		c:JAP ?= {
+			country_rank >= rank_value:great_power
+		}
+		custom_tooltip = {
+			text = east_siberia_formation_tt
+			OR = {
+				is_ai = yes
+				any_military_formation = {
+					is_army = yes
+					current_hq ?= p:x68226E.land_hq
+					any_combat_unit = {
+						count >= 20
+					}
+				}
+			}
+		}
+	}
+
+	effect = {
+		random_country = {
+			limit = {
+				OR = {
+					country_has_primary_culture = cu:manchu
+					country_has_primary_culture = cu:han
+				}
+				OR = {
+					any_scope_state = {
+					state_region = s:STATE_BUREYIA
+					is_split_state = no
+					is_capital = no
+					}
+					any_scope_state = {
+					state_region = s:STATE_OUTER_MANCHURIA
+					is_split_state = no
+					is_capital = no
+					}
+				}
+				
+				is_country_type = unrecognized
+				is_player = no
+			}
+			save_scope_as = donor_scope
+		}
+		if = {
+			limit = {
+				scope:donor_scope = {
+					owes_obligation_to = ROOT
+				}
+			}
+			custom_tooltip = obligation_for_amur_tt
+		}
+		else_if = {
+			limit = {
+				scope:donor_scope = {
+					is_subject_of = ROOT
+				}
+			}
+			custom_tooltip = transfer_of_amur_tt
+		}
+		else = {
+			c:JAP ?= {
+				create_incident = {
+					country = scope:donor_scope
+					value = 10
+				}
+			}
+			custom_tooltip = transfer_of_amur_tt
+		}
+		set_global_variable = rus_bought_amur
+		trigger_event = { id = dvg_ryuukidou.4 popup = yes }
+	}
+}
