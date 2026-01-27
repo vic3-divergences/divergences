@@ -739,3 +739,267 @@ je_anglois_neo_absolutism = {
 	weight = 100
 	should_be_pinned_by_default = yes
 }
+
+#Dual Monarquie Fascism - Nota mental, Imperador Tiago "meu deus"
+
+je_action_anglo_française = {
+	group = je_group_historical_content
+	icon = "gfx/interface/icons/law_icons/corporate_state.dds"
+
+	scripted_button = je_aaf_eliminate_parliament
+
+	should_be_pinned_by_default = yes
+	weight = 10000
+
+	is_shown_when_inactive = {
+		c:DUA ?= this
+		has_technology_researched = corporatism
+	}
+
+	possible = {
+		OR = {
+			has_law_or_variant = law_type:law_census_voting
+			has_law_or_variant = law_type:law_universal_suffrage
+		}
+		NOR = {
+			has_law_or_variant = law_type:law_neo_absolutism
+		}
+		has_technology_researched = political_agitation
+		any_political_movement = {
+			is_political_movement_type = movement_corporatist
+		}
+		OR = {
+			has_law_or_variant = law_type:law_corporate_state
+			is_enacting_law = law_type:law_corporate_state
+			any_political_movement = {
+				is_political_movement_type = movement_corporatist
+				political_movement_support >= 0.05
+				political_movement_radicalism >= define:NPolitics|RADICALISM_AGITATING_THRESHOLD
+			}
+		}
+	}
+
+	immediate = {
+		random_political_movement = {
+			limit = {
+				is_political_movement_type = movement_corporatist
+			}
+			save_scope_as = corporatist_movement_scope
+		}
+		ordered_interest_group = {
+			limit = {
+				OR = {
+					is_interest_group_type = ig_petty_bourgeoisie
+					is_interest_group_type = ig_devout
+					is_interest_group_type = ig_landowners
+					is_interest_group_type = ig_rural_folk
+				}
+			}
+			order_by = ig_clout
+			position = 0
+			check_range_bounds = no
+			if = {
+				limit = {
+					ROOT = {
+						NOT = {
+							any_scope_character = {
+								AND = {
+									OR = {
+										has_role = politician
+										has_role = agitator
+									}
+									has_ideology = ideology:ideology_corporatist_leader
+								}
+							}
+						}
+					}
+				}
+				ROOT = {
+					custom_tooltip = {
+						text = corporatist_agitator_appears_tt
+						create_character = {
+							culture = primary_culture
+							is_agitator = yes
+							interest_group = prev
+							ideology = ideology_corporatist_leader
+							traits = {
+								demagogue
+								basic_political_operator
+							}
+						}
+					}
+				}
+			}
+		}
+		set_variable = { name = corporatists_suppression_var value = 0 }
+		trigger_event = { id = dua_fascism.1 popup = yes }
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					any_political_movement = {
+						is_political_movement_type = movement_corporatist
+						political_movement_support < 0.05
+					}
+				}
+				change_variable = { name = corporatists_suppression_var add = 1 }
+			}
+			else = {
+				set_variable = { name = corporatists_suppression_var value = 0 }
+			}
+		}
+	}
+
+	complete = {
+		has_law_or_variant = law_type:law_single_party_state
+		has_law_or_variant = law_type:law_corporate_state
+		has_law_or_variant = law_type:law_corporatized_unions
+		has_law_or_variant = law_type:law_state_religion
+		has_law_or_variant = law_type:law_interventionism
+		custom_tooltip = {
+			text = fascism_2_tt
+			trigger_if = {
+				limit = {
+					any_interest_group = {
+						leader = {
+							OR = {
+								has_socialist_ideology = yes
+								has_ideology = ideology:ideology_radical
+							}
+						}
+					}
+				}
+				any_interest_group = {
+					filter = {
+						leader = {
+							OR = {
+								has_socialist_ideology = yes
+								has_ideology = ideology:ideology_radical
+							}
+						}
+					}
+					ig_counts_as_marginal = yes
+					count = all
+				}
+			}
+		}
+		custom_tooltip = {
+			text = fascism_3_tt
+			trigger_if = {
+				limit = {
+					any_political_movement = {
+						OR = {
+							is_political_movement_type = movement_radical
+							movement_is_socialist = yes
+						}
+					}
+				}
+				any_political_movement = {
+					filter = {
+						OR = {
+							is_political_movement_type = movement_radical
+							movement_is_socialist = yes
+						}
+					}
+					OR = {
+						is_being_suppressed = yes
+						political_movement_support <= 0.05
+					}
+					count = all
+				}
+			}
+		}
+		has_revolution = no
+		has_any_secessionists_broken_out = no
+	}
+
+	on_complete = {
+		trigger_event = { id = dua_fascism.2 popup = yes }
+	}
+
+	event_outcome_completed_desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = event_dua_austrian_fascism.2_tt
+			}
+		}
+	}
+
+	fail = {
+		OR = {
+			trigger_if = {
+				limit = {
+					exists = scope:corporatist_movement_scope
+				}
+				custom_tooltip = {
+					text = corporatist_movement_disbanded_tt
+					NOT = {
+						exists = scope:corporatist_movement_scope
+					}
+				}
+			}
+			trigger_else = {
+				custom_tooltip = {
+					text = corporatist_movement_disbanded_dummy_tt
+					NOT = {
+						exists = scope:corporatist_movement_scope
+					}
+				}
+			}
+			AND = {
+				custom_tooltip = {
+					text = no_interest_group_in_government_is_corporatist_tt
+					NOT = {
+						any_interest_group = {
+							is_in_government = yes
+							OR = {
+								has_ideology = ideology:ideology_corporatist
+								any_scope_character = {
+									OR = {
+										has_role = politician
+										has_role = agitator
+									}
+									OR = {
+										has_ideology = ideology:ideology_corporatist_leader
+										has_ideology = ideology:ideology_fascist
+										has_ideology = ideology:ideology_integralist
+									}
+								}
+							}
+						}
+					}
+				}
+				OR = {
+					trigger_if = {
+						limit = {
+							has_variable = corporatists_suppression_var
+							exists = scope:corporatist_movement_scope
+						}
+						custom_tooltip = {
+							text = has_repressed_corporatists_for_some_years_tt
+							var:corporatists_suppression_var >= 24
+							any_political_movement = {
+								is_political_movement_type = movement_corporatist
+								political_movement_support < 0.05
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	on_fail = {
+		trigger_event = { id = dua_fascism.3 popup = yes }
+	}
+
+	event_outcome_failed_desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = event_effects_dua_fascism.3_tt
+			}
+		}
+	}
+}
