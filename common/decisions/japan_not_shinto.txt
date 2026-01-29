@@ -161,27 +161,36 @@ dvg_embrace_ainu = {
 		value = 100
 	}
 }
-
 kaigan_unite_ryu = {
 	is_shown = {
 		exists = c:KAM
 		exists = c:KKN
 
 	}
-
 	possible = {
-		is_at_war = no
+		is_diplomatic_play_committed_participant = no
 		has_technology_researched = nationalism
 		OR = {
 			AND = {
 				c:KAM = this
-				is_in_same_power_bloc = c:KKN
+				OR = {
+					is_in_same_power_bloc = c:KKN
+					top_overlord = {
+							THIS = root.top_overlord
+					}
+				}
 			}
-			AND = {
+			AND = {			
 				c:KKN = this
-				is_in_same_power_bloc = c:KAM
+				OR = {
+					is_in_same_power_bloc = c:KAM
+					top_overlord = {
+							THIS = root.top_overlord
+					}
+				}
 			}
 		}
+		
 	}
 	when_taken = {
 		custom_tooltip = unite_kaigan_tt
@@ -217,20 +226,30 @@ kaigan_unite_jap = {
 		}
 	}
 	possible = {
-		is_at_war = no
+		is_diplomatic_play_committed_participant = no
 		has_technology_researched = nationalism
-		NOT = { has_modifier = kaigan_test_modifier }
-		custom_tooltip = {
-			text = jap_can_relations_tt
-			any_subject_or_below = {
+		OR = {
+			AND = {
+				c:KAM = this
 				OR = {
-					country_has_primary_culture = cu:japanese
-					country_has_primary_culture = cu:kaiganese
+					is_in_same_power_bloc = c:KKN
+					top_overlord = {
+							THIS = root.top_overlord
+					}
 				}
-				is_ai = yes
-				relations:root >= relations_threshold:amicable
-				count >= 2
 			}
+			AND = {
+				c:KKN = this
+				OR = {
+					is_in_same_power_bloc = c:KAM
+					top_overlord = {
+							THIS = root.top_overlord
+					}
+				}
+			}
+		}
+		top_overlord ?= {
+				relations:root >= relations_threshold:amicable
 		}
 	}
 	when_taken = {
