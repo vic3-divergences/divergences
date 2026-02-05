@@ -129,3 +129,102 @@ je_dzungar_invite_lama = {
 		
 	}
 }
+
+je_kazakh_unite_button = {
+	name = "je_kazakh_unite_button"
+	desc = "je_kazakh_unite_button_desc"
+
+	visible = {
+		always = yes
+	}
+
+	possible = {
+		is_at_war = no
+		has_technology_researched = nationalism
+		NOT = { has_modifier = australia_test_modifier }
+		trigger_if = {
+			limit = {
+				OR = {
+					country_has_primary_culture = cu:kazak
+					country_has_primary_culture = cu:xacitarxani
+					country_has_primary_culture = cu:sibir
+				}
+			}
+			top_overlord ?= {
+				relations:root >= relations_threshold:amicable
+			}
+			custom_tooltip = {
+				text = unite_kazakh_je_kaz_tt
+				any_neighbouring_state = {
+					owner = {
+						is_ai = yes
+						relations:root >= relations_threshold:amicable
+						OR = {
+							country_has_primary_culture = cu:kazak
+							country_has_primary_culture = cu:xacitarxani
+							country_has_primary_culture = cu:sibir
+						}
+						is_subject = yes
+						NOT = { THIS = ROOT }
+						top_overlord = {
+							THIS = root.top_overlord
+						}
+						this.gdp < root.gdp
+					}
+				}
+			}
+		}
+		trigger_else = {
+			custom_tooltip = {
+				text = gbr_aus_relations_tt
+				any_subject_or_below = {
+					OR = {
+						country_has_primary_culture = cu:kazak
+						country_has_primary_culture = cu:xacitarxani
+						country_has_primary_culture = cu:sibir
+					}
+					is_ai = yes
+					relations:root >= relations_threshold:amicable
+					count >= 2
+				}
+			}
+		}
+	}
+
+	cooldown = { days = short_modifier_time }
+
+	effect = {
+		custom_tooltip = unite_australia_tt
+		if = {
+			limit = {
+				OR = {
+					country_has_primary_culture = cu:australian
+					country_has_primary_culture = cu:maori
+					country_has_primary_culture = cu:aborigine
+				}
+			}
+			hidden_effect = {
+				trigger_event = { id = can_aus.3 popup = yes }
+			}
+		}
+		else = {
+			hidden_effect = {
+				trigger_event = { id = can_aus.4 popup = yes }
+			}
+		}
+		add_modifier = {
+			name = australia_test_modifier
+			days = short_modifier_time
+		}
+	}
+
+	ai_chance = {
+		value = 0
+		if = {
+			limit = {
+				has_technology_researched = pan-nationalism
+			}
+			add = 100
+		}
+	}
+}
