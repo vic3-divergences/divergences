@@ -80,7 +80,6 @@
 				break_string = string # Loc string used when breaking pact, default BREAK
 				ask_to_end_string = string # Loc string used when proposing to break a pact, default ASK_TO_END
 	
-				military_access = yes/no # Whether this pact provides military access between both parties, i.e. formations can travel on the other country territory
 				actor_requires_approval_to_break = bool # Whether this pact requires the approval of the other part for original initiator to break it off, default no
 				target_requires_approval_to_break = bool # Whether this pact requires the approval of the other part for original target to break it off, default no
 

@@ -31,13 +31,16 @@
 		is_revolutionary = no
 		scope:target_country = {
 			is_revolutionary = no
-			has_law = law_type:law_colonial_administration
+			OR = {	# don't appoint colonial governor monarchies
+				has_law = law_type:law_presidential_republic
+				has_law = law_type:law_parliamentary_republic
+			}
 		}
 		OR = {
 			AND = {
 				OR = {
 					is_country_type = recognized
-					country_is_colonial_or_company = yes
+					is_country_type = colonial
 				}
 				scope:target_country = {
 					is_country_type = unrecognized
@@ -46,12 +49,12 @@
 			AND = {
 				OR = {
 					is_country_type = recognized
-					country_is_colonial_or_company = yes
+					is_country_type = colonial
 				}
 				scope:target_country = {
 					OR = {
 						is_country_type = recognized
-						country_is_colonial_or_company = yes
+						is_country_type = colonial
 					}
 					OR = {
 						is_subject_type = subject_type_chartered_company
@@ -59,7 +62,6 @@
 						is_subject_type = subject_type_puppet
 						is_subject_type = subject_type_dominion
 						is_subject_type = subject_type_vassal
-						is_subject_type = subject_type_crown_land
 					}
 				}
 			}
@@ -73,7 +75,6 @@
 						is_subject_type = subject_type_puppet
 						is_subject_type = subject_type_dominion
 						is_subject_type = subject_type_vassal
-						is_subject_type = subject_type_crown_land
 					}
 				}
 			}
@@ -85,9 +86,8 @@
 			set_variable = gubernatorial_candidate
 			set_variable = {
 				name = gubernatorial_candidate_timed
-				days = normal_modifier_time
+				months = 61
 			}
-			post_notification = appointed_new_governor_notification
 		}
 		trigger_event = { id = subject_interactions.1 popup = yes }
 	}
@@ -104,7 +104,7 @@
 		will_propose = {
 			"ai_ideological_opinion(scope:target_country)" <= -25
 			OR = {
-				scope:target_country = { liberty_desire < define:NDiplomacy|WAR_GOAL_INFAMY_LOW_LIBERTY_DESIRE_THRESHOLD }
+				scope:target_country = { liberty_desire < 25 }
 				has_attitude = {
 					who = scope:target_country
 					attitude = domineering

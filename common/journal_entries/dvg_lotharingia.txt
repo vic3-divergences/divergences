@@ -52,12 +52,11 @@
 			}
 		}
 		random_events = {
-		15 = dvg_lotharingia.26
-		15 = dvg_lotharingia.28
+		10 = dvg_lotharingia.26
+		10 = dvg_lotharingia.28
 		15 = dvg_lotharingia.15
 		15 = dvg_lotharingia.35
-     	15 = dvg_lotharingia.32
-		15 = dvg_lotharingia.36
+     	20 = dvg_lotharingia.32
 
 		}
 		
@@ -68,8 +67,8 @@
 		OR = {
 			custom_tooltip = {
 			text = je_lotharian_house_of_cards_goal
-			scope:journal_entry = {
-				"scripted_bar_progress(de_aigle_progressbar)" >= 99
+			scope:journal_entry ?= {
+				"scripted_bar_progress(de_aigle_progressbar)" >= 100
 			}
 			}	
 		}
@@ -83,15 +82,6 @@
 			ig:ig_armed_forces = {
 				is_powerful = yes
 				ig_approval < -10
-			}
-			any_enemy_in_diplo_play = {
-				count > 1
-				OR = {
-					country_has_primary_culture = cu:lotharian
-					country_has_primary_culture = cu:atlantian
-					country_has_primary_culture = cu:guarani
-					country_has_primary_culture = cu:afro_amerigan
-				}
 			}
 		}
 		
@@ -226,9 +216,8 @@ je_reuniting_lotharingia = {
 	group = je_group_internal_affairs
 
 	is_shown_when_inactive = {
-		ruler = {
-			has_variable = chef_de_aigle_var
-		}
+		exists = c:LOT
+		this = c:LOT
         OR = {
 	        exists = c:NEA
 			exists = c:ODO
@@ -247,7 +236,6 @@ je_reuniting_lotharingia = {
 				owner = c:ODO
 			}
 		}
-
 	}
 
 	possible = {
@@ -318,12 +306,16 @@ je_odonia_unite = {
 		
 		has_state_in_state_region = STATE_BOURGOGNE_DU_SUD
 		has_state_in_state_region = STATE_TRANSFLEUVE
-		c:LOT = this
+		any_neighbouring_state = {
+			owner = c:LOT
+		}
 	}
 
     possible = {
 		has_state_in_state_region = STATE_BOURGOGNE_DU_SUD
 		has_state_in_state_region = STATE_TRANSFLEUVE
+		
+		
 		
 		is_subject = no
 	}
@@ -469,7 +461,7 @@ je_anglo_lotharingia = {
 				limit = {
 					OR = {
 						cu:lotharian = {
-							culture_current_fervor > 40
+							culture_current_fervor > 49
 						}
 						cu:beornian = {
 							culture_current_fervor > 49
@@ -493,24 +485,17 @@ je_anglo_lotharingia = {
 							culture_current_fervor > 49
 			}
 		}
-		NOT = {
-			has_modifier = unification_prestige
-		}
-		
 		NOR = {
-			has_technology_researched = pan-nationalism
+			
 			any_country = {
-					AND = {	
-					OR = {
+				OR = {
 					country_has_primary_culture = cu:beornian
 					country_has_primary_culture = cu:lotharian
-					}
-					has_truce_with = root
-					NOT = {
-					is_subject_of = ROOT
-					}
 				}
-				
+				has_truce_with = root
+				NOT = {
+					is_subject_of = ROOT
+				}
 			}
 			
 		}
@@ -527,6 +512,8 @@ je_anglo_lotharingia = {
 	
 		NOT = {exists = c:BLT}
 	}
+	
+
 	
 
 	goal_add_value = {
@@ -550,7 +537,7 @@ je_lotharian_awakening = {
 	group = je_group_great_awakening
 
 	is_shown_when_inactive = {
-		is_in_geographic_region = geographic_region_south_america
+		country_is_in_south_america = yes
 		country_has_primary_culture = cu:lotharian
 	}
 	possible = {
@@ -571,8 +558,6 @@ je_lotharian_awakening = {
 	on_monthly_pulse = {
 		random_events = {
 			10 = dvg_lotharingia.25
-			10 = dvg_lotharingia.26
-			80 = 0
 		}
 		effect = {
 			if = {
@@ -620,30 +605,6 @@ je_lotharian_awakening = {
 				subtract = 1
 				}
 			}
-			if = {
-				limit = {
-					OR = {
-					has_law = law_type:law_freedom_of_conscience
-					has_law = law_type:law_state_religion
-					}
-				}
-				change_variable = {
-				name = pc_var
-				add = 1
-				}
-			}
-			if = {
-				limit = {
-					OR = {
-					has_law = law_type:law_religious_schools
-					has_law = law_type:law_charitable_health_system 
-					}
-				}
-				change_variable = {
-				name = pc_var
-				add = 1
-				}
-			}
 		}
 	}
 
@@ -651,26 +612,10 @@ je_lotharian_awakening = {
 		trigger_if = {
 			scope:journal_entry = { is_goal_complete = yes }
 		}
-		calc_true_if = {
-			amount > 3
-
-			ig:ig_devout = {
+		ig:ig_devout = {
 			is_in_government = yes
 			ig_approval > 10
-			}
-			ig:ig_devout = {
-				is_powerful = yes
-			}
-			OR = {
-				has_law = law_type:law_freedom_of_conscience
-				has_law = law_type:law_state_religion
-			}
-			OR = {
-				has_law = law_type:law_religious_schools
-				has_law = law_type:law_charitable_health_system 
-			}
 		}
-		
 	}
 	
 	goal_add_value = 100
@@ -683,19 +628,9 @@ je_lotharian_awakening = {
 	fail = {
 		ig:ig_devout = {
 			is_in_government = no
+			ig_approval < -10
+			is_marginal = yes
 		}
-		OR = {
-			ig:ig_devout = {
-				is_marginal = yes
-			}
-			ig:ig_devout = {
-				is_insurrectionary = yes
-			}
-		}
-	}
-	on_fail = {
-
-		
 	}
 	timeout = 7125
 

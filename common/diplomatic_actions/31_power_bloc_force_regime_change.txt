@@ -50,103 +50,15 @@
 			value = scope:target_country.prestige
 			multiply = 3
 		}
-		NOT = {
-			scope:target_country ?= {
-				is_diplomatic_play_ally_of = ROOT
-			}
-		}
-		trigger_if = { # The same requirements as decision_demand_hungary_revoke_laws, to prevent cheating the Hungarian Revolution
-			limit = {
-				c:AUS ?= ROOT
-				has_journal_entry = je_matter_of_hungary
-				scope:target_country ?= {
-					has_journal_entry = je_hungarian_revolution
-				}
-			}
-			custom_tooltip = {
-				text = decision_demand_hungary_revoke_laws_tt
-				has_variable = austria_folded_to_hungary_var
-				NOT = {
-					has_variable = hungarian_ultimatum_sent_var
-				}
-				scope:target_country ?= {
-					OR = {
-						has_variable = hungarian_revolution_twelve_points_var
-						has_variable = hungarian_revolution_annex_transylvania_button_var
-					}
-				}
-			}
-			NOT = {
-				any_interest_group = {
-					is_in_government = yes
-					is_powerful = yes
-					leader = {
-						OR = {
-							has_progressive_ideology = yes
-							has_liberal_ideology = yes
-							has_socialist_ideology = yes
-						}
-					}
-				}
-			}
-		}
-		trigger_if = { # The same requirements as decision_demand_hungary_revoke_laws, to prevent cheating the Hungarian Revolution
-			limit = {
-				c:AUS ?= this
-				scope:target_country ?= {
-					c:HUN ?= this
-				}
-			}
-			NOT = {
-				scope:target_country ?= {
-					is_subject_type = subject_type_personal_union
-				}
-			}
-		}
 	}
 
 	accept_effect = {
-		if = {
-			limit = {
-				c:AUS ?= ROOT
-				has_journal_entry = je_matter_of_hungary
-				scope:target_country ?= {
-					has_journal_entry = je_hungarian_revolution
-				}
-			}
-			scope:target_country ?= { # The same effects as decision_demand_hungary_revoke_laws, to prevent cheating the Hungarian Revolution
-				save_temporary_scope_as = hungary_country_scope
-				trigger_event = { id = hungary_events.6 popup = yes }
-			}
-			change_relations = { country = scope:target_country value = -30 }
-			custom_tooltip = hungary_likely_lead_to_war_tt
-			create_diplomatic_catalyst = {
-				type = catalyst_event_negative
-				target = scope:target_country
-			}
-			add_radicals = {
-				culture = cu:hungarian
-				value = medium_radicals
-			}
-		}
-		else = {
-			regime_change = scope:target_country
-			scope:target_country = {
-				add_modifier = {
-					name = installed_regime
-					days = normal_modifier_time
-					multiplier = 0.2
-				}
-				change_relations = {
-					country = root
-					value = -25
-				}
-				if = {
-					limit = {
-						is_subject_of = root
-					}
-					add_liberty_desire = 10
-				}
+		regime_change = scope:target_country
+		scope:target_country = {
+			add_modifier = {
+				name = installed_regime
+				days = normal_modifier_time
+				multiplier = 0.2
 			}
 		}
 
@@ -162,9 +74,9 @@
 
 		will_propose = {
 			power_bloc = { current_cohesion_percentage >= 0.75 }
-			"ai_ideological_opinion(scope:target_country)" <= -25
+			"ai_ideological_opinion(scope:target_country)" <= -50
 			OR = {
-				"ai_ideological_opinion(scope:target_country)" <= -50
+				"ai_ideological_opinion(scope:target_country)" <= -100
 				has_attitude = {
 					who = scope:target_country
 					attitude = domineering
