@@ -315,3 +315,126 @@ dvg_pillger_prince_button = {
 		
 	}
 }
+
+je_fang_hu_unification_appeal_to_qingqiu_button = {
+	name = "je_fang_hu_unification_appeal_to_qingqiu_button"
+	desc = "je_fang_hu_unification_appeal_to_qingqiu_button_desc"
+
+	selected = {
+		has_variable = AFG_appealed_to_RUS
+	}
+
+	visible = {
+		exists = c:QIN
+		NOT = {
+			exists = c:FGH
+		}
+	}
+
+	cooldown = { days = long_modifier_time }
+
+	possible = {
+		has_technology_researched = mandatory_service
+		NOR = {
+			custom_tooltip = {
+				text = opposes_rus_in_diplo_play_tt
+				OR = {
+					has_war_with = c:QIN
+					is_diplomatic_play_enemy_of = c:QIN
+				}
+			}
+			has_diplomatic_pact = {
+				who = c:QIN
+				type = rivalry
+			}
+		}
+		any_scope_treaty = {
+			count < 1
+			OR = {
+				binds = c:JAP
+				binds = c:QIN
+			}
+			any_scope_article = {
+				has_type = military_assistance
+			}
+		}
+		c:QIN ?= {
+			has_interest_marker_in_region = region_persia
+		}
+		custom_tooltip = {
+			text = AFG_no_other_fang_hu_nation_appealing_rus_tt
+			NOT = {
+				any_diplomatically_relevant_country = {
+					has_journal_entry = je_unify_fang_huistan
+					NOT = {
+						THIS = ROOT
+					}
+					OR = {
+						has_variable = AFG_appealed_to_RUS
+						AND = {
+							has_variable = pending_aid_request
+							var:pending_aid_request = c:QIN
+						}
+					}
+				}
+			}
+		}
+		custom_tooltip = {
+			text = "can_create_treaty_MILITARY_ASSISTANCE"
+			c:QIN ?= {
+				can_create_treaty = {
+					first_country = c:QIN
+					second_country = ROOT
+
+					is_draft = no
+					binding_period = { years = 2 }
+
+					articles_to_create = {
+						{
+							article = military_assistance
+							source_country = c:QIN
+							target_country = ROOT
+						}
+					}
+				}
+			}
+		}
+	}
+
+	effect = {
+		set_variable = { name = pending_aid_request value = c:QIN }
+		save_scope_as = fang_hu_nation_scope
+		c:QIN ?= {
+			save_scope_as = relevant_country
+			trigger_event = { id = dvg_hawaii.6 days = 7 popup = yes }
+		}
+		
+	}
+
+	ai_chance = {
+		value = 0
+
+		if = {
+			limit = {
+				c:QIN ?= {
+					relations:root >= relations_threshold:cordial
+				}
+			}
+			add = 15
+		}
+
+		if = {
+			limit = {
+				is_diplomatic_play_committed_participant = yes
+			}
+			add = 10
+		}
+
+		if = {
+			limit = {
+				has_variable = player_RUS_denied_aid_request
+			}
+			add = -1000
+		}
+	}
+}
