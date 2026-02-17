@@ -374,3 +374,129 @@ dvg_hawaii.6 = {
 		}
 	}
 }
+
+#Human Trafficking
+dvg_hawaii.7 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_hawaii.7.t
+	desc = dvg_hawaii.7.d
+	flavor = dvg_hawaii.7.f
+
+	event_image = {
+		video = "gfx/event_pictures/europenorthamerica_political_extremism.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/military_parade"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	duration = 3
+
+	trigger = {
+
+	}
+	immediate = {
+		random_country = {
+			limit = {
+				is_country_type = decentralized 
+				region = sr:REPLACE_OR_CREATE:region_oceania
+			}
+			save_scope_as = decentral_scope
+		}
+
+		random_country = {
+			limit = {
+				NOT = {
+					is_country_type = decentralized 
+				}
+				any_primary_culture = {
+					has_discrimination_trait = heritage_han
+				}
+			}
+			save_scope_as = central_scope
+			
+		}
+		random_scope_state = {
+			save_scope_as = capital_scope
+			owner = {
+				save_scope_as = root_scope
+			}
+		}
+	}
+
+	option = {
+		name = dvg_hawaii.7.a
+		default_option = yes
+
+		add_modifier = {
+			name = dvg_human_trafficking
+			months = 7
+			is_decaying = yes
+		}
+
+		create_incident = {
+			country = THIS
+			value = 12
+		}
+		scope:central_scope = {
+			change_relations = {
+				country = ROOT
+				value = -20
+			}
+			random_scope_pop = {
+				move_pop = scope:capital_scope
+				if = {
+					limit = {
+						NOT = {
+							scope:root_scope = {
+								has_law = law_type:law_slavery_banned
+							}
+						}
+					}
+					change_poptype = pop_type:slaves
+				}
+			}
+		}
+
+	}
+
+
+	option = {
+		name = dvg_hawaii.7.b
+
+		create_incident = {
+			country = THIS
+			value = 5
+		}
+
+		add_modifier = {
+			name = dvg_human_trafficking
+			months = 7
+			is_decaying = yes
+		}
+
+		scope:decentral_scope = {
+			change_relations = {
+				country = ROOT
+				value = -20
+			}
+			random_scope_pop = {
+				move_pop = scope:capital_scope
+				if = {
+					limit = {
+						NOT = {
+							scope:root_scope = {
+								has_law = law_type:law_slavery_banned
+							}
+						}
+					}
+					change_poptype = pop_type:slaves
+				}
+			}
+		}
+		
+	}
+}
