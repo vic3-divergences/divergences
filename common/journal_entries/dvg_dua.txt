@@ -1006,3 +1006,282 @@ je_action_anglo_française = {
 
 #Dual Monarquie new national organization
 
+je_dua_federal_pact = {
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	group = je_group_historical_content
+
+	is_shown_when_inactive = {
+		has_law_or_variant = law_provincial_councils
+		has_technology_researched = nationalism
+		c:DUA ?= this
+	}
+
+	possible = {
+		OR = {
+			has_government_type = gov_dual_monarquie
+		}
+		has_technology_researched = pan-nationalism
+		NOR = {
+			has_law_or_variant = law_type:law_ethnostate
+			has_law_or_variant = law_type:law_national_supremacy
+		}
+	}
+
+	immediate = {
+		ig:ig_armed_forces ?= {
+			save_scope_as = armed_forces_ig
+		}
+		set_variable = { name = count_integrated_cultures value = 0 }
+		set_variable = { name = count_disqualified_cultures value = 0 }
+		if = {
+			limit = {
+				NOT = {
+					has_variable = received_federation_proposal
+				}
+			}
+			trigger_event = { id = dua_federation.1 popup = yes }
+		}
+		dua_federation_calculate_path_to_victory = yes
+	}
+
+	scripted_button = je_danubian_federation_czech_button
+	scripted_button = je_danubian_federation_slovak_button
+	scripted_button = je_danubian_federation_polish_button
+	scripted_button = je_danubian_federation_hungarian_button
+	scripted_button = je_danubian_federation_slovene_button
+	scripted_button = je_danubian_federation_croat_button
+	scripted_button = je_danubian_federation_romanian_button
+	scripted_button = je_danubian_federation_north_italian_button
+	scripted_button = je_danubian_federation_serb_button
+	scripted_button = je_danubian_federation_ukrainian_button
+	scripted_button = je_danubian_federation_enact_the_federation
+
+	on_weekly_pulse = {
+
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			dua_federation_calculate_path_to_victory = yes
+		}
+	}
+
+	complete = {
+		trigger_if = {
+			limit = {
+				has_variable = count_integrated_cultures
+			}
+			custom_tooltip = {
+				text = has_integrated_2_dua_cultures_tt
+				var:count_integrated_cultures >= 2
+			}
+		}
+		custom_tooltip = {
+			text = dua_federation_final_act_tt
+			has_variable = dua_federation_final_act
+		}
+		trigger_if = {
+			limit = {
+				any_subject_or_below = {
+					OR = {
+						is_subject_type = subject_type_personal_union
+						is_subject_type = subject_type_puppet
+					}
+					capital = {
+						OR = {
+							region = sr:region_france
+							region = sr:region_occitania
+							region = sr:region_italy
+							region = sr:region_england
+						}
+					}
+				}
+			}
+			any_subject_or_below = {
+				filter = {
+					OR = {
+						is_subject_type = subject_type_personal_union
+						is_subject_type = subject_type_puppet
+					}
+					capital = {
+						OR = {
+							region = sr:region_france
+							region = sr:region_occitania
+							region = sr:region_italy
+							region = sr:region_england
+						}
+					}
+				}
+				custom_tooltip = capital_is_in_dua_states_tt
+				OR = {
+					custom_tooltip = {
+						text = all_primary_cultures_integrated_tt
+						any_primary_culture = {
+							save_temporary_scope_as = subject_primary_culture
+							ROOT = {
+								any_in_list = {
+									variable = dua_integrated_cultures
+									scope:subject_primary_culture ?= this
+								}
+							}
+							percent = 1
+						}
+					}
+					AND = {
+						relations:root >= relations_threshold:amicable
+						liberty_desire < define:NDiplomacy|WAR_GOAL_INFAMY_LOW_LIBERTY_DESIRE_THRESHOLD
+					}
+				}
+				count = all
+			}
+		}
+		is_diplomatic_play_committed_participant = no
+		is_at_war = no
+	}
+
+	on_complete = {
+		every_subject_or_below = {
+			limit = {
+				OR = {
+					is_subject_type = subject_type_personal_union
+					is_subject_type = subject_type_puppet
+				}
+				capital = {
+					OR = {
+						region = sr:region_france
+						region = sr:region_occitania
+						region = sr:region_italy
+						region = sr:region_england
+					}
+				}
+			}
+			c:AUS ?= {
+				annex_with_incorporation = prev
+			}
+		}
+		custom_tooltip = {
+			text = dua_tradition_traits_tt
+			every_scope_culture = {
+				limit = {
+					has_discrimination_trait_group = heritage_group_european
+					save_temporary_scope_as = temp_culture_scope
+					ROOT = {
+						any_scope_state = {
+							OR = {
+								region = sr:region_france
+								region = sr:region_occitania
+								region = sr:region_italy
+								region = sr:region_england
+							}
+							state_region = {
+								is_homeland = scope:temp_culture_scope
+							}
+						}
+					}
+				}
+				add_tradition_trait = tradition_danubian
+			}
+		}
+		if = {
+			limit = {
+				has_law = law_type:law_monarchy
+			}
+			custom_tooltip = {
+				text = change_tag_to_DUA_monarchy_tt
+				change_tag = DUA
+			}
+		}
+		else = {
+			limit = {
+				OR = {
+					has_law_or_variant = law_type:law_parliamentary_republic
+					has_law_or_variant = law_type:law_presidential_republic
+				}
+			}
+			custom_tooltip = {
+				text = change_tag_to_DUA_republic_tt
+				change_tag = DUA
+			}
+		}
+		trigger_event = { id = dua_federation.2 }
+		set_variable = dua_federation_done_with
+		set_variable = achievement_dua_federation
+	}
+
+	event_outcome_completed_desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = event_effects_dua_federation.2_tt
+			}
+		}
+	}
+
+	fail = {
+		OR = {
+			trigger_if = {
+				limit = {
+					has_variable = dua_federation_potential_points
+					dua_federation_remaining_cultures_to_integrate > 0
+				}
+				custom_tooltip = { # failsafe
+					text = has_no_way_to_integrate_2_dua_cultures_tt
+					AND = {
+						var:count_integrated_cultures < 2
+						var:dua_federation_potential_points <= {
+							value = 2 # The minimum number of cultures needed to get over the hill
+							subtract = var:count_integrated_cultures
+						}
+					}
+				}
+			}
+			any_civil_war = {
+				civil_war_progress >= 0.75
+				OR = {
+					is_civil_war_type = revolution
+					AND = {
+						is_civil_war_type = secession
+						political_movement.culture ?= {
+							OR = {
+								has_discrimination_trait_group = language_group_germanic
+								has_discrimination_trait = heritage_gallic
+								has_discrimination_trait = heritage_british
+							}
+						}
+					}
+				}
+			}
+			has_law_or_variant = law_type:law_ethnostate
+			has_law_or_variant = law_type:law_national_supremacy
+		}
+	}
+
+	on_fail = {
+		custom_tooltip = lose_integrated_cultures_tt
+		if = {
+			limit = {
+				has_variable_list = dua_integrated_cultures
+			}
+			every_in_list = {
+				variable = dua_integrated_cultures
+				if = {
+					limit = {
+						is_primary_culture_of = ROOT
+					}
+					ROOT = {
+						remove_primary_culture = prev
+					}
+				}
+			}
+		}
+		set_variable = dua_federation_done_with
+	}
+
+	invalid = {
+		has_variable = shelved_federation_proposal
+	}
+
+	weight = 100
+
+	should_be_pinned_by_default = yes
+}
