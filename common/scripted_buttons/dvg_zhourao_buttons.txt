@@ -349,20 +349,10 @@ je_fang_hu_subject_appeal_to_qingqiu_button = {
 				type = rivalry
 			}
 		}
-		any_scope_treaty = {
-			count < 1
-			OR = {
-				binds = c:JAP
-				binds = c:QIN
-			}
-			any_scope_article = {
-				has_type = military_assistance
-			}
-		}
 		
 		
 		custom_tooltip = {
-			text = FGH_no_other_fang_hu_nation_appealing_rus_tt
+			text = FGH_petiton_tt
 			NOT = {
 				any_diplomatically_relevant_country = {
 					has_journal_entry = je_unify_fang_huistan
@@ -379,26 +369,7 @@ je_fang_hu_subject_appeal_to_qingqiu_button = {
 				}
 			}
 		}
-		custom_tooltip = {
-			text = "can_create_treaty_MILITARY_ASSISTANCE"
-			c:QIN ?= {
-				can_create_treaty = {
-					first_country = c:QIN
-					second_country = ROOT
-
-					is_draft = no
-					binding_period = { years = 2 }
-
-					articles_to_create = {
-						{
-							article = military_assistance
-							source_country = c:QIN
-							target_country = ROOT
-						}
-					}
-				}
-			}
-		}
+		is_subject = no
 	}
 
 	effect = {
@@ -417,6 +388,100 @@ je_fang_hu_subject_appeal_to_qingqiu_button = {
 		if = {
 			limit = {
 				c:QIN ?= {
+					relations:root >= relations_threshold:cordial
+				}
+			}
+			add = 15
+		}
+
+		if = {
+			limit = {
+				is_diplomatic_play_committed_participant = yes
+			}
+			add = 10
+		}
+
+		if = {
+			limit = {
+				has_variable = player_QIN_denied_aid_request
+			}
+			add = -1000
+		}
+	}
+}
+
+je_fang_hu_subject_appeal_to_japan_button = {
+	name = "je_fang_hu_subject_appeal_to_japan_button"
+	desc = "je_fang_hu_subject_appeal_to_japan_button_desc"
+
+	selected = {
+		has_variable = FGH_appealed_to_JAP
+	}
+
+	visible = {
+		exists = c:QIN
+		exists = c:FGH
+	}
+
+
+	cooldown = { days = long_modifier_time }
+
+	possible = {
+		c:JAP ?= {
+					relations:root >= relations_threshold:amicable
+		}
+		NOR = {
+			custom_tooltip = {
+				text = opposes_rus_in_diplo_play_tt
+				OR = {
+					has_war_with = c:JAP
+					is_diplomatic_play_enemy_of = c:JAP
+				}
+			}
+			has_diplomatic_pact = {
+				who = c:JAP
+				type = rivalry
+			}
+		}
+		
+		
+		custom_tooltip = {
+			text = FGH_petiton_tt
+			NOT = {
+				any_diplomatically_relevant_country = {
+					has_journal_entry = je_unify_fang_huistan
+					NOT = {
+						THIS = ROOT
+					}
+					OR = {
+						has_variable = FGH_appealed_to_JAP
+						AND = {
+							has_variable = pending_aid_request
+							var:pending_aid_request = c:JAP
+						}
+					}
+				}
+			}
+		}
+		is_subject = no
+	}
+
+	effect = {
+		set_variable = { name = pending_aid_request value = c:JAP }
+		save_scope_as = fang_hu_nation_scope
+		c:JAP ?= {
+			save_scope_as = relevant_country
+			trigger_event = { id = dvg_hawaii.6 days = 7 popup = yes }
+		}
+		
+	}
+
+	ai_chance = {
+		value = 0
+
+		if = {
+			limit = {
+				c:JAP ?= {
 					relations:root >= relations_threshold:cordial
 				}
 			}
