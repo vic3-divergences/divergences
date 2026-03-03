@@ -64,7 +64,7 @@ je_ploumanao_raiding = {
 		}
 		c:AMA ?= {
 			add_journal_entry = {
-				type = je_tur_raided
+				type = je_ama_raided
 			}
 		}
 		#Way of getting rid of errors, cause this variable is only used in Loc
@@ -208,7 +208,7 @@ je_ploumanao_raiding = {
 		add_modifier = {
 			name = modifier_montenegrin_victory
 		}
-		set_variable = je_ploumanao_raiding_won
+		#set_variable = je_ploumanao_raiding_won
 		end_raiding_cleanup = yes
 	}
 
@@ -261,7 +261,135 @@ je_ploumanao_raiding = {
 	transferable = no
 	should_be_pinned_by_default = yes
 }
+je_ama_raided = {
+	icon = "gfx/interface/icons/event_icons/event_skull.dds"
 
+	group = je_group_historical_content
+
+	is_shown_in_lobby = {
+		has_dlc_feature = ip3_content #National Awakening
+		c:AMA ?= this
+	}
+
+	scripted_button = je_ploumanao_ama_raid_back
+
+	status_desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = je_ama_raided_target
+				trigger = {
+					c:PLU ?= {
+						is_country_alive = yes
+					}
+					raiding_level >= 2 #correspond to above
+					any_scope_state = {
+						has_modifier = raid_target
+					}
+				}
+			}
+			triggered_desc = {
+				desc = je_ama_raided_no_target
+				trigger = {
+					c:PLU ?= {
+						is_country_alive = yes
+					}
+					raiding_level <= 2
+				}
+			}
+			triggered_desc = {
+				desc = je_ama_raided_no_target
+				trigger = {
+					always = yes
+				}
+			}
+		}
+	}
+
+
+	immediate = {
+		c:EQX ?= {
+			save_scope_as = russia
+		}
+		c:AMA ?= {
+			save_scope_as = ottoman
+		}
+		c:PLU ?= {
+			save_scope_as = montenegro
+		}
+	}
+
+	invalid = {
+	}
+
+	complete = {
+		OR = {
+			NOT = {
+				exists = c:PLU
+			}
+			c:PLU ?= {
+				OR = {
+					is_country_alive = no
+					is_subject_of = ROOT
+				 }
+			}
+		}
+	}
+
+	on_complete = {
+		add_modifier = {
+			name = put_down_rebels_modifier
+			days = very_long_modifier_time
+			is_decaying = yes
+		}
+		add_fervor_target_modifier = {
+			culture = cu:equinoxien
+			days = stupidly_long_modifier_time
+			multiplier = -20
+		}
+		# trigger_event = {
+			# ID = mon_state_formation.14
+			# popup = yes
+		# }
+		hidden_effect = { # Clear Montenegrin raiding if that hasn't happened already
+			if = {
+				limit = {
+					NOT = {
+						has_global_variable = montenegro_defeat_var
+					}
+				}
+				c:AMA ?= {
+					every_scope_state = {
+						limit = {
+							has_modifier = raid_target
+						}
+						remove_modifier = raid_target
+					}
+					remove_global_variable = mon_raid_state
+				}
+				set_global_variable = montenegro_defeat_var
+			}
+		}
+	}
+
+	# event_outcome_completed_desc = {
+        # first_valid = {
+            # triggered_desc = {
+                # desc = event_effects_mon_state_formation.14_tt
+            # }
+        # }
+    # }
+
+	fail = {
+	}
+
+	on_fail = {
+	}
+
+	weight = 100
+	can_revolution_inherit = yes
+	transferable = no
+	should_be_pinned_by_default = yes
+}
 je_amazonie_reconstruction = {
 	icon = "gfx/interface/icons/event_icons/event_scales.dds"
 
@@ -448,7 +576,7 @@ je_antarctica_independent = {
 		OR = {
 			has_truce_with = c:AMA
 			AND =	{
-				owns_entire_state_region = STATE_PLUTS_DIAMANTS
+				owns_entire_state_region = PLUTS_DIAMANTS
 			}
 		}
 	}
@@ -477,11 +605,15 @@ je_amazonie_annex = {
 	
 	complete = {
 		is_at_war = no
-		NOT = { exists = c:AMA }
-		owns_entire_state_region = STATE_FRANCE_ANTARTIQUE
-		owns_entire_state_region = STATE_COTE_DU_SUCRE
-		owns_entire_state_region = STATE_PLUTS_DIAMANTS
-		owns_entire_state_region = STATE_GOUAS
+		OR = {
+			NOT = { exists = c:AMA }
+			AND = {
+				owns_entire_state_region = STATE_FRANCE_ANTARTIQUE
+			owns_entire_state_region = STATE_COTE_DU_SUCRE
+			owns_entire_state_region = STATE_PLUTS_DIAMANTS
+			owns_entire_state_region = STATE_GOUAS
+			}
+		}
 	}
 
     on_complete = {
@@ -1196,7 +1328,7 @@ je_nouvelle_mali = {
 				target = cu:afro_amerigan
 				value > 0.33
 				}
-				radical_fraction > 0.33
+				radical_fraction = { value >= 0.33 }
 			}		
 			}
 		}

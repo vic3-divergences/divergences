@@ -2,9 +2,6 @@
     kind = directed
     cost = 25
 
-    relations_progress_per_day = 0.5
-    relations_improvement_max = 25
-
 	icon = "gfx/interface/icons/diplomatic_treaties_articles_icons/law_commitment_treaties.dds"
 
 	flags = {
@@ -492,25 +489,25 @@
                     }
                 }
 
-                # if = {
-                    # limit = {
-                        # scope:article.input_law = law_type:law_slavery_banned
-                        # OR = {
-                            # has_strategy = ai_strategy_egalitarian_agenda
-                            # has_strategy = ai_strategy_progressive_agenda
-							# AND = {
-								# has_journal_entry = je_aberdeen_act
-								# scope:source_country = {
-									# c:BRZ ?= this
-								# }
-							# }
-                        # }
-                    # }
-                    # add = {
-                        # desc = "DIPLOMATIC_ACCEPTANCE_ANTI_SLAVERY"
-                        # value = 25
-                    # }
-                # }
+                if = {
+                    limit = {
+                        scope:article.input_law = law_type:law_slavery_banned
+                        OR = {
+                            has_strategy = ai_strategy_egalitarian_agenda
+                            has_strategy = ai_strategy_progressive_agenda
+							AND = {
+								has_journal_entry = je_aberdeen_act
+								scope:source_country = {
+									c:BRZ ?= this
+								}
+							}
+                        }
+                    }
+                    add = {
+                        desc = "DIPLOMATIC_ACCEPTANCE_ANTI_SLAVERY"
+                        value = 25
+                    }
+                }
 
                 if = {
                     limit = {
@@ -631,29 +628,29 @@
 					scope:article.input_law ?= law_type:law_slavery_banned
 				}
 
-				# # Britain will prioritize ending slavery in Brazil if they have the Aberdeen Act JE
-				# if = {
-					# limit = {
-						# has_journal_entry = je_aberdeen_act
-						# scope:source_country = {
-							# c:BRZ ?= this
-						# }
-					# }
-					# add = 0.5
-				# }
-				# # Great Powers with slavery banned will prioritize ending slavery in Brazil if that country failed its slavery JE
-				# if = {
-					# limit = {
-						# has_law = law_type:law_slavery_banned
-						# country_rank >= rank_value:great_power
-						# scope:source_country = {
-							# c:BRZ ?= this
-							# has_modifier = brazil_slaving_pariah_modifier
-							# has_law = law_type:law_slave_trade
-						# }
-					# }
-					# add = 0.25
-				# }
+				# Britain will prioritize ending slavery in Brazil if they have the Aberdeen Act JE
+				if = {
+					limit = {
+						has_journal_entry = je_aberdeen_act
+						scope:source_country = {
+							c:BRZ ?= this
+						}
+					}
+					add = 0.5
+				}
+				# Great Powers with slavery banned will prioritize ending slavery in Brazil if that country failed its slavery JE
+				if = {
+					limit = {
+						has_law_or_variant = law_type:law_slavery_banned
+						country_rank >= rank_value:great_power
+						scope:source_country = {
+							c:BRZ ?= this
+							has_modifier = brazil_slaving_pariah_modifier
+							has_law_or_variant = law_type:law_slave_trade
+						}
+					}
+					add = 0.25
+				}
 			}
 		}
 	}
@@ -692,12 +689,31 @@
 			scope:target_country = {
 				multiply = {
 					desc = "INFAMY_TARGET_COUNTRY_POPULATION_FACTOR"
-					value = total_population
-					divide = define:NDiplomacy|WAR_GOAL_INFAMY_POPULATION_SCALING_FACTOR
-					multiply = define:NDiplomacy|WAR_GOAL_INFAMY_POPULATION_SCALING_MULTIPLIER
-                    max = define:NDiplomacy|WAR_GOAL_INFAMY_POPULATION_SCALING_MULTIPLIER_MAX_TOTAL
+					add = {
+						every_scope_state = {
+							add = {
+								value = state_population
+								divide = define:NDiplomacy|WAR_GOAL_INFAMY_POPULATION_SCALING_FACTOR
+								multiply = define:NDiplomacy|WAR_GOAL_INFAMY_POPULATION_SCALING_MULTIPLIER
+
+								if = {
+									limit = {
+										is_incorporated = no
+									}
+									multiply = {
+										value = 1
+										add = define:NDiplomacy|WAR_GOAL_INFAMY_UNINCORPORATED_FACTOR
+									}
+								}
+								max = define:NDiplomacy|WAR_GOAL_INFAMY_POPULATION_SCALING_MULTIPLIER_MAX_PER_STATE
+							}
+						}
+					}
+					max = define:NDiplomacy|WAR_GOAL_INFAMY_POPULATION_SCALING_MULTIPLIER_MAX_TOTAL
 				}
 			}
+
+            min = 0.5
 		}
 	}
 }

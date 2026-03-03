@@ -39,12 +39,23 @@ law_monarchy = {
 
 	progressiveness = 0
 
+	is_visible = {
+		NOT = {
+			has_law = law_type:law_colonial_administration
+		}
+	}
+
 	disallowing_laws = {
 		law_anarchy
 	}
 
 	can_enact = {
-		NOT = { has_government_type = gov_chartered_company }
+		trigger_if ={
+			limit = {
+				is_subject = no
+			}
+			NOT = { has_government_type = gov_chartered_company }
+		}
 	}
 
 	can_impose = {
@@ -74,25 +85,156 @@ law_monarchy = {
 		}
 	}
 
-	#on_activate = {
-	#	if = {
-	#		limit = {
-	#			c:FRA ?= this
-	#			NOT = {
-	#				has_variable = one_true_french_dynasty
-	#			}
-	#			has_dlc_feature = voice_of_the_people_content
-	#			game_date > 1836.1.1
-	#		}
-	#		if = {
-	#			limit = {
-	#				has_variable = fra_divided_monarchists_freeze
-	#			}
-	#			remove_variable = fra_divided_monarchists_freeze
-	#		}
-	#		add_journal_entry = { type = je_divided_monarchists }
-	#	}
-	#}
+	on_activate = {
+		if = {
+			limit = {
+				c:FRA ?= this
+				NOT = {
+					has_variable = one_true_french_dynasty
+				}
+				has_dlc_feature = voice_of_the_people_content
+				game_date > 1836.1.1
+			}
+			if = {
+				limit = {
+					has_variable = fra_divided_monarchists_freeze
+				}
+				remove_variable = fra_divided_monarchists_freeze
+			}
+			add_journal_entry = { type = je_divided_monarchists }
+		}
+		# Generates French monarch upon enaction.
+		hidden_effect = {
+			if = {
+				limit = {
+					c:FRA ?= this
+					NOT = {
+						has_variable = one_true_french_dynasty
+					}
+					has_dlc_feature = voice_of_the_people_content
+					game_date > 1836.1.1
+					NOR = {
+						ruler_is_bonapartist = yes
+						ruler_is_orleanist = yes
+						ruler_is_legitimist = yes
+					}
+				}
+				fra_handle_republic_monarch_assignment = yes
+			}
+		}
+		if = {
+			limit = {
+       	 		has_dlc_feature = ip4_content
+				c:SPA ?= this
+				is_revolutionary = no
+				is_secessionist = no
+				game_date > 1836.1.1
+			}
+			add_modifier = modifier_regency
+			custom_tooltip = {
+				text = activate_provisional_government_tt
+				add_journal_entry = { type = je_spain_provisional_government }
+			}
+		}
+		if = {
+			limit = {
+				country_has_primary_culture = cu:vietnamese
+			}
+			if = {
+				limit = {
+					any_scope_state = {
+						state_region = s:STATE_CAMBODIA
+					}
+				}
+				random_scope_state = {
+					limit = {
+						state_region = s:STATE_CAMBODIA
+					}
+					STATE_CAMBODIA_state_name_assign = yes
+				}
+			}
+			if = {
+				limit = {
+					any_scope_state = {
+						state_region = s:STATE_LAOS
+					}
+				}
+				random_scope_state = {
+					limit = {
+						state_region = s:STATE_LAOS
+					}
+					STATE_LAOS_state_name_assign = yes
+				}
+			}
+		}
+		crown_land_republic_effect = yes
+		if = {
+			limit = {
+				has_law = law_type:law_neo_absolutism
+			}
+			deactivate_law = law_type:law_neo_absolutism
+			activate_law = law_type:law_autocracy
+		}
+	}
+
+	on_deactivate = {
+		if = {
+			limit = {
+				AND = {
+					has_law = law_type:law_subjecthood
+					NOR = {
+						has_law = law_type:law_theocracy
+						is_enacting_law = law_type:law_theocracy
+					}
+				}
+			}
+			custom_tooltip = because_subjecthood_is_active_tt
+			if = {
+				limit = {
+					any_interest_group = {
+						is_in_government = yes
+						any_preferred_law = {
+							is_citizenship_law = yes
+							NOT = {
+								type ?= law_type:law_subjecthood
+							}
+						}
+					}
+				}
+				ordered_interest_group = {
+					limit = {
+						is_in_government = yes
+						any_preferred_law = {
+							is_citizenship_law = yes
+							NOT = {
+								type ?= law_type:law_subjecthood
+							}
+						}
+					}
+					order_by = ig_clout
+					position = 0
+					check_range_bounds = no
+					ordered_preferred_law = {
+						limit = {
+							is_citizenship_law = yes
+							NOT = {
+								type ?= law_type:law_subjecthood
+							}
+						}
+						position = 0
+						check_range_bounds = no
+						prev.owner = {
+							activate_law = prev.type
+						}
+					}
+				}
+			}
+			else = {
+				activate_law = law_type:law_national_supremacy
+			}
+		}
+		remove_regency_modifier = yes
+	}
 
 	ai_enact_weight_modifier = { #Petitions
 		value = 0
@@ -112,14 +254,14 @@ law_monarchy = {
 				has_strategy = ai_strategy_reactionary_agenda
 				power_bloc ?= { has_identity = identity:identity_ideological_union }
 				scope:target_country = { # Is their law different enough from what we want to impose?
-					NOT = { has_law = law_type:law_theocracy }
+					NOT = { has_law_or_variant = law_type:law_theocracy }
 				}
 			}
 
 			add = base_impose_law_weight
 			if = {
 				limit = {
-					scope:target_country = { has_law = law_type:council_republic }
+					scope:target_country = { has_law_or_variant = law_type:law_council_republic }
 					NOT = { has_strategy = ai_strategy_egalitarian_agenda }
 				}
 				multiply = 5
@@ -127,6 +269,58 @@ law_monarchy = {
 			else = {
 				multiply = 0.5 # AI is less likely to mess with governance principles unless dealing with council republics
 			}
+		}
+	}
+}
+
+law_colonial_administration = {
+	group = lawgroup_governance_principles
+	parent = law_monarchy
+
+	icon = "gfx/interface/icons/law_icons/colonial_administration.dds"
+
+	progressiveness = 0
+
+	disallowing_laws = {
+		law_anarchy
+	}
+
+	can_enact = {
+		country_is_colonial_or_company = yes
+	}
+
+	is_visible = {
+		country_is_colonial_or_company = yes
+	}
+
+	can_impose = {
+		scope:target_country ?= {
+			country_is_colonial_or_company = yes
+			is_subject_of = root
+		}
+	}
+
+	modifier = {
+		country_legitimacy_headofstate_add = 10
+		country_legitimacy_ideological_incoherence_mult = 0.2
+		country_bureaucrats_pol_str_mult = 1
+		country_officers_pol_str_mult = 1
+		country_authority_add = 100
+	}
+
+	ai_will_do = {
+		always = no
+	}
+
+	on_activate = {
+
+	}
+	ai_enact_weight_modifier = { #Petitions
+		value = 0
+
+		if = {
+			limit = { ai_has_enact_weight_modifier_journal_entries = yes }
+			add = 750
 		}
 	}
 }
@@ -142,10 +336,12 @@ law_presidential_republic = {
 		democracy
 	}
 
-	is_visible = {
-		NOR = {
-			c:NFL = root
-			was_formed_from = NFL
+	can_enact = {
+		trigger_if ={
+			limit = {
+				is_subject = no
+			}
+			NOT = { has_government_type = gov_chartered_company }
 		}
 	}
 
@@ -172,6 +368,18 @@ law_presidential_republic = {
 	on_activate = {
 		if = {
 			limit = {
+				has_variable = fra_republic_counter
+			}
+			change_variable = {
+				name = fra_republic_counter
+				add = 1
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					c:BIC ?= this
+				}
 				any_interest_group = {
 					has_ideology = ideology:ideology_constitutionalist
 				}
@@ -184,17 +392,59 @@ law_presidential_republic = {
 				add_ideology = ideology_republican
 			}
 		}
+		crown_land_republic_effect = yes
+		if = {
+			limit = {
+				has_law = law_type:law_neo_absolutism
+			}
+			deactivate_law = law_type:law_neo_absolutism
+			activate_law = law_type:law_autocracy
+		}
+		if = {
+			limit = {
+				c:POR ?= this
+				ruler ?= {
+					has_template = POR_manuel_ii_de_braganca_template
+				}
+			}
+			trigger_event = { id = portuguese_monarchs.3 }
+		}
 	}
 
 	ai_will_do = {
 		exists = ruler
-		ruler = {
-			has_ideology = ideology:ideology_republican_leader
+		OR = {
+			ruler = {
+				OR = {
+					has_ideology = ideology:ideology_republican_leader
+					has_ideology = ideology:ideology_radical
+					has_ideology = ideology:ideology_positivist
+					has_socialist_ideology = yes
+				}
+			}
+			any_interest_group = {
+				is_in_government = yes
+				is_powerful = yes
+				leader = {
+					OR = {
+						has_ideology = ideology:ideology_republican_leader
+						has_ideology = ideology:ideology_radical
+						has_ideology = ideology:ideology_positivist
+						has_socialist_ideology = yes
+					}
+				}
+			}
 		}
 	}
 
 	ai_enact_weight_modifier = {
 		value = 0
+		if = {
+			limit = {
+				has_journal_entry = je_pedro_republic
+			}
+			add = 100
+		}
 		if = {
 			limit = { ai_has_enact_weight_modifier_journal_entries = yes }
 			add = 750
@@ -210,14 +460,14 @@ law_presidential_republic = {
 				has_strategy = ai_strategy_progressive_agenda
 				power_bloc ?= { has_identity = identity:identity_ideological_union }
 				scope:target_country = { # Is their law different enough from what we want to impose?
-					NOT = { has_law = law_type:law_parliamentary_republic }
+					NOT = { has_law_or_variant = law_type:law_parliamentary_republic }
 				}
 			}
 
 			add = base_impose_law_weight
 			if = {
 				limit = {
-					scope:target_country = { has_law = law_type:council_republic }
+					scope:target_country = { has_law_or_variant = law_type:law_council_republic }
 					NOT = { has_strategy = ai_strategy_egalitarian_agenda }
 				}
 				multiply = 5
@@ -225,6 +475,20 @@ law_presidential_republic = {
 			else = {
 				multiply = 0.5 # AI is less likely to mess with governance principles unless dealing with council republics
 			}
+		}
+
+		if = {
+			limit = {
+				scope:target_country = {
+					c:BIC ?= this
+					OR = {
+						has_journal_entry = je_british_dictate_plantations
+						has_journal_entry = je_british_dictate_military
+						has_journal_entry = je_british_dictate_universities
+					}
+				}
+			}
+			multiply = 0
 		}
 	}
 }
@@ -242,7 +506,12 @@ law_parliamentary_republic = {
 	}
 
 	can_enact = {
-		NOT = { has_government_type = gov_chartered_company }
+		trigger_if ={
+			limit = {
+				is_subject = no
+			}
+			NOT = { has_government_type = gov_chartered_company }
+		}
 	}
 
 	unlocking_technologies = {
@@ -268,15 +537,15 @@ law_parliamentary_republic = {
 	}
 
 	on_activate = {
-	#	if = {
-	#		limit = {
-	#			has_variable = fra_republic_counter
-	#		}
-	#		change_variable = {
-	#			name = fra_republic_counter
-	#			add = 1
-	#		}
-	#	}
+		if = {
+			limit = {
+				has_variable = fra_republic_counter
+			}
+			change_variable = {
+				name = fra_republic_counter
+				add = 1
+			}
+		}
 		if = {
 			limit = {
 				any_interest_group = {
@@ -291,12 +560,48 @@ law_parliamentary_republic = {
 				add_ideology = ideology_republican
 			}
 		}
+		crown_land_republic_effect = yes
+		if = {
+			limit = {
+				has_law = law_type:law_neo_absolutism
+			}
+			deactivate_law = law_type:law_neo_absolutism
+			activate_law = law_type:law_autocracy
+		}
+		if = {
+			limit = {
+				c:POR ?= this
+				ruler ?= {
+					has_template = POR_manuel_ii_de_braganca_template
+				}
+			}
+			trigger_event = { id = portuguese_monarchs.3 }
+		}
 	}
 
 	ai_will_do = {
 		exists = ruler
-		ruler = {
-			has_ideology = ideology:ideology_republican_leader
+		OR = {
+			ruler = {
+				OR = {
+					has_ideology = ideology:ideology_republican_leader
+					has_ideology = ideology:ideology_radical
+					has_ideology = ideology:ideology_positivist
+					has_socialist_ideology = yes
+				}
+			}
+			any_interest_group = {
+				is_in_government = yes
+				is_powerful = yes
+				leader = {
+					OR = {
+						has_ideology = ideology:ideology_republican_leader
+						has_ideology = ideology:ideology_radical
+						has_ideology = ideology:ideology_positivist
+						has_socialist_ideology = yes
+					}
+				}
+			}
 		}
 	}
 
@@ -318,14 +623,14 @@ law_parliamentary_republic = {
 				has_strategy = ai_strategy_progressive_agenda
 				power_bloc ?= { has_identity = identity:identity_ideological_union }
 				scope:target_country = { # Is their law different enough from what we want to impose?
-					NOT = { has_law = law_type:law_presidential_republic }
+					NOT = { has_law_or_variant = law_type:law_presidential_republic }
 				}
 			}
 
 			add = base_impose_law_weight
 			if = {
 				limit = {
-					scope:target_country = { has_law = law_type:council_republic }
+					scope:target_country = { has_law_or_variant = law_type:law_council_republic }
 					NOT = { has_strategy = ai_strategy_egalitarian_agenda }
 				}
 				multiply = 5
@@ -333,6 +638,20 @@ law_parliamentary_republic = {
 			else = {
 				multiply = 0.5 # AI is less likely to mess with governance principles unless dealing with council republics
 			}
+		}
+
+		if = {
+			limit = {
+				scope:target_country = {
+					c:BIC ?= this
+					OR = {
+						has_journal_entry = je_british_dictate_plantations
+						has_journal_entry = je_british_dictate_military
+						has_journal_entry = je_british_dictate_universities
+					}
+				}
+			}
+			multiply = 0
 		}
 	}
 }
@@ -349,7 +668,12 @@ law_theocracy = {
 	}
 
 	can_enact = {
-		NOT = { has_government_type = gov_chartered_company }
+		trigger_if ={
+			limit = {
+				is_subject = no
+			}
+			NOT = { has_government_type = gov_chartered_company }
+		}
 	}
 
 	can_impose = {
@@ -365,6 +689,73 @@ law_theocracy = {
 		}
 	}
 
+	on_activate = {
+		if = {
+			limit = {
+				has_law = law_type:law_neo_absolutism
+			}
+			deactivate_law = law_type:law_neo_absolutism
+			activate_law = law_type:law_autocracy
+		}
+	}
+
+	on_deactivate = {
+		if = {
+			limit = {
+				AND = {
+					has_law = law_type:law_subjecthood
+					NOR = {
+						has_law = law_type:law_monarchy
+						is_enacting_law = law_type:law_monarchy
+					}
+				}
+			}
+			if = {
+				limit = {
+					any_interest_group = {
+						is_in_government = yes
+						any_preferred_law = {
+							is_citizenship_law = yes
+							NOT = {
+								type ?= law_type:law_subjecthood
+							}
+						}
+					}
+				}
+				ordered_interest_group = {
+					limit = {
+						is_in_government = yes
+						any_preferred_law = {
+							is_citizenship_law = yes
+							NOT = {
+								type ?= law_type:law_subjecthood
+							}
+						}
+					}
+					order_by = ig_clout
+					position = 0
+					check_range_bounds = no
+					ordered_preferred_law = {
+						limit = {
+							is_citizenship_law = yes
+							NOT = {
+								type ?= law_type:law_subjecthood
+							}
+						}
+						position = 0
+						check_range_bounds = no
+						prev.owner = {
+							activate_law = prev.type
+						}
+					}
+				}
+			}
+			else = {
+				activate_law = law_type:law_national_supremacy
+			}
+		}
+	}
+
 	modifier = {
 		country_legitimacy_headofstate_add = 20
 		country_legitimacy_ideological_incoherence_mult = 0.1
@@ -374,8 +765,17 @@ law_theocracy = {
 
 	ai_will_do = {
 		exists = ruler
-		ruler = {
-			has_ideology = ideology:ideology_theocrat
+		OR = {
+			ruler = {
+				has_ideology = ideology:ideology_theocrat
+			}
+			any_interest_group = {
+				is_in_government = yes
+				is_powerful = yes
+				leader = {
+					has_ideology = ideology:ideology_theocrat
+				}
+			}
 		}
 	}
 
@@ -405,7 +805,7 @@ law_theocracy = {
 			add = base_impose_law_weight
 			if = {
 				limit = {
-					scope:target_country = { has_law = law_type:council_republic }
+					scope:target_country = { has_law_or_variant = law_type:law_council_republic }
 					NOT = { has_strategy = ai_strategy_egalitarian_agenda }
 				}
 				multiply = 5
@@ -413,6 +813,20 @@ law_theocracy = {
 			else = {
 				multiply = 0.5 # AI is less likely to mess with governance principles unless dealing with council republics
 			}
+		}
+
+		if = {
+			limit = {
+				scope:target_country = {
+					c:BIC ?= this
+					OR = {
+						has_journal_entry = je_british_dictate_plantations
+						has_journal_entry = je_british_dictate_military
+						has_journal_entry = je_british_dictate_universities
+					}
+				}
+			}
+			multiply = 0
 		}
 	}
 }
@@ -429,7 +843,12 @@ law_council_republic = {
 	}
 
 	can_enact = {
-		NOT = { has_government_type = gov_chartered_company }
+		trigger_if ={
+			limit = {
+				is_subject = no
+			}
+			NOT = { has_government_type = gov_chartered_company }
+		}
 	}
 
 	on_activate = {
@@ -449,6 +868,52 @@ law_council_republic = {
 				remove_ideology = ideology_constitutionalist
 				add_ideology = ideology_republican
 			}
+		}
+		if = {
+			limit = {
+				has_global_variable = lenin_spawn
+				country_has_primary_culture = cu:russian
+				any_scope_state = {
+					state_region = s:STATE_INGRIA
+				}
+			}
+			random_scope_state = {
+				limit = {
+					state_region = s:STATE_INGRIA
+				}
+				if = {
+					limit = {
+						has_global_variable = lenin_spawn
+
+						owner = {
+							country_has_primary_culture = cu:russian
+							has_law_or_variant = law_type:law_council_republic
+						}
+					}
+
+			        set_hub_name = {
+			            type = city
+			            name = HUB_NAME_STATE_INGRIA_city_russian_sov # St. Petersburg only becomes Leningrad if Lenin has been around to be a namesake
+			        }
+				}
+			}
+		}
+		crown_land_republic_effect = yes
+		if = {
+			limit = {
+				has_law = law_type:law_neo_absolutism
+			}
+			deactivate_law = law_type:law_neo_absolutism
+			activate_law = law_type:law_autocracy
+		}
+		if = {
+			limit = {
+				c:POR ?= this
+				ruler ?= {
+					has_template = POR_manuel_ii_de_braganca_template
+				}
+			}
+			trigger_event = { id = portuguese_monarchs.3 }
 		}
 	}
 
@@ -475,11 +940,7 @@ law_council_republic = {
 	ai_will_do = {
 		exists = ruler
 		ruler = {
-			OR = {
-				has_ideology = ideology:ideology_communist
-				has_ideology = ideology:ideology_anarchist
-				has_ideology = ideology:ideology_vanguardist
-			}
+			has_socialist_ideology = yes
 		}
 	}
 
@@ -504,6 +965,20 @@ law_council_republic = {
 			add = base_impose_law_weight
 			multiply = 5.0
 		}
+
+		if = {
+			limit = {
+				scope:target_country = {
+					c:BIC ?= this
+					OR = {
+						has_journal_entry = je_british_dictate_plantations
+						has_journal_entry = je_british_dictate_military
+						has_journal_entry = je_british_dictate_universities
+					}
+				}
+			}
+			multiply = 0
+		}
 	}
 }
 
@@ -516,6 +991,15 @@ law_corporate_state = {
 
 	unlocking_technologies = {
 		corporatism
+	}
+
+	can_enact = {
+		trigger_if ={
+			limit = {
+				is_subject = no
+			}
+			NOT = { has_government_type = gov_chartered_company }
+		}
 	}
 
 	on_activate = {
@@ -533,45 +1017,27 @@ law_corporate_state = {
 				add_ideology = ideology_republican
 			}
 		}
+		crown_land_republic_effect = yes
 		if = {
 			limit = {
-				var:corporatist_nominating_body_var ?= 1
+				has_law = law_type:law_neo_absolutism
 			}
-			add_modifier = { name = modifier_corporate_state_trade_unions_bias }
+			deactivate_law = law_type:law_neo_absolutism
+			activate_law = law_type:law_autocracy
 		}
 		if = {
 			limit = {
-				var:corporatist_nominating_body_var ?= 2
+				c:POR ?= this
+				ruler ?= {
+					has_template = POR_manuel_ii_de_braganca_template
+				}
 			}
-			add_modifier = { name = modifier_corporate_state_industrialists_bias }
-		}
-		if = {
-			limit = {
-				var:corporatist_nominating_body_var ?= 3
-			}
-			add_modifier = { name = modifier_corporate_state_intelligentsia_bias }
+			trigger_event = { id = portuguese_monarchs.3 }
 		}
 	}
 
 	on_enact = {
-		if = {
-			limit = {
-				var:corporatist_nominating_body_var ?= 1
-			}
-			custom_tooltip = corporate_state_trade_unions_bias_tt
-		}
-		if = {
-			limit = {
-				var:corporatist_nominating_body_var ?= 2
-			}
-			custom_tooltip = corporate_state_industrialists_bias_tt
-		}
-		if = {
-			limit = {
-				var:corporatist_nominating_body_var ?= 3
-			}
-			custom_tooltip = corporate_state_intelligentsia_bias_tt
-		}
+
 	}
 
 	on_deactivate = {
@@ -613,16 +1079,26 @@ law_corporate_state = {
 		country_legitimacy_ideological_incoherence_mult = -0.25
 		country_authority_add = 100
 		interest_group_ig_petty_bourgeoisie_pol_str_mult = 0.25
-		country_max_companies_add = 1
-		country_free_charters_add = 1
 	}
 
 	ai_will_do = {
 		exists = ruler
-		ruler = {
-			OR = {
-				has_ideology = ideology:ideology_fascist
-				has_ideology = ideology:ideology_corporatist_leader
+		OR = {
+			ruler = {
+				OR = {
+					has_ideology = ideology:ideology_fascist
+					has_ideology = ideology:ideology_corporatist_leader
+				}
+			}
+			any_interest_group = {
+				is_in_government = yes
+				is_powerful = yes
+				leader = {
+					OR = {
+						has_ideology = ideology:ideology_fascist
+						has_ideology = ideology:ideology_corporatist_leader
+					}
+				}
 			}
 		}
 	}
@@ -648,8 +1124,23 @@ law_corporate_state = {
 			add = base_impose_law_weight
 			multiply = 5.0
 		}
+
+		if = {
+			limit = {
+				scope:target_country = {
+					c:BIC ?= this
+					OR = {
+						has_journal_entry = je_british_dictate_plantations
+						has_journal_entry = je_british_dictate_military
+						has_journal_entry = je_british_dictate_universities
+					}
+				}
+			}
+			multiply = 0
+		}
 	}
 }
+
 
 #Custom Winkelier Republic law for Nuweflander
 law_winkelier_republic = {

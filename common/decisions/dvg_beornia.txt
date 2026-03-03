@@ -224,10 +224,23 @@ dvg_beo_lot_union = {
 			
 		}
 		
-		c:LOT = {
+		cu:beornian = {
+			culture_current_fervor < 39
+		}
+
+		cu:lotharian = {
+			culture_current_fervor < 39
+		}
+		OR = {
+			c:LOT = {
 			is_in_same_power_bloc = c:BEO
 
 			relations:root >= relations_threshold:amicable
+			}
+			c:LOT = {
+				is_in_customs_union_with = c:BEO
+				relations:root >= relations_threshold:amicable
+			}
 		}
 	}
 		
@@ -263,6 +276,15 @@ dvg_lot_beo_union = {
 	}
 
     possible = {
+		
+		cu:beornian = {
+			culture_current_fervor < 39
+		}
+
+		cu:lotharian = {
+			culture_current_fervor < 39
+		}
+		
 		OR = {
 			has_technology_researched = pan-nationalism
 			AND = {
@@ -288,10 +310,17 @@ dvg_lot_beo_union = {
 			
 			
 		}
-		c:BEO = {
+		OR = {
+			c:LOT = {
+				is_in_customs_union_with = c:BEO
+				relations:root >= relations_threshold:amicable
+			}
+			c:BEO = {
 				is_in_same_power_bloc = c:LOT
 				relations:root >= relations_threshold:amicable
 			}
+		}
+		
 		
 	}
 		
@@ -361,7 +390,6 @@ dvg_establish_new_mercia = {
 			days = long_modifier_time
 		}
 		}
-		trigger_event = { id = dvg_beornia.21 popup = yes days = 10 }
 		
 		set_global_variable = {
 				name = new_mercia
@@ -380,20 +408,30 @@ dvg_rennovating_camelot = {
 	is_shown = {
 		exists = c:BEO
 		this = c:BEO
-		
-		NOT = { has_global_variable = camelot_renovated }
+		NOT = {
+			has_global_variable = camelot_renovated
+		}
 	}
 
     possible = {
 		has_technology_researched = railways
 		has_technology_researched = modern_sewerage
-		has_technology_researched = bessemer_process
-		has_technology_researched = reinforced_concrete
-	
+		owns_entire_state_region = STATE_AVALON
 	}
 
     when_taken = {
+		
+		set_global_variable = {
+				name = camelot_renovated
+				value = 0
+		}
 
+		random_scope_state = {
+			limit = {
+				state_region = s:STATE_AVALON
+			}
+			STATE_AVALON_state_name_assign = yes
+		}
 
 		s:STATE_AVALON.region_state:BEO = {
 			add_modifier = {
@@ -407,10 +445,7 @@ dvg_rennovating_camelot = {
 			days = 1200
 			is_decaying	= yes
 		}
-		set_global_variable = {
-				name = camelot_renovated
-				value = 0
-		}
+		
 		if = {
 			limit = {
 				ruler = {
