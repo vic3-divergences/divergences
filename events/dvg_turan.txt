@@ -26,8 +26,8 @@ dvg_turan.1 = {
 	immediate = {
 		create_character = {
 			historical = yes
-			first_name = Sándor
-			last_name = Vámbéry 
+			first_name = Sandor
+			last_name = Vambery 
 			noble = yes
 			is_agitator = yes
 			birth_date = 1809.12.05
@@ -43,6 +43,7 @@ dvg_turan.1 = {
 				literary
 			}
 			on_created = {
+				set_variable = vambery_variable
 				save_scope_as = vambery_scope
 			}
 		}
@@ -53,7 +54,7 @@ dvg_turan.1 = {
 		name = dvg_turan.1.a
 		
 
-
+		
 		
 
 		ai_chance = {
@@ -70,21 +71,37 @@ dvg_turan.1 = {
 		}
 		random_country = {
 			limit = {
-				any_primary_culture = {
+				OR = {
+					any_primary_culture = {
 					has_discrimination_trait = heritage_finnic
+					}
+					any_primary_culture = {
+					has_discrimination_trait = heritage_kipchak
+					}
 				}
+				
 				empty_agitator_slots >= 1
 			}
 			trigger_event = dvg_turan.2
 			save_scope_as = turan_event_country
+			else_if = {
+				random_country = {
+					limit = {
+						is_in_geographic_region = geographic_region_middle_east
+						empty_agitator_slots >= 1
+					}
+					trigger_event = dvg_turan.2
+					save_scope_as = turan_event_country
+				}
+			}
 		}
+
 		scope:vambery_scope = {
 			transfer_character = scope:turan_event_country
 		}
 		
-		trigger_event = {
-				id = dvg_turan.2 days = 75
-		}
+		
+		
 		ai_chance = {
 			base = 100
 		}
@@ -114,14 +131,24 @@ dvg_turan.2 = {
 	trigger = {
 	}
 	immediate = {
-		
+		random_scope_character = {
+			limit = {
+				has_variable = vambery_variable
+			}
+			save_scope_as = vambery_scope
+		}
 	}
 
 	#He is welcome
 	option = {
 		name = dvg_turan.2.a
 		
-
+		hidden_effect = {
+			trigger_event = {
+				id = dvg_turan.3
+				days = 95
+			}
+		}
 
 		
 
@@ -142,6 +169,10 @@ dvg_turan.2 = {
 				any_primary_culture = {
 					has_discrimination_trait = heritage_iranian
 				}
+				trigger_event = {
+				id = dvg_turan.2
+				days = 95
+				}
 			}
 			
 		}
@@ -153,7 +184,7 @@ dvg_turan.2 = {
 	
 }
 
-#A traveller from the West
+#A traveller from the West now departs!
 dvg_turan.3 = {
 	type = country_event
 	placement = ROOT
@@ -176,32 +207,41 @@ dvg_turan.3 = {
 	trigger = {
 	}
 	immediate = {
-		
+		random_country = {
+			limit = {
+				is_in_geographic_region = geographic_region_central_asia
+				empty_agitator_slots >= 1
+			}
+			save_scope_as = turan_event_country
+			else_if = {
+				c:DZU = {
+					save_scope_as = turan_event_country
+				}
+			}
+		}
+		random_scope_character = {
+			limit = {
+				has_variable = vambery_variable
+			}
+			save_scope_as = vambery_scope
+		}
 	}
 
 	#He is welcome
 	option = {
 		name = dvg_turan.3.a
 		
-
-
+		
+		scope:turan_event_country = {
+			
+		}
 		
 
 		ai_chance = {
 			base = 1
 		}
 	}	
-	#He needs to GTFO
-	option = {
-		name = dvg_turan.3.b
-		default_option = yes
-
-		
-		
-		ai_chance = {
-			base = 100
-		}
-	}
+	
 	
 }
 
@@ -228,7 +268,12 @@ dvg_turan.4 = {
 	trigger = {
 	}
 	immediate = {
-		
+		random_scope_character = {
+			limit = {
+				has_variable = vambery_variable
+			}
+			save_scope_as = vambery_scope
+		}
 	}
 
 	#He is welcome
@@ -280,7 +325,12 @@ dvg_turan.5 = {
 	trigger = {
 	}
 	immediate = {
-		
+		random_scope_character = {
+			limit = {
+				has_variable = vambery_variable
+			}
+			save_scope_as = vambery_scope
+		}
 	}
 
 	#He is welcome
@@ -333,6 +383,13 @@ dvg_turan.6 = {
 	}
 	immediate = {
 		set_global_variable = turan_book_published
+
+		random_scope_character = {
+			limit = {
+				has_variable = vambery_variable
+			}
+			save_scope_as = vambery_scope
+		}
 	}
 
 	#He is welcome
@@ -557,7 +614,7 @@ dvg_turan.9 = {
 	immediate = {
 		create_character = {
 			historical = yes
-			culture = cu:REPLACE_OR_CREATE:japanese
+			culture = cu:japanese
 			is_agitator = yes
 			birth_date = 1827.12.25
 			interest_group = ig:ig_petty_bourgeoisie
