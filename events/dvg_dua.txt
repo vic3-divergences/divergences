@@ -4802,3 +4802,2247 @@ dua_fascism.3 = {
 
 #Dual Monarquie Federation
 
+namespace = dua_federation
+
+dua_federation.1 = { 
+	type = country_event
+	placement = root
+	title = dua_federation.1.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = dua_federation.1.d
+				trigger = {
+					scope:relevant_character ?= {
+						culture = {
+							NOR = {
+							has_discrimination_trait = language_anglophone
+							has_discrimination_trait = language_francophone
+							}
+						}
+					}
+				}
+			}
+			triggered_desc = {
+				desc = dua_federation.1.d_mil
+				trigger = {
+					scope:relevant_character ?= {
+						culture = {
+							OR = {
+								has_discrimination_trait = language_anglophone
+								has_discrimination_trait = language_francophone
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	flavor = dua_federation.1.f
+	duration = 3
+	event_image = {
+		video = "votp_monarch_holding_court"
+	}
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+
+	trigger = {
+		# Triggered by je_danubian_federation
+	}
+
+	cancellation_trigger = {
+
+	}
+
+	immediate = {
+		if = {
+			limit = {
+				any_subject_or_below = {
+					OR = {
+						is_subject_type = subject_type_personal_union
+						is_subject_type = subject_type_puppet
+						is_subject_type = subject_type_vassal
+					}
+				}
+			}
+			random_subject_or_below = {
+				limit = {
+					OR = {
+						is_subject_type = subject_type_personal_union
+						is_subject_type = subject_type_puppet
+						is_subject_type = subject_type_vassal
+					}
+				}
+				save_scope_as = relevant_subject
+			}
+		}
+		random_scope_character = {
+			limit = {
+				OR = {
+					is_interest_group_type = ig_armed_forces
+					culture = {
+						NOR = {
+							has_discrimination_trait = language_anglophone
+							has_discrimination_trait = language_francophone
+						}
+					}
+				}
+				OR = {
+					has_role = politician
+					has_role = agitator
+				}
+			}
+			if = {
+				limit = {
+					is_immortal = no # checks if the relevant character isn't already immortal
+				}
+				save_scope_as = relevant_character
+				set_character_immortal = yes # makes the relevant character immortal only until the end of this event
+				set_variable = temp_immortality_aus_fed_1
+			}
+			else = {
+				save_scope_as = relevant_character
+			}
+		}
+		set_variable = received_federation_proposal
+	}
+
+	option = { # Endorse this.
+		name = dua_federation.1.a
+		default_option = yes
+		ai_chance = {
+			base = 20
+			modifier = {
+				trigger = {
+					ruler ?= {
+						is_interest_group_type = ig_armed_forces
+					}
+				}
+				add = 50
+			}
+			modifier = {
+				trigger = {
+					ruler ?= {
+						NOT = {
+							culture = cu:anglois
+						}
+					}
+				}
+				add = 100
+			}
+		}
+		add_modifier = {
+			name = modifier_endorse_federal_proposal
+			days = normal_modifier_time
+			is_decaying = yes
+		}
+		if = {
+			limit = {
+				scope:relevant_character = {
+					has_variable = temp_immortality_dua_fed_1
+				}
+			}
+			scope:relevant_character = {
+				hidden_effect = {
+					set_character_immortal = no # sets relevant_character back to not immortal
+					remove_variable = temp_immortality_dua_fed_1
+				}
+			}
+		}
+		every_subject_or_below = {
+			limit = {
+				capital = {
+					OR = {
+						region = sr:region_france
+						region = sr:region_occitania
+						region = sr:region_italy
+						region = sr:region_england
+					}
+				}
+			}
+			trigger_event = { id = dua_federation.13 popup = yes }
+		}
+	}
+
+	option = { # Shelve it.
+		name = austria_federation.1.b
+		ai_chance = {
+			base = 20
+		}
+		custom_tooltip = {
+			text = shelve_proposal_for_now_tt
+			set_variable = { name = shelved_federation_proposal days = 30 }
+		}
+		if = {
+			limit = {
+				scope:relevant_character.interest_group = {
+					NOT = {
+						has_modifier = modifier_shelve_federal_proposal
+					}
+				}
+			}
+			scope:relevant_character.interest_group = {
+				add_modifier = {
+					name = modifier_shelve_federal_proposal
+					days = normal_modifier_time
+					is_decaying = yes
+				}
+			}
+		}
+		if = {
+			limit = {
+				exists = scope:relevant_subject
+			}
+			scope:relevant_subject = {
+				change_relations = {
+					country = ROOT
+					value = 15
+				}
+			}
+		}
+		if = {
+			limit = {
+				scope:relevant_character = {
+					has_variable = temp_immortality_dua_fed_1
+				}
+			}
+			scope:relevant_character = {
+				hidden_effect = {
+					set_character_immortal = no # sets relevant_character back to not immortal
+					remove_variable = temp_immortality_dua_fed_1
+				}
+			}
+		}
+	}
+}
+
+austria_federation.2 = { # Reward Event
+	type = country_event
+	placement = root
+	title = austria_federation.2.t
+	desc = austria_federation.2.d
+	flavor = austria_federation.2.f
+	duration = 3
+	dlc = dlc014
+	event_image = {
+		video = "ip3_official_reading_dictate"
+	}
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+
+	trigger = {
+		# Triggered by je_danubian_federation
+	}
+
+	cancellation_trigger = {
+
+	}
+
+	immediate = {
+
+	}
+
+	option = {
+		name = austria_federation.2.a
+		default_option = yes
+		ai_chance = {
+			base = 20
+		}
+		add_loyalists = {
+			value = medium_radicals
+		}
+		add_modifier = {
+			name = modifier_greater_austria
+			days = long_modifier_time
+		}
+	}
+
+	option = {
+		name = austria_federation.2.b
+		trigger = {
+			has_law = law_type:law_monarchy
+		}
+		ai_chance = {
+			base = 20
+		}
+		add_loyalists = {
+			value = large_radicals
+		}
+		ruler = {
+			add_modifier = {
+				name = modifier_greater_austria_character
+				days = long_modifier_time
+			}
+		}
+	}
+}
+
+# Cultural integration events
+
+austria_federation.3 = { # Czechs
+	type = country_event
+	placement = root
+	title = austria_federation.3.t
+	desc = austria_federation.3.desc
+	flavor = austria_federation.3.f
+	duration = 3
+	dlc = dlc014
+	event_image = {
+		video = "ip3_village_school"
+	}
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+
+	trigger = {
+		# Triggered by je_danubian_federation
+	}
+
+	cancellation_trigger = {
+
+	}
+
+	immediate = {
+		save_scope_as = austria_scope # For Notifications
+		cu:czech = {
+			save_scope_as = czech_culture
+		}
+	}
+
+	option = { # Favour Bohemian Germans
+		name = austria_federation.3.a
+		default_option = yes
+		danubian_federation_anger_culture = {
+			CULTURE = cu:czech
+			DEGREE = medium_radicals
+		}
+		danubian_federation_please_culture = {
+			CULTURE = cu:south_german
+			DEGREE = small_radicals
+		}
+	}
+
+	option = {  # Favour Bohemian unity
+		name = austria_federation.3.b
+		danubian_federation_anger_culture = {
+			CULTURE = cu:south_german
+			DEGREE = medium_radicals
+		}
+		danubian_federation_please_culture = {
+			CULTURE = cu:czech
+			DEGREE = medium_radicals
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:czech
+		}
+	}
+
+	option = {  # Trade Czechoslovakia for Bohemian Germans
+		name = austria_federation.3.c
+		trigger = {
+			sr:region_danubia = {
+				any_scope_state = {
+					state_region = {
+						is_homeland = cu:slovak
+					}
+					OR = {
+						owner = ROOT
+						owner = {
+							is_subject_of = ROOT
+						}
+					}
+				}
+			}
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:czech
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:slovak
+		}
+		danubian_federation_anger_culture = {
+			CULTURE = cu:hungarian
+			DEGREE = medium_radicals
+		}
+		danubian_federation_disqualify_culture = {
+			CULTURE = cu:hungarian
+		}
+	}
+
+	option = {  # Endorse Czechoslovakia
+		name = austria_federation.3.d
+		trigger = {
+			sr:region_danubia = {
+				any_scope_state = {
+					state_region = {
+						is_homeland = cu:slovak
+					}
+					OR = {
+						owner = ROOT
+						owner = {
+							is_subject_of = ROOT
+						}
+					}
+				}
+			}
+		}
+		danubian_federation_anger_culture = {
+			CULTURE = cu:south_german
+			DEGREE = medium_radicals
+		}
+		danubian_federation_please_culture = {
+			CULTURE = cu:czech
+			DEGREE = medium_radicals
+		}
+		danubian_federation_please_culture = {
+			CULTURE = cu:slovak
+			DEGREE = medium_radicals
+		}
+		danubian_federation_anger_culture = {
+			CULTURE = cu:hungarian
+			DEGREE = large_radicals
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:czech
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:slovak
+		}
+		danubian_federation_disqualify_culture = {
+			CULTURE = cu:hungarian
+		}
+	}
+}
+
+austria_federation.4 = { # Slovaks
+	type = country_event
+	placement = root
+	title = austria_federation.4.t
+	desc = austria_federation.4.desc
+	flavor = austria_federation.4.f
+	duration = 3
+	dlc = dlc014
+	event_image = {
+		video = "ip3_village_school"
+	}
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+
+	trigger = {
+		# Triggered by je_danubian_federation
+	}
+
+	cancellation_trigger = {
+
+	}
+
+	immediate = {
+		save_scope_as = austria_scope # For Notifications
+		cu:slovak = {
+			save_scope_as = slovak_culture
+		}
+		random_state = {
+			limit = {
+				OR = {
+					owner = ROOT
+					owner = {
+						is_subject_of = ROOT
+					}
+				}
+				state_region = s:STATE_SLOVAKIA
+			}
+			save_scope_as = slovakia_state
+		}
+	}
+
+	option = { # Slovakia can be a thing
+		name = austria_federation.4.a
+		default_option = yes
+		danubian_federation_please_culture = {
+			CULTURE = cu:slovak
+			DEGREE = small_radicals
+		}
+		danubian_federation_anger_culture = {
+			CULTURE = cu:hungarian
+			DEGREE = medium_radicals
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:slovak
+		}
+		danubian_federation_disqualify_culture = {
+			CULTURE = cu:hungarian
+		}
+	}
+
+	option = { # Condition Slovakia on autonomy for the Zipser Germans
+		name = austria_federation.4.b
+		danubian_federation_please_culture = {
+			CULTURE = cu:south_german
+			DEGREE = small_radicals
+		}
+		danubian_federation_anger_culture = {
+			CULTURE = cu:hungarian
+			DEGREE = medium_radicals
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:slovak
+		}
+		danubian_federation_disqualify_culture = {
+			CULTURE = cu:hungarian
+		}
+	}
+
+	option = { # Screw the Slovaks over in the name of appeasing Hungary
+		name = austria_federation.4.c
+		set_variable = slovakia_is_hungary
+		danubian_federation_anger_culture = {
+			CULTURE = cu:slovak
+			DEGREE = large_radicals
+		}
+		danubian_federation_please_culture = {
+			CULTURE = cu:hungarian
+			DEGREE = small_radicals
+		}
+	}
+
+	option = { # Endorse Czechoslovakia
+		name = austria_federation.4.d
+		danubian_federation_please_culture = {
+			CULTURE = cu:czech
+			DEGREE = medium_radicals
+		}
+		danubian_federation_please_culture = {
+			CULTURE = cu:slovak
+			DEGREE = medium_radicals
+		}
+		danubian_federation_anger_culture = {
+			CULTURE = cu:hungarian
+			DEGREE = large_radicals
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:czech
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:slovak
+		}
+		danubian_federation_disqualify_culture = {
+			CULTURE = cu:hungarian
+		}
+	}
+}
+
+austria_federation.5 = { # Poles
+	type = country_event
+	placement = root
+	title = austria_federation.5.t
+	desc = austria_federation.5.desc
+	flavor = austria_federation.5.f
+	duration = 3
+	dlc = dlc014
+	event_image = {
+		video = "ip3_village_school"
+	}
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+
+	trigger = {
+		# Triggered by je_danubian_federation
+	}
+
+	cancellation_trigger = {
+
+	}
+
+	immediate = {
+		save_scope_as = austria_scope # For Notifications
+		cu:polish = {
+			save_scope_as = polish_culture
+		}
+	}
+
+	option = { # Partition Galicia
+		name = austria_federation.5.a
+		default_option = yes
+		danubian_federation_anger_culture = {
+			CULTURE = cu:polish
+			DEGREE = medium_radicals
+		}
+		danubian_federation_please_culture = {
+			CULTURE = cu:ukrainian
+			DEGREE = medium_radicals
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:ukrainian
+		}
+	}
+
+	option = { # Partition Galicia, with Polish Lviv
+		name = austria_federation.5.b
+		danubian_federation_anger_culture = {
+			CULTURE = cu:ukrainian
+			DEGREE = medium_radicals
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:polish
+		}
+	}
+
+	option = { # Keep Galicia intact and under Polish rule
+		name = austria_federation.5.c
+		danubian_federation_anger_culture = {
+			CULTURE = cu:ukrainian
+			DEGREE = large_radicals
+		}
+		danubian_federation_please_culture = {
+			CULTURE = cu:polish
+			DEGREE = small_radicals
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:polish
+		}
+		danubian_federation_disqualify_culture = {
+			CULTURE = cu:ukrainian
+		}
+	}
+}
+
+austria_federation.6 = { # Hungarians
+	type = country_event
+	placement = root
+	title = austria_federation.6.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = austria_federation.6.desc_dual
+				trigger = {
+					c:HUN ?= {
+						exists = yes
+						is_subject_of = ROOT
+						is_subject_type = subject_type_personal_union
+					}
+				}
+			}
+			triggered_desc = {
+				desc = austria_federation.6.desc
+				trigger = {
+					always = yes
+				}
+			}
+		}
+	}
+	flavor = austria_federation.6.f
+	duration = 3
+	dlc = dlc014
+	event_image = {
+		video = "ip3_village_school"
+	}
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+
+	trigger = {
+		# Triggered by je_danubian_federation
+	}
+
+	cancellation_trigger = {
+
+	}
+
+	immediate = {
+		save_scope_as = austria_scope # For Notifications
+		cu:hungarian = {
+			save_scope_as = hungarian_culture
+		}
+		c:HUN ?= {
+			save_scope_as = hungary_scope
+		}
+	}
+
+	option = { # Greater Hungary
+		name = austria_federation.6.a
+		default_option = yes
+		danubian_federation_please_culture = {
+			CULTURE = cu:hungarian
+			DEGREE = medium_radicals
+		}
+		danubian_federation_anger_culture = {
+			CULTURE = cu:slovak
+			DEGREE = medium_radicals
+		}
+		danubian_federation_anger_culture = {
+			CULTURE = cu:romanian
+			DEGREE = medium_radicals
+		}
+		danubian_federation_anger_culture = {
+			CULTURE = cu:serb
+			DEGREE = medium_radicals
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:hungarian
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:szekely
+		}
+		danubian_federation_disqualify_culture = {
+			CULTURE = cu:slovak
+		}
+		danubian_federation_disqualify_culture = {
+			CULTURE = cu:romanian
+		}
+		danubian_federation_disqualify_culture = {
+			CULTURE = cu:serb
+		}
+		if = {
+			limit = {
+				hungary_owns_croatia = no
+				any_scope_state = {
+					state_region = {
+						is_homeland = cu:croat
+					}
+				}
+			}
+			custom_tooltip = croats_are_fine_tt
+		}
+		else = {
+			danubian_federation_anger_culture = {
+				CULTURE = cu:croat
+				DEGREE = medium_radicals
+			}
+			danubian_federation_disqualify_culture = {
+				CULTURE = cu:croat
+			}
+		}
+	}
+
+	option = { # Everything but Slovakia
+		name = austria_federation.6.b
+		danubian_federation_anger_culture = {
+			CULTURE = cu:romanian
+			DEGREE = medium_radicals
+		}
+		danubian_federation_anger_culture = {
+			CULTURE = cu:serb
+			DEGREE = medium_radicals
+		}
+		danubian_federation_disqualify_culture = {
+			CULTURE = cu:romanian
+		}
+		danubian_federation_disqualify_culture = {
+			CULTURE = cu:serb
+		}
+		if = {
+			limit = {
+				hungary_owns_croatia = no
+				any_scope_state = {
+					state_region = {
+						is_homeland = cu:croat
+					}
+				}
+			}
+			custom_tooltip = croats_are_fine_tt
+		}
+		else = {
+			danubian_federation_disqualify_culture = {
+				CULTURE = cu:croat
+			}
+		}
+		if = {
+			limit = {
+				has_variable = slovakia_is_hungary
+			}
+			custom_tooltip = promised_slovakia_to_hungary_tt
+			danubian_federation_anger_culture = {
+				CULTURE = cu:hungarian
+				DEGREE = medium_radicals
+			}
+		}
+		else = {
+			danubian_federation_anger_culture = {
+				CULTURE = cu:hungarian
+				DEGREE = small_radicals
+			}
+		}
+	}
+
+	option = { # 1836 Hungary
+		name = austria_federation.6.c
+		danubian_federation_disqualify_culture = {
+			CULTURE = cu:serb
+		}
+		danubian_federation_disqualify_culture = {
+			CULTURE = cu:slovak
+		}
+		danubian_federation_anger_culture = {
+			CULTURE = cu:hungarian
+			DEGREE = medium_radicals
+		}
+	}
+
+	option = { # Minimal Hungary
+		name = austria_federation.6.d
+		if = {
+			limit = {
+				has_variable = slovakia_is_hungary
+			}
+			custom_tooltip = promised_slovakia_to_hungary_tt
+			danubian_federation_anger_culture = {
+				CULTURE = cu:hungarian
+				DEGREE = very_large_radicals
+			}
+		}
+		else = {
+			danubian_federation_anger_culture = {
+				CULTURE = cu:hungarian
+				DEGREE = large_radicals
+			}
+		}
+	}
+}
+
+austria_federation.7 = { # Slovenes
+	type = country_event
+	placement = root
+	title = austria_federation.7.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = austria_federation.7.desc_istria
+				trigger = {
+					OR = {
+						any_scope_state = {
+							state_region = s:STATE_ISTRIA
+						}
+						any_subject_or_below = {
+							any_scope_state = {
+								state_region = s:STATE_ISTRIA
+							}
+						}
+					}
+				}
+			}
+			triggered_desc = {
+				desc = austria_federation.7.desc
+				trigger = {
+					always = yes
+				}
+			}
+		}
+	}
+	flavor = austria_federation.7.f
+	duration = 3
+	dlc = dlc014
+	event_image = {
+		video = "ip3_village_school"
+	}
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+
+	trigger = {
+		# Triggered by je_danubian_federation
+	}
+
+	cancellation_trigger = {
+
+	}
+
+	immediate = {
+		save_scope_as = austria_scope # For Notifications
+		cu:slovene = {
+			save_scope_as = slovene_culture
+		}
+		random_state = {
+			limit = {
+				OR = {
+					owner = ROOT
+					owner = {
+						is_subject_of = ROOT
+					}
+				}
+				state_region = s:STATE_SLOVENIA
+			}
+			save_scope_as = slovenia_scope
+		}
+		random_state = {
+			limit = {
+				OR = {
+					owner = ROOT
+					owner = {
+						is_subject_of = ROOT
+					}
+				}
+				state_region = s:STATE_ISTRIA
+			}
+			save_scope_as = istria_scope
+		}
+	}
+
+	option = { # Greater Slovenia
+		name = austria_federation.7.a
+		trigger = {
+			OR = {
+				any_scope_state = {
+					state_region = s:STATE_ISTRIA
+				}
+				any_subject_or_below = {
+					any_scope_state = {
+						state_region = s:STATE_ISTRIA
+					}
+				}
+			}
+		}
+		danubian_federation_please_culture = {
+			CULTURE = cu:slovene
+			DEGREE = medium_radicals
+		}
+		danubian_federation_anger_culture = {
+			CULTURE = cu:north_italian
+			DEGREE = medium_radicals
+		}
+		danubian_federation_anger_culture = {
+			CULTURE = cu:croat
+			DEGREE = small_radicals
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:slovene
+		}
+		danubian_federation_disqualify_culture = {
+			CULTURE = cu:north_italian
+		}
+	}
+
+	option = { # Istrialess Slovenia
+		name = austria_federation.7.b1
+		trigger = {
+			OR = {
+				any_scope_state = {
+					state_region = s:STATE_ISTRIA
+				}
+				any_subject_or_below = {
+					any_scope_state = {
+						state_region = s:STATE_ISTRIA
+					}
+				}
+			}
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:slovene
+		}
+	}
+
+	option = { # Istrialess Slovenia - Istria lost
+		name = austria_federation.7.b2
+		trigger = {
+			NOR = {
+				any_scope_state = {
+					state_region = s:STATE_ISTRIA
+				}
+				any_subject_or_below = {
+					any_scope_state = {
+						state_region = s:STATE_ISTRIA
+					}
+				}
+			}
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:slovene
+		}
+	}
+
+	option = { # Minimal Slovenia
+		name = austria_federation.7.c
+		default_option = yes
+		danubian_federation_anger_culture = {
+			CULTURE = cu:slovene
+			DEGREE = medium_radicals
+		}
+		danubian_federation_please_culture = {
+			CULTURE = cu:south_german
+			DEGREE = medium_radicals
+		}
+	}
+
+	option = { # Croatia-Slovenia
+		name = austria_federation.7.d
+		danubian_federation_please_culture = {
+			CULTURE = cu:slovene
+			DEGREE = medium_radicals
+		}
+		danubian_federation_please_culture = {
+			CULTURE = cu:croat
+			DEGREE = medium_radicals
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:slovene
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:croat
+		}
+		if = {
+			limit = {
+				hungary_owns_croatia = yes
+			}
+			danubian_federation_disqualify_culture = {
+				CULTURE = cu:hungarian
+			}
+		}
+	}
+
+	option = { # Pan-Slavic Solution
+		name = austria_federation.7.e
+		danubian_federation_please_culture = {
+			CULTURE = cu:slovene
+			DEGREE = medium_radicals
+		}
+		danubian_federation_please_culture = {
+			CULTURE = cu:croat
+			DEGREE = medium_radicals
+		}
+		danubian_federation_please_culture = {
+			CULTURE = cu:serb
+			DEGREE = medium_radicals
+		}
+		danubian_federation_anger_culture = {
+			CULTURE = cu:hungarian
+			DEGREE = medium_radicals
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:slovene
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:croat
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:serb
+		}
+		danubian_federation_disqualify_culture = {
+			CULTURE = cu:hungarian
+		}
+	}
+}
+
+austria_federation.8 = { # Croats
+	type = country_event
+	placement = root
+	title = austria_federation.8.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = austria_federation.8.desc_triune
+				trigger = {
+					any_subject_or_below ?= {
+						country_has_primary_culture = cu:croat
+						any_scope_state = {
+							state_region = s:STATE_DALMATIA
+						}
+						any_scope_state = {
+							state_region = s:STATE_CROATIA
+						}
+						any_scope_state = {
+							state_region = s:STATE_SLAVONIA
+						}
+					}
+				}
+			}
+			triggered_desc = {
+				desc = austria_federation.8.desc
+				trigger = {
+					always = yes
+				}
+			}
+		}
+	}
+	flavor = austria_federation.8.f
+	duration = 3
+	dlc = dlc014
+	event_image = {
+		video = "ip3_village_school"
+	}
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+
+	trigger = {
+		# Triggered by je_danubian_federation
+	}
+
+	cancellation_trigger = {
+
+	}
+
+	immediate = {
+		save_scope_as = austria_scope # For Notifications
+		cu:croat = {
+			save_scope_as = croat_culture
+		}
+		random_subject_or_below = {
+			limit = {
+				country_has_primary_culture = cu:croat
+				any_scope_state = {
+					state_region = s:STATE_DALMATIA
+				}
+				any_scope_state = {
+					state_region = s:STATE_CROATIA
+				}
+				any_scope_state = {
+					state_region = s:STATE_SLAVONIA
+				}
+			}
+			save_scope_as = croatia_scope
+		}
+	}
+
+	option = { # Dalmatia only
+		name = austria_federation.8.a
+		default_option = yes
+		trigger = {
+			hungary_owns_croatia = yes
+			any_scope_state = {
+				state_region = s:STATE_DALMATIA
+			}
+		}
+		danubian_federation_please_culture = {
+			CULTURE = cu:hungarian
+			DEGREE = small_radicals
+		}
+		danubian_federation_anger_culture = {
+			CULTURE = cu:croat
+			DEGREE = medium_radicals
+		}
+	}
+
+	option = { # Preserve status quo
+		name = austria_federation.8.b
+		default_option = yes
+		trigger = {
+			hungary_owns_croatia = no
+		}
+		danubian_federation_please_culture = {
+			CULTURE = cu:croat
+			DEGREE = small_radicals
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:croat
+		}
+	}
+
+	option = { # Full Triune
+		name = austria_federation.8.c
+		trigger = {
+			hungary_owns_croatia = yes
+		}
+		danubian_federation_please_culture = {
+			CULTURE = cu:croat
+			DEGREE = medium_radicals
+		}
+		danubian_federation_anger_culture = {
+			CULTURE = cu:hungarian
+			DEGREE = medium_radicals
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:croat
+		}
+		danubian_federation_disqualify_culture = {
+			CULTURE = cu:hungarian
+		}
+	}
+
+	option = { # Croatia-Slovenia
+		name = austria_federation.8.d
+		danubian_federation_please_culture = {
+			CULTURE = cu:croat
+			DEGREE = medium_radicals
+		}
+		danubian_federation_please_culture = {
+			CULTURE = cu:slovene
+			DEGREE = medium_radicals
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:croat
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:slovene
+		}
+		if = {
+			limit = {
+				hungary_owns_croatia = yes
+			}
+			danubian_federation_anger_culture = {
+				CULTURE = cu:hungarian
+				DEGREE = medium_radicals
+			}
+			danubian_federation_disqualify_culture = {
+				CULTURE = cu:hungarian
+			}
+		}
+	}
+
+	option = { # Pan-Slavic Solution
+		name = austria_federation.8.e
+		danubian_federation_please_culture = {
+			CULTURE = cu:croat
+			DEGREE = medium_radicals
+		}
+		danubian_federation_please_culture = {
+			CULTURE = cu:slovene
+			DEGREE = medium_radicals
+		}
+		danubian_federation_please_culture = {
+			CULTURE = cu:serb
+			DEGREE = medium_radicals
+		}
+		danubian_federation_anger_culture = {
+			CULTURE = cu:hungarian
+			DEGREE = medium_radicals
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:croat
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:slovene
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:serb
+		}
+		danubian_federation_disqualify_culture = {
+			CULTURE = cu:hungarian
+		}
+	}
+}
+
+austria_federation.9 = { # Romanians
+	type = country_event
+	placement = root
+	title = austria_federation.9.t
+	desc = austria_federation.9.desc
+	flavor = austria_federation.9.f
+	duration = 3
+	dlc = dlc014
+	event_image = {
+		video = "ip3_village_school"
+	}
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+
+	trigger = {
+		# Triggered by je_danubian_federation
+	}
+
+	cancellation_trigger = {
+
+	}
+
+	immediate = {
+		save_scope_as = austria_scope # For Notifications
+		cu:romanian = {
+			save_scope_as = romanian_culture
+		}
+	}
+
+	option = { # Romanian Translyvania
+		name = austria_federation.9.a
+		default_option = yes
+		danubian_federation_please_culture = {
+			CULTURE = cu:romanian
+			DEGREE = large_radicals
+		}
+		danubian_federation_anger_culture = {
+			CULTURE = cu:hungarian
+			DEGREE = large_radicals
+		}
+		danubian_federation_anger_culture = {
+			CULTURE = cu:szekely
+			DEGREE = large_radicals
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:romanian
+		}
+		danubian_federation_disqualify_culture = {
+			CULTURE = cu:szekely
+		}
+		danubian_federation_disqualify_culture = {
+			CULTURE = cu:hungarian
+		}
+		set_variable = bukovina_is_romanian
+	}
+
+	option = { # Create a Szekler Land
+		name = austria_federation.9.b
+		danubian_federation_please_culture = {
+			CULTURE = cu:romanian
+			DEGREE = small_radicals
+		}
+		danubian_federation_please_culture = {
+			CULTURE = cu:szekely
+			DEGREE = large_radicals
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:romanian
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:szekely
+		}
+		if = {
+			limit = {
+				OR = {
+					any_subject_or_below = {
+						country_has_primary_culture = cu:hungarian
+						liberty_desire > 25
+					}
+					radical_fraction = {
+						value >= 0.1
+						culture = cu:hungarian
+					}
+				}
+			}
+			custom_tooltip = {
+				text = because_hungarian_anger_is_high_tt
+				danubian_federation_anger_culture = {
+					CULTURE = cu:hungarian
+					DEGREE = small_radicals
+				}
+				danubian_federation_disqualify_culture = {
+					CULTURE = cu:hungarian
+				}
+			}
+		}
+		else = {
+			custom_tooltip = because_hungarian_anger_is_low_tt
+		}
+		set_variable = bukovina_is_romanian
+	}
+
+	option = { # German Banat
+		name = austria_federation.9.c
+		danubian_federation_please_culture = {
+			CULTURE = cu:romanian
+			DEGREE = small_radicals
+		}
+		danubian_federation_please_culture = {
+			CULTURE = cu:south_german
+			DEGREE = medium_radicals
+		}
+		danubian_federation_anger_culture = {
+			CULTURE = cu:hungarian
+			DEGREE = medium_radicals
+		}
+		danubian_federation_anger_culture = {
+			CULTURE = cu:szekely
+			DEGREE = large_radicals
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:romanian
+		}
+		danubian_federation_disqualify_culture = {
+			CULTURE = cu:hungarian
+		}
+		danubian_federation_disqualify_culture = {
+			CULTURE = cu:szekely
+		}
+		set_variable = bukovina_is_romanian
+	}
+
+	option = { # Dismember Romania
+		name = austria_federation.9.d
+		danubian_federation_anger_culture = {
+			CULTURE = cu:romanian
+			DEGREE = medium_radicals
+		}
+		danubian_federation_please_culture = {
+			CULTURE = cu:szekely
+			DEGREE = medium_radicals
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:szekely
+		}
+		if = {
+			limit = {
+				OR = {
+					any_subject_or_below = {
+						country_has_primary_culture = cu:hungarian
+						liberty_desire > 25
+					}
+					radical_fraction = {
+						value >= 0.1
+						culture = cu:hungarian
+					}
+				}
+			}
+			custom_tooltip = {
+				text = because_hungarian_anger_is_high_tt
+				danubian_federation_anger_culture = {
+					CULTURE = cu:hungarian
+					DEGREE = small_radicals
+				}
+				danubian_federation_disqualify_culture = {
+					CULTURE = cu:hungarian
+				}
+			}
+		}
+		else = {
+			custom_tooltip = because_hungarian_anger_is_low_tt
+		}
+	}
+
+	option = { # Prioritize Hungarian interests
+		name = austria_federation.9.e
+		danubian_federation_please_culture = {
+			CULTURE = cu:hungarian
+			DEGREE = large_radicals
+		}
+		danubian_federation_please_culture = {
+			CULTURE = cu:szekely
+			DEGREE = large_radicals
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:szekely
+		}
+		danubian_federation_anger_culture = {
+			CULTURE = cu:romanian
+			DEGREE = large_radicals
+		}
+	}
+}
+
+austria_federation.10 = { # North Italians
+	type = country_event
+	placement = root
+	title = austria_federation.10.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = austria_federation.10.desc_lomven
+				trigger = {
+					OR = {
+						any_scope_state = {
+							OR = {
+								state_region = s:STATE_LOMBARDY
+								state_region = s:STATE_VENETIA
+							}
+						}
+						any_subject_or_below = {
+							any_scope_state = {
+								OR = {
+									state_region = s:STATE_LOMBARDY
+									state_region = s:STATE_VENETIA
+								}
+							}
+						}
+					}
+				}
+			}
+			triggered_desc = {
+				desc = austria_federation.10.desc
+				trigger = {
+					always = yes
+				}
+			}
+		}
+	}
+	flavor = austria_federation.10.f
+	duration = 3
+	dlc = dlc014
+	event_image = {
+		video = "votp_realist_household"
+	}
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+
+	trigger = {
+		# Triggered by je_danubian_federation
+	}
+
+	cancellation_trigger = {
+
+	}
+
+	immediate = {
+		save_scope_as = austria_scope # For Notifications
+		cu:north_italian = {
+			save_scope_as = north_italian_culture
+		}
+	}
+
+	option = { # South Tyrol and Trieste
+		name = austria_federation.10.a
+		default_option = yes
+		danubian_federation_anger_culture = {
+			CULTURE = cu:south_german
+			DEGREE = small_radicals
+		}
+		danubian_federation_anger_culture = {
+			CULTURE = cu:slovene
+			DEGREE = small_radicals
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:north_italian
+		}
+	}
+
+	option = { # Just South Tyrol
+		name = austria_federation.10.b
+		danubian_federation_anger_culture = {
+			CULTURE = cu:north_italian
+			DEGREE = small_radicals
+		}
+		danubian_federation_anger_culture = {
+			CULTURE = cu:south_german
+			DEGREE = small_radicals
+		}
+		danubian_federation_please_culture = {
+			CULTURE = cu:slovene
+			DEGREE = small_radicals
+		}
+		if = {
+			limit = {
+				any_scope_state = {
+					OR = {
+						state_region = s:STATE_LOMBARDY
+						state_region = s:STATE_VENETIA
+					}
+				}
+			}
+			custom_tooltip = {
+				text = because_lombardy_venetia_tt
+				danubian_federation_integrate_culture = {
+					CULTURE = cu:north_italian
+				}
+			}
+		}
+	}
+
+	option = { # Just Trieste
+		name = austria_federation.10.c
+		danubian_federation_anger_culture = {
+			CULTURE = cu:north_italian
+			DEGREE = small_radicals
+		}
+		danubian_federation_please_culture = {
+			CULTURE = cu:south_german
+			DEGREE = small_radicals
+		}
+		danubian_federation_anger_culture = {
+			CULTURE = cu:slovene
+			DEGREE = small_radicals
+		}
+		if = {
+			limit = {
+				any_scope_state = {
+					OR = {
+						state_region = s:STATE_LOMBARDY
+						state_region = s:STATE_VENETIA
+					}
+				}
+			}
+			custom_tooltip = {
+				text = because_lombardy_venetia_tt
+				danubian_federation_integrate_culture = {
+					CULTURE = cu:north_italian
+				}
+			}
+		}
+	}
+
+	option = { # Neither region - Lombardy-Venetia
+		name = austria_federation.10.d
+		trigger = {
+			any_scope_state = {
+				OR = {
+					state_region = s:STATE_LOMBARDY
+					state_region = s:STATE_VENETIA
+				}
+			}
+		}
+		danubian_federation_anger_culture = {
+			CULTURE = cu:north_italian
+			DEGREE = large_radicals
+		}
+		danubian_federation_please_culture = {
+			CULTURE = cu:slovene
+			DEGREE = medium_radicals
+		}
+		danubian_federation_please_culture = {
+			CULTURE = cu:south_german
+			DEGREE = medium_radicals
+		}
+	}
+
+	option = { # Neither region
+		name = austria_federation.10.e
+		trigger = {
+			NOT = {
+				any_scope_state = {
+					OR = {
+						state_region = s:STATE_LOMBARDY
+						state_region = s:STATE_VENETIA
+					}
+				}
+			}
+		}
+		danubian_federation_anger_culture = {
+			CULTURE = cu:north_italian
+			DEGREE = medium_radicals
+		}
+		danubian_federation_please_culture = {
+			CULTURE = cu:slovene
+			DEGREE = medium_radicals
+		}
+		danubian_federation_please_culture = {
+			CULTURE = cu:south_german
+			DEGREE = medium_radicals
+		}
+	}
+}
+
+austria_federation.11 = { # Ukrainians
+	type = country_event
+	placement = root
+	title = austria_federation.11.t
+	desc = austria_federation.11.desc
+	flavor = austria_federation.11.f
+	duration = 3
+	dlc = dlc014
+	event_image = {
+		video = "ip3_village_school"
+	}
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+
+	trigger = {
+		# Triggered by je_danubian_federation
+	}
+
+	cancellation_trigger = {
+
+	}
+
+	immediate = {
+		save_scope_as = austria_scope # For Notifications
+		cu:ukrainian = {
+			save_scope_as = ukrainian_culture
+		}
+		random_state = {
+			limit = {
+				OR = {
+					owner = ROOT
+					owner = {
+						is_subject_of = ROOT
+					}
+				}
+				state_region = s:STATE_EAST_GALICIA
+			}
+			save_scope_as = east_galicia_state
+		}
+	}
+
+	option = { # All of East Galicia
+		name = austria_federation.11.a
+		default_option = yes
+		danubian_federation_anger_culture = {
+			CULTURE = cu:polish
+			DEGREE = medium_radicals
+		}
+		danubian_federation_please_culture = {
+			CULTURE = cu:ukrainian
+			DEGREE = large_radicals
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:ukrainian
+		}
+		danubian_federation_disqualify_culture = {
+			CULTURE = cu:polish
+		}
+	}
+
+	option = { # East Galicia minus Lviv
+		name = austria_federation.11.b
+		danubian_federation_anger_culture = {
+			CULTURE = cu:ukrainian
+			DEGREE = small_radicals
+		}
+	}
+
+	option = { # Trade Bukovina for Lviv
+		name = austria_federation.11.c
+		trigger = {
+			OR = {
+				any_scope_state = {
+					state_region = s:STATE_BUKOVINA
+				}
+				any_subject_or_below = {
+					any_scope_state = {
+						state_region = s:STATE_BUKOVINA
+					}
+				}
+			}
+		}
+		danubian_federation_anger_culture = {
+			CULTURE = cu:romanian
+			DEGREE = medium_radicals
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:ukrainian
+		}
+		if = {
+			limit = {
+				has_variable = bukovina_is_romanian
+			}
+			custom_tooltip = {
+				text = promised_bukovina_to_romania_tt
+				danubian_federation_disqualify_culture = {
+					CULTURE = cu:romanian
+				}
+			}
+		}
+	}
+
+	option = { # All of Galicia is Polish
+		name = austria_federation.11.d
+		danubian_federation_please_culture = {
+			CULTURE = cu:polish
+			DEGREE = medium_radicals
+		}
+		danubian_federation_anger_culture = {
+			CULTURE = cu:ukrainian
+			DEGREE = large_radicals
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:polish
+		}
+	}
+}
+
+austria_federation.12 = { # Serbs
+	type = country_event
+	placement = root
+	title = austria_federation.12.t
+	desc = austria_federation.12.desc
+	flavor = austria_federation.12.f
+	duration = 3
+	dlc = dlc014
+	event_image = {
+		video = "ip3_village_school"
+	}
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+
+	trigger = {
+		# Triggered by je_danubian_federation
+	}
+
+	cancellation_trigger = {
+
+	}
+
+	immediate = {
+		save_scope_as = austria_scope # For Notifications
+		cu:serb = {
+			save_scope_as = serb_culture
+		}
+		if = {
+			limit = {
+				any_state = {
+					OR = {
+						owner = ROOT
+						owner = {
+							is_subject_of = ROOT
+						}
+					}
+					state_region = s:STATE_DELVIDEK
+				}
+			}
+			random_state = {
+				limit = {
+					OR = {
+						owner = ROOT
+						owner = {
+							is_subject_of = ROOT
+						}
+					}
+					state_region = s:STATE_DELVIDEK
+				}
+				save_scope_as = vojvodina_state
+			}
+		}
+		else = {
+			ordered_state = {
+				limit = {
+					OR = {
+						owner = ROOT
+						owner = {
+							is_subject_of = ROOT
+						}
+					}
+					state_region = {
+						is_homeland = cu:serb
+					}
+				}
+				order_by = gdp
+				position = 0
+				check_range_bounds = no
+				save_scope_as = vojvodina_state
+			}
+		}
+	}
+
+	option = { # Create a State of Vojvodina
+		name = austria_federation.12.a
+		default_option = yes
+		danubian_federation_please_culture = {
+			CULTURE = cu:serb
+			DEGREE = medium_radicals
+		}
+		danubian_federation_anger_culture = {
+			CULTURE = cu:hungarian
+			DEGREE = medium_radicals
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:serb
+		}
+		danubian_federation_disqualify_culture = {
+			CULTURE = cu:hungarian
+		}
+	}
+
+	option = { # Screw the Serbs over in the name of appeasing Hungary
+		name = austria_federation.12.b
+		danubian_federation_anger_culture = {
+			CULTURE = cu:serb
+			DEGREE = large_radicals
+		}
+	}
+
+	option = { # Pan-Slavic Solution
+		name = austria_federation.12.c
+		danubian_federation_please_culture = {
+			CULTURE = cu:serb
+			DEGREE = medium_radicals
+		}
+		danubian_federation_please_culture = {
+			CULTURE = cu:croat
+			DEGREE = medium_radicals
+		}
+		danubian_federation_please_culture = {
+			CULTURE = cu:slovene
+			DEGREE = medium_radicals
+		}
+		danubian_federation_anger_culture = {
+			CULTURE = cu:hungarian
+			DEGREE = large_radicals
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:serb
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:croat
+		}
+		danubian_federation_integrate_culture = {
+			CULTURE = cu:slovene
+		}
+		danubian_federation_disqualify_culture = {
+			CULTURE = cu:hungarian
+		}
+	}
+}
+
+austria_federation.13 = { # Puppets decide how to respond
+	type = country_event
+	placement = root
+	title = austria_federation.13.t
+	desc = austria_federation.13.d
+	flavor = austria_federation.13.f
+	duration = 3
+	dlc = dlc014
+	event_image = {
+		video = "ip3_official_reading_dictate"
+	}
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	trigger = {
+		# Triggered by Austria getting je_danubian_federation
+	}
+
+	cancellation_trigger = {
+
+	}
+
+	immediate = {
+		c:AUS ?= {
+			save_scope_as = austria_scope
+		}
+	}
+
+	option = { # We'll go with it.
+		name = austria_federation.13.a
+		default_option = yes
+		ai_chance = {
+			base = 10
+			modifier = {
+				trigger = {
+					liberty_desire < define:NDiplomacy|WAR_GOAL_INFAMY_LOW_LIBERTY_DESIRE_THRESHOLD
+				}
+				add = 10
+			}
+			modifier = {
+				trigger = {
+					liberty_desire <= 10
+				}
+				add = 10
+			}
+			modifier = {
+				trigger = {
+					"relations(scope:austria_scope)" >= relations_threshold:cordial
+				}
+				add = 10
+			}
+			modifier = {
+				trigger = {
+					"relations(scope:austria_scope)" >= relations_threshold:amicable
+				}
+				add = 10
+			}
+			modifier = {
+				trigger = {
+					"relations(scope:austria_scope)" >= relations_threshold:friendly
+				}
+				add = 10
+			}
+			modifier = {
+				trigger = {
+					any_interest_group = {
+						is_in_government = yes
+						is_powerful = no
+						is_member_of_lobby = lobby_type:lobby_pro_overlord
+					}
+				}
+				add = 10
+			}
+			modifier = {
+				trigger = {
+					any_interest_group = {
+						is_in_government = yes
+						is_powerful = yes
+						is_member_of_lobby = lobby_type:lobby_pro_overlord
+					}
+				}
+				add = 20
+			}
+		}
+		custom_tooltip = unlocks_actions_to_allow_federalization_tt
+		set_variable = danubian_federation_receptive
+		add_journal_entry = { type = je_danubian_federation_observer }
+		show_as_tooltip = {
+			add_modifier = {
+				name = modifier_welcoming_federalization
+			}
+		}
+		je:je_danubian_federation_observer ?= {
+			add_modifier = {
+				name = modifier_welcoming_federalization
+			}
+		}
+		c:AUS ?= {
+			set_secret_goal = {
+				country = ROOT
+				secret_goal = protect
+			}
+		}
+		hidden_effect = {
+			set_secret_goal = {
+				country = c:AUS
+				secret_goal = comply
+			}
+			set_strategy = ai_strategy_subject_overlord_compliance
+		}
+	}
+
+	option = { # NOH.
+		name = austria_federation.13.b
+		ai_chance = {
+			base = 20
+			modifier = {
+				trigger = {
+					liberty_desire > 25
+				}
+				add = 10
+			}
+			modifier = {
+				trigger = {
+					liberty_desire > 50
+				}
+				add = 10
+			}
+			modifier = {
+				trigger = {
+					"relations(scope:austria_scope)" <= relations_threshold:poor
+				}
+				add = 10
+			}
+			modifier = {
+				trigger = {
+					"relations(scope:austria_scope)" <= relations_threshold:cold
+				}
+				add = 10
+			}
+			modifier = {
+				trigger = {
+					"relations(scope:austria_scope)" <= relations_threshold:hostile
+				}
+				add = 10
+			}
+			modifier = {
+				trigger = {
+					any_interest_group = {
+						is_in_government = yes
+						is_powerful = no
+						is_member_of_lobby = lobby_type:lobby_anti_overlord
+					}
+				}
+				add = 10
+			}
+			modifier = {
+				trigger = {
+					any_interest_group = {
+						is_in_government = yes
+						is_powerful = yes
+						is_member_of_lobby = lobby_type:lobby_anti_overlord
+					}
+				}
+				add = 20
+			}
+		}
+		custom_tooltip = unlocks_actions_to_prevent_federalization_tt
+		set_variable = danubian_federation_opposed
+		add_liberty_desire = 15
+		add_journal_entry = { type = je_danubian_federation_observer }
+		show_as_tooltip = {
+			add_modifier = {
+				name = modifier_resisting_federalization
+			}
+		}
+		je:je_danubian_federation_observer ?= {
+			add_modifier = {
+				name = modifier_resisting_federalization
+			}
+		}
+		c:AUS ?= {
+			set_secret_goal = {
+				country = ROOT
+				secret_goal = dominate
+			}
+		}
+		hidden_effect = {
+			set_secret_goal = {
+				country = c:AUS
+				secret_goal = defy
+			}
+			set_strategy = ai_strategy_subject_break_free
+		}
+	}
+}
+
+austria_federation.14 = { # Independence Event
+	type = country_event
+	placement = root
+	title = austria_federation.14.t
+	desc = austria_federation.14.d
+	flavor = austria_federation.14.f
+	duration = 3
+	dlc = dlc014
+	event_image = {
+		video = "ep1_transfer_of_authority"
+	}
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+
+	trigger = {
+		# Triggered by Austria getting je_danubian_federation
+	}
+
+	cancellation_trigger = {
+
+	}
+
+	immediate = {
+		random_country = {
+			limit = {
+				OR = {
+					c:AUS ?= this
+					c:KUK ?= this
+				}
+			}
+			save_scope_as = austria_or_danubia_scope
+		}
+		generate_1_common_name = {
+			CULTURE_1 = primary_culture
+		}
+	}
+
+	option = {
+		name = austria_federation.14.a
+		default_option = yes
+		add_modifier = {
+			name = modifier_free_and_independent_subject
+			days = normal_modifier_time
+		}
+	}
+
+	option = {
+		name = austria_federation.14.b
+		change_relations = {
+			country = scope:austria_or_danubia_scope
+			value = 20
+		}
+		create_diplomatic_catalyst = {
+			type = catalyst_event_positive
+			target = scope:austria_or_danubia_scope
+		}
+	}
+}
+
+austria_federation.15 = { # Helping Event
+	type = country_event
+	placement = root
+	title = austria_federation.15.t
+	desc = austria_federation.15.d
+	flavor = austria_federation.15.f
+	duration = 3
+	dlc = dlc014
+	event_image = {
+		video = "unspecific_signed_contract"
+	}
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	trigger = {
+		# Triggered by button
+	}
+
+	cancellation_trigger = {
+		scope:relevant_subject ?= {
+			any_primary_culture = {
+				is_danubian_culture = yes
+				any_in_list = {
+					variable = aus_disqualified_cultures
+					prev ?= this
+				}
+			}
+		}
+	}
+
+	immediate = {
+		save_scope_as = austria_scope
+		random_subject_or_below = {
+			limit = {
+				has_variable = aus_federation_helping_var
+			}
+			save_scope_as = relevant_subject
+			random_primary_culture = {
+				save_scope_as = primary_culture_scope
+			}
+		}
+		generate_1_common_name = {
+			CULTURE_1 = cu:czech
+		}
+	}
+
+	option = {
+		name = austria_federation.15.a
+		default_option = yes
+		ai_chance = {
+			base = 100
+		}
+		scope:relevant_subject ?= {
+			every_primary_culture = {
+				limit = {
+					is_danubian_culture = yes
+				}
+				save_temporary_scope_as = temp_primary_culture
+				scope:austria_scope ?= {
+					danubian_federation_integrate_culture = {
+						CULTURE = scope:temp_primary_culture
+					}
+				}
+			}
+		}
+		change_relations = {
+			country = scope:relevant_subject
+			value = 10
+		}
+		clear_generated_names = yes
+	}
+
+	option = { # This exists only for those who really don't want a culture, for some reason.
+		name = austria_federation.15.b
+		ai_chance = {
+			base = 0
+		}
+		change_relations = {
+			country = scope:relevant_subject
+			value = -20
+		}
+		clear_generated_names = yes
+	}
+}
+
+austria_federation.16 = { # Hating Event
+	type = country_event
+	placement = root
+	title = austria_federation.16.t
+	desc = austria_federation.16.d
+	flavor = austria_federation.16.f
+	duration = 3
+	dlc = dlc014
+	event_image = {
+		video = "votp_agitator_speaking"
+	}
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+
+	trigger = {
+		# Triggered by button
+	}
+
+	cancellation_trigger = {
+
+	}
+
+	immediate = {
+		save_scope_as = austria_scope
+		random_subject_or_below = {
+			limit = {
+				has_variable = aus_federation_hating_var
+			}
+			save_scope_as = relevant_subject
+			random_primary_culture = {
+				save_scope_as = primary_culture_scope
+			}
+		}
+	}
+
+	option = {
+		name = austria_federation.16.a
+		default_option = yes
+		ai_chance = {
+			base = 100
+		}
+		scope:relevant_subject ?= {
+			every_primary_culture = {
+				limit = {
+					is_danubian_culture = yes
+				}
+				save_temporary_scope_as = temp_primary_culture
+				scope:austria_scope ?= {
+					danubian_federation_disqualify_culture = {
+						CULTURE = scope:temp_primary_culture
+					}
+				}
+			}
+		}
+		change_relations = {
+			country = scope:relevant_subject
+			value = -15
+		}
+		create_diplomatic_catalyst = {
+			type = catalyst_event_negative
+			target = scope:relevant_subject
+		}
+	}
+}
