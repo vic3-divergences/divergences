@@ -122,7 +122,13 @@ dvg_dzungaria.2 = { #Split Dzungaria up into warlord states
 				}
 	
 		if = {
-			limit = { exists = s:STATE_DVG_SEMIRECHE.region_state:DZU }
+			limit = { NOT = {
+				exists = c:KAZ
+				cu:kazak = {
+					culture_current_fervor > 20
+				}
+			}
+			}
 			create_country = { #Kazakhstan
 				tag = KAZ
 				origin = this
@@ -134,7 +140,7 @@ dvg_dzungaria.2 = { #Split Dzungaria up into warlord states
 				state = s:STATE_BASHKORTOSTAN.region_state:DZU
 				on_created = {
 					warlord_setup_effect = yes
-					set_variable = warlord_state
+					
 				}
 			}
 			c:KAZ = { save_scope_as = scope_KAZ }
@@ -151,7 +157,12 @@ dvg_dzungaria.2 = { #Split Dzungaria up into warlord states
 		if = {
 			limit = { 
 			exists = s:STATE_ULIASTAI.region_state:DZU
-			NOT = {country_has_state_religion = rel:gelugpa }
+			NOT = {country_has_state_religion = rel:gelugpa 
+		
+					cu:mongol = {
+					culture_current_fervor < 20
+					}
+				}
 			}
 			create_country = { #Mongolia
 				tag = MGL
@@ -175,7 +186,12 @@ dvg_dzungaria.2 = { #Split Dzungaria up into warlord states
 
 		if = {
 			limit = { exists = s:STATE_UZBEKIA.region_state:DZU
-			NOT = {country_has_state_religion = rel:sunni }
+			NOT = {country_has_state_religion = rel:sunni 
+					cu:uzbek = {
+					culture_current_fervor < 20
+					}
+				}
+				
 			}
 			create_country = { #Uzbekistan
 				tag = UZB 
@@ -187,7 +203,7 @@ dvg_dzungaria.2 = { #Split Dzungaria up into warlord states
 
 				on_created = {
 					warlord_setup_effect = yes
-					set_variable = warlord_state
+					
 				}
 			}
 			c:UZB = { save_scope_as = scope_UZB }
@@ -195,7 +211,11 @@ dvg_dzungaria.2 = { #Split Dzungaria up into warlord states
 
 		
 		if = {
-			limit = { exists = s:STATE_TIANSHAN.region_state:DZU }
+			limit = { exists = s:STATE_TIANSHAN.region_state:DZU 
+					cu:uighur = {
+					culture_current_fervor < 20
+					}
+			}
 			create_country = { #Xinjiang
 				tag = XIN
 				origin = this
@@ -203,7 +223,7 @@ dvg_dzungaria.2 = { #Split Dzungaria up into warlord states
 
 				on_created = {
 					warlord_setup_effect = yes
-					set_variable = warlord_state
+					
 				}
 			}
 			c:XIN = { save_scope_as = scope_XIN }
@@ -232,7 +252,7 @@ dvg_dzungaria.2 = { #Split Dzungaria up into warlord states
 				NOR = {
 					has_variable = var_warlord_two
 					has_variable = var_warlord_three
-					has_variable = var_warlord_four 
+					 
 				}
 			}
 			save_scope_as = scope_random_warlord_one
@@ -248,7 +268,7 @@ dvg_dzungaria.2 = { #Split Dzungaria up into warlord states
 				NOR = {
 					has_variable = var_warlord_one
 					has_variable = var_warlord_three
-					has_variable = var_warlord_four
+					
 				}
 			}
 			save_scope_as = scope_random_warlord_two
@@ -264,7 +284,7 @@ dvg_dzungaria.2 = { #Split Dzungaria up into warlord states
 				NOR = {
 					has_variable = var_warlord_one
 					has_variable = var_warlord_two
-					has_variable = var_warlord_four
+					
 				}
 			}
 			save_scope_as = scope_random_warlord_three
@@ -1348,5 +1368,168 @@ dvg_dzungaria.10 = {  #Support Ma Separatism?
 		ai_chance = {
 			base = 1
 		}
+	}
+}
+
+# Australia complete event for Australia
+dvg_dzungaria.11 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_dzungaria.11.t
+	desc = dvg_dzungaria.11.d
+	flavor = dvg_dzungaria.11.f
+
+	event_image = {
+		video = "unspecific_signed_contract"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+
+	immediate = {
+		top_overlord = {
+			save_scope_as = kazakh_overlord_country
+			ruler = {
+				save_scope_as = kazakh_overlord_ruler
+			}
+		}
+	}
+
+	option = {
+		name = dvg_dzungaria.11.a
+		add_modifier = {
+			name = aus_unified_australia
+			days = normal_modifier_time
+		}
+		if = {
+			limit = {
+				NOT = { is_subject_type = subject_type_tributary }
+			}
+			change_subject_type = subject_type_tributary
+		}
+	}
+}
+
+# Australia complete event for Overlord
+dvg_dzungaria.12 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_dzungaria.12.t
+	desc = dvg_dzungaria.12.d
+	flavor = dvg_dzungaria.12.f
+
+	event_image = {
+		video = "unspecific_signed_contract"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+
+	immediate = {
+		random_subject_or_below = {
+			limit = {
+				OR = {
+					country_has_primary_culture = cu:australian
+					country_has_primary_culture = cu:maori
+				}
+				any_scope_state = {
+					OR = {
+						state_region = s:STATE_JETISY
+						state_region = s:STATE_DVG_SEMIRECHE
+						state_region = s:STATE_DVG_URALSK
+						state_region = s:STATE_DVG_AKMOLINSK
+						state_region = s:STATE_UZBEKIA
+						state_region = s:STATE_BASHKORTOSTAN	
+						state_region = s:STATE_IDEL
+						state_region = s:STATE_TOBOLSK
+						state_region = s:STATE_TOMSK
+					}
+					count >= 7
+				}
+			}
+			save_scope_as = kazakh_country
+			ruler = {
+				save_scope_as = kazakh_country_ruler
+			}
+		}
+	}
+
+	option = {
+		name = can_aus.7.a
+		add_modifier = {
+			name = gbr_unified_australia
+			days = normal_modifier_time
+		}
+	}
+}
+
+# Kazakh annex other Kazak
+dvg_dzungaria.13 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_dzungaria.13.t
+	desc = dvg_dzungaria.13.d
+	flavor = dvg_dzungaria.13.f
+
+	event_image = {
+		video = "ep1_transfer_of_authority"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+
+	immediate = {
+		random_neighbouring_state = {
+			limit = {
+				owner = {
+					is_ai = yes
+					relations:root >= relations_threshold:amicable
+					OR = {
+						country_has_primary_culture = cu:kazak
+						country_has_primary_culture = cu:sibir
+					}
+					is_subject = yes
+					NOT = { THIS = ROOT }
+					top_overlord = {
+						THIS = root.top_overlord
+					}
+					this.gdp < root.gdp
+				}
+			}
+			owner = { save_scope_as = canada_annex_scope }
+		}
+		top_overlord = {
+			save_scope_as = canada_overlord_country
+			ruler = {
+				save_scope_as = canada_overlord_ruler
+			}
+		}
+	}
+
+	option = {
+		name = dvg_dzungaria.13.a
+		default_option = yes
+		annex_with_incorporation = scope:canada_annex_scope
 	}
 }
