@@ -430,3 +430,153 @@ je_zimisces_revolt = {
 	weight = 20
 	should_be_pinned_by_default = yes
 }
+
+je_aragocracy = {
+	group = je_group_historical_content
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	is_shown_in_lobby = {
+		has_dlc_feature = ip3_content #National Awakening
+		c:MCD ?= THIS
+	}
+
+	scripted_button = je_bavarocracy_convert_button
+
+	scripted_progress_bar = bavarocracy_progress_bar
+
+	should_be_pinned_by_default = yes
+	transferable = no
+	weight = 10000
+
+	modifiers_while_active = {
+		modifier_foreign_administration
+	}
+
+	immediate = {
+		random_scope_character = {
+			limit = {
+				has_template = GRE_otto_von_wittelsbach
+			}
+			save_scope_as = king_otto_scope
+		}
+		set_variable = {
+			name = je_bavarocracy_timer_var
+			value = 0
+		}
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					scope:journal_entry = {
+						"scripted_bar_progress(bavarocracy_progress_bar)" >= 80
+					}
+				}
+				change_variable = {
+					name = je_bavarocracy_timer_var
+					add = 1
+				}
+			}
+		}
+	}
+
+	complete = {
+		OR = {
+			AND = {
+				has_law_or_variant = law_type:law_autocracy
+				institution_investment_level = {
+					institution = institution_home_affairs
+					value >= 1
+				}
+			}
+			AND = {
+				country_has_voting_franchise = yes
+				has_law_or_variant = law_type:law_elected_bureaucrats
+				OR = {
+					has_law_or_variant = law_type:law_right_of_assembly
+					has_law_or_variant = law_type:law_protected_speech
+				}
+			}
+		}
+		government_legitimacy >= 75
+		custom_tooltip = {
+			text = je_bavarocracy_complete_tt
+			scope:journal_entry = {
+				"scripted_bar_progress(bavarocracy_progress_bar)" < 10
+			}
+		}
+	}
+
+	on_complete = {
+		trigger_event = {
+			id = dvg_macedonia.1
+			popup = yes
+		}
+		hidden_effect = {
+			scope:king_otto_scope ?= {
+				if = {
+					limit = {
+						is_immortal = yes
+					}
+					set_character_immortal = no
+				}
+			}
+		}
+	}
+
+	event_outcome_completed_desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = event_effects_dvg_macedonia.1_tt
+			}
+		}
+	}
+
+	fail = {
+		custom_tooltip = {
+			text = je_bavarocracy_fail_tt
+			var:je_bavarocracy_timer_var >= 50
+		}
+	}
+
+	on_fail = {
+		trigger_event = {
+			id = dvg_macedonia.2
+			popup = yes
+		}
+		hidden_effect = {
+			scope:king_otto_scope ?= {
+				if = {
+					limit = {
+						is_immortal = yes
+					}
+					set_character_immortal = no
+				}
+			}
+		}
+		custom_tooltip = bavarocracy_fail_tt
+	}
+
+	invalid = {
+		OR = {
+			NOT = {
+				has_law = law_type:law_monarchy
+			}
+			c:GRE ?= {
+				has_variable = ruler_selector_var
+			}
+		}
+	}
+
+	on_invalid = {
+		scope:king_otto_scope ?= {
+			if = {
+				limit = {
+					is_immortal = yes
+				}
+				set_character_immortal = no
+			}
+		}
+	}
+}

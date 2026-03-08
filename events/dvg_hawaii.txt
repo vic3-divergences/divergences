@@ -1,6 +1,5 @@
 ﻿namespace = dvg_hawaii
 
-
 #Fang Hu
 dvg_hawaii.1 = {
 	type = country_event
@@ -22,7 +21,10 @@ dvg_hawaii.1 = {
 	duration = 3
 
 	trigger = {
-
+		exists = c:FGH
+		exists = c:TNG
+		exists = c:SCA
+		exists = c:QIN
 	}
 	immediate = {
 		c:QIN = { save_scope_as = scope_QIN}
@@ -39,6 +41,14 @@ dvg_hawaii.1 = {
 		change_relations = {
 			country = c:QIN
 			value = -10
+		}
+		c:TNG = {
+			random_scope_state = {
+				create_mass_migration = {
+				origin = c:FGH
+				culture = cu:hawaiian
+				}
+			}
 		}
 	}
 }
@@ -290,6 +300,473 @@ dvg_hawaii.5 = {
 			}
 			free_character_from_void = yes
 			set_character_as_ruler = yes
+		}
+	}
+}
+
+#Fang Hu Petitions for Subjugation
+dvg_hawaii.6 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_hawaii.6.t
+	desc = dvg_hawaii.6.d
+	flavor = dvg_hawaii.6.f
+
+	event_image = {
+		video = "gfx/event_pictures/unspecific_signed_contract.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/military_parade"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	duration = 3
+
+	trigger = {
+		exists = c:FGH
+		exists = c:QIN
+	}
+	immediate = {
+		c:QIN = { save_scope_as = scope_QIN}
+		c:FGH = { save_scope_as = scope_FGH}
+		c:SCA = { save_scope_as = scope_SCA}
+		c:JAP = { save_scope_as = scope_JAP}
+		c:FGH = {
+			ruler = {
+				save_scope_as = futing_scope
+			}
+		}
+		ig:ig_armed_forces = {
+			save_scope_as = armed_forces_ig
+		}
+		ROOT = {
+			save_scope_as = scope_protector
+		}
+	}
+
+	option = {
+		name = dvg_hawaii.6.a
+		trigger = {
+			c:FGH = {
+				is_player = no
+			}
+		}
+		c:FGH = {
+			trigger_event = {
+				id = dvg_hawaii.8
+			}
+		}
+
+		scope:futing_scope = {
+			transfer_character = ROOT
+			set_as_interest_group_leader = yes
+
+			add_trait = demagogue
+		}
+		c:FGH = {
+
+		}
+
+		
+		add_radicals = {
+			value = 0.10
+		}
+	}
+
+	option = {
+		name = dvg_hawaii.6.b
+		default_option = yes
+
+		
+
+		create_diplomatic_pact = {
+			country = c:FGH
+			type = protectorate
+		}
+
+		c:FGH = {
+			trigger_event = {
+				id = dvg_hawaii.9
+			}
+		}
+
+		create_incident = {
+			country = c:FGH
+			value = 3
+		}
+		post_notification = protectorate_approved_tt
+	}
+
+	option = {
+		name = dvg_hawaii.6.c
+		trigger = {
+			is_player = yes
+		}
+
+		
+		change_relations = {
+			country = c:FGH
+			value = -15
+		}
+
+	}
+}
+
+#Human Trafficking
+dvg_hawaii.7 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_hawaii.7.t
+	desc = dvg_hawaii.7.d
+	flavor = dvg_hawaii.7.f
+
+	event_image = {
+		video = "gfx/event_pictures/europenorthamerica_political_extremism.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/military_parade"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	duration = 3
+
+	trigger = {
+		exists = c:FGH
+	}
+	
+	immediate = {
+		random_country = {
+			limit = {
+				OR = {
+					any_primary_culture = {
+					has_discrimination_trait = heritage_polynesian
+					}
+					any_primary_culture = {
+					has_discrimination_trait = heritage_melanesian
+					}
+				}		
+			}
+			save_scope_as = decentral_scope
+		}
+
+		random_country = {
+			limit = {
+				NOT = {
+					is_country_type = decentralized 
+				}
+				any_primary_culture = {
+					has_discrimination_trait = heritage_han
+				}
+			}
+			save_scope_as = central_scope
+			
+		}
+		random_scope_state = {
+			save_scope_as = capital_scope
+			owner = {
+				save_scope_as = root_scope
+			}
+		}
+	}
+
+	option = {
+		name = dvg_hawaii.7.a
+		default_option = yes
+
+		add_modifier = {
+			name = dvg_human_trafficking
+			months = 7
+			is_decaying = yes
+		}
+
+		create_incident = {
+			country = THIS
+			value = 7
+		}
+		scope:central_scope = {
+			change_relations = {
+				country = ROOT
+				value = -20
+			}
+			random_scope_pop = {
+				limit = {
+					has_heritage_trait = heritage_han
+				}
+				move_pop = scope:capital_scope
+				if = {
+					limit = {
+						NOT = {
+							scope:root_scope = {
+								has_law = law_type:law_slavery_banned
+							}
+						}
+					}
+					change_poptype = pop_type:slaves
+				}
+			}
+			random_scope_pop = {
+				limit = {
+					has_heritage_trait = heritage_han
+				}
+				move_pop = scope:capital_scope
+				if = {
+					limit = {
+						NOT = {
+							scope:root_scope = {
+								has_law = law_type:law_slavery_banned
+							}
+						}
+					}
+					change_poptype = pop_type:slaves
+				}
+			}
+		}
+
+	}
+
+
+	option = {
+		name = dvg_hawaii.7.b
+
+		create_incident = {
+			country = THIS
+			value = 3
+		}
+
+		add_modifier = {
+			name = dvg_human_trafficking
+			months = 7
+			is_decaying = yes
+		}
+
+		scope:decentral_scope = {
+			change_relations = {
+				country = ROOT
+				value = -20
+			}
+			random_scope_pop = {
+				move_pop = scope:capital_scope
+				if = {
+					limit = {
+						NOT = {
+							scope:root_scope = {
+								has_law = law_type:law_slavery_banned
+							}
+						}
+					}
+					change_poptype = pop_type:slaves
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+					is_country_type = decentralized 
+					}
+				}
+				random_scope_state = {
+					state_region = {
+						add_claim = scope:decentral_scope
+					}
+				}
+			}
+		}
+		
+	}
+}
+
+#Fang Hu Becomes Protectorate
+dvg_hawaii.8 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_hawaii.8.t
+	desc = dvg_hawaii.8.d
+	flavor = dvg_hawaii.8.f
+
+	event_image = {
+		video = "gfx/event_pictures/unspecific_signed_contract.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/military_parade"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	duration = 3
+
+	trigger = {
+		exists = c:FGH
+		exists = c:QIN
+	}
+	immediate = {
+		c:QIN = { save_scope_as = scope_QIN}
+		c:FGH = { save_scope_as = scope_FGH}
+		c:SCA = { save_scope_as = scope_SCA}
+		c:JAP = { save_scope_as = scope_JAP}
+		c:FGH = {
+			ruler = {
+				save_scope_as = futing_scope
+			}
+		}
+		ig:ig_armed_forces = {
+			save_scope_as = armed_forces_ig
+		}
+	}
+
+	option = {
+		name = dvg_hawaii.8.a
+		trigger = {
+			c:FGH = {
+				is_player = no
+			}
+		}
+
+		scope:futing_scope = {
+			transfer_character = c:QIN
+			set_as_interest_group_leader = yes
+
+			add_trait = demagogue
+		}
+
+
+		
+		add_radicals = {
+			value = 0.10
+		}
+	}
+
+	option = {
+		name = dvg_hawaii.8.b
+		default_option = yes
+
+		add_modifier = {
+			name = dvg_modifier_intelligentsia_bolstered
+			months = 24
+			is_decaying = yes
+		}
+
+		create_diplomatic_pact = {
+			country = c:FGH
+			type = protectorate
+		}
+		create_incident = {
+			country = c:FGH
+			value = 3
+		}
+		change_relations = {
+			country = c:JAP
+			value = -15
+		}
+		change_relations = {
+			country = c:SCA
+			value = -15
+		}
+		
+	}
+	option = {
+		name = dvg_hawaii.8.c
+		trigger = {
+			is_player = yes
+		}
+
+		play_as = c:QIN
+
+		scope:futing_scope = {
+			transfer_character = c:QIN
+			set_as_interest_group_leader = yes
+
+			add_trait = demagogue
+		}
+
+	}
+}
+
+dvg_hawaii.9 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_hawaii.9.t
+	desc = dvg_hawaii.9.d
+	flavor = dvg_hawaii.9.f
+
+	event_image = {
+		video = "gfx/event_pictures/unspecific_signed_contract.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/military_parade"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	duration = 3
+
+	trigger = {
+		exists = c:FGH
+	}
+	immediate = {
+		c:QIN = { save_scope_as = scope_QIN}
+		c:FGH = { save_scope_as = scope_FGH}
+		c:SCA = { save_scope_as = scope_SCA}
+		c:JAP = { save_scope_as = scope_JAP}
+		c:FGH = {
+			ruler = {
+				save_scope_as = futing_scope
+			}
+		}
+		ig:ig_armed_forces = {
+			save_scope_as = armed_forces_ig
+		}
+		overlord = {
+			save_scope_as = scope_protector
+		}
+	}
+
+	option = {
+		name = dvg_hawaii.9.a
+		
+		add_modifier = {
+			name = dvg_modifier_intelligentsia_bolstered
+			months = 61
+			is_decaying = yes
+		}
+
+		add_modifier = {
+			name = dvg_small_research_value
+			months = 61
+			is_decaying = yes
+		}
+	}
+
+	option = {
+		name = dvg_hawaii.9.b
+		default_option = yes
+
+		random_scope_state = {
+			add_modifier = {
+				name = qingqiu_migration_attraction
+				months = 61
+				is_decaying = yes
+			}
+		}
+	}
+
+	option = {
+		name = dvg_hawaii.9.c
+
+		add_modifier = {
+			name = dvg_modifier_armed_forces_bolstered
+			months = 61
+			is_decaying = yes
+		}
+		
+		add_modifier = {
+			name = dvg_revolutionary_militias
+			months = 61
+			is_decaying = yes
 		}
 	}
 }
