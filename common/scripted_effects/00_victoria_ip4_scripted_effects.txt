@@ -1,1 +1,237 @@
 ﻿
+initialise_caciquismo_effect = {
+	set_variable = caciquismo_var
+	if = {
+		limit = {
+			OR = {
+				active_law:lawgroup_distribution_of_power ?= {
+					OR = {
+						has_amendment = amendment_type:amendment_chamber_of_procurators
+						has_amendment = amendment_type:amendment_chamber_of_gentleman_deputies
+					}
+				}
+				has_law_or_variant = law_type:law_landed_voting
+				has_law_or_variant = law_type:law_wealth_voting
+				has_law_or_variant = law_type:law_census_voting
+				has_law_or_variant = law_type:law_universal_suffrage
+			}
+		}
+		active_law:lawgroup_distribution_of_power ?= {
+			add_amendment = {
+				type = amendment_electoral_clientelism
+				sponsor = PREV.ig:ig_landowners
+				cooldown = 1200
+			}
+		}
+	}
+}
+
+inherit_caciquismo_effect = {
+	if = {
+		limit = {
+			has_variable = caciquismo_var
+		}
+		scope:relevant_voting_law ?= {
+			add_amendment = {
+				type = amendment_electoral_clientelism
+				sponsor = PREV.ig:ig_landowners
+				cooldown = 1200
+			}
+		}
+	}
+}
+
+inherit_free_elections_effect = {
+	if = {
+		limit = {
+			has_variable = free_elections_var
+		}
+		scope:relevant_voting_law ?= {
+			add_amendment = {
+				type = amendment_tradition_of_free_elections
+				sponsor = PREV.ig:ig_intelligentsia
+				cooldown = 1200
+			}
+		}
+	}
+}
+
+add_caciquismo_effect = {
+	if = {
+		limit = {
+			has_variable = caciquismo_var
+		}
+		custom_tooltip = {
+			text = caciquismo_add_tt
+			change_variable = { name = electoral_fraud_abolish_var subtract = 1 }
+		}
+	}
+	else = {
+		custom_tooltip = {
+			text = free_elections_subtract_tt
+			change_variable = { name = electoral_fraud_abolish_var subtract = 1 }
+		}
+	}
+	add_electoral_confidence = -0.15
+	clamp_variable = { name = electoral_fraud_abolish_var max = 5 min = 0 }
+}
+
+subtract_caciquismo_effect = {
+	if = {
+		limit = {
+			has_variable = caciquismo_var
+		}
+		custom_tooltip = {
+			text = caciquismo_subtract_tt
+			change_variable = { name = electoral_fraud_abolish_var add = 1 }
+		}
+	}
+	else = {
+		custom_tooltip = {
+			text = free_elections_add_tt
+			change_variable = { name = electoral_fraud_abolish_var add = 1 }
+		}
+	}
+	clamp_variable = { name = electoral_fraud_abolish_var max = 5 min = 0 }
+	add_electoral_confidence = 0.10
+}
+
+handle_possible_absent_caciquismo_variables = {
+	if = {
+		limit = {
+			active_law:lawgroup_distribution_of_power ?= {
+				has_amendment = amendment_type:amendment_electoral_clientelism
+			}
+			NOT = {
+				has_variable = caciquismo_var
+			}
+		}
+		set_variable = caciquismo_var
+	}
+	if = {
+		limit = {
+			modifier:country_forbid_electoral_fraud_bool = no
+			NOT = {
+				active_law:lawgroup_distribution_of_power ?= {
+					has_amendment = amendment_type:amendment_electoral_clientelism
+				}
+			}
+			NOT = {
+				has_variable = electoral_fraud_abolish_var
+			}
+		}
+		set_variable = { name = electoral_fraud_abolish_var value = 0 }
+	}
+}
+
+remove_electoral_fraud_effect = {
+	remove_variable = caciquismo_var
+	remove_variable = electoral_fraud_abolish_var
+	if = {
+		limit ={
+			active_law:lawgroup_distribution_of_power ?= {
+				has_amendment = amendment_type:amendment_electoral_clientelism
+			}
+		}
+		active_law:lawgroup_distribution_of_power ?= {
+			random_scope_amendment = {
+				limit = {
+					type = amendment_type:amendment_electoral_clientelism
+				}
+				remove_amendment = yes
+			}
+		}
+	}
+	set_variable = free_elections_var
+	active_law:lawgroup_distribution_of_power ?= {
+		add_amendment = {
+			type = amendment_tradition_of_free_elections
+			sponsor = PREV.ig:ig_intelligentsia
+		}
+	}
+}
+
+initialize_electoral_confidence = {
+	set_electoral_confidence = {
+		value = 1
+		multiply = eagle_burger_freedom_index
+	}
+	if = {
+		limit = {
+			game_date > 1836.1.1
+			country_has_voting_franchise = yes
+			eagle_burger_freedom_index < 0.8
+		}
+		if = {
+			limit = {
+				has_modifier = modifier_recent_election_initialisation
+			}
+			remove_modifier = modifier_recent_election_initialisation
+		}
+		add_modifier = {
+			name = modifier_recent_election_initialisation
+			multiplier = {
+				value = 1
+				subtract = eagle_burger_freedom_index
+			}
+			days = very_long_modifier_time
+			is_decaying = yes
+		}
+	}
+	set_variable = electoral_confidence_initialized
+}
+
+cleanup_voting_strength_modifiers = {
+	if = {
+		limit = {
+			has_modifier = missouri_compromise
+		}
+		remove_modifier = missouri_compromise
+	}
+	if = {
+		limit = {
+			has_modifier = modifier_portugal_liberal_hegemony
+		}
+		remove_modifier = modifier_portugal_liberal_hegemony
+		add_modifier = {
+			name = modifier_portugal_liberal_hegemony_no_voting
+			days = long_modifier_time
+			is_decaying = yes
+		}
+	}
+	if = {
+		limit = {
+			has_modifier = modifier_libertad_igualdad_fraternidad
+		}
+		remove_modifier = modifier_libertad_igualdad_fraternidad
+		add_modifier = {
+			name = modifier_libertad_igualdad_fraternidad_no_voting
+			days = long_modifier_time
+			is_decaying = yes
+		}
+	}
+	if = {
+		limit = {
+			has_modifier = modifier_governors_policy
+		}
+		remove_modifier = modifier_governors_policy
+	}
+	if = {
+		limit = {
+			has_modifier = modifier_anti_electorialism
+		}
+		remove_modifier = modifier_anti_electorialism
+	}
+	if = {
+		limit = {
+			has_modifier = modifier_farmers_voting_conservative
+		}
+		remove_modifier = modifier_farmers_voting_conservative
+	}
+	if = {
+		limit = {
+			has_modifier = modifier_political_involvement_welcomed
+		}
+		remove_modifier = modifier_political_involvement_welcomed
+	}
+}
