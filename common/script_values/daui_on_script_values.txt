@@ -1,0 +1,55 @@
+﻿# GDP Ownership Display
+gdp_ownership_by_other_count = {
+	every_country = {
+		limit = { this != prev }
+		save_temporary_scope_as = t
+		if = {
+			limit = { "scope:t.gdp_ownership_ratio(prev)" > 0 }
+			add = 1
+		}
+	}
+}
+
+gdp_ownership_by_self = {
+	value = "this.gdp_ownership_ratio(this)"
+}
+
+gdp_ownership_by_other = {
+	value = 1
+	subtract = gdp_ownership_by_self
+}
+
+gdp_ownership_of_other_count = {
+	every_country = {
+		limit = { this != prev }
+		save_temporary_scope_as = t
+		if = {
+			limit = { "prev.gdp_ownership_ratio(scope:t)" > 0 }
+			add = 1
+		}
+	}
+}
+
+# Requires: scope:_1 & scope:_2
+gdp_ownership_ratio_value = {
+	value = "scope:_2.gdp_ownership_ratio(scope:_1)"
+}
+
+gdp_ownership_self_level = {
+	value = this.country_has_building_levels
+}
+
+gdp_ownership_of_other = {
+	every_country = {
+		limit = { this != prev }
+		save_temporary_scope_as = t
+		if = {
+			limit = { "scope:t.gdp_ownership_ratio(prev)" > 0 }
+			add = {
+				value = scope:t.gdp
+				multiply = "scope:t.gdp_ownership_ratio(prev)"
+			}
+		}
+	}
+	divide = gdp
+}

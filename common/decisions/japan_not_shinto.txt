@@ -1,28 +1,44 @@
 ﻿dvg_annex_ainu_protectorate = {
 	is_shown = {
 		exists = c:JAP
-		exists = c:AIN
+		exists = c:KAM
 		c:JAP = THIS
 	}
 
 	possible = {
-		c:JAP = {
-			has_diplomatic_pact = {
-				who = c:AIN
-				type = vassal
-				is_initiator = yes
+		OR = {
+			c:JAP = {
+				has_diplomatic_pact = {
+					who = c:KAM
+					type = vassal
+					is_initiator = yes
+				}
+			}
+			c:JAP = {
+				has_diplomatic_pact = {
+					who = c:KAM
+					type = puppet
+					is_initiator = yes
+				}
+			}
+			c:JAP = {
+				has_diplomatic_pact = {
+					who = c:KAM
+					type = dominion
+					is_initiator = yes
+				}
 			}
 		}
 		year >= 1860
 		NOT = {
-			c:AIN = {
+			c:KAM = {
 				is_player = yes
 			}
 		}
 	}
 
 	when_taken = {
-		annex = c:AIN
+		annex = c:KAM
 		hidden_effect = {
 			if = {
 				limit = {
@@ -36,37 +52,224 @@
 	}
 
 	ai_chance = {
-		base = 100
+		value = 100
 	}
 }
 
-dvg_ai_westernize_japan = {
+dvg_high_castle = {
 	is_shown = {
 		exists = c:JAP
+		exists = c:QIN
 		c:JAP = THIS
-		c:JAP = {
-			is_player = no
-		}
-		NOT = {
-			has_variable = dvg_japan_event_recognized
-		}
 	}
 
 	possible = {
-		year >= 1865
+		custom_tooltip = {
+			text = that_castle_do_be_high_tt
+			NOT = { has_variable = that_castle_do_be_high_var }
+		}
 		c:JAP = {
-			is_player = no
+			NOT = { has_truce_with = c:QIN }
+		}
+		NOT = { has_game_rule = plausible_formable_nations }
+		has_technology_researched = pan-nationalism
+		NOT = {
+			any_interest_group = {
+				is_powerful = yes
+				is_in_government = yes
+				has_ideology = ideology:ideology_pacifist
+			}
+		}
+		
+		any_interest_group = {
+			is_powerful = yes
+			is_in_government = yes
+			OR = {
+				has_ideology = ideology:ideology_fascist
+				has_ideology = ideology:ideology_colonialist
+				has_ideology = ideology:ideology_jingoist_leader
+				has_ideology = ideology:ideology_jingoist
+			}
 		}
 	}
 
 	when_taken = {
-		set_country_type = recognized
-		hidden_effect = {
-			set_variable = dvg_japan_event_recognized
+		set_variable = that_castle_do_be_high_var
+		save_temporary_scope_value_as = {
+			name = war_reparations_amount
+			value = {
+				value = income
+				multiply = define:NDiplomacy|DEFAULT_WAR_REPARATIONS_MONEY_TRANSFER
+			}
+		}
+
+		create_diplomatic_play = {
+				
+			target_country = c:QIN
+			
+			war = yes
+			
+			type = dp_annex_war
+			
+				add_war_goal = {
+				holder = c:QIN
+				target_country = c:JAP
+				type = enforce_treaty_article
+				article = {
+					article = money_transfer
+					source_country = c:JAP
+					target_country = c:QIN
+					inputs = {
+						{ quantity = scope:war_reparations_amount }
+					}
+				}
+			}
 		}
 	}
 
 	ai_chance = {
-		base = 100
+		value = 100
+	}
+}
+
+dvg_embrace_ainu = {
+	is_shown = {
+		country_has_primary_culture = cu:japanese
+		any_scope_state = {
+			state_region = {
+				is_homeland = cu:ainu
+			}
+		}
+		NOT = {
+			country_has_primary_culture = cu:ainu
+		}
+	}
+
+	possible = {
+		cultural_acceptance_base = {
+			target = cu:ainu
+			value > acceptance_status_3
+		}
+	}
+
+	when_taken = {
+		add_primary_culture = cu:ainu
+		
+	}
+
+	ai_chance = {
+		value = 100
+	}
+}
+kaigan_unite_ryu = {
+	is_shown = {
+		exists = c:KAM
+		exists = c:KKN
+
+	}
+	possible = {
+		is_diplomatic_play_committed_participant = no
+		has_technology_researched = nationalism
+		OR = {
+			AND = {
+				c:KAM = this
+				OR = {
+					is_in_same_power_bloc = c:KKN
+					top_overlord = {
+							THIS = root.top_overlord
+					}
+				}
+			}
+			AND = {			
+				c:KKN = this
+				OR = {
+					is_in_same_power_bloc = c:KAM
+					top_overlord = {
+							THIS = root.top_overlord
+					}
+				}
+			}
+		}
+		
+	}
+	when_taken = {
+		custom_tooltip = unite_kaigan_tt
+		hidden_effect = {
+			trigger_event = { id = dvg_ryuukidou.8 popup = yes }
+		}
+		add_modifier = {
+			name = kaigan_test_modifier
+			days = short_modifier_time
+		}
+	}
+
+	ai_chance = {
+		value = 0
+		if = {
+			limit = {
+				has_technology_researched = pan-nationalism
+			}
+			add = 100
+		}
+	}
+}
+
+kaigan_unite_jap = {
+	is_shown = {
+		any_subject_or_below = {
+			OR = {
+				country_has_primary_culture = cu:japanese
+				country_has_primary_culture = cu:kaiganese
+			}
+			is_ai = yes
+			count >= 2
+		}
+	}
+	possible = {
+		is_diplomatic_play_committed_participant = no
+		has_technology_researched = nationalism
+		OR = {
+			AND = {
+				c:KAM = this
+				OR = {
+					is_in_same_power_bloc = c:KKN
+					top_overlord = {
+							THIS = root.top_overlord
+					}
+				}
+			}
+			AND = {
+				c:KKN = this
+				OR = {
+					is_in_same_power_bloc = c:KAM
+					top_overlord = {
+							THIS = root.top_overlord
+					}
+				}
+			}
+		}
+		top_overlord ?= {
+				relations:root >= relations_threshold:amicable
+		}
+	}
+	when_taken = {
+		custom_tooltip = unite_kaigan_tt
+		hidden_effect = {
+			trigger_event = { id = dvg_ryuukidou.9 popup = yes }
+		}
+		add_modifier = {
+			name = kaigan_test_modifier
+			days = short_modifier_time
+		}
+	}
+
+	ai_chance = {
+		value = 0
+		if = {
+			limit = {
+				has_technology_researched = pan-nationalism
+			}
+			add = 100
+		}
 	}
 }

@@ -1,0 +1,158 @@
+﻿namespace = dvg_ari_unification
+
+# Annex an Italian country
+dvg_ari_unification.2 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_ari_unification.2.t
+	desc = dvg_ari_unification.2.d
+	flavor = dvg_ari_unification.2.f
+
+	event_image = {
+		video = "unspecific_signed_contract"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/signed_contract"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	duration = 3
+
+	cooldown = { months = 4 }
+
+	trigger = {
+		root.infamy < infamy_threshold:infamous
+		OR = {
+			country_tier = empire
+			country_tier = kingdom
+			country_tier = principality
+		}
+		any_country = {
+			OR = {
+				country_has_primary_culture = cu:central_italian
+				country_has_primary_culture = cu:north_italian
+				country_has_primary_culture = cu:south_italian
+				country_has_primary_culture = cu:maltese
+			}
+			OR = {
+				is_subject_of = ROOT
+			}
+			OR = {
+				is_subject = no
+				is_subject_of = ROOT
+			}
+			country_rank < rank_value:major_power
+			relations:root >= relations_threshold:amicable
+			is_player = no
+			NOT = { has_variable = italian_minor_dont_annex }
+		}
+	}
+
+	immediate = {
+		random_country = {
+			limit = {
+				OR = {
+					country_has_primary_culture = cu:central_italian
+					country_has_primary_culture = cu:north_italian
+					country_has_primary_culture = cu:south_italian
+					country_has_primary_culture = cu:maltese
+				}
+				OR = {
+					is_subject_of = ROOT
+				}
+				OR = {
+					is_subject = no
+					is_subject_of = ROOT
+				}
+				country_rank < rank_value:major_power
+				relations:root >= relations_threshold:amicable
+				is_player = no
+				NOT = { has_variable = italian_minor_dont_annex }
+			}
+			save_scope_as = italian_annex_country
+		}
+	}
+
+	option = {
+		name = dvg_ari_unification.2.a
+		default_option = yes
+		annex = scope:italian_annex_country
+		ai_chance = {
+			base = 1
+		}
+	}
+	option = {
+		name = dvg_ari_unification.2.b
+		change_relations = {
+			country = scope:italian_annex_country
+			value = 20
+		}
+		scope:italian_annex_country = {
+			set_variable = {
+				name = italian_minor_dont_annex
+				days = 1825
+			}
+		}
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+
+dvg_ari_unification.4 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_ari_unification.4.t
+	desc = dvg_ari_unification.4.d
+	flavor = dvg_ari_unification.4.f
+
+	event_image = {
+		video = "unspecific_military_parade"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/military_parade"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+
+	option = {
+		name = dvg_ari_unification.4.a
+		default_option = yes
+		give_claims_on_italy = yes
+
+		ruler = {
+			add_modifier = {
+				name = ari_unifier_ruler
+			}
+		}
+	}
+	option = {
+		name = dvg_ari_unification.4.b
+		give_claims_on_italy = yes
+
+		add_loyalists = {
+			value = 0.1
+			culture = cu:catalan
+		}
+		add_loyalists = {
+			value = 0.1
+			culture = cu:north_italian
+		}
+		add_loyalists = {
+			value = 0.1
+			culture = cu:central_italian
+		}
+		add_loyalists = {
+			value = 0.1
+			culture = cu:south_italian
+		}
+	}
+}

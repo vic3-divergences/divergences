@@ -1,16 +1,24 @@
 ﻿je_galdan_khan = {
-	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	icon = "gfx/interface/icons/invention_icons/wargaming.dds"
+
+	group = je_group_crises
+
+	
 
 	complete = {
 		custom_tooltip = {
 			text = galdan_khan_died
-			c:DZU = {
+			ROOT = {
 				ruler = {
 					NOT = { has_variable = is_galdan_khan }
 				}
 			}
 		}
-		government_legitimacy < 65
+		trigger_if = {
+			limit = { exists = var:dzungar_var }
+			scope:journal_entry = { is_goal_complete = yes }
+		}
+		has_technology_researched = nationalism
 	}
 
 	on_complete = {
@@ -20,15 +28,9 @@
 				exists = c:DZU
 				c:DZU = ROOT
 			}
-			trigger_event = { id = dvg_dzungaria.2 }
+			trigger_event = { id = dvg_dzungaria.3 }
 		}
-		if = {
-			limit = {
-				exists = c:DZU
-				c:DZU = ROOT
-			}
-			
-		}
+		
 	}
 
 	on_monthly_pulse = {
@@ -56,35 +58,546 @@
 					}
 				}
 			}
+			if = {
+				limit = {
+					NOT = { has_variable = dzu_beijing }
+					country_or_subject_owns_entire_state_region = STATE_BEIJING
+				}
+				change_variable = {
+					name = dzungar_var
+					add = 8
+				}
+				set_variable = dzu_beijing
+			}
+			if = {
+				limit = {
+					NOT = { has_variable = dzu_shanxi }
+					country_or_subject_owns_entire_state_region = STATE_SHANXI
+				}
+				change_variable = {
+					name = dzungar_var
+					add = 2
+				}
+				set_variable = dzu_shanxi
+			}
+			if = {
+				limit = {
+					NOT = { has_variable = dzu_astrakhan }
+					country_or_subject_owns_entire_state_region = STATE_ASTRAKHAN
+				}
+				change_variable = {
+					name = dzungar_var
+					add = 1
+				}
+				set_variable = dzu_astrakhan
+			}
+			if = {
+				limit = {
+					NOT = { has_variable = dzu_shengjing }
+					country_or_subject_owns_entire_state_region = STATE_SHENGJING
+				}
+				change_variable = {
+					name = dzungar_var
+					add = 2
+				}
+				set_variable = dzu_shengjing
+			}
+			if = {
+				limit = {
+					country_has_primary_culture = cu:kalmyk
+				}
+				every_scope_pop = {
+					limit = {
+						culture = {has_discrimination_trait_group = heritage_group_central_asian}
+						religion = rel:gelugpa
+					}
+					change_pop_culture = { target = cu:kalmyk value = 1 }
+				}
+			}
+			
 		}
 	}
 
 	fail = {
 		custom_tooltip = {
 			text = galdan_khan_died
-			c:DZU = {
+			ROOT = {
 				ruler = {
 					NOT = { has_variable = is_galdan_khan }
 				}
 			}
 		}
-		calc_true_if = {
-			amount >= 3
-			owns_entire_state_region = STATE_BEIJING
-			owns_entire_state_region = STATE_XIAN
-			owns_entire_state_region = STATE_GANSU
-			owns_entire_state_region = STATE_SHANXI
-			owns_entire_state_region = STATE_NINGXIA
-			owns_entire_state_region = STATE_QINGHAI
-			owns_entire_state_region = STATE_HINGGAN
+		trigger_if = {
+			limit = { exists = var:dzungar_var }
+			scope:journal_entry = { is_goal_complete = no }
 		}
-		government_legitimacy >= 65
 	}
 	on_fail = {
-		trigger_event = { id = dvg_dzungaria.3 }
+		trigger_event = { id = dvg_dzungaria.2 }
+	}
+	
+
+	current_value = {
+		value = var:dzungar_var
 	}
 
+	goal_add_value = {
+		add = 10
+	}
+
+	progressbar = yes
+
 	weight = 10
+
+	should_be_pinned_by_default = yes
+}
+
+je_dzungar_china = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	group = je_group_historical_content
+
+	complete = {
+		OR = {
+			AND = {
+				country_or_subject_owns_entire_state_region = STATE_XIAN
+				country_or_subject_owns_entire_state_region = STATE_GANSU
+				country_or_subject_owns_entire_state_region = STATE_SHENGJING
+				country_or_subject_owns_entire_state_region = STATE_NINGXIA
+				country_or_subject_owns_entire_state_region = STATE_SHANXI
+				country_or_subject_owns_entire_state_region = STATE_HINGGAN
+			}
+			AND = {
+				country_or_subject_owns_entire_state_region = STATE_BEIJING
+			}
+		}
+	}
+
+	on_complete = {
+		change_variable = {
+			name = dzungar_var
+			add = 6
+		}
+		trigger_event = { id = dvg_dzungaria.5 }
+	}
+
+	
+
+	transferable = no
+
+	weight = 5000
+
+	should_be_pinned_by_default = yes
+}
+
+je_dzungar_europe = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	group = je_group_historical_content
+
+	complete = {
+		calc_true_if = {
+			amount >= 5
+			country_or_subject_owns_entire_state_region = STATE_DVG_PERM
+			country_or_subject_owns_entire_state_region = STATE_DVG_VYATKA
+			country_or_subject_owns_entire_state_region = STATE_BRYANSK
+			country_or_subject_owns_entire_state_region = STATE_DVG_MOSCOW
+			country_or_subject_owns_entire_state_region = STATE_ASTRAKHAN
+			country_or_subject_owns_entire_state_region = STATE_DVG_ROSTOV
+			country_or_subject_owns_entire_state_region = STATE_DVG_CRIMEA
+			country_or_subject_owns_entire_state_region = STATE_DVG_KIEV
+			country_or_subject_owns_entire_state_region = STATE_DAGESTAN
+			country_or_subject_owns_entire_state_region = STATE_KUBAN
+			country_or_subject_owns_entire_state_region = STATE_GREATER_CAUCASUS
+			country_or_subject_owns_entire_state_region = STATE_DVG_URALSK
+			country_or_subject_owns_entire_state_region = STATE_QOBAN
+			country_or_subject_owns_entire_state_region = STATE_BASHKORTOSTAN
+			country_or_subject_owns_entire_state_region = STATE_IDEL
+			country_or_subject_owns_entire_state_region = STATE_URAL
+		}
+	}
+
+	on_complete = {
+		change_variable = {
+			name = dzungar_var
+			add = 6
+		}
+		trigger_event = { id = dvg_dzungaria.6 }
+	}
+
+	
+
+	transferable = no
+
+	should_be_pinned_by_default = yes
+
+	weight = 5000
+}
+
+je_dzungar_separatism = {
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	group = je_group_historical_content
+
+	complete = {
+		scope:journal_entry = {
+			is_goal_complete = yes
+		}
+		highest_secession_progress < 0.5
+	}
+
+	on_complete = {
+		set_variable = completed_separatism_sick_man_je
+		custom_tooltip = je_sick_man_advance
+		change_variable = {
+			name = dzungar_var
+			add = 2
+		}
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					highest_secession_progress < 0.5
+				}
+				change_variable = {
+					name = dzungar_separatist_var
+					add = 1
+				}
+			}
+		}
+		
+	}
+
+	fail = {
+		highest_secession_progress > 0.5
+	}
+
+	current_value = {
+		value = var:dzungar_separatist_var
+	}
+
+	goal_add_value = {
+		add = 120
+	}
+
+	invalid = {
+		custom_tooltip = {
+			text = finished_galdan_khan
+			NOT = {has_journal_entry = je_galdan_khan
+			}
+		}
+	}
+
+	transferable = no
+
+	weight = 5000
+
+	progressbar = yes
+}
+
+
+je_dzungar_society_pn = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	group = je_group_historical_content
+
+	complete = {
+		
+		has_technology_researched = pan-nationalism
+		
+	}
+
+	on_complete = {
+		change_variable = {
+			name = dzungar_var
+			add = 3
+		}
+	}
+
+	invalid = {
+		custom_tooltip = {
+			text = finished_galdan_khan
+			NOT = {has_journal_entry = je_galdan_khan
+			}
+		}
+	}
+
+	transferable = no
+
+	weight = 5000
+}
+je_dzungar_society_mc = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	group = je_group_historical_content
+
+	complete = {
+
+		
+		has_technology_researched = mass_communication
+	}
+
+	on_complete = {
+		change_variable = {
+			name = dzungar_var
+			add = 3
+		}
+	}
+
+	invalid = {
+		custom_tooltip = {
+			text = finished_galdan_khan
+			NOT = {has_journal_entry = je_galdan_khan
+			}
+		}
+	}
+
+	transferable = no
+
+	weight = 5000
+}
+
+je_dzungar_legitimacy = {
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	group = je_group_historical_content
+
+	complete = {
+		scope:journal_entry = {
+			is_goal_complete = yes
+		}
+		government_legitimacy > 64
+	}
+
+	on_complete = {
+		set_variable = completed_separatism_sick_man_je
+		change_variable = {
+			name = dzungar_var
+			add = 2
+		}
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					government_legitimacy > 64
+				}
+				change_variable = {
+					name = dzungar_legitimacy_var
+					add = 1
+				}
+			}
+		}
+		
+	}
+
+	fail = {
+		highest_secession_progress > 0.5
+	}
+
+	current_value = {
+		value = var:dzungar_separatist_var
+	}
+
+	goal_add_value = {
+		add = 120
+	}
+
+	invalid = {
+		custom_tooltip = {
+			NOT = {has_journal_entry = je_galdan_khan
+			}
+		}
+	}
+
+	transferable = no
+
+	weight = 5000
+
+	progressbar = yes
+}
+
+je_dzungar_religion = { # viva dzungar
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+
+	group = je_group_historical_content
+
+    is_shown_in_lobby = {
+        c:DZU ?= THIS
+    }
+
+	possible = {
+        has_journal_entry = je_galdan_khan
+	}
+
+    status_desc = {
+        desc = je_dzungar_custom_status_desc
+    }
+
+    scripted_progress_bar = dzungar_religion_progress_bar
+
+    #scripted_button = dvg_convert_islam_button
+	#scripted_button = dvg_convert_buddhism_button
+
+	immediate = { #Maybe these are done by the bars themselves?
+        set_variable = { 
+            name = devout_current
+            value = 35
+        }
+        set_variable = { 
+            name = devout_target 
+            value = je_dzungar_devout_bar_target 
+        }
+        ig:ig_landowners ?= {
+            save_scope_as = landowners_ig
+        }
+        rel:gelugpa = {
+			save_scope_as = gelugpa_scope
+		}
+		rel:sunni = {
+			save_scope_as = sunni_scope
+		}
+		c:TIB = {
+			save_scope_as = scope_TIB
+		}
+		c:AFG= {
+			save_scope_as = scope_AFG
+		}
+	}
+
+	on_weekly_pulse = {
+        effect = {
+            set_variable = { 
+                name = devout_current
+                value = "scope:journal_entry.scripted_bar_progress(je_dzungar_total_bar)" 
+            }
+            set_variable = { 
+                name = devout_target 
+                value = je_dzungar_devout_bar_target
+            }
+        }
+    }
+
+    on_monthly_pulse = {
+        
+	}
+
+	custom_completion_header = je_dzungar_devout_completion_header
+
+	complete = {
+       OR = {
+			AND = {
+				country_has_state_religion = rel:sunni
+				religion_percent_country = {
+				target = rel:sunni
+				value > 0.67
+				}
+			}
+			AND = {
+				country_has_state_religion = rel:gelugpa
+				religion_percent_country = {
+				target = rel:gelugpa
+				value > 0.67	
+	   			}
+			}
+	}
+	}
+    
+	custom_on_completion_header = dzungar_free_header
+
+	on_complete = {
+		if = {
+            limit = {
+                has_variable = slaves_work_with_independence_movement
+                NOT = {
+                    has_law_or_variant = law_type:law_slavery_banned
+                }
+            }
+            activate_law = law_type:law_slavery_banned
+        }
+        if = {
+            limit = {
+                has_variable = slaves_work_with_independence_movement
+            }
+            add_primary_culture = cu:afro_caribeno
+        }
+        add_modifier = {
+            name = dzungar_libre_chill
+            days = long_modifier_time
+        }
+        add_modifier = {
+            name = dzungar_libre_total
+        }
+        add_modifier = {
+            name = dzungar_libre_market
+            days = even_longer_modifier_time
+            is_decaying = yes
+        }
+        add_loyalists = {
+            value = large_radicals
+            strata = middle
+        }
+        add_loyalists = {
+            value = medium_radicals
+            strata = lower
+        }
+	}
+
+	weight = 20
+
+    should_be_pinned_by_default = yes
+    transferable = yes
+
+}
+
+je_kazakh_unite = {
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+
+	group = je_group_historical_content
+
+	is_shown_when_inactive = {
+		any_subject_or_below = {
+			OR = {
+				country_has_primary_culture = cu:kazak
+				country_has_primary_culture = cu:sibir
+			}
+			count >= 2
+		}
+		OR = {
+				country_has_primary_culture = cu:kazak
+				country_has_primary_culture = cu:sibir
+		}
+	}
+
+	possible = {
+		has_technology_researched = nationalism
+	}
+
+	scripted_button = je_kazakh_unite_button
+
+	complete = {
+		calc_true_if = {
+				amount >= 3
+				owns_entire_state_region = STATE_JETISY
+				owns_entire_state_region = STATE_DVG_SEMIRECHE
+				owns_entire_state_region = STATE_DVG_URALSK
+				owns_entire_state_region = STATE_DVG_AKMOLINSK
+				owns_entire_state_region = STATE_UZBEKIA
+				owns_entire_state_region = STATE_BASHKORTOSTAN	
+				owns_entire_state_region = STATE_IDEL
+				owns_entire_state_region = STATE_TOBOLSK
+				owns_entire_state_region = STATE_TOMSK
+		}
+	}
+
+	on_complete = {
+		trigger_event = { id = dvg_dzungaria.11 }
+	}
+
+	weight = 100
 
 	should_be_pinned_by_default = yes
 }

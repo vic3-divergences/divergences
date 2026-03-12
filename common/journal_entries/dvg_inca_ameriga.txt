@@ -1,0 +1,232 @@
+﻿je_beornia_conquer = {
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	group = je_group_historical_content
+
+	complete = {
+		custom_tooltip = {
+		text = beo_existence_tt
+
+		owns_entire_state_region = STATE_AVALON
+		owns_entire_state_region = STATE_GODWINSON
+		owns_entire_state_region = STATE_EOFERWIC
+		owns_entire_state_region = STATE_WESSEX
+	 	owns_entire_state_region = STATE_NEW_LONDON
+	 
+	 	NOT = { exists = c:BEO }
+	 
+	 	any_state = {
+			region = sr:region_la_plata	
+			NOT = {	
+				owner = c:BEO
+			}
+		}
+		}
+	}
+
+    on_complete = {
+		trigger_event = { id = dvg_hbe.3 popup = yes  }	
+    }	
+
+	invalid = {
+		
+	}
+
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+
+je_beornia_revolt = {
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	group = je_group_crises
+
+	on_monthly_pulse = {
+		random_events = {
+			
+		}
+	}
+
+	complete = {
+		cu:beornian = {
+			culture_current_fervor > 49
+		}
+	}
+
+    on_complete = {
+		trigger_event = { id = dvg_hbe.4 }
+	}
+
+	invalid = {
+		NOT = { 
+			any_scope_state = {
+				state_region = {
+					is_homeland = cu:beornian
+				}
+			}
+		}
+	}
+
+	weight = 100
+	should_be_pinned_by_default = yes
+	
+}
+
+je_inca_lotharingia = {
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	group = je_group_historical_content
+
+	is_shown_when_inactive = {
+		exists = c:LOT
+		exists = c:TWT
+		c:TWT = ROOT
+		has_global_variable = anti_inca_coalition
+	}
+	possible = {
+		exists = c:LOT
+		is_diplomatic_play_enemy_of = c:LOT
+	}
+
+	complete = {
+		custom_tooltip = {
+			text = lot_existence_tt
+			NOT = { exists = c:LOT }
+		}
+	}
+	
+	on_complete = {
+		if = {
+			limit = {
+				is_country_type = unrecognized
+			}
+			set_country_type = recognized
+		}
+		
+		trigger_event = { id = dvg_inca_ameriga.5} 
+
+		set_global_variable = lotharingia_shatters
+	}
+
+	fail = {
+		custom_tooltip = {
+			text = twt_capitulation_tt
+			has_truce_with = c:LOT
+		}
+	}
+
+	on_fail = {
+		trigger_event = { id = dvg_inca_ameriga.9 }
+
+		every_diplomatic_play = {
+			limit = {
+				OR = {
+					initiator_is = c:LOT
+					initiator_is = c:AMA
+				}
+			}
+			end_play = yes
+		}
+	}
+
+	timeout = 1200
+	on_timeout = {
+		trigger_event = { id = dvg_inca_ameriga.8 }
+	}
+
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+
+je_inca_amazonie = {
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	group = je_group_historical_content
+
+	is_shown_when_inactive = {
+		exists = c:LOT
+		exists = c:TWT
+		c:TWT = ROOT
+		has_global_variable = anti_inca_coalition
+	}
+	possible = {
+		is_diplomatic_play_enemy_of = c:AMA
+	}
+
+	complete = {
+		custom_tooltip = {
+		text = ama_existence_tt
+
+			NOT = {
+				exists = c:AMA
+				exists = c:EQX
+				exists = c:GOU
+			}
+		}
+		custom_tooltip = {
+		text = atl_existence_tt
+			NOT = { exists = c:ATL }
+		}
+	}
+	on_complete = {
+		trigger_event = { id = dvg_inca_ameriga.7 }
+		set_global_variable = amazonie_shatters
+	}
+
+	fail = {
+		exists = c:AMA
+		is_at_war = no
+		OR = {
+			has_truce_with = c:AMA
+			has_truce_with = c:LOT
+		}
+	}
+
+	on_fail = {
+		every_diplomatic_play = {
+			limit = {
+				initiator_is = c:TWT
+			}
+			end_play = yes
+		}
+	}
+
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+
+je_inca_ameriga_communists = {
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	group = je_group_crises
+
+	is_shown_when_inactive = {
+		OR = {
+			AND = { 
+				exists = c:QUI
+				c:QUI = ROOT
+			}
+			AND = { 
+				exists = c:ADS
+				c:ADS = ROOT
+			}
+		}
+		owns_entire_state_region = STATE_CUZCO
+	}
+
+	possible = {
+		has_technology_researched = socialism
+	}
+
+	immediate = {
+		trigger_event = { id = dvg_inca_ameriga.14 }
+	}
+
+	complete = {
+		has_revolution = yes
+	}
+
+	on_complete = {
+		trigger_event = { id = dvg_inca_ameriga.15 }
+	}
+}

@@ -1,24 +1,31 @@
 ﻿dvg_embrace_han = {
 	is_shown = {
 		NOT = { country_has_primary_culture = cu:han }
-		NOT = { has_game_rule = plausible_formable_nations }
+		NOT = { has_journal_entry = je_china_reunification }
+		OR = {
+		has_interest_marker_in_region = region_south_china
+		has_interest_marker_in_region = region_north_china
+		}
+		ROOT = {
+			culture_percent_country = {
+			  target = cu:han
+			  value >= 0.35
+			}
+		}
 		OR = {
 		any_primary_culture = {
-							has_discrimination_trait = sinosphere
+							has_discrimination_trait = tradition_sinosphere
 						}
 		any_primary_culture = {
-							has_discrimination_trait = han_chinese
+							has_discrimination_trait_group = heritage_group_east_asian
 						}
 		any_primary_culture = {
-							has_discrimination_trait = mongol_language
+							has_discrimination_trait_group = language_group_mongolic
 						}
-		any_primary_culture = {
-							has_discrimination_trait = tibetan_language
-						}
+
 			}
 		any_scope_state = {
 						is_incorporated = yes
-						is_capital = no
 						state_region = { 
 							OR = {
 								is_homeland = cu:han
@@ -29,20 +36,518 @@
 	}
 
     possible = {
-
-		has_technology_researched = pan-nationalism
-		
-		country_rank > rank_value:unrecognized_power
+		OR = {
+		has_law = law_type:law_racial_segregation
+		has_law = law_type:law_cultural_exclusion
+		}
+		OR = {
+		  any_primary_culture = {
+				has_discrimination_trait = tradition_sinosphere
+			}
+		   any_primary_culture = {
+				has_discrimination_trait = heritage_han
+			}
+		ROOT = {
+			culture_percent_country = {
+			  target = cu:han
+			  value >= 0.65
+			}
+		}
+		}
 	}
 
     when_taken = {
 		
 		add_primary_culture = cu:han
+
+		add_journal_entry = {
+				type = je_china_reunification_outsider
+			}
+	
+		
     }
 
 	ai_chance = {
-		base = 100
+		value = 100
+	}
+}
+
+dvg_dzu_tib_union = {
+	is_shown = {
+	
+		country_has_primary_culture = cu:mongol
+		country_has_state_religion = rel:gelugpa
+		
+		exists = c:TIB
+
+		OR = {
+		
+		has_law = law_type:law_monarchy
+		has_law = law_type:law_theocracy
+
+		}
+		
+		c:TIB = {has_law = law_type:law_theocracy }
+
+		NOT = {
+			has_global_variable = dzu_tib_united
+		}
+	}
+
+    possible = {
+
+		has_law = law_type:law_state_religion
+		has_law = law_type:law_cultural_exclusion
+		NOT = {has_journal_entry = je_galdan_khan}
+		has_technology_researched = pan-nationalism
+		c:TIB = {
+			is_at_war = no
+			has_law = law_type:law_theocracy
+			owner = {
+				is_ai = yes
+					
+				relations:root >= relations_threshold:amicable
+					
+				this.gdp < root.gdp
+			}
+		}
+	}
+
+    when_taken = {
+		trigger_event = { id = dvg_dzungaria.7 popup = yes }
+		set_global_variable = {
+			name = dzu_tib_united
+			value = 0
+		}
+    }
+
+	ai_chance = {
+		value = 100
+	}
+}
+
+dvg_annex_siberia = {
+	is_shown = {
+	
+		NOT = { is_country_type = decentralized }
+		exists = c:SIB
+
+		has_game_rule = siberia_railroaded
+
+		any_primary_culture = {
+			has_discrimination_trait_group = heritage_group_north_asian
+		}
+		any_neighbouring_state = {
+			owner = {is_country_type = decentralized}
+		}
+		has_interest_marker_in_region = sr:region_west_siberia
+		
+	}
+
+    possible = {
+
+		OR = {
+			is_player = yes
+			year >= 1900
+			is_country_type = recognized
+			has_technology_researched = pan-nationalism
+		}
+		has_technology_researched = colonization
+		NOT = { has_law = law_type:law_no_colonial_affairs }
+		army_size >= 20
+		
+	
+	}
+
+    when_taken = {
+		every_country = {
+			if = {
+				limit = {
+					is_ai = yes			
+					is_country_type = decentralized
+					any_primary_culture = {
+						has_discrimination_trait_group = heritage_group_north_asian
+						
+					}
+					any_scope_state = {
+						region = sr:region_west_siberia
+					}
+
+				}			
+				root = { annex = prev }
+			}
+		}
+		if = {
+			limit = {
+				exists = c:SBR
+			}
+			save_temporary_scope_value_as = {
+				name = war_reparations_amount
+				value = {
+					value = income
+					multiply = define:NDiplomacy|DEFAULT_WAR_REPARATIONS_MONEY_TRANSFER
+				}
+			}
+			
+			create_diplomatic_play = {
+				type = dp_annex_war
+				target_country = c:SBR
+
+				add_war_goal = {
+					holder = c:SBR
+					target_country = ROOT
+					type = enforce_treaty_article
+					article = {
+						article = money_transfer
+						source_country = ROOT
+						target_country = c:SBR
+						inputs = {
+							{ quantity = scope:war_reparations_amount }
+						}
+					}
+				}
+			}
+		}
+		
+		create_incident = {
+			country = ROOT
+			value = 5
+		}
+    }
+
+	ai_chance = {
+		value = 100
+	}
+}
+dvg_annex_yakutia = {
+	is_shown = {
+	
+		NOT = { is_country_type = decentralized }
+		exists = c:YAK
+		has_game_rule = siberia_railroaded
+
+		any_primary_culture = {
+			has_discrimination_trait_group = heritage_group_north_asian
+		}
+		any_neighbouring_state = {
+			owner = {is_country_type = decentralized}
+		}
+		has_interest_marker_in_region = sr:region_east_siberia
+
+		
+	}
+
+    possible = {
+
+		OR = {
+			is_player = yes
+			year >= 1900
+			is_country_type = recognized
+			has_technology_researched = pan-nationalism
+		}
+		has_technology_researched = colonization
+		NOT = { has_law = law_type:law_no_colonial_affairs }
+		army_size >= 20
+		
+	
+	}
+
+    when_taken = {
+		every_country = {
+			if = {
+				limit = {
+					is_ai = yes			
+					is_country_type = decentralized
+					any_primary_culture = {
+						has_discrimination_trait_group = heritage_group_north_asian
+					}
+					any_scope_state = {
+						region = sr:region_east_siberia
+					}
+				}			
+				root = { annex = prev }
+			}
+		}
+		create_incident = {
+			country = ROOT
+			value = 5
+		}
+    }
+
+	ai_chance = {
+		value = 100
+	}
+}
+
+dvg_tib_dzu_union = {
+	is_shown = {
+	
+		country_has_primary_culture = cu:tibetan
+		country_has_state_religion = rel:gelugpa
+		
+		exists = c:TIB
+		exists = c:DZU
+
+		has_law = law_type:law_theocracy
+
+		
+		c:TIB = ROOT
+		c:TIB = {has_law = law_type:law_theocracy }
+		c:DZU = {country_has_state_religion = rel:gelugpa}
+
+		NOT = {
+			has_global_variable = dzu_tib_united
+		}
+	}
+
+    possible = {
+
+		has_law = law_type:law_state_religion
+		has_law = law_type:law_cultural_exclusion
+		has_technology_researched = pan-nationalism
+		c:DZU = {
+			is_at_war = no
+			has_law = law_type:law_state_religion
+				
+			owner = {
+				is_ai = yes
+					
+				relations:root >= relations_threshold:amicable
+					
+				this.gdp < root.gdp
+			}
+		}
+	}
+
+    when_taken = {
+		trigger_event = { id = dvg_dzungaria.8 popup = yes }
+		set_global_variable = {
+			name = dzu_tib_united
+			value = 0
+		}
+    }
+
+	ai_chance = {
+		value = 100
 	}
 }
 
 
+dvg_accept_mizrahi = {
+	is_shown = {
+		OR = {
+			is_in_geographic_region = geographic_region_middle_east
+			is_in_geographic_region = geographic_region_central_asia
+		}
+		any_scope_state = {
+			state_region = {
+				is_homeland = cu:mizrahi
+			}
+		}
+		any_scope_pop = {
+			culture = cu:mizrahi
+			OR = {
+				religion = {
+					has_discrimination_trait = heritage_islamic
+				}
+				religion = {
+					has_discrimination_trait = heritage_christian
+				}
+				religion = {
+					has_discrimination_trait = heritage_jewish
+				}
+			}
+		}
+	}
+
+    possible = {
+		cultural_acceptance_base = {
+			target = cu:mizrahi
+			value > acceptance_status_3
+		}
+		has_law = law_type:law_cultural_exclusion
+	}
+
+    when_taken = {
+		add_primary_culture = cu:mizrahi
+    }
+
+	ai_chance = {
+		value = 100
+	}
+}
+
+kazakhstan_unite_kaz = {
+	is_shown = {
+		any_primary_culture = {
+			has_discrimination_trait = heritage_kipchak
+		}
+		any_scope_state = {
+			state_region = {
+				is_homeland = cu:kazak
+			}
+			is_capital = yes
+		}
+
+		is_subject = yes
+		any_neighbouring_state = {
+			owner = {
+				any_primary_culture = {
+					has_discrimination_trait = heritage_kipchak
+				}
+				is_ai = yes
+				is_subject = yes
+				NOT = { THIS = ROOT }
+				top_overlord = {
+					THIS = root.top_overlord
+				}
+			}
+		}
+	}
+
+	possible = {
+		is_at_war = no
+		has_technology_researched = nationalism
+		top_overlord = {
+			relations:root >= relations_threshold:amicable
+		}
+		NOT = { has_modifier = australia_test_modifier }
+		custom_tooltip = {
+			text = unite_australia_je_aus_tt
+			any_neighbouring_state = {
+				owner = {
+					relations:root >= relations_threshold:amicable
+					any_primary_culture = {
+						has_discrimination_trait = heritage_kipchak
+					}
+					is_ai = yes
+					is_subject = yes
+					NOT = { THIS = ROOT }
+					top_overlord = {
+						THIS = root.top_overlord
+					}
+					this.gdp < root.gdp
+				}
+			}
+		}
+	}
+	when_taken = {
+		
+		add_modifier = {
+			name = australia_test_modifier
+			days = short_modifier_time
+		}
+	}
+
+	ai_chance = {
+		value = 0
+		if = {
+			limit = { has_technology_researched = pan-nationalism }
+			add = 100
+		}		
+	}
+}
+
+kazakhstan_unite_overlord = {
+	is_shown = {
+		any_subject_or_below = {
+			country_has_primary_culture = cu:kazak
+			is_ai = yes
+			count >= 2
+			OR = {
+						country_tier = principality
+						country_tier = grand_principality
+					}
+		}
+	}
+	possible = {
+		is_at_war = no
+		has_technology_researched = nationalism
+		NOT = { has_modifier = decision_cooldown }
+		any_subject_or_below = {
+			country_has_primary_culture = cu:kazak
+			is_ai = yes
+			OR = {
+				relations:root >= relations_threshold:amicable
+				liberty_desire <= 25
+			}
+			count >= 2
+		}
+	}
+	when_taken = {
+		hidden_effect = {
+			#trigger_event = { id = can_aus.4 popup = yes }
+		}
+		add_modifier = {
+			name = decision_cooldown
+			months = 3
+		}
+		if = {
+			limit = {
+				exists = c:KAZ
+			}
+			every_country = {
+				limit = {
+					country_has_primary_culture = cu:kazak
+					is_subject_of = ROOT
+					OR = {
+						relations:root >= relations_threshold:amicable
+						liberty_desire <= 25
+					}
+					OR = {
+						country_tier = principality
+						country_tier = grand_principality
+					}
+					is_ai = yes
+				}
+				c:KAZ = {
+					annex = PREV
+				}
+				
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					exists = c:KAZ
+
+				}
+			}
+			random_country = {
+				limit = {
+					country_has_primary_culture = cu:kazak
+					is_subject_of = ROOT
+					OR = {
+						relations:root >= relations_threshold:amicable
+						liberty_desire <= 25
+					}
+					is_ai = yes
+				}
+				change_tag = MLY
+			}
+			every_country = {
+				limit = {
+					country_has_primary_culture = cu:kazak
+					is_subject_of = ROOT
+					OR = {
+						relations:root >= relations_threshold:amicable
+						liberty_desire <= 25
+					}
+					is_ai = yes
+				}
+				c:KAZ = {
+					annex = PREV
+				}
+				
+			}
+		}
+	}
+
+	ai_chance = {
+		value = 0
+		if = {
+			limit = { has_technology_researched = nationalism }
+			add = 100
+		}		
+	}
+}

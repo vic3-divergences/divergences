@@ -1,0 +1,284 @@
+﻿namespace = corn_laws
+
+# Corn Laws abolished
+corn_laws.1 = {
+	type = country_event
+
+	title = corn_laws.1.t
+	desc = corn_laws.1.d
+	flavor = corn_laws.1.f
+
+	event_image = {
+		video = "middleeast_courtroom_upheaval"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	duration = 3
+
+	cooldown = { days = stupidly_long_modifier_time }
+
+	option = {
+		name = corn_laws.1.a
+        default_option = yes
+
+        if = {
+        	limit = {
+        		ig:ig_landowners = {
+        			is_in_government = yes
+        			leader = {
+        				NOT = { has_ideology = ideology:ideology_market_liberal }
+        			}
+        		}
+        	}
+        	ig:ig_landowners = {
+        		# interest_group_approval_add
+        		add_modifier = {
+        			name = repealed_corn_laws
+        			days = long_modifier_time
+        		}
+        	}
+        }
+        add_loyalists = {
+        	value = 0.1
+        	pop_type = laborers
+        }
+        add_loyalists = {
+        	value = 0.1
+        	pop_type = peasants
+        }
+	}
+}
+
+# New Market Liberal Petit-Bourgeoisie agitator who opposes the laws
+corn_laws.2 = {
+	type = country_event
+
+	title = corn_laws.2.t
+	desc = corn_laws.2.d
+	flavor = corn_laws.2.f
+
+	event_image = {
+		video = "middleeast_courtroom_upheaval"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	duration = 3
+
+	cooldown = { days = stupidly_long_modifier_time }
+
+	trigger = {
+		NOT = { has_variable = corn_law_opponent_event }
+		ig:ig_petty_bourgeoisie = {
+			is_marginal = no
+		}
+		empty_agitator_slots >= 1
+	}
+
+	immediate = {
+		ig:ig_petty_bourgeoisie = { save_scope_as = pb_ig }
+		set_variable = corn_law_opponent_event
+		create_character = {
+			is_agitator = yes
+			interest_group = ig:ig_petty_bourgeoisie
+			ideology = ideology_market_liberal
+			traits = {
+				charismatic
+				experienced_political_operator
+			}
+			on_created = {
+				set_variable = corn_laws_agitator
+			}
+		}
+		random_scope_character = {
+			limit = {
+				has_variable = corn_laws_agitator
+			}
+			save_scope_as = corn_laws_agitator_scope
+		}
+	}
+
+	option = {
+		name = corn_laws.2.a
+		custom_tooltip = corn_laws_agitator_appears_tt
+		if = {
+			limit = {
+				any_political_movement = {
+					#OR = {
+						is_political_movement_type = movement_liberal
+					#	is_political_movement_type = movement_orleanist
+					#}
+				}
+			}
+			random_political_movement = {
+				limit = {
+					#OR = {
+						is_political_movement_type = movement_liberal
+					#	is_political_movement_type = movement_orleanist
+					#}
+				}
+				add_modifier = {
+					name = modifier_anti_corn_laws_league
+					days = long_modifier_time
+				}
+			}
+		}
+		else = {
+			random_political_movement = {
+				limit = {
+					is_political_movement_type = movement_modernizer
+				}
+				add_modifier = {
+					name = modifier_anti_corn_laws_league
+					days = long_modifier_time
+				}
+			}
+		}
+	}
+
+	option = {
+		name = corn_laws.2.b
+        default_option = yes
+		custom_tooltip = corn_laws_agitator_appears_tt
+		scope:corn_laws_agitator_scope ?= {
+			add_modifier = {
+				name = modifier_working_against_the_grain
+				days = normal_modifier_time
+			}
+		}
+		add_loyalists = {
+			value = large_radicals
+			pop_type = aristocrats
+		}
+	}
+}
+
+# Landowners profit and become more powerful due to Corn Laws
+corn_laws.3 = {
+	type = country_event
+
+	title = corn_laws.3.t
+	desc = corn_laws.3.d
+	flavor = corn_laws.3.f
+
+	event_image = {
+		video = "middleeast_courtroom_upheaval"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	duration = 3
+
+	cooldown = { days = stupidly_long_modifier_time }
+
+	trigger = {
+		NOT = { has_modifier = corn_law_leverage }
+		any_scope_pop = {
+			is_pop_type = aristocrats
+			pop_employment_building = building_manor_house
+			wealth > 20
+		}
+	}
+
+	immediate = {
+		random_scope_pop = {
+			limit = {
+				is_pop_type = aristocrats
+				pop_employment_building = building_manor_house
+				wealth > 20
+			}
+			save_scope_as = wealthy_landowners
+		}
+	}
+
+	option = {
+		name = corn_laws.3.a
+		# country_aristocrats_pol_str_mult
+		add_modifier = {
+			name = corn_law_leverage
+			days = normal_modifier_time
+			multiplier = 2
+		}
+		add_loyalists = {
+			value = 0.1
+			pop_type = aristocrats
+		}
+	}
+
+	option = {
+		name = corn_laws.3.b
+        default_option = yes
+        add_modifier = {
+        	name = corn_law_leverage
+        	days = normal_modifier_time
+        }
+	}
+}
+
+# Poor people struggle to buy bread
+corn_laws.4 = {
+	type = country_event
+
+	title = corn_laws.4.t
+	desc = corn_laws.4.d
+	flavor = corn_laws.4.f
+	placement = scope:bread_buying_state
+
+	event_image = {
+		video = "middleeast_courtroom_upheaval"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	duration = 3
+
+	cooldown = { days = stupidly_long_modifier_time }
+
+	trigger = {
+		NOT = { has_modifier = temporary_minimum_wages }
+		any_scope_state = {
+			average_sol <= 10
+			any_scope_pop = {
+				wealth <= 5
+			}
+		}
+	}
+
+	immediate = {
+		random_scope_state = {
+			limit = {
+				average_sol <= 10
+				any_scope_pop = {
+					wealth <= 5
+				}
+			}
+			save_scope_as = bread_buying_state
+		}
+	}
+
+	option = {
+		name = corn_laws.4.a
+		add_modifier = {
+			name = temporary_minimum_wages
+			days = normal_modifier_time
+		}
+	}
+
+	option = {
+		name = corn_laws.4.b
+        default_option = yes
+        add_radicals = {
+        	strata = lower
+        	value = medium_radicals
+        }
+	}
+}
