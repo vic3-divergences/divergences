@@ -21,18 +21,24 @@ atlantia_subject_button = {
 				market = {
 					owner = ROOT
 				}
-				country_is_in_south_america = yes
+				is_in_geographic_region = geographic_region_south_america
 				OR = {
 					country_has_primary_culture = cu:lotharian
 					country_has_primary_culture = cu:antarctican
 					country_has_primary_culture = cu:atlantian
 					country_has_primary_culture = cu:equinoxien
+					AND = {
+						country_has_primary_culture = cu:afro_amerigan
+						c:ATL = {
+							country_has_primary_culture = cu:afro_amerigan
+						}
+					}
 				}
 
 			}
 			any_subject_or_below = {
 
-				country_is_in_south_america = yes
+				is_in_geographic_region = geographic_region_south_america
 
 				any_primary_culture = {
 					has_discrimination_trait = amerigan_group
@@ -103,9 +109,26 @@ atlantia_subject_button = {
 			country = scope:atl_subject
 			type = protectorate
 		}
-		remove_diplomatic_pact = {
-			country = scope:atl_investment
-			type = bankroll
+		if = {
+			limit = {
+				any_scope_treaty = {
+					binds = c:ATL
+					any_scope_article = {
+						has_type = money_transfer
+					}
+				}
+			}
+			every_scope_treaty = {
+				limit = {
+					binds = c:ATL
+					any_scope_article = {
+						has_type = money_transfer
+					}
+				}
+				withdraw = {
+					country = root
+				}
+			}
 		}
 		create_incident = {
 			country = ROOT
@@ -120,7 +143,7 @@ atlantia_subject_button = {
 	}
 
 	ai_chance = {
-		base = 100
+		value = 100
 		 		 
 	 }	
 }
@@ -147,9 +170,11 @@ atlantia_investment_button = {
 					}
 				}
 				NOT = {
-					has_diplomatic_pact = {
-						who = ROOT
-						type = bankroll
+					any_scope_treaty = {
+						binds = ROOT
+						any_scope_article = {
+							has_type = money_transfer
+						}
 					}
 				}
 				
@@ -180,9 +205,11 @@ atlantia_investment_button = {
 					}
 				}
 				NOT = {
-					has_diplomatic_pact = {
-						who = ROOT
-						type = bankroll
+					any_scope_treaty = {
+						binds = ROOT
+						any_scope_article = {
+							has_type = money_transfer
+						}
 					}
 				}
 				
@@ -219,7 +246,7 @@ atlantia_investment_button = {
 				market = {
 					owner = ROOT
 				}
-				state_is_in_south_america = yes
+				is_in_geographic_region = geographic_region_south_america
 				NOT = {
 					has_building = building_railway
 				}
@@ -229,27 +256,74 @@ atlantia_investment_button = {
 				level=1
 			}
 		}
-		create_diplomatic_pact = {
-			country = scope:atl_investment
-			type = bankroll
+		create_treaty = {
+			first_country = ROOT
+			second_country = scope:atl_investment
+			is_draft = no
+			binding_period = { years = 1 }
+			articles_to_create = {
+				{
+					article = money_transfer
+					source_country = ROOT
+					target_country = scope:atl_investment
+					inputs = {
+					{ quantity = 1000 } # temporary 
+					}
+				}
+			}
 		}
-		
-		
 	}
 
 	ai_chance = {
-		base = 100
+		value = 100
 		 		 
 	 }	
 }
+
+varennese_button = {
+	name = "varennese_button"
+	desc = "varennese_button_desc"
+
+	visible = { 
+		has_journal_entry = je_atlantia_wild_card
+	}
+
+	possible = {
+		c:LOT = {
+			has_journal_entry = je_lotharian_house_of_cards
+
+					
+			custom_tooltip = {
+						text = lot_explosion_point_2_tt
+						var:aigle_var >= 140 
+			
+			}
+
+		}
+	}
+	effect = {
+		add_modifier = {
+			name = dvg_atlantia_giving_support
+			months = 12
+		}
+		
+		trigger_event = dvg_lotharingia.16
+	}
+
+	ai_chance = {
+		value = 100
+		 		 
+	 }	
+}
+
+
 
 atlantia_agitation_button = {
 	name = "atl_agitate_button"
 	desc = "atl_agitate_button_desc"
 
 	visible = { 
-		country_has_primary_culture = cu:atlantian
-		
+		has_journal_entry = je_atlantia_wild_card
 	}
 
 	possible = {
@@ -272,14 +346,16 @@ atlantia_agitation_button = {
 			name = dvg_atlantia_giving_support
 			months = 12
 		}
+		
 		trigger_event = dvg_atlantia.19
 	}
 
 	ai_chance = {
-		base = 100
+		value = 100
 		 		 
 	 }	
 }
+
 je_amerigan_nation_building_integrate_equinoxien = {
 	name = {
 		first_valid = {
@@ -359,7 +435,7 @@ je_amerigan_nation_building_integrate_equinoxien = {
 	}
 
 	ai_chance = {
-		base = 1
+		value = 1
 	}
 }
 
@@ -457,7 +533,7 @@ je_amerigan_nation_building_integrate_lotharian = {
 	}
 
 	ai_chance = {
-		base = 1
+		value = 1
 	}
 }
 
@@ -542,7 +618,7 @@ je_amerigan_nation_building_integrate_atlantian = {
 	}
 
 	ai_chance = {
-		base = 1
+		value = 1
 	}
 }
 
@@ -558,7 +634,10 @@ je_amerigan_nation_building_integrate_antarctican = {
 			triggered_desc = {
 				desc = "je_amerigan_nation_building_integrate_antarctican_past_tense"
 				trigger = {
-					has_variable = antarcticans_integrated
+					OR = {
+						has_global_variable = equinoxean_victory
+						has_variable = antarcticans_integrated
+					}
 				}
 			}
 		}
@@ -669,7 +748,7 @@ je_south_american_national_identity_integrate_a_state = {
 				any_scope_building = {
 					OR = {
 						is_building_type = building_naval_base
-						is_building_type = building_barracks
+						is_building_type = building_barrack
 					}
 					level >= 15
 				}
@@ -701,7 +780,7 @@ je_south_american_national_identity_integrate_a_state = {
 	}
 
 	ai_chance = {
-		base = 1
+		value = 1
 	}
 }
 

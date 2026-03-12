@@ -1,0 +1,244 @@
+﻿je_tibet_expedition = {
+
+	group = je_group_objectives
+
+	progressbar = yes
+
+	on_monthly_pulse = {
+		random_events = {
+			chance_to_happen = 33
+
+			# Phase I: Preparations
+			10 = tibet_expedition_events.4
+			10 = tibet_expedition_events.5
+			10 = tibet_expedition_events.6
+			10 = tibet_expedition_events.7
+			10 = tibet_expedition_events.29
+
+			# Triggers Phase II
+			10 = tibet_expedition_events.8
+			# 9 and 10 are triggered by 8
+			# 11 is also triggered by 8
+			# 12 and 13 are triggered by 11
+
+			# Phase II: Incursion
+			10 = tibet_expedition_events.14
+			10 = tibet_expedition_events.18
+			10 = tibet_expedition_events.19
+
+			# Phase III: "Negotiation"
+			10 = tibet_expedition_events.20
+		}
+	}
+
+	immediate = {
+		c:TIB = {
+			save_scope_as = tibet_scope
+			if = {
+				limit = {
+					is_subject = yes
+				}
+				top_overlord = {
+					save_scope_as = tibetan_overlord
+				}
+			}
+			random_scope_state = {
+				limit = { is_capital = yes }
+				save_scope_as = current_expedition_location # needs to be saved as this to be compatible with generic events
+			}
+		}
+		save_scope_as = expedition_country # redundant, but redundancy saves lives. and errors.
+		random_scope_character = {
+			limit = {
+				has_variable = expedition_leader_var
+			}
+			save_scope_as = expedition_leader
+		}
+
+		set_variable = { name = tibet_expedition_progress_var value = 0 }
+		set_variable = on_expedition
+	}
+
+	status_desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = tibet_expedition_surveying
+				trigger = {
+					exists = var:tibet_expedition_progress_var
+					var:tibet_expedition_progress_var < 3
+				}
+			}
+			triggered_desc = {
+				desc = tibet_expedition_incursion
+				trigger = {
+					exists = var:tibet_expedition_progress_var
+					var:tibet_expedition_progress_var <= 4
+					NOT = { has_variable = ultimatum_sent }
+				}
+			}
+			triggered_desc = {
+				desc = tibet_expedition_negotiation
+				trigger = {
+					has_variable = ultimatum_sent
+				}
+			}
+		}
+	}
+
+    complete = {
+		custom_tooltip = {
+			text = je_tibet_expedition_success_tt
+			OR = {
+				AND = {
+					has_variable = tibet_has_concluded
+					scope:journal_entry = {
+						is_goal_complete = yes
+					}
+				}
+				c:TIB ?= {
+					is_direct_subject_of = ROOT
+				}
+			}
+		}
+    }
+
+	on_complete = {
+		custom_tooltip = {
+			text = je_tibet_expedition_success_event_tt
+		}
+		random_scope_character = {
+			limit = {
+				has_variable = expedition_leader_var
+			}
+			remove_variable = expedition_leader_var
+			set_character_busy_and_immortal = no
+		}
+		remove_variable = on_expedition
+		remove_variable = tibet_expedition_var
+		remove_variable = tibet_has_started
+		remove_variable = lhasa_approached
+		remove_variable = entered_into_tibet
+		remove_variable = tibet_has_concluded
+		remove_modifier = modifier_large_expedition_cost
+		set_global_variable = tibet_expedition_completed
+		remove_variable = tibet_expedition_progress_var
+	}
+
+    event_outcome_completed_desc = {
+		first_valid = {
+            triggered_desc = {
+                trigger = {
+                    is_country_type = unrecognized
+                }
+                desc = event_effects_tibet_expedition_events.27_unrecognised_tt
+            }
+            triggered_desc = {
+                trigger = {
+					OR = {
+						is_country_type = recognized
+						is_country_type = colonial
+					}
+                }
+                desc = event_effects_tibet_expedition_events.27_recognised_tt
+            }
+        }
+    }
+
+	timeout = 1825 # five years
+
+	on_timeout = {
+		remove_variable = tibet_expedition_progress_var
+		remove_variable = on_expedition
+		remove_variable = tibet_expedition_var
+		remove_variable = tibet_has_started
+		remove_variable = lhasa_approached
+		remove_variable = entered_into_tibet
+		remove_variable = tibet_has_concluded # strange if this happened but just in case
+		remove_modifier = modifier_large_expedition_cost
+		random_scope_character = {
+			limit = {
+				has_variable = expedition_leader_var
+			}
+			remove_variable = expedition_leader_var
+			set_character_busy_and_immortal = no
+		}
+		if = {
+			limit = {
+				has_variable = received_subjugation_refusal_var
+			}
+			remove_variable = received_subjugation_refusal_var
+		}
+		add_modifier = {
+			name = tibetan_fiasco
+			days = normal_modifier_time
+		}
+	}
+
+    fail = {
+		custom_tooltip = {
+			text = je_tibet_expedition_failure_tt
+			OR = {
+				has_global_variable = tibet_expedition_completed
+				NOT = { exists = c:TIB }
+				NOT = {
+					any_scope_character = {
+						has_variable = expedition_leader_var
+					}
+				}
+				trigger_if = {
+					limit = {
+						exists = c:TIB
+					}
+					has_war_with = c:TIB
+				}
+				has_variable = received_subjugation_refusal_var
+			}
+		}
+    }
+
+	on_fail = {
+		remove_variable = tibet_expedition_progress_var
+		remove_variable = on_expedition
+		remove_variable = tibet_expedition_var
+		remove_variable = tibet_has_started
+		remove_variable = lhasa_approached
+		remove_variable = entered_into_tibet
+		remove_variable = tibet_has_concluded # strange if this happened but just in case
+		remove_modifier = modifier_large_expedition_cost
+		random_scope_character = {
+			limit = {
+				has_variable = expedition_leader_var
+			}
+			remove_variable = expedition_leader_var
+		}
+		if = {
+			limit = {
+				has_variable = received_subjugation_refusal_var
+			}
+			remove_variable = received_subjugation_refusal_var
+		}
+		add_modifier = {
+			name = tibetan_fiasco
+			days = normal_modifier_time
+		}
+	}
+
+	current_value = {
+		if = {
+			limit = {
+				has_variable = tibet_expedition_progress_var
+			}
+			value = var:tibet_expedition_progress_var
+		}
+	}
+
+	goal_add_value = {
+		add = 6
+	}
+
+	progressbar = yes
+
+    weight = 200
+    transferable = no
+    should_be_pinned_by_default = yes
+}

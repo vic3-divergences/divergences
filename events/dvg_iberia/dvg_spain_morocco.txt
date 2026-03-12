@@ -1,0 +1,120 @@
+﻿namespace = dvg_spain_morocco
+
+# The Moroccan Revolt!
+dvg_spain_morocco.1 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_spain_morocco.1.t
+	desc = dvg_spain_morocco.1.d
+	flavor = dvg_spain_morocco.1.f
+	
+	event_image = {
+		video = "southamerica_war_civilians"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_morocco_independence.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+		c:MOR = {
+			save_scope_as = dvg_morocco_scope
+		}
+	}
+	
+	#This means war!
+	option = {
+		name = dvg_spain_morocco.1.a
+		default_option = yes
+		
+		c:SPA = {
+			create_diplomatic_play = {
+				target_country = scope:dvg_morocco_scope
+				war = yes
+				type = dp_annex_war
+				
+				add_war_goal = {
+					holder = c:MOR
+					type = independence
+					target_country = c:SPA
+				}
+				add_war_goal = {
+					holder = c:MOR
+					type = return_state
+					target_state = s:STATE_MARRAKECH.region_state:SPA
+				}
+				add_war_goal = {
+					holder = c:MOR
+					type = return_state
+					target_state = s:STATE_INNER_MOROCCO.region_state:SPA
+				}
+				add_war_goal = {
+					holder = c:MOR
+					type = return_state
+					target_state = s:STATE_AL_RIF.region_state:SPA
+				}
+			}
+		}
+		
+		hidden_effect = {
+			add_radicals = {
+				value = 0.5
+				culture = cu:maghrebi
+			}
+			c:MOR = {
+				trigger_event = { id = dvg_morocco.5 }
+			}
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+	
+	#We have to accept this for now
+	option = {
+		name = dvg_spain_morocco.1.b
+		trigger = {
+			NOT = { 
+				has_variable = dvg_let_morocco_go
+			}
+		}
+		c:MOR = {
+			trigger_event = { id = dvg_morocco.6 }
+		}
+		hidden_effect = {
+			c:SPA = {
+				remove_diplomatic_pact = {
+					country = c:MOR
+					type = protectorate
+				}
+			}
+			s:STATE_MARRAKECH = {
+				remove_claim = c:SPA
+			}
+			s:STATE_INNER_MOROCCO = {
+				remove_claim = c:SPA
+				add_claim = c:MOR
+			}
+			s:STATE_AL_RIF = {
+				remove_claim = c:SPA
+			}
+			s:STATE_MARRAKECH.region_state:SPA = {
+				set_state_owner = c:MOR
+			}
+			s:STATE_INNER_MOROCCO.region_state:SPA = {
+				set_state_owner = c:MOR
+			}
+			set_variable = dvg_let_morocco_go
+		}
+		ai_chance = {
+			base = 0
+		}
+	}
+}

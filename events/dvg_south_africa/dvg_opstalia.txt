@@ -43,11 +43,11 @@ dvg_opstalia.1 = {
 
 	option = {
 		name = dvg_opstalia.1.a
-		add_modifier = {
-            name = dvg_kommandos
-        }
         hidden_effect = { 
         	remove_modifier = dvg_kommandos
+        }
+		add_modifier = {
+            name = dvg_kommandos
         }
 		trigger_event = { id = dvg_opstalia.2 popup = yes }
 	}
@@ -209,6 +209,9 @@ dvg_opstalia.4 = {
 	option = { #demand the land
 	name = dvg_opstalia.4.a
 	default_option = yes
+		s:STATE_TRANS_ORANJE = {
+			add_claim = c:OPS
+        }
 		c:VRY = {
 			trigger_event = {id = dvg_vryland.2 days = 14}
 		}
@@ -235,7 +238,7 @@ dvg_opstalia.4 = {
 			}
 		}
 		ai_chance = {
-			base = 50
+			base = 30
 		}
 		default_option = yes
     }
@@ -309,9 +312,6 @@ dvg_opstalia.5 = {
 	option = { #war
 		name = dvg_opstalia.5.a
 		default_option = yes
-		s:STATE_TRANS_ORANJE = {
-			add_claim = c:OPS
-        }
         custom_tooltip = {
 			text = dvg_opstalia_take_trans_oranje_tt
 			create_diplomatic_play = {
@@ -323,11 +323,12 @@ dvg_opstalia.5 = {
 				
 				war = no
 				
-				type = dp_conquer_state
+				# I dont know how to make this target Trans-Oranje instead of their capital so its on Return State so they cannot take Botswana in the war
+				type = dp_return_state
 				
 				add_war_goal = {
 					holder = c:OPS
-					type = conquer_state
+					type = return_state
 					target_state = s:STATE_TRANS_ORANJE.region_state:VRY
 				}
 			}
@@ -419,7 +420,7 @@ dvg_opstalia.7 = {
 	duration = 1
 
 	trigger = {
-		root = c:OPS
+		this = c:OPS
 		NOT = {
 			exists = c:VRY
 		}
@@ -468,7 +469,7 @@ dvg_opstalia.7 = {
 			}
 		}
         ai_chance = {
-			base = 2
+			base = 15
 		}
 		default_option = yes
     }
@@ -495,7 +496,7 @@ dvg_opstalia.8 = {
 
 	trigger = {
 		root = {
-			army_size >= c:NFL.army_size
+			army_size > c:NFL.army_size
 		}
 		NOT = {
 			has_variable = dvg_noordveld_war_triggered_var
@@ -507,20 +508,25 @@ dvg_opstalia.8 = {
 	option = { #go get it
 	default_option = yes
 	name = dvg_opstalia.8.a
+		
+		# This is still a messy way to do it but I cba to fix it at the moment
 		create_diplomatic_play = {
 			name = noordveld_war
 		
 			target_country = c:NFL
-			
-			war = yes
+
+			# Nobody can join the war anymore at this stage, but both nations get time to mobilize troops this way
+			escalation = 80
+			war = no
 			
 			type = dp_annex_war
-			
+
 			add_war_goal = {
 				holder = c:NFL
 				type = annex_country
 				target_country = c:OPS
 			}
+
 		}
 		ai_chance = {
 			base = 10
@@ -815,6 +821,10 @@ dvg_opstalia.12 = {
 	name = dvg_opstalia.12.a
         ai_chance = {
 			base = 1
+		}
+		# Reminder to change this to something better in the future (ZombieKiller)
+		s:STATE_LOURENCO_MARQUES = {
+			set_owner_of_provinces = { country = c:OPS  provinces = { "xA30505" "x884936" "x90A090" } }
 		}
     }
 }
