@@ -258,8 +258,8 @@ dvg_nov_non_russians.5 = {
 		default_option = yes
 
 		add_radicals = {
-			value = 0.4
-			culture = cu:ugrian
+			value = very_large_radicals
+			culture = cu:udmurt
 		}
 
 		trigger_event = {
@@ -290,14 +290,25 @@ dvg_nov_non_russians.6 = {
 	duration = 3
 
 	immediate = {
-		c:NOV = {
-			remove_diplomatic_pact = {
-				country = c:VYA
-				type = puppet
+		# Create UDM
+		create_country = {
+			tag = UDM
+			origin = this
+			province = p:x003051
+		}
+		s:STATE_DVG_VYATKA = {
+			set_owner_of_provinces = {
+				country = c:UDM
+				provinces = { x0A78C3 x0E6979 x199917 x1FD22C x2080C0 x29245A x31E881 x336835 x342573 x34999F x40D3F3 x41DF7D x4344A1 x4401F4 x454C45
+				x49C31C x4CB925 x4E1217 x5B57D5 x6578DF x730769 x78F48B x7D0DB0 x8BAC4A x8C2EE8 x948973 xA7F595 xAB7912 xADCD83 xB5DD9A xB6C701 xB7D465 xB9522D 
+				xC410CF xCB3697 xD754F9 xD80177 xDBB080 xDCF9AE xEF2B33 xEFA1B1 xF4A935 }
 			}
-			change_relations = { 
-				country = c:VYA 
-				value = -100
+		}
+		save_temporary_scope_value_as = {
+			name = war_reparations_amount
+			value = {
+				value = c:NOV.income
+				multiply = define:NDiplomacy|DEFAULT_WAR_REPARATIONS_MONEY_TRANSFER
 			}
 		}
 	}
@@ -307,39 +318,43 @@ dvg_nov_non_russians.6 = {
 		default_option = yes
 
 		add_radicals = {
-			value = 0.4
-			culture = cu:ugrian
+			value = very_large_radicals
+			culture = cu:udmurt
 		}
 
 		set_global_variable = UDM_WAR
 
-		# Create UDM
-		create_country = {
-			tag = UDM
-			origin = this
-			state = s:STATE_VYATKA.region_state:VYA
-		}
-		s:STATE_VYATKA = {
-			set_owner_of_provinces = {
-				country = c:VYA
-				provinces = { "x062B1B" "x0D7D00" "x132F3A" "x1910A8" "x1C24B7" "x2101B3" "x2D9E21" "x3BB87B" "x568002" "x5D5433" "x5E8636" "x61562C" "x643CDB" "x67657B" "x67980D" "x6C039E" "x6C1B87" "x7CFCC5" "x80F7CE" "x9E8C5F" "xA000C0" "xAF5831" "xC29095" "xCE626F" "xD53291" "xE82CFC" "xF62997" "xFD9F1D" }
-			}
-		}
-
 		c:UDM = {
 			activate_law = law_type:law_monarchy
-			activate_law = law_type:law_autocracy 
-		}
-
-		create_diplomatic_play = {
-			target_country = c:UDM
-			war = yes
-			type = dp_annex_war
+			activate_law = law_type:law_autocracy
+			add_loyalists = {
+				value = very_large_radicals
+				culture = cu:udmurt
+			}
+			create_diplomatic_play = {
+				target_country = c:VYA
+				war = yes
+				type = dp_conquer_state
+				target_state = s:STATE_DVG_VYATKA.region_state:VYA
 			
-			add_war_goal = {
-				holder = c:UDM
-				type = conquer_state
-				target_state = s:STATE_VYATKA.region_state:VYA
+				add_war_goal = {
+					holder = c:VYA
+					type = annex_country
+					target_country = c:UDM
+				}
+				add_war_goal = {
+					holder = c:UDM
+					target_country = c:NOV
+					type = enforce_treaty_article
+					article = {
+						article = money_transfer
+						source_country = c:NOV
+						target_country = c:UDM
+						inputs = {
+							{ quantity = scope:war_reparations_amount }
+						}
+					}
+				}
 			}
 		}
 
@@ -381,34 +396,6 @@ dvg_nov_non_russians.7 = {
 		default_option = yes
 
 		set_variable = nov_udm_war
-
-		save_temporary_scope_value_as = {
-			name = war_reparations_amount
-			value = {
-				value = income
-				multiply = define:NDiplomacy|DEFAULT_WAR_REPARATIONS_MONEY_TRANSFER
-			}
-		}
-		create_diplomatic_play = {
-			target_country = c:NOV
-			war = yes
-			type = dp_annex_war
-
-			
-			add_war_goal = {
-				holder = c:UDM
-				target_country = ROOT
-				type = enforce_treaty_article
-				article = {
-					article = money_transfer
-					source_country = ROOT
-					target_country = c:UDM
-					inputs = {
-						{ quantity = scope:war_reparations_amount }
-					}
-				}
-			}
-		}
 
 		create_diplomatic_pact = {
 			country = c:VYA
