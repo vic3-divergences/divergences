@@ -280,6 +280,7 @@ dvg_beornia.3 = { #Border Raids TWT
 		default_option = yes
 		
 		create_diplomatic_play = {
+			escalation = 40
 			target_country = c:BEO
 			war = no
 			type = dp_humiliation
@@ -380,6 +381,7 @@ dvg_beornia.3 = { #Border Raids TWT
 	}
 	
 	option = {
+		#Do Nothing
 		name = dvg_beornia.3.c
 
 		trigger = {
@@ -480,9 +482,10 @@ dvg_beornia.4 = { #Immigration Policy
 				leader = {
 					save_scope_as = industrialists_leader
 				}
-			}
-		
 		}
+		
+		
+	}
 	
 	
 	# Vive!
@@ -545,8 +548,24 @@ dvg_beornia.4 = { #Immigration Policy
 
 		random_scope_state = {
 			limit = {
-				available_jobs > 2000
+				available_jobs > 1000
 			}
+			if = {
+				limit = {
+						NOT = {
+							has_cultural_community = cu:scottish
+						}
+					}
+				add_cultural_community = cu:scottish
+				random_scope_pop = {
+				change_pop_culture = {
+					target = cu:scottish
+					value = 1
+				}
+				}
+			}
+			
+			
 			create_mass_migration = {
 			origin = scope:scope_scotstate
 			culture = cu:scottish
@@ -570,15 +589,49 @@ dvg_beornia.4 = { #Immigration Policy
 			origin = scope:scope_scotstate
 			culture = cu:scottish
 			}
+			if = {
+				limit = {
+						NOT = {
+							has_cultural_community = cu:scottish
+						}
+					}
+				add_cultural_community = cu:scottish
+				random_scope_pop = {
+				change_pop_culture = {
+					target = cu:scottish
+					value = 1
+				}
+				}
+			}
 		}
 
 		random_scope_state = {
 			limit = {
 				arable_land > 30
 			}
+			if = {
+				limit = {
+						NOT = {
+							has_cultural_community = cu:lotharian
+						}
+					}
+				add_cultural_community = cu:lotharian
+				random_scope_pop = {
+				change_pop_culture = {
+					target = cu:lotharian
+					value = 1
+				}
+				}
+			}
 			create_mass_migration = {
 			origin = c:LOT
 			culture = cu:lotharian
+			}
+			random_scope_pop = {
+				change_pop_culture = {
+					target = cu:lotharian
+					value = 1
+				}
 			}
 		}
 
@@ -1244,7 +1297,7 @@ dvg_beornia.9 = { #Cattle Barons Coup
                     name = dvg_modifier_landowners_bolstered
                     months = 120
 					is_decaying	= yes
-                }
+        }
 		add_modifier = {
                     name = dvg_approval_buff
                     months = 12
@@ -1274,6 +1327,7 @@ dvg_beornia.9 = { #Cattle Barons Coup
 		scope:landowners_leader = {
 			set_character_as_ruler = yes
 			remove_trait = immortal
+			set_ideology = ideology:ideology_luddite
 		}
 		add_loyalists = {
 			value = 0.15
@@ -1477,8 +1531,13 @@ dvg_beornia.11 = {
 		
 		add_loyalists = {
 			value = 0.10
-			culture = cu:beornian
+			interest_group = ig:ig_industrialists
 		}
+		add_radicals = {
+			value = 0.10
+			interest_group = ig:ig_landowners
+		}
+
 		trigger_event = { id = dvg_beornia.16 days =  365 }
 		
 		
@@ -1491,6 +1550,15 @@ dvg_beornia.11 = {
 		default_option = yes
 		
 		activate_law = law_type:law_landed_voting
+
+		add_radicals = {
+			value = 0.10
+			interest_group = ig:ig_industrialists
+		}
+		add_loyalists = {
+			value = 0.10
+			interest_group = ig:ig_landowners
+		}
 		
 		
 		call_election = {
@@ -1506,7 +1574,18 @@ dvg_beornia.11 = {
 	option = {
 		name = dvg_beornia.11.c
 
-		
+		add_radicals = {
+			value = 0.20
+			strata = upper
+		}
+		add_loyalists = {
+			value = 0.10
+			strata = middle
+		}
+		add_loyalists = {
+			value = 0.05
+			strata = lower
+		}
 		
 		
 		activate_law = law_type:law_census_voting
@@ -1525,7 +1604,7 @@ dvg_beornia.11 = {
 		}
 	}
 }
-
+#Stalemate Ending
 dvg_beornia.12 = {
 	type = country_event
 	placement = ROOT
@@ -2285,7 +2364,7 @@ dvg_beornia.21 = {
 		name = dvg_beornia.21.a
 		default_option = yes
 		
-		start_enactment = law_type:law_tenant_farmers
+		activate_law = law_type:law_tenant_farmers
 		
 		add_loyalists = {
 			value = 0.35
@@ -2298,6 +2377,7 @@ dvg_beornia.21 = {
 			value = 0.15
 			culture = cu:beornian
 		}
+		
 		if = {
 			limit = {
 				has_journal_entry = je_new_mercia_independent
@@ -2341,7 +2421,7 @@ dvg_beornia.21 = {
 		name = dvg_beornia.21.c
 		default_option = yes
 		
-		start_enactment = law_type:law_homesteading
+		activate_law = law_type:law_homesteading
 		
 		add_loyalists = {
 			value = 0.15
@@ -3688,7 +3768,7 @@ dvg_beornia.35 = {
 
 	}
 	option = {
-		name = dvg_beornia.34.b
+		name = dvg_beornia.35.b
 
 		every_scope_state = {
 			limit = {
@@ -3699,4 +3779,96 @@ dvg_beornia.35 = {
 			set_state_owner = c:NME
 		}
 	}	
+}
+
+dvg_beornia.36 = {
+	type = country_event
+	hidden = yes
+
+	trigger = {
+		any_scope_state = {
+			is_in_geographic_region = geographic_region_south_america
+			any_neighboring_state = {
+				state_region = {
+					is_homeland = cu:beornian
+				}
+			}
+		}
+	}
+
+	immediate = {
+		random_scope_state = {
+			limit = {
+				is_in_geographic_region = geographic_region_south_america
+				any_neighboring_state = {
+				state_region = {
+					is_homeland = cu:beornian
+				}
+				}
+			}
+			save_scope_as = new_homeland_state
+		}
+		scope:new_homeland_state = {
+			if = {
+				limit = {
+					owner = {
+						country_has_primary_culture = cu:beornian
+					}
+				}
+				state_region = {
+					add_homeland = cu:beornian
+				}
+				if = {
+					limit = {
+						NOT = {
+							has_cultural_community = cu:beornian
+						}
+					 }
+					 add_cultural_community = cu:beornian
+				}
+				
+				cu:beornian = {
+					save_scope_as = new_homeland_culture
+				}
+			}
+			else_if = {
+				limit = { 
+					OR = {
+						state_region = s:STATE_NEW_CORNWALL
+					}
+				}
+				state_region = {
+					add_homeland = cu:dixie
+				}
+				if = {
+					limit = {
+						NOT = {
+							has_cultural_community = cu:dixie
+						}
+					 }
+					 add_cultural_community = cu:dixie
+				}
+				cu:dixie = {
+					save_scope_as = new_homeland_culture
+				}
+			}
+			else = {
+				state_region = {
+					add_homeland = cu:yankee
+				}
+				if = {
+					limit = {
+						NOT = {
+							has_cultural_community = cu:yankee
+						}
+					 }
+					 add_cultural_community = cu:yankee
+				}
+				cu:yankee = {
+					save_scope_as = new_homeland_culture
+				}
+			}
+		}
+		post_notification = usfp_new_american_homeland
+	}
 }
