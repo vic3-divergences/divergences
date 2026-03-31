@@ -119,12 +119,15 @@ dvg_guinea.3 = { #Company Rule Collapses
 			}
 			save_scope_as = foreign_culture
 		}
+		
 	}
 
 	option = {
 		name = dvg_guinea.3.a
+
 		
-		add_radicals = {
+		
+		add_radicals ={
 			value = 0.15
 		}
 	}
@@ -132,6 +135,29 @@ dvg_guinea.3 = { #Company Rule Collapses
 	option = {
 		name = dvg_guinea.3.b
 		default_option = yes
+		
+
+		remove_primary_culture = scope:foreign_culture
+		if = {
+			limit = {
+				NOT = {
+					exists = c:IBO
+				}
+			}
+			change_tag = IBO
+		}
+
+		add_loyalists = {
+			value = 0.10
+		}
+
+	}
+
+	option = {
+		name = dvg_guinea.3.c
+		trigger = {
+			has_technology_researched = pan-nationalism
+		}
 
 		remove_primary_culture = scope:foreign_culture
 		add_primary_culture = cu:afro_frankish
@@ -143,7 +169,7 @@ dvg_guinea.3 = { #Company Rule Collapses
 	}
 }
 
-dvg_guinea.4 = { #Japan Railways?
+dvg_guinea.4 = { #Name of the Country
 	type = country_event
 	placement = root
 	title = dvg_guinea.4.t
@@ -178,7 +204,7 @@ dvg_guinea.4 = { #Japan Railways?
 }
 
 
-dvg_guinea.5 = { #Labor Shortages
+dvg_guinea.5 = { #Ambitions of the Country
 	type = country_event
 	placement = root
 	title = dvg_guinea.5.t
@@ -225,7 +251,7 @@ dvg_guinea.5 = { #Labor Shortages
 }
 
 
-dvg_guinea.6 = { #Shingon Teachings
+dvg_guinea.6 = {  #Plantagenia has banned slavery
 	type = country_event
 	placement = root
 	title = dvg_guinea.6.t
@@ -247,7 +273,9 @@ dvg_guinea.6 = { #Shingon Teachings
 		
 	}
 	immediate = {
-	
+		overlord = {
+			save_scope_as = scope_PLA
+		}
 	}
 
 	option = {
@@ -259,8 +287,31 @@ dvg_guinea.6 = { #Shingon Teachings
 
 	option = {
 		name = dvg_guinea.6.b
+		trigger = {
+			any_country = {
+				is_country_type = recognized
+				NOT = {
+					has_law = law_type:law_slavery_banned
+				}
+				any_primary_culture = {
+					has_discrimination_trait = language_francophone
+				}
+			}
+		}
 		
 		
+		trigger_event = {
+			id = dvg_guinea.7
+		}
+	}
+
+	option = {
+		name = dvg_guinea.6.c
+		
+		create_diplomatic_play = {
+			type = dp_independence
+			target_country = scope:scope_PLA
+		}
 		
 	}
 }
@@ -284,30 +335,126 @@ dvg_guinea.7 = { #
 	icon = "gfx/interface/icons/event_icons/event_military.dds"
 
 	trigger = {
-	
-	}
-	immediate = {
-		c:DZU = {
-			save_scope_as = scope_DZU
-		}
 		
 	}
+	immediate = {
+		if = {
+			limit = {
+				any_country = {
+					NOT = {
+						has_law = law_type:law_slavery_banned
+					}
+					country_has_primary_culture = cu:antarctican
+				}
+			}
+			save_scope_as = scope_AMA
+		}
+		random_country = {
+			limit = {
+				NOT = {
+					has_law = law_type:law_slavery_banned
+					country_has_primary_culture = cu:antarctican
+				}
+				any_primary_culture = {
+					has_discrimination_trait = language_francophone
+				}
+				is_country_type = recognized
+				country_is_great_power = yes
+			}
+			save_scope_as = scope_DUA
+		}
 
+		random_country = {
+			limit = {
+				is_country_type = recognized
+				NOT = {
+					has_law = law_type:law_slavery_banned
+					country_has_primary_culture = cu:antarctican
+				}
+				any_primary_culture = {
+					has_discrimination_trait = language_burgundian
+				}
+				is_country_type = recognized
+			}
+			save_scope_as = scope_NBG
+		}
+	}
 	option = {
 		name = dvg_guinea.7.a
 		default_option = yes
-		
+		trigger = {
+			any_country = {
+					NOT = {
+						has_law = law_type:law_slavery_banned
+					}
+					country_has_primary_culture = cu:antarctican
+			}
+		}
+		scope:scope_AMA = {
+			create_diplomatic_pact = {
+				country = ROOT
+				type = chartered_company
+			}
+		}
+		change_relations = {
+			country = scope:scope_AMA
+			value = 30
+		}
 	}
 
 	option = {
 		name = dvg_guinea.7.b
-		
+		trigger = {
+			any_country = {
+				NOT = {
+					has_law = law_type:law_slavery_banned
+					country_has_primary_culture = cu:antarctican
+				}
+				any_primary_culture = {
+					has_discrimination_trait = language_francophone
+				}
+				is_country_type = recognized
+				country_is_great_power = yes
+			}
+		}
 
+		scope:scope_DUA = {
+			create_diplomatic_pact = {
+				country = ROOT
+				type = chartered_company
+			}
+		}
+		change_relations = {
+			country = scope:scope_DUA
+			value = 30
+		}
 	}
 
 	option = {
 		name = dvg_guinea.7.c
-		
+		trigger = {
+			any_country = {
+				is_country_type = recognized
+				NOT = {
+					has_law = law_type:law_slavery_banned
+					country_has_primary_culture = cu:antarctican
+				}
+				any_primary_culture = {
+					has_discrimination_trait = language_burgundian
+				}
+				is_country_type = recognized
+			}
+		}
+		scope:scope_NBG = {
+			create_diplomatic_pact = {
+				country = ROOT
+				type = chartered_company
+			}
+		}
+		change_relations = {
+			country = scope:scope_NBG
+			value = 30
+		}
 	}
 }
 
