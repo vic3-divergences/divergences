@@ -691,4 +691,236 @@ je_btv_autocracy = {
 
 	weight = 100
 	should_be_pinned_by_default = yes
+} 
+
+je_the_first_aloysius_war = {
+	group = je_group_global_international_situations
+	icon = "gfx/interface/icons/event_icons/event_carlist_beret.dds"
+
+    is_shown_in_lobby = {
+        OR = {
+        	c:CAP ?= this
+        	c:LEW ?= this
+        }
+    }
+
+	modifiers_while_active = {
+		carlist_war_guerilla_warfare
+	}
+
+	#scripted_progress_bar = je_the_first_aloysius_war_score_bar
+	#scripted_button = je_the_first_aloysius_war_royal_expedition_button
+	#scripted_button = je_the_first_carlist_flush_them_out_button
+
+	should_be_involved = {
+		OR = {
+			country_has_primary_culture = cu:burgundian
+			country_has_primary_culture = cu:boer
+		}
+		country_has_state_religion = rel:protestant
+		is_in_geographic_region = geographic_region_south_africa
+	}
+
+	should_show_when_not_involved = {
+		always = no
+		
+	}
+
+	immediate = {
+		if = {
+			limit = {
+				NOT = { has_global_variable = cap_aloysius_war_score }
+			}
+			set_global_variable = {
+				name = cap_aloysius_war_score
+				value = 0
+			}
+		}
+		if = {
+			limit = {
+				NOT = { has_global_variable = lew_aloysius_war_score }
+			}
+			set_global_variable = {
+				name = lew_aloysius_war_score
+				value = 0
+			}
+		}
+		if = {
+			limit = {
+				NOT = { has_global_variable = aloysius_war_skirmish_phase }
+			}
+			set_global_variable = aloysius_war_skirmish_phase
+		}
+	}
+
+	immediate_all_involved = {
+	}
+
+	status_desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = je_the_first_aloysius_war_status
+				trigger = {
+					has_global_variable = aloysius_war_skirmish_phase
+				}
+			}
+			triggered_desc = {
+				desc = je_the_first_aloysius_war_status_royal_expedition
+				trigger = {
+					always = yes
+				}
+			}
+		}
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			
+		}
+	}
+
+	complete = {
+		custom_tooltip = {
+			text = je_the_first_aloysius_war_complete
+			NAND = {
+				exists = c:LEW
+				exists = c:CAP
+			}
+		}
+	}
+
+	on_complete_all_involved = {
+		if = {
+			limit = {
+				c:LEW ?= this
+			}
+			create_diplomatic_pact = {
+				country = c:BRG
+				type = protectorate
+			}
+			set_variable = spain_carlist_victory
+			add_modifier = {
+				name = aloysius_war_lew_reward
+				years = 20
+				is_decaying = yes
+			}
+			hidden_effect = {
+				every_scope_state = {
+					limit = {
+						state_region = {
+							is_homeland = cu:boer
+						}
+					}
+					set_state_type = incorporated
+				}
+			}
+			every_scope_state = {
+				limit = {
+					is_split_state = yes
+				}
+				state_region = {
+					add_claim = ROOT
+				}
+			}
+			trigger_event = { id = dvg_leeuwin.14 }
+		}
+		else_if = {
+			limit = {
+				c:CAP ?= this
+			}
+			every_scope_state = {
+				limit = {
+					is_split_state = yes
+				}
+				state_region = {
+					add_claim = ROOT
+				}
+			}
+		}
+		trigger_event = aloysius_war.2
+		hidden_effect = {
+			remove_global_variable = cap_aloysius_war_score
+			remove_global_variable = lew_aloysius_war_score
+			remove_modifier = national_guard_preoccupied
+			remove_modifier = the_last_stand
+			remove_modifier = galvanized_forces
+			remove_modifier = lew_secure_port
+			remove_modifier = cap_aloysius_terror_expenses
+			remove_modifier = captured_royal_arsenals
+			set_immune_to_revolutions = no
+			remove_variable = coup_immunity
+
+			if = {
+				limit = {
+					any_scope_state = {
+						has_modifier = cap_aloysius_terror
+					}
+				}
+				every_scope_state = {
+					limit = {
+						has_modifier = cap_aloysius_terror
+					}
+					remove_modifier = cap_aloysius_terror
+				}
+			}
+			if = {
+				limit = {
+					any_scope_State = {
+						has_modifier = ad_hoc_manufacturing
+					}
+				}
+				every_scope_state = {
+					limit = {
+						has_modifier = ad_hoc_manufacturing
+					}
+					remove_modifier = ad_hoc_manufacturing
+				}
+			}
+			if = {
+				limit = {
+					any_scope_state = {
+						has_modifier = lew_raided_grain_storages
+					}
+				}
+				every_scope_state = {
+					limit = {
+						has_modifier = lew_raided_grain_storages
+					}
+					remove_modifier = lew_raided_grain_storages
+				}
+			}
+			if = {
+				limit = {
+					any_scope_state = {
+						has_modifier = pyrenean_smuggling
+					}
+				}
+				every_scope_state = {
+					limit = {
+						has_modifier = pyrenean_smuggling
+					}
+					remove_modifier = pyrenean_smuggling
+				}
+			}
+			if = {
+				limit = {
+					any_scope_state = {
+						has_modifier = ad_hoc_manufacturing_negative
+					}
+				}
+				every_scope_state = {
+					limit = {
+						has_modifier = ad_hoc_manufacturing_negative
+					}
+					remove_modifier = ad_hoc_manufacturing_negative
+				}
+			}
+		}
+	}
+
+	weight = 10000
+
+	should_be_pinned_by_default = yes
 }
+
+
