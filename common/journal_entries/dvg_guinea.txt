@@ -1,0 +1,263 @@
+﻿je_guinea_imperialism = {
+	icon = "gfx/interface/icons/invention_icons/colonization.dds"
+
+	group = je_group_internal_affairs
+
+	immediate = {
+		set_secret_goal = {
+			country = THIS
+			secret_goal = conquer
+		}
+	}
+	
+	
+
+	complete = {
+		calc_true_if = {
+			amount > 3
+
+			owns_entire_state_region = STATE_NIGERIA
+			owns_entire_state_region = STATE_NIGER_DELTA
+			owns_entire_state_region = STATE_NORTH_CAMEROON
+			owns_entire_state_region = STATE_SOUTH_CAMEROON
+			owns_entire_state_region = STATE_YORUBA_STATES
+			owns_entire_state_region = STATE_HAUSALAND
+			
+		}
+		OR = {
+			has_technology_researched = civilizing_mission
+			any_scope_state = {
+			is_incorporated = yes
+			turmoil < 0.30
+			percent >= 0.75
+			}
+		}
+		
+		bureaucracy > 10
+		authority > 0
+		custom_tooltip = {
+			text = cda_exist_tt
+			NOT = {
+			exists = c:CDA
+			}
+		}
+		
+	}
+
+	on_complete = {
+		trigger_event = {
+			id = dvg_guinea.2
+		}
+		if = {
+			limit = {
+				has_law = law_type:law_cultural_exclusion 
+			}
+			add_primary_culture = cu:afro_frankish
+		}
+	}
+	fail = {
+		OR = {
+			has_law = law_type:law_anarchy
+			is_subject = no	
+		}
+	}
+	on_fail = {
+		if = {
+			limit = {
+				is_ai = yes
+				has_law = law_type:law_anarchy
+			}
+			set_country_type = decentralized
+		}
+		trigger_event = {
+			id = dvg_guinea.3
+		}
+	}	
+
+	weight = 100
+	should_be_pinned_by_default = yes
+	inheritable = yes
+	
+}
+
+je_ashanti = {
+	icon = "gfx/interface/icons/event_icons/event_ashanti.dds"
+
+	group = je_group_internal_affairs
+
+	
+	
+
+	complete = {
+		is_country_type = recognized
+		any_scope_state = {
+			is_coastal = yes
+		}
+		is_subject = no
+	}
+
+	on_complete = {
+		trigger_event = {
+			id = dvg_ashanti.1
+		}
+	}
+	
+	
+
+	weight = 100
+	progressbar = yes
+	should_be_pinned_by_default = yes
+	
+}
+
+je_emancipe = {
+	icon = "gfx/interface/icons/invention_icons/pan_nationalism.dds"
+
+	group = je_group_internal_affairs
+
+	
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+				overlord = {
+					has_law = law_type:law_slavery_banned
+				}
+				NOT = {
+					has_variable = overlord_slavery_ban
+				}
+				}
+				set_variable = overlord_slavery_ban
+			}
+			trigger_event = {
+				id = dvg_guinea.6
+			}
+		}
+	}
+
+	complete = {
+		is_country_type = recognized
+		is_subject = no
+		NOT = {
+			any_neighbouring_state = {
+				owner = {
+					NOT = {
+						has_law = law_type:law_slavery_banned
+					}
+				}
+			}
+		}
+	}
+
+	on_complete = {
+		trigger_event = {
+			id = dvg_ashanti.1
+		}
+	}
+	fail = {
+		has_law = law_type:law_anarchy
+		is_country_type = unrecognized
+		authority < 0
+	}
+	on_fail = {
+		if = {
+			limit = {
+				is_ai = yes
+				has_law = law_type:law_anarchy
+			}
+			set_country_type = decentralized
+		}
+	}
+	
+
+	weight = 100
+	progressbar = yes
+	should_be_pinned_by_default = yes
+	
+}
+
+je_akan_nationalism = {
+	icon = "gfx/interface/icons/invention_icons/nationalism.dds"
+
+	group = je_group_internal_affairs
+
+	
+	
+
+	complete = {
+		year > 1850
+		has_technology_researched = nationalism
+		is_diplomatic_play_committed_participant = no
+		cu:akan = {
+			culture_current_fervor < 40
+		}
+		culture_percent_country = {
+			target = cu:afro_frankish
+			value > 0.50
+		}
+	}
+
+	on_complete = {
+		every_scope_state = {
+			add_homeland = cu:afro_frankish
+		}
+	}
+
+	fail = {
+		cu:akan = {
+			culture_current_fervor > 20
+		}
+		any_enemy_in_diplo_play = {
+
+		country_has_primary_culture = cu:akan
+				
+		}
+	}
+
+	on_fail = {
+		trigger_event = {
+			id = dvg_ashanti.2
+		}
+	}
+	
+	
+
+	weight = 100
+	should_be_pinned_by_default = yes
+	
+}
+
+je_novo_cadiz = {
+	icon = "gfx/interface/icons/invention_icons/international_diplomacy.dds"
+
+	group = je_group_foreign_affairs
+
+	immediate = {
+		
+	}
+	
+	complete = {
+		country_has_primary_culture = cu:afro_latino
+	}
+
+	on_complete = {
+		add_loyalists = {
+			value = 0.10
+		}
+	}
+
+	fail = {
+		is_subject = no
+	}
+
+	on_fail = {
+		remove_primary_culture = cu:portuguese
+		add_primary_culture = cu:mande 
+		add_primary_culture = cu:fulbe
+		add_primary_culture = cu:dyula
+
+		change_tag = KBU
+	}
+	weight = 200
+	should_be_pinned_by_default = yes
+}
