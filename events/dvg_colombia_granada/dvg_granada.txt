@@ -73,7 +73,7 @@ dvg_granada.2 = {
 			c:SPA = {
 				remove_diplomatic_pact = {
 					country = c:GRA
-					type = puppet
+					type = colony
 				}
 			}
 		}
@@ -89,7 +89,7 @@ dvg_granada.2 = {
 	}
 }
 
-# The Colombian Alliance has won the War of Independence
+# Truce of 1840
 dvg_granada.3 = {
 	type = country_event
 	placement = ROOT
@@ -111,56 +111,15 @@ dvg_granada.3 = {
 
 	trigger = {
 	}
-		
-	# Independence!
-	option = {
-		name = dvg_granada.3.a
-		default_option = yes
-		add_loyalists = {
-			value = 0.1
-		}
-		ig:ig_rural_folk = {
-				add_ruling_interest_group = yes
-				add_modifier = {
-                    name = dvg_approval_buff
-                    days = 730
-                    is_decaying = yes
-				}
-		}		
-		c:SPA = {
-			remove_diplomatic_pact = {
-				country = c:GRA
-				type = puppet
-			}
-		}
-		change_relations = {
-			country = c:SPA
-			value = -50
-		}
-		hidden_effect = {
-			if = {
-				limit = {
-					has_law = law_type:law_monarchy
-				}
-				activate_law = law_type:law_presidential_republic
-			}
-		}
-		ai_chance = {
-			base = 1
-		}
-	}
-
+	
 	# We shall stand with Spain... for now.
 	option = {
-		name = dvg_granada.3.b
-		add_radicals = {
-			value = 0.1
-		}
+		name = dvg_granada.3.a
 		hidden_effect = {
 			c:SPA = {
 				remove_diplomatic_pact = {
 					country = c:GRA
-					type = puppet
+					type = colony
 				}
 			}
 		}
@@ -170,78 +129,44 @@ dvg_granada.3 = {
 				type = dominion
 			}
 		}
-		hidden_effect = {
-			if = {
-				limit = {
-					NOT = { has_global_variable = dvg_herrera_revolution_happened }
-				}
-			}
-			c:GRA = {
-				trigger_event = { id = dvg_granada.5 days = 730 }	# Herrera Revolution
-			}
-		}
 		ai_chance = {
-			base = 0
+			base = 1
 		}
 	}
 }
-
-# Truce of 1838
+#Fall of Bogota
 dvg_granada.4 = {
 	type = country_event
 	placement = ROOT
-
-	title = dvg_granada.4.t
-	desc = dvg_granada.4.d
-	flavor = dvg_granada.4.f
 	
 	event_image = {
-		video = "southamerica_aristocrats"
+		video = "southamerica_war_civilians"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
-	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/war_civilians"
 
 	icon = "gfx/interface/icons/event_icons/event_fire.dds"
 
 	duration = 3
 
 	trigger = {
+		exists = c:SPA
+		this = c:SPA
+		year = 1840
+		has_war_with = c:GCO
+		has_variable = herreria_invite
+		NOT = { has_global_variable = dvg_SPA_truce_of_1840 }
 	}
-	
-	# We shall stand with Spain... for now.
+	immediate = {}
 	option = {
 		name = dvg_granada.4.a
-		hidden_effect = {
-			c:SPA = {
-				remove_diplomatic_pact = {
-					country = c:GRA
-					type = puppet
-				}
-			}
-		}
-		c:SPA = {
-			create_diplomatic_pact = {
-				country = c:GRA
-				type = dominion
-			}
-		}
-		hidden_effect = {
-			if = {
-				limit = {
-					NOT = { has_global_variable = dvg_herrera_revolution_happened }
-				}
-			}
-			c:GRA = {
-				trigger_event = { id = dvg_granada.5 days = 730 }	# Herrera Revolution
-			}
-		}
-		ai_chance = {
-			base = 1
-		}
+		default_option = yes
+		
+		remove_variable = herreria_invite
+		trigger_event = { id = dvg_granada.5 days = 1 }
 	}
 }
-
 # The Herrera Revolution
 dvg_granada.5 = {
 	type = country_event
@@ -274,7 +199,6 @@ dvg_granada.5 = {
 				tag = SAN
 				origin = this
 				state = s:STATE_ANTIOQUIA.region_state:GRA
-				state = s:STATE_CUNDINAMARCA.region_state:GRA
 				state = s:STATE_CAUCA.region_state:GRA
 				on_created = {
 					if = {
@@ -288,25 +212,14 @@ dvg_granada.5 = {
 				}
 			}
 		}
+		every_scope_character = {
+			limit = { has_variable = is_de_blanco }
+			save_scope_as = scope_de_blanco
+		}
 		
-		c:SAN = {
-			create_character = {
-				ruler = yes
-				is_general = yes
-				historical = yes
-				first_name = Guillermo
-				last_name = de_Blanco
-				dna = dna_francisco_de_paula_santander
-				birth_date = 1789.12.10
-				hq = region_gran_colombia
-				interest_group = ig_armed_forces
-				ideology = ideology_ethno_nationalist
-				traits = {
-					meticulous
-					experienced_defensive_strategist
-					firebrand
-				}
-			}
+		scope:scope_de_blanco = {
+			transfer_character = c:SAN
+			set_character_as_ruler = yes
 		}
 		set_global_variable = {
 			name = dvg_herrera_revolution_happened
@@ -320,7 +233,7 @@ dvg_granada.5 = {
 		default_option = yes	
 		create_diplomatic_play = {
 			target_country = c:SAN
-			war = no
+			war = yes
 			type = dp_annex_war
 			add_war_goal = {
 				holder = c:SAN
@@ -330,23 +243,44 @@ dvg_granada.5 = {
 		}
 		c:SAN = { 
 			add_journal_entry = {
-				type = je_granadan_civil_war_SAN
+				type = je_herrerian_revolution
 			}
 		}
 		c:GRA = { 
 			add_journal_entry = {
-				type = je_granadan_civil_war_GRA
+				type = je_herrerian_revolution
 			}
 		}
 		hidden_effect = {
 			c:GRA = {
 				trigger_event = { id = dvg_granada.9 days = 7 }	# Secession of Essequibo
 			}
-			c:GRA = {
-				trigger_event = { id = dvg_granada.10 days = 5 } # The Spanish Withdraw
-			}
 			c:GCO = {
-				trigger_event = { id = dvg_gran_colombia.6 days = 5 } # Herreria calls for aids
+				trigger_event = { id = dvg_gran_colombia.6 days = 5 } # GCO makes decision on the Herrerian Revolution
+			}
+			c:SPA = {
+				trigger_event = { id = dvg_spain.8 days = 5 }
+			}
+			if = {
+				limit = { 
+					c:SPA = { 
+						NOT = { has_variable = herreria_invite_alt } 
+					} 
+				}
+				c:QUI = {
+					trigger_event = { id = dvg_caladero.17 days = 7 }
+				}
+			}
+			
+			else = {
+				limit = { 
+					c:SPA = { 
+						 has_variable = herreria_invite_alt
+					} 
+				}
+				c:QUI = {
+					trigger_event = { id = dvg_caladero.18 days = 7 }
+				}
 			}
 		}
 		ai_chance = {
@@ -359,7 +293,7 @@ dvg_granada.5 = {
 		name = dvg_granada.5.b		
 		create_diplomatic_play = {
 			target_country = c:SAN
-			war = no
+			war = yes
 			type = dp_annex_war
 			add_war_goal = {
 				holder = c:SAN
@@ -370,23 +304,44 @@ dvg_granada.5 = {
 		play_as = c:SAN
 		c:SAN = { 
 			add_journal_entry = {
-				type = je_granadan_civil_war_SAN
+				type = je_herrerian_revolution
 			}
 		}
 		c:GRA = { 
 			add_journal_entry = {
-				type = je_granadan_civil_war_GRA
+				type = je_herrerian_revolution
 			}
 		}
 		hidden_effect = {
 			c:GRA = {
 				trigger_event = { id = dvg_granada.9 days = 7 }	# Secession of Essequibo
 			}
-			c:GRA = {
-				trigger_event = { id = dvg_granada.10 days = 5 } # The Spanish Withdraw
-			}
 			c:GCO = {
-				trigger_event = { id = dvg_gran_colombia.6 days = 5 } # Herreria calls for aids
+				trigger_event = { id = dvg_gran_colombia.6 days = 5 } # GCO makes decision on the Herrerian Revolution
+			}
+			c:SPA = {
+				trigger_event = { id = dvg_spain.8 days = 5 }
+			}
+			if = {
+				limit = { 
+					c:SPA = { 
+						NOT = { has_variable = herreria_invite_alt } 
+					} 
+				}
+				c:QUI = {
+					trigger_event = { id = dvg_caladero.17 days = 7 }
+				}
+			}
+			
+			else = {
+				limit = { 
+					c:SPA = { 
+						 has_variable = herreria_invite_alt
+					} 
+				}
+				c:QUI = {
+					trigger_event = { id = dvg_caladero.18 days = 7 }
+				}
 			}
 		}
 		ai_chance = {
@@ -398,7 +353,7 @@ dvg_granada.5 = {
 	option = {
 		name = dvg_granada.5.c
 		c:GRA = {
-			create_truce = {
+			create_bidirectional_truce = {
 				country = c:SAN
 				months = 48
 			}
@@ -409,6 +364,27 @@ dvg_granada.5 = {
 			}
 			c:GRA = {
 				trigger_event = { id = dvg_granada.6 days = 7 }	# Collapse of Granada
+			}
+			if = {
+				limit = { 
+					c:SPA = { 
+						NOT = { has_variable = herreria_invite_alt } 
+					} 
+				}
+				c:QUI = {
+					trigger_event = { id = dvg_caladero.17 days = 7 }
+				}
+			}
+			
+			else = {
+				limit = { 
+					c:SPA = { 
+						 has_variable = herreria_invite_alt
+					} 
+				}
+				c:QUI = {
+					trigger_event = { id = dvg_caladero.18 days = 7 }
+				}
 			}
 		}
 		ai_chance = {
@@ -421,7 +397,7 @@ dvg_granada.5 = {
 		name = dvg_granada.5.e
 		play_as = c:SAN
 		c:GRA = {
-			create_truce = {
+			create_bidirectional_truce = {
 				country = c:SAN
 				months = 48
 			}
@@ -432,6 +408,27 @@ dvg_granada.5 = {
 			}
 			c:GRA = {
 				trigger_event = { id = dvg_granada.6 days = 7 }	# Collapse of Granada
+			}
+			if = {
+				limit = { 
+					c:SPA = { 
+						NOT = { has_variable = herreria_invite_alt } 
+					} 
+				}
+				c:QUI = {
+					trigger_event = { id = dvg_caladero.17 days = 7 }
+				}
+			}
+			
+			else = {
+				limit = { 
+					c:SPA = { 
+						 has_variable = herreria_invite_alt
+					} 
+				}
+				c:QUI = {
+					trigger_event = { id = dvg_caladero.18 days = 7 }
+				}
 			}
 		}
 		ai_chance = {
@@ -490,7 +487,7 @@ dvg_granada.6 = {
 				if = {
 					limit = {
 						NOT = {
-							has_law = law_type:wealth_voting
+							has_law = law_type:law_wealth_voting
 						}
 					}
 					activate_law = law_type:law_wealth_voting
@@ -499,33 +496,6 @@ dvg_granada.6 = {
 		}
 		change_tag = CST
 		set_capital = STATE_MIRANDA
-		hidden_effect = {
-			c:CST = {
-				add_primary_culture = cu:granadan
-				remove_primary_culture = cu:guianan
-			}
-		}
-		c:CST = {
-			ruler = { kill_character = yes }		
-			create_character = {
-				ruler = yes
-				is_general = yes
-				historical = yes
-				first_name = Antonio
-				last_name = Rocafuerte
-				birth_date = 1782.8.10
-				interest_group = ig_armed_forces
-				ideology = ideology_royalist
-				traits = {
-					persistent
-					expert_offensive_planner
-					romantic
-				}
-			}
-		}
-		c:ESQ = {
-			ruler = { kill_character = yes }
-		}
 		if = {
 			limit = {
 				NOT = {
@@ -535,19 +505,13 @@ dvg_granada.6 = {
 			activate_law = law_type:law_presidential_republic
 		}
 		c:CST = {
-			create_truce = {
+			create_bidirectional_truce = {
 				country = c:SAN
 				months = 48
 			}
-			create_truce = {
+			create_bidirectional_truce = {
 				country = c:ESQ
 				months = 48
-			}
-		}
-		c:SPA = {
-			remove_diplomatic_pact = {
-				country = c:CST
-				type = puppet
 			}
 		}
 		c:SPA = {
@@ -562,9 +526,12 @@ dvg_granada.6 = {
 		}
 		hidden_effect = {
 			c:CST = { 
+				trigger_event = { id = dvg_granada.19 days = 1 }
+				trigger_event = { id = dvg_granada.10 days = 5 } # The Spanish Withdraw
 				trigger_event = { id = dvg_granada.16 days = 7 }	# Coronation of Antonio Rocafuerte (post Collapse)
 			}
 			c:SAN = { 
+				trigger_event = { id = dvg_granada.19 days = 1 }
 				trigger_event = { id = dvg_granada.18 days = 7 }	# De Blanco proclaims himself the President of Herreria (post Collapse)
 			}
 		}
@@ -596,34 +563,6 @@ dvg_granada.6 = {
 			}
 		}
 		change_tag = ESQ
-		set_capital = STATE_GUAYANA
-		hidden_effect = {
-			c:ESQ = {
-				add_primary_culture = cu:guianan
-				remove_primary_culture = cu:granadan
-			}
-		}
-		c:CST = {
-			ruler = { kill_character = yes }
-			create_character = {
-				ruler = yes
-				is_general = yes
-				historical = yes
-				first_name = Antonio
-				last_name = Rocafuerte
-				birth_date = 1782.8.10
-				interest_group = ig_armed_forces
-				ideology = ideology_royalist
-				traits = {
-					persistent
-					expert_offensive_planner
-					romantic
-				}
-			}
-		}
-		c:ESQ = {
-			ruler = { kill_character = yes }
-		}
 		if = {
 			limit = {
 				NOT = {
@@ -641,24 +580,18 @@ dvg_granada.6 = {
 			activate_law = law_type:law_wealth_voting
 		}		
 		c:ESQ = {
-			create_truce = {
+			create_bidirectional_truce = {
 				country = c:SAN
 				months = 48
 			}
-			create_truce = {
+			create_bidirectional_truce = {
 				country = c:CST
 				months = 48
 			}
 		}
 		c:SPA = {
 			remove_diplomatic_pact = {
-				country = c:ESQ
-				type = puppet
-			}
-		}
-		c:SPA = {
-			remove_diplomatic_pact = {
-				country = c:ESQ
+				country = c:CST
 				type = dominion
 			}
 		}
@@ -668,6 +601,7 @@ dvg_granada.6 = {
 		}
 		hidden_effect = {
 			c:CST = { 
+				trigger_event = { id = dvg_granada.10 days = 5 } # The Spanish Withdraw
 				trigger_event = { id = dvg_granada.16 days = 7 }	# Coronation of Antonio Rocafuerte (post Collapse)
 			}
 			c:SAN = { 
@@ -700,7 +634,10 @@ dvg_granada.7 = {
 	duration = 3
 
 	trigger = {
-		year = 1837
+		exists = c:GRA
+		this = c:GRA
+		year = 1838
+		has_global_variable = dvg_SPA_truce_of_1840
 	}
 	
 	# It was probably just some freak accident
@@ -737,6 +674,10 @@ dvg_granada.8 = {
 	duration = 3
 
 	trigger = {
+		exists = c:GRA
+		this = c:GRA
+		year = 1840
+		has_global_variable = dvg_SPA_truce_of_1840
 	}
 	
 	# Bogota must not fall
@@ -746,7 +687,8 @@ dvg_granada.8 = {
 		add_radicals = {
 			value = 0.2
 			culture = cu:granadan
-		}		
+		}
+		trigger_event = { id = dvg_granada.5 days = 7 }
 		ai_chance = {
 			base = 1
 		}
@@ -798,25 +740,12 @@ dvg_granada.9 = {
 					if = {
 						limit = {
 							NOT = {
-								has_law = law_type:wealth_voting
+								has_law = law_type:law_wealth_voting
 							}
 						}
-						activate_law = law_type:wealth_voting
+						activate_law = law_type:law_wealth_voting
 					}
 				}
-			}
-		}
-		
-		c:ESQ = {
-			ruler = { kill_character = yes }	
-		}
-		
-		hidden_effect = {
-			c:ESQ = {
-				remove_primary_culture = cu:granadan
-			}
-			c:GRA = {
-				remove_primary_culture = cu:guianan
 			}
 		}
 	}
@@ -861,23 +790,17 @@ dvg_granada.10 = {
 		c:SPA = {
 			remove_diplomatic_pact = {
 				country = c:GRA
-				type = puppet
-			}
-		}
-		c:SPA = {
-			remove_diplomatic_pact = {
-				country = c:GRA
 				type = dominion
 			}
 		}
 		c:SPA = {
-			create_truce = {
+			create_bidirectional_truce = {
 				country = c:GRA
 				months = 48
 			}
 		}
 		c:SPA = {
-			trigger_event = { id = dvg_spain.28 }	# Withdrawal from Granada
+			trigger_event = { id = dvg_spain.15 }	# Withdrawal from Granada
 		}
 		hidden_effect = {
 			if = {
@@ -932,8 +855,13 @@ dvg_granada.11 = {
 	option = {
 		name = dvg_granada.11.a
 		default_option = yes
-		c:GRA = {
-			trigger_event = { id = dvg_granada.15 days = 7 }	# Coronation of Antonio Rocafuerte (GCW Victory)
+		if = {
+			limit = {
+				c:GRA = { is_subject = no }
+			}
+			c:GRA = {
+				trigger_event = { id = dvg_granada.15 days = 7 }	# Coronation of Antonio Rocafuerte (GCW Victory)
+			}
 		}
 		ai_chance = {
 			base = 1
@@ -1001,11 +929,11 @@ dvg_granada.13 = {
 	duration = 3
 
 	trigger = {
-		if = {
-			limit = {
-				NOT = { has_global_variable = dvg_SPA_truce_of_1838 }
-			}
-			year = 1840
+		exists = c:GRA
+		this = c:GRA
+		NOR = { 
+			has_global_variable = dvg_granada_collapse_happened
+			has_variable = dvg_granada_truce_denied
 		}
 		year = 1842
 	}
@@ -1017,10 +945,7 @@ dvg_granada.13 = {
 	option = {
 		name = dvg_granada.13.a
 		default_option = yes
-		set_global_variable = {
-			name = dvg_granada_collapse_happened
-			value = yes
-		}
+		set_global_variable = dvg_granada_collapse_happened
 		every_diplomatic_play = {
 			limit = {
 				initiator_is = c:GRA
@@ -1028,16 +953,11 @@ dvg_granada.13 = {
 			}
 			end_play = yes
 		}
-		change_tag = CST
-		set_capital = STATE_MIRANDA
-		c:CST = {
-			create_truce = {
+		c:GRA = {
+			create_bidirectional_truce = {
 				country = c:SAN
 				months = 48
 			}
-		}
-		c:CST = { 
-			remove_journal_entry = je_granadan_civil_war_GRA
 		}
 		hidden_effect = {
 			c:SAN = {
@@ -1058,6 +978,7 @@ dvg_granada.13 = {
 				name = dvg_herrera_revolutionary_fervor
 			}
 		}
+		set_variable = dvg_granada_truce_denied
 		ai_chance = {
 			base = 0
 		}
@@ -1095,18 +1016,33 @@ dvg_granada.14 = {
 		name = dvg_granada.14.a
 		default_option = yes
 		c:SAN = {
-			create_truce = {
-				country = c:CST
+			create_bidirectional_truce = {
+				country = c:GRA
 				months = 48
 			}
 		}
-		c:SAN = { 
-			remove_journal_entry = je_granadan_civil_war_SAN
+		if = {
+			limit = { 
+				c:QUI = { has_variable = dvg_QUI_ballivian }
+			}
+			c:GRA = {
+				trigger_event = { id = dvg_granada.21 days = 7 }
+			}
+		}
+		else_if = {
+			limit = { 
+				c:QUI = { 
+					NOT = { has_variable = dvg_QUI_ballivian }
+				}
+			}
+			c:GRA = {
+				trigger_event = { id = dvg_granada.30 days = 7 }
+			}
 		}
 		hidden_effect = {
-			c:CST = { 
+			c:GRA = { 
 				trigger_event = { id = dvg_granada.19 days = 1 }
-				trigger_event = { id = dvg_granada.16 days = 7 }	# Coronation of Antonio Rocafuerte (post Collapse)
+				trigger_event = { id = dvg_granada.10 days = 5 } # The Spanish Withdraw
 			}
 			c:SAN = {
 				trigger_event = { id = dvg_granada.19 days = 1 }
@@ -1142,9 +1078,6 @@ dvg_granada.15 = {
 	}
 	
 	immediate = {
-		c:SAN = {
-			remove_modifier = dvg_herrera_revolutionary_fervor
-		}
 		if = {
 			limit = {
 				NOT = {
@@ -1185,21 +1118,8 @@ dvg_granada.15 = {
 			}
 			activate_law = law_type:law_censorship
 		}
-		ruler = { kill_character = yes }			
-		create_character = {
-			ruler = yes
-			is_general = yes
-			historical = yes
-			first_name = Antonio
-			last_name = Rocafuerte
-			birth_date = 1782.8.10
-			interest_group = ig_armed_forces
-			ideology = ideology_royalist
-			traits = {
-				persistent
-				expert_offensive_planner
-				romantic
-			}
+		ruler = {
+			set_ideology = ideology:ideology_humanitarian_royalist
 		}
 	}
 	
@@ -1207,7 +1127,7 @@ dvg_granada.15 = {
 	option = {
 		name = dvg_granada.15.a
 		default_option = yes
-		set_capital = STATE_MIRANDA
+		
 		ai_chance = {
 			base = 1
 		}
@@ -1280,21 +1200,8 @@ dvg_granada.16 = {
 			}
 			activate_law = law_type:law_censorship
 		}
-		ruler = { kill_character = yes }			
-		create_character = {
-			ruler = yes
-			is_general = yes
-			historical = yes
-			first_name = Antonio
-			last_name = Rocafuerte
-			birth_date = 1782.8.10
-			interest_group = ig_armed_forces
-			ideology = ideology_royalist
-			traits = {
-				persistent
-				expert_offensive_planner
-				romantic
-			}
+		ruler = {
+			set_ideology = ideology:ideology_humanitarian_royalist
 		}
 	}
 	
@@ -1332,9 +1239,7 @@ dvg_granada.17 = {
 	}
 	
 	immediate = {
-		c:SAN = {
-			remove_modifier = dvg_herrera_revolutionary_fervor
-		}
+		remove_modifier = dvg_herrera_revolutionary_fervor
 		if = {
 			limit = {
 				NOT = {
@@ -1367,13 +1272,13 @@ dvg_granada.17 = {
 			}
 			activate_law = law_type:law_slave_trade
 		}
-		trigger_event = { id = dvg_granada.21 days = 4 }	# workaround for de Blanco spawning
+		
 	}
 	
 	# Viva de Blanco!
 	option = {
 		name = dvg_granada.17.a
-		set_capital = STATE_ANTIOQUIA
+		
 		default_option = yes
 		ai_chance = {
 			base = 1
@@ -1404,9 +1309,7 @@ dvg_granada.18 = {
 	}
 	
 	immediate = {
-		c:SAN = {
-			remove_modifier = dvg_herrera_revolutionary_fervor
-		}
+		remove_modifier = dvg_herrera_revolutionary_fervor
 		if = {
 			limit = {
 				NOT = {
@@ -1439,7 +1342,7 @@ dvg_granada.18 = {
 			}
 			activate_law = law_type:law_slave_trade
 		}
-		trigger_event = { id = dvg_granada.21 days = 4 }	# workaround for de Blanco spawning
+		
 	}
 	
 	# Viva de Blanco!
@@ -1523,15 +1426,13 @@ dvg_granada.20 = {
 	}
 }
 
-# Workaround for spawning de Blanco
 dvg_granada.21 = {
 	type = country_event
 	placement = ROOT
-	hidden = yes
 
-	title = dvg_granada.20.t
-	desc = dvg_granada.20.d
-	flavor = dvg_granada.20.f
+	title = dvg_granada.21.t
+	desc = dvg_granada.21.d
+	flavor = dvg_granada.21.f
 	
 	event_image = {
 		video = "southamerica_aristocrats"
@@ -1547,24 +1448,989 @@ dvg_granada.21 = {
 	trigger = {
 	}
 	
+	option = {
+		name = dvg_granada.21.a
+		default_option = yes
+		
+		trigger_event = { id = dvg_granada.22 days = 7 }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_granada.22 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_granada.22.t
+	desc = dvg_granada.22.d
+	flavor = dvg_granada.22.f
+	
+	event_image = {
+		video = "unspecific_politicians_arguing"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
 	immediate = {
-		ruler = { kill_character = yes }			
-		create_character = {
-			ruler = yes
-			is_general = yes
-			historical = yes
-			first_name = Guillermo
-			last_name = de_Blanco
-			dna = dna_francisco_de_paula_santander
-			birth_date = 1789.12.10
-			hq = region_gran_colombia
-			interest_group = ig_armed_forces
-			ideology = ideology_ethno_nationalist
-			traits = {
-				meticulous
-				experienced_defensive_strategist
-				firebrand
+	}
+	
+	# So be it
+	option = {
+		name = dvg_granada.22.a
+		default_option = yes
+		
+		trigger_event = { id = dvg_granada.23 days = 7 }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_granada.23 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_granada.23.t
+	desc = dvg_granada.23.d
+	flavor = dvg_granada.23.f
+	
+	event_image = {
+		video = "unspecific_politicians_arguing"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+	}
+	
+	# So be it
+	option = {
+		name = dvg_granada.23.a
+		default_option = yes
+		
+		trigger_event = { id = dvg_granada.24 days = 7 }
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_granada.24 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_granada.24.t
+	desc = dvg_granada.24.d
+	flavor = dvg_granada.24.f
+	
+	event_image = {
+		video = "unspecific_politicians_arguing"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+	}
+	
+	# New Granada’s future hangs by a thread
+	option = {
+		name = dvg_granada.24.a
+		default_option = yes
+		trigger_event = { id = dvg_granada.25 days = 7 }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_granada.25 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_granada.25.t
+	desc = dvg_granada.25.d
+	flavor = dvg_granada.25.f
+	
+	event_image = {
+		video = "unspecific_politicians_arguing"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+	}
+	
+	# So be it
+	option = {
+		name = dvg_granada.25.a
+		default_option = yes
+		trigger_event = { id = dvg_granada.26 days = 7 }
+		
+		ai_chance = {
+			base = 0
+		}
+	}
+	option = {
+		name = dvg_granada.25.b
+		default_option = yes
+		trigger_event = { id = dvg_granada.27 days = 7 }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_granada.26 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_granada.26.t
+	desc = dvg_granada.26.d
+	flavor = dvg_granada.26.f
+	
+	event_image = {
+		video = "unspecific_politicians_arguing"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+	}
+	
+	# ¡Viva Ballivian!
+	option = {
+		name = dvg_granada.26.a
+		default_option = yes
+		
+		if = {
+			limit = {
+				c:QUI = { is_player = yes }
 			}
+			annex = c:SAN
+			annex = c:GRA
+			add_primary_culture = cu:granadan
+			set_variable = dvg_martin_is_super_glad
+		}
+		else = {
+			limit = {
+				c:QUI = { is_player = no }
+			}
+			change_tag = QUI
+			c:QUI = {
+				annex = c:SAN
+				annex = c:GRA
+				add_primary_culture = cu:granadan
+				set_variable = dvg_martin_is_super_glad
+			}
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_granada.27 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_granada.27.t
+	desc = dvg_granada.27.d
+	flavor = dvg_granada.27.f
+	
+	event_image = {
+		video = "unspecific_politicians_arguing"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+	}
+	
+	# So be it
+	option = {
+		name = dvg_granada.27.a
+		default_option = yes
+		
+		trigger_event = { id = dvg_granada.28 days = 7 }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_granada.28 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_granada.28.t
+	desc = dvg_granada.28.d
+	flavor = dvg_granada.28.f
+	
+	event_image = {
+		video = "unspecific_politicians_arguing"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# So be it
+	option = {
+		name = dvg_granada.28.a
+		default_option = yes
+		
+		c:GRA = {
+			create_diplomatic_play = {
+				target_country = c:SAN
+				war = yes
+				type = dp_annex_war
+				add_war_goal = {
+					holder = c:SAN
+					type = annex_country
+					target_country = c:GRA
+				}
+			}
+			create_diplomatic_play = {
+				target_country = c:QUI
+				war = yes
+				type = dp_annex_war
+				add_war_goal = {
+					holder = c:QUI
+					type = annex_country
+					target_country = c:GRA
+				}
+			}
+		}
+		c:QUI = {
+			create_diplomatic_play = {
+				target_country = c:SAN
+				war = yes
+				type = dp_annex_war
+				add_war_goal = {
+					holder = c:SAN
+					type = annex_country
+					target_country = c:QUI
+				}
+			}
+		}
+		c:SAN = { 
+			add_journal_entry = {
+				type = je_granadan_civil_war
+			}
+		}
+		c:GRA = { 
+			add_journal_entry = {
+				type = je_granadan_civil_war
+			}
+		}
+		c:QUI = { 
+			add_journal_entry = {
+				type = je_granadan_civil_war
+			}
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+	option = {
+		name = dvg_granada.28.b
+		
+		play_as = c:SAN
+		
+		c:GRA = {
+			create_diplomatic_play = {
+				target_country = c:SAN
+				war = yes
+				type = dp_annex_war
+				add_war_goal = {
+					holder = c:SAN
+					type = annex_country
+					target_country = c:GRA
+				}
+			}
+			create_diplomatic_play = {
+				target_country = c:QUI
+				war = yes
+				type = dp_annex_war
+				add_war_goal = {
+					holder = c:QUI
+					type = annex_country
+					target_country = c:GRA
+				}
+			}
+		}
+		c:QUI = {
+			create_diplomatic_play = {
+				target_country = c:SAN
+				war = yes
+				type = dp_annex_war
+				add_war_goal = {
+					holder = c:SAN
+					type = annex_country
+					target_country = c:QUI
+				}
+			}
+		}
+		c:SAN = { 
+			add_journal_entry = {
+				type = je_granadan_civil_war
+			}
+		}
+		c:GRA = { 
+			add_journal_entry = {
+				type = je_granadan_civil_war
+			}
+		}
+		c:QUI = { 
+			add_journal_entry = {
+				type = je_granadan_civil_war
+			}
+		}
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+dvg_granada.29 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_granada.29.t
+	desc = dvg_granada.29.d
+	flavor = dvg_granada.29.f
+	
+	event_image = {
+		video = "unspecific_politicians_arguing"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+	}
+	
+	# So be it
+	option = {
+		name = dvg_granada.29.a
+		default_option = yes
+		
+		create_diplomatic_play = {
+			target_country = c:QUI
+			war = yes
+			type = dp_annex_war
+		}
+		create_diplomatic_play = {
+			target_country = c:TWT
+			war = yes
+			type = dp_annex_war
+		}
+		add_journal_entry = {
+			type = je_andes_campaign_de_blanco
+		}
+		set_variable = intervened_andes
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_granada.30 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_granada.30.t
+	desc = dvg_granada.30.d
+	flavor = dvg_granada.30.f
+	
+	event_image = {
+		video = "unspecific_politicians_arguing"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+	}
+	
+	# So be it
+	option = {
+		name = dvg_granada.30.a
+		default_option = yes
+		
+		trigger_event = { id = dvg_granada.31 days = 7 }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_granada.31 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_granada.31.t
+	desc = dvg_granada.31.d
+	flavor = dvg_granada.31.f
+	
+	event_image = {
+		video = "unspecific_politicians_arguing"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+	}
+	
+	# So be it
+	option = {
+		name = dvg_granada.31.a
+		default_option = yes
+		
+		trigger_event = { id = dvg_granada.32 days = 7 }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_granada.32 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_granada.32.t
+	desc = dvg_granada.32.d
+	flavor = dvg_granada.32.f
+	
+	event_image = {
+		video = "unspecific_politicians_arguing"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+	}
+	
+	# So be it
+	option = {
+		name = dvg_granada.32.a
+		default_option = yes
+		
+		trigger_event = { id = dvg_granada.33 days = 7 }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_granada.33 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_granada.33.t
+	desc = dvg_granada.33.d
+	flavor = dvg_granada.33.f
+	
+	event_image = {
+		video = "unspecific_politicians_arguing"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	# So be it
+	option = {
+		name = dvg_granada.33.a
+		default_option = yes
+		
+		c:GRA = {
+			create_diplomatic_play = {
+				target_country = c:SAN
+				war = yes
+				type = dp_annex_war
+				add_war_goal = {
+					holder = c:SAN
+					type = annex_country
+					target_country = c:GRA
+				}
+			}
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+	option = {
+		name = dvg_granada.33.b
+		
+		play_as = c:SAN
+		c:GRA = {
+			create_diplomatic_play = {
+				target_country = c:SAN
+				war = yes
+				type = dp_annex_war
+				add_war_goal = {
+					holder = c:SAN
+					type = annex_country
+					target_country = c:GRA
+				}
+			}
+		}
+		
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+dvg_granada.34 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_granada.34.t
+	desc = dvg_granada.34.d
+	flavor = dvg_granada.34.f
+	
+	event_image = {
+		video = "unspecific_politicians_arguing"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+	}
+	
+	# So be it
+	option = {
+		name = dvg_granada.34.a
+		default_option = yes
+		
+		trigger_event = { id = dvg_granada.35 days = 7 }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_granada.35 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_granada.35.t
+	desc = dvg_granada.35.d
+	flavor = dvg_granada.35.f
+	
+	event_image = {
+		video = "unspecific_politicians_arguing"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+	}
+	
+	# So be it
+	option = {
+		name = dvg_granada.35.a
+		default_option = yes
+		
+		if = { #prevents the event from kicking if you already annex QUI via decision
+			limit = {
+				exists = c:QUI
+				c:QUI = { 
+					is_at_war = no 
+					relations:root < relations_threshold:amicable
+				}
+			}
+			c:QUI = {
+				trigger_event = { id = dvg_granada.36 }
+			}
+		}
+		
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_granada.36 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_granada.36.t
+	desc = dvg_granada.36.d
+	flavor = dvg_granada.36.f
+	
+	event_image = {
+		video = "unspecific_politicians_arguing"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+	}
+	
+	# So be it
+	option = {
+		name = dvg_granada.36.a
+		default_option = yes
+		
+		c:GRA = {
+			if = {
+				limit = {
+					any_scope_treaty = {
+						binds = c:QUI
+						any_scope_article = {
+							has_type = alliance
+						}
+					}
+				}
+				every_scope_treaty = {
+					limit = {
+						binds = c:QUI
+						any_scope_article = {
+							has_type = alliance
+						}
+					}
+					withdraw = {
+						country = root
+					}
+				}
+			}
+			create_diplomatic_play = {
+				target_country = c:QUI
+				war = yes
+				type = dp_annex_war
+				
+				add_war_goal = {
+					holder = c:QUI
+					type = annex_country
+					target_country = c:GRA
+				}
+			}
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_granada.37 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_granada.37.t
+	desc = dvg_granada.37.d
+	flavor = dvg_granada.37.f
+	
+	event_image = {
+		video = "unspecific_politicians_arguing"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		exists = c:GRA
+		this = c:GRA
+		exists = c:QUI
+		exists = c:TWT
+		has_variable = de_blanco_revenge
+		NOT = { has_variable = intervened_andes }
+		c:QUI = { has_variable = dvg_QUI_ballivian }
+	}
+	
+	immediate = {
+	}
+	
+	# So be it
+	option = {
+		name = dvg_granada.37.a
+		default_option = yes
+		
+		c:GRA = {
+			if = {
+				limit = {
+					NOT = {
+						any_scope_treaty = {
+							binds = c:QUI
+							any_scope_article = {
+								has_type = alliance
+							}
+						}
+					}
+				}
+				create_treaty = {
+					first_country = root
+					second_country = c:QUI
+
+					is_draft = no
+					binding_period = { years = 5 }
+
+					articles_to_create = {
+						{
+							article = alliance
+						}
+					}
+				}
+			}
+		}
+		random_diplomatic_play = {
+			limit = {
+				any_scope_play_involved = { this = c:QUI }
+				any_scope_play_involved = { this = c:TWT }
+			}
+			add_target_backers = { root }
+		}
+		c:QUI = {
+			trigger_event = { id = dvg_granada.38 days = 7 }
+		}
+		c:TWT = {
+			trigger_event = { id = dvg_granada.39 days = 7 }
+		}
+		add_journal_entry = {
+			type = je_andes_campaign_de_blanco_ballivian
+		}
+		set_variable = intervened_andes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_granada.38 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_granada.38.t
+	desc = dvg_granada.38.d
+	flavor = dvg_granada.38.f
+	
+	event_image = {
+		video = "unspecific_politicians_arguing"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+	}
+	
+	# So be it
+	option = {
+		name = dvg_granada.38.a
+		default_option = yes
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_granada.39 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_granada.39.t
+	desc = dvg_granada.39.d
+	flavor = dvg_granada.39.f
+	
+	event_image = {
+		video = "unspecific_politicians_arguing"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+	}
+	
+	# So be it
+	option = {
+		name = dvg_granada.39.a
+		default_option = yes
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_granada.40 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_granada.40.t
+	desc = dvg_granada.40.d
+	flavor = dvg_granada.40.f
+	
+	event_image = {
+		video = "unspecific_politicians_arguing"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+	}
+	
+	# So be it
+	option = {
+		name = dvg_granada.40.a
+		default_option = yes
+		
+		trigger_event = { id = dvg_granada.41 days = 7 }
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+dvg_granada.41 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_granada.41.t
+	desc = dvg_granada.41.d
+	flavor = dvg_granada.41.f
+	
+	event_image = {
+		video = "unspecific_politicians_arguing"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+	
+	immediate = {
+	}
+	
+	# So be it
+	option = {
+		name = dvg_granada.41.a
+		default_option = yes
+		ai_chance = {
+			base = 1
 		}
 	}
 }

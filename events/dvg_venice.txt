@@ -38,6 +38,89 @@ dvg_ven.1 = {
 		}
 	}
 }
+#Orano
+dvg_ven.2 = {
+	type = country_event
+	placement = root
+	title = dvg_ven.2.t
+	desc = dvg_ven.2.d
+	flavor = dvg_ven.2.f
+
+	duration = 3
+
+	event_image = {
+		video = "europenorthamerica_rich_and_poor"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/europenorthamerica_rich_and_poor"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	trigger = {
+	}
+
+	immediate = {
+		
+	}
+
+	option = {
+		name = dvg_ven.2.a
+		default_option = yes
+		trigger = {
+			has_game_rule = breakaway
+		}
+
+		add_primary_culture = cu:orano
+		remove_primary_culture = cu:venetian
+
+		
+		every_scope_pop = {
+			limit = {
+				is_pop_type = bureaucrats
+			}
+			change_pop_culture = {
+				target = cu:orano
+				value = 1
+			}
+		}
+		random_scope_pop = {
+			limit = {
+				culture = {
+					has_discrimination_trait_group = heritage_group_european
+				}
+			}
+			change_pop_culture = {
+				target = cu:orano
+				value = 1
+			}
+		}
+		ai_chance = {
+			base = 100
+		}
+	}
+	option = {
+		name = dvg_ven.2.b
+		
+		add_primary_culture = cu:venetian
+		remove_primary_culture = cu:orano
+
+		if = {
+			limit = {
+				has_technology_researched = nationalism
+			}
+			add_technology_progress = {
+				technology = pan-nationalism
+				progress = 5000
+			}
+		}
+
+		ai_chance = {
+			base = 1
+		}
+
+	}
+}
 
 #Disaster Begins
 dvg_ven.101 = { #nationalist and anti-caste thoughts have coalesced in calls for enfranchisement
@@ -123,13 +206,13 @@ dvg_ven.102 = {
 		ig:ig_landowners = {
 			add_modifier = {
 				name = dvg_ven_patricians_victory_modifier
-				months = normal_modifier_time
+				days = normal_modifier_time
 			}
 		}
 		ig:ig_petty_bourgeoisie = {
 			add_modifier = {
 				name = dvg_ven_patricians_victory_modifier
-				months = normal_modifier_time
+				days = normal_modifier_time
 			}
 		}
 	}
@@ -182,13 +265,13 @@ dvg_ven.102 = {
 			ig:ig_landowners = {
 				add_modifier = {
 					name = dvg_ven_patricians_solo_victory_modifier
-					months = long_modifier_time
+					days = long_modifier_time
 				}
 			}
 			ig:ig_petty_bourgeoisie = {
 				add_modifier = {
 					name = dvg_ven_patricians_solo_victory_modifier
-					months = long_modifier_time
+					days = long_modifier_time
 				}
 			}
 		}
@@ -225,7 +308,7 @@ dvg_ven.103 = {
 			remove_ideology = ideology_venician_patrician
 			add_modifier = {
 				name = dvg_ven_patricians_diluted_power
-				months = long_modifier_time
+				days = long_modifier_time
 			}
 		}
 		ig:ig_petty_bourgeoisie = {
@@ -233,7 +316,7 @@ dvg_ven.103 = {
 			add_ideology = ideology_reactionary
 			add_modifier = {
 				name = dvg_ven_patricians_diluted_power
-				months = long_modifier_time
+				days = long_modifier_time
 			}
 		}
 		remove_modifier = dvg_ven_patricians
@@ -375,13 +458,13 @@ dvg_ven.104 = { #Chose your character
 		ig:ig_petty_bourgeoisie = {
 			add_modifier = {
 				name = dvg_ven_patricians_no_outside_help
-				months = normal_modifier_time
+				days = normal_modifier_time
 			}
 		}
 		ig:ig_landowners = {
 			add_modifier = {
 				name = dvg_ven_patricians_no_outside_help
-				months = normal_modifier_time
+				days = normal_modifier_time
 			}
 		}
 		scope:dvg_ven_positivist_leader_scope = {
@@ -519,13 +602,13 @@ dvg_ven.105 = { #Competing speaches -
 		ig:ig_petty_bourgeoisie = {
 			add_modifier = {
 				name = dvg_ven_patricians_no_outside_help
-				months = normal_modifier_time
+				days = normal_modifier_time
 			}
 		}
 		ig:ig_landowners = {
 			add_modifier = {
 				name = dvg_ven_patricians_no_outside_help
-				months = normal_modifier_time
+				days = normal_modifier_time
 			}
 		}
 	}
@@ -550,54 +633,56 @@ dvg_ven.106 = { #movement gets rowdy
 	icon = "gfx/interface/icons/event_icons/event_protest.dds"
 	trigger = { 
 		any_political_movement = {
+			political_movement_radicalism >= 0.5 # temporary, as the old movement_to_enact and movement_to_restore triggers no longer work after politics rework 
+			#OR = {
+			#	is_political_movement_type = movement_to_enact
+			#	is_political_movement_type = movement_to_restore
+			#}
 			OR = {
-				is_political_movement_type = movement_to_enact
-				is_political_movement_type = movement_to_restore
-			}
-			OR = {
-				desired_law = law_type:law_landed_voting
-				desired_law = law_type:law_wealth_voting
-				desired_law = law_type:law_census_voting
-				desired_law = law_type:law_universal_suffrage
+				most_desired_law = law_type:law_landed_voting
+				most_desired_law = law_type:law_wealth_voting
+				most_desired_law = law_type:law_census_voting
+				most_desired_law = law_type:law_universal_suffrage
 				
-				desired_law = law_type:law_parliamentary_republic
-				desired_law = law_type:law_presidential_republic
+				most_desired_law = law_type:law_parliamentary_republic
+				most_desired_law = law_type:law_presidential_republic
 
-				desired_law = law_type:law_racial_segregation
-				desired_law = law_type:law_cultural_exclusion
-				desired_law = law_type:law_multicultural
+				most_desired_law = law_type:law_racial_segregation
+				most_desired_law = law_type:law_cultural_exclusion
+				most_desired_law = law_type:law_multicultural
 
-				desired_law = law_type:law_right_of_assembly
-				desired_law = law_type:law_protected_speech
+				most_desired_law = law_type:law_right_of_assembly
+				most_desired_law = law_type:law_protected_speech
 
-				desired_law = law_type:law_slavery_banned
+				most_desired_law = law_type:law_slavery_banned
 			}
 		}
 	}
 	immediate = {
 		random_political_movement = {
 			limit = {
-				OR = {
-					is_political_movement_type = movement_to_enact
-					is_political_movement_type = movement_to_restore
-				}
+				political_movement_radicalism >= 0.5 # temporary, as the old movement_to_enact and movement_to_restore triggers no longer work after politics rework 
+				#OR = {
+				#	is_political_movement_type = movement_to_enact
+				#	is_political_movement_type = movement_to_restore
+				#}
 				OR = { #must be liberal movement
-					desired_law = law_type:law_landed_voting
-					desired_law = law_type:law_wealth_voting
-					desired_law = law_type:law_census_voting
-					desired_law = law_type:law_universal_suffrage
+					most_desired_law = law_type:law_landed_voting
+					most_desired_law = law_type:law_wealth_voting
+					most_desired_law = law_type:law_census_voting
+					most_desired_law = law_type:law_universal_suffrage
 					
-					desired_law = law_type:law_parliamentary_republic
-					desired_law = law_type:law_presidential_republic
+					most_desired_law = law_type:law_parliamentary_republic
+					most_desired_law = law_type:law_presidential_republic
 
-					desired_law = law_type:law_racial_segregation
-					desired_law = law_type:law_cultural_exclusion
-					desired_law = law_type:law_multicultural
+					most_desired_law = law_type:law_racial_segregation
+					most_desired_law = law_type:law_cultural_exclusion
+					most_desired_law = law_type:law_multicultural
 
-					desired_law = law_type:law_right_of_assembly
-					desired_law = law_type:law_protected_speech
+					most_desired_law = law_type:law_right_of_assembly
+					most_desired_law = law_type:law_protected_speech
 
-					desired_law = law_type:law_slavery_banned
+					most_desired_law = law_type:law_slavery_banned
 				}
 			}
 			save_scope_as = dvg_ven_supporting_movement
@@ -609,7 +694,7 @@ dvg_ven.106 = { #movement gets rowdy
 		scope:dvg_ven_supporting_movement = {
 			add_modifier = {
 				name = dvg_ven_movement_supressed_modifier
-				months = short_modifier_time
+				days = short_modifier_time
 			}
 		}
 		add_radicals = {
@@ -634,13 +719,13 @@ dvg_ven.106 = { #movement gets rowdy
 		scope:dvg_ven_supporting_movement = {
 			add_modifier = {
 				name = dvg_ven_movement_support_modifier
-				months = short_modifier_time
+				days = short_modifier_time
 			}
 		}
 		if = {
 			limit = {
 				scope:dvg_ven_supporting_movement = {
-					this.desired_law = root.currently_enacting_law.type
+					this.most_desired_law = root.currently_enacting_law.type
 				}
 			}
 			add_enactment_modifier = {
@@ -680,18 +765,18 @@ dvg_ven.107 = { #shipyard sabotage
 		default_option = yes
 		add_modifier = {
 			name = dvg_ven_tea_party_modifier
-			months = short_modifier_time
+			days = short_modifier_time
 		}
 		ig:ig_petty_bourgeoisie = {
 			add_modifier = {
 				name = dvg_ven_patricians_no_outside_help
-				months = short_modifier_time
+				days = short_modifier_time
 			}
 		}
 		ig:ig_landowners = {
 			add_modifier = {
 				name = dvg_ven_patricians_no_outside_help
-				months = short_modifier_time
+				days = short_modifier_time
 			}
 		}
 		custom_tooltip = {
@@ -707,7 +792,7 @@ dvg_ven.107 = { #shipyard sabotage
 		
 		add_modifier = {
 			name = dvg_ven_diverting_resources
-			months = short_modifier_time
+			days = short_modifier_time
 			multiplier = money_amount_multiplier_medium
 		}
 		custom_tooltip = {
@@ -743,18 +828,18 @@ dvg_ven.1071 = { #factory sabotage
 		default_option = yes
 		add_modifier = {
 			name = dvg_ven_factory_sabotage_modifier
-			months = short_modifier_time
+			days = short_modifier_time
 		}
 		ig:ig_petty_bourgeoisie = {
 			add_modifier = {
 				name = dvg_ven_patricians_no_outside_help
-				months = short_modifier_time
+				days = short_modifier_time
 			}
 		}
 		ig:ig_landowners = {
 			add_modifier = {
 				name = dvg_ven_patricians_no_outside_help
-				months = short_modifier_time
+				days = short_modifier_time
 			}
 		}
 		custom_tooltip = {
@@ -770,7 +855,7 @@ dvg_ven.1071 = { #factory sabotage
 		
 		add_modifier = {
 			name = dvg_ven_diverting_resources
-			months = short_modifier_time
+			days = short_modifier_time
 			multiplier = money_amount_multiplier_medium
 		}
 		custom_tooltip = {
@@ -806,7 +891,7 @@ dvg_ven.108 = { #class violence - adds radicals from sol
 		default_option = yes
 		add_modifier = {
 			name = dvg_ven_modifier_public_worried
-			months = short_modifier_time
+			days = short_modifier_time
 		}
 	}
 }
@@ -979,7 +1064,7 @@ dvg_ven.109 = { #nationalists goo up an Aragonese diplomat
 			name = dvg_ven.1091.b
 			add_modifier = {
 				name = dvg_ven_arn_diplomatic_mastry
-				months = normal_modifier_time
+				days = normal_modifier_time
 			}
 		}
 		option = { #Demand compensation
@@ -1025,12 +1110,12 @@ dvg_ven.109 = { #nationalists goo up an Aragonese diplomat
 			default_option = yes
 			add_modifier = {
 				name = dvg_ven_modifier_ven_payments
-				months = short_modifier_time
+				days = short_modifier_time
 			}
 			c:ARN = {
 				add_modifier = {
 					name = dvg_ven_modifier_arn_payments
-					months = short_modifier_time
+					days = short_modifier_time
 				}
 			}
 			c:VEN = {
@@ -1088,72 +1173,48 @@ dvg_ven.109 = { #nationalists goo up an Aragonese diplomat
 			if = {
 				limit = {
 					c:VEN = {
-						has_diplomatic_pact = {
-							who = root
-							type = defensive_pact
-						}									
+						any_scope_treaty = {
+							binds = c:ARN
+							any_scope_article = {
+								has_type = defensive_pact
+							}
+						}							
 					}
-				 }
-				 remove_diplomatic_pact = {
-					country = c:VEN
-					type = defensive_pact
-				}	
+				}
+				every_scope_treaty = {
+					limit = {
+						binds = c:VEN
+						any_scope_article = {
+							has_type = defensive_pact
+						}
+					}
+					withdraw = {
+						country = root
+					}
+				}
 			}
-			if = {
+			else_if = {
 				limit = {
 					c:VEN = {
-						has_diplomatic_pact = {
-							who = root
-							type = customs_union
-						}									
+						any_scope_treaty = {
+							binds = c:ARN
+							any_scope_article = {
+								has_type = alliance
+							}
+						}							
 					}
-				 }
-				 remove_diplomatic_pact = {
-					country = c:VEN
-					type = customs_union
-				}	
-			}
-			if = {
-				limit = {
-					c:VEN = {
-						has_diplomatic_pact = {
-							who = root
-							type = trade_agreement
-						}									
+				}
+				every_scope_treaty = {
+					limit = {
+						binds = c:VEN
+						any_scope_article = {
+							has_type = alliance
+						}
 					}
-				 }
-				 remove_diplomatic_pact = {
-					country = c:VEN
-					type = trade_agreement
-				}	
-			}
-			if = {
-				limit = {
-					c:VEN = {
-						has_diplomatic_pact = {
-							who = root
-							type = alliance
-						}									
+					withdraw = {
+						country = root
 					}
-				 }
-				 remove_diplomatic_pact = {
-					country = c:VEN
-					type = alliance
-				}	
-			}
-			if = {
-				limit = {
-					c:VEN = {
-						has_diplomatic_pact = {
-							who = root
-							type = alliance
-						}									
-					}
-				 }
-				 remove_diplomatic_pact = {
-					country = c:VEN
-					type = alliance
-				}	
+				}
 			}
 			c:ARN = {
 				create_diplomatic_pact = {
@@ -1306,7 +1367,7 @@ dvg_ven.111 = { #Capitalists choose a side
 		}
 		add_modifier = {
 			name = dvg_ven_industrialists_tax_cuts
-			months = normal_modifier_time
+			days = normal_modifier_time
 			multiplier = money_amount_multiplier_medium
 		}
 		if = {
@@ -1350,7 +1411,7 @@ dvg_ven.111 = { #Capitalists choose a side
 		}
 		add_modifier = {
 			name = dvg_ven_industrialists_tax_cuts
-			months = normal_modifier_time
+			days = normal_modifier_time
 			multiplier = money_amount_multiplier_medium
 		}
 		custom_tooltip = {
@@ -1366,7 +1427,7 @@ dvg_ven.111 = { #Capitalists choose a side
 
 		add_modifier = {
 			name = dvg_ven_authority_up
-			months = normal_modifier_time
+			days = normal_modifier_time
 		}
 	}
 }
@@ -1484,7 +1545,7 @@ dvg_ven.113 = { #Abolitionist
 
 		add_modifier = {
 			name = dvg_ven_plantation_owners_support
-			months = normal_modifier_time
+			days = normal_modifier_time
 			multiplier = money_amount_multiplier_medium
 		}
 		scope:dvg_ven_abolitionist_leader_scope = {
@@ -1576,12 +1637,12 @@ dvg_ven.114 = { #involve the universities
 		}
 		add_modifier = {
 			name = dvg_ven_diverting_resources
-			months = normal_modifier_time
+			days = normal_modifier_time
 			multiplier = money_amount_multiplier_medium
 		}
 		add_modifier = {
 			name = dvg_ven_intelligentsia_support
-			months = normal_modifier_time
+			days = normal_modifier_time
 		}
 		custom_tooltip = {
 			text = dvg_increase_ven_patricians_success_count_var_tt
@@ -1612,12 +1673,12 @@ dvg_ven.114 = { #involve the universities
 		}
 		add_modifier = {
 			name = dvg_ven_diverting_resources
-			months = normal_modifier_time
+			days = normal_modifier_time
 			multiplier = money_amount_multiplier_medium
 		}
 		add_modifier = {
 			name = dvg_ven_intelligentsia_support
-			months = normal_modifier_time
+			days = normal_modifier_time
 		}
 		custom_tooltip = {
 			text = dvg_decrease_ven_patricians_success_count_var_tt
@@ -1631,7 +1692,7 @@ dvg_ven.114 = { #involve the universities
 		name = dvg_ven.114.c
 		add_modifier = {
 			name = dvg_ven_authority_up
-			months = normal_modifier_time
+			days = normal_modifier_time
 		}
 	}
 }
@@ -1786,7 +1847,7 @@ dvg_ven.115 = { #Military allies in the council
 		name = dvg_ven.115.c
 		add_modifier = {
 			name = dvg_ven_authority_up
-			months = normal_modifier_time
+			days = normal_modifier_time
 		}
 	}
 }
@@ -1987,7 +2048,7 @@ dvg_ven.119 = { #The Iannarelli Institute Keeps Us Positivist
 
 		add_modifier = {
 			name = dvg_ven_authority_up
-			months = normal_modifier_time
+			days = normal_modifier_time
 		}
 	}
 }

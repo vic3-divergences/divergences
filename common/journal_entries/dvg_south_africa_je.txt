@@ -13,11 +13,18 @@
 		owns_entire_state_region = STATE_VRYSTAAT 
 		custom_tooltip = {
 		text = dvg_basuto_no_rickusdorp_tt
-			c:BST = {
-				NOT = {
-					has_state_in_state_region = STATE_NORTHERN_CAPE
+			OR = {
+				c:BST = {
+					NOT = {
+						has_state_in_state_region = STATE_NORTHERN_CAPE
+					}
+				}
+				owns_entire_state_region = STATE_NORTHERN_CAPE
+				c:LEW = {
+					owns_entire_state_region = STATE_NORTHERN_CAPE
 				}
 			}
+			
 		}	
 	}
 
@@ -35,20 +42,30 @@ je_return_of_hendrik = {
 	group = je_group_internal_affairs
 
 	complete = {
-		AND = {
-			custom_tooltip = {
-			text = dvg_ready_for_noordveld_war_tt
-				root = {
-					army_size >= c:NFL.army_size
-				}	
-			}
-			c:OPS = {
-				has_state_in_state_region = STATE_LOURENCO_MARQUES
-			}
+		OR = {
 			c:NFL = {
-				exists = no
+				NOT = {
+					exists = yes 
+				}
+			}
+			AND = {
+				custom_tooltip = {
+				text = dvg_ready_for_noordveld_war_tt
+				NOT = {
+					c:NFL = {
+						
+			
+						army_size > root.army_size
+					}
+					}
+				}
+				c:OPS = {
+					has_state_in_state_region = STATE_LOURENCO_MARQUES
+				}
+				
 			}
 		}
+		
 	}
 
 	on_complete = {
@@ -94,7 +111,7 @@ je_king_aloysius = {
 	immediate = {
 		set_variable = {
 			name = aloysius_legitimacy
-			value = 1
+			value = 0
 		}
 	}
 
@@ -115,11 +132,140 @@ je_king_aloysius = {
 					add = 1
 				}
 			}
+			if = {
+				limit = {
+				
+					NOT = {
+						exists = c:NFL
+						exists = c:OPS
+						has_variable = geus_defeat_var
+					}
+				}
+				change_variable = {
+					name = aloysius_legitimacy
+					add = 10
+				}
+				set_variable = geus_defeat_var
+			}
+			if = {
+				limit = {
+					NOT = {
+						exists = c:CAP
+						has_variable = cap_defeat_var
+					}
+				}
+				change_variable = {
+					name = aloysius_legitimacy
+					add = 15
+				}
+				set_variable = cap_defeat_var
+				trigger_event = { id = dvg_leeuwin.14 }
+			}
+			if = {
+				limit = {
+					has_state_in_state_region = STATE_VRYSTAAT
+				}
+				change_variable = {
+					name = aloysius_legitimacy
+					add = 0.5
+				}
+			}
+			if = {
+				limit = {
+					has_state_in_state_region = STATE_EASTERN_CAPE
+				}
+				change_variable = {
+					name = aloysius_legitimacy
+					add = 0.5
+				}
+			}
+			if = {
+				limit = {
+					has_state_in_state_region = STATE_ZULULAND
+				}
+				change_variable = {
+					name = aloysius_legitimacy
+					add = 0.5
+				}
+			}
+			if = {
+				limit = {
+					has_state_in_state_region = STATE_TRANSVAAL
+				}
+				change_variable = {
+					name = aloysius_legitimacy
+					add = 0.5
+				}
+			}
+			if = {
+				limit = {
+					has_state_in_state_region = STATE_CAPE_COLONY
+				}
+				change_variable = {
+					name = aloysius_legitimacy
+					add = 0.5
+				}
+			}
+			if = {
+				limit = {
+					has_state_in_state_region = STATE_LOURENCO_MARQUES
+				}
+				change_variable = {
+					name = aloysius_legitimacy
+					add = 0.5
+				}
+			}
+			if = {
+				limit = {
+					is_at_war = yes
+				}
+				change_variable = {
+					name = aloysius_legitimacy
+					add = 0.5
+				}
+			}
+			if = {
+				limit = {
+					government_legitimacy <= 50 
+				}
+				change_variable = {
+					name = aloysius_legitimacy
+					add = -1.0
+				}
+			}
+			if = {
+				limit = {
+					has_variable = recent_capitulation
+				}
+				change_variable = {
+					name = aloysius_legitimacy
+					add = -1.0
+				}
+			}
+			if = {
+				limit = {
+					in_default = yes
+				}
+				change_variable = {
+					name = aloysius_legitimacy
+					add = -1.0
+				}
+			}
+			if = {
+				limit = {
+					root.average_sol < 5
+				}
+				change_variable = {
+					name = aloysius_legitimacy
+					add = -1.0
+				}
+			}
+			
 		}
 		random_events = {
 			10 = 0
-			1 = autocracy.2
-			1 = autocracy.3
+			10 = autocracy.2
+			10 = autocracy.3
 		}
 	}
 
@@ -132,6 +278,9 @@ je_king_aloysius = {
 				civil_war_progress > 0.5
 			}
 		}
+		root.average_sol > 5
+		in_default = no
+		government_legitimacy > 49 
 	}
 
 	on_complete = {
@@ -144,6 +293,12 @@ je_king_aloysius = {
 		OR = {
 			NOT = { has_law = law_type:law_state_religion }
 			NOT = { has_law = law_type:law_autocracy }
+			is_subject = yes
+			NOT = {
+				has_state_in_state_region = STATE_NORTHERN_CAPE
+			}
+			this = { var:aloysius_legitimacy <= 0 }
+
 		}
 	}
 
@@ -153,6 +308,19 @@ je_king_aloysius = {
 
 	goal_add_value = {
 		add = 240
+	}
+	invalid = {
+		OR = {
+			NOT = {
+				any_scope_character = {
+					has_variable = is_aloysius
+				}
+			}
+			has_law = law_type:law_monarchy
+		}
+	}
+	on_invalid = {
+		
 	}
 
 	progressbar = yes
@@ -169,6 +337,7 @@ je_cap_moderate = {
 	immediate = {
 		set_variable = {
 			name = geus_agitation_var
+			value = 0
 		} 
 	}
 
@@ -180,8 +349,8 @@ je_cap_moderate = {
 			}
 			if = {
 				limit = {
-					s:CAPE_COLONY.region_state:CAP = {
-						turmoil.cu:boer > 0.5
+					s:STATE_CAPE_COLONY.region_state:CAP = {
+						turmoil > 0.10
 					}
 				}
 				change_variable = {
@@ -191,8 +360,8 @@ je_cap_moderate = {
 			}
 			if = {
 				limit = {
-					s:CAPE_COLONY.region_state:CAP = {
-						turmoil.cu:boer > 0.25
+					s:STATE_CAPE_COLONY.region_state:CAP = {
+						turmoil > 0.25
 					}
 				}
 				change_variable = {
@@ -212,12 +381,10 @@ je_cap_moderate = {
 
 	complete = {
 		AND = {
-			root.var:geus_agitation_var = {
-				value = 0
-			}
-			NOT = {
-				cu:boer = {
-					culture_is_discriminated_in	= c:CAP
+			root.var:geus_agitation_var = 0
+			cu:boer = {
+				C:CAP = { 
+					cultural_acceptance_base = { target = prev value < acceptance_status_5 }
 				}
 			}
 			has_variable = moderate_progress_add
@@ -231,7 +398,7 @@ je_cap_moderate = {
 	}
 
 	fail = {
-		hidden_effect = {
+		hidden_trigger = {
 			c:CAP = {
 				has_variable = moderate_progress_add
 			}
@@ -390,9 +557,7 @@ je_cap_militarist = {
 	}
 
 	fail = {
-		var:geus_supression_var = {
-			value = 0
-		}
+		var:geus_supression_var = 0
 		has_variable = militarist_progress_add
 	}
 
@@ -530,4 +695,6 @@ je_btv_autocracy = {
 
 	weight = 100
 	should_be_pinned_by_default = yes
-}
+} 
+
+

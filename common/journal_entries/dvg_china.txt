@@ -29,50 +29,22 @@ je_decline_of_great_shun_main = {
 	}
 	on_monthly_pulse = {
 		effect = {
-			if = {
-				limit = {
-					any_scope_character = {
-						has_variable = paranoid_prince
-					}
-				}
-				change_variable = {
-					name = dvg_shun_var
-					add = -1
-				}
-			}
-			if = {
-				limit = {
-				any_scope_character = {
-					has_variable = pillager_prince
-				}
-				}
-				change_variable = {
-					name = dvg_shun_var
-					add = 1
-				}
-			}
-			if = {
-				limit = {
-					any_scope_character = {
-						has_variable = placid_prince
-					}
-				}
-				change_variable = {
-					name = dvg_shun_var
-					add = 2
-				}
-			}
+			
 			if = {
 				limit = {
 					ig:ig_landowners = {
 						is_powerful = no
 						is_in_government = yes
 					}
+					NOT = {
+						has_variable = influential_landowners
+					}
 				}
 				change_variable = {
 					name = dvg_shun_var
 					add = 1
 				}
+				set_variable = influential_landowners
 			}
 			if = {
 				limit = {
@@ -180,7 +152,7 @@ je_decline_of_great_shun_main = {
 					subtract = 4
 				}
 				set_capital = STATE_ZHILI
-				set_variable = beijing_lost
+				#set_variable = beijing_lost
 			}
 			if = {
 				limit = {
@@ -336,6 +308,48 @@ je_conquer_beijing_manchus = {
 	on_fail = {
 		trigger_event = { id = dvg_qing.3 popup = yes }
 		
+	}
+
+
+	should_be_pinned_by_default = yes
+	weight = 5000
+}
+
+je_song_return = {
+	icon = "gfx/interface/icons/event_icons/event_empty_chair.dds"
+	
+	group = je_group_historical_content
+
+	is_shown_when_inactive = {
+	
+	}
+	possible = {
+		
+	}
+	
+	complete = {
+		has_law = law_type:law_monarchy
+	}
+
+	on_complete = {
+		trigger_event = { id = dvg_china.7 popup = yes }
+	}
+
+	fail = {
+		custom_tooltip = {
+		text = song_tt
+		NOT = {
+			any_scope_character = {
+				has_variable = song_pretender
+			}
+		}
+		}
+		
+	}
+	on_fail = {
+		add_journal_entry = {
+			type = je_abolish_monarchy
+		}
 	}
 
 
@@ -521,7 +535,7 @@ je_xijao_missions_receive = {
 			
 			add_modifier = {
 				name = god_worshippers
-				months = short_modifier_time
+				days = short_modifier_time
 			}
 		}
 		trigger_event = {
@@ -660,49 +674,9 @@ je_xijiao_conquer = {
 	weight = 5000
 }
 
-je_song_return = {
-	icon = "gfx/interface/icons/event_icons/event_empty_chair.dds"
-	
-	group = je_group_internal_affairs
-
-	is_shown_when_inactive = {
-		any_scope_character = {
-			has_variable = song_pretender
-		}
-	}
-	possible = {
-		NOT = {
-			has_law = law_type:law_monarchy
-		}
-	}
-	
-	complete = {
-		has_law = law_type:law_monarchy
-	}
-
-	on_complete = {
-		trigger_event = { id = dvg_china.7 popup = yes }
-	}
-
-	fail = {
-		custom_tooltip = {
-		text = song_tt
-		NOT = {
-			any_scope_character = {
-				has_variable = song_pretender
-			}
-		}
-		}
-		
-	}
-	on_fail = {
-		
-	}
 
 
-	should_be_pinned_by_default = yes
-	weight = 5000
-}
+
 je_blue_turbans = {
 	icon = "gfx/interface/icons/event_icons/event_protest.dds"
 
@@ -720,6 +694,7 @@ je_blue_turbans = {
 		
 		
 	}
+	scripted_button = dvg_consolidate_mandate
 
 	on_monthly_pulse = {
 		random_events = {
@@ -752,8 +727,54 @@ je_blue_turbans = {
 				}
 			}
 			if = {
+				limit = { root.average_sol > 13}
+
+				change_variable = {
+					name = dvg_blue_turbans
+					add = 1
+				}
+			}
+			if = {
+				limit = { 
+					has_law = law_type:law_multicultural
+				}
+
+				change_variable = {
+					name = dvg_blue_turbans
+					add = 8
+				}
+			}
+			if = {
+				limit = { 
+					has_law = law_type:law_cultural_exclusion
+					var:dvg_blue_turbans < 88
+				}
+
+				change_variable = {
+					name = dvg_blue_turbans
+					add = 2
+				}
+			}
+			if = {
+				limit = { 
+					any_interest_group = {
+						ig_approval <= -15 
+						is_marginal = no
+						var:dvg_blue_turbans > 0
+					}
+					
+				}
+
+				change_variable = {
+					name = dvg_blue_turbans
+					subtract = 2
+				}
+			}
+			if = {
 				limit = {
 					government_legitimacy >= 88 
+					var:dvg_blue_turbans < 88
+
 				 }
 
 				change_variable = {
@@ -764,9 +785,36 @@ je_blue_turbans = {
 			}
 			if = {
 				limit = {
+					government_legitimacy < 88 
+					var:dvg_blue_turbans > 0
+				 }
+
+				change_variable = {
+					name = dvg_blue_turbans
+					subtract = 1
+				}
+
+			}
+			if = {
+				limit = { 
+					any_interest_group = {
+						ig_approval >= 15 
+						is_powerful = yes
+					}
+					var:dvg_blue_turbans < 88
+				}
+	
+				change_variable = {
+					name = dvg_blue_turbans
+					add = 2
+				}
+			}
+			if = {
+				limit = {
 					OR = {
 						sr:region_south_china = {
 							any_scope_state = {
+							count >= 5
 							state_region = {
 							is_homeland = cu:han
 
@@ -777,6 +825,8 @@ je_blue_turbans = {
 						sr:region_north_china = {
 							
 							any_scope_state = {
+							count >= 5
+
 							state_region = {
 							is_homeland = cu:han
 
@@ -786,6 +836,7 @@ je_blue_turbans = {
 						}
 			
 					}
+					var:dvg_blue_turbans > 0
 					
 				 }
 				 change_variable = {
@@ -795,7 +846,56 @@ je_blue_turbans = {
 
 				
 			}
+			if = {
+				limit = {
+					bureaucracy >= 888
+					var:dvg_blue_turbans < 88
+				 }
+
+				change_variable = {
+					name = dvg_blue_turbans
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					root.average_sol < 8
+					var:dvg_blue_turbans > 0
+				 }
+
+				change_variable = {
+					name = dvg_blue_turbans
+					subtract = 1
+				}
+			}
+			if = {
+				limit = {
+					scope:journal_entry = {
+						is_goal_complete = yes
+					}
+					has_modifier = questioned_mandate
+				 }
+
+				 remove_modifier = questioned_mandate
+			}
+			if = {
+				limit = {
+					scope:journal_entry = {
+						is_goal_complete = yes
+					}
+					NOT = {
+						has_technology_researched = pan-nationalism
+					}
+				 }
+				 add_technology_progress = {
+					technology = pan-nationalism
+					progress = 888
+				 }
+				
+			}
+			
 		}
+		
 	}
 	
 	current_value = {
@@ -807,19 +907,25 @@ je_blue_turbans = {
 		scope:journal_entry = {
 			is_goal_complete = yes
 		}
-		
+		has_technology_researched = pan-nationalism
+		government_legitimacy >= 88 
+		bureaucracy >= 888	
+		root.average_sol >= 8
 	}
 	on_complete = {
 
 		trigger_event = {
-			id = dvg_china.9
+			id = dvg_china.10
 		}
-		
-		
 		
 	}
 
 	fail = {
+		any_interest_group = {
+			ig_approval <= -15 
+			is_marginal = no
+		}
+
 		OR = {
 		any_country = {
 			is_revolutionary = yes
@@ -828,6 +934,31 @@ je_blue_turbans = {
 		
 		this = { var:blue_turban_revolt <= 0 }
 	
+		}
+		OR = {
+			sr:region_south_china = {
+				any_scope_state = {
+				count >= 8
+				state_region = {
+				is_homeland = cu:han
+
+					}
+				turmoil > 0.40
+				}
+			}
+			sr:region_north_china = {
+				
+				any_scope_state = {
+				count >= 8
+
+				state_region = {
+				is_homeland = cu:han
+
+					}
+				turmoil > 0.40
+				}
+			}
+
 		}
 		
 	}
@@ -842,14 +973,14 @@ je_blue_turbans = {
 			set_variable = blue_turban_revolt
 		}
 		trigger_event = {
-			id = dvg_china.10
+			id = dvg_china.9
 		}
+		
 		
 	}
 
 	invalid = {
 		
-		country_has_primary_culture = cu:han
 		
 	}
 	progressbar = yes
@@ -860,4 +991,75 @@ je_blue_turbans = {
 
 	weight = 10000
 	should_be_pinned_by_default = yes
+}
+
+je_wu_culture = {
+	icon = "gfx/interface/icons/event_icons/event_empty_chair.dds"
+	
+	group = je_group_internal_affairs
+
+	is_shown_when_inactive = {
+		has_game_rule = breakaway
+		exists = c:NAN
+		c:NAN = ROOT
+	}
+	possible = {
+		has_technology_researched = nationalism
+		is_revolutionary = no
+
+	}
+	immediate = {
+		set_national_identity_vars = yes
+		if = {
+			limit = {
+				c:NAN = this
+			}
+			cu:han = {
+				save_scope_as = old_national_culture
+			}
+			cu:wu = {
+				save_scope_as = new_national_culture
+			}
+		}
+		
+	}
+	on_weekly_pulse = {
+		effect = {
+			calculate_national_identity_progress = yes
+		}
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			add_national_identity_progress = yes
+		}
+	}
+	
+	complete = {
+		scope:journal_entry = {
+			is_goal_complete = yes
+		}
+	}
+
+	on_complete = {
+		if = {
+			limit = {
+				c:NAN ?= this
+			}
+			add_primary_culture = cu:wu
+			remove_primary_culture = cu:han
+		}
+	}
+
+	fail = {
+		
+		
+	}
+	on_fail = {
+		
+	}
+
+
+	should_be_pinned_by_default = yes
+	weight = 5000
 }

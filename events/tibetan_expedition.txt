@@ -1,0 +1,2445 @@
+﻿namespace = tibet_expedition_events
+
+
+tibet_expedition_events.1 = { #Start event
+	type = country_event
+    placement = ROOT
+
+    title = tibet_expedition_events.1.t
+    desc = tibet_expedition_events.1.d
+    flavor = tibet_expedition_events.1.f
+
+    duration = 3
+
+	event_image = {
+		video = "europenorthamerica_capitalists_meeting"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	immediate = {
+	}
+
+	option = {
+		name = tibet_expedition_events.1.a
+		trigger_event = { id = tibet_expedition_events.2 days = 0 popup = yes }
+	}
+}
+
+tibet_expedition_events.2 = { #Choose commander
+	type = country_event
+    placement = ROOT
+
+    title = expedition_events.2.t
+    desc = expedition_events.2.d
+    flavor = expedition_events.2.f
+
+    duration = 3
+
+	event_image = {
+		video = "ep1_ca_mountain_pass_civilian"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	trigger = {
+		any_scope_character = {
+			OR = {
+				has_role = general
+				has_role = admiral
+			}
+			is_ruler = no
+			is_busy = no
+		}
+	}
+
+	cancellation_trigger = {
+		NOR = {
+			exists = scope:expedition_leader_1
+			exists = scope:expedition_leader_2
+			exists = scope:expedition_leader_3
+		}
+	}
+
+	immediate = {
+		if = {
+			limit = {
+				any_scope_character = {
+					is_busy = no
+					is_ruler = no
+					OR = {
+						has_role = general
+						has_role = admiral
+					}
+					is_ruler = no
+					has_trait = explorer
+				}
+			}
+			random_scope_character = {
+				limit = {
+					is_busy = no
+					is_ruler = no
+					OR = {
+						has_role = general
+						has_role = admiral
+					}
+					has_trait = explorer
+				}
+				save_scope_as = expedition_leader_1
+			}
+		}
+		random_scope_character = {
+			limit = {
+				is_busy = no
+				is_ruler = no
+				OR = {
+					has_role = general
+					has_role = admiral
+				}
+				trigger_if = {
+					limit = { exists = scope:expedition_leader_1 }
+					NOT = {
+						this = scope:expedition_leader_1
+					}
+				}
+			}
+			save_scope_as = expedition_leader_2
+		}
+		random_scope_character = {
+			limit = {
+				is_busy = no
+				is_ruler = no
+				OR = {
+					has_role = general
+					has_role = admiral
+				}
+				NOR = {
+					AND = {
+						exists = scope:expedition_leader_1
+						this = scope:expedition_leader_1
+					}
+					this = scope:expedition_leader_2
+				}
+			}
+			save_scope_as = expedition_leader_3
+		}
+	}
+
+	option = {
+		name = expedition_events.602.a
+		trigger = {
+			exists = scope:expedition_leader_1
+		}
+		scope:expedition_leader_1 = {
+			set_character_busy_and_immortal = yes
+			set_variable = expedition_leader_var
+			ROOT = {
+				set_variable = { name = expedition_leader_storage_var value = prev }
+			}
+		}
+		trigger_event = { id = tibet_expedition_events.3 days = 30 }
+	}
+
+	option = {
+		name = expedition_events.602.b
+		default_option = yes
+		trigger = {
+			exists = scope:expedition_leader_2
+		}
+		scope:expedition_leader_2 = {
+			set_character_busy_and_immortal = yes
+			set_variable = expedition_leader_var
+			ROOT = {
+				set_variable = { name = expedition_leader_storage_var value = prev }
+			}
+		}
+		trigger_event = { id = tibet_expedition_events.3 days = 30 }
+	}
+
+	option = {
+		name = expedition_events.602.c
+		trigger = {
+			exists = scope:expedition_leader_3
+		}
+		scope:expedition_leader_3 = {
+			set_character_busy_and_immortal = yes
+			set_variable = expedition_leader_var
+			ROOT = {
+				set_variable = { name = expedition_leader_storage_var value = prev }
+			}
+		}
+		trigger_event = { id = tibet_expedition_events.3 days = 30 }
+	}
+}
+
+tibet_expedition_events.3 = { #Expedition Arrives
+	type = country_event
+    placement = ROOT
+
+    title = tibet_expedition_events.3.t
+    desc = tibet_expedition_events.3.d
+    flavor = tibet_expedition_events.3.f
+
+    duration = 3
+
+	event_image = {
+		video = "ep1_ca_mountain_pass_military"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	immediate = {
+
+		random_scope_character = {
+			limit = { has_variable = expedition_leader_var }
+			save_scope_as = expedition_leader
+		}
+	}
+
+	cancellation_trigger = {
+		OR = {
+			NOT = {
+				any_scope_character = {
+					has_variable = expedition_leader_var
+				}
+			}
+			NOT = {
+				exists = c:TIB
+			}
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.3.a
+		default_option = yes
+		if = {
+			limit = {
+				has_journal_entry = je_great_game_control
+			}
+			show_as_tooltip = {
+				add_journal_entry = {
+					type = je_tibet_expedition
+				}
+			}
+		}
+		else = {
+			add_journal_entry = {
+				type = je_tibet_expedition
+			}
+		}
+		custom_tooltip = expedition_costs_tt
+		add_modifier = {
+			name = modifier_large_expedition_cost
+			multiplier = money_amount_multiplier_medium
+		}
+		set_variable = tibet_has_started
+	}
+}
+
+### Phase 1: Preparing the ground for an expedition ###
+
+tibet_expedition_events.4 = { # Yaks cross the border
+	type = country_event
+    placement = scope:current_expedition_location
+
+    title = tibet_expedition_events.4.t
+    desc = tibet_expedition_events.4.d
+    flavor = tibet_expedition_events.4.f
+
+    duration = 3
+
+	event_image = {
+		video = "ep1_ca_mountain_pass_civilian"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	trigger = {
+		NOT = {
+			any_interest_group = {
+				OR = {
+					has_modifier = hostility_resisted
+					has_modifier = resisted_being_hostile
+				}
+			}
+		}
+		var:tibet_expedition_progress_var < 4
+	}
+
+	immediate = {
+
+		random_scope_character = {
+			limit = { has_variable = expedition_leader_var }
+			save_scope_as = expedition_leader
+		}
+	}
+
+	cancellation_trigger = {
+		OR = {
+			NOT = {
+				any_scope_character = {
+					has_variable = expedition_leader_var
+				}
+			}
+			NOT = {
+				exists = c:TIB
+			}
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.4.a
+		default_option = yes
+
+		ai_chance = {
+			base = 1
+		}
+
+		every_interest_group = {
+			limit = {
+				OR = {
+					is_interest_group_type = ig_armed_forces
+					has_ideology = ideology:ideology_jingoist
+					leader = {
+						has_ideology = ideology:ideology_jingoist_leader
+ 					}
+				}
+			}
+			add_modifier = {
+				name = hostility_resisted
+				days = normal_modifier_time
+			}
+		}
+
+		if = {
+			limit = {
+				NOT = {
+					any_interest_group = {
+						NOT = {
+							is_interest_group_type = ig_armed_forces
+						}
+	    				OR = {
+	    					has_ideology = ideology:ideology_jingoist
+	    					leader = {
+	    						has_ideology = ideology:ideology_jingoist_leader
+	     					}
+	  					}
+					}
+				}
+			}
+			random_interest_group = {
+				limit = {
+					NOR = {
+						is_interest_group_type = ig_armed_forces
+						is_interest_group_type = ig_rural_folk # RF is not normally a valid IG for Jingoists
+						leader = { has_ideology = ideology:ideology_jingoist_leader }
+					}
+				}
+				leader = {
+					set_ideology = ideology:ideology_jingoist_leader
+				}
+				add_modifier = {
+					name = hostility_resisted
+					days = normal_modifier_time
+				}
+			}
+		}
+
+		custom_tooltip = {
+			text = je_tibet_expedition_advance
+			change_variable = { name = tibet_expedition_progress_var add = 1 }
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.4.b
+
+
+		ai_chance = {
+			base = 0
+		}
+
+		every_interest_group = {
+			limit = {
+				OR = {
+					has_ideology = ideology:ideology_isolationist
+					leader = {
+						has_ideology = ideology:ideology_pacifist
+ 					}
+				}
+			}
+			add_modifier = {
+				name = resisted_being_hostile
+				days = normal_modifier_time
+			}
+		}
+	}
+}
+
+tibet_expedition_events.5 = { # The Great Trigonometrical Survey Goes North (Mount Everest named)
+	type = country_event
+    placement = scope:current_expedition_location
+
+    title = tibet_expedition_events.5.t
+    desc = tibet_expedition_events.5.d
+    flavor = tibet_expedition_events.5.f
+
+    duration = 3
+
+	event_image = {
+		video = "ep1_ca_mountain_pass_military"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	trigger = {
+		var:tibet_expedition_progress_var < 4
+		NOT = {
+			any_scope_character = {
+				has_variable = everest_encountered
+			}
+		}
+	}
+
+	immediate = {
+		random_scope_character = {
+			limit = { has_variable = expedition_leader_var }
+			save_scope_as = expedition_leader
+			set_variable = everest_encountered
+		}
+	}
+
+	cancellation_trigger = {
+		OR = {
+			NOT = {
+				any_scope_character = {
+					has_variable = expedition_leader_var
+				}
+			}
+			NOT = {
+				exists = c:TIB
+			}
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.5.a
+		default_option = yes
+
+		ai_chance = {
+			base = 1
+		}
+
+		create_character = {
+			is_general = yes
+			ig_leader = no
+			noble = no
+			traits = {
+			}
+			on_created = {
+				add_trait = engineer
+			}
+		}
+
+		scope:expedition_leader = {
+			add_modifier = {
+				name = sidelined_mountaineer
+				days = normal_modifier_time
+			}
+		}
+
+		custom_tooltip = {
+			text = je_tibet_expedition_advance
+			change_variable = { name = tibet_expedition_progress_var add = 1 }
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.5.dd
+
+		ai_chance = {
+			base = 1
+		}
+
+		random_list = {
+			1 = {
+				scope:expedition_leader = {
+					kill_character = yes
+				}
+			}
+			1 = {
+				modifier = {
+					if = {
+						limit = {
+							ROOT.modifier:country_expedition_events_explorer_mult > 0
+						}
+						add = 1
+					}
+					if = {
+						limit = {
+							scope:expedition_leader.modifier:character_expedition_events_explorer_mult > 0
+						}
+						add = 2
+					}
+				}
+				scope:expedition_leader = {
+					add_modifier = famed_mountaineer
+					if = {
+						limit = {
+							NOT = { has_trait = surveyor }
+						}
+						add_trait = surveyor
+					}
+				}
+				custom_tooltip = {
+					text = je_tibet_expedition_advance
+					change_variable = { name = tibet_expedition_progress_var add = 1 }
+				}
+			}
+		}
+	}
+}
+
+tibet_expedition_events.6 = { # Leeches!
+	type = country_event
+    placement = scope:current_expedition_location
+
+    title = tibet_expedition_events.6.t
+    desc = tibet_expedition_events.6.d
+    flavor = tibet_expedition_events.6.f
+
+    duration = 3
+
+	event_image = {
+		video = "middleeast_jungle_expedition"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	trigger = {
+		var:tibet_expedition_progress_var < 4
+	}
+
+	immediate = {
+
+		random_scope_character = {
+			limit = { has_variable = expedition_leader_var }
+			save_scope_as = expedition_leader
+		}
+	}
+
+	cancellation_trigger = {
+		OR = {
+			NOT = { any_scope_character = { has_variable = expedition_leader_var } }
+			NOT = {
+				exists = c:TIB
+			}
+			NOT = { has_journal_entry = je_tibet_expedition }
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.6.a
+		default_option = yes
+
+		random_list = {
+			1 = {
+				scope:expedition_leader = {
+					kill_character = yes
+				}
+			}
+			1 = {
+				modifier = {
+					if = {
+						limit = {
+							ROOT.modifier:country_expedition_events_explorer_mult > 0
+						}
+						add = 0.5
+					}
+					if = {
+						limit = {
+							scope:expedition_leader.modifier:character_expedition_events_explorer_mult > 0
+						}
+						add = 2
+					}
+				}
+				trigger = {
+					scope:expedition_leader = {
+						NOT = { has_trait = sickly }
+					}
+				}
+				scope:expedition_leader = {
+					add_trait = sickly
+				}
+				custom_tooltip = {
+					text = je_tibet_expedition_advance
+					change_variable = { name = tibet_expedition_progress_var add = 1 }
+				}
+			}
+			2 = {
+				modifier = {
+					if = {
+						limit = {
+							ROOT.modifier:country_expedition_events_explorer_mult > 0
+						}
+						add = 1
+					}
+				}
+				modifier = {
+					if = {
+						limit = {
+							scope:expedition_leader.modifier:character_expedition_events_explorer_mult > 0
+						}
+						add = 4
+					}
+				}
+				custom_tooltip = {
+					text = je_tibet_expedition_advance
+					change_variable = { name = tibet_expedition_progress_var add = 1 }
+				}
+			}
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.6.b
+
+		random_list = {
+			1 = {
+				trigger = { scope:expedition_leader = { has_trait = sickly } }
+				scope:expedition_leader = {
+					remove_trait = sickly
+				}
+			}
+			1 = {
+				trigger = { scope:expedition_leader = { has_trait = beetle_ear } }
+				scope:expedition_leader = {
+					remove_trait = beetle_ear
+				}
+			}
+			1 = {
+				trigger = { scope:expedition_leader = { has_trait = wounded } }
+				scope:expedition_leader = {
+					remove_trait = wounded
+					if = {
+						limit ={
+							NOT = { has_trait = scarred }
+						}
+					}
+					add_trait = scarred
+				}
+			}
+			1 = {
+				trigger = { scope:expedition_leader = { has_trait = opium_addiction } }
+				scope:expedition_leader = {
+					remove_trait = opium_addiction
+				}
+			}
+			1 = {
+				trigger = { scope:expedition_leader = { has_trait = cocaine_addiction } }
+				scope:expedition_leader = {
+					remove_trait = cocaine_addiction
+				}
+			}
+			1 = {
+				trigger = { scope:expedition_leader = { has_trait = alcoholic } }
+				scope:expedition_leader = {
+					remove_trait = alcoholic
+				}
+			}
+		}
+		scope:expedition_leader = {
+			add_modifier = {
+				name = well_rested_leader
+				days = normal_modifier_time
+			}
+		}
+	}
+}
+
+tibet_expedition_events.7 = { # Selecting the expeditionary force
+	type = country_event
+    placement = scope:current_expedition_location
+
+    title = tibet_expedition_events.7.t
+    desc = tibet_expedition_events.7.d
+    flavor = tibet_expedition_events.7.f
+
+    duration = 3
+
+	event_image = {
+		video = "middleeast_jungle_expedition"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	trigger = {
+		NOT = {
+			any_scope_character = {
+				has_variable = expedition_troops_selected
+			}
+		}
+		var:tibet_expedition_progress_var < 4
+	}
+
+	immediate = {
+
+		random_scope_character = {
+			limit = { has_variable = expedition_leader_var }
+			save_scope_as = expedition_leader
+			set_variable = expedition_troops_selected
+		}
+	}
+
+	cancellation_trigger = {
+		OR = {
+			NOT = { exists = c:TIB }
+			NOT = { has_journal_entry = je_tibet_expedition }
+			NOT = {
+				any_scope_character = {
+					has_variable = expedition_leader_var
+				}
+			}
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.7.a
+		default_option = yes
+
+		scope:expedition_leader = {
+			add_modifier = {
+				name = leader_of_men # character_command_limit_add
+				# lifetime
+			}
+		}
+
+		custom_tooltip = {
+			text = je_tibet_expedition_advance
+			change_variable = { name = tibet_expedition_progress_var add = 1 }
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.7.b
+
+		scope:expedition_leader = {
+			add_modifier = {
+				name = best_of_the_best # unit_morale_loss_mult
+				# lifetime
+			}
+		}
+
+		custom_tooltip = {
+			text = je_tibet_expedition_advance
+			change_variable = { name = tibet_expedition_progress_var add = 1 }
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.7.c
+		trigger = {
+			scope:expedition_leader = {
+				has_role = admiral
+			}
+		}
+
+		scope:expedition_leader = {
+			add_modifier = {
+				name = marine_commander
+				# lifetime
+			}
+		}
+
+		custom_tooltip = {
+			text = je_tibet_expedition_advance
+			change_variable = { name = tibet_expedition_progress_var add = 1 }
+		}
+	}
+}
+
+tibet_expedition_events.8 = { # Cross the border
+	type = country_event
+    placement = scope:current_expedition_location
+
+    title = tibet_expedition_events.8.t
+    desc = tibet_expedition_events.8.d
+    flavor = tibet_expedition_events.8.f
+
+    duration = 3
+
+	event_image = {
+		video = "ep1_ca_mountain_pass_military"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	trigger = {
+		var:tibet_expedition_progress_var >= 4
+
+		NOR = {
+			has_variable = delayed_expedition_events
+			has_variable = entered_into_tibet
+		}
+	}
+
+	immediate = {
+		save_scope_as = expedition_country
+		random_scope_character = {
+			limit = { has_variable = expedition_leader_var }
+			save_scope_as = expedition_leader
+		}
+		set_variable = entered_into_tibet
+	}
+
+	cancellation_trigger = {
+		OR = {
+			NOT = { exists = c:TIB }
+			NOT = { has_journal_entry = je_tibet_expedition }
+			NOT = {
+				any_scope_character = {
+					has_variable = expedition_leader_var
+				}
+			}
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.8.a
+		default_option = yes
+
+		if = {
+			limit = {
+				c:TIB = {
+					is_subject = yes
+				}
+			}
+			c:TIB = {
+				overlord = {
+					trigger_event = { id = tibet_expedition_events.9 days = 1 }
+				}
+			}
+		}
+		else = {
+			c:TIB = {
+				trigger_event = { id = tibet_expedition_events.10 days = 1 }
+			}
+		}
+
+		custom_tooltip = {
+			text = je_tibet_expedition_advance
+			change_variable = { name = tibet_expedition_progress_var add = 1 }
+		}
+
+		hidden_effect = {
+			c:TIB ?= {
+				trigger_event = { id = tibet_expedition_events.11 days = 14 }
+			}
+		}
+	}
+}
+
+tibet_expedition_events.9 = { # Cross the border (Overlord alert)
+	type = country_event
+    placement = scope:current_expedition_location
+
+    title = tibet_expedition_events.9.t
+    desc = tibet_expedition_events.9.d
+    flavor = tibet_expedition_events.9.f
+
+    duration = 3
+
+	event_image = {
+		video = "ep1_ca_mountain_pass_military"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	immediate = {
+		scope:expedition_leader = {
+			owner = {
+				save_scope_as = expedition_country
+			}
+		}
+	}
+
+	cancellation_trigger = {
+		OR = {
+			NOT = { exists = scope:expedition_country }
+			scope:expedition_country = {
+				NOR = { has_journal_entry = je_tibet_expedition }
+				any_scope_character = {
+					has_variable = expedition_leader_var
+				}
+			}
+			NOT = { exists = c:TIB }
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.9.a
+		default_option = yes
+
+		change_relations = {
+			country = scope:expedition_country
+			value = 5
+		}
+
+		c:TIB = {
+			add_liberty_desire = 5
+		}
+
+		hidden_effect = {
+			c:TIB = {
+				set_secret_goal = {
+					country = ROOT
+					secret_goal = antagonize
+				}
+			}
+		}
+
+		c:TIB = {
+			trigger_event = { id = tibet_expedition_events.10 days = 1 }
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.9.b
+
+		# Diplomatically object
+
+		change_relations = {
+			country = scope:expedition_country
+			value = -15
+		}
+
+		hidden_effect = {
+			set_secret_goal = {
+				country = scope:expedition_country
+				secret_goal = antagonize
+			}
+		}
+
+		c:TIB = {
+			trigger_event = { id = tibet_expedition_events.10 days = 1 }
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.9.c
+
+		# Reinforce Tibet!
+
+		change_relations = {
+			country = scope:expedition_country
+			value = -30
+		}
+
+		add_modifier = {
+			name = himalayan_affairs # temp hit to authority
+			days = normal_modifier_time
+		}
+
+		create_incident = {
+			country = scope:expedition_country
+			value = 2
+		}
+
+		hidden_effect = {
+			set_secret_goal = {
+				country = c:TIB
+				secret_goal = dominate
+			}
+		}
+
+		hidden_effect = {
+			c:TIB = {
+				set_secret_goal = {
+					country = ROOT
+					secret_goal = befriend
+				}
+			}
+		}
+
+		hidden_effect = {
+			set_secret_goal = {
+				country = scope:expedition_country
+				secret_goal = antagonize
+			}
+		}
+
+		c:TIB = {
+			add_liberty_desire = -5
+		}
+
+		c:TIB = {
+			if = {
+				limit = {
+					NOT = { has_modifier = overlord_military_support }
+				}
+			}
+			add_modifier = {
+				name = overlord_military_support
+				days = short_modifier_time
+			}
+			trigger_event = { id = tibet_expedition_events.10 days = 1 }
+		}
+	}
+}
+
+tibet_expedition_events.10 = { # Cross the border (Tibetan response)
+	type = country_event
+    placement = ROOT
+
+    title = tibet_expedition_events.10.t
+    desc = tibet_expedition_events.10.d
+    flavor = tibet_expedition_events.10.f
+
+    duration = 3
+
+	event_image = {
+		video = "ep1_ca_mountain_pass_military"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	immediate = {
+		scope:expedition_leader = {
+			owner = {
+				save_scope_as = expedition_country
+			}
+		}
+	}
+
+	cancellation_trigger = {
+		OR = {
+			NOT = { exists = scope:expedition_country }
+			scope:expedition_country = {
+				NOT = { has_journal_entry = je_tibet_expedition }
+			}
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.10.a
+		default_option = yes
+
+		change_relations = {
+			country = scope:expedition_country
+			value = -15
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.10.b
+		trigger = { aggressive_diplomatic_plays_permitted = yes }
+		highlighted_option = yes
+
+		create_diplomatic_play = {
+			name = anti_expedition_war
+			target_country = scope:expedition_country
+			type = dp_default_treaty_article
+		}
+	}
+}
+
+### Phase 2: The expedition advances ###
+
+tibet_expedition_events.11 = { # (Tibet) Block their advance?
+	type = country_event
+    placement = scope:current_expedition_location
+
+    title = tibet_expedition_events.11.t
+    desc = tibet_expedition_events.11.d
+    flavor = tibet_expedition_events.11.f
+
+    duration = 3
+
+	event_image = {
+		video = "ep1_ca_mountain_pass_military"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	immediate = {
+		scope:expedition_leader = {
+			owner = {
+				save_scope_as = expedition_country
+			}
+		}
+		random_scope_state = {
+			limit = { NOT = { has_modifier = expedition_disturbs_the_people }  }
+			save_scope_as = disturbed_state
+		}
+	}
+
+	cancellation_trigger = {
+		OR = {
+			NOT = { exists = scope:expedition_leader }
+			scope:expedition_leader = {
+				owner = {
+					NOT = { has_journal_entry = je_tibet_expedition }
+				}
+			}
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.11.a
+		default_option = yes
+
+		every_interest_group = {
+			limit = {
+				NOT = { has_modifier = government_cowardice }
+				OR = {
+					has_ideology = ideology:ideology_jingoist
+					leader = {
+						OR = {
+							has_ideology = ideology:ideology_jingoist_leader
+							has_trait = brave
+							has_role = general
+						}
+					}
+				}
+			}
+			add_modifier = {
+				name = government_cowardice
+				days = normal_modifier_time
+			}
+		}
+
+		if = {
+			limit = {
+				any_scope_state = {
+					NOT = { has_modifier = expedition_disturbs_the_people }
+				}
+			}
+			scope:disturbed_state = {
+				add_modifier = {
+					name = expedition_disturbs_the_people
+					days = normal_modifier_time
+				}
+			}
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.11.b
+
+		every_interest_group = {
+			limit = {
+				NOT = { has_modifier = government_bravery }
+				OR = {
+					has_ideology = ideology:ideology_jingoist
+					leader = {
+						OR = {
+							has_ideology = ideology:ideology_jingoist_leader
+							has_trait = brave
+							has_role = general
+						}
+					}
+				}
+			}
+			add_modifier = {
+				name = government_bravery
+				days = normal_modifier_time
+			}
+		}
+		scope:expedition_country = {
+			trigger_event = { id = tibet_expedition_events.12 days = 1 }
+		}
+	}
+}
+
+tibet_expedition_events.12 = { # Block their advance? Response
+	type = country_event
+    placement = scope:current_expedition_location
+
+    title = tibet_expedition_events.12.t
+    desc = tibet_expedition_events.12.d
+    flavor = tibet_expedition_events.12.f
+
+    duration = 3
+
+	event_image = {
+		video = "ep1_ca_mountain_pass_military"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	immediate = {
+		random_scope_character = {
+			limit = { has_variable = expedition_leader_var }
+			save_scope_as = expedition_leader
+		}
+		c:TIB = {
+			save_scope_as = tibet_scope
+		}
+	}
+
+	cancellation_trigger = {
+		OR = {
+			NOT = { exists = c:TIB }
+			NOT = { has_journal_entry = je_tibet_expedition }
+			NOT = {
+				any_scope_character = {
+					has_variable = expedition_leader_var
+				}
+			}
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.12.a
+		default_option = yes
+
+		create_incident = {
+			country = c:TIB
+			value = 15
+		}
+
+		if = {
+			limit = {
+				scope:expedition_leader = {
+					NOT = { has_trait = cruel }
+				}
+			}
+			random_list = {
+				2 = { }
+				1 = { scope:expedition_leader = { add_trait = cruel } }
+			}
+		}
+
+		if = {
+			limit = {
+				c:TIB = { is_subject = yes }
+			}
+			c:TIB = {
+				top_overlord = {
+					trigger_event = { id = tibet_expedition_events.13 days = 1 }
+				}
+			}
+		}
+
+		custom_tooltip = {
+			text = je_tibet_expedition_advance
+			change_variable = { name = tibet_expedition_progress_var add = 1 }
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.12.b
+
+		custom_tooltip = {
+			text = tibet_expedition_delayed
+			set_variable = {
+				name = delayed_expedition_events
+				months = 3
+			}
+		}
+	}
+}
+
+tibet_expedition_events.13 = { # Block their advance? Overlord alert of clash.
+	type = country_event
+    placement = scope:current_expedition_location
+
+    title = tibet_expedition_events.13.t
+    desc = tibet_expedition_events.13.d
+    flavor = tibet_expedition_events.13.f
+
+    duration = 3
+
+	event_image = {
+		video = "ep1_ca_mountain_pass_military"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	immediate = {
+		c:TIB = {
+			save_scope_as = tibet_scope
+		}
+	}
+
+	cancellation_trigger = {
+		OR = {
+			NOT = { exists = c:TIB }
+			scope:expedition_country = {
+			NOR = {
+				has_journal_entry = je_tibet_expedition }
+				any_scope_character = {
+					has_variable = expedition_leader_var
+				}
+			}
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.13.a
+		default_option = yes
+
+		c:TIB = {
+			add_liberty_desire = 5
+		}
+
+		ai_chance = {
+			base = 1
+			modifier = {
+				trigger = {
+					c:TIB = { liberty_desire <= 50 }
+				}
+				add = 10
+			}
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.13.b
+
+		c:TIB = {
+			add_liberty_desire = -5
+		}
+
+		c:TIB = {
+			if = {
+				limit = {
+					NOT = { has_modifier = overlord_military_support }
+				}
+				add_modifier = {
+					name = overlord_military_support
+					days = short_modifier_time
+				}
+			}
+		}
+
+		if = {
+			limit = {
+				NOT = { has_modifier = himalayan_expenses }
+			}
+			add_modifier = {
+				name = himalayan_expenses
+				multiplier = money_amount_multiplier_small
+				days = short_modifier_time
+			}
+		}
+
+		ai_chance = {
+			base = 0
+			modifier = {
+				trigger = {
+					c:TIB = { liberty_desire > 50 }
+				}
+				add = 10
+			}
+		}
+	}
+}
+
+tibet_expedition_events.14 = { # Lost in a blizzard
+	type = country_event
+    placement = scope:current_expedition_location
+
+    title = tibet_expedition_events.14.t
+    desc = tibet_expedition_events.14.d
+    flavor = tibet_expedition_events.14.f
+
+    duration = 3
+
+	event_image = {
+		video = "ep1_ca_mountain_pass_military"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	trigger = {
+		var:tibet_expedition_progress_var >= 4
+
+		NOT = {
+			has_variable = delayed_expedition_events
+		}
+	}
+
+	immediate = {
+		c:TIB = {
+			save_scope_as = tibet_scope
+		}
+		random_scope_character = {
+			limit = { has_variable = expedition_leader_var }
+			save_scope_as = expedition_leader
+		}
+	}
+
+	cancellation_trigger = {
+		OR = {
+			NOT = { exists = c:TIB }
+			NOT = { has_journal_entry = je_tibet_expedition }
+			NOT = {
+				any_scope_character = {
+					has_variable = expedition_leader_var
+				}
+			}
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.14.a
+		default_option = yes
+
+		random_list = {
+			3 = { # 75% chance it's fine
+				modifier = {
+					if = {
+						limit = {
+							ROOT.modifier:country_expedition_events_explorer_mult > 0
+						}
+						add = 1
+					}
+					if = {
+						limit = {
+							scope:expedition_leader.modifier:character_expedition_events_explorer_mult > 0
+						}
+						add = 2
+					}
+				}
+				custom_tooltip = {
+					text = je_tibet_expedition_advance
+					change_variable = { name = tibet_expedition_progress_var add = 1 }
+				}
+			}
+			1 = {
+				scope:expedition_leader = { kill_character = yes } # 25% chance you messed up bad
+			}
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.14.b
+
+		custom_tooltip = {
+			text = tibet_expedition_delayed
+			set_variable = {
+				name = delayed_expedition_events
+				months = 3
+			}
+		}
+	}
+}
+
+# 15 removed
+# 16 removed
+# 17 removed
+
+tibet_expedition_events.18 = { # Approaching Lhasa/Assault on Gyantse Dzong
+	type = country_event
+    placement = scope:current_expedition_location
+
+    title = tibet_expedition_events.18.t
+    desc = tibet_expedition_events.18.d
+    flavor = tibet_expedition_events.18.f
+
+    duration = 3
+
+	event_image = {
+		video = "ep1_ca_mountain_pass_civilian"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	trigger = {
+		NOR = {
+			has_variable = delayed_expedition_events
+			has_variable = lhasa_approached
+		}
+		var:tibet_expedition_progress_var >= 4
+	}
+
+	immediate = {
+
+		random_scope_character = {
+			limit = { has_variable = expedition_leader_var }
+			save_scope_as = expedition_leader
+		}
+		if = {
+			limit = {
+				c:TIB = { is_subject = yes }
+			}
+			c:TIB = {
+				overlord = {
+					save_scope_as = overlord_of_tibet
+				}
+			}
+		}
+		set_variable = lhasa_approached
+	}
+
+	cancellation_trigger = {
+		OR = {
+			NOT = { exists = c:TIB }
+			NOT = { has_journal_entry = je_tibet_expedition }
+			NOT = {
+				any_scope_character = {
+					has_variable = expedition_leader_var
+				}
+			}
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.18.a
+		default_option = yes
+
+		change_relations = {
+			country = c:TIB
+			value = -15
+		}
+		if = {
+			limit = {
+				exists = scope:overlord_of_tibet
+			}
+			change_relations = {
+				country = scope:overlord_of_tibet
+				value = -15
+			}
+		}
+
+		custom_tooltip = {
+			text = je_tibet_expedition_advance
+			change_variable = { name = tibet_expedition_progress_var add = 1 }
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.18.b
+
+
+		random_list = {
+			1 = {
+				custom_tooltip = {
+					text = tibet_expedition_delayed
+					set_variable = {
+						name = delayed_expedition_events
+						months = 3
+					}
+				}
+			}
+			1 = {
+				modifier = {
+					if = {
+						limit = {
+							ROOT.modifier:country_expedition_events_explorer_mult > 0
+						}
+						add = 1
+					}
+					if = {
+						limit = {
+							scope:expedition_leader.modifier:character_expedition_events_explorer_mult > 0
+						}
+						add = 4
+					}
+				}
+				custom_tooltip = {
+					text = je_tibet_expedition_advance
+					change_variable = { name = tibet_expedition_progress_var add = 1 }
+				}
+			}
+		}
+	}
+}
+
+tibet_expedition_events.19 = { # Unsanctioned pillaging
+	type = country_event
+    placement = scope:current_expedition_location
+
+    title = tibet_expedition_events.19.t
+    desc = tibet_expedition_events.19.d
+    flavor = tibet_expedition_events.19.f
+
+    duration = 3
+
+	event_image = {
+		video = "middleeast_police_breaking_door"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	trigger = {
+		NOT = {
+			has_variable = pillaged_tibet
+		}
+		var:tibet_expedition_progress_var >= 4
+
+		NOT = {
+			has_variable = delayed_expedition_events
+		}
+	}
+
+	immediate = {
+		c:TIB = {
+			save_scope_as = tibet_scope
+		}
+
+		random_scope_character = {
+			limit = { has_variable = expedition_leader_var }
+			save_scope_as = expedition_leader
+		}
+
+		set_variable = {
+			name = pillaged_tibet
+			days = short_modifier_time
+		}
+	}
+
+	cancellation_trigger = {
+		OR = {
+			NOT = { exists = c:TIB }
+			NOT = { has_journal_entry = je_tibet_expedition }
+			NOT = {
+				any_scope_character = {
+					has_variable = expedition_leader_var
+				}
+			}
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.19.a
+		default_option = yes
+
+		change_relations = { # boy you really like upsetting Tibet at this point, huh
+			country = c:TIB
+			value = -10
+		}
+
+		c:TIB = {
+			random_scope_state = {
+				limit = {
+					is_capital = yes
+				}
+				state_region = {
+					add_devastation = 10
+				}
+			}
+		}
+
+		custom_tooltip = {
+			text = je_tibet_expedition_advance
+			change_variable = { name = tibet_expedition_progress_var add = 1 }
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.19.b
+		default_option = yes
+
+		change_relations = {
+			country = c:TIB
+			value = 10
+		}
+
+		add_modifier = {
+			name = tibetan_restitution
+			multiplier = money_amount_multiplier_very_small
+			days = short_modifier_time
+		}
+
+		random_list = {
+			1 = { }
+			1 = {
+				modifier = {
+					if = {
+						limit = {
+							ROOT.modifier:country_expedition_events_explorer_mult > 0
+						}
+						add = 1
+					}
+					if = {
+						limit = {
+							scope:expedition_leader.modifier:character_expedition_events_explorer_mult > 0
+						}
+						add = 4
+					}
+				}
+				custom_tooltip = {
+					text = je_tibet_expedition_advance
+					change_variable = { name = tibet_expedition_progress_var add = 1 }
+				}
+			}
+		}
+	}
+}
+
+### Phase 3: Negotiations with Tibet ###
+
+tibet_expedition_events.20 = { # Who to address the ultimatum to?
+	type = country_event
+    placement = scope:current_expedition_location
+
+    title = tibet_expedition_events.20.t
+    desc = tibet_expedition_events.20.d
+    flavor = tibet_expedition_events.20.f
+
+    duration = 3
+
+	event_image = {
+		video = "ep1_ca_mountain_pass_military"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	trigger = {
+		var:tibet_expedition_progress_var >= 6
+		NOR = {
+			has_variable = delayed_expedition_events
+			has_variable = ultimatum_event
+		}
+		any_scope_character = {
+			has_variable = expedition_leader_var
+		}
+	}
+
+	cancellation_trigger = {
+		OR = {
+			NOT = {
+				any_scope_character = {
+					has_variable = expedition_leader_var
+				}
+			}
+			NOT = {
+				exists = c:TIB
+			}
+		}
+	}
+
+	immediate = {
+		c:TIB = {
+			save_scope_as = tibet_scope
+		}
+		save_scope_as = expedition_country
+		if = {
+			limit = {
+				c:TIB = {
+					is_subject = yes
+				}
+			}
+			c:TIB = {
+				overlord = {
+					save_scope_as = overlord_of_tibet
+				}
+			}
+		}
+		set_variable = ultimatum_event
+		random_scope_character = {
+			limit = {
+				has_variable = expedition_leader_var
+			}
+			save_scope_as = expedition_leader
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.20.a
+		default_option = yes
+
+		custom_tooltip = {
+			text = sending_tibet_ultimatum_tt
+			c:TIB = {
+				trigger_event = {
+					id = tibet_expedition_events.21
+					days = 1
+				}
+			}
+		}
+
+		hidden_effect = {
+			set_variable = ultimatum_sent
+		}
+
+		ai_chance = {
+			base = 25
+			modifier = {
+				trigger = {
+					scope:overlord_of_tibet ?= {
+						is_player = yes
+					}
+					c:TIB ?= {
+						is_player = no
+					}
+				}
+				add = -25
+			}
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.20.b # ISN'T THERE SOMEONE YOU FORGOT?
+		trigger = {  # trigger tibet_expedition_events.22 only if overlord exists & c:TIB is subject (so this is not sent to an independent c:TIB with top_overlord)
+			exists = scope:overlord_of_tibet
+			c:TIB ?= {
+				is_subject = yes
+			}
+		}
+
+		custom_tooltip = {
+			text = sending_tibet_overlord_ultimatum_tt
+			scope:overlord_of_tibet = {
+				trigger_event = {
+					id = tibet_expedition_events.22
+					days = 1
+				}
+			}
+		}
+
+		hidden_effect = {
+			set_variable = ultimatum_sent
+		}
+
+		ai_chance = {
+			base = 25
+			modifier = {
+				trigger = {
+					scope:overlord_of_tibet ?= {
+						is_player = no
+					}
+					c:TIB ?= {
+						is_player = yes
+					}
+				}
+				add = -25
+			}
+		}
+	}
+}
+
+tibet_expedition_events.21 = { # Ultimatum sent (Tibet)
+	type = country_event
+    placement = scope:current_expedition_location
+
+    title = tibet_expedition_events.21.t
+    desc = tibet_expedition_events.21.d
+    flavor = tibet_expedition_events.21.f
+
+    duration = 3
+
+	event_image = {
+		video = "asia_union_leader"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	immediate = {
+
+		scope:expedition_leader = {
+			owner = {
+				save_scope_as = expedition_country
+			}
+		}
+		if = {
+			limit = {
+				c:TIB = {
+					is_subject = yes
+				}
+			}
+			c:TIB = {
+				overlord = {
+					save_scope_as = overlord_of_tibet
+				}
+			}
+		}
+	}
+
+	cancellation_trigger = {
+		NOT = { exists = scope:expedition_country }
+	}
+
+	option = {
+		name = tibet_expedition_events.21.a
+		default_option = yes
+
+		if = { # trigger tibet_expedition_events.26 only if overlord exists & c:TIB is subject (so this is not sent to an independent c:TIB with top_overlord)
+			limit = {
+				exists = scope:overlord_of_tibet
+				c:TIB ?= {
+					is_subject = yes
+				}
+			}
+			scope:overlord_of_tibet = {
+				trigger_event = {
+					id = tibet_expedition_events.26 days = 1
+				}
+				set_variable = former_tibetan_overlord
+			}
+		}
+
+		scope:expedition_country = {
+			trigger_event = {
+				id = tibet_expedition_events.27 days = 1
+			}
+		}
+
+		hidden_effect = { # clearing out existing relations
+			if = {
+				limit = {
+					is_subject = yes
+				}
+				make_independent = yes
+			}
+		}
+
+		if = {
+			limit = {
+				country_rank <= rank_value:minor_power
+				scope:expedition_country = {
+					OR = {
+						is_country_type = recognized
+						is_country_type = colonial
+					}
+					country_rank >= rank_value:minor_power
+				}
+			}
+			scope:expedition_country = {
+				create_diplomatic_pact = {
+					country = c:TIB
+					type = protectorate
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				country_rank <= rank_value:minor_power
+				scope:expedition_country = {
+					is_country_type = unrecognized
+					country_rank >= rank_value:unrecognized_regional_power
+				}
+			}
+			scope:expedition_country = {
+				create_diplomatic_pact = {
+					country = c:TIB
+					type = tributary
+				}
+			}
+		}
+		else = {
+			scope:expedition_country = {
+				create_diplomatic_pact = {
+					country = c:TIB
+					type = vassal
+				}
+			}
+		}
+
+		ai_chance = {
+			base = 1
+			modifier = {
+				trigger = {
+					has_dlc_feature = lobbies
+					any_political_lobby = {
+						is_political_lobby_type = lobby_pro_country
+						target = {
+							scope:expedition_country = this
+						}
+					}
+				}
+				add = 25
+			}
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.21.b
+
+		change_relations = {
+			country = scope:expedition_country
+			value = -40
+		}
+		scope:expedition_country = {
+			set_variable = received_subjugation_refusal_var # variable for expedition_country to fail their Tibet Expedition JE if this option is selected
+		}
+
+		scope:expedition_country = {
+			post_notification = tibet_refuses_demands
+		}
+
+		ai_chance = {
+			base = 0
+			modifier = {
+				trigger = {
+					any_scope_character = {
+						is_ruler = yes
+						OR = {
+							has_trait = ambitious
+							has_trait = arrogant
+							has_trait = imperious
+						}
+					}
+				}
+				add = 25
+			}
+			modifier = {
+				trigger = {
+					has_dlc_feature = lobbies
+					any_political_lobby = {
+						is_political_lobby_type = lobby_anti_country
+						target = {
+							scope:expedition_country = this
+						}
+					}
+				}
+				add = 25
+			}
+		}
+	}
+}
+
+tibet_expedition_events.22 = { # Ultimatum sent (Overlord)
+	type = country_event
+    placement = ROOT
+
+    title = tibet_expedition_events.22.t
+    desc = tibet_expedition_events.22.d
+    flavor = tibet_expedition_events.22.f
+
+    duration = 3
+
+	event_image = {
+		video = "asia_union_leader"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	immediate = {
+		scope:expedition_leader = {
+			owner = {
+				save_scope_as = expedition_country
+			}
+		}
+	}
+
+	cancellation_trigger = {
+		NOT = { exists = scope:expedition_country }
+	}
+
+	option = {
+		name = tibet_expedition_events.22.a
+		default_option = yes
+
+
+		hidden_effect = { # clearing out existing relations
+			if = {
+				limit = {
+					c:TIB = {
+						is_subject = yes
+					}
+				}
+				c:TIB = {
+					make_independent = yes
+				}
+			}
+			set_variable = former_tibetan_overlord
+
+			c:TIB = {
+				post_notification = expedition_is_our_new_master
+			}
+		}
+
+		if = {
+			limit = {
+				c:TIB = {
+					country_rank <= rank_value:minor_power
+				}
+				scope:expedition_country = {
+					OR = {
+						is_country_type = recognized
+						is_country_type = colonial
+					}
+					country_rank >= rank_value:minor_power
+				}
+			}
+			scope:expedition_country = {
+				create_diplomatic_pact = {
+					country = c:TIB
+					type = protectorate
+				}
+			}
+		}
+		else_if = {
+			limit = {
+				c:TIB = {
+					country_rank <= rank_value:minor_power
+				}
+				scope:expedition_country = {
+					is_country_type = unrecognized
+					country_rank >= rank_value:unrecognized_regional_power
+				}
+			}
+			scope:expedition_country = {
+				create_diplomatic_pact = {
+					country = c:TIB
+					type = tributary
+				}
+			}
+		}
+		else = {
+			scope:expedition_country = {
+				create_diplomatic_pact = {
+					country = c:TIB
+					type = vassal
+				}
+			}
+		}
+
+		scope:expedition_country = {
+			trigger_event = {
+				id = tibet_expedition_events.27
+				days = 3
+			}
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.22.b # Only the player should be able to get a last out like this, and only if it's not an MP where another player has been working hard at this themself
+		trigger = {
+			is_player = yes
+			scope:expedition_country = { is_player = no }
+		}
+
+		create_incident = {
+			country = scope:expedition_country
+			value = 10
+		}
+		scope:expedition_country = {
+			post_notification = tibet_overlord_refuses_demands
+		}
+		scope:expedition_country = {
+			set_variable = received_subjugation_refusal_var # variable for expedition_country to fail their Tibet Expedition JE if this option is selected by player
+		}
+	}
+}
+
+tibet_expedition_events.26 = { # (Overlord) Tibet submits to demands
+	type = country_event
+    placement = scope:current_expedition_location
+
+    title = tibet_expedition_events.26.t
+    desc = tibet_expedition_events.26.d
+    flavor = tibet_expedition_events.26.f
+
+    duration = 3
+
+	event_image = {
+		video = "ep1_ca_mountain_pass_military"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	immediate = {
+		scope:expedition_leader = {
+			owner = {
+				save_scope_as = expedition_country
+			}
+		}
+		c:TIB = {
+			save_scope_as = tibet_scope
+		}
+		random_country = {
+			limit = { has_variable = former_tibetan_overlord }
+			save_scope_as = ex_tibetan_overlord
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.26.a
+		default_option = yes
+
+		hidden_effect = {
+			set_secret_goal = {
+				country = c:TIB
+				secret_goal = antagonize
+			}
+		}
+		hidden_effect = {
+			scope:ex_tibetan_overlord = {
+				remove_variable = former_tibetan_overlord
+			}
+		}
+		c:TIB = {
+			every_scope_state = {
+				state_region = {
+					add_claim = ROOT
+				}
+			}
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.26.b
+
+		hidden_effect = {
+			set_secret_goal = {
+				country = c:TIB
+				secret_goal = antagonize
+			}
+		}
+		hidden_effect = {
+			scope:ex_tibetan_overlord = {
+				remove_variable = former_tibetan_overlord
+			}
+		}
+		create_diplomatic_play = {
+			name = transfer_subject
+			type = dp_transfer_subject
+
+			target_country = c:TIB
+		}
+	}
+}
+
+tibet_expedition_events.27 = { # Conclusion
+	type = country_event
+    placement = ROOT
+
+    title = tibet_expedition_events.27.t
+    desc = tibet_expedition_events.27.d
+    flavor = tibet_expedition_events.27.f
+
+    duration = 3
+
+	event_image = {
+		video = "europenorthamerica_capitalists_meeting"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	immediate = {
+		c:TIB = {
+			save_scope_as = tibet_scope
+		}
+		random_scope_character = {
+			limit = { has_variable = expedition_leader_var }
+			save_scope_as = expedition_leader
+		}
+		remove_variable = tibet_has_started
+		set_variable = tibet_has_concluded
+	}
+
+	option = {
+		name = tibet_expedition_events.27.a
+		default_option = yes
+
+		scope:expedition_leader = {
+			if = {
+				limit = {
+					commander_rank < 5
+				}
+				add_commander_rank = 1
+			}
+			if = {
+				limit = {
+					NOT = { has_modifier = master_of_the_himalayas }
+				}
+				add_modifier = {
+					name = master_of_the_himalayas
+				}
+			}
+		}
+
+		show_as_tooltip = {
+			if = {
+				limit = {
+					c:TIB = {
+						country_rank <= rank_value:minor_power
+					}
+					OR = {
+						is_country_type = recognized
+						is_country_type = colonial
+					}
+					country_rank >= rank_value:minor_power
+				}
+				create_diplomatic_pact = {
+					country = c:TIB
+					type = protectorate
+				}
+			}
+			else_if = {
+				limit = {
+					c:TIB = {
+						country_rank <= rank_value:minor_power
+					}
+					is_country_type = unrecognized
+					country_rank >= rank_value:unrecognized_regional_power
+				}
+				create_diplomatic_pact = {
+					country = c:TIB
+					type = tributary
+				}
+			}
+			else = {
+				create_diplomatic_pact = {
+					country = c:TIB
+					type = vassal
+				}
+			}
+		}
+	}
+}
+
+tibet_expedition_events.29 = { # Manul spotted
+	type = country_event
+    placement = scope:current_expedition_location
+
+    title = tibet_expedition_events.29.t
+    desc = tibet_expedition_events.29.d
+    flavor = tibet_expedition_events.29.f
+
+    duration = 3
+
+	event_image = {
+		video = "ep1_ca_mountain_pass_civilian"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	trigger = {
+		NOR = {
+			any_scope_state = {
+				has_modifier = manul_zoo_exhibit
+			}
+			any_scope_character = {
+				has_modifier = manul_luxurious_pelt
+			}
+		}
+		var:tibet_expedition_progress_var < 4
+	}
+
+	immediate = {
+		random_scope_character = {
+			limit = { has_variable = expedition_leader_var }
+			save_scope_as = expedition_leader
+		}
+	}
+
+	cancellation_trigger = {
+		OR = {
+			NOT = { exists = c:TIB }
+			NOT = { has_journal_entry = je_tibet_expedition }
+			NOT = {
+				any_scope_character = {
+					has_variable = expedition_leader_var
+				}
+			}
+		}
+	}
+
+	option = {
+		name = tibet_expedition_events.29.a
+		default_option = yes
+
+		random_list = {
+			3 = { }
+			1 = {
+				scope:expedition_leader = {
+					if = {
+						limit = { NOT = { has_trait = wounded } }
+						add_trait = wounded
+					}
+					else = {
+						kill_character = yes
+					}
+				}
+			}
+		}
+		random_scope_state = {
+			limit = {
+				is_capital = yes
+			}
+
+			add_modifier = {
+				name = manul_zoo_exhibit
+				days = normal_modifier_time
+			}
+		}
+
+		custom_tooltip = {
+			text = je_tibet_expedition_advance
+			change_variable = { name = tibet_expedition_progress_var add = 1 }
+		}
+	}
+	option = {
+		name = tibet_expedition_events.29.b
+		trigger = { scope:expedition_leader = { has_trait = cruel } }
+
+		random_list = {
+			2 = { }
+			1 = {
+				scope:expedition_leader = {
+					if = {
+						limit = { NOT = { has_trait = wounded } }
+						add_trait = wounded
+					}
+					else = {
+						kill_character = yes
+					}
+				}
+			}
+		}
+
+		scope:expedition_leader ?= {
+			add_modifier = {
+				name = manul_luxurious_pelt
+				# lifetime
+			}
+		}
+	}
+	option = {
+		name = tibet_expedition_events.29.c
+
+		custom_tooltip = {
+			text = je_tibet_expedition_advance
+			change_variable = { name = tibet_expedition_progress_var add = 1 }
+		}
+	}
+}

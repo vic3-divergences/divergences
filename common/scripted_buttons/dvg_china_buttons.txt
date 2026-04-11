@@ -59,14 +59,14 @@ ban_opium_button = {
 	desc = "ban_opium_desc"
 
 	visible = { 
-		has_journal_entry = je_opium_obsession
+		#has_journal_entry = je_opium_obsession
 		exists = market
 		market.owner = root
 		NOT = { is_banning_goods = g:opium }
 	}
 
 	possible = {
-		has_journal_entry = je_opium_obsession
+		#has_journal_entry = je_opium_obsession
 		NOT = { has_law = law_type:law_free_trade }
 		NOT = { has_variable = lost_opium_wars }
 		exists = market	
@@ -80,9 +80,9 @@ ban_opium_button = {
 	}
 
 	ai_chance = {
-        base = 0
-		modifier = {
-			trigger = {
+        value = 0
+		if = {
+			limit = {
 				OR = {
 					has_strategy = ai_strategy_conservative_agenda
 					has_strategy = ai_strategy_reactionary_agenda
@@ -100,7 +100,7 @@ unban_opium_button = {
 	desc = "remove_opium_ban_desc"
 
 	visible = { 
-		has_journal_entry = je_opium_obsession
+		#has_journal_entry = je_opium_obsession
 		is_banning_goods = g:opium
 		exists = market
 		market.owner = root
@@ -116,9 +116,9 @@ unban_opium_button = {
 	}
 
 	ai_chance = {
-		base = 0
-		  modifier = {
-			  trigger = {
+		value = 0
+		  if = {
+			  limit = {
 				  has_strategy = ai_strategy_progressive_agenda
 			  }
 			  add = 10
@@ -156,7 +156,7 @@ export_missionaries_button = {
 	}
 
 	ai_chance = {
-		base = 100
+		value = 100
 		 		 
 	 }	
 }
@@ -202,7 +202,7 @@ xijiao_rise_up = {
 	}
 
 	ai_chance = {
-		base = 100
+		value = 100
 		 		 
 	 }	
 }
@@ -224,7 +224,164 @@ purge_corruption = {
 	}
 
 	ai_chance = {
-		base = 100
+		value = 100
 		  
 	 }	
+}
+
+annex_chinese_subjects = {
+	name = "annex_chinese_subjects"
+	desc = "annex_chinese_subjects_desc"
+
+	visible = { 
+		any_subject_or_below = {
+			any_primary_culture = {
+				has_discrimination_trait = tradition_sinosphere
+			}
+		}
+		has_technology_researched = nationalism
+	}
+
+	possible = {
+		any_subject_or_below = {
+			any_primary_culture = {
+				has_discrimination_trait = tradition_sinosphere
+			}
+			has_attitude = {
+				who = ROOT
+				attitude = loyal
+			}
+		}
+		NOT = {
+			has_modifier = questioned_mandate
+			has_journal_entry = je_decline_of_great_shun_main
+			has_journal_entry = je_tungning_start
+			has_journal_entry = je_xijiao_missions_send
+		}
+		is_diplomatic_play_committed_participant = no
+		
+
+	}
+
+	effect = {
+		every_country = {
+			if = {
+				limit = {
+					is_ai = yes			
+					is_in_geographic_region = geographic_region_china
+					is_subject_of = ROOT
+				}			
+				root = { annex = prev }
+			}
+		}
+	}
+
+	ai_chance = {
+		value = 100
+	 }	
+}
+
+china_unify_play = {
+	name = "china_unify_play"
+	desc = "china_unify_play_desc"
+
+	visible = { 
+		any_country = {
+			country_has_primary_culture = cu:han
+			any_neighbouring_state = {
+				owner = ROOT
+			}
+			is_ai = yes
+		}
+		NOT = {
+			exists = c:CHI
+		}
+	}
+
+	possible = {
+		
+		NOT = {
+			has_modifier = questioned_mandate
+			has_modifier = decision_cooldown
+			has_journal_entry = je_decline_of_great_shun_main
+			has_journal_entry = je_tungning_start
+			has_journal_entry = je_xijiao_missions_send
+		}
+		is_diplomatic_play_committed_participant = no
+		is_at_war = no
+		has_technology_researched = nationalism
+		
+		
+
+	}
+
+	effect = {
+		add_modifier = {
+			name = decision_cooldown
+			months = 30
+		}
+		random_country = {
+			limit = {
+				is_in_geographic_region = geographic_region_china
+				any_neighbouring_state = {
+					owner = ROOT
+				}
+				is_ai = yes
+			}
+			save_scope_as = china_target
+		}
+		create_diplomatic_play = {
+			type = dp_unify_china
+			target_country = scope:china_target
+			war = no 
+			add_war_goal = {
+				holder = scope:china_target
+				type = annex_country
+				target_country = ROOT
+			}
+		}
+	}
+
+	ai_chance = {
+		value = 100
+	 }	
+}
+
+dvg_consolidate_mandate = {
+	name = "CHI_mandate_button"
+	desc = "CHI_mandate_button_desc"
+
+	visible = { always = yes }
+
+	possible = {
+	  authority >= 888 
+	  NOT = {
+		has_modifier = consolidating_mandate
+	  }
+	  in_default = no
+	  NOR = {
+		has_law = law_type:law_no_schools
+		has_law = law_type:law_no_home_affairs
+	  }
+	  root.average_sol >= 10 
+	  has_technology_researched = mass_communication
+	}
+	effect = {
+		if = {
+			limit = {
+				has_modifier = questioned_mandate
+			}
+			remove_modifier = questioned_mandate
+		}
+		add_modifier = {
+			name = consolidating_mandate
+			months = 12
+		}
+		every_scope_state = {
+			add_modifier = {
+				name = dvg_assimilate
+				months = 12
+			}
+		}
+	}
 }

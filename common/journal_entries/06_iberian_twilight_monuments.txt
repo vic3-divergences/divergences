@@ -1,0 +1,559 @@
+﻿# Monuments for IP4 Journal Entries
+
+#### Sagrada Família Cathedral ###
+je_sagrada_familia = {
+    icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	group = je_group_technology
+
+    is_shown_when_inactive = {
+        has_dlc_feature = ip4_content
+        any_scope_state = {
+            state_region = s:STATE_CATALONIA
+        }
+    }
+
+    possible = {
+        has_technology_researched = reinforced_concrete
+        any_scope_state = {
+            state_region = s:STATE_CATALONIA
+        }
+        OR = {
+            country_has_state_religion = rel:catholic
+            ruler = {
+                religion = rel:catholic
+            }
+        }
+        NOT = { 
+            has_law_or_variant = law_type:law_state_atheism 
+        }
+        NOR = {
+            has_law_or_variant = law_type:law_command_economy
+            investment_pool_gross_income < 5000
+        }
+    }
+
+    status_desc = {
+        first_valid = {
+            triggered_desc = {
+                desc = no_cathedral_status_loc
+                trigger = {
+                    NOT = {
+                        has_journal_entry = je_sagrada_familia
+                    }
+                }
+            }
+            triggered_desc = {
+                desc = cathedral_0_built_cathedral_1_ready_status_loc
+                trigger = {
+                    NOR = {
+                        has_building = building_sagrada_familia_cathedral_1
+                        has_building = building_sagrada_familia_cathedral_2
+                        has_building = building_sagrada_familia_cathedral_3
+                    }
+                }
+            }
+            triggered_desc = {
+                desc = cathedral_1_built_cathedral_2_ready_status_loc
+                trigger = {
+                    has_building = building_sagrada_familia_cathedral_1
+                    NOR = {
+                        has_building = building_sagrada_familia_cathedral_2
+                        has_building = building_sagrada_familia_cathedral_3
+                    }
+                }
+            }
+            triggered_desc = {
+                desc = cathedral_2_built_cathedral_3_ready_status_loc
+                trigger = {
+                    has_building = building_sagrada_familia_cathedral_2
+                    NOT = {
+                        has_building = building_sagrada_familia_cathedral_3
+                    }
+                }
+            }
+            triggered_desc = {
+                desc = cathedral_3_built_complete_status_loc
+                trigger = {
+                    has_building = building_sagrada_familia_cathedral_3
+                }
+            }
+        }
+    }
+
+    immediate = {
+        random_scope_state = {
+            limit = {
+                state_region = s:STATE_CATALONIA
+            }
+            save_scope_as = relevant_state
+        }
+        ig:ig_devout = {
+            save_scope_as = relevant_ig
+        }
+        trigger_event = { id = sagrada_familia.1 popup = yes }
+    }
+
+    on_weekly_pulse = {
+        effect = { # checks if the next phase is being constructed
+            destroy_building_sagrada_familia_cathedral_1 = yes
+            destroy_building_sagrada_familia_cathedral_2 = yes
+        }
+    }
+
+    complete = {
+        custom_tooltip = {
+            text = sagrada_familia_complete_tt
+            any_scope_state = {
+                state_region = s:STATE_CATALONIA
+                has_building = building_sagrada_familia_cathedral_3
+            }
+        }
+        trigger_if = {
+            limit = {
+                has_game_rule = allow_monument_effects
+            }
+            custom_tooltip = {
+                text = sagrada_familia_populated_tt
+                any_scope_state = {
+                    state_region = s:STATE_CATALONIA
+                    any_scope_building = {
+                        is_building_type = building_sagrada_familia_cathedral_3
+                        occupancy >= 0.5
+                    }
+                }
+            }
+        }
+    }
+
+    on_complete = {
+        trigger_event = { id = sagrada_familia.4 popup = yes }
+    }
+
+    event_outcome_completed_effect_desc = {
+        header = sagrada_familia.4.a
+        effect = {
+            random_scope_state = {
+                limit = {
+                    state_region = s:STATE_CATALONIA
+                }
+                add_modifier = {
+                    name = sagrada_familia_reward_loc
+                    days = moderately_long_modifier_time
+                }
+            }
+        }
+    }
+
+    event_outcome_completed_effect_desc = {
+        header = sagrada_familia.4.b
+        effect = {
+            add_modifier = {
+                name = sagrada_familia_reward_int
+                days = moderately_long_modifier_time
+            }
+        }
+    }
+
+    invalid = {
+        OR = {
+            has_variable = rejected_sagrada_familia_project
+            AND = {
+                NOT = {
+                    s:STATE_CATALONIA = {
+                        any_scope_state = {
+                            owner = root
+                        }
+                    }
+                }
+                NOT = {
+                    s:STATE_CATALONIA = {
+                        any_scope_state = {
+                            owner = {
+                               is_diplomatic_play_enemy_of = root
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    weight = 1000
+
+    should_be_pinned_by_default = yes
+}
+
+### Palácio da Pena ###
+je_pena_palace = {
+    icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+    group = je_group_technology
+
+    is_shown_when_inactive = {
+        has_dlc_feature = ip4_content
+        any_scope_state = {
+            state_region = s:STATE_ESTREMADURA
+        }
+    }
+
+    possible = {
+        has_technology_researched = mechanical_tools
+        custom_tooltip = {
+            text = pena_palace_possible_tt
+            any_scope_state = {
+                state_region = s:STATE_ESTREMADURA
+                has_building = building_pena_convent
+            }
+        }
+        NOR = {
+            has_law_or_variant = law_type:law_command_economy
+            investment_pool_gross_income < 5000
+        }
+    }
+
+    immediate = {
+        random_scope_state = {
+            limit = {
+                state_region = s:STATE_ESTREMADURA
+            }
+            save_scope_as = relevant_state
+        }
+        ig:ig_industrialists ?= {
+            save_scope_as = relevant_ig
+        }
+        trigger_event = { id = pena_palace.1 popup = yes }
+    }
+
+    on_weekly_pulse = {
+        effect = { # checks if the next phase is being constructed
+            destroy_pena_convent = yes
+        }
+    }
+
+    complete = {
+        custom_tooltip = {
+            text = pena_palace_complete_tt
+            any_scope_state = {
+                state_region = s:STATE_ESTREMADURA
+                has_building = building_pena_palace
+            }
+        }
+        trigger_if = {
+            limit = {
+                has_game_rule = allow_monument_effects
+            }
+            custom_tooltip = {
+                text = pena_palace_populated_tt
+                any_scope_state = {
+                    state_region = s:STATE_ESTREMADURA
+                    any_scope_building = {
+                        is_building_type = building_pena_palace
+                        occupancy >= 0.5
+                    }
+                }
+            }
+        }
+    }
+
+    on_complete = {
+        trigger_event = { id = pena_palace.2 popup = yes }
+    }
+
+    event_outcome_completed_effect_desc = {
+        header = pena_palace.2.a
+        effect = {
+            random_scope_state = {
+                limit = {
+                    state_region = s:STATE_ESTREMADURA
+                }
+                add_modifier = {
+                    name = pena_palace_reward_loc
+                    days = long_modifier_time
+                }
+            }
+        }
+    }
+
+    event_outcome_completed_effect_desc = {
+        header = pena_palace.2.b
+        effect = {
+            add_modifier = {
+                name = pena_palace_reward_int
+                days = long_modifier_time
+            }
+        }
+    }
+
+    invalid = {
+        OR = {
+            has_variable = rejected_pena_palace_project
+            AND = {
+                NOT = {
+                    s:STATE_ESTREMADURA = {
+                        any_scope_state = {
+                            owner = root
+                        }
+                    }
+                }
+                NOT = {
+                    s:STATE_ESTREMADURA = {
+                        any_scope_state = {
+                            owner = {
+                               is_diplomatic_play_enemy_of = root
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    weight = 1000
+
+    should_be_pinned_by_default = yes
+}
+
+### Gran Teatro de La Habana ###
+je_gran_teatro = {
+    icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+    group = je_group_technology
+
+    is_shown_when_inactive = {
+        has_dlc_feature = ip4_content
+        any_scope_state = {
+            state_region = s:STATE_WESTERN_CUBA
+        }
+    }
+
+    possible = {
+        has_technology_researched = pneumatic_tools
+        any_scope_state = {
+            state_region = s:STATE_WESTERN_CUBA
+        }
+        NOR = {
+            has_law_or_variant = law_type:law_command_economy
+            investment_pool_gross_income < 5000
+        }
+    }
+
+    immediate = {
+        random_scope_state = {
+            limit = {
+                state_region = s:STATE_WESTERN_CUBA
+            }
+            save_scope_as = relevant_state
+        }
+        ig:ig_petty_bourgeoisie ?= {
+            save_scope_as = relevant_ig
+        }
+        trigger_event = { id = gran_teatro.1 popup = yes }
+    }
+
+    complete = {
+        custom_tooltip = {
+            text = gran_teatro_complete_tt
+            any_scope_state = {
+                state_region = s:STATE_WESTERN_CUBA
+                has_building = building_gran_teatro_de_la_habana
+            }
+        }
+        trigger_if = {
+            limit = {
+                has_game_rule = allow_monument_effects
+            }
+            custom_tooltip = {
+                text = gran_teatro_populated_tt
+                any_scope_state = {
+                    state_region = s:STATE_WESTERN_CUBA
+                    any_scope_building = {
+                        is_building_type = building_gran_teatro_de_la_habana
+                        occupancy >= 0.5
+                    }
+                }
+            }
+        }
+    }
+
+    on_complete = {
+        trigger_event = { id = gran_teatro.2 popup = yes }
+    }
+
+    event_outcome_completed_effect_desc = {
+        header = gran_teatro.2.a
+        effect = {
+            random_scope_state = {
+                limit = {
+                    state_region = s:STATE_WESTERN_CUBA
+                }
+                add_modifier = {
+                    name = gran_teatro_reward_loc
+                    days = long_modifier_time
+                }
+            }
+        }
+    }
+
+    event_outcome_completed_effect_desc = {
+        header = gran_teatro.2.b
+        effect = {
+            add_modifier = {
+                name = gran_teatro_reward_int
+                days = long_modifier_time
+            }
+        }
+    }
+
+    invalid = {
+        OR = {
+            has_variable = rejected_gran_teatro_project
+            AND = {
+                NOT = {
+                    s:STATE_WESTERN_CUBA = {
+                        any_scope_state = {
+                            owner = root
+                        }
+                    }
+                }
+                NOT = {
+                    s:STATE_WESTERN_CUBA = {
+                        any_scope_state = {
+                            owner = {
+                               is_diplomatic_play_enemy_of = root
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    weight = 1000
+
+    should_be_pinned_by_default = yes
+}
+
+### Estación de Madrid Atocha ###
+je_atocha_railway = {
+    icon = "gfx/interface/icons/event_icons/event_industry.dds"
+
+    group = je_group_technology
+
+    is_shown_when_inactive = {
+        has_dlc_feature = ip4_content
+        any_scope_state = {
+            state_region = s:STATE_NEW_CASTILE
+        }
+    }
+
+    possible = {
+        has_technology_researched = steel_frame_buildings
+        custom_tooltip = {
+            text = atocha_railway_possible_tt
+            any_scope_state = {
+                state_region = s:STATE_NEW_CASTILE
+                has_building = building_railway
+            }
+        }
+        NOR = {
+            has_law_or_variant = law_type:law_command_economy
+            investment_pool_gross_income < 5000
+        }
+    }
+
+    immediate = {
+        random_scope_state = {
+            limit = {
+                state_region = s:STATE_NEW_CASTILE
+            }
+            save_scope_as = relevant_state
+        }
+        ig:ig_industrialists ?= {
+            save_scope_as = relevant_ig
+        }
+        trigger_event = { id = atocha_railway.1 popup = yes }
+    }
+
+    complete = {
+        custom_tooltip = {
+            text = atocha_railway_complete_tt
+            any_scope_state = {
+                state_region = s:STATE_NEW_CASTILE
+                has_building = building_estacion_de_madrid_atocha
+            }
+        }
+        trigger_if = {
+            limit = {
+                has_game_rule = allow_monument_effects
+            }
+            custom_tooltip = {
+                text = atocha_railway_populated_tt
+                any_scope_state = {
+                    state_region = s:STATE_NEW_CASTILE
+                    any_scope_building = {
+                        is_building_type = building_estacion_de_madrid_atocha
+                        occupancy >= 0.5
+                    }
+                }
+            }
+        }
+    }
+
+    on_complete = {
+        trigger_event = { id = atocha_railway.2 popup = yes }
+    }
+
+    event_outcome_completed_effect_desc = {
+        header = atocha_railway.2.a
+        effect = {
+            random_scope_state = {
+                limit = {
+                    state_region = s:STATE_NEW_CASTILE
+                }
+                add_modifier = {
+                    name = atocha_railway_reward_loc
+                    days = long_modifier_time
+                }
+            }
+        }
+    }
+
+    event_outcome_completed_effect_desc = {
+        header = atocha_railway.2.b
+        effect = {
+            add_modifier = {
+                name = atocha_railway_reward_int
+                days = long_modifier_time
+            }
+        }
+    }
+
+    invalid = {
+        OR = {
+            has_variable = rejected_atocha_railway_project
+            AND = {
+                NOT = {
+                    s:STATE_NEW_CASTILE = {
+                        any_scope_state = {
+                            owner = root
+                        }
+                    }
+                }
+                NOT = {
+                    s:STATE_NEW_CASTILE = {
+                        any_scope_state = {
+                            owner = {
+                               is_diplomatic_play_enemy_of = root
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    weight = 1000
+
+    should_be_pinned_by_default = yes
+}

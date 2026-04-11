@@ -15,6 +15,21 @@ je_ameriga_unite = {
 	}
 
     possible = {
+		has_technology_researched = pan-nationalism
+		OR = {
+			country_has_primary_culture = cu:antarctican
+			country_has_primary_culture = cu:equinoxien
+			country_has_primary_culture = cu:lotharian
+			country_has_primary_culture = cu:atlantian
+			AND = {
+				has_variable = blt_pursue_ameriga
+				country_has_primary_culture = cu:beornian
+			}
+		}
+		OR = {
+			is_subject = no
+			aggressive_diplomatic_plays_permitted = yes
+		}
 	}
 
 	complete = {
@@ -119,6 +134,9 @@ je_ameriga_unite = {
 	trigger_event = { id = dvg_ameriga.4 popup = yes }
 		
 	}
+	invalid = {
+		has_global_variable = amerigan_culture
+	}
 	should_be_pinned_by_default = yes
 
 }
@@ -129,9 +147,9 @@ je_south_america_migration = {
 	group = je_group_foreign_affairs
 
 	is_shown_when_inactive = {
-		country_is_in_south_america = yes
+		is_in_geographic_region = geographic_region_south_america
 		any_primary_culture = {
-			has_discrimination_trait = european_heritage
+			has_discrimination_trait_group = heritage_group_european
 		}
 	}
 
@@ -142,13 +160,13 @@ je_south_america_migration = {
 		is_at_war = no
 		is_subject = no
 		OR = {
-			has_law = law_type:law_racial_segregation
-			has_law = law_type:law_cultural_exclusion
-			has_law = law_type:law_multicultural
+			has_law_or_variant = law_type:law_racial_segregation
+			has_law_or_variant = law_type:law_cultural_exclusion
+			has_law_or_variant = law_type:law_multicultural
 		}
 		NOR = {
-			has_law = law_type:law_closed_borders
-			has_law = law_type:law_isolationism
+			has_law_or_variant = law_type:law_closed_borders
+			has_law_or_variant = law_type:law_isolationism
 		}
 	}
 
@@ -164,7 +182,7 @@ je_south_america_migration = {
 		every_scope_state = {
 			limit = {
 				is_incorporated = yes
-				state_is_in_south_america = yes
+				is_in_geographic_region = geographic_region_south_america
 			}
 			ROOT = {
 				change_variable = {
@@ -197,7 +215,7 @@ je_south_america_migration = {
 			every_scope_state = {
 				limit = {
 					is_incorporated = yes
-					state_is_in_south_america = yes
+					is_in_geographic_region = geographic_region_south_america
 				}
 				ROOT = {
 					change_variable = {
@@ -213,7 +231,7 @@ je_south_america_migration = {
 			every_scope_state = {
 				limit = {
 					is_incorporated = yes
-					state_is_in_south_america = yes
+					is_in_geographic_region = geographic_region_south_america
 				}
 				ROOT = {
 					change_variable = {
@@ -236,9 +254,15 @@ je_south_america_migration = {
 	complete = {
 		custom_tooltip = {
 			text = sa_migration_completion_tt
-			var:south_america_incorporated_population >= var:south_america_migration_goal
-			var:south_america_incorporated_population > 0
-			var:south_america_migration_goal > 0
+			trigger_if = {
+				limit = { exists = var:south_america_incorporated_population }
+				var:south_america_incorporated_population >= var:south_america_migration_goal
+				var:south_america_incorporated_population > 0
+				var:south_america_migration_goal > 0
+			}
+			trigger_else = {
+				always = no
+			}
 		}
 	}
 
@@ -262,60 +286,111 @@ je_south_america_migration = {
 	should_be_pinned_by_default = yes
 }
 
+je_amerigan_nation_building = {
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
 
-je_ameriga_liberty = {
-	icon = "gfx/interface/icons/event_icons/event_military.dds"
-
-	group = je_group_foreign_affairs
+	group = je_group_historical_content
 
 	is_shown_when_inactive = {
-
-
-	country_has_primary_culture = cu:afro_amerigan
-
-	any_primary_culture = {
-		has_discrimination_trait = european_heritage
+		NOT = {
+			country_has_primary_culture = cu:amazonien
+		}
+		exists = c:AME
+		c:AME = ROOT
 	}
-		
-	}
-
-    possible = {
-
+	possible = {
 		has_technology_researched = pan-nationalism
+		OR = {
+			NOT = {
+				exists = c:AMA
+			}
+			NOT = {
+				exists = c:LOT
+			}
+			NOT = {
+				exists = c:ATL
+			}
+			NOT = {
+				exists = c:EQX
+			}
+		}
+	}
 
+	immediate = {
+		
+		cu:lotharian = {
+			save_scope_as = atlantian_culture
+		}
+		cu:atlantian = {
+			save_scope_as = lotharian_culture
+		}
+		cu:equinoxien = {
+			save_scope_as = equinoxien_culture
+		}
+		cu:antarctican = {
+			save_scope_as = antarctican_culture
+		}
+		cu:amerigan = {
+			save_scope_as = amerigan_culture
+		}
 	}
 
 	complete = {
-		
-		NOT = {
-			any_country = {
-				any_primary_culture = {
-					has_discrimination_trait = amerigan
-				}
-				country_is_in_south_america = yes
+		has_technology_researched = pan-nationalism
+		custom_tooltip = {
+			text = je_amerigan_nation_building_integrate_equinoxien_complete_tt
+			has_variable = equinoxiens_integrated
+		}
+		custom_tooltip = {
+			text = je_amerigan_nation_building_integrate_lotharian_complete_tt
+			has_variable = lotharians_integrated
+		}
+		custom_tooltip = {
+			text = je_amerigan_nation_building_integrate_atlantian_complete_tt
+			has_variable = atlantians_integrated
+		}
+		custom_tooltip = {
+			text = je_amerigan_nation_building_integrate_antarctican_complete_tt
+			OR = {
+				has_variable = antarcticans_integrated
 				NOT = {
-					market = {
-						owner = ROOT
+					any_state_region = {
+						is_homeland = cu:antarctican
 					}
-
 				}
 			}
 		}
 	}
-    on_complete = {
-		change_tag = AME
-		
-    }
-	fail = {
-	
-	
-	
-		}
-	on_fail = {
-	
-	
-		
-	}
-	should_be_pinned_by_default = yes
 
+	on_complete = {
+		trigger_event = { id = dvg_ameriga.7 }
+		set_global_variable = amerigan_culture
+		add_loyalists = {
+			value = 0.20
+		}
+		add_modifier = {
+			name = dvg_nation_built
+		}
+	}
+
+	fail = {
+		AND = {
+			exists = c:AMA
+			exists = c:LOT
+			exists = c:ATL
+			exists = c:EQX
+		}
+
+	}
+
+	
+
+	scripted_button = je_amerigan_nation_building_integrate_equinoxien
+	scripted_button = je_amerigan_nation_building_integrate_lotharian
+	scripted_button = je_amerigan_nation_building_integrate_atlantian
+	scripted_button = je_amerigan_nation_building_integrate_antarctican
+
+	weight = 100
+
+	should_be_pinned_by_default = yes
 }

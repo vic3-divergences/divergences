@@ -19,6 +19,7 @@ dvg_atlantia.10 = {
 	icon = "gfx/interface/icons/event_icons/event_fire.dds"
 
 	duration = 3
+	duration = 3
 
 	trigger = {
 	    
@@ -28,12 +29,7 @@ dvg_atlantia.10 = {
 		name = dvg_atlantia.10.a
 		default_option = yes
 		
-		s:STATE_COTE_DU_CAFE = {
-			add_claim = c:LOT
-		}
-		s:STATE_COTE_DU_CAFE = {
-			add_claim = c:AMA
-		}
+		
 	}
 }	
 
@@ -90,7 +86,6 @@ dvg_atlantia.1 = {
 		
 		if = {
 		limit = {
-		
 			exists = c:AMA
 			}
 		c:AMA = { save_scope_as = ama_scope }
@@ -195,6 +190,25 @@ dvg_atlantia.1 = {
 				}
 				add = 50
 			}
+
+			modifier = {
+				trigger = {
+					has_game_rule = atlantia_referendum_amazonie
+				}
+				add = 1000
+			}
+			modifier = {
+				trigger = {
+					has_game_rule = atlantia_referendum_lotharingia
+				}
+				add = -1000
+			}
+			modifier = {
+				trigger = {
+					has_game_rule = atlantia_referendum_independent
+				}
+				add = -1000
+			}
 		}
 	}
 	option = {
@@ -271,6 +285,25 @@ dvg_atlantia.1 = {
 				}
 				add = 50
 			}
+
+			modifier = {
+				trigger = {
+					has_game_rule = atlantia_referendum_amazonie
+				}
+				add = -1000
+			}
+			modifier = {
+				trigger = {
+					has_game_rule = atlantia_referendum_lotharingia
+				}
+				add = 1000
+			}
+			modifier = {
+				trigger = {
+					has_game_rule = atlantia_referendum_independent
+				}
+				add = -1000
+			}
 		}
 		
 	}
@@ -301,12 +334,8 @@ dvg_atlantia.1 = {
 			culture = cu:atlantian
 		}
 
-		
-		c:SPA = {
-			remove_diplomatic_pact = {
-				country = c:ATL
-				type = puppet
-			}
+		c:ATL = {
+			make_independent = yes
 		}
 		
 		c:ATL = {
@@ -321,17 +350,34 @@ dvg_atlantia.1 = {
 			}
 			
 		}
-		c:LOT = {
-		       
-			
-			add_journal_entry = { type = je_reconquering_atlantia }
-			
+		ig:ig_landowners = {
+			set_interest_group_name = ig_planteurs
 		}
+		
 		c:LOT = { trigger_event = { id = dvg_atlantia.12 popup = yes } }
 		
 
 		ai_chance = {
 			base = 65
+
+			modifier = {
+				trigger = {
+					has_game_rule = atlantia_referendum_amazonie
+				}
+				add = -1000
+			}
+			modifier = {
+				trigger = {
+					has_game_rule = atlantia_referendum_lotharingia
+				}
+				add = -1000
+			}
+			modifier = {
+				trigger = {
+					has_game_rule = atlantia_referendum_independent
+				}
+				add = 1000
+			}
 		}
 	}
 	option = {
@@ -593,16 +639,19 @@ dvg_atlantia.4 = {
 				
 				add_war_goal = {
 					holder = c:AMA
-					type = war_reparations
-					target_country = c:LOT
-				}
-				
-				add_war_goal = {
-					holder = c:AMA
 					type = humiliation
 					target_country = c:LOT
 				}
 			}
+		}
+		cu:atlantian = {
+			add_fervor = 20
+		}
+		cu:antarctican = {
+			add_fervor = 10
+		}
+		cu:equinoxien = {
+			add_fervor = 10
 		}
 		
 		add_loyalists = {
@@ -628,7 +677,6 @@ dvg_atlantia.4 = {
 	
 	option = {
 		name = dvg_atlantia.4.b
-		default_option = yes
 		change_relations = {
 				country = c:AMA
 				value = 60
@@ -642,6 +690,9 @@ dvg_atlantia.4 = {
 				name = modifier_army_dissaproves
 				days = 1825
 			}
+		}
+		cu:lotharian = {
+			add_fervor = 10
 		}
 		ai_chance = {
 			base = 1
@@ -920,12 +971,6 @@ dvg_atlantia.9 = {
 			
 			 add_war_goal = {
 				 holder = c:ATL
-				 type = war_reparations
-				 target_country = c:LOT
-			 }
-			
-			 add_war_goal = {
-				 holder = c:ATL
 				 type = humiliation
 				 target_country = c:LOT
 			 }
@@ -1041,8 +1086,64 @@ dvg_atlantia.12 = {
 	option = {
 		name = dvg_atlantia.12.a
 		default_option = yes	
+
+		add_radicals = {
+			value = 0.15
+			culture = cu:lotharian
+
+		}
+		s:STATE_COTE_DU_CAFE = {
+			remove_claim = ROOT
+		}
+
+		change_relations = {
+			country = c:ATL
+			value = 20
+		}
+		cu:lotharian = {
+			add_fervor = 10
+		}
+		add_modifier = {
+			name = dvg_favored_foreigners
+			months = 6 
+			is_decaying = yes
+		}
 	}
 	
+	option = {
+		name = dvg_atlantia.12.b
+		trigger = {
+			is_player = yes
+		}
+
+		add_loyalists = {
+			value = 0.10
+			culture = cu:lotharian
+		}
+		add_radicals = {
+			value = 0.10
+			culture = cu:atlantian
+		}
+		
+		change_relations = {
+			country = c:ATL
+			value = -30
+		}
+		create_incident = {
+			country = THIS
+			value = 10
+		}
+		cu:atlantian = {
+			add_fervor = 15
+		}
+		ruler = {
+			add_modifier = {
+				name = sovereignty_defender
+				months = 30
+				is_decaying = yes
+			}
+		}
+	}
 	
 }
 
@@ -1082,13 +1183,7 @@ dvg_atlantia.13 = {
 			war = no
 			
 			 type = dp_return_state
-			
-			 add_war_goal = {
-				 holder = c:LOT
-				 type = war_reparations
-				 target_country = c:AMA
-			 }
-			
+			 
 			 add_war_goal = {
 				 holder = c:LOT
 				 type = humiliation
@@ -1144,7 +1239,12 @@ dvg_atlantia.14 = {
 	    
 	}
 	immediate = {
-	
+		c:AMA = {
+			save_scope_as = ama_scope
+		}
+		c:LOT = {
+			save_scope_as = lot_scope
+		}
 	}
 	
 	option = {
@@ -1362,6 +1462,7 @@ dvg_atlantia.18 = {
 	}	
 	
 }
+#Lighting the Fuses of Liberty
 dvg_atlantia.19 = {
 	type = country_event
 	placement = ROOT
@@ -1372,7 +1473,7 @@ dvg_atlantia.19 = {
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
 	on_opened_soundeffect = "texan_war_of_independence.1"
 
-	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
 
 	title = dvg_atlantia.19.t
 	desc = dvg_atlantia.19.d
@@ -1399,17 +1500,67 @@ dvg_atlantia.19 = {
 	option = {
 		name = dvg_atlantia.19.a
 		default_option = yes
-		
-		random_scope_state = {
-			limit = {
-				owner = c:AMA
+		trigger = {
+			
+			NOT = {
+				has_global_variable = amazonie_shatters
+			}
+		}
+		c:AMA = {
+			change_variable = {
+				name = equinoxea_var
+				add = 15
 			}
 			add_modifier = {
-				name = dvg_fragile_state
+				name = dvg_fragile_country
 				months = 12
+			}
+		}
+		custom_tooltip = {
+			text = ama_rebel_tt
+			random_scope_state = {
+				limit = {
+					owner = c:AMA
+				}
+				add_modifier = {
+					name = dvg_fragile_state
+					months = 12
+				}
+				
 			}
 			
 		}
+		cu:atlantian = {
+			add_fervor = 10
+		}
+		c:AMA = {
+			change_variable = {
+				name = equinoxea_var
+				add = 15
+			}
+			add_modifier = {
+				name = dvg_fragile_country
+				months = 12
+			}
+			random_scope_state = {
+			limit = {
+				any_neighbouring_state = {
+					owner = c:ATL
+				}
+			}
+				every_scope_pop = {
+				limit = {
+					pop_radical_fraction > 0.50
+				}
+				change_pop_culture = {
+					target = cu:atlantian
+					value = 1
+				}
+			}
+			}
+		}
+		
+		
 		
 		ai_chance = {
 			base = 50
@@ -1417,16 +1568,55 @@ dvg_atlantia.19 = {
 	}	
 	option = {
 		name = dvg_atlantia.19.b
-		
-		random_scope_state = {
-			limit = {
-				owner = c:LOT
-			}
-			add_modifier = {
-				name = dvg_fragile_state
-				months = 12
+		trigger = {
+			NOT = {
+				has_global_variable = lotharingia_shatters
 			}
 		}
+		custom_tooltip = {
+			text = lot_rebel_tt
+			random_scope_state = {
+				limit = {
+					owner = c:LOT
+				}
+				add_modifier = {
+					name = dvg_fragile_state
+					months = 12
+				}
+			}
+			
+		}
+		cu:atlantian = {
+			add_fervor = 10
+		}
+		c:LOT = {
+			change_variable = {
+				name = aigle_var
+				add = 20
+			}
+			add_modifier = {
+				name = dvg_fragile_country
+				months = 12
+			}
+			random_scope_state = {
+			limit = {
+				any_neighbouring_state = {
+					owner = c:ATL
+				}
+			}
+				every_scope_pop = {
+				limit = {
+					pop_radical_fraction > 0.50
+				}
+				change_pop_culture = {
+					target = cu:atlantian
+					value = 1
+				}
+			}
+			}
+		}
+		
+		
 		
 	}
 	
