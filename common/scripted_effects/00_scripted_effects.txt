@@ -1,0 +1,1262 @@
+﻿#	Example:
+#
+#	example_effect = {
+#		x = 100
+#		y = 50
+#	}
+#
+#
+#	In a script file:
+#
+#	effect = {
+#		example_effect = yes
+#	}
+#
+
+relations_hit_with_power_bloc_leaders = {
+	if = {
+		limit = {
+			has_game_started = yes
+		}
+
+		every_power_bloc = {
+			limit = {
+				NOT = { scope:power_bloc ?= this }
+			}
+			power_bloc_leader = {
+				root = {
+					change_relations = {
+						country = prev
+						value = {
+							add = -30
+							if = {
+								limit = {
+									is_country_type = unrecognized
+									prev = { is_country_type = recognized }
+								}
+								add = -30
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+save_neighbor_with_state = {
+	random_neighbouring_state = {
+		limit = {
+			owner = {
+				$CRITERIA$
+			}
+		}
+		save_scope_as = neighbor_state
+		owner = {
+			save_scope_as = neighbor_country
+		}
+
+		random_neighbouring_state = {
+			limit = {
+				owner = ROOT
+			}
+			save_scope_as = neighbor_neighbor_state
+		}
+	}
+}
+
+save_industrialized_pm_building_and_state = {
+	random_scope_building = {
+		limit = {
+			OR = {
+				AND = {
+					is_building_type = building_textile_mill
+					state = {
+						OR = {
+							is_production_method_active = {
+								building_type = building_textile_mill
+								production_method = pm_mechanized_looms
+							}
+							is_production_method_active = {
+								building_type = building_textile_mill
+								production_method = pm_automatic_power_looms
+							}
+						}
+					}
+				}
+				AND = {
+					is_building_type = building_furniture_manufactory
+					state = {
+						OR = {
+							is_production_method_active = {
+								building_type = building_furniture_manufactory
+								production_method = pm_mechanized_workshops
+							}
+							is_production_method_active = {
+								building_type = building_furniture_manufactory
+								production_method = pm_watertube_boiler_building_furniture_manufactory
+							}
+							is_production_method_active = {
+								building_type = building_furniture_manufactory
+								production_method = pm_rotary_valve_engine_building_furniture_manufactory
+							}
+							is_production_method_active = {
+								building_type = building_furniture_manufactory
+								production_method = pm_assembly_lines_building_furniture_manufactory
+							}
+						}
+					}
+				}
+				AND = {
+					is_building_type = building_tooling_workshop
+					state = {
+						OR = {
+							is_production_method_active = {
+								building_type = building_tooling_workshop
+								production_method = pm_watertube_boiler_building_tooling_workshop
+							}
+							is_production_method_active = {
+								building_type = building_tooling_workshop
+								production_method = pm_rotary_valve_engine_building_tooling_workshop
+							}
+							is_production_method_active = {
+								building_type = building_tooling_workshop
+								production_method = pm_assembly_lines_building_tooling_workshop
+							}
+						}
+					}
+				}
+				AND = {
+					is_building_type = building_paper_mill
+					state = {
+						OR = {
+							is_production_method_active = {
+								building_type = building_paper_mill
+								production_method = pm_watertube_boiler_building_paper_mill
+							}
+							is_production_method_active = {
+								building_type = building_paper_mill
+								production_method = pm_rotary_valve_engine_building_paper_mill
+							}
+						}
+					}
+				}
+				AND = {
+					is_building_type = building_steel_mill
+					state = {
+						OR = {
+							is_production_method_active = {
+								building_type = building_steel_mill
+								production_method = pm_watertube_boiler_building_steel_mill
+							}
+							is_production_method_active = {
+								building_type = building_steel_mill
+								production_method = pm_rotary_valve_engine_building_steel_mill
+							}
+						}
+					}
+				}
+				AND = {
+					is_building_type = building_motor_industry
+					state = {
+						OR = {
+							is_production_method_active = {
+								building_type = building_motor_industry
+								production_method = pm_watertube_boiler_building_motor_industry
+							}
+							is_production_method_active = {
+								building_type = building_motor_industry
+								production_method = pm_rotary_valve_engine_building_motor_industry
+							}
+						}
+					}
+				}
+			}
+		}
+
+		save_scope_as = industrialized_pm_building
+		state = {
+			save_scope_as = industrialized_pm_state
+		}
+	}
+}
+
+warlord_setup_effect = {
+	activate_law = law_type:law_autocracy
+	activate_law = law_type:law_presidential_republic
+	activate_law = law_type:law_peasant_levies
+	if = {
+		limit = {
+			NOR = {
+				c:MGL ?= this
+				c:TUV ?= this
+				c:ALI ?= this
+			}
+		}
+		random_character = {
+			limit = {
+				c:CHI ?= owner
+				OR = {
+					has_role = general
+					AND = {
+						PREV = {
+							any_scope_state = {
+								has_building = building_naval_base
+							}
+						}
+						has_role = admiral
+					}
+				}
+			}
+			transfer_character = PREV
+			set_character_as_ruler = yes
+		}
+		if = {
+			limit = {
+				NOR = {
+					country_has_primary_culture = cu:han
+					country_has_primary_culture = cu:manchu
+				}
+			}
+			add_primary_culture = cu:han
+			if = {
+				limit = {
+					OR = {
+						has_law_or_variant = law_type:law_ethnostate
+						has_law_or_variant = law_type:law_national_supremacy
+					}
+				}
+				remove_primary_culture = cu:uighur
+				remove_primary_culture = cu:tibetan
+				remove_primary_culture = cu:mongol
+			}
+		}
+	}
+
+	every_scope_character = {
+		random_list = {
+			80 =  {
+			}
+
+			20 = {
+				add_trait = bandit
+			}
+		}
+	}
+}
+
+scripted_effect_parties_emergence = {
+	if = {
+		limit = {
+			country_has_voting_franchise = no
+		}
+		custom_tooltip = PARTIES_EMERGENCE
+	}
+
+	# Will immediately trigger elections and thus update parties so no need to call update_party_support here
+}
+
+scripted_effect_parties_disappearence = {
+	if = {
+		limit = {
+			country_has_voting_franchise = yes
+		}
+		custom_tooltip = PARTIES_DISAPPEARENCE
+	}
+
+	deactivate_parties = yes
+}
+
+enslave_discriminated_farm_workers = {
+	every_scope_pop = {
+		limit = {
+			is_pop_type = laborers
+			pop_acceptance < acceptance_status_4
+			OR = {
+				pop_employment_building_group = bg_agriculture
+				pop_employment_building_group = bg_ranching
+				pop_employment_building_group = bg_plantations
+			}
+		}
+		change_poptype = pop_type:slaves
+	}
+}
+
+civil_war_save_scopes = {
+	save_scope_as = ongoing_revolution
+	political_movement = {
+		save_scope_as = ongoing_revolution_movement
+	}
+}
+
+save_agitator_law_scopes = {
+	if = {
+		limit = {
+			agitator_supports_enaction = yes
+		}
+		random_scope_character = {
+			limit = {
+				has_role = agitator
+				OR = {
+					law_enactment_stance = {
+						law = owner.currently_enacting_law.type
+						value > neutral
+					}
+					AND = {
+						law_enactment_stance = {
+							law = owner.currently_enacting_law.type
+							value = neutral
+						}
+						interest_group = {
+							law_enactment_stance = {
+								law = owner.currently_enacting_law.type
+								value > neutral
+							}
+						}
+					}
+				}
+			}
+			save_scope_as = supporting_agitator
+			interest_group = {
+				save_scope_as = agitator_ig
+			}
+		}
+		random_political_movement = {
+			limit = {
+				law_enactment_stance = {
+					law = owner.currently_enacting_law.type
+					value > neutral
+				}
+			}
+			save_scope_as = supporting_movement
+		}
+	}
+
+	if = {
+		limit = {
+			agitator_opposes_enaction = yes
+		}
+		random_scope_character = {
+			limit = {
+				has_role = agitator
+				OR = {
+					law_enactment_stance = {
+						law = owner.currently_enacting_law.type
+						value < neutral
+					}
+					AND = {
+						law_enactment_stance = {
+							law = owner.currently_enacting_law.type
+							value = neutral
+						}
+						interest_group = {
+							law_enactment_stance = {
+								law = owner.currently_enacting_law.type
+								value < neutral
+							}
+						}
+					}
+				}
+			}
+			save_scope_as = opposing_agitator
+			interest_group = {
+				save_scope_as = agitator_ig
+			}
+		}
+		random_political_movement = {
+			limit = {
+				law_enactment_stance = {
+					law = owner.currently_enacting_law.type
+					value < neutral
+				}
+			}
+			save_scope_as = opposing_movement
+		}
+	}
+}
+
+generate_french_monarch = {
+	hidden_effect = {
+		if = {
+			limit = {
+				any_scope_character = {
+					is_heir = yes
+				}
+			}
+			random_scope_character = {
+				limit = {
+					is_heir = yes
+				}
+				kill_character = yes
+			}
+		}
+		if = {
+			limit = {
+				has_gov_regency = yes
+			}
+			remove_regency_modifier = yes
+		}
+	}
+	# if = {
+		# limit = {
+			# has_variable = orleanist_restoration_var
+		# }
+		# if = {
+			# limit = {
+				# year < 1850
+			# }
+			# if = {
+				# limit = {
+					# any_scope_character = {
+						# has_template = FRA_louis_philippe
+					# }
+				# }
+				# random_scope_character = {
+					# limit = {
+						# has_template = FRA_louis_philippe
+					# }
+					# set_character_as_ruler = yes
+				# }
+			# }
+			# else_if = {
+				# limit = {
+					# any_scope_character = {
+						# has_template = FRA_ferdinand_philippe
+						# is_ruler = no
+					# }
+				# }
+				# random_scope_character = {
+					# limit = {
+						# has_template = FRA_ferdinand_philippe
+					# }
+					# set_character_as_ruler = yes
+				# }
+			# }
+			# else = {
+				# create_character = {
+					# template = FRA_ferdinand_philippe
+				# }
+			# }
+		# }
+		# else_if = {
+			# limit = {
+				# year >= 1850
+				# year < 1894
+			# }
+			# create_character = {
+				# template = FRA_philippe_de_orleans_of_paris
+				# on_created = {
+					# set_character_as_ruler = yes
+					# add_character_role = politician
+				# }
+			# }
+			# if = {
+				# limit = {
+					# year >= 1870
+					# year < 1894
+				# }
+				# create_character = {
+					# template = FRA_philippe_de_orleans_of_orleans
+				# }
+			# }
+		# }
+		# else_if = {
+			# limit = {
+				# year >= 1894
+				# year < 1926
+			# }
+			# create_character = {
+				# template = FRA_philippe_de_orleans_of_orleans
+				# on_created = {
+					# set_character_as_ruler = yes
+					# add_character_role = politician
+				# }
+			# }
+			# create_character = {
+				# template = FRA_jean_de_orleans
+			# }
+		# }
+		# else_if = {
+			# limit = {
+				# year >= 1926
+			# }
+			# create_character = {
+				# template = FRA_jean_de_orleans
+				# on_created = {
+					# set_character_as_ruler = yes
+					# add_character_role = politician
+				# }
+			# }
+			# create_character = {
+				# template = FRA_henri_de_orleans
+			# }
+		# }
+	# }
+	# else_if = {
+		# limit = {
+			# has_variable = legitimist_restoration_var
+		# }
+		# if = {
+			# limit = {
+				# year < 1844
+			# }
+			# create_character = {
+				# template = FRA_louis_antoine_de_bourbon
+				# on_created = {
+					# set_character_as_ruler = yes
+					# add_character_role = politician
+				# }
+			# }
+			# create_character = {
+				# template = FRA_henri_de_bourbon
+			# }
+		# }
+		# else_if = {
+			# limit = {
+				# year >= 1844
+				# year < 1883
+			# }
+			# create_character = {
+				# template = FRA_henri_de_bourbon
+				# on_created = {
+					# set_character_as_ruler = yes
+					# add_character_role = politician
+				# }
+			# }
+		# }
+		# else_if = {
+			# limit = {
+				# year >= 1883
+				# year < 1887
+			# }
+			# country_summon_character_effect = {
+				# TEMPLATE = SPC_juan_iii_de_borbon_template
+				# ON_CREATED_EFFECT = summon_legitimist_carlist_effect
+			# }
+		# }
+		# else_if = {
+			# limit = {
+				# year >= 1887
+				# year < 1909
+			# }
+			# country_summon_character_effect = {
+				# TEMPLATE = SPC_carlos_vii_de_borbon_template
+				# ON_CREATED_EFFECT = summon_legitimist_carlist_effect
+			# }
+		# }
+		# else_if = {
+			# limit = {
+				# year >= 1909
+				# year < 1931
+			# }
+			# country_summon_character_effect = {
+				# TEMPLATE = SPC_jaime_iii_de_borbon_template
+				# ON_CREATED_EFFECT = summon_legitimist_carlist_effect
+			# }
+		# }
+		# else_if = {
+			# limit = {
+				# year >= 1931
+			# }
+			# country_summon_character_effect = {
+				# TEMPLATE = SPC_alfonso_i_de_borbon_template
+				# ON_CREATED_EFFECT = summon_legitimist_carlist_effect
+			# }
+		# }
+	# }
+	# else_if = {
+		# limit = {
+			# has_variable = bonapartist_restoration_var
+		# }
+	# #		limit = { # Joseph and Louis commented out due Louis-Napoleon taking precedence, and due to them not having any real designs on the throne.
+	# #			year < 1844
+	# #		}
+	# #		create_character = {
+	# #			# Joseph-Napoléon Bonaparte
+	# #			first_name = "Joseph"
+	# #			last_name = "Bonaparte"
+	# #			ruler = yes
+	# #			birth_date = 1768.1.7
+	# #			culture = cu:corsican
+	# #			interest_group = ig_landowners
+	# #			ideology = ideology_bonapartist
+	# #			traits = {
+	# #				ambitious
+	# #				basic_diplomat
+	# #			}
+	# #			on_created = {
+	# #				set_variable = {
+	# #					name = house_bonaparte
+	# #				}
+	# #			}
+	# #		}
+	# #		create_character = {
+	# #			# Louis Napoléon Bonaparte
+	# #			first_name = "Louis"
+	# #			last_name = "Bonaparte"
+	# #			heir = yes
+	# #			birth_date = 1778.9.2
+	# #			culture = cu:corsican
+	# #			interest_group = ig_armed_forces
+	# #			ideology = ideology_bonapartist
+	# #			traits = {
+	# #				basic_artillery_commander
+	# #				meticulous
+	# #				tactful
+	# #			}
+	# #			on_created = {
+	# #				set_variable = {
+	# #					name = house_bonaparte
+	# #				}
+	# #			}
+	# #		}
+	# #	}
+	# #	else_if = {
+	# #		limit = {
+	# #			year >= 1844
+	# #			year < 1846
+	# #		}
+	# #		create_character = {
+	# #			# Louis Napoléon Bonaparte
+	# #			first_name = "Louis"
+	# #			last_name = "Bonaparte"
+	# #			ruler = yes
+	# #			birth_date = 1778.9.2
+	# #			culture = cu:corsican
+	# #			interest_group = ig_armed_forces
+	# #			ideology = ideology_bonapartist
+	# #			traits = {
+	# #				basic_artillery_commander
+	# #				meticulous
+	# #				tactful
+	# #			}
+	# #			on_created = {
+	# #				set_variable = {
+	# #					name = house_bonaparte
+	# #				}
+	# #			}
+	# #		}
+	# #		create_character = {
+	# #			# Charles Louis Napoléon Bonaparte
+	# #			first_name = "Louis-Napoleon"
+	# #			last_name = "Bonaparte"
+	# #			heir = yes
+	# #			birth_date = 1808.4.20
+	# #			culture = cu:french
+	# #			interest_group = ig_petty_bourgeoisie
+	# #			ideology = ideology_bonapartist
+	# #			traits = {
+	# #				ambitious
+	# #				experienced_political_operator
+	# #				demagogue
+	# #			}
+	# #			on_created = {
+	# #				set_variable = {
+	# #					name = house_bonaparte
+	# #				}
+	# #			}
+	# #		}
+	# #	}
+		# if = {
+			# limit = {
+				# year < 1873
+			# }
+			# if = {
+				# limit = {
+					# any_scope_character = {
+						# has_template = fra_napoleon_iii_character_template
+					# }
+				# }
+				# random_scope_character =  {
+					# limit = {
+						# has_template = fra_napoleon_iii_character_template
+					# }
+					# set_character_as_ruler = yes
+					# add_character_role = politician
+					# if = {
+						# limit = {
+							# has_role = agitator
+						# }
+						# remove_character_role = agitator
+					# }
+				# }
+			# }
+			# else_if = {
+				# limit = {
+					# any_character_in_exile_pool = {
+						# has_template = fra_napoleon_iii_character_template
+					# }
+				# }
+				# random_character_in_exile_pool =  {
+					# limit = {
+						# has_template = fra_napoleon_iii_character_template
+					# }
+					# transfer_character = root
+					# hidden_effect = {
+						# free_from_exile_effect = yes
+					# }
+					# set_character_as_ruler = yes
+					# add_character_role = politician
+					# if = {
+						# limit = {
+							# has_role = agitator
+						# }
+						# remove_character_role = agitator
+					# }
+				# }
+			# }
+			# else_if = {
+				# limit = {
+					# any_country = {
+						# NOT = {
+							# this = root
+						# }
+						# any_scope_character = {
+							# has_template = fra_napoleon_iii_character_template
+						# }
+					# }
+				# }
+				# random_country = {
+					# limit = {
+						# NOT = {
+							# this = root
+						# }
+						# any_scope_character = {
+							# has_template = fra_napoleon_iii_character_template
+						# }
+					# }
+					# random_scope_character = {
+						# limit = {
+							# has_template = fra_napoleon_iii_character_template
+						# }
+						# kill_character = {
+							# hidden = yes
+						# }
+					# }
+					# post_notification = napoleon_iii_leaves_country
+				# }
+				# create_character = {
+					# template = fra_napoleon_iii_character_template
+					# on_created = {
+						# set_global_variable = napoleon_iii_spawn
+						# set_character_as_ruler = yes
+						# add_character_role = politician
+						# remove_character_role = agitator
+					# }
+				# }
+			# }
+			# else = {
+				# create_character = {
+					# template = fra_napoleon_iii_character_template
+					# on_created = {
+						# set_global_variable = napoleon_iii_spawn
+						# set_character_as_ruler = yes
+						# add_character_role = politician
+						# remove_character_role = agitator
+					# }
+				# }
+			# }
+			# if = {
+				# limit = {
+					# year >= 1857
+					# year < 1873
+				# }
+				# create_character = {
+					# template = FRA_napoleon_eugene_louis_bonaparte
+				# }
+			# }
+		# }
+		# else_if = {
+			# limit = {
+				# year >= 1873
+				# year < 1879
+			# }
+			# create_character = {
+				# template = FRA_napoleon_eugene_louis_bonaparte
+				# on_created = {
+					# set_character_as_ruler = yes
+					# add_character_role = politician
+				# }
+			# }
+			# create_character = {
+				# template = FRA_victor_bonaparte
+			# }
+		# }
+		# else_if = {
+			# limit = {
+				# year >= 1879
+				# year < 1926
+			# }
+			# create_character = {
+				# template = FRA_victor_bonaparte
+				# on_created = {
+					# set_character_as_ruler = yes
+					# add_character_role = politician
+				# }
+			# }
+			# if = {
+				# limit = {
+					# year >= 1915
+					# year < 1926
+				# }
+				# create_character = {
+					# template = FRA_louis_bonaparte
+				# }
+			# }
+		# }
+		# else_if = {
+			# limit = {
+				# year >= 1926
+			# }
+			# create_character = {
+				# template = FRA_louis_bonaparte
+				# on_created = {
+					# set_character_as_ruler = yes
+					# add_character_role = politician
+				# }
+			# }
+		# }
+	# }
+	random_scope_character = {
+		limit = {
+			is_ruler = yes
+		}
+		save_scope_as = french_monarch_scope
+	}
+}
+
+clean_up_exile_character_roles = { # scope: character
+	if = {
+		limit = {
+			NOT = { has_role = agitator }
+		}
+		add_character_role = agitator
+	}
+	if = {
+		limit = {
+			has_role = politician
+		}
+		remove_character_role = politician
+	}
+	if = {
+		limit = {
+			has_role = general
+		}
+		remove_character_role = general
+	}
+	if = {
+		limit = {
+			has_role = admiral
+		}
+		remove_character_role = admiral
+	}
+}
+
+remove_war_disease_modifier = { #used to remove modifiers from nursing_events.1 and je_war_nursing
+    if = {
+        limit = {
+            has_modifier = war_wounded_disease
+        }
+        remove_modifier = war_wounded_disease
+    }
+    if = {
+        limit = {
+            has_modifier = war_wounded_civilian_assistance
+        }
+        remove_modifier = war_wounded_civilian_assistance
+    }
+}
+
+unification_claims_effect = {
+	if = {
+		limit = {
+			any_state_region = {
+				any_scope_state = {
+					is_homeland_of_country_cultures = ROOT
+					NOT = { owner = ROOT }
+					NOT = { has_claim_by = ROOT }
+				}
+			}
+		}
+		every_state_region = {
+			limit = {
+				any_scope_state = {
+					is_homeland_of_country_cultures = ROOT
+					NOT = { owner = ROOT }
+					NOT = { has_claim_by = ROOT }
+				}
+			}
+			add_claim = ROOT
+		}
+	}
+	else = {
+		add_loyalists = {
+			value = 0.05
+		}
+	}
+}
+
+remove_subject_diplomatic_pact = {
+	root.power_bloc ?= {
+		add_leverage = { target = prev value = -500 }
+	}
+	if = {
+		limit = {
+			this = {
+				has_diplomatic_pact = {
+					who = root
+					type = protectorate
+				}
+			}
+		}
+		this = {
+			remove_diplomatic_pact = {
+				country = root
+				type = protectorate
+			}
+		}
+	}
+	if = {
+		limit = {
+			this = {
+				has_diplomatic_pact = {
+					who = root
+					type = puppet
+				}
+			}
+		}
+		this = {
+			remove_diplomatic_pact = {
+				country = root
+				type = puppet
+			}
+		}
+	}
+	if = {
+		limit = {
+			this = {
+				has_diplomatic_pact = {
+					who = root
+					type = tributary
+				}
+			}
+		}
+		this = {
+			remove_diplomatic_pact = {
+				country = root
+				type = tributary
+			}
+		}
+	}
+	if = {
+		limit = {
+			this = {
+				has_diplomatic_pact = {
+					who = root
+					type = vassal
+				}
+			}
+		}
+		this = {
+			remove_diplomatic_pact = {
+				country = root
+				type = vassal
+			}
+		}
+	}
+	if = {
+		limit = {
+			this = {
+				has_diplomatic_pact = {
+					who = root
+					type = chartered_company
+				}
+			}
+		}
+		this = {
+			remove_diplomatic_pact = {
+				country = root
+				type = chartered_company
+			}
+		}
+	}
+	if = {
+		limit = {
+			this = {
+				has_diplomatic_pact = {
+					who = root
+					type = dominion
+				}
+			}
+		}
+		this = {
+			remove_diplomatic_pact = {
+				country = root
+				type = dominion
+			}
+		}
+	}
+	if = {
+		limit = {
+			this = {
+				has_diplomatic_pact = {
+					who = root
+					type = colony
+				}
+			}
+		}
+		this = {
+			remove_diplomatic_pact = {
+				country = root
+				type = colony
+			}
+		}
+	}
+	if = {
+		limit = {
+			this = {
+				has_diplomatic_pact = {
+					who = root
+					type = personal_union
+				}
+			}
+		}
+		this = {
+			remove_diplomatic_pact = {
+				country = root
+				type = personal_union
+			}
+		}
+	}
+	if = {
+		limit = {
+			this = {
+				has_diplomatic_pact = {
+					who = root
+					type = crown_land
+				}
+			}
+		}
+		this = {
+			remove_diplomatic_pact = {
+				country = root
+				type = crown_land
+			}
+		}
+	}
+}
+
+accepted_cultural_minority_selector_owner_scope_save_scope_as_minority_culture = {
+	random_scope_state = {
+		limit = {
+			any_scope_culture = {
+				OR = {
+					has_homeland = prev
+					culture_has_community_in_state = prev
+				}
+				prev = {
+					OR  = {
+						AND = {
+							ROOT.owner = { has_law_or_variant = law_type:law_national_supremacy }
+							state_cultural_acceptance = {
+								target = prev
+								value >= acceptance_status_5
+							}
+						}
+						AND = {
+							ROOT.owner = { has_law_or_variant = law_type:law_racial_segregation }
+							state_cultural_acceptance = {
+								target = prev
+								value >= acceptance_status_4
+							}
+						}
+						AND = {
+							ROOT.owner = { has_law_or_variant = law_type:law_subjecthood }
+							state_cultural_acceptance = {
+								target = prev
+								value >= acceptance_status_4
+							}
+						}
+						AND = {
+							ROOT.owner = { has_law_or_variant = law_type:law_cultural_exclusion }
+							state_cultural_acceptance = {
+								target = prev
+								value >= acceptance_status_3
+							}
+						}
+						AND = {
+							ROOT.owner = { has_law_or_variant = law_type:law_multicultural }
+							state_cultural_acceptance = {
+								target = prev
+								value >= acceptance_status_2
+							}
+						}
+					}
+				}
+				NOT = { is_primary_culture_of = ROOT.owner }
+			}
+		}
+		random_scope_culture = {
+			limit = {
+				OR = {
+					has_homeland = prev
+					culture_has_community_in_state = prev
+				}
+				prev = {
+					OR  = {
+						AND = {
+							ROOT.owner = { has_law_or_variant = law_type:law_national_supremacy }
+							state_cultural_acceptance = {
+								target = prev
+								value >= acceptance_status_4
+							}
+						}
+						AND = {
+							ROOT.owner = { has_law_or_variant = law_type:law_racial_segregation }
+							state_cultural_acceptance = {
+								target = prev
+								value >= acceptance_status_3
+							}
+						}
+						AND = {
+							ROOT.owner = { has_law_or_variant = law_type:law_cultural_exclusion }
+							state_cultural_acceptance = {
+								target = prev
+								value >= acceptance_status_2
+							}
+						}
+						AND = {
+							ROOT.owner = { has_law_or_variant = law_type:law_multicultural }
+							state_cultural_acceptance = {
+								target = prev
+								value >= acceptance_status_1
+							}
+						}
+					}
+				}
+				NOT = { is_primary_culture_of = ROOT.owner }
+			}
+			save_scope_as = minority_culture
+		}
+	}
+}
+
+# spoils_of_war_initiation_gre = { # If there are any states in the Balkans that are Greek homelands, and not ours, and if there is at least one country who completed the Balkan League JE besides us.
+	# if = {
+		# limit = {
+			# exists = c:GRE
+			# c:GRE ?= THIS
+			# is_subject = no
+			# sr:region_balkans = {
+				# any_scope_state = {
+					# state_region = {
+						# is_homeland = cu:greek
+					# }
+					# owner = root
+					# count < 7
+				# }
+			# }
+			# has_variable = first_balkan_war_successful
+	   	# }
+		# add_journal_entry = {
+			# type = je_spoils_of_war
+		# }
+	# }
+# }
+
+# spoils_of_war_initiation_mon = { # If there are any states in the Balkans that are Serbian homelands, and not ours, and if there is at least one country who completed the Balkan League JE besides us.
+    # if = {
+		# limit = {
+			# exists = c:MON
+			# c:MON ?= THIS
+			# is_subject = no
+			# sr:region_balkans = {
+				# any_scope_state = {
+					# state_region = {
+						# is_homeland = cu:serb
+					# }
+					# owner = root
+					# count < 5
+				# }
+			# }
+			# has_variable = first_balkan_war_successful
+    	# }
+		# add_journal_entry = {
+			# type = je_spoils_of_war
+		# }
+    # }
+# }
+
+# spoils_of_war_initiation_bul = { # If there are any states in the Balkans that are Romanian homelands, and not ours, and if there is at least one country who completed the Balkan League JE besides us.
+    # if = {
+		# limit = {
+			# exists = c:BUL
+			# c:BUL ?= THIS
+			# is_subject = no
+			# sr:region_balkans = {
+				# any_scope_state = {
+					# state_region = {
+						# is_homeland = cu:bulgarian
+					# }
+					# owner = root
+					# count < 4
+				# }
+			# }
+			# has_variable = first_balkan_war_successful
+    	# }
+		# add_journal_entry = {
+			# type = je_spoils_of_war
+		# }
+    # }
+# }
+
+# spoils_of_war_initiation_ser = { # If there are any states in the Balkans that are Serbian homelands, and not ours, and if there is at least one country who completed the Balkan League JE besides us.
+	# if = {
+		# limit = {
+			# exists = c:SER
+			# c:SER ?= THIS
+			# is_subject = no
+			# sr:region_balkans = {
+				# any_scope_state = {
+					# state_region = {
+						# is_homeland = cu:serb
+					# }
+					# owner = root
+					# count < 5
+				# }
+			# }
+			# has_variable = first_balkan_war_successful
+    	# }
+		# add_journal_entry = {
+			# type = je_spoils_of_war
+		# }
+    # }
+# }
+
+# spoils_of_war_initiation_wal = { # If there are any states in the Danubia region that are romanian homelands, and not ours, and if there is at least one country who completed the Balkan League JE.
+	# if = {
+		# limit = {
+			# exists = c:WAL
+			# is_subject = no
+			# sr:region_danubia = {
+				# any_scope_state = {
+					# state_region = {
+						# is_homeland = cu:romanian
+					# }
+					# owner = root
+					# count < 3
+				# }
+			# }
+    	# }
+		# add_journal_entry = {
+			# type = je_spoils_of_war
+		# }
+    # }
+# }
+
+# the_balkan_league_activated_modifier_cleanser = { #removes all activated modifiers when they're not logically applicable anymore.
+	# hidden_effect = {
+		# remove_modifier = balkan_wars_military_tech_boost_mod
+		# remove_modifier = balkan_wars_military_industry_overworked_mod
+	# }
+# }

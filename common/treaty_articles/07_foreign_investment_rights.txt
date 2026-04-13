@@ -364,18 +364,18 @@
 					}
 				}
 
-				# add = {
-					# desc = "je_hawaiian_interest"
-					# if = {
-						# limit = {
-							# has_journal_entry = je_hawaiian_interest
-							# c:HAW ?= {
-								# this = scope:source_country
-							# }
-						# }
-						# value = 20
-					# }
-				# }
+				add = {
+					desc = "je_hawaiian_interest"
+					if = {
+						limit = {
+							has_journal_entry = je_hawaiian_interest
+							c:HAW ?= {
+								this = scope:source_country
+							}
+						}
+						value = 20
+					}
+				}
 			}
 		}
 
@@ -386,6 +386,7 @@
 						NOT = {
 							any_scope_article_option = {
 								NOT = { has_type = foreign_investment_rights }
+								NOT = { is_desired_by = root }
 							}
 						}
 						any_scope_article_option = {
@@ -514,12 +515,31 @@
 			scope:target_country = {
 				multiply = {
 					desc = "INFAMY_TARGET_COUNTRY_POPULATION_FACTOR"
-					value = total_population
-					divide = define:NDiplomacy|WAR_GOAL_INFAMY_POPULATION_SCALING_FACTOR
-					multiply = define:NDiplomacy|WAR_GOAL_INFAMY_POPULATION_SCALING_MULTIPLIER
-					max = 50
+					add = {
+						every_scope_state = {
+							add = {
+								value = state_population
+								divide = define:NDiplomacy|WAR_GOAL_INFAMY_POPULATION_SCALING_FACTOR
+								multiply = define:NDiplomacy|WAR_GOAL_INFAMY_POPULATION_SCALING_MULTIPLIER
+
+								if = {
+									limit = {
+										is_incorporated = no
+									}
+									multiply = {
+										value = 1
+										add = define:NDiplomacy|WAR_GOAL_INFAMY_UNINCORPORATED_FACTOR
+									}
+								}
+								max = define:NDiplomacy|WAR_GOAL_INFAMY_POPULATION_SCALING_MULTIPLIER_MAX_PER_STATE
+							}
+						}
+					}
+					max = define:NDiplomacy|WAR_GOAL_INFAMY_POPULATION_SCALING_MULTIPLIER_MAX_TOTAL
 				}
 			}
+
+			min = 0.25
 		}
 	}
 }
