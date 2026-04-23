@@ -179,3 +179,98 @@ dvg_scandinavia.102 = { #Scottish New Towns Act
 		}
 	}
 }
+
+dvg_scandinavia.103 = { #Mainland Settlement Act - grants Scandi homelands to Scotland
+	type = country_event
+	placement = ROOT
+
+	title = dvg_scandinavia.103.t
+	desc = dvg_scandinavia.103.d
+	flavor = dvg_scandinavia.103.f
+	
+	duration = 3
+
+	event_image = {
+		video = "gfx/event_pictures/europenorthamerica_capitalists_meeting.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/leader_speaking_to_a_group_of_people"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+
+	immediate = {
+		set_variable = var_sca_mainland_settlement_act_triggered
+	}
+	
+	trigger = {
+		NOT = {
+			has_variable = var_sca_mainland_settlement_act_triggered
+		}
+		has_variable = var_sca_new_towns_act_triggered
+		any_scope_state = {
+			state_region = s:STATE_HIGHLANDS
+			culture_percent_state = {
+				target = cu:scandinavian
+				value >= 0.2
+			}
+			is_incorporated = yes
+			is_split_state = no
+			turmoil < 0.1
+		}
+		any_scope_state = {
+			state_region = s:STATE_LOWLANDS
+			culture_percent_state = {
+				target = cu:scandinavian
+				value >= 0.2
+			}
+			is_incorporated = yes
+			is_split_state = no
+			turmoil < 0.1
+		}
+		ROOT = {
+			owns_entire_state_region = STATE_LOWLANDS
+			owns_entire_state_region = STATE_HIGHLANDS
+		}
+	}
+	
+	option = { #The act passes
+		if = {
+			limit = {
+				ROOT = {
+					owns_entire_state_region = STATE_LOWLANDS
+				}
+			}
+			s:STATE_LOWLANDS = {
+				add_homeland = cu:scandinavian
+			}
+		}
+		if = {
+			limit = {
+				ROOT = {
+					owns_entire_state_region = STATE_HIGHLANDS
+				}
+			}
+			s:STATE_HIGHLANDS = {
+				add_homeland = cu:scandinavian
+			}
+		}
+	}
+	
+	option = { #The act fails
+		s:STATE_HIGHLANDS.region_state:SCA = {
+			add_radicals_in_state = {
+				value = 0.33
+				culture = cu:scandinavian
+			}
+		}
+		s:STATE_LOWLANDS.region_state:SCA = {
+			add_radicals_in_state = {
+				value = 0.33
+				culture = cu:scandinavian
+			}
+		}			
+	}
+}
+
+}
