@@ -275,4 +275,190 @@ dvg_scandinavia.103 = { #Mainland Settlement Act - grants Scandi homelands to Sc
 	}
 }
 
+dvg_scandinavia.104 = { #Bankrupt Laird estate
+	type = country_event
+	placement = ROOT
+
+	title = dvg_scandinavia.104.t
+	desc = dvg_scandinavia.104.d
+	flavor = dvg_scandinavia.104.f
+	
+	duration = 3
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+	
+	#This event can fire 3 times at most
+	#do NOT re-arrange the contents of this event, it will not work if you do, my code isn't perfect, sure, but Jomini isn't either
+	immediate = {
+		if = {
+			limit = {
+				NOT = {
+					OR = {
+						has_variable = var_sca_highland_clearances_bankrupt_two
+						has_variable = var_sca_highland_clearances_bankrupt_three
+					}
+				}
+			}
+			set_variable = var_sca_highland_clearances_bankrupt_one
+		}
+		if = {
+			limit = {
+				has_variable = var_sca_highland_clearances_bankrupt_one
+			}
+			remove_variable = var_sca_highland_clearances_bankrupt_one
+			set_variable = var_sca_highland_clearances_bankrupt_two
+		}
+		if = {
+			limit = {
+				has_variable = var_sca_highland_clearances_bankrupt_two
+			}
+			remove_variable = var_sca_highland_clearances_bankrupt_two
+			set_variable = var_sca_highland_clearances_bankrupt_three
+		}
+	}
+	
+	trigger = {
+		NOT = {
+			has_variable = var_sca_highland_clearances_bankrupt_three
+		}
+	}
+
+	option = { #Bail them out
+		name = dvg_scandinavia.104.a
+		if = {
+			limit = {
+				has_variable = var_sca_highland_clearances_bankrupt_did_nothing_two
+				NOT = {
+					has_variable = var_sca_highland_clearances_bankrupt_did_nothing_one
+				}
+			}
+			add_modifier = {
+				name = dvg_bankrupt_laird_estate_clearances
+				days = long_modifier_time
+			}
+		}
+		if = {
+			limit = {
+				has_variable = var_sca_highland_clearances_bankrupt_did_nothing_one
+				NOT = {
+					has_variable = var_sca_highland_clearances_bankrupt_did_nothing_two
+				}
+			}
+			set_variable = var_sca_highland_clearances_bankrupt_did_nothing_two
+			remove_variable = var_sca_highland_clearances_bankrupt_did_nothing_one
+			add_modifier = {
+				name = dvg_bankrupt_laird_estate_clearances
+				days = normal_modifier_time
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					OR = {
+						has_variable = var_sca_highland_clearances_bankrupt_did_nothing_one
+						has_variable = var_sca_highland_clearances_bankrupt_did_nothing_two
+					}
+				}
+			}
+			set_variable = var_sca_highland_clearances_bankrupt_did_nothing_one
+			add_modifier = {
+				name = dvg_bankrupt_laird_estate_clearances
+				days = short_modifier_time
+			}
+		}
+	}
+	
+	option = { #Nothing ever happens
+		name = dvg_scandinavia.104.b
+		if = {
+			limit = {
+				has_variable = var_sca_highland_clearances_bankrupt_did_nothing_two
+			}
+			custom_tooltip = {
+				text = sca_cufc_this_will_upset_the_crown_a_lot_tt
+				je:je_sca_kings_watch ?= {
+					add_progress = { value = 20 name = dvg_scandinavia_kings_anger_progress_bar }
+				}
+			}
+			custom_tooltip = {			
+				text = sca_cufc_this_will_slow_progress_tt
+				set_variable = var_sca_highland_clearances_nothing_ever_happens_three
+			}
+			ig:ig_landowners = {
+				add_modifier = {
+					name = dvg_landowners_pissed_clearances
+					days = long_modifier_time
+				}
+			}
+			s:STATE_HIGHLANDS.region_state:SCA = {
+				add_radicals_in_state = {
+					value = 0.1
+				}
+				add_modifier = {
+					name = 	dvg_sca_nothing_ever_happens_is_a_bad_economic_model_clearances
+					days = normal_modifier_time
+				}
+			}
+			s:STATE_LOWLANDS.region_state:SCA = {
+				add_radicals_in_state = {
+					value = 0.1
+				}
+				add_modifier = {
+					name = 	dvg_sca_nothing_ever_happens_is_a_bad_economic_model_clearances
+					days = short_modifier_time
+				}
+			}	
+		}
+		if = {
+			limit = {
+				has_variable = var_sca_highland_clearances_bankrupt_did_nothing_one
+			}
+			remove_variable = var_sca_highland_clearances_bankrupt_did_nothing_one
+			set_variable = var_sca_highland_clearances_bankrupt_did_nothing_two
+			ig:ig_landowners = {
+				add_modifier = {
+					name = dvg_landowners_pissed_clearances
+					days = normal_modifier_time
+				}
+			}
+			custom_tooltip = {
+				text = sca_cufc_this_will_upset_the_crown_tt
+				je:je_sca_kings_watch ?= {
+					add_progress = { value = 10 name = dvg_scandinavia_kings_anger_progress_bar }
+				}
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					OR = {
+						has_variable = var_sca_highland_clearances_bankrupt_did_nothing_one
+						has_variable = var_sca_highland_clearances_bankrupt_did_nothing_two
+					}
+				}
+			}
+			set_variable = var_sca_highland_clearances_bankrupt_did_nothing_one
+			ig:ig_landowners = {
+				add_modifier = {
+					name = dvg_landowners_pissed_clearances
+					days = short_modifier_time
+				}
+			}
+			custom_tooltip = {
+				text = sca_cufc_this_will_upset_the_crown_a_little_tt
+				je:je_sca_kings_watch ?= {
+					add_progress = { value = 5 name = dvg_scandinavia_kings_anger_progress_bar }
+				}
+			}
+		}
+	}
+}
+
 }
