@@ -39,20 +39,115 @@ je_nvz_colonization = {
 je_chougie_unite = {
 	icon = "gfx/interface/icons/event_icons/event_zhusha.dds"
 
-	group = je_group_foreign_affairs
+	group = je_group_historical_content
 
 	is_shown_in_lobby = {
 		exists = c:NJY
 		c:NJY = this
 	}
+	is_shown_when_inactive = {
+		exists = c:NJY
+		c:NJY = this
+	}
+	possible = {
+		has_technology_researched = colonization
+	}
 
 	complete = {
-	
-		
+		AND = {
+			exists = c:YLN
+			c:YLN = {
+				liberty_desire < 25
+
+				relations:root >= relations_threshold:amicable
+			}
+		}
+		OR = {
+			has_law = law_type:law_subjecthood
+			has_law = law_type:law_cultural_exclusion
+			has_law = law_type:law_multicultural
+		}
 	}
 	
 	fail = {
-		has_law = law_type:law_no_colonial_affairs
+		is_at_war = yes
+		any_enemy_in_war = {
+			c:YLN = this	
+		}
+	}
+
+    on_complete = {
+		
+	}
+	
+    on_fail = {
+
+	}
+	
+	weight = 100
+	should_be_pinned_by_default = yes
+}
+
+
+je_chougie_racism = {
+	icon = "gfx/interface/icons/event_icons/event_zhusha.dds"
+
+	group = je_group_historical_content
+
+	is_shown_in_lobby = {
+		exists = c:NJY
+		c:NJY = this
+	}
+	is_shown_when_inactive = {
+		exists = c:NJY
+		c:NJY = this
+	}
+	possible = {
+		has_technology_researched = colonization
+	}
+
+	complete = {
+		owns_entire_state_region = STATE_YOLNGU
+		
+		NOT = {
+			any_scope_state = {
+				turmoil > 0.20
+			}
+			any_neighbouring_state = {
+				owner = {
+					is_country_type = decentralized
+				}
+			}
+		}
+		OR = {
+			has_technology_researched = pan-nationalism
+			has_technology_researched = human_rights
+		}
+		country_average_cultural_acceptance = {
+				target = cu:aborigine_french
+				value > 40
+		}
+		cu:verlander = {
+			culture_current_fervor < 25
+		}
+		cu:aborigine_french = {
+			culture_current_fervor < 25
+		}
+	}
+	
+	fail = {
+		is_at_war = yes
+		any_enemy_in_war = {
+			c:YLN = this	
+		}
+		OR = {
+			cu:verlander = {
+			culture_current_fervor > 25
+			}
+		cu:aborigine_french = {
+			culture_current_fervor > 25
+			}
+		}
 	}
 
     on_complete = {
