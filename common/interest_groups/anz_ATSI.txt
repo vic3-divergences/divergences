@@ -1,0 +1,483 @@
+﻿ig_atsi = {
+	color = hsv{ 0 0.46 0.3 }
+	texture = "gfx/interface/icons/atsi_ig.dds"
+	#layer = "revolution_dynamic_trade_unions" #??
+	index = 9
+
+	ideologies = {
+		ideology_anz_atsi_pluralist #citizenship & aboriginal rights
+		ideology_anz_atsi_traditional_beliefs #church and education
+		ideology_anz_atsi_anti_colonial #colonisation, police & internal security
+		ideology_anti_slavery #slavery and land reform
+		#agrarian?
+	}
+	
+	character_ideologies = { #need clones/have the ideologies enable this IG
+		ideology_moderate
+		ideology_reformer #i guess, would be more of a compromiser re: citizenship +no overwrite
+		ideology_radical
+		ideology_social_democrat
+		ideology_communist
+		ideology_vanguardist
+		ideology_anarchist
+		ideology_liberal_leader 
+		ideology_land_reformer
+		ideology_corporatist_leader #no overwrite; maybe?
+
+		#contenders for clone:
+		# theocrat/traditionalist (would need to ensure protestant character, idk how possible), jingoist, luddite?, 
+	}
+
+	enable = {
+		or = {
+			OR = {
+				country_has_primary_culture = cu:australian
+				country_has_primary_culture = cu:zhourao
+			}
+			and = { #workaround fix for revolution CTD
+				country_has_primary_culture = cu:aborigine
+				not = {
+					is_country_type = decentralized
+					has_variable = anz_remove_atsi_ig_var
+				}
+			}
+		}
+	#	not = {
+	#		has_variable = anz_remove_atsi_ig_var
+	#	}
+	}
+	
+	on_enable = {
+		ig:ig_atsi = {
+			set_ig_trait = ig_trait:ig_trait_anz_atsi_trackers_stockmen
+			set_ig_trait = ig_trait:ig_trait_anz_atsi_land_stewards
+			set_ig_trait = ig_trait:ig_trait_anz_atsi_raids
+		}
+
+		### Feminism
+	#	if = {
+	#		limit = {
+	#			has_technology_researched = feminism
+	#		}
+	#		every_interest_group = {
+	#			limit = {
+	#				has_ideology = ideology:ideology_egalitarian
+	#			}
+	#			remove_ideology = ideology_egalitarian
+	#			add_ideology = ideology_egalitarian_modern
+	#		}
+	#	}
+		if = { #workaround fix for revolution CTD
+			limit = {
+			#	country_has_primary_culture = cu:aborigine
+				not = {
+					OR = {
+					country_has_primary_culture = cu:australian
+					country_has_primary_culture = cu:zhourao
+					}
+				}
+			}
+			set_variable = anz_remove_atsi_ig_var
+		}
+	}
+
+	on_disable = {}
+	priority_cultures = { #Country scope
+		rule = {
+			trigger = {
+				any_primary_culture = { 
+					OR = {
+						cu:australian = this
+						cu:zhourao = this
+					}
+				}
+			}
+			cultures = {
+				aborigine #ideally also torres-strait, but not sure how to make them less likely, also for when to include
+			}
+		}
+	}
+	on_character_ig_membership = {
+		if = {
+			limit = {
+				owner = {
+					country_has_primary_culture = cu:australian
+				}
+				is_historical = no
+			}
+			if = {
+				limit = {
+					owner = {
+						country_has_state_religion = rel:protestant
+					}
+				}
+				random_list = {
+					20 = {}
+					1 = {
+						change_character_religion = rel:protestant
+						random_list = {
+							1 = {}
+							5 = {
+								set_ideology = ideology:ideology_traditionalist
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	pop_potential = {
+		culture = { has_discrimination_trait_group = heritage_group_indigenous_oceanic }
+	}
+	#	or = {
+	#		has_pop_culture = aborigine
+	#		has_pop_culture = torres_strait_islander
+	#	}
+
+	pop_weight = {
+		value = 0
+
+
+		if = {
+			limit = {
+				has_pop_culture = aborigine
+			}
+			add = { 
+				desc = "POP_Aboriginal"
+				value = 225
+			}
+		}
+		else_if = {
+			limit = {
+				has_pop_culture = aborigine_mixed
+			}
+			add = { 
+				desc = "POP_Aboriginal_mixed"
+				value = 125
+			}
+		}
+		else_if = {
+			limit = {
+				has_pop_culture = torres_strait_islander #Still has common interest, but less of a unifying cultural connection
+			}
+			add = { 
+				desc = "POP_TSI"
+				value = 225
+			}
+		}
+
+		#less likely if state religion.. should adjust 
+		if = {
+			limit = {
+				owner = {
+					ig:ig_atsi = {
+						leader = {
+							not = {
+								has_religion = protestant
+								has_ideology = ideology:ideology_traditionalist
+							}
+						}
+					}
+				}
+			}
+			add = {
+				desc = "POP_atsi_religion"
+				if = {
+					limit = {
+						has_state_religion = yes
+					}
+					add = -40
+				}
+			}
+		}
+
+		#more likely when discriminated
+		add = {
+			desc = "POP_ATSI_ACCEPTANCE"
+			if = {
+				limit = {
+					pop_acceptance < 20
+				}
+				add = 65
+			}
+			else_if = {
+				limit = {
+					pop_acceptance < 40
+				}
+				add = 40
+			}
+			else_if = {
+				limit = {
+					pop_acceptance < 60
+				}
+				add = 20
+			}
+			else_if = { 
+				limit = {
+					pop_acceptance >= 80
+				}
+				add = -55
+			}
+		}
+
+		#less relevant when equal rights
+		add = {
+			desc = "POP_ATSI_EQUAL_RIGHTS"
+			if = {
+				limit = {
+					owner = {
+						has_law_or_variant = law_type:law_aboriginal_equal
+					}
+				}
+				add = -115
+			}
+		}
+
+		#rally together when colonising
+		if = { 
+			limit = {
+				or = {
+					has_pop_culture = aborigine
+					has_pop_culture = torres_strait_islander
+				}
+			}
+			if = {
+				limit = {
+					owner = {
+						any_scope_state = {
+							state_region = {
+								is_homeland = cu:aborigine
+							}
+							is_under_colonization = yes
+						}
+					}
+				}
+				add = {
+					desc = "COLONISATION_INST"
+					value = owner.institution:institution_colonial_affairs.investment
+					multiply = 15
+				}
+			}
+		}
+		else_if = {
+			limit = { #excluding others because cultures are fragmented and might need more performance than worth?
+				has_pop_culture = maori 
+			}
+			if = {
+				limit = {
+					owner = {
+						any_scope_state = {
+							state_region = {
+								is_homeland = cu:maori
+							}
+							is_under_colonization = yes
+						}
+					}
+				}
+				add = {
+					desc = "COLONISATION_INST"
+					value = owner.institution:institution_colonial_affairs.investment
+					multiply = 15
+				}
+			}
+		}
+
+		#very high attraction while oppressed
+		#lose support when getting less oppressed
+		# new land reform law? aboriginal poptypes would be helpful here
+
+		#######
+		multiply = {
+			desc = "LEADER_POPULARITY"
+			scope:interest_group = {
+				leader ?= {
+					value = popularity
+					multiply = 0.0025
+					add = 1
+					max = 1.15
+					min = 0.85
+				}
+			}
+		}
+
+		if = {
+			limit = {
+				scope:interest_group = {
+					is_in_government = yes
+				}
+			}
+			multiply = {
+				desc = "IN_GOVERNMENT_ATTRACTION"
+				value = 1
+				add = scope:interest_group.modifier:interest_group_in_government_attraction_mult
+				min = 0
+			}
+		}
+
+		if = {
+			limit = {
+				scope:interest_group = {
+					is_in_government = no
+				}
+			}
+			multiply = { 
+				desc = "POP_RADICALS"
+				value = pop_radical_fraction
+				divide = 3
+				add = 1
+			}
+		}
+
+		if = {
+			limit = {
+				NOR = {
+					has_pop_culture = aborigine
+					has_pop_culture = aborigine_mixed
+					has_pop_culture = torres_strait_islander
+				}
+			}
+			multiply = {
+				desc = "POP_not_atsi"
+				value = 0.333
+			}
+		}
+	}
+
+	monarch_weight = {
+		value = 0.05 # this is just inherently unlikely
+	}
+
+	agitator_weight = {
+		# Agitators more likely to come from populist IG's rather than elitist
+		value = 1.0
+		# Agitators will never be part of a marginalized IG
+		if = {
+			limit = {
+				owner.ig:ig_atsi = {
+					is_marginal = yes
+				}
+			}
+			multiply = {
+				value = 0
+			}
+		}
+	}
+
+	commander_weight = {
+		value = 0.1
+	}
+
+	executive_weight = {
+		value = 1.0
+
+		if = { # possible but still less likely with equal aboriginal rights
+			limit = {
+				owner = {
+					has_law_or_variant = law_type:law_aboriginal_equal
+				}
+			}
+			multiply = {
+				value = 0.66
+			}
+		}
+		else = {
+			multiply = {
+				value = 0
+			}
+		}
+		if = { # less likely without aboriginal primary culture
+			limit = {
+				not = {
+					owner = {
+						country_has_primary_culture = cu:aborigine
+					}
+				}
+			}
+			multiply = {
+				value = 0.66
+			}
+		}
+	}
+
+	noble_chance = {
+		value = 0.1
+	}
+
+	female_commander_chance = {
+		value = 0.0
+	}
+
+	female_executive_chance = {
+		value = 0.2
+	}
+
+	female_politician_chance = {
+		value = 0.2
+
+		if = {
+			limit = {
+				owner = {
+					has_law_or_variant = law_type:law_womens_suffrage
+				}
+
+			}
+			add = {
+				value = 0.05
+			}
+		}
+	}
+
+	female_agitator_chance = {
+		value = 0.2
+		
+		if = {
+			limit = {
+				owner = {
+					has_law_or_variant = law_type:law_women_own_property
+				}
+
+			}
+			add = {
+				value = 0.05
+			}
+		}	
+		
+		if = {
+			limit = {
+				owner = {
+					has_law_or_variant = law_type:law_women_in_the_workplace
+				}
+
+			}
+			add = {
+				value = 0.05
+			}
+		}
+
+		if = {
+			limit = {
+				owner = {
+					has_law_or_variant = law_type:law_womens_suffrage
+				}
+
+			}
+			add = {
+				value = 0.05
+			}
+		}		
+	}
+
+	# The chance that a commander belonging to this IG takes over leadership when it changes
+	# scope:character is the most popular commander in the IG
+	commander_leader_chance = {
+		value = 0.25
+		multiply = ig_commander_leader_chance_mult
+	}
+
+	# The chance that a executive belonging to this IG takes over leadership when it changes
+	# scope:character is the most popular executive in the IG
+	executive_leader_chance = {
+		value = 0.12
+	}
+}
