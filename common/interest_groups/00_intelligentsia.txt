@@ -35,6 +35,7 @@
 
 	on_enable = {
 		ig:ig_intelligentsia ?= {
+			### Specific IG traits
 			if = {
 				limit = {
 					owner = { c:CHI ?= this }
@@ -66,13 +67,13 @@
 				set_ig_trait = ig_trait:ig_trait_les_beaux_arts
 			}
 			# else_if = {
-				# limit = {
-					# has_dlc_feature = ip2_content
-					# owner = { c:BEI ?= this }
-				# }
-				# set_ig_trait = ig_trait:ig_trait_swaraj
-				# set_ig_trait = ig_trait:ig_trait_civil_service
-				# set_ig_trait = ig_trait:ig_trait_westernisation
+			# 	limit = {
+			# 		has_dlc_feature = ip2_content
+			# 		owner = { c:BIC ?= this }
+			# 	}
+			# 	set_ig_trait = ig_trait:ig_trait_swaraj
+			# 	set_ig_trait = ig_trait:ig_trait_civil_service
+			# 	set_ig_trait = ig_trait:ig_trait_westernisation
 			# }
 			else = {
 				set_ig_trait = ig_trait:ig_trait_social_criticism
@@ -80,7 +81,6 @@
 				set_ig_trait = ig_trait:ig_trait_propagandists
 			}
 		}
-
 		# Papal Intellegentsia
 		if = {
 			limit = {
@@ -113,18 +113,27 @@
 		}
 		# Brazilian Intelligentsia
 		# else_if = {
-			# limit = {
-				# has_dlc_feature = rp1_content
-				# c:BRZ ?= THIS
-			# }
-			# ig:ig_intelligentsia ?= {
-				# set_ig_trait = ig_trait:ig_trait_brasilidade
-				# set_ig_trait = ig_trait:ig_trait_bachareis
-				# set_ig_trait = ig_trait:ig_trait_social_criticism
+		# 	limit = {
+		# 		has_dlc_feature = rp1_content
+		# 		c:BRZ ?= THIS
+		# 	}
+		# 	ig:ig_intelligentsia ?= {
+		# 		set_ig_trait = ig_trait:ig_trait_brasilidade
+		# 		set_ig_trait = ig_trait:ig_trait_bachareis
+		# 		set_ig_trait = ig_trait:ig_trait_social_criticism
 
-				# remove_ideology = ideology_republican
-				# add_ideology = ideology_constitutionalist
-			# }
+		# 		remove_ideology = ideology_republican
+		# 		add_ideology = ideology_constitutionalist
+		# 	}
+		# }
+		# # Philippines Intelligentsia
+		# else_if = {
+		# 	limit = {
+		# 		c:PHI ?= this
+		# 	}
+		# 	ig:ig_intelligentsia ?= {
+		# 		set_interest_group_name = ig_ilustrados
+		# 	}
 		# }
 		# India
 		else_if = {
@@ -155,7 +164,16 @@
 				add_ideology = ideology_constitutionalist
 			}
 		}
-
+		if = {
+			limit = {
+				country_has_primary_culture = cu:japanese
+			}
+			ig:ig_intelligentsia ?= {
+				set_interest_group_name = ig_rangakusha
+				remove_ideology = ideology_republican
+				add_ideology = ideology_rangaku
+			}
+		}
 		if = {
 			limit = {
 				has_technology_researched = feminism
@@ -204,6 +222,32 @@
 				swahili bedouin
 			}
 		}
+		# rule = { # dvg
+		# 	trigger = {
+		# 		c:PHI ?= this
+		# 		NOT = { has_variable = je_philippines_main_reliance_happened }
+		# 		NOT = { any_primary_culture = { cu:filipino = this } }
+		# 		NOT = { any_primary_culture = { cu:filipino_hispanophone = this } }
+		# 		any_primary_culture = { cu:spanish = this }
+		# 	}
+		# 	cultures = {
+		# 		spanish filipino_mestizo
+		# 	}
+		# }
+		# rule = {
+		# 	trigger = {
+		# 		c:PHI ?= this
+		# 		any_primary_culture = {
+		# 			AND = {
+		# 				cu:spanish = this
+		# 				cu:filipino_hispanophone = this
+		# 			}
+		# 		}
+		# 	}
+		# 	cultures = {
+		# 		spanish filipino_hispanophone
+		# 	}
+		# }
 	}
 	on_character_ig_membership = {}
 
@@ -258,6 +302,9 @@
 			if = {
 				limit = {
 					is_pop_type = aristocrats
+					owner = {
+						has_technology_researched = academia
+					}
 				}
 				if = {
 					limit = {
@@ -267,11 +314,33 @@
 					}
 					value = 75
 				}
+				else_if = {
+					limit = {
+						owner = {
+							country_has_primary_culture = cu:french
+						}
+					}
+					value = 50
+				}
 				else = {
 					value = 25
 				}
 			}
 		}
+
+		# add = { # dvg
+		# 	desc = "je_hungarian_revolution"
+		# 	if = {
+		# 		limit = {
+		# 			is_pop_type = aristocrats
+		# 			culture = cu:hungarian
+		# 			owner ?= {
+		# 				has_journal_entry = je_hungarian_revolution
+		# 			}
+		# 		}
+		# 		value = 50
+		# 	}
+		# }
 
 		add = {
 			desc = "ADMINISTRATION_ROLE"
@@ -421,7 +490,7 @@
 		# Monarch is not likely to adopt a marginal IG
 		if = {
 			limit = {
-				is_marginal = yes
+				ig_counts_as_marginal = yes
 			}
 			multiply = {
 				value = 0.1
@@ -478,7 +547,7 @@
 		if = {
 			limit = {
 				owner.ig:ig_intelligentsia ?= {
-					is_marginal = yes
+					ig_counts_as_marginal = yes
 				}
 			}
 			multiply = {
@@ -490,16 +559,20 @@
 	commander_weight = {
 		value = 1.0
 	}
+	
+	magnate_weight = {
+		value = 1.0
+	}	
 
 	executive_weight = {
 		value = 2.0
-		
-		# The company owning BEI should not get non-industrialist executives
+
+		# The company owning BIC should not get non-industrialist executives
 		if = {
 			limit = {
 				exists = scope:company
-				exists = c:BEI
-				c:BEI = {
+				exists = c:BIC
+				c:BIC ?= {
 					exists = owning_company
 					owning_company = scope:company
 				}
@@ -520,6 +593,10 @@
 
 	female_executive_chance = {
 		value = 0.0
+	}
+
+	female_monarch_chance = {
+		value = 0.025
 	}
 
 	female_politician_chance = {
@@ -582,16 +659,30 @@
 		}
 	}
 
-	# The chance that a commander belonging to this IG takes over leadership when it changes
-	# scope:character is the most popular commander in the IG
-	commander_leader_chance = {
-		value = 0.25
-		multiply = ig_commander_leader_chance_mult
+	# Multiplier applied to the weight for an appropriate commander will be selected from the character pool to lead the IG
+	# root = interest group
+	commander_leader_weight = {
+		value = 0.5
 	}
+	
+	# Multiplier applied to the weight for an appropriate magnate will be selected from the character pool to lead the IG
+	# root = interest group
+	magnate_leader_weight = {
+		value = 0.5
+		if = {
+			limit = {
+				c:JAP ?= owner
+				NOT = {
+					has_variable = japan_restoration_complete
+				}
+			}
+			add = 5
+		}
+	}	
 
-	# The chance that a executive belonging to this IG takes over leadership when it changes
-	# scope:character is the most popular executive in the IG
-	executive_leader_chance = {
+	# Multiplier applied to the weight for an appropriate executive will be selected from the character pool to lead the IG
+	# root = interest group
+	executive_leader_weight = {
 		value = 0.5
 	}
 }

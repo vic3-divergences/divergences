@@ -28,11 +28,14 @@
 	}
 
 	on_enable = {
-		ig:ig_industrialists = {
+		ig:ig_industrialists ?= {
 			if = {
 				limit = {
 					owner = { c:JAP ?= this }
 				}
+				set_interest_group_name = ig_gosho
+				remove_ideology = ideology_laissez_faire
+				add_ideology = ideology_interventionist
 				set_ig_trait = ig_trait:ig_trait_zaibatsu_withdrawal
 				set_ig_trait = ig_trait:ig_trait_engines_of_progress
 				set_ig_trait = ig_trait:ig_trait_zaibatsu_cooperation
@@ -69,7 +72,7 @@
 			else_if = {
 				limit = {
 					has_dlc_feature = rp1_content
-					owner = { c:PLA ?= this }
+					owner = { c:PLA ?= this } # dvg
 				}
 				set_ig_trait = ig_trait:ig_trait_tax_avoidance
 				set_ig_trait = ig_trait:ig_trait_the_goods_must_flow
@@ -95,22 +98,22 @@
 				set_ig_trait = ig_trait:ig_trait_responsible_government
 			}
 			# else_if = {
-				# limit = {
-					# owner = {
-						# OR = {
-							# c:DEI ?= this
-							# c:ALK ?= this
-							# c:HBC ?= this
-							# is_country_type = company
-						# }
-					# }
-				# }
-				# remove_ideology = ideology_laissez_faire
-				# add_ideology = ideology_colonialist
+			# 	limit = {
+			# 		owner = {
+			# 			OR = {
+			# 				c:DEI ?= this
+			# 				c:ALK ?= this
+			# 				c:HBC ?= this
+			# 				is_country_type = company
+			# 			}
+			# 		}
+			# 	}
+			# 	remove_ideology = ideology_laissez_faire
+			# 	add_ideology = ideology_colonialist
 
-				# set_ig_trait = ig_trait:ig_trait_tax_avoidance
-				# set_ig_trait = ig_trait:ig_trait_engines_of_progress
-				# set_ig_trait = ig_trait:ig_trait_job_creators
+			# 	set_ig_trait = ig_trait:ig_trait_tax_avoidance
+			# 	set_ig_trait = ig_trait:ig_trait_engines_of_progress
+			# 	set_ig_trait = ig_trait:ig_trait_job_creators
 			# }
 			else = {
 				set_ig_trait = ig_trait:ig_trait_tax_avoidance
@@ -156,14 +159,40 @@
 				bedouin swahili north_german british gujarati
 			}
 		}
+		# rule = { # dvg
+		# 	trigger = {
+		# 		c:HAW ?= this
+		# 		NOT = { has_variable = deported_americans }
+		# 	}
+		# 	cultures = {
+		# 		yankee dixie british hawaiian
+		# 	}
+		# }
 		# rule = {
-			# trigger = {
-				# c:HAW ?= this
-				# NOT = { has_variable = deported_americans }
-			# }
-			# cultures = {
-				# yankee dixie british hawaiian
-			# }
+		# 	trigger = {
+		# 		c:PHI ?= this
+		# 		NOT = { has_variable = je_philippines_main_reliance_happened }
+		# 		NOT = { any_primary_culture = { cu:filipino = this } }
+		# 		NOT = { any_primary_culture = { cu:filipino_hispanophone = this } }
+		# 		any_primary_culture = { cu:spanish = this }
+		# 	}
+		# 	cultures = {
+		# 		spanish filipino_mestizo
+		# 	}
+		# }
+		# rule = {
+		# 	trigger = {
+		# 		c:PHI ?= this
+		# 		any_primary_culture = {
+		# 			AND = {
+		# 				cu:spanish = this
+		# 				cu:filipino_hispanophone = this
+		# 			}
+		# 		}
+		# 	}
+		# 	cultures = {
+		# 		spanish filipino_hispanophone
+		# 	}
 		# }
 	}
 
@@ -250,10 +279,10 @@
 				limit = {
 					is_pop_type = shopkeepers
 				}
-				value = 50
+				value = 25
 				add = {
 					value = this.standard_of_living
-					multiply = 2
+					multiply = 2.5
 				}
 			}
 		}
@@ -323,7 +352,7 @@
 
 		multiply = {
 			desc = "LEADER_POPULARITY"
-			scope:interest_group = {
+			scope:interest_group ?= {
 				leader ?= {
 					value = popularity
 					multiply = 0.0025
@@ -349,7 +378,7 @@
 		}
 		if = {
 			limit = {
-				scope:interest_group = {
+				scope:interest_group ?= {
 					is_in_government = yes
 				}
 			}
@@ -363,7 +392,7 @@
 
 		if = {
 			limit = {
-				scope:interest_group = {
+				scope:interest_group ?= {
 					is_in_government = yes
 				}
 			}
@@ -376,7 +405,7 @@
 		}
 		if = {
 			limit = {
-				scope:interest_group = {
+				scope:interest_group ?= {
 					is_in_government = no
 				}
 			}
@@ -394,7 +423,7 @@
 		# Monarch is not likely to adopt a marginal IG
 		if = {
 			limit = {
-				is_marginal = yes
+				ig_counts_as_marginal = yes
 			}
 			multiply = {
 				value = 0.1
@@ -464,8 +493,8 @@
 		# Agitators will never be part of a marginalized IG
 		if = {
 			limit = {
-				owner.ig:ig_industrialists = {
-					is_marginal = yes
+				owner.ig:ig_industrialists ?= {
+					ig_counts_as_marginal = yes
 				}
 			}
 			multiply = {
@@ -477,6 +506,10 @@
 	commander_weight = {
 		value = 0.5
 	}
+	
+	magnate_weight = {
+		value = 2.0
+	}	
 
 	executive_weight = {
 		value = 5.0
@@ -491,7 +524,11 @@
 	}
 
 	female_executive_chance = {
-		value = 0.0
+	value = 0.0
+	}
+
+	female_monarch_chance = {
+		value = 0.05
 	}
 
 	female_politician_chance = {
@@ -550,16 +587,30 @@
 		}
 	}
 
-	# The chance that a commander belonging to this IG takes over leadership when it changes
-	# scope:character is the most popular commander in the IG
-	commander_leader_chance = {
-		value = 0.25
-		multiply = ig_commander_leader_chance_mult
+	# Multiplier applied to the weight for an appropriate commander will be selected from the character pool to lead the IG
+	# root = interest group
+	commander_leader_weight = {
+		value = 0.5
+	}
+	
+	# Multiplier applied to the weight for an appropriate magnate will be selected from the character pool to lead the IG
+	# root = interest group
+	magnate_leader_weight = {
+		value = 2.0
+		if = {
+			limit = {
+				c:JAP ?= owner
+				NOT = {
+					has_variable = japan_restoration_complete
+				}
+			}
+			add = 5
+		}
 	}
 
-	# The chance that a executive belonging to this IG takes over leadership when it changes
-	# scope:character is the most popular executive in the IG
-	executive_leader_chance = {
-		value = 0.75
+	# Multiplier applied to the weight for an appropriate executive will be selected from the character pool to lead the IG
+	# root = interest group
+	executive_leader_weight = {
+		value = 3.0
 	}
 }

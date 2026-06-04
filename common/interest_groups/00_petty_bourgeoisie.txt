@@ -16,6 +16,7 @@
 		ideology_jingoist_leader
 		ideology_protectionist
 		ideology_sovereignist_leader
+		ideology_despotic_utopian
 	}
 
 	enable = {
@@ -74,6 +75,28 @@
 			}
 			else_if = {
 				limit = {
+					c:POR ?= owner
+				}
+				remove_ideology = ideology_meritocratic
+				add_ideology = ideology_cartist
+
+				set_ig_trait = ig_trait:ig_trait_xenophobia
+				set_ig_trait = ig_trait:ig_trait_middle_managers
+				set_ig_trait = ig_trait:ig_trait_treasury_bonds
+			}
+			else_if = {
+				limit = {
+					owner = {
+						country_has_primary_culture = cu:japanese
+					}
+				}
+				set_interest_group_name = ig_chonin
+				set_ig_trait = ig_trait:ig_trait_xenophobia
+				set_ig_trait = ig_trait:ig_trait_middle_managers
+				set_ig_trait = ig_trait:ig_trait_treasury_bonds
+			}
+			else_if = {
+				limit = {
 					owner = {
 						OR = {
 							c:BEI ?= this
@@ -110,7 +133,7 @@
 				}
 			}
 			# Kleinbürger
-			if = {
+			else_if = {
 				limit = {
 					has_dlc_feature = ip3_content
 					owner = {
@@ -128,6 +151,18 @@
 				set_ig_trait = ig_trait:ig_trait_xenophobia
 				set_ig_trait = ig_trait:ig_trait_middle_managers
 				set_ig_trait = ig_trait:ig_trait_treasury_bonds
+			}
+
+			if = { # For newly-released countries. For game-start, initialisation is handled in global history
+				limit = {
+					owner = {
+						OR = {
+							has_law_or_variant = law_type:law_traditionalism
+							has_law_or_variant = law_type:law_isolationism
+						}
+					}
+				}
+				add_ideology = ideology_mercantile
 			}
 		}
 	}
@@ -156,6 +191,32 @@
 				swahili gujarati
 			}
 		}
+		# rule = { # dvg
+		# 	trigger = {
+		# 		c:PHI ?= this
+		# 		NOT = { has_variable = je_philippines_main_reliance_happened }
+		# 		NOT = { any_primary_culture = { cu:filipino = this } }
+		# 		NOT = { any_primary_culture = { cu:filipino_hispanophone = this } }
+		# 		any_primary_culture = { cu:spanish = this }
+		# 	}
+		# 	cultures = {
+		# 		spanish filipino_mestizo
+		# 	}
+		# }
+		# rule = {
+		# 	trigger = {
+		# 		c:PHI ?= this
+		# 		any_primary_culture = {
+		# 			AND = {
+		# 				cu:spanish = this
+		# 				cu:filipino_hispanophone = this
+		# 			}
+		# 		}
+		# 	}
+		# 	cultures = {
+		# 		spanish filipino_hispanophone
+		# 	}
+		# }
 	}
 	on_character_ig_membership = {
 		if = {
@@ -187,7 +248,7 @@
 					}
 					AND = {
 						c:ZAN ?= prev.owner
-						c:ZAN = {
+						c:ZAN ?= {
 							any_primary_culture = { cu:bedouin = this }
 						}
 						OR = {
@@ -198,15 +259,19 @@
 				}
 			}
 		}
-		NOR = {
+		NOT = {
 			is_pop_type = aristocrats
-			trigger_if = {
-				limit = {
-					NOT = {
-						c:BEI ?= owner
-					}
-				}
+		}
+		OR = {
+			NOT = {
 				is_pop_type = capitalists
+			}
+			custom_tooltip = {
+				text = capitalist_in_british_india_tt
+				AND = {
+					is_pop_type = capitalists
+					c:BEI ?= owner
+				}
 			}
 		}
 		OR = {
@@ -255,7 +320,7 @@
 		}
 		else_if = {
 			limit = {
-				strata = middle
+				pop_typically_counts_as_middle_strata = yes
 			}
 			add = {
 				desc = "POP_BASE_ATTRACTION"
@@ -382,7 +447,7 @@
 
 		multiply = {
 			desc = "LEADER_POPULARITY"
-			scope:interest_group = {
+			scope:interest_group ?= {
 				leader ?= {
 					value = popularity
 					multiply = 0.0025
@@ -408,7 +473,7 @@
 		}
 		if = {
 			limit = {
-				scope:interest_group = {
+				scope:interest_group ?= {
 					is_in_government = yes
 				}
 			}
@@ -422,7 +487,7 @@
 
 		if = {
 			limit = {
-				scope:interest_group = {
+				scope:interest_group ?= {
 					is_in_government = yes
 				}
 			}
@@ -435,7 +500,7 @@
 		}
 		if = {
 			limit = {
-				scope:interest_group = {
+				scope:interest_group ?= {
 					is_in_government = no
 				}
 			}
@@ -453,7 +518,7 @@
 		# Monarch is not likely to adopt a marginal IG
 		if = {
 			limit = {
-				is_marginal = yes
+				ig_counts_as_marginal = yes
 			}
 			multiply = {
 				value = 0.1
@@ -499,7 +564,7 @@
 		if = {
 			limit = {
 				owner.ig:ig_petty_bourgeoisie ?= {
-					is_marginal = yes
+					ig_counts_as_marginal = yes
 				}
 			}
 			multiply = {
@@ -511,6 +576,10 @@
 	commander_weight = {
 		value = 1.0
 	}
+	
+	magnate_weight = {
+		value = 0.25
+	}	
 
 	executive_weight = {
 		value = 1.5
@@ -543,9 +612,12 @@
 		value = 0.0
 	}
 
+	female_monarch_chance = {
+		value = 0.10
+	}
+
 	female_politician_chance = {
 		value = 0.0
-
 
 		if = {
 			limit = {
@@ -603,16 +675,30 @@
 		}
 	}
 
-	# The chance that a commander belonging to this IG takes over leadership when it changes
-	# scope:character is the most popular commander in the IG
-	commander_leader_chance = {
-		value = 0.25
-		multiply = ig_commander_leader_chance_mult
+	# Multiplier applied to the weight for an appropriate commander will be selected from the character pool to lead the IG
+	# root = interest group
+	commander_leader_weight = {
+		value = 1.0
+	}
+	
+	# Multiplier applied to the weight for an appropriate magnate will be selected from the character pool to lead the IG
+	# root = interest group
+	magnate_leader_weight = {
+		value = 1.0
+		# if = {
+		# 	limit = {
+		# 		c:JAP ?= owner
+		# 		NOT = {
+		# 			has_variable = japan_restoration_complete
+		# 		}
+		# 	}
+		# 	add = 5
+		# }
 	}
 
-	# The chance that a executive belonging to this IG takes over leadership when it changes
-	# scope:character is the most popular executive in the IG
-	executive_leader_chance = {
-		value = 0.5
+	# Multiplier applied to the weight for an appropriate executive will be selected from the character pool to lead the IG
+	# root = interest group
+	executive_leader_weight = {
+		value = 1.0
 	}
 }
