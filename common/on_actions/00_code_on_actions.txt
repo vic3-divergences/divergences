@@ -1859,6 +1859,20 @@ on_yearly_pulse_character = {
 				set_variable = { name = regency_years value = 0 } # In case all else fails
 			}
 		}
+		if = { # Handles total years in power, not consecutive years. Mostly for Japan.
+			limit = {
+				is_ruler_of_own_country = yes
+			}
+			if = {
+				limit = {
+					has_variable = year_in_power
+				}
+				change_variable = { name = year_in_power add = 1 } # Keeps track of how long one has been Regent
+			}
+			else = {
+				set_variable = { name = year_in_power value = 1 } # In case all else fails
+			}
+		}
 	}
 }
 on_half_yearly_pulse_character = {
@@ -2368,6 +2382,29 @@ on_diplomatic_play_started = {
 					}
 					change_relations = { country = root value = -50 }
 				}
+			}
+		}
+		if = {
+			limit = {
+				scope:initiator = {
+					c:TUR ?= this
+					NOT = { has_variable = egyptian_crisis }
+				}
+				scope:target = {
+					c:EGY ?= this
+				}
+				OR = {
+					is_diplomatic_play_type = dp_conquer_state
+					is_diplomatic_play_type = dp_return_state
+					is_diplomatic_play_type = dp_reduce_autonomy
+					is_diplomatic_play_type = dp_make_tributary
+					is_diplomatic_play_type = dp_make_protectorate
+					is_diplomatic_play_type = dp_annex_subject
+				}
+			}
+			save_scope_as = egyptian_crisis_scope
+			scope:initiator = {
+				trigger_event = { id = egyptian_crisis_events.1 popup = yes }
 			}
 		}
 	}
