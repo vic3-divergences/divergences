@@ -343,15 +343,17 @@
 movement_presbyterian = {
 	category = movement_category_ideological
 
-	ideology = ideology_utilitarian_movement
+	ideology = ideology_presbyterian_movement
+
 	character_ideologies = {
 		ideology_presbyterian_leader
 	}
 
 	creation_trigger = {
 		OR = {
-			country_has_primary_culture = cu:british
+			country_has_primary_culture = cu:scottish
 			country_has_primary_culture = cu:beornian
+			country_has_primary_culture = cu:lotharian
 			country_has_primary_culture = cu:burgundian
 			country_has_state_religion = rel:protestant
 		}
@@ -396,6 +398,8 @@ movement_presbyterian = {
 			has_ideology = ideology:ideology_abolitionist
 			has_ideology = ideology:ideology_market_liberal
 			has_ideology = ideology:ideology_modernizer_leader
+			has_ideology = ideology:ideology_republican_leader
+			has_ideology = ideology:ideology_radical
 
 		}
 		
@@ -424,17 +428,15 @@ movement_presbyterian = {
 				}
 			}
 			is_pop_type = bureaucrats
-			is_pop_type = capitalists
 			is_pop_type = engineers
 			is_pop_type = clerks
 			is_pop_type = officers
 			is_pop_type = academics
-		}
-		NOR = {
 			is_pop_type = laborers
 			is_pop_type = peasants
 			is_pop_type = slaves
 		}
+		
 	}
 
 	pop_support_factors = {
@@ -443,6 +445,8 @@ movement_presbyterian = {
 		movement_support_academics
 		movement_support_officers
 		movement_support_clerks
+		movement_support_cultural_fervor
+		movement_support_cultural_discrimination
 	}
 
 	pop_support_weight = {
@@ -689,11 +693,12 @@ movement_presbyterian = {
 }
 
 movement_parisher = {
-	category = movement_category_ideological
+	category = movement_category_cultural_majority
 
 	active_law_radicalism_multiplier = 0.5
 
 	ideology = ideology_parisher_movement
+
 	character_ideologies = {
 		ideology_jingoist_leader
 		ideology_protectionist
@@ -736,6 +741,7 @@ movement_parisher = {
 	disband_trigger = {
 		OR = {
 			has_law = law_type:law_closed_borders
+			has_law = law_type:law_ethnostate
 		}
 	}
 
@@ -750,7 +756,7 @@ movement_parisher = {
 			has_ideology = ideology:ideology_market_liberal
 			has_ideology = ideology:ideology_sovereignist
 			has_ideology = ideology:ideology_utopian
-			has_ideology = ideology:ideology_parisher
+			has_ideology = ideology:ideology_parisher_leader
 			has_ideology = ideology:ideology_luddite
 			scope:interest_group ?= {
 				OR = {
@@ -767,29 +773,55 @@ movement_parisher = {
 	}
 
 	character_support_weight = {
-		value = 200
+		value = 100
+		if = {
+			limit = {
+				has_ideology = ideology:ideology_ethno_nationalist
+			}
+			multiply = {
+				value = 5
+			}
+		}
+		else_if = {
+			limit = {
+				OR = {
+					has_ideology = ideology:ideology_fascist
+					has_ideology = ideology:ideology_jingoist_leader
+				}
+			}
+			multiply = {
+				value = 2
+			}
+		}
+		else_if = {
+			limit = {
+				OR = {
+					has_progressive_ideology = yes
+					has_socialist_ideology = yes
+				}
+			}
+			multiply = 0.05
+		}
 	}
 
 	pop_support_trigger = {
-		NOT = {
-			is_pop_type = slaves
+		culture = {
+			is_primary_culture_of = root.owner
 		}
 	}
 
 	pop_support_factors = {
-		movement_support_high_urbanization
-		movement_support_high_literacy
-		movement_support_capitalists
-		movement_support_aristocrats
-		movement_support_academics
-		movement_support_bureaucrats
-		movement_support_engineers
+		movement_support_national_awakening
+		movement_support_cultural_fervor
+		movement_support_shopkeepers
+		movement_support_officers
+		movement_support_farmers
 		movement_support_clerks
 		movement_support_soldiers
-		movement_support_lost_wars
-		movement_support_backwardsness
-		movement_support_daimyo_loyalty_low
-		movement_support_daimyo_loyalty_high # Conditional
+		movement_support_peasants
+		movement_support_colonial_settlers
+		movement_support_nationalism_tech
+		movement_support_pan_nationalism_tech
 	}
 
 	pop_support_weight = {
@@ -829,54 +861,14 @@ movement_parisher = {
 				}
 			}
 		}
-
-		add = {
-			desc = "URBAN_STATE"
-			value = 10
-			multiply = state.state_urbanization_rate
-		}
-
+		
 		if = {
 			limit = {
 				strata = upper
 			}
-			if = {
-				limit = {
-					is_pop_type = academics
-				}
-				add = {
-					value = 25
-					desc = "POP_ACADEMICS"
-				}
-			}
-			if = {
-				limit = {
-					is_pop_type = aristocrats
-				}
-				add = {
-					value = 10
-					desc = "POP_ARISTOCRATS"
-				}
-			}
-			else_if = {
-				limit = {
-					is_pop_type = officers
-				}
-				add = {
-					value = 5
-					desc = "POP_OFFICERS"
-				}
-			}
-			if = {
-				limit = {
-					owner = {
-						has_variable = wargoal_enforced_by_recognized_power
-					}
-				}
-				add = {
-					value = 15
-					desc = "wargoal_pressed_by_recognized_power_tt"
-				}
+			add = {
+				value = 10
+				desc = "UPPER_NO_ICON"
 			}
 		}
 		else_if = {
@@ -885,40 +877,35 @@ movement_parisher = {
 			}
 			if = {
 				limit = {
-					is_pop_type = bureaucrats
+					is_pop_type = shopkeepers
+				}
+				add = {
+					value = 25
+					desc = "POP_SHOPKEEPERS"
+				}
+			}
+			else_if = {
+				limit = {
+					is_pop_type = officers
+				}
+				add = {
+					value = 20
+					desc = "POP_OFFICERS"
+				}
+			}
+			else_if = {
+				limit = {
+					is_pop_type = farmers
 				}
 				add = {
 					value = 15
-					desc = "POP_BUREAUCRATS"
+					desc = "POP_FARMERS"
 				}
 			}
-			else_if = {
-				limit = {
-					is_pop_type = soldiers
-				}
+			else = {
 				add = {
-					value = 6
-					desc = "POP_SOLDIERS"
-				}
-			}
-			else_if = {
-				limit = {
-					is_pop_type = clergymen
-				}
-				add = {
-					value = 1
-					desc = "POP_CLERGYMEN"
-				}
-			}
-			if = {
-				limit = {
-					owner = {
-						has_variable = wargoal_enforced_by_recognized_power
-					}
-				}
-				add = {
-					value = 10
-					desc = "wargoal_pressed_by_recognized_power_tt"
+					value = 12
+					desc = "MIDDLE_NO_ICON"
 				}
 			}
 		}
@@ -928,38 +915,20 @@ movement_parisher = {
 			}
 			if = {
 				limit = {
-					is_pop_type = capitalists
-				}
-				add = {
-					value = 35
-					desc = "POP_CAPITALISTS"
-				}
-			}
-			else_if = {
-				limit = {
-					is_pop_type = shopkeepers
-				}
-				add = {
-					value = 30
-					desc = "POP_ENGINEERS"
-				}
-			}
-			else_if = {
-				limit = {
-					is_pop_type = engineers
-				}
-				add = {
-					value = 25
-					desc = "POP_ENGINEERS"
-				}
-			}
-			if = {
-				limit = {
 					is_pop_type = clerks
 				}
 				add = {
-					value = 9
+					value = 25
 					desc = "POP_CLERKS"
+				}
+			}
+			else_if = {
+				limit = {
+					is_pop_type = soldiers
+				}
+				add = {
+					value = 20
+					desc = "POP_SOLDIERS"
 				}
 			}
 			else_if = {
@@ -967,63 +936,152 @@ movement_parisher = {
 					is_pop_type = peasants
 				}
 				add = {
-					value = 1
+					value = 10
 					desc = "POP_PEASANTS"
 				}
 			}
 			else = {
 				add = {
-					value = 3
+					value = 5
 					desc = "LOWER_NO_ICON"
 				}
 			}
 		}
 
-		multiply = { # Illiterate pops participate at 1/10 the rate of fully literate pops
-			desc = "POP_LITERACY"
-			value = literacy_rate
-			add = 0.10
+		if = {
+			limit = {
+				state = {
+					is_incorporated = no
+				}
+			}
+			multiply = {
+				value = 1.5
+				desc = "COLONIAL_SETTLERS"
+			}
 		}
 
-		multiply = { # Daimyo loyalty is quite important
-			value = 1.5
-			subtract = state.state_daimyo_loyalty
-			desc = "LOYALTY_OF_STATE_DAIMYO"
+		if = {
+			limit = {
+				owner ?= {
+					has_technology_researched = pan-nationalism
+				}
+			}
+			multiply = {
+				value = 1.5
+				desc = "PAN_NATIONALISM_TECH"
+			}
+		}
+		else_if = {
+			limit = {
+				owner ?= {
+					has_technology_researched = nationalism
+				}
+			}
+			multiply = {
+				value = 1.25
+				desc = "NATIONALISM_TECH"
+			}
+		}
+		
+		multiply = { # Range from x0.625 to x3.125
+			desc = "POP_CULTURE_FERVOR"
+			value = culture.culture_current_fervor
+			subtract = 15
+			multiply = 0.025
+			add = 1
 		}
 
-		multiply = { # "What are you doing?" factor
-			desc = "BACKWARDSNESS"
-			value = 1
-			add = {
-				value = years_since_game_start
-				divide = 100
+		if = {
+			limit = {
+				culture ?= {
+					culture_has_national_awakening = yes
+				}
+			}
+			multiply = {
+				value = 1.5
+				desc = "POP_ACTIVE_NATIONAL_AWAKENING"
+			}
+		}
+
+		if = { # If a more radical movement exists, it'll poach radicals from this one.
+			limit = {
+				owner ?= {
+					any_political_movement = {
+						OR = {
+							is_political_movement_type = movement_reactionary
+							is_political_movement_type = movement_fascist
+						}
+					}
+				}
+			}
+			multiply = {
+				desc = "POP_RADICAL_MOVEMENT_LOSSES"
+				value = 1
+				subtract = pop_radical_fraction
+			}
+		}
+	}
+
+	secession = {
+		possible = {
+			political_movement_support >= 0.05
+			political_movement_support <= 0.20
+		}
+
+		weight = {
+			value = 1000
+		}
+
+		state_weight = {
+			value = 0
+
+			if = {
+				limit = {
+					is_capital = no
+					is_homeland_of_country_cultures = owner
+					primary_cultures_percent_state >= 0.05
+				}
+				add = 10
+
+				if = {
+					limit = {
+						primary_cultures_percent_state >= 0.75
+					}
+					add = 1000
+				}
+				else_if = {
+					limit = {
+						primary_cultures_percent_state >= 0.5
+					}
+					add = 500
+				}
+				else_if = {
+					limit = {
+						primary_cultures_percent_state >= 0.25
+					}
+					add = 100
+				}
+				else_if = {
+					limit = {
+						primary_cultures_percent_state >= 0.1
+					}
+					add = 50
+				}
 			}
 		}
 	}
 
 	revolution = {
 		possible = {
-			political_movement_support >= 0.05
+			political_movement_support >= 0.20
 		}
 
 		weight = {
 			value = 100
 		}
-
-		state_weight = {
-			if = {
-				limit = {
-					state_daimyo_loyalty_impact_restorationist > 0
-				}
-				add = state_daimyo_loyalty_impact_restorationist
-			}
-			else = {
-				multiply = 0
-			}
-		}
 	}
 
-	# Cannot secede
+
 
 	additional_radicalism_factors = {
 		if = {
