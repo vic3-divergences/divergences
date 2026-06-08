@@ -59,11 +59,13 @@ law_interventionism = {
 
 	icon = "gfx/interface/icons/law_icons/interventionism.dds"
 
-	progressiveness = 50
+	progressiveness = 25
 
 	disallowing_laws = {
 		law_serfdom
 		law_anarchy
+		law_factory_councils
+		law_women_in_the_fields
 	}
 
 	on_activate = {
@@ -89,7 +91,7 @@ law_interventionism = {
 			limit = { ai_has_enact_weight_modifier_journal_entries = yes }
 			add = 750
 		}
-		
+
 		# Once the AI gets to a certain society tech level they should try to ditch Traditionalism for either Agrarianism or Interventionism
 		if = {
 			limit = {
@@ -134,6 +136,8 @@ law_agrarianism = {
 
 	disallowing_laws = {
 		law_anarchy
+		law_factory_councils
+		law_women_in_the_fields
 	}
 
 	unlocking_technologies = {
@@ -153,7 +157,6 @@ law_agrarianism = {
 		country_government_dividends_reinvestment_add = 0.5
 		country_government_dividends_efficiency_add = 0.3
 		country_free_charters_add = 1
-
 		country_disable_nationalization_without_compensation_bool = yes
 	}
 
@@ -184,12 +187,12 @@ law_agrarianism = {
 			}
 
 			add = 1000
-		}		
+		}
 
 		# AI should really try to get out of Traditionalism under the right circumstances
 		if = {
 			limit = {
-				has_law = law_type:law_traditionalism
+				has_law_or_variant = law_type:law_traditionalism
 				NOT = { has_strategy = ai_strategy_reactionary_agenda }
 				OR = {
 					NOT = { has_strategy = ai_strategy_conservative_agenda }
@@ -319,7 +322,7 @@ law_extraction_economy = {
 
 	icon = "gfx/interface/icons/law_icons/extraction_economy.dds"
 	progressiveness = -50
-	
+
 	disallowing_laws = {
 		law_anarchy
 		law_factory_councils
@@ -329,16 +332,13 @@ law_extraction_economy = {
 		colonization
 	}
 
+	disallowing_laws = {
+		law_anarchy
+		law_women_in_the_fields
+	}
+
 	can_enact = {
-		trigger_if = {
-			limit = {
-				game_date > 1836.1.1
-			}
-			is_subject = yes # Subject relationships load after laws' validities are checked
-		}
-		trigger_else = {
-			always = yes
-		}
+		is_subject = yes
 	}
 
 	on_activate = {
@@ -427,7 +427,7 @@ law_laissez_faire = {
 
 	icon = "gfx/interface/icons/law_icons/laissez_faire.dds"
 
-	progressiveness = 50
+	progressiveness = 25
 
 	disallowing_laws = {
 		law_serfdom
@@ -464,6 +464,7 @@ law_laissez_faire = {
 			limit = { ai_has_enact_weight_modifier_journal_entries = yes }
 			add = 750
 		}
+
 		# AI should really try to get out of Traditionalism under the right circumstances
 		if = {
 			limit = {
@@ -494,11 +495,13 @@ law_cooperative_ownership = {
 
 	disallowing_laws = {
 		law_serfdom
+		law_women_in_the_fields
 	}
 
 	unlocking_laws = {
 		law_council_republic
 		law_corporate_state
+		# No Social Monarchy
 	}
 
 	on_activate = {
@@ -559,11 +562,12 @@ law_command_economy = {
 
 	icon = "gfx/interface/icons/law_icons/command_economy.dds"
 
-	progressiveness = 100
+	progressiveness = 50
 
 	disallowing_laws = {
 		law_serfdom
 		law_anarchy
+		law_women_in_the_fields
 	}
 
 	unlocking_technologies = {
@@ -574,6 +578,7 @@ law_command_economy = {
 		law_autocracy
 		law_neo_absolutism
 		law_oligarchy
+		law_organic_regulation
 		law_single_party_state
 		law_technocracy
 	}
@@ -671,7 +676,7 @@ law_incan_economics = {
 					is_subject_type = subject_type_crown_land
 					is_subject_type = subject_type_personal_union
 				}
-				c:TWT ?= { has_law = law_type:law_manorialism }
+				c:TWT ?= { has_law_or_variant = law_type:law_serfdom }
 			}
 			country_has_primary_culture = cu:quechua
 			country_has_primary_culture = cu:aimara
