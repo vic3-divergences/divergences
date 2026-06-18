@@ -11,7 +11,7 @@ opium_wars.1 = {
 
 	duration = 3
 
-	cooldown = { days = stupidly_900 }
+	cooldown = { days = stupidly_long_modifier_time }
 
 	event_image = {
 		video = "europenorthamerica_opium_smoker"
@@ -23,6 +23,10 @@ opium_wars.1 = {
 
 	trigger = {
 		NOT = { has_variable = opium_wars_start_var }
+		NOR = {
+			is_revolutionary = yes
+			is_secessionist = yes
+		}
 		any_primary_culture = {
 			has_cultural_obsession = opium
 		}
@@ -39,7 +43,7 @@ opium_wars.1 = {
 			}
 		}
 		is_subject = no
-		NOT = { has_law = law_type:law_free_trade }
+		NOT = { has_law_or_variant = law_type:law_free_trade }
 		any_market = {
             root.market = {
                 market_imports_reliance = { target = prev goods = opium value > 0.25 }
@@ -149,7 +153,7 @@ opium_wars.1 = {
 		}
 		add_modifier = {
 			name = opium_wars_addiction_modifier
-			days = 900
+			days = long_modifier_time
 		}
 		ai_chance = {
 			base = 100
@@ -159,11 +163,12 @@ opium_wars.1 = {
 		name = opium_wars.1.b
 		add_modifier = {
 			name = opium_wars_addiction_modifier
-			days = very_900
+			days = very_long_modifier_time
 		}
 		add_radicals = {
 			value = medium_radicals
 		}
+		set_variable = opium_wars_gave_in
 		if = {
 			limit = { has_journal_entry = je_warlord_china }
 			chi_remove_1_fragile_unity = yes
@@ -185,7 +190,7 @@ opium_wars.2 = {
 
 	duration = 3
 
-	cooldown = { days = stupidly_900 }
+	cooldown = { days = stupidly_long_modifier_time }
 
 	event_image = {
 		video = "europenorthamerica_opium_smoker"
@@ -227,6 +232,10 @@ opium_wars.2 = {
 			type = je_opium_wars
 			target = scope:opium_wars_target_country
 		}
+		add_involvement = {
+			strategic_region = sr:region_south_china
+			value = 2500
+		}
 		hidden_effect = {
 			every_country = {
 				limit = {
@@ -261,6 +270,8 @@ opium_wars.2 = {
 			country = scope:opium_wars_target_country
 			value = 50
 		}
+
+		set_variable = opium_wars_ignored_ban
 
 		every_subject_or_below = {
 			limit = {
@@ -329,7 +340,7 @@ opium_wars.3 = {
 
 	duration = 3
 
-	cooldown = { days = stupidly_900 }
+	cooldown = { days = stupidly_long_modifier_time }
 
 	event_image = {
 		video = "europenorthamerica_opium_smoker"
@@ -344,6 +355,7 @@ opium_wars.3 = {
 	}
 
 	immediate = {
+		set_variable = opium_wars_won
 		if = {
 			limit = { has_modifier = opium_wars_addiction_modifier }
 			remove_modifier = opium_wars_addiction_modifier
@@ -382,7 +394,7 @@ opium_wars.3 = {
 		}
 		add_modifier = {
 			name = china_authority
-			days = very_900
+			days = very_long_modifier_time
 		}
 		if = {
 			limit = { has_modifier = opium_wars_addiction_modifier }
@@ -397,7 +409,7 @@ opium_wars.3 = {
 		}
 		add_modifier = {
 			name = china_welfare
-			days = very_900
+			days = very_long_modifier_time
 		}
 		if = {
 			limit = { has_modifier = opium_wars_addiction_modifier }
@@ -417,7 +429,7 @@ opium_wars.4 = {
 			triggered_desc = {
 				desc = opium_wars.4.d
 				trigger = {
-					has_law = law_type:law_free_trade
+					has_law_or_variant = law_type:law_free_trade
 				}
 			}
 			triggered_desc = {
@@ -445,7 +457,7 @@ opium_wars.4 = {
 
 	duration = 3
 
-	cooldown = { days = stupidly_900 }
+	cooldown = { days = stupidly_long_modifier_time }
 
 	event_image = {
 		video = "europenorthamerica_opium_smoker"
@@ -460,6 +472,7 @@ opium_wars.4 = {
 	}
 
 	immediate = {
+		save_scope_as = opium_wars_defeated_country
 		if = {
 			limit = { has_modifier = opium_wars_addiction_modifier }
 			remove_modifier = opium_wars_addiction_modifier
@@ -469,8 +482,11 @@ opium_wars.4 = {
 				any_country = {
 					has_variable = opium_wars_aggressor
 					any_scope_state = {
-						market = {
-							owner = ROOT
+						is_treaty_port = yes
+						state_region = {
+							any_scope_state = {
+								owner = root
+							}
 						}
 					}
 				}
@@ -479,8 +495,11 @@ opium_wars.4 = {
 				limit = {
 					has_variable = opium_wars_aggressor
 					any_scope_state = {
-						market = {
-							owner = ROOT
+						is_treaty_port = yes
+						state_region = {
+							any_scope_state = {
+								owner = root
+							}
 						}
 					}
 				}
@@ -498,6 +517,21 @@ opium_wars.4 = {
 				}
 			}
 		}
+		# if = { # dvg TODO unsure if we want this?
+		# 	limit = {
+		# 		scope:opium_wars_defeated_country ?= c:CHI
+		# 		OR = {
+		# 			scope:opium_wars_treaty_port_winner ?= c:GBR
+		# 			c:CHI ?= { has_law_or_variant = law_type:law_free_trade }
+		# 		}
+		# 	}
+		# 	c:JAP ?= {
+		# 		trigger_event = {
+		# 			id = tenpo_events.6
+		# 			popup = yes
+		# 		}
+		# 	}
+		# }
 		if = {
 			limit = { has_journal_entry = je_warlord_china }
 			set_variable = lost_opium_wars
@@ -510,7 +544,7 @@ opium_wars.4 = {
 		default_option = yes
 		add_modifier = {
 			name = opium_wars_lost
-			days = very_900
+			days = very_long_modifier_time
 			is_decaying = yes
 		}
 		add_radicals = {
@@ -543,7 +577,7 @@ opium_wars.5 = {
 				desc = opium_wars.5.d
 				trigger = {
 					scope:opium_wars_target_country = {
-						has_law = law_type:law_free_trade
+						has_law_or_variant = law_type:law_free_trade
 					}
 				}
 			}
@@ -618,7 +652,7 @@ opium_wars.5 = {
 		default_option = yes
 		add_modifier = {
 			name = opium_wars_navy_modifier
-			days = 400
+			days = normal_modifier_time
 		}
 		#remove_variable = opium_wars_aggressor
 	}
@@ -627,7 +661,7 @@ opium_wars.5 = {
 		name = opium_wars.5.b
 		add_modifier = {
 			name = opium_wars_export_modifier
-			days = 400
+			days = normal_modifier_time
 		}
 		#remove_variable = opium_wars_aggressor
 	}
@@ -644,7 +678,7 @@ opium_wars.6 = {
 
 	duration = 3
 
-	cooldown = { days = stupidly_900 }
+	cooldown = { days = stupidly_long_modifier_time }
 
 	event_image = {
 		video = "europenorthamerica_opium_smoker"
@@ -683,7 +717,7 @@ opium_wars.6 = {
 		}
 		add_modifier = {
 			name = executed_opium_smugglers
-			days = 400
+			days = normal_modifier_time
 		}
 	}
 
@@ -691,7 +725,7 @@ opium_wars.6 = {
 		name = opium_wars.6.b
 		add_modifier = {
 			name = returned_opium_smugglers
-			days = 400
+			days = normal_modifier_time
 		}
 		change_relations = {
 			country = scope:smuggler_country
@@ -711,7 +745,7 @@ opium_wars.7 = {
 
 	duration = 3
 
-	cooldown = { days = 400 }
+	cooldown = { days = normal_modifier_time }
 
 	event_image = {
 		video = "europenorthamerica_opium_smoker"
@@ -768,7 +802,7 @@ opium_wars.7 = {
 		scope:recovry_state = {
 			add_modifier = {
 				name = opium_health_focus
-				days = 400
+				days = normal_modifier_time
 				multiplier = 2
 			}
 		}
@@ -782,7 +816,7 @@ opium_wars.7 = {
 			}
 			add_modifier = {
 				name = opium_loyalty_focus
-				days = 400
+				days = normal_modifier_time
 			}
 		}
 	}
@@ -799,7 +833,7 @@ opium_wars.8 = {
 
 	duration = 3
 
-	cooldown = { days = 400 }
+	cooldown = { days = normal_modifier_time }
 
 	event_image = {
 		video = "europenorthamerica_opium_smoker"
@@ -859,11 +893,11 @@ opium_wars.8 = {
 		scope:opium_addiction_state = {
 			add_modifier = {
 				name = opium_addiction_state_mod
-				days = 400
+				days = normal_modifier_time
 			}
 			add_culture_standard_of_living_modifier = {
 				culture = scope:opium_addiction_pop
-				days = 900
+				days = long_modifier_time
 				multiplier = -2
 			}
 		}
@@ -879,7 +913,7 @@ opium_wars.8 = {
 		scope:opium_addiction_state = {
 			add_culture_standard_of_living_modifier = {
 				culture = scope:opium_addiction_pop
-				days = 900
+				days = long_modifier_time
 				multiplier = -1
 			}
 		}
