@@ -13,6 +13,13 @@
 #	}
 #
 
+resign_and_retire = {
+	remove_character_role = politician
+	remove_character_role = ruler
+	on_remove_ruler_effects = yes
+	retire_character = yes
+}
+
 relations_hit_with_power_bloc_leaders = {
 	if = {
 		limit = {
@@ -193,23 +200,42 @@ warlord_setup_effect = {
 				c:ALI ?= this
 			}
 		}
-		random_character = {
-			limit = {
-				c:CHI ?= owner
-				OR = {
-					has_role = general
-					AND = {
-						PREV = {
-							any_scope_state = {
-								has_building = building_naval_base
+		save_scope_as = transfer_scope
+		c:CHI ?= {
+			if = {
+				limit = {
+					any_scope_character = {
+						OR = {
+							has_role_of_type = general
+							AND = {
+								PREV = {
+									any_scope_state = {
+										has_building = building_naval_administration
+									}
+								}
+								has_role_of_type = admiral
 							}
 						}
-						has_role = admiral
 					}
 				}
+				random_scope_character = {
+					limit = {
+						OR = {
+							has_role_of_type = general
+							AND = {
+								PREV = {
+									any_scope_state = {
+										has_building = building_naval_administration
+									}
+								}
+								has_role_of_type = admiral
+							}
+						}
+					}
+					transfer_character = scope:transfer_scope
+					set_character_as_ruler = yes
+				}
 			}
-			transfer_character = PREV
-			set_character_as_ruler = yes
 		}
 		if = {
 			limit = {
@@ -271,6 +297,7 @@ enslave_discriminated_farm_workers = {
 	every_scope_pop = {
 		limit = {
 			is_pop_type = laborers
+			pop_has_primary_culture = no
 			pop_acceptance < acceptance_status_4
 			OR = {
 				pop_employment_building_group = bg_agriculture
@@ -296,7 +323,7 @@ save_agitator_law_scopes = {
 		}
 		random_scope_character = {
 			limit = {
-				has_role = agitator
+				has_role_of_type = agitator
 				OR = {
 					law_enactment_stance = {
 						law = owner.currently_enacting_law.type
@@ -307,7 +334,7 @@ save_agitator_law_scopes = {
 							law = owner.currently_enacting_law.type
 							value = neutral
 						}
-						interest_group = {
+						interest_group ?= {
 							law_enactment_stance = {
 								law = owner.currently_enacting_law.type
 								value > neutral
@@ -317,7 +344,7 @@ save_agitator_law_scopes = {
 				}
 			}
 			save_scope_as = supporting_agitator
-			interest_group = {
+			interest_group ?= {
 				save_scope_as = agitator_ig
 			}
 		}
@@ -338,7 +365,7 @@ save_agitator_law_scopes = {
 		}
 		random_scope_character = {
 			limit = {
-				has_role = agitator
+				has_role_of_type = agitator
 				OR = {
 					law_enactment_stance = {
 						law = owner.currently_enacting_law.type
@@ -349,7 +376,7 @@ save_agitator_law_scopes = {
 							law = owner.currently_enacting_law.type
 							value = neutral
 						}
-						interest_group = {
+						interest_group ?= {
 							law_enactment_stance = {
 								law = owner.currently_enacting_law.type
 								value < neutral
@@ -359,7 +386,7 @@ save_agitator_law_scopes = {
 				}
 			}
 			save_scope_as = opposing_agitator
-			interest_group = {
+			interest_group ?= {
 				save_scope_as = agitator_ig
 			}
 		}
@@ -825,31 +852,25 @@ generate_french_monarch = {
 	}
 }
 
+exile_character_with_role_cleanup = { # scope:character - should be used instead of exile_character = yes
+	exile_character = yes
+	if = {
+		limit = {
+			exists = this.commander_military_formation
+		}
+		unassign_from_formation = yes
+	}
+	replace_character_roles = { add = { agitator } remove_all = yes }
+}
+
 clean_up_exile_character_roles = { # scope: character
 	if = {
 		limit = {
-			NOT = { has_role = agitator }
+			exists = this.commander_military_formation
 		}
-		add_character_role = agitator
+		unassign_from_formation = yes
 	}
-	if = {
-		limit = {
-			has_role = politician
-		}
-		remove_character_role = politician
-	}
-	if = {
-		limit = {
-			has_role = general
-		}
-		remove_character_role = general
-	}
-	if = {
-		limit = {
-			has_role = admiral
-		}
-		remove_character_role = admiral
-	}
+	replace_character_roles = { add = { agitator } remove_all = yes }
 }
 
 remove_war_disease_modifier = { #used to remove modifiers from nursing_events.1 and je_war_nursing
@@ -1142,100 +1163,146 @@ accepted_cultural_minority_selector_owner_scope_save_scope_as_minority_culture =
 }
 
 # spoils_of_war_initiation_gre = { # If there are any states in the Balkans that are Greek homelands, and not ours, and if there is at least one country who completed the Balkan League JE besides us.
-	# if = {
-		# limit = {
-			# exists = c:GRE
-			# c:GRE ?= THIS
-			# is_subject = no
-			# sr:region_balkans = {
-				# any_scope_state = {
-					# state_region = {
-						# is_homeland = cu:greek
-					# }
-					# owner = root
-					# count < 7
-				# }
-			# }
-			# has_variable = first_balkan_war_successful
-	   	# }
-		# add_journal_entry = {
-			# type = je_spoils_of_war
-		# }
-	# }
+# 	if = {
+# 		limit = {
+# 			exists = c:GRE
+# 			c:GRE ?= THIS
+# 			is_subject = no
+# 			sr:region_balkans = {
+# 				any_scope_state = {
+# 					state_region = {
+# 						is_homeland = cu:greek
+# 					}
+# 					owner = root
+# 					count < 7
+# 				}
+# 			}
+# 			has_variable = first_balkan_war_successful
+# 	   	}
+# 		add_journal_entry = {
+# 			type = je_spoils_of_war
+# 		}
+# 	}
 # }
 
 # spoils_of_war_initiation_mon = { # If there are any states in the Balkans that are Serbian homelands, and not ours, and if there is at least one country who completed the Balkan League JE besides us.
-    # if = {
-		# limit = {
-			# exists = c:MON
-			# c:MON ?= THIS
-			# is_subject = no
-			# sr:region_balkans = {
-				# any_scope_state = {
-					# state_region = {
-						# is_homeland = cu:serb
-					# }
-					# owner = root
-					# count < 5
-				# }
-			# }
-			# has_variable = first_balkan_war_successful
-    	# }
-		# add_journal_entry = {
-			# type = je_spoils_of_war
-		# }
-    # }
+#     if = {
+# 		limit = {
+# 			exists = c:MON
+# 			c:MON ?= THIS
+# 			is_subject = no
+# 			sr:region_balkans = {
+# 				any_scope_state = {
+# 					state_region = {
+# 						is_homeland = cu:serb
+# 					}
+# 					owner = root
+# 					count < 5
+# 				}
+# 			}
+# 			has_variable = first_balkan_war_successful
+#     	}
+# 		add_journal_entry = {
+# 			type = je_spoils_of_war
+# 		}
+#     }
 # }
 
 # spoils_of_war_initiation_bul = { # If there are any states in the Balkans that are Romanian homelands, and not ours, and if there is at least one country who completed the Balkan League JE besides us.
-    # if = {
-		# limit = {
-			# exists = c:BUL
-			# c:BUL ?= THIS
-			# is_subject = no
-			# sr:region_balkans = {
-				# any_scope_state = {
-					# state_region = {
-						# is_homeland = cu:bulgarian
-					# }
-					# owner = root
-					# count < 4
-				# }
-			# }
-			# has_variable = first_balkan_war_successful
-    	# }
-		# add_journal_entry = {
-			# type = je_spoils_of_war
-		# }
-    # }
+#     if = {
+# 		limit = {
+# 			exists = c:BUL
+# 			c:BUL ?= THIS
+# 			is_subject = no
+# 			sr:region_balkans = {
+# 				any_scope_state = {
+# 					state_region = {
+# 						is_homeland = cu:bulgarian
+# 					}
+# 					owner = root
+# 					count < 4
+# 				}
+# 			}
+# 			has_variable = first_balkan_war_successful
+#     	}
+# 		add_journal_entry = {
+# 			type = je_spoils_of_war
+# 		}
+#     }
 # }
 
 # spoils_of_war_initiation_ser = { # If there are any states in the Balkans that are Serbian homelands, and not ours, and if there is at least one country who completed the Balkan League JE besides us.
-	# if = {
-		# limit = {
-			# exists = c:SER
-			# c:SER ?= THIS
-			# is_subject = no
-			# sr:region_balkans = {
-				# any_scope_state = {
-					# state_region = {
-						# is_homeland = cu:serb
-					# }
-					# owner = root
-					# count < 5
-				# }
-			# }
-			# has_variable = first_balkan_war_successful
-    	# }
-		# add_journal_entry = {
-			# type = je_spoils_of_war
-		# }
-    # }
+# 	if = {
+# 		limit = {
+# 			exists = c:SER
+# 			c:SER ?= THIS
+# 			is_subject = no
+# 			sr:region_balkans = {
+# 				any_scope_state = {
+# 					state_region = {
+# 						is_homeland = cu:serb
+# 					}
+# 					owner = root
+# 					count < 5
+# 				}
+# 			}
+# 			has_variable = first_balkan_war_successful
+#     	}
+# 		add_journal_entry = {
+# 			type = je_spoils_of_war
+# 		}
+#     }
+# }
+
+# spoils_of_war_initiation_wal = { # If there are any states in the Danubia region that are romanian homelands, and not ours, and if there is at least one country who completed the Balkan League JE.
+# 	if = {
+# 		limit = {
+# 			exists = c:WAL
+# 			is_subject = no
+# 			sr:region_balkans = {
+# 				any_scope_state = {
+# 					state_region = {
+# 						is_homeland = cu:romanian
+# 					}
+# 					owner = root
+# 					count < 3
+# 				}
+# 			}
+#     	}
+# 		add_journal_entry = {
+# 			type = je_spoils_of_war
+# 		}
+#     }
 # }
 
 # the_balkan_league_activated_modifier_cleanser = { #removes all activated modifiers when they're not logically applicable anymore.
-	# hidden_effect = {
-		# remove_modifier = balkan_wars_military_tech_boost_mod
-		# remove_modifier = balkan_wars_military_industry_overworked_mod
-	# }
+# 	hidden_effect = {
+# 		remove_modifier = balkan_wars_military_tech_boost_mod
+# 		remove_modifier = balkan_wars_military_industry_overworked_mod
+# 	}
 # }
+
+# Used by the generic prestige-good JEs in 05_prestige_goods.txt. If the
+# company currently saved to scope:relevant_company no longer exists
+# (e.g. the player disbanded it), rebind scope:relevant_company to another
+# qualifying company in the country and reset the progress timer. If no
+# qualifying company exists, leaves the scope unbound — the JE's possible
+# trigger will then fail and can_deactivate = yes sends it back to inactive.
+rebind_prestige_good_company = {
+	if = {
+		limit = { NOT = { exists = scope:relevant_company } }
+		random_company = {
+			limit = {
+				can_potentially_produce_prestige_goods = $GOODS$
+				is_producing_prestige_goods = no
+				company_is_prosperous = yes
+				NOT = { has_variable = $UNLOCK_VAR$ }
+			}
+			save_scope_as = relevant_company
+		}
+		set_variable = {
+			name = $TIMER_VAR$
+			value = 0
+		}
+	}
+}
