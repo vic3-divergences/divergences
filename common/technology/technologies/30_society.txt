@@ -89,11 +89,6 @@ currency_standards = {
 
 	ai_weight = {
 		value = 3 # Very important in general
-
-		if = {
-			limit = { has_journal_entry = je_sick_man_bureaucracy }
-			add = 20
-		}
 	}
 }
 
@@ -172,11 +167,6 @@ centralization = {
 
 	ai_weight = {
 		value = 1.5 # Important in general
-
-		if = {
-			limit = { has_journal_entry = je_age_of_princes }
-			add = 20
-		}
 	}
 }
 
@@ -248,6 +238,7 @@ colonization = {
 
 	modifier = {
 		country_institution_colonial_affairs_max_investment_add = 2
+		country_max_declared_interests_add = 1
 		country_infamy_generation_against_unrecognized_mult = -0.1
 	}
 
@@ -358,7 +349,7 @@ empiricism = {
 
 	modifier = {
 		country_influence_mult = 0.25
-		country_diplomatic_play_maneuvers_mult = 0.25
+		country_diplomatic_play_maneuvers_add = 10
 		country_institution_schools_max_investment_add = 1
 		state_education_access_wealth_add = 0.005
 	}
@@ -390,20 +381,6 @@ egalitarianism = {
 
 	unlocking_technologies = {
 		democracy
-	}
-
-	on_researched = {
-		if = {
-			limit = {
-				has_journal_entry = je_springtime_of_the_peoples
-				NOT = {
-					is_involved_in_journal_entry = je_springtime_of_the_peoples
-				}
-			}
-			je:je_springtime_of_the_peoples ?= {
-				add_involved_country = ROOT
-			}
-		}
 	}
 
 	ai_weight = {
@@ -563,11 +540,11 @@ central_archives = {
 					AND = {
 						OR = {
 							is_in_geographic_region = geographic_region_south_america
-							is_in_geographic_region = geographic_region_central_america_old
+							is_in_geographic_region = geographic_region_central_america
 						}
 						country_rank <= rank_value:major_power
 					}
-					country_is_colonial_or_company = yes
+					is_country_type = colonial
 					is_country_type = unrecognized
 				}
 				NAND = {
@@ -656,7 +633,7 @@ psychiatry = {
 
 	modifier = {
 		country_influence_mult = 0.25
-		country_diplomatic_play_maneuvers_mult = 0.25
+		country_diplomatic_play_maneuvers_add = 10
 		state_bureaucracy_population_base_cost_factor_mult = -0.05
 	}
 
@@ -705,6 +682,17 @@ nationalism = {
 		international_relations
 	}
 
+	on_researched = {
+		if = {
+			limit = {
+				NOT = { has_variable = nationalism_researched }
+			}
+			custom_tooltip = {
+				text = unlock_national_agitation_tt
+				set_variable = nationalism_researched
+			}
+		}
+	}
 	ai_weight = {
 		value = 2 # Important in general
 
@@ -724,22 +712,6 @@ nationalism = {
 				OR = {
 					country_has_primary_culture = cu:north_italian
 					country_has_primary_culture = cu:south_italian
-				}
-				any_country = {
-					has_journal_entry = je_risorgimento
-				}
-			}
-			multiply = 4
-		}
-
-		if = { # Important for Hungary and the Balkan states
-			limit = {
-				OR = {
-					country_has_primary_culture = cu:croat
-					country_has_primary_culture = cu:serb
-					country_has_primary_culture = cu:slovene
-					country_has_primary_culture = cu:bosniak
-					country_has_primary_culture = cu:hungarian
 				}
 			}
 			multiply = 4
@@ -958,6 +930,7 @@ civilizing_mission = {
 
 	modifier = {
 		country_institution_colonial_affairs_max_investment_add = 1
+		country_max_declared_interests_add = 1
 		country_infamy_generation_against_unrecognized_mult = -0.25
 	}
 
@@ -1086,65 +1059,6 @@ corporatism = {
 				add_ideology = ideology_corporatist
 			}
 		}
-		if = {
-			limit = {
-				OR = {
-					country_has_primary_culture = cu:spanish # I am in Spain...
-					country_has_primary_culture = cu:catalan # ...without the S
-					country_has_primary_culture = cu:basque # ...without the A
-				}
-			}
-			custom_tooltip = {
-				text = carlist_amended_tt
-				every_character = {
-					limit = {
-						has_ideology = ideology:ideology_carlist
-						OR = {
-							owner ?= ROOT
-							home_country ?= ROOT
-						}
-					}
-					set_ideology = ideology:ideology_carlist_2
-				}
-				every_political_movement = {
-					limit = {
-						has_core_ideology = ideology:ideology_carlist_movement
-					}
-					set_core_ideology = ideology_carlist_movement_2
-				}
-				every_interest_group = {
-					limit = {
-						has_ideology = ideology:ideology_carlist_ig
-					}
-					remove_ideology = ideology_carlist_ig
-					add_ideology = ideology_carlist_ig_2
-				}
-			}
-		}
-		if = {
-			limit = {
-				country_has_primary_culture = cu:portuguese
-			}
-			custom_tooltip = {
-				text = miguelist_amended_tt
-				every_character = {
-					limit = {
-						has_ideology = ideology:ideology_miguelist
-						OR = {
-							owner ?= ROOT
-							home_country ?= ROOT
-						}
-					}
-					set_ideology = ideology:ideology_miguelist_2
-				}
-				every_political_movement = {
-					limit = {
-						has_core_ideology = ideology:ideology_miguelist_movement
-					}
-					set_core_ideology = ideology_miguelist_movement_2
-				}
-			}
-		}
 	}
 
 	modifier = {
@@ -1205,10 +1119,6 @@ pan-nationalism = {
 					country_has_primary_culture = cu:south_german
 					country_has_primary_culture = cu:north_italian
 					country_has_primary_culture = cu:south_italian
-					country_has_primary_culture = cu:croat
-					country_has_primary_culture = cu:serb
-					country_has_primary_culture = cu:slovene
-					country_has_primary_culture = cu:bosniak
 				}
 			}
 			add = 5
@@ -1246,6 +1156,7 @@ investment_banks = {
 		country_max_companies_add = 1
 		country_free_charters_add = 1
 		state_urbanization_per_level_mult = -0.15
+		state_incorporation_speed_mult = 0.05
 	}
 
 	unlocking_technologies = {
@@ -1284,7 +1195,7 @@ philosophical_pragmatism = {
 
 	modifier = {
 		country_influence_mult = 0.25
-		country_diplomatic_play_maneuvers_mult = 0.25
+		country_diplomatic_play_maneuvers_add = 10
 		state_bureaucracy_population_base_cost_factor_mult = -0.05
 	}
 
@@ -1307,7 +1218,6 @@ identification_documents = {
 	modifier = {
 		state_tax_capacity_add = 25
 		country_institution_home_affairs_max_investment_add = 1
-		state_incorporation_speed_mult = 0.05
 	}
 
 	unlocking_technologies = {
@@ -1508,7 +1418,7 @@ psychoanalysis = {
 
 	modifier = {
 		country_influence_mult = 0.25
-		country_diplomatic_play_maneuvers_mult = 0.25
+		country_diplomatic_play_maneuvers_add = 10
 		state_bureaucracy_population_base_cost_factor_mult = -0.05
 	}
 
@@ -1547,7 +1457,6 @@ multilateral_alliances = {
 
 	modifier = {
 		country_infamy_generation_mult = -0.25
-		country_diplomatic_play_maneuvers_mult = 0.5		
 		country_allow_multiple_alliances_bool = yes
 	}
 
@@ -1679,7 +1588,7 @@ behaviorism = {
 
 	modifier = {
 		country_influence_mult = 0.5
-		country_diplomatic_play_maneuvers_mult = 0.5
+		country_diplomatic_play_maneuvers_add = 20
 		state_bureaucracy_population_base_cost_factor_mult = -0.05
 	}
 
