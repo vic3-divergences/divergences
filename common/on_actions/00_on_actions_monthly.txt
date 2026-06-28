@@ -107,3 +107,43 @@ krakatoa_on_action = {
 		}
 	}
 }
+
+exile_pool_culling_on_action = {
+	trigger = {
+		any_character_in_exile_pool = {
+			count > {
+				value = exile_pool_max_size
+				add = 10
+			}
+		}
+	}
+	effect = {
+		save_temporary_scope_value_as = {
+			name = exile_pool_size
+			value = {
+				add = 0
+				every_character_in_exile_pool = {
+					add = 1
+				}
+			}
+		}
+		ordered_character_in_exile_pool = {
+			limit = {
+				is_historical = no # Only consider culling historical characters if there arent generic ones we can remove
+			}
+			alternative_limit = {
+				NOT = { has_variable = exile_pool_culling_immunity }
+			}
+			order_by = {
+				value = popularity
+				multiply = -1
+			}
+			max = {
+				add = scope:exile_pool_size
+				subtract = exile_pool_max_size
+			}
+
+			kill_character = yes
+		}
+	}
+}
