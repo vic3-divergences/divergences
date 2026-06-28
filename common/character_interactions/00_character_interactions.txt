@@ -17,16 +17,16 @@ grant_command_to_ruler = {
 	clicksound = "event:/SFX/UI/Military/command_grant"
 
 	potential = {
-		is_ruler = yes
+		is_ruler_of_own_country = yes
 		NOR = {
-			has_role = general
-			has_role = admiral
+			has_role_of_type = general
+			has_role_of_type = admiral
 		}
 		owner ?= scope:actor
 	}
 
 	possible = {
-		age >= define:NCharacters|ADULT_AGE
+		is_adult = yes
 		OR = {
 			is_female = no
 			owner ?= {
@@ -71,8 +71,8 @@ remove_command_from_ruler = {
 	clicksound = "event:/SFX/UI/Military/command_remove"
 
 	potential = {
-		is_ruler = yes
-		has_role = general
+		is_ruler_of_own_country = yes
+		has_role_of_type = general
 		owner ?= scope:actor
 	}
 
@@ -110,7 +110,7 @@ grant_leadership_to_agitator = {
 
 	potential = {
 		has_dlc_feature = agitators
-		has_role = agitator
+		has_role_of_type = agitator
 		exists = owner
 		owner ?= scope:actor
 	}
@@ -167,8 +167,9 @@ grant_leadership_to_agitator = {
 	}
 
 	effect = {
-		remove_character_role = agitator
-		add_character_role = politician
+		show_as_tooltip = {
+			remove_character_role = agitator
+		}
 		custom_tooltip = {
 			text = make_agitator_ig_leader_tt
 			set_as_interest_group_leader = yes
@@ -220,14 +221,14 @@ grant_command_to_agitator = {
 
 	potential = {
 		has_dlc_feature = agitators
-		has_role = agitator
-		NOT = { has_role = general }
-		NOT = { has_role = admiral }
+		has_role_of_type = agitator
+		NOT = { has_role_of_type = general }
+		NOT = { has_role_of_type = admiral }
 		owner ?= scope:actor
 	}
 
 	possible = {
-		age >= define:NCharacters|ADULT_AGE
+		is_adult = yes
 		is_female = no
 		exists = owner.capital.land_hq
 	}
@@ -286,32 +287,35 @@ marry_ruler_or_heir = {
 	potential = {
 		owner ?= scope:actor
 		OR = {
-			is_ruler = yes
-			is_heir = yes
+			is_ruler_of_own_country = yes
+			is_heir_of_own_country = yes
 		}
 		scope:actor ?= {
-			has_law = law_type:law_monarchy
+			country_has_monarchy_law = yes
+			NOT = { has_law = law_type:law_bakufu }
 			has_gov_regency = no
 			religion = {
 				has_discrimination_trait = heritage_christian
 			}
 		}
-		age >= 18
+		is_adult = yes
 		NOT = { has_variable = spouse_seeker }
 		NOT = { has_variable = is_married }
 	}
 
 	possible = {
-		any_country = {
-			NOT = { THIS = scope:actor }
-			NOT = { is_subject_type = subject_type_personal_union }
-			has_law = law_type:law_monarchy
-			religion = scope:actor.religion
-			ruler = {
-				age > 36
-				hidden_trigger = {
-					NOT = {
-						has_variable = marriage_target
+		owner ?= {
+			any_diplomatically_relevant_country = {
+				NOT = { THIS = scope:actor }
+				NOT = { is_subject_type = subject_type_personal_union }
+				country_has_monarchy_law = yes
+				religion = scope:actor.religion
+				ruler = {
+					age > 36
+					hidden_trigger = {
+						NOT = {
+							has_variable = marriage_target
+						}
 					}
 				}
 			}
@@ -337,9 +341,9 @@ abdicate_monarch = {
 	potential = {
 		has_dlc_feature = voice_of_the_people_content
 		owner ?= scope:actor
-		is_ruler = yes
+		is_ruler_of_own_country = yes
 		owner ?= {
-			has_law = law_type:law_monarchy
+			country_has_monarchy_law = yes
 			has_gov_regency = no
 		}
 		exists = owner.heir
@@ -349,7 +353,7 @@ abdicate_monarch = {
 	possible = {
 		OR = {
 			interest_group ?= {
-				ig_counts_as_marginal = yes
+				ig_clout < define:NPolitics|MARGINAL_IG_THRESHOLD
 			}
 			popularity <= -50
 			has_trait = psychological_affliction
@@ -411,7 +415,7 @@ abdicate_monarch = {
 				}
 			}
 			owner.heir ?= {
-				age >= 18
+				is_adult = yes
 			}
 		}
 	}
@@ -438,7 +442,7 @@ abdicate_monarch = {
 		}
 	}
 
-	cooldown = { months = 360 }
+	cooldown = { years = 30 }
 	show_confirmation_box = yes
 
 	ai_chance = {
@@ -502,12 +506,30 @@ exile_character = {
 	potential = {
 		is_in_exile_pool = no
 		is_in_void = no
-		is_ruler = no
-		is_heir = no
+		is_ruler_of_own_country = no
+		is_heir_of_own_country = no
 		# Cannot exile pure commanders, we have the retire interaction for that
 		OR = {
-			has_role = politician
-			has_role = agitator
+			has_role_of_type = executive
+			has_role_of_type = magnate
+			has_role_of_type = politician
+			has_role_of_type = agitator
+		}
+		trigger_if = {
+			limit = {
+				owner ?= {
+					c:JAP ?= this
+					NOT = {
+						has_variable = japan_restoration_complete
+					}
+				}
+			}
+			custom_tooltip = {
+				text = daimyo_not_tt
+				NOT = {
+					has_variable = daimyo_var
+				}
+			}
 		}
 	}
 
@@ -523,7 +545,7 @@ exile_character = {
 		is_busy = no
 		trigger_if = {
 			limit = {
-				has_role = agitator
+				has_role_of_type = agitator
 			}
 
 			political_movement ?= { is_insurrectionary = no }
@@ -594,6 +616,40 @@ exile_character = {
 				}
 			}
 		}
+		trigger_if = {
+			limit = {
+				c:JAP ?= owner
+			}
+			trigger_if = {
+				limit = {
+					owner ?= {
+						has_law = law_type:law_bakufu
+					}
+				}
+				custom_tooltip = {
+					text = house_tokugawa_not_tt
+					NOT = {
+						has_variable = house_tokugawa
+					}
+				}
+			}
+			trigger_if = {
+				limit = {
+					owner ?= {
+						NOR = {
+							has_law_or_variant = law_type:law_council_republic
+							has_law_or_variant = law_type:law_corporate_state
+						}
+					}
+				}
+				custom_tooltip = {
+					text = house_yamato_not_tt
+					NOT = {
+						has_variable = house_yamato
+					}
+				}
+			}
+		}
 	}
 
 	effect = {
@@ -623,7 +679,7 @@ exile_character = {
 		else = {
 			if = {
 				limit = {
-					has_role = politician
+					has_role_of_type = politician
 				}
 				owner ?= {
 					scope:relevant_ig = {
@@ -679,32 +735,6 @@ exile_character = {
 					popularity >= 100
 				}
 				owner ?= { set_variable = achievement_agitate_elsewhere_var }
-			}
-			hidden_effect = {
-				if = {
-					limit = {
-						NOT = { has_role = agitator }
-					}
-					add_character_role = agitator
-				}
-				if = {
-					limit = {
-						has_role = general
-					}
-					remove_character_role = general
-				}
-				if = {
-					limit = {
-						has_role = admiral
-					}
-					remove_character_role = admiral
-				}
-				if = {
-					limit = {
-						has_role = politician
-					}
-					remove_character_role = politician
-				}
 			}
 			owner ?= {
 				custom_tooltip = exiling_dissident_radicals_factors
@@ -787,9 +817,8 @@ exile_character = {
 						create_character = {
 							template = exile_count_dracula
 							on_created = {
-								exile_character = yes
+								exile_character_with_role_cleanup = yes
 								set_character_immortal = yes
-								add_character_role = agitator
 							}
 						}
 					}
@@ -813,7 +842,7 @@ exile_character = {
 				OR = {
 					interest_group ?= {
 						ig_approval < 0
-				}
+					}
 					political_movement ?= {
 						is_being_suppressed = yes
 					}
@@ -823,39 +852,54 @@ exile_character = {
 			add = {
 				value = popularity
 				multiply = 0.2
-		}
-
-		if = {
-			limit = {
-				scope:actor ?= {
-					has_law_or_variant = law_type:law_outlawed_dissent
-				}
 			}
+
+			if = { # Dangerous agitators have a greater chance of getting booted
+				limit = {
+					has_role_of_type = agitator
+					OR = {
+						has_trait = ambitious
+						has_trait = wrathful
+						has_trait = ruthless
+						has_trait = bandit
+						has_trait = social_bandit
+						has_trait = special_character_luxemburg_in_exile
+					}
+				}
 				multiply = 1.5
-		}
-			else_if = {
-			limit = {
-				scope:actor ?= {
-					has_law_or_variant = law_type:law_censorship
-				}
 			}
-				multiply = 1.25
-		}
-			else_if = {
-			limit = {
-				scope:actor ?= {
-					has_law_or_variant = law_type:law_right_of_assembly
-				}
-			}
-				multiply = 0.75
-		}
 
-		if = {
-			limit = {
-				scope:actor ?= {
-						has_law_or_variant = law_type:law_secret_police
+			if = {
+				limit = {
+					scope:actor ?= {
+						has_law_or_variant = law_type:law_outlawed_dissent
+					}
 				}
+				multiply = 1.5
 			}
+			else_if = {
+				limit = {
+					scope:actor ?= {
+						has_law_or_variant = law_type:law_censorship
+					}
+				}
+				multiply = 1.25
+			}
+			else_if = {
+				limit = {
+					scope:actor ?= {
+						has_law_or_variant = law_type:law_right_of_assembly
+					}
+				}
+				multiply = 0.75
+			}
+
+			if = {
+				limit = {
+					scope:actor ?= {
+						has_law_or_variant = law_type:law_secret_police
+					}
+				}
 				multiply = 1.5
 			}
 			else_if = {
@@ -940,10 +984,9 @@ exile_character = {
 				multiply = 0.5
 			}
 
-
 			if = { # Be less inclined to toss out politicians
 				limit = {
-					NOT = { has_role = agitator }
+					NOT = { has_role_of_type = agitator }
 				}
 				multiply = 0.25
 			}
@@ -1007,9 +1050,10 @@ invite_exile = {
 	effect = {
 		transfer_character = scope:actor
 		set_variable = exile_to_ruler_var
-		set_variable = {
-			name = memento_mori_immunity
+		add_career_length = {
+			role = agitator
 			months = 60
+			random_range = { 1.0 1.5 } # 60-90 months
 		}
 		custom_tooltip = invite_exile_start_join_movement_effect
 		hidden_effect = {
@@ -1151,11 +1195,11 @@ retire_commander = {
 	potential = {
 		owner ?= scope:actor
 		is_commander = yes
-		is_ruler = no
+		is_ruler_of_own_country = no
 	}
 
 	possible = {
-		is_ruler = no
+		is_ruler_of_own_country = no
 		interest_group ?= {
 			is_insurrectionary = no
 		}
@@ -1210,21 +1254,11 @@ retire_commander = {
 		}
 		else = {
 			hidden_effect = {
-				if = {
-					limit = {
-						has_role = general
-					}
-					remove_character_role = general
-				}
-				if = {
-					limit = {
-						has_role = admiral
-					}
-					remove_character_role = admiral
-				}
+				replace_character_roles = { remove = { general admiral } }
+				retire_character_if_should_be_culled = yes
 			}
 
-		interest_group ?= {
+			interest_group ?= {
 				add_modifier = {
 					name = retired_commander_interest_group_impact
 					multiplier = {
@@ -1355,12 +1389,12 @@ return_to_home_country = {
 
 	potential = {
 		is_in_exile_pool = no
-		has_role = agitator
-		NOT = { has_role = general }
-		NOT = { has_role = admiral }
-		NOT = { has_role = politician }
-		is_ruler = no
-		is_heir = no
+		has_role_of_type = agitator
+		NOT = { has_role_of_type = general }
+		NOT = { has_role_of_type = admiral }
+		NOT = { has_role_of_type = politician }
+		is_ruler_of_own_country = no
+		is_heir_of_own_country = no
 		exists = root.home_country
 		NOT = { root.home_country = this.owner }
 	}
@@ -1403,4 +1437,3 @@ return_to_home_country = {
 		value = -50
 	}
 }
-
