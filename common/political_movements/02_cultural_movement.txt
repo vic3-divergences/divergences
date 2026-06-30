@@ -33,6 +33,7 @@ movement_cultural_majority = {
 			}
 		}
 	}
+
 	creation_weight = {
 		value = 100
 	}
@@ -46,6 +47,9 @@ movement_cultural_majority = {
 			has_ideology = ideology:ideology_fascist
 			has_ideology = ideology:ideology_jingoist_leader
 			has_ideology = ideology:ideology_ethno_nationalist
+		}
+		NOT = {
+			has_variable = anti_nationalist_var
 		}
 	}
 	character_support_weight = {
@@ -137,7 +141,7 @@ movement_cultural_majority = {
 				}
 			}
 		}
-		
+
 		if = {
 			limit = {
 				strata = upper
@@ -258,12 +262,12 @@ movement_cultural_majority = {
 				desc = "NATIONALISM_TECH"
 			}
 		}
-		
-		multiply = { # Range from x0.625 to x3.125
+
+		multiply = { # Range from x0.775 to 2.275
 			desc = "POP_CULTURE_FERVOR"
 			value = culture.culture_current_fervor
 			subtract = 15
-			multiply = 0.025
+			multiply = 0.015
 			add = 1
 		}
 
@@ -365,31 +369,18 @@ movement_cultural_majority = {
 					is_homeland_of_country_cultures = owner
 					primary_cultures_percent_state >= 0.05
 				}
-				add = 10
-
-				if = {
-					limit = {
-						primary_cultures_percent_state >= 0.75
+				add = { # These three values must add up to more than 1 - 5 x Obstinance, 1/2 Turmoil, percent of pops of primary cultures
+					value = -1
+					add = "this.primary_cultures_percent_state"
+					add = {
+						value = this.turmoil
+						multiply = 0.5
 					}
-					add = 1000
+					add = {
+						value = this.obstinance
+						multiply = 5
 				}
-				else_if = {
-					limit = {
-						primary_cultures_percent_state >= 0.5
-					}
-					add = 500
-				}
-				else_if = {
-					limit = {
-						primary_cultures_percent_state >= 0.25
-					}
-					add = 100
-				}
-				else_if = {
-					limit = {
-						primary_cultures_percent_state >= 0.1
-					}
-					add = 50
+					multiply = 100
 				}
 			}
 		}
@@ -420,6 +411,37 @@ movement_cultural_majority = {
 
 		if = {
 			limit = {
+				owner ?= {
+					has_technology_researched = nationalism
+					any_scope_homeland_state = {
+						NOT = {
+							owner = {
+								country_has_primary_culture = root.culture
+							}
+						}
+					}
+				}
+			}
+			add = {
+				owner ?= {
+					every_scope_homeland_state = {
+						limit = {
+							NOT = {
+								owner = {
+									country_has_primary_culture = root.culture
+								}
+							}
+						}
+						add = 0.025
+					}
+				}
+				max = 0.25
+				desc = "MOVEMENT_RADICALISM_UNOWNED_HOMELAND_STATES_FACTOR"
+			}
+		}
+
+		if = {
+			limit = {
 				owner = {
 					any_neighbouring_state = {
 						owner = {
@@ -435,6 +457,20 @@ movement_cultural_majority = {
 			add = {
 				desc = "NEIGHBOURING_COUNTRY_WITH_CULTURE_REVOLUTION"
 				value = 0.15
+			}
+		}
+
+		if = {
+			limit = {
+				this.days_since_movement_defeated <= very_long_modifier_time
+			}
+			add = { # (x-y)/y - ([1, 7300]-7300)/7300
+				desc = "movement_suppressed_after_civil_war"
+				value = this.days_since_movement_defeated
+				subtract = very_long_modifier_time
+				divide = {
+					value = very_long_modifier_time
+				}
 			}
 		}
 	}
@@ -499,7 +535,7 @@ movement_cultural_minority = {
 			limit = {
 				culture = {
 					AND = {
-						shares_heritage_trait_group_with_any_primary_culture = root.owner
+						shares_heritage_trait_with_any_primary_culture = root.owner
 						OR = {
 							shares_language_trait_group_with_any_primary_culture = root.owner
 							shares_tradition_trait_with_any_primary_culture = root.owner
@@ -513,6 +549,10 @@ movement_cultural_minority = {
 			limit = {
 				culture = {
 					shares_heritage_trait_group_with_any_primary_culture = root.owner
+					OR = {
+						shares_language_trait_group_with_any_primary_culture = root.owner
+						shares_tradition_trait_with_any_primary_culture = root.owner
+					}
 				}
 			}
 			set_core_ideology = ideology_pluralist_movement_2
@@ -521,8 +561,8 @@ movement_cultural_minority = {
 			limit = {
 				culture = {
 					OR = {
-						shares_language_trait_group_with_any_primary_culture = root.owner
-						shares_tradition_trait_with_any_primary_culture = root.owner
+						shares_heritage_trait_group_with_any_primary_culture = root.owner
+						shares_language_trait_with_any_primary_culture = root.owner
 					}
 				}
 			}
@@ -627,6 +667,9 @@ movement_cultural_minority = {
 			has_ideology = ideology:ideology_sovereignist_leader
 			has_ideology = ideology:ideology_reformer
 		}
+		NOT = {
+			has_variable = anti_nationalist_var # Please stop becoming a Polish nationalist, Rosa.
+		}
 	}
 	character_support_weight = {
 		value = 50
@@ -648,6 +691,14 @@ movement_cultural_minority = {
 			}
 			multiply = {
 				value = 5
+			}
+		}
+		else_if = {
+			limit = {
+				has_socialist_ideology = yes
+			}
+			multiply = {
+				value = 0.5
 			}
 		}
 	}
@@ -752,7 +803,7 @@ movement_cultural_minority = {
 			}
 			else = {
 				add = {
-					value = 12
+					value = 18
 					desc = "UPPER_NO_ICON"
 				}
 			}
@@ -766,7 +817,7 @@ movement_cultural_minority = {
 					is_pop_type = academics
 				}
 				add = {
-					value = 35
+					value = 40
 					desc = "POP_ACADEMICS"
 				}
 			}
@@ -781,13 +832,13 @@ movement_cultural_minority = {
 						}
 					}
 					add = {
-						value = 35
+						value = 40
 						desc = "POP_CLERGYMEN"
 					}
 				}
 				else = {
 					add = {
-						value = 25
+						value = 15
 						desc = "POP_CLERGYMEN"
 					}
 				}
@@ -835,7 +886,7 @@ movement_cultural_minority = {
 					is_pop_type = clerks
 				}
 				add = {
-					value = 20
+					value = 25
 					desc = "POP_CLERKS"
 				}
 			}
@@ -937,12 +988,12 @@ movement_cultural_minority = {
 				desc = "NATIONALISM_TECH"
 			}
 		}
-		
-		multiply = { # Range from x0.625 to x3.125
+
+		multiply = { # Range from x0.775 to 2.275
 			desc = "POP_CULTURE_FERVOR"
 			value = culture.culture_current_fervor
 			subtract = 15
-			multiply = 0.025
+			multiply = 0.015
 			add = 1
 		}
 
@@ -1053,53 +1104,41 @@ movement_cultural_minority = {
 						value >= 0.05
 					}
 				}
-				add = 10
-
-				if = {
-					limit = {
-						culture_percent_state = {
-							target = scope:political_movement.culture
-							value >= 0.75
+				add = { # These three values must add up to more than 1 - 5 x Obstinance, 1/2 Turmoil, percent of pops of this culture
+					value = -1
+					add = "this.culture_percent_state(scope:political_movement.culture)"
+					add = {
+						value = this.turmoil
+						multiply = 0.5
 						}
+					add = {
+						value = this.obstinance
+						multiply = 5
 					}
-					add = 1000
-				}
-				else_if = {
-					limit = {
-						culture_percent_state = {
-							target = scope:political_movement.culture
-							value >= 0.5
-						}
-					}
-					add = 500
-				}
-				else_if = {
-					limit = {
-						culture_percent_state = {
-							target = scope:political_movement.culture
-							value >= 0.25
-						}
-					}
-					add = 100
-				}
-				else_if = {
-					limit = {
-						culture_percent_state = {
-							target = scope:political_movement.culture
-							value >= 0.1
-						}
-					}
-					add = 50
+					multiply = 100
 				}
 			}
+		}
 
-			if = { # Agnus Dei, qui tollis peccata mundi, miserere nobis
+		interest_group_can_join = {
+			trigger_if = {
 				limit = {
-					p:xF0E080.state ?= this
-					is_split_state = yes
-					scope:political_movement.culture ?= cu:polish
+					c:BIC ?= owner
 				}
-				multiply = -100
+				is_indian_interest_group = yes
+			}
+			trigger_else_if = {
+				limit = {
+					owner = {
+						country_is_colonial_or_company = yes
+					}
+				}
+				NOT = {
+					has_ideology = ideology:ideology_colonialist
+				}
+			}
+			trigger_else = { # For example - the Austrian Aristocracy can only secede with a Polish uprising if the leader of the IG is Polish
+				leader = { culture = scope:political_movement.culture }
 			}
 		}
 
@@ -1113,17 +1152,6 @@ movement_cultural_minority = {
 	}
 
 	additional_radicalism_factors = {
-		if = {
-			limit = {
-				owner = { has_journal_entry = je_springtime_of_the_peoples }
-				scope:culture = { has_discrimination_trait_group = heritage_group_european }
-			}
-			add = {
-				value = 0.25
-				desc = "SPRINGTIME_OF_THE_PEOPLES_UNDERWAY"
-			}
-		}
-
 		add = {
 			value = "owner.average_sol"
 			subtract = "owner.average_sol_for_culture(scope:culture)"
@@ -1135,6 +1163,21 @@ movement_cultural_minority = {
 
 		if = {
 			limit = {
+				owner = {
+					has_law = law_type:law_subjecthood
+				}
+			}
+			add = {
+				value = 100
+				subtract = "owner.country_average_cultural_acceptance(scope:culture)"
+				divide = 200 # To get this on the level of the other laws
+				subtract = 0.10 # Compensate for religious acceptance, which is currently inaccessible from here
+				desc = "DISCRIMINATION_LEVEL_subjecthood"
+			}
+		}
+		else = {
+			if = {
+				limit = {
 				owner = { cultural_acceptance_base = { target = scope:culture value <= acceptance_status_1 } }
 			}
 
@@ -1162,6 +1205,7 @@ movement_cultural_minority = {
 				value = 0.1
 				desc = "DISCRIMINATION_LEVEL_open_prejudice"
 			}
+		}
 		}
 
 		if = {
@@ -1203,6 +1247,18 @@ movement_cultural_minority = {
 		if = {
 			limit = {
 				owner = {
+					has_modifier = modifier_polish_organic_statute
+				}
+			}
+			add = {
+				desc = "modifier_polish_organic_statute"
+				value = 0.15
+			}
+		}
+
+		if = {
+			limit = {
+				owner = {
 					any_neighbouring_state = {
 						owner = {
 							NOT = { THIS = ROOT.owner }
@@ -1230,7 +1286,7 @@ movement_cultural_minority = {
 				}
 			}
 			add = {
-				desc = "INSURRECTIONARY_MOVEMENTS"
+				desc = "SIMULTANEOUS_INSURRECTIONARY_MOVEMENTS"
 				owner = {
 					every_political_movement = {
 						limit = {
@@ -1253,6 +1309,19 @@ movement_cultural_minority = {
 				}
 				min = 0.05
 				max = 0.25
+			}
+		}
+		if = {
+			limit = {
+				this.days_since_movement_defeated <= very_long_modifier_time
+			}
+			add = { # (x-y)/y - ([1, 7300]-7300)/7300
+				desc = "movement_suppressed_after_civil_war"
+				value = this.days_since_movement_defeated
+				subtract = very_long_modifier_time
+				divide = {
+					value = very_long_modifier_time
+				}
 			}
 		}
 	}
@@ -1631,6 +1700,19 @@ movement_minority_rights = {
 			add = {
 				value = 0.15
 				desc = "law_racial_segregation"
+			}
+		}
+		if = {
+			limit = {
+				this.days_since_movement_defeated <= very_long_modifier_time
+			}
+			add = { # (x-y)/y - ([1, 7300]-7300)/7300
+				desc = "movement_suppressed_after_civil_war"
+				value = this.days_since_movement_defeated
+				subtract = very_long_modifier_time
+				divide = {
+					value = very_long_modifier_time
+				}
 			}
 		}
 	}
