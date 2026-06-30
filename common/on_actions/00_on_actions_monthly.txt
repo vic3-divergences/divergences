@@ -1,10 +1,19 @@
 ﻿# Fired off on_monthly_pulse_country
 
+# Regency switch event
+regency_monthly_events = {
+	random_events = {
+		chance_to_happen = 20
+		1 = regency.2
+	}
+}
+
 # Coup
 coup_monthly_events = {
 	random_events = {
-		chance_to_happen = 20
-		1 = coup.1
+		# If someone can do a coup, they will
+		chance_to_happen = 50
+		1 = ip4_coup.1
 	}
 }
 
@@ -108,6 +117,36 @@ krakatoa_on_action = {
 	}
 }
 
+# Colonial Claims
+colonial_claims_check = {
+	trigger = {
+		owner = {
+			has_strategic_region_interest_tier = {
+				strategic_region = root.region
+				value >= interest_tier_effect_colonial_claim_generation_min_tier
+			}
+		}
+		NOT = { has_claim_by = root.owner }
+		is_under_colonization = yes
+		num_provinces >= {
+			value = state_region.num_provinces
+			multiply = interest_tier_effect_colonial_claim_generation_threshold
+		}
+	}
+	effect = {
+		state_region = {
+			add_claim = root.owner
+		}
+		root = {
+			save_scope_as = colony_notification_state
+		}
+		owner = {
+			save_scope_as = colonizer_notification_country
+			post_notification = colonial_claim_generated
+		}
+	}
+}
+
 exile_pool_culling_on_action = {
 	trigger = {
 		any_character_in_exile_pool = {
@@ -143,7 +182,7 @@ exile_pool_culling_on_action = {
 				subtract = exile_pool_max_size
 			}
 
-			kill_character = yes
+			retire_character = yes
 		}
 	}
 }

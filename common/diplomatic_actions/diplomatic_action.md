@@ -56,6 +56,9 @@
 				counts_for_tech_spread = x # Whether or not tech spreads through this pact
 				forced_duration = x # How many months after being established is it not possible to break this pact, overriden by OBLIGATION_FORCED_PACT_MONTHS if obligation is used, cannot be lower than PACT_REQUIRES_APPROVAL_MIN_FORCED_MONTHS for pacts that require approval
 	
+				max_target_involvement = x # The maximum involvement level the target country can have from this pact
+				target_involvement_applies_to = <source_country|target_country|mutual> # Whether the involvement level applies to the source country, target country or both (mutual), default source_country
+
 				second_country_gets_income_transfer = yes/no # If yes, actor pays money to recipient, if no recipient pays to actor
 				income_transfer_based_on_second_country = yes/no # If yes, the amount of money transferred to the other part is based on a fraction of recipient's tax income, if no it's based on a fraction of actor's income.
 				income_transfer_to_pops = { # If defined, the transfered income will go to appro pops of the target country instead of the treasury
