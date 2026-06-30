@@ -13,6 +13,13 @@
 #	}
 #
 
+resign_and_retire = {
+	remove_character_role = politician
+	remove_character_role = ruler
+	on_remove_ruler_effects = yes
+	retire_character = yes
+}
+
 relations_hit_with_power_bloc_leaders = {
 	if = {
 		limit = {
@@ -193,23 +200,42 @@ warlord_setup_effect = {
 				c:ALI ?= this
 			}
 		}
-		random_character = {
-			limit = {
-				c:CHI ?= owner
-				OR = {
-					has_role = general
-					AND = {
-						PREV = {
-							any_scope_state = {
-								has_building = building_naval_base
+		save_scope_as = transfer_scope
+		c:CHI ?= {
+			if = {
+				limit = {
+					any_scope_character = {
+						OR = {
+							has_role_of_type = general
+							AND = {
+								PREV = {
+									any_scope_state = {
+										has_building = building_naval_administration
+									}
+								}
+								has_role_of_type = admiral
 							}
 						}
-						has_role = admiral
 					}
 				}
+				random_scope_character = {
+					limit = {
+						OR = {
+							has_role_of_type = general
+							AND = {
+								PREV = {
+									any_scope_state = {
+										has_building = building_naval_administration
+									}
+								}
+								has_role_of_type = admiral
+							}
+						}
+					}
+					transfer_character = scope:transfer_scope
+					set_character_as_ruler = yes
+				}
 			}
-			transfer_character = PREV
-			set_character_as_ruler = yes
 		}
 		if = {
 			limit = {
@@ -271,6 +297,7 @@ enslave_discriminated_farm_workers = {
 	every_scope_pop = {
 		limit = {
 			is_pop_type = laborers
+			pop_has_primary_culture = no
 			pop_acceptance < acceptance_status_4
 			OR = {
 				pop_employment_building_group = bg_agriculture
@@ -296,7 +323,7 @@ save_agitator_law_scopes = {
 		}
 		random_scope_character = {
 			limit = {
-				has_role = agitator
+				has_role_of_type = agitator
 				OR = {
 					law_enactment_stance = {
 						law = owner.currently_enacting_law.type
@@ -307,7 +334,7 @@ save_agitator_law_scopes = {
 							law = owner.currently_enacting_law.type
 							value = neutral
 						}
-						interest_group = {
+						interest_group ?= {
 							law_enactment_stance = {
 								law = owner.currently_enacting_law.type
 								value > neutral
@@ -317,7 +344,7 @@ save_agitator_law_scopes = {
 				}
 			}
 			save_scope_as = supporting_agitator
-			interest_group = {
+			interest_group ?= {
 				save_scope_as = agitator_ig
 			}
 		}
@@ -338,7 +365,7 @@ save_agitator_law_scopes = {
 		}
 		random_scope_character = {
 			limit = {
-				has_role = agitator
+				has_role_of_type = agitator
 				OR = {
 					law_enactment_stance = {
 						law = owner.currently_enacting_law.type
@@ -349,7 +376,7 @@ save_agitator_law_scopes = {
 							law = owner.currently_enacting_law.type
 							value = neutral
 						}
-						interest_group = {
+						interest_group ?= {
 							law_enactment_stance = {
 								law = owner.currently_enacting_law.type
 								value < neutral
@@ -359,7 +386,7 @@ save_agitator_law_scopes = {
 				}
 			}
 			save_scope_as = opposing_agitator
-			interest_group = {
+			interest_group ?= {
 				save_scope_as = agitator_ig
 			}
 		}
@@ -380,14 +407,16 @@ generate_french_monarch = {
 		if = {
 			limit = {
 				any_scope_character = {
-					is_heir = yes
+					is_heir_of_own_country = yes
+					is_historical = no
 				}
 			}
 			random_scope_character = {
 				limit = {
-					is_heir = yes
+					is_heir_of_own_country = yes
+					is_historical = no
 				}
-				kill_character = yes
+				retire_character = yes
 			}
 		}
 		if = {
@@ -821,35 +850,39 @@ generate_french_monarch = {
 		limit = {
 			is_ruler = yes
 		}
+	}
+	else_if = {
+		limit = {
+			NOT = { has_role = agitator }
+		}
+	}
+	if = {
+		limit = {
+			is_ruler_of_own_country = yes
+		}
 		save_scope_as = french_monarch_scope
 	}
+}
+
+exile_character_with_role_cleanup = { # scope:character - should be used instead of exile_character = yes
+	exile_character = yes
+	if = {
+		limit = {
+			exists = this.commander_military_formation
+		}
+		unassign_from_formation = yes
+	}
+	replace_character_roles = { add = { agitator } remove_all = yes }
 }
 
 clean_up_exile_character_roles = { # scope: character
 	if = {
 		limit = {
-			NOT = { has_role = agitator }
+			exists = this.commander_military_formation
 		}
-		add_character_role = agitator
+		unassign_from_formation = yes
 	}
-	if = {
-		limit = {
-			has_role = politician
-		}
-		remove_character_role = politician
-	}
-	if = {
-		limit = {
-			has_role = general
-		}
-		remove_character_role = general
-	}
-	if = {
-		limit = {
-			has_role = admiral
-		}
-		remove_character_role = admiral
-	}
+	replace_character_roles = { add = { agitator } remove_all = yes }
 }
 
 remove_war_disease_modifier = { #used to remove modifiers from nursing_events.1 and je_war_nursing

@@ -511,7 +511,7 @@ carlist_clothes_trigger = {
 			country_has_primary_culture = cu:spanish
 		}
 		OR = {
-			has_ideology = ideology:ideology_carlist
+			character_has_carlist_ideology = yes
 			home_country = {
 				c:SPC ?= this
 			}
@@ -529,7 +529,7 @@ carlist_clothes_pop_trigger = {
 			OR = {
 				c:SPC ?= this
 				ruler = {
-					has_ideology = ideology:ideology_carlist
+					character_has_carlist_ideology = yes
 				}
 			}
 		}
@@ -1060,36 +1060,58 @@ african_diaspora_pop_clothes_trigger = {
 	}
 }
 
-japanese_imperial_clothes_trigger = {
+japanese_shogun_clothes_trigger = {
 	exists = scope:character
 	scope:character = {
-		is_ruler = yes
-		exists = home_country
-     	home_country = {
-     		has_law = law_type:law_monarchy
+		is_ruler_of_own_country = yes
+		owner ?= {
+			has_law = law_type:law_bakufu
+		}
+     	home_country ?= {
+			OR = {
+     			has_law = law_type:law_monarchy
+     			has_law = law_type:law_social_monarchy
+			}
      	}
 		OR = {
-			AND = {
-				culture = {
-					has_discrimination_trait = heritage_japanese
-				}
-				OR = {
-					NOT = {
-						exists = c:JAP
-					}
-					AND = {
-						exists = c:JAP
-						NOT = { home_country = c:JAP }
-					}
+			culture = {
+				has_discrimination_trait = language_japanese
+			}
+			c:JAP ?= home_country
+		}
+	}
+}
+
+japanese_imperial_clothes_trigger = {
+		exists = home_country
+		trigger_if = {
+			limit = {
+				owner ?= {
+					has_law = law_type:law_bakufu
 				}
 			}
-			AND = {
-				exists = c:JAP
-				home_country = {
-					c:JAP ?= THIS
-					NOT = { has_variable = meiji_restoration_complete }
+			has_trait = special_character_japanese_emperor
+		}
+		trigger_else = {
+			is_ruler_of_own_country = yes
+			owner ?= {
+				NOR = {
+					has_government_type = gov_domain_alliance
+					has_government_type = gov_domain_frontier
 				}
 			}
+		}
+     	home_country ?= {
+			OR = {
+     			has_law = law_type:law_monarchy
+     			has_law = law_type:law_social_monarchy
+			}
+     	}
+		OR = {
+			culture = {
+				has_discrimination_trait = language_japanese
+			}
+			c:JAP ?= home_country
 		}
 	}
 }
@@ -1097,10 +1119,13 @@ japanese_imperial_clothes_trigger = {
 chinese_imperial_clothes_trigger = {
 	exists = scope:character
 	scope:character = {
-		is_ruler = yes
+		is_ruler_of_own_country = yes
 		exists = home_country
      	home_country = {
-     		has_law = law_type:law_monarchy
+			OR = {
+     			has_law = law_type:law_monarchy
+     			has_law = law_type:law_social_monarchy
+			}
      	}
 		OR = {
 			culture = {
@@ -1189,14 +1214,15 @@ chinese_court_clothes_trigger = {
 		NOT = {
 			AND = {
 				exists = home_country
-				is_ruler = yes
+				is_ruler_of_own_country = yes
 				culture = {
 					has_discrimination_trait = heritage_tai
 					has_discrimination_trait_group = heritage_group_southeast_asian
 				}
 		     	home_country = {
 		     		OR = {
-			     		has_law = law_type:law_monarchy
+						has_law = law_type:law_monarchy
+						has_law = law_type:law_social_monarchy
 			     		has_law_or_variant = law_type:law_theocracy
 			     	}
 		     	}
@@ -1253,21 +1279,26 @@ arabic_fez_trigger = {
 			home_country = {
 				OR = {
 					is_country_type = recognized
-					is_country_type = colonial
+					country_is_colonial_or_company = yes
 				}
 			}
 			home_country = {
 				top_overlord = {
 					OR = {
 						is_country_type = recognized
-						is_country_type = colonial
+						country_is_colonial_or_company = yes
 					}
 				}
 			}
 			home_country = {
 				exists = c:EGY
 				c:EGY = this
-				c:EGY ?= { has_law = law_type:law_monarchy }
+				c:EGY ?= {
+					OR = {
+						has_law = law_type:law_monarchy
+						has_law = law_type:law_social_monarchy
+					}
+				}
 			}
 		}
 	}
@@ -1281,22 +1312,42 @@ arabic_military_fez_pop_trigger = {
 				home_country = {
 					exists = c:EGY
 					c:EGY = this
-					c:EGY ?= { has_law = law_type:law_monarchy }
+					c:EGY ?= {
+						OR = {
+							has_law = law_type:law_monarchy
+							has_law = law_type:law_social_monarchy
+						}
+					}
 				}
 				home_country = {
 					exists = c:TUR
 					c:TUR = this
-					c:TUR ?= { has_law = law_type:law_monarchy }
+					c:TUR ?= {
+						OR = {
+							has_law = law_type:law_monarchy
+							has_law = law_type:law_social_monarchy
+						}
+					}
 				}
 				home_country = {
 					exists = c:TUN
 					c:TUN = this
-					c:TUN ?= { has_law = law_type:law_monarchy }
+					c:TUN ?= {
+						OR = {
+							has_law = law_type:law_monarchy
+							has_law = law_type:law_social_monarchy
+						}
+					}
 				}
 				home_country = {
 					exists = c:MOR
 					c:MOR = this
-					c:MOR ?= { has_law = law_type:law_monarchy }
+					c:MOR ?= {
+						OR = {
+							has_law = law_type:law_monarchy
+							has_law = law_type:law_social_monarchy
+						}
+					}
 				}
 			}
 			OR = {
@@ -1312,12 +1363,22 @@ arabic_military_fez_pop_trigger = {
 						home_country = {
 							exists = c:TUR
 							c:TUR = this
-							c:TUR ?= { has_law = law_type:law_monarchy }
+							c:TUR ?= {
+								OR = {
+									has_law = law_type:law_monarchy
+									has_law = law_type:law_social_monarchy
+								}
+							}
 						}
 						home_country = {
 							exists = c:EGY
 							c:EGY = this
-							c:EGY ?= { has_law = law_type:law_monarchy }
+							c:EGY ?= {
+								OR = {
+									has_law = law_type:law_monarchy
+									has_law = law_type:law_social_monarchy
+								}
+							}
 						}
 					}
 				}
@@ -1352,12 +1413,22 @@ arabic_clothes_trigger = {
 					home_country = {
 						exists = c:TUR
 						c:TUR = this
-						c:TUR ?= { has_law = law_type:law_monarchy }
+						c:TUR ?= {
+							OR = {
+								has_law = law_type:law_monarchy
+								has_law = law_type:law_social_monarchy
+							}
+						}
 					}
 					home_country = {
 						exists = c:EGY
 						c:EGY = this
-						c:EGY ?= { has_law = law_type:law_monarchy }
+						c:EGY ?= {
+							OR = {
+								has_law = law_type:law_monarchy
+								has_law = law_type:law_social_monarchy
+							}
+						}
 					}
 				}
 			}
@@ -1386,10 +1457,11 @@ european_clothes_trigger = {
 				devout_clothes_trigger = no
 				NOT = {
 					has_ideology = ideology:ideology_traditionalist
-					is_ruler = yes
+					is_ruler_of_own_country = yes
 				}
-				owner ?= {
-					has_variable = meiji_restoration_complete
+				OR = {
+					japanese_restoration_trigger = yes
+					japanese_modernizer_character_trigger = yes
 				}
 			}
 			has_template = AST_william_light
@@ -1475,8 +1547,8 @@ politician_clothes_trigger = {
 	exists = scope:character
 	scope:character = {
 		AND = {
-			has_role = politician
-			is_ruler = no
+			has_role_of_type = politician
+			is_ruler_of_own_country = no
 		}
 	}
 }
@@ -1485,7 +1557,7 @@ junta_clothes_trigger = {
 	exists = scope:character
 	scope:character = {
 		AND = {
-			is_ruler = yes
+			is_ruler_of_own_country = yes
 			is_interest_group_type = ig_armed_forces
 			owner ?= {
 				OR = {
@@ -1549,14 +1621,14 @@ recognized_country_trigger = {
 			home_country = {
 				OR = {
 					is_country_type = recognized
-					is_country_type = colonial
+					country_is_colonial_or_company = yes
 				}
 			}
 			home_country = {
 				top_overlord = {
 					OR = {
 						is_country_type = recognized
-						is_country_type = colonial
+						country_is_colonial_or_company = yes
 					}
 				}
 			}
@@ -1571,14 +1643,14 @@ recognized_country_pop_trigger = {
 			home_country = {
 				OR = {
 					is_country_type = recognized
-					is_country_type = colonial
+					country_is_colonial_or_company = yes
 				}
 			}
 			home_country = {
 				top_overlord = {
 					OR = {
 						is_country_type = recognized
-						is_country_type = colonial
+						country_is_colonial_or_company = yes
 					}
 				}
 			}
@@ -1612,7 +1684,7 @@ armed_forces_clothes_trigger = {
 military_governor_clothes_trigger = {
 	exists = scope:character
 	scope:character = {
-		is_ruler = yes
+		is_ruler_of_own_country = yes
 		has_trait = special_character_colonial_military
 		owner ?= {
 			has_law = law_type:law_colonial_administration
@@ -1623,7 +1695,7 @@ military_governor_clothes_trigger = {
 ruler_clothes_trigger = {
 	exists = scope:character
 	scope:character = {
-		is_ruler = yes
+		is_ruler_of_own_country = yes
 	}
 }
 
@@ -1631,8 +1703,8 @@ military_clothes_trigger = {
 	exists = scope:character
 	scope:character = {
 		OR = {
-			has_role = general
-			has_role = admiral
+			has_role_of_type = general
+			has_role_of_type = admiral
 		}
 	}
 }
@@ -1643,12 +1715,12 @@ military_marshal_clothes_trigger = {
 		OR = {
 			AND = {
 				OR = {
-					has_role = general
-					has_role = admiral
+					has_role_of_type = general
+					has_role_of_type = admiral
 				}
 				OR = {
 					commander_rank >= 5
-					has_role = politician # If is IG leader
+					is_interest_group_leader = yes # If is IG leader
 				}
 			}
 		}
@@ -1666,12 +1738,15 @@ monarchy_clothes_trigger = {
 					is_female = yes # Female Regents wear more stylish clothes than male ones, as female regents trend towards being royals themselves
 					owner ?= { has_gov_regency = no }
 				}
-				is_ruler = yes
+				is_ruler_of_own_country = yes
 			}
-	     	is_heir = yes
+	     	is_heir_of_own_country = yes
 		}
      	owner = {
-     		has_law = law_type:law_monarchy
+			OR = {
+     			has_law = law_type:law_monarchy
+     			has_law = law_type:law_social_monarchy
+			}
      	}
 	}
 }
@@ -1680,11 +1755,14 @@ republic_clothes_trigger = {
 	exists = scope:character
 	scope:character = {
 		exists = home_country
-		is_ruler = yes
+		is_ruler_of_own_country = yes
 		OR = {
 			culture = cu:bastaard
 			home_country = {
-				NOT = { has_law_or_variant = law_type:law_monarchy}
+				NOR = {
+					has_law_or_variant = law_type:law_monarchy
+					has_law_or_variant = law_type:law_social_monarchy
+				}
 			}
 		}
 	}
@@ -1694,7 +1772,7 @@ regency_clothes_trigger = {
 	exists = scope:character
 	scope:character = {
 		exists = owner
-		is_ruler = yes
+		is_ruler_of_own_country = yes
 		owner ?= {
 			has_gov_regency = yes
 		}
@@ -1829,6 +1907,12 @@ circumpolar_clothes_pop_trigger = {
 	scope:pop = {
 		OR = {
 			culture = cu:inuit
+			AND = {
+				culture = cu:ainu
+				home_country ?= {
+					NOT = { country_has_primary_culture = cu:japanese }
+				}
+			}
 			culture = {
 				has_discrimination_trait = heritage_siberian
 			}
@@ -1843,7 +1927,6 @@ sami_clothes_pop_trigger = {
 		culture = cu:sami
 	}
 }
-
 
 african_clothes_pop_trigger = {
 	exists = scope:pop
@@ -1925,6 +2008,12 @@ cold_clothes_pop_trigger = {
 	exists = scope:pop
 	scope:pop = {
 		OR = {
+			AND = {
+				culture = cu:ainu
+				home_country ?= {
+					NOT = { country_has_primary_culture = cu:japanese }
+				}
+			}
 			has_pop_culture = inuit
 			has_pop_culture = athabaskan
 			has_pop_culture = siberian
@@ -1932,12 +2021,73 @@ cold_clothes_pop_trigger = {
 	}
 }
 
+japanese_restoration_trigger = {
+	owner ?= {
+		OR = {
+			AND = {
+				c:JAP ?= this
+				OR = {
+					NOR = {
+						has_law = law_type:law_monarchy
+						has_law = law_type:law_theocracy
+					}
+					has_variable = japan_emperor_restored
+				}
+			}
+			AND = {
+				NOT = { c:JAP ?= this }
+				country_has_primary_culture = cu:japanese
+				has_technology_researched = rifling
+			}
+		}
+	}
+}
+
+japanese_modernizer_character_trigger = {
+	OR = {
+		has_ideology = ideology:ideology_modernizer_leader
+		has_ideology = ideology:ideology_radical
+		has_ideology = ideology:ideology_social_democrat
+		has_socialist_ideology = yes
+		interest_group ?= {
+			OR = {
+				has_ideology = ideology:ideology_liberal
+				has_ideology = ideology:ideology_liberal_modern
+				has_ideology = ideology:ideology_egalitarian
+				has_ideology = ideology:ideology_egalitarian_modern
+			}
+		}
+	}
+	NOR = {
+		has_variable = daimyo_var
+		has_ideology = ideology:ideology_traditionalist
+		law_stance = {
+			law = law_type:law_closed_borders
+			value > neutral
+		}
+	}
+	owner ?= {
+		c:JAP ?= this
+		NOR = {
+			has_law_or_variant = law_type:law_closed_borders
+			has_law_or_variant = law_type:law_isolationism
+		}
+		has_technology_researched = stock_exchange
+	}
+}
+
 japanese_clothes_pop_trigger = {
 	exists = scope:pop
 	scope:pop = {
 		OR = {
+			culture = cu:ryukyuan
 			culture = cu:japanese
-			culture = cu:ainu
+			AND = {
+				culture = cu:ainu
+				home_country ?= {
+					country_has_primary_culture = cu:japanese
+				}
+			}
 		}
 	}
 }
@@ -1946,10 +2096,16 @@ japanese_clothes_pop_trigger = {
 japanese_clothes_trigger = {
 	exists = scope:character
 	scope:character = {
-          OR = {
-          	culture = cu:japanese
-          	culture = cu:ainu
-          }
+		OR = {
+			culture = cu:ryukyuan
+        	culture = cu:japanese
+			AND = {
+				culture = cu:ainu
+				home_country ?= {
+					country_has_primary_culture = cu:japanese
+				}
+			}
+        }
 	}
 }
 
@@ -2039,7 +2195,12 @@ upper_clothes_pop_trigger = {
      }
 }
 
-
+capitalists_clothes_pop_trigger = {
+     exists = scope:pop
+     scope:pop = {
+		is_pop_type = capitalists
+     }
+}
 
 soldier_clothes_pop_trigger = {
      exists = scope:pop
@@ -2291,13 +2452,21 @@ struggling_pop_trigger = {
 
 agitator_character_trigger = {
 	scope:character ?= {
-		has_role = agitator
+		has_role_of_type = agitator
 	}
 }
 
 executive_clothes_trigger = {
 	scope:character ?= {
-		has_role = executive
+		has_role_of_type = executive
+	}
+}
+
+magnate_clothes_trigger = {
+	monarchy_clothes_trigger = no
+	military_clothes_trigger = no
+	scope:character ?= {
+		has_role_of_type = magnate
 	}
 }
 
@@ -2329,3 +2498,38 @@ should_be_fully_naked_portrait_trigger = {
 #	has_character_flag = single_combat_stripped_to_waist
 #	should_show_nudity = yes
 #}
+
+
+is_in_cold_land_hq_trigger = {
+    commander_military_formation ?= {
+        current_hq ?= {
+            region ?= {
+                OR = {
+                    is_in_geographic_region = geographic_region_siberia
+                    is_in_geographic_region = geographic_region_canada
+					is_in_geographic_region = geographic_region_himalayas_old
+                    is_in_geographic_region = geographic_region_scandinavia
+                    is_in_geographic_region = geographic_region_iceland
+                }
+            }
+        }
+    }
+}
+
+is_in_hot_land_hq_trigger = {
+    commander_military_formation ?= {
+        current_hq ?= {
+            region ?= {
+                OR = {
+                	is_in_geographic_region = geographic_region_north_india
+                	is_in_geographic_region = geographic_region_south_india
+                	is_in_geographic_region = geographic_region_indochina
+                	is_in_geographic_region = geographic_region_indonesia
+                	is_in_geographic_region = geographic_region_central_america
+                    is_in_geographic_region = geographic_region_africa
+                    is_in_geographic_region = geographic_region_arabia
+                }
+            }
+        }
+    }
+}
