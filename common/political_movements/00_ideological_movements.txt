@@ -4751,6 +4751,7 @@ movement_liberal = {
 	}
 
 	pop_support_factors = {
+		# movement_support_je_hungarian_revolution
 		movement_support_high_urbanization
 		movement_support_high_literacy
 		movement_support_capitalists
@@ -4827,11 +4828,24 @@ movement_liberal = {
 				limit = {
 					is_pop_type = aristocrats
 				}
+				# if = {
+				# 	limit = {
+				# 		culture = cu:hungarian
+				# 		owner ?= {
+				# 			has_journal_entry = je_hungarian_revolution
+				# 		}
+				# 	}
+				# 	add = {
+				# 		value = 25
+				# 		desc = "je_hungarian_revolution"
+				# 	}
+				# }
+				# else = {
 				add = {
 					value = 6
 					desc = "POP_ARISTOCRATS"
 				}
-			}
+			# }
 			}
 			else = {
 				add = {
@@ -4968,7 +4982,35 @@ movement_liberal = {
 				}
 			}
 		}
-		
+		# if = {
+		# 	limit = {
+		# 		owner ?= { has_journal_entry = je_devorismo }
+		# 	}
+		# 	add = {
+		# 		value = 0.2
+		# 		desc = "je_devorismo"
+		# 	}
+		# }
+
+		if = {
+			limit = {
+				owner ?= {
+					country_has_voting_franchise = yes
+					electoral_confidence < 0.9
+				}
+			}
+			add = {
+				value = 1
+				subtract = owner.electoral_confidence
+				divide = 5
+				multiply = {
+					value = 1
+					add = owner.modifier:country_electoral_confidence_impact_mult
+				}
+				desc = "low_electoral_confidence"
+			}
+		}
+
 		if = {
 			limit = {
 				owner = {
@@ -5049,6 +5091,14 @@ movement_radical = {
 					is_political_movement_type = movement_italian_national
 				}
 			}
+			# AND = {
+			# 	c:JAP ?= this
+			# 	has_law = law_type:law_bakufu
+			# 	country_has_pending_meiji_restoration = yes
+			# 	any_political_movement = {
+			# 		is_political_movement_type = movement_meiji_restorationist
+			# 	}
+			# }
 		}
 	}
 	creation_weight = {
@@ -6848,14 +6898,14 @@ movement_reactionary = {
 		country_should_exclusively_focus_on_modernization = no
 		has_law_or_variant = law_type:law_slavery_banned
 		country_has_voting_franchise = yes
-		# NOT = { # Disable French Monarchism shinanigans
-			# OR = {
-				# c:FRA ?= this
-				# civil_war_origin_country ?= c:FRA
-			# }
-			# any_political_movement = {
-				# is_political_movement_type = movement_legitimist
-			# }
+		# NOT = { # Reactionary and Legitimist movements cannot co-exist
+		# 	any_political_movement = {
+		# 		OR = {
+		# 			is_political_movement_type = movement_legitimist
+		# 			is_political_movement_type = movement_carlist
+		# 			is_political_movement_type = movement_miguelist
+		# 		}
+		# 	}
 		# }
 	}
 	creation_weight = {
@@ -6883,13 +6933,13 @@ movement_reactionary = {
 	}
 
 	# disband_trigger = {
-		# OR = {
-			# c:FRA ?= this
-			# civil_war_origin_country ?= c:FRA
-		# }
-		# any_political_movement = {
-			# is_political_movement_type = movement_legitimist
-		# }
+	# 	any_political_movement = {
+	# 		OR = {
+	# 			is_political_movement_type = movement_legitimist
+	# 			is_political_movement_type = movement_carlist
+	# 			is_political_movement_type = movement_miguelist
+	# 		}
+	# 	}
 	# }
 
 	character_support_trigger = {
@@ -7244,32 +7294,21 @@ movement_modernizer = { # This movement loves you and wants you to succeed. It e
 
 	creation_trigger = {
 		has_technology_researched = academia
-		OR = {
-			AND = {
-				OR = {
-					is_in_geographic_region = geographic_region_south_america
-					is_in_geographic_region = geographic_region_central_america
-				}
-				country_rank <= rank_value:major_power
-			}
-			is_country_type = colonial
-			is_country_type = unrecognized
+		ig:ig_intelligentsia ?= {
+			ig_counts_as_marginal = no
 		}
 		country_has_laws_in_need_of_critical_modernization = yes
-		NAND = {
-			has_law_or_variant = law_type:law_protectionism
-			has_law_or_variant = law_type:law_compulsory_primary_school
-			has_law_or_variant = law_type:law_public_schools
-			OR = {
-				has_law_or_variant = law_type:law_interventionism
-				has_law_or_variant = law_type:law_command_economy
-				has_law_or_variant = law_type:law_laissez_faire
-			}
-			OR = {
-				has_law_or_variant = law_type:law_graduated_taxation
-				has_law_or_variant = law_type:law_proportional_taxation
-			}
-		}
+		# NAND = {
+		# 	c:JAP ?= this
+		# 	NOR = {
+		# 		has_variable = monarchy_stamped_out_var
+		# 		has_variable = japan_restoration_complete
+		# 	}
+		# }
+		# NAND = {
+		# 	c:BIC ?= this
+		# 	is_involved_in_journal_entry = je_uneasy_raj
+		# }
 	}
 
 	creation_weight = {
@@ -7309,13 +7348,15 @@ movement_modernizer = { # This movement loves you and wants you to succeed. It e
 	}
 
 	disband_trigger = {
-		AND = {
-			has_law_or_variant = law_type:law_protectionism
-			OR = {
-				has_law_or_variant = law_type:law_interventionism
-				has_law_or_variant = law_type:law_command_economy
-				has_law_or_variant = law_type:law_laissez_faire
-			}
+		OR = {
+			country_has_laws_in_need_of_modernization = no # The crisis is past
+			# AND = { # Just in case
+			# 	c:JAP ?= this
+			# 	NOR = {
+			# 		has_variable = monarchy_stamped_out_var
+			# 		has_variable = japan_restoration_complete
+			# 	}
+			# }
 		}
 	}
 
@@ -7330,12 +7371,12 @@ movement_modernizer = { # This movement loves you and wants you to succeed. It e
 			has_ideology = ideology:ideology_utopian
 			has_ideology = ideology:ideology_modernizer_leader
 			scope:interest_group ?= {
-			OR = {
-						has_ideology = ideology:ideology_modernizer
-						has_ideology = ideology:ideology_liberal
-						has_ideology = ideology:ideology_liberal_modern
-						has_ideology = ideology:ideology_plutocratic
-					}
+				OR = {
+					has_ideology = ideology:ideology_cartist
+					has_ideology = ideology:ideology_modernizer
+					has_ideology = ideology:ideology_liberal
+					has_ideology = ideology:ideology_liberal_modern
+					has_ideology = ideology:ideology_plutocratic
 				}
 			}
 		}
@@ -7396,6 +7437,7 @@ movement_modernizer = { # This movement loves you and wants you to succeed. It e
 	}
 
 	pop_support_factors = {
+		# movement_support_je_hungarian_revolution
 		movement_support_high_urbanization
 		movement_support_high_literacy
 		movement_support_capitalists
@@ -7467,28 +7509,51 @@ movement_modernizer = { # This movement loves you and wants you to succeed. It e
 					desc = "POP_CAPITALISTS"
 				}
 			}
-			# if = {
-				# limit = {
-					# is_pop_type = aristocrats
-				# }
+			if = {
+				limit = {
+					is_pop_type = aristocrats
+				}
 				# if = {
-					# limit = {
-						# owner ?= {
-							# has_journal_entry = je_great_reformer
-						# }
-					# }
-					# add = {
-						# value = 25
-						# desc = "POP_ARISTOCRATS"
-					# }
+				# 	limit = {
+				# 		owner ?= {
+				# 			has_journal_entry = je_great_reformer
+				# 		}
+				# 	}
+				# 	add = {
+				# 		value = 25
+				# 		desc = "POP_ARISTOCRATS"
+				# 	}
+				# }
+				# else_if = {
+				# 	limit = {
+				# 		culture = cu:hungarian
+				# 		owner ?= {
+				# 			has_journal_entry = je_hungarian_revolution
+				# 		}
+				# 	}
+				# 	add = {
+				# 		value = 25
+				# 		desc = "je_hungarian_revolution"
+				# 	}
 				# }
 				# else = {
-					# add = {
-						# value = 10
-						# desc = "POP_ARISTOCRATS"
-					# }
+					add = {
+						value = 10
+						desc = "POP_ARISTOCRATS"
+					}
 				# }
-			# }
+			}
+			if = {
+				limit = {
+					owner = {
+						has_variable = wargoal_enforced_by_recognized_power
+					}
+				}
+				add = {
+					value = 15
+					desc = "wargoal_pressed_by_recognized_power_tt"
+				}
+			}
 		}
 		else_if = {
 			limit = {
