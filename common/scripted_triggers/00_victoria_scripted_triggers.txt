@@ -34,10 +34,22 @@
 ig_desires_laws_for_petition = {
 	any_interest_group = {
 		is_in_government = yes
-		is_marginal = no
+		ig_counts_as_marginal = no
 		any_preferred_law = {
 			law_is_valid_for_ig_petition = yes
 		}
+	}
+}
+
+is_brazil_northeast_state = {
+	OR = {
+		state_region = s:STATE_PERNAMBUCO
+		state_region = s:STATE_PARAIBA
+		state_region = s:STATE_RIO_GRANDE_DO_NORTE
+		state_region = s:STATE_CEARA
+		state_region = s:STATE_PIAUI
+		state_region = s:STATE_MARANHAO
+		state_region = s:STATE_BAHIA
 	}
 }
 
@@ -52,27 +64,23 @@ law_is_valid_for_ig_petition = {
 
 }
 
-character_has_patrol_coast_order = {
-	OR = {
-		has_commander_order = interception_coast
-		has_commander_order = interception_carrier_assualt
-		has_commander_order = escort_convoys_advanced
-	}
-}
+# ruler_is_bonapartist = { # dvg
+# 	ruler ?= {
+# 		has_variable = house_bonaparte
+# 	}
+# }
 
-character_has_raid_convoys_order = {
-	OR = {
-		has_commander_order = raid_convoys
-		has_commander_order = raid_unrestricted_sub
-	}
-}
+# ruler_is_orleanist = {
+# 	ruler ?= {
+# 		has_variable = house_orleans
+# 	}
+# }
 
-character_has_escort_convoys_order = {
-	OR = {
-		has_commander_order = escort_convoys
-		has_commander_order = escort_convoys_advanced
-	}
-}
+# ruler_is_legitimist = {
+# 	ruler ?= {
+# 		has_variable = legitimist_leader
+# 	}
+# }
 
 character_has_advance_order = {
 	OR = {
@@ -140,6 +148,10 @@ pro_lobby_war_valid_check = {
 	NOT = { is_subject_of = scope:third_party_country }
 	NOT = { scope:third_party_country = { is_subject_of = root } }
 	"potential_diplomatic_play_power_ratio(scope:third_party_country)" >= 1
+	scope:third_party_country ?= {
+		is_revolutionary = no
+		is_secessionist = no
+	}
 	is_at_war = no
 	scope:third_party_country.relations:root < relations_threshold:cordial
 	AND = {
@@ -147,9 +159,9 @@ pro_lobby_war_valid_check = {
 		OR = {
 			has_strategic_adjacency = scope:third_party_country
 			AND = {
-				has_port = yes
+				has_port_country = yes
 				navy_size >= 10
-				scope:third_party_country = { has_port = yes }
+				scope:third_party_country = { has_port_country = yes }
 			}
 		}
 	}
@@ -298,6 +310,10 @@ anti_lobby_war_valid_check = {
 	NOT = { has_truce_with = scope:relevant_country }
 	NOT = { is_subject_of = scope:relevant_country }
 	NOT = { scope:relevant_country = { is_subject_of = root } }
+	scope:relevant_country ?= {
+		is_revolutionary = no
+		is_secessionist = no
+	}
 	"potential_diplomatic_play_power_ratio(scope:relevant_country)" >= 1
 	is_at_war = no
 	scope:relevant_country.relations:root < relations_threshold:cordial
@@ -416,17 +432,19 @@ is_valid_lobby_target = {
 	custom_tooltip = {
 		text = is_valid_lobby_target_tt
 		is_revolutionary = no
+		is_secessionist = no
 		ROOT = {
 			# Same as above, this trigger will not work in the context of lobbies against subject relation countries
 			is_revolutionary = no
+			is_secessionist = no
 			can_lobbies_target = PREV
 		}
 
 		ROOT = {
 			OR = {
 				AND = {
-					has_port = yes
-					PREV = { has_port = yes }
+					has_port_country = yes
+					PREV = { has_port_country = yes }
 					navy_size >= 10
 				}
 				has_strategic_adjacency = PREV
@@ -506,7 +524,7 @@ is_afghan_nation = {
 		c:HER ?= this
 		c:KUN ?= this
 		c:MAI ?= this
-		# c:KAF ?= this
+		# c:KAF ?= this # dvg?
 	}
 }
 
@@ -540,8 +558,8 @@ asian_ally_against_russia_trigger = {
 					level >= 5
 				}
 				any_scope_building = {
-					is_building_type = building_naval_base
-					level >= 15
+					is_building_type = building_naval_administration
+					level >= 3
 				}
 			}
 		}
@@ -581,7 +599,7 @@ meiji_completion_trigger = {
 		}
 		OR = {
 			government_legitimacy >= 50
-			ig:ig_landowners ?= { is_marginal = yes }
+			ig:ig_landowners ?= { ig_counts_as_marginal = yes }
 		}
 		has_insurrectionary_interest_groups = no
 		is_at_war = no
@@ -722,6 +740,12 @@ ideology_republican_leader_valid_trigger = {
 		is_interest_group_type = ig_armed_forces
 		is_interest_group_type = ig_petty_bourgeoisie
 		is_interest_group_type = ig_industrialists
+		AND = {
+			is_interest_group_type = ig_intelligentsia
+			NOT = {
+				has_ideology = ideology:ideology_republican # The interest group
+			}
+		}
 	}
 }
 
@@ -756,6 +780,7 @@ ideology_abolitionist_valid_trigger = {
 		is_interest_group_type = ig_petty_bourgeoisie
 		is_interest_group_type = ig_industrialists
 		is_interest_group_type = ig_devout
+		is_interest_group_type = ig_armed_forces
 	}
 }
 
@@ -775,8 +800,8 @@ ideology_pacifist_valid_trigger = {
 
 ideology_jingoist_leader_valid_trigger = {
 	NOR = {
-		is_interest_group_type = ig_armed_forces
 		is_interest_group_type = ig_rural_folk
+		is_interest_group_type = ig_armed_forces
 	}
 }
 
@@ -786,6 +811,12 @@ ideology_royalist_valid_trigger = {
 		is_interest_group_type = ig_rural_folk
 		is_interest_group_type = ig_petty_bourgeoisie
 		is_interest_group_type = ig_armed_forces
+		AND = {
+			is_interest_group_type = ig_intelligentsia
+			NOT = {
+				has_ideology = ideology:ideology_republican # The interest group
+			}
+		}
 	}
 }
 
@@ -795,7 +826,7 @@ ideology_social_democrat_valid_trigger = {
 		is_interest_group_type = ig_rural_folk
 		is_interest_group_type = ig_intelligentsia
 		is_interest_group_type = ig_trade_unions
-		is_interest_group_type = ig_armed_forces
+		is_interest_group_type = ig_petty_bourgeoisie
 	}
 }
 
@@ -919,6 +950,7 @@ ideology_land_reformer_valid_trigger = {
 		is_interest_group_type = ig_intelligentsia
 		is_interest_group_type = ig_trade_unions
 		is_interest_group_type = ig_petty_bourgeoisie
+		is_interest_group_type = ig_devout
 	}
 }
 
@@ -941,7 +973,42 @@ ideology_corporatist_leader_valid_trigger = {
 }
 
 ideology_modernizer_leader_valid_trigger = {
+}
 
+ideology_shojoi_leader_valid_trigger = {
+
+}
+
+ideology_regenerator_leader_valid_trigger = {
+
+}
+
+ideology_ilustrado_leader_valid_trigger = {
+	AND = {
+		c:PHI ?= owner
+		OR = {
+			is_interest_group_type = ig_intelligentsia
+			is_interest_group_type = ig_petty_bourgeoisie
+		}
+	}
+}
+
+ideology_carlist_valid_trigger = {
+	OR = {
+		is_interest_group_type = ig_devout
+		is_interest_group_type = ig_rural_folk
+		is_interest_group_type = ig_armed_forces
+		is_interest_group_type = ig_landowners
+	}
+}
+
+ideology_miguelist_valid_trigger = {
+	OR = {
+		is_interest_group_type = ig_devout
+		is_interest_group_type = ig_rural_folk
+		is_interest_group_type = ig_armed_forces
+		is_interest_group_type = ig_landowners
+	}
 }
 
 ideology_humanitarian_royalist_valid_trigger = {
@@ -1017,8 +1084,8 @@ ideology_legitimist_valid_trigger = {
 	OR = {
 		is_interest_group_type = ig_devout
 		is_interest_group_type = ig_rural_folk
-		is_interest_group_type = ig_petty_bourgeoisie
 		is_interest_group_type = ig_landowners
+		is_interest_group_type = ig_armed_forces
 	}
 }
 
