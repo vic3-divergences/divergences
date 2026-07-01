@@ -55,24 +55,24 @@ ig_rural_folk = {
 				set_ig_trait = ig_trait:ig_trait_fellahin
 				set_ig_trait = ig_trait:ig_trait_farmers_markets
 			}
-			# else_if = {
-				# limit = {
-					# owner = {
-						# OR = {
-							# c:BIC ?= this
-							# any_primary_culture = {
-								# has_discrimination_trait_group = heritage_group_south_asian
-								# NOT = {
-									# has_discrimination_trait = tradition_himalayan
-								# }
-							# }
-						# }
-					# }
-				# }
-				# set_interest_group_name = ig_ryots
-				# set_ig_trait = ig_trait:ig_trait_of_the_sovereign_alone
-				# set_ig_trait = ig_trait:ig_trait_imandari
-				# set_ig_trait = ig_trait:ig_trait_bazaar_bargains
+			# else_if = { # dvg
+			# 	limit = {
+			# 		owner = {
+			# 			OR = {
+			# 				c:BIC ?= this
+			# 				any_primary_culture = {
+			# 					has_discrimination_trait_group = heritage_group_south_asian
+			# 					NOT = {
+			# 						has_discrimination_trait = tradition_himalayan
+			# 					}
+			# 				}
+			# 			}
+			# 		}
+			# 	}
+			# 	set_interest_group_name = ig_ryots
+			# 	set_ig_trait = ig_trait:ig_trait_of_the_sovereign_alone
+			# 	set_ig_trait = ig_trait:ig_trait_imandari
+			# 	set_ig_trait = ig_trait:ig_trait_bazaar_bargains
 			# }
 			else_if = {
 				limit = {
@@ -106,18 +106,18 @@ ig_rural_folk = {
 		}
 
 		# Jeffersonian Ideology
-		# if = {
-			# limit = {
-				# OR = {
-					# country_has_primary_culture = cu:yankee
-					# country_has_primary_culture = cu:dixie
-				# }
-			# }
-			# ig:ig_rural_folk ?= {
-				# remove_ideology = ideology_agrarian
-				# add_ideology = ideology_agrarian_jeffersonian
-				# set_interest_group_name = ig_yeoman_farmers
-			# }
+		# if = { dvg
+		# 	limit = {
+		# 		OR = {
+		# 			country_has_primary_culture = cu:yankee
+		# 			country_has_primary_culture = cu:dixie
+		# 		}
+		# 	}
+		# 	ig:ig_rural_folk ?= {
+		# 		remove_ideology = ideology_agrarian
+		# 		add_ideology = ideology_agrarian_jeffersonian
+		# 		set_interest_group_name = ig_yeoman_farmers
+		# 	}
 		# }
 
 		# Heimin
@@ -132,7 +132,7 @@ ig_rural_folk = {
 		# Maka'āinana
 		if = {
 			limit = {
-				OR = {
+				OR = { # dvg
 					country_has_primary_culture = cu:hawaiian
 					any_scope_state = {
 						is_capital = yes
@@ -156,10 +156,13 @@ ig_rural_folk = {
 		# India
 		else_if = {
 			limit = {
-				any_primary_culture = {
-					has_discrimination_trait_group = heritage_group_south_asian
-					NOT = {
-						has_discrimination_trait = tradition_himalayan
+				OR = {
+					# c:BIC ?= this # dvg
+					any_primary_culture = {
+						has_discrimination_trait_group = heritage_group_south_asian
+						NOT = {
+							has_discrimination_trait = tradition_himalayan
+						}
 					}
 				}
 			}
@@ -346,7 +349,7 @@ ig_rural_folk = {
 
 		multiply = {
 			desc = "LEADER_POPULARITY"
-			scope:interest_group = {
+			scope:interest_group ?= {
 				leader ?= {
 					value = popularity
 					multiply = 0.0025
@@ -358,7 +361,7 @@ ig_rural_folk = {
 		}
 		if = {
 			limit = {
-				scope:interest_group = {
+				scope:interest_group ?= {
 					is_in_government = yes
 				}
 			}
@@ -372,7 +375,7 @@ ig_rural_folk = {
 
 		if = {
 			limit = {
-				scope:interest_group = {
+				scope:interest_group ?= {
 					is_in_government = yes
 				}
 			}
@@ -385,7 +388,7 @@ ig_rural_folk = {
 		}
 		if = {
 			limit = {
-				scope:interest_group = {
+				scope:interest_group ?= {
 					is_in_government = no
 				}
 			}
@@ -403,7 +406,7 @@ ig_rural_folk = {
 		# Monarch is not likely to adopt a marginal IG
 		if = {
 			limit = {
-				is_marginal = yes
+				ig_counts_as_marginal = yes
 			}
 			multiply = {
 				value = 0.1
@@ -449,7 +452,7 @@ ig_rural_folk = {
 		if = {
 			limit = {
 				owner.ig:ig_rural_folk ?= {
-					is_marginal = yes
+					ig_counts_as_marginal = yes
 				}
 			}
 			multiply = {
@@ -461,6 +464,10 @@ ig_rural_folk = {
 	commander_weight = {
 		value = 1.0
 	}
+	
+	magnate_weight = {
+		value = 0.25
+	}	
 
 	executive_weight = {
 		value = 0.1
@@ -491,6 +498,10 @@ ig_rural_folk = {
 
 	female_executive_chance = {
 		value = 0.0
+	}
+
+	female_monarch_chance = {
+		value = 0.025
 	}
 
 	female_politician_chance = {
@@ -553,16 +564,30 @@ ig_rural_folk = {
 		}
 	}
 
-	# The chance that a commander belonging to this IG takes over leadership when it changes
-	# scope:character is the most popular commander in the IG
-	commander_leader_chance = {
-		value = 0.5
-		multiply = ig_commander_leader_chance_mult
+	# Multiplier applied to the weight for an appropriate commander will be selected from the character pool to lead the IG
+	# root = interest group
+	commander_leader_weight = {
+		value = 0.75
 	}
 
-	# The chance that a executive belonging to this IG takes over leadership when it changes
-	# scope:character is the most popular executive in the IG
-	executive_leader_chance = {
-		value = 0.2
+	# Multiplier applied to the weight for an appropriate magnate will be selected from the character pool to lead the IG
+	# root = interest group
+	magnate_leader_weight = {
+		value = 0.25
+		# if = { # dvg
+		# 	limit = {
+		# 		c:JAP ?= owner
+		# 		NOT = {
+		# 			has_variable = japan_restoration_complete
+		# 		}
+		# 	}
+		# 	add = 5
+		# }
+	}
+
+	# Multiplier applied to the weight for an appropriate executive will be selected from the character pool to lead the IG
+	# root = interest group
+	executive_leader_weight = {
+		value = 0.1
 	}
 }
