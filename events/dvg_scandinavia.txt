@@ -299,7 +299,7 @@ dvg_scandinavia.104 = { #Bankrupt Laird estate
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
 	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
 
-	icon = "gfx/interface/icons/event_icons/event_map.dds"
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
 	
 	#This event can fire 3 times at most
 	#do NOT re-arrange the contents of this event, it will not work if you do, my code isn't perfect, sure, but Jomini isn't either
@@ -494,7 +494,7 @@ dvg_scandinavia.105 = { #Clearances affect the Lowlands
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
 	on_opened_soundeffect = "event:/SFX/Events/unspecific/leader_speaking_to_a_group_of_people"
 
-	icon = "gfx/interface/icons/event_icons/event_map.dds"
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
 
 	immediate = {
 		set_variable = var_sca_lowland_woes_triggered
@@ -502,7 +502,10 @@ dvg_scandinavia.105 = { #Clearances affect the Lowlands
 	
 	trigger = {
 		NOT = {
-			has_variable = var_sca_lowland_woes_triggered
+			OR = {
+				has_variable = var_sca_lowland_woes_triggered
+				has_variable = var_sca_highlands_fixed_economy
+			}
 		}
 		ROOT = {
 			owns_entire_state_region = STATE_LOWLANDS
@@ -661,5 +664,75 @@ dvg_scandinavia.106 = { #Peasants organise - Harbingers
 			}
 		}
 	}
+}
+
+dvg_scandinavia.107 = { #Highland Banking
+	type = country_event
+	placement = ROOT
+
+	title = dvg_scandinavia.107.t
+	desc = dvg_scandinavia.107.d
+	flavor = dvg_scandinavia.107.f
 	
+	duration = 3
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
+
+	immediate = {
+		set_variable = var_sca_highlander_banking_triggered
+	}
+	
+	trigger = {
+		NOT = {
+			has_variable = var_sca_highlander_banking_triggered
+		}
+		NOT = {
+			any_scope_state = {
+				OR = {
+					has_modifier = dvg_sca_minor_economic_downturn_scotland_clearances
+				}
+				OR = {
+					has_modifier = dvg_sca_major_economic_downturn_scotland_clearances
+				}
+			}
+		}
+	}
+	
+	option = { #An excellent initiative!
+		name = dvg_scandinavia.107.a
+		custom_tooltip = {
+			text = sca_cufc_this_will_fasten_progress_tt
+			set_variable = var_sca_banking_highlands_var
+		}
+		ig:ig_landowners = {
+			add_modifier = {
+				name = dvg_landowners_pleased_clearances
+				days = short_modifier_time
+			}
+		}
+		add_treasury = -10000	
+		if = {
+			limit = {
+				NOT = {
+					has_variable = var_sca_lowland_woes_triggered
+				}
+			}
+			custom_tooltip = {
+				text = var_sca_highlands_fixed_economy_tt
+				set_variable = var_sca_highlands_fixed_economy
+			}
+		}
+	}
+	
+	option = { #This isn't needed
+		name = dvg_scandinavia.107.b
+		custom_tooltip = {
+			text = var_sca_highlands_didnt_fix_economy_tt
+		}
+	}
 }
