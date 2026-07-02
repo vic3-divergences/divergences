@@ -1,5 +1,7 @@
 ﻿namespace = dvg_australie
 
+
+
 dvg_australie.1 = {
 	type = country_event
 	placement = ROOT
@@ -38,9 +40,7 @@ dvg_australie.1 = {
 			base = 1
 		}
 
-		add_journal_entry = {
-			type = je_nvz_colonization
-		}
+		
 	}
 
 	option = {
@@ -51,9 +51,7 @@ dvg_australie.1 = {
 			months = 241
 			is_decaying = yes
 		}
-		add_journal_entry = {
-			type = je_nvz_colonization
-		}
+		
 		
 		ai_chance = {
 			base = 1
@@ -103,7 +101,7 @@ dvg_australie.2 = {
 		}
 		c:BRG = {
 			trigger_event = {
-				id = dvg_australie.3
+				id = dvg_australie.3 days = 90
 			}
 		}
 	
@@ -155,6 +153,18 @@ dvg_australie.3 = {
 			limit = {
 				country_has_primary_culture = cu:australian
 			}
+			trigger_event = {
+				id = dvg_australie.4 
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_law = law_type:law_slavery_banned
+					}
+				}
+				activate_law = law_type:law_slavery_banned
+			}
+			set_variable = penal_colonies_banned
 		}
 		
 		ai_chance = {
@@ -629,8 +639,8 @@ dvg_australie.10 = {
 		NOT = {
 			any_scope_state = {
 				state_region = s:STATE_OODNATTA
-
 			}
+			exists = c:TRJ
 		}
 	}
 	immediate = {
@@ -642,13 +652,66 @@ dvg_australie.10 = {
 				 }
 			}
 		}
-		create_character = {
+		
+	}
+
+
+	option = {
+		name = dvg_australie.10.a
+		default_option = yes
+
+		random_scope_pop = {
+			limit = {
+				culture = cu:australian
+			}
+			move_pop = s:STATE_OODNATTA.region_state:NVZ
+		}
+
+		add_loyalists = {
+			value = 0.10
+		}
+		
+		create_country = {
+						tag = TRJ
+						origin = this
+						state = s:STATE_OODNATTA.region_state:NVZ
+
+		}
+		
+		s:STATE_OODNATTA.region_state:TRJ = {
+			create_building={
+				building="building_port"
+				add_ownership={
+					country={
+						country="c:TRJ"
+						levels=1
+					}
+				}
+				reserves=1
+				activate_production_methods={ "pm_anchorage" }
+			}
+			create_building={
+				building="building_government_administration"
+				add_ownership={
+					country={
+						country="c:TRJ"
+						levels=1
+					}
+				}
+				reserves=1
+				activate_production_methods={ "pm_simple_organization" }
+			}
+		}
+		c:TRJ = {
+			activate_law = law_type:law_national_militia 
+			create_character = {
 			historical = yes
 			first_name = Jean
 		  	last_name = Poirot
 			culture = cu:australian
-			noble = yes
-		  	birth_date = 1803.07.04
+			ruler = yes
+			dna = dna_josiah_harlan
+		  	birth_date = 1809.07.04
 	  		interest_group = ig_petty_bourgeoisie
 	  		ideology = ideology_jingoist
 			traits = {
@@ -663,46 +726,9 @@ dvg_australie.10 = {
 				}
 				save_scope_as = poirot_scope
 			}
-  		}
-	}
-
-
-	option = {
-		name = dvg_australie.10.a
-		default_option = yes
-
-		add_loyalists = {
-			value = 0.10
-		}
-		
-		create_country = {
-						tag = TRJ
-						origin = this
-						state = s:STATE_OODNATTA.region_state:NVZ
-
-		}
-		scope:poirot_scope = {
-			transfer_character = c:TRJ
-		}
-		s:STATE_OODNATTA.region_state:TRJ = {
-			create_building={
-				building="building_port"
-				add_ownership={
-					country={
-						country="c:TRJ"
-						levels=1
-					}
-				}
-				reserves=1
-				activate_production_methods={ "pm_anchorage" }
-			}
-		}
-		c:TRJ = {
-			random_scope_character = {
-				limit = {
-					has_variable = is_poirot
-				}
-				set_character_as_ruler = yes
+  			}
+			add_journal_entry = {
+			type = je_nvz_colonization
 			}
 		}
 		s:STATE_OODNATTA = {
@@ -727,6 +753,13 @@ dvg_australie.10 = {
 		name = dvg_australie.10.b
 		default_option = yes
 
+		random_scope_pop = {
+			limit = {
+				culture = cu:australian
+			}
+			move_pop = s:STATE_OODNATTA.region_state:NVZ
+		}
+
 		s:STATE_OODNATTA.region_state:NVZ = {
 			create_building={
 				building="building_port"
@@ -746,11 +779,520 @@ dvg_australie.10 = {
 		}
 		
 		
-		random_scope_character = {
-				limit = {
-					has_variable = is_poirot
+		create_character = {
+			historical = yes
+			first_name = Jean
+		  	last_name = Poirot
+			culture = cu:australian
+			dna = dna_josiah_harlan
+			is_agitator = yes
+		  	birth_date = 1809.07.04
+	  		interest_group = ig_petty_bourgeoisie
+	  		ideology = ideology_jingoist
+			traits = {
+				basic_colonial_administrator
+				pillager
+				basic_offensive_planner
+				experienced_entrepreneur
+			}
+			on_created = {
+				set_variable = {
+					name = is_poirot
 				}
-				exile_character = yes
+				save_scope_as = poirot_scope
+			}
+  		}
+		
+		
+		ai_chance = {
+			base = 1
+		}
+
+		
+	}
+
+	option = {
+		name = dvg_australie.10.c
+
+		random_scope_pop = {
+			limit = {
+				culture = cu:australian
+			}
+			move_pop = s:STATE_OODNATTA.region_state:NVZ
+		}
+
+		add_loyalists = {
+			value = 0.10
+		}
+		
+		create_country = {
+						tag = TRJ
+						origin = this
+						state = s:STATE_OODNATTA.region_state:NVZ
+
+		}
+		
+		s:STATE_OODNATTA.region_state:TRJ = {
+			create_building={
+				building="building_port"
+				add_ownership={
+					country={
+						country="c:TRJ"
+						levels=1
+					}
+				}
+				reserves=1
+				activate_production_methods={ "pm_anchorage" }
+			}
+			create_building={
+				building="building_government_administration"
+				add_ownership={
+					country={
+						country="c:TRJ"
+						levels=1
+					}
+				}
+				reserves=1
+				activate_production_methods={ "pm_simple_organization" }
+			}
+		}
+		c:TRJ = {
+			activate_law = law_type:law_national_militia 
+			create_character = {
+			historical = yes
+			first_name = Jean
+		  	last_name = Poirot
+			culture = cu:australian
+			ruler = yes
+			dna = dna_josiah_harlan
+		  	birth_date = 1809.07.04
+	  		interest_group = ig_petty_bourgeoisie
+	  		ideology = ideology_jingoist
+			traits = {
+				basic_colonial_administrator
+				pillager
+				basic_offensive_planner
+				experienced_entrepreneur
+			}
+			on_created = {
+				set_variable = {
+					name = is_poirot
+				}
+				save_scope_as = poirot_scope
+			}
+  			}
+		}
+		
+		s:STATE_OODNATTA = {
+			add_claim = c:TRJ
+		}
+		
+		create_diplomatic_pact = {
+				country = c:TRJ
+				type = chartered_company
+		}
+		
+		play_as = c:TRJ
+		
+		ai_chance = {
+			base = 99
+		}
+
+		
+	}
+}
+
+dvg_australie.11 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_australie.11.t
+	desc = dvg_australie.11.d
+	flavor = dvg_australie.11.f
+
+	event_image = {
+		video = "gfx/event_pictures/europenorthamerica_gold_prospectors.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+
+	immediate = {
+		
+	}
+	option = {
+		name = dvg_australie.11.a
+		default_option = yes
+
+
+		ai_chance = {
+			base = 50
+		}
+
+	}
+
+	option = {
+		name = dvg_australie.11.b
+
+		ai_chance = {
+			base = 50
+		}
+	}
+}
+#Race Riots
+dvg_australie.12 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_australie.12.t
+	desc = dvg_australie.12.d
+	flavor = dvg_australie.12.f
+
+	event_image = {
+		video = "gfx/event_pictures/europenorthamerica_gold_prospectors.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+
+	immediate = {
+		add_modifier = {
+			name = 
+		}
+	}
+
+	option = {
+		name = dvg_australie.12.a
+		default_option = yes
+
+
+		every_interest_group = {
+			limit = {
+				law_stance = {
+					law = law_type:law_multicultural
+					value > neutral
+				}
+			}
+			add_loyalists = {
+				value = 0.10
+			}
+		}
+
+		every_interest_group = {
+			limit = {
+				law_stance = {
+					law = law_type:law_racial_segregation
+					value < neutral
+				}
+			}
+			add_radicals = {
+				value = 0.10
+			}
+		}
+		
+
+		
+		ai_chance = {
+			base = 1
+		}
+
+
+	}
+
+	
+	option = {
+		name = dvg_australie.12.b
+
+		if = {
+			limit = {
+				NOT = {
+					has_law = law_type:law_racial_segregation
+				}
+			}
+			activate_law = law_type:law_racial_segregation
+		}
+		every_interest_group = {
+			limit = {
+				law_stance = {
+					law = law_type:law_racial_segregation
+					value > neutral
+				}
+			}
+			add_loyalists = {
+				value = 0.10
+			}
+		}
+		every_interest_group = {
+			limit = {
+				law_stance = {
+					law = law_type:law_racial_segregation
+					value < neutral
+				}
+			}
+			add_radicals = {
+				value = 0.10
+			}
+		}
+
+		if = {
+			limit = {
+				NOT = {
+					any_scope_state = {
+						state_region = {
+							is_homeland = cu:indo_australien
+						}
+					}
+				}
+			}
+			every_scope_state = {
+				limit = {
+				NOT = {
+					any_scope_state = {
+						state_region = {
+							is_homeland = cu:indo_australien
+						}
+					}
+				}
+				}
+				add_homeland = cu:indo_australien
+			}
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+
+
+	}
+}
+
+#Calls to Prayer
+dvg_australie.13 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_australie.13.t
+	desc = dvg_australie.13.d
+	flavor = dvg_australie.13.f
+
+	event_image = {
+		video = "gfx/event_pictures/europenorthamerica_gold_prospectors.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+
+
+	option = {
+		name = dvg_australie.13.a
+		default_option = yes
+
+		
+		add_radicals = {
+			value = 0.15
+			religion = rel:sunni
+		}
+
+		add_loyalists = {
+			value = 0.10
+			religion = rel:protestant
+		}
+
+		add_loyalists = {
+			value = 0.10
+			religion = rel:catholic
+		}
+
+
+		
+		ai_chance = {
+			base = 1
+		}
+
+
+	}
+
+	
+	option = {
+		name = dvg_australie.13.b
+
+		add_radicals = {
+			value = 0.15
+			religion = rel:protestant
+		}
+		add_radicals = {
+			value = 0.15
+			religion = rel:catholic
+		}
+		add_loyalists = {
+			value = 0.10
+			religion = rel:sunni
+		}
+
+		
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+
+	option = {
+		name = dvg_australie.13.c
+
+		add_radicals = {
+			value = 0.10
+		}
+
+		
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#Migration Restriction Petition
+dvg_australie.14 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_australie.14.t
+	desc = dvg_australie.14.d
+	flavor = dvg_australie.14.f
+
+	event_image = {
+		video = "gfx/event_pictures/europenorthamerica_gold_prospectors.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+	}
+
+
+	option = {
+		name = dvg_australie.14.a
+		default_option = yes
+
+		
+		
+		ai_chance = {
+			base = 1
+		}
+
+
+	}
+
+	
+	option = {
+		name = dvg_australie.14.b
+
+		
+		
+		ai_chance = {
+			base = 1
+		}
+
+
+	}
+}
+
+#Pride in Antipody, Verland Petition
+dvg_australie.15 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_australie.15.t
+	desc = dvg_australie.15.d
+	flavor = dvg_australie.15.f
+
+	event_image = {
+		video = "gfx/event_pictures/europenorthamerica_gold_prospectors.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		cu:australian = {
+			culture_current_fervor > 19
+		}
+		any_scope_state = {
+			is_capital = no
+		}
+		NOT = {
+			exists = c:VLD
+			has_global_variable = verland_revolt
+		}
+	}
+	immediate = {
+		random_scope_state = {
+			limit = {
+				is_capital = no
+			}
+			save_scope_as = verland_state_scope
+		}
+	}
+
+
+	option = {
+		name = dvg_australie.15.a
+		default_option = yes
+
+		trigger_event = {
+			id = dvg_australie.16
+			days = 60
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+
+	
+	option = {
+		name = dvg_australie.15.b
+
+		create_country = {
+			tag = VLD
+			origin = THIS
+			state = scope:verland_state_scope
+
+			
+		}
+		c:VLD = {
+			activate_law = law_type:law_racial_segregation
+			activate_law = law_type:law_migration_controls
 		}
 		
 		
@@ -758,6 +1300,202 @@ dvg_australie.10 = {
 			base = 1
 		}
 
+
+	}
+}
+
+#Verland Revolt
+dvg_australie.16 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_australie.16.t
+	desc = dvg_australie.16.d
+	flavor = dvg_australie.16.f
+
+	event_image = {
+		video = "gfx/event_pictures/europenorthamerica_gold_prospectors.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		any_scope_state = {
+			is_capital = no
+
+		}
+		NOT = {
+			exists = c:VLD
+			has_global_variable = verland_revolt
+		}
+	}
+	immediate = {
+		random_scope_state = {
+			limit = {
+				is_capital = no
+			}
+			save_scope_as = verland_state_scope
+		}
+		create_country = {
+			tag = VLD
+			origin = THIS
+			state = scope:verland_state_scope
+
+			
+		}
+		c:VLD = {
+			activate_law = law_type:law_racial_segregation
+			activate_law = law_type:law_migration_controls
+		}
+		set_global_variable = verland_revolt
+	}
+
+	option = {
+		name = dvg_australie.16.a
+		default_option = yes
+
+		create_diplomatic_play = {
+			type = dp_rebellion_annex
+			target_country = c:VLD
+			war = no
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+
+	}
+
+	
+	option = {
+		name = dvg_australie.16.b
+
+		play_as = c:VLD
+
+		create_diplomatic_play = {
+			type = dp_rebellion_annex
+			target_country = c:VLD
+			war = no
+		}
+
+		
+		ai_chance = {
+			base = 1
+		}
+
+
+	}
+}
+
+#More Convicts
+dvg_australie.20 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_australie.20.t
+	desc = dvg_australie.20.d
+	flavor = dvg_australie.20.f
+
+	event_image = {
+		video = "gfx/event_pictures/europenorthamerica_gold_prospectors.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		NOT = {
+			any_scope_state = {
+				has_modifier = dvg_penal_colony
+			}
+		}
+	}
+
+	immediate = {
+		every_scope_state = {
+			add_modifier = {
+				name = dvg_penal_colony
+				months = 7
+			}
+		}
+		
+		random_scope_state = {
+			limit = {
+				is_capital = yes
+			}
+			save_scope_as = capital_state_scope
+		}
+		
+		if = {
+			limit = {
+				any_scope_state = {
+					is_capital = no
+				}
+			}
+			random_scope_state = {
+			limit = {
+				is_capital = no
+			}
+			save_scope_as = rural_state_scope
+		}
+		}
+	}
+
+	option = {
+		name = dvg_australie.20.a
+		default_option = yes
+
+
+		top_overlord = {
+			random_scope_pop = {
+				limit = {
+					pop_radical_fraction > 0.10
+					pop_acceptance > 35
+				}
+				move_pop = scope:capital_state_scope
+				change_poptype = pop_type:slaves
+			}
+		}
+		scope:capital_state_scope = {
+			add_radicals_in_state = {
+				value = 0.03
+			}
+		}
+		
+	}
+
+	option = {
+		name = dvg_australie.20.b
+		trigger = {
+			any_scope_state = {
+					is_capital = no
+			}
+		}
+
+		top_overlord = {
+			random_scope_pop = {
+				limit = {
+					pop_radical_fraction > 0.10
+					pop_acceptance > 35
+				}
+				move_pop = scope:rural_state_scope
+				change_poptype = pop_type:slaves
+			}
+		}
+		scope:rural_state_scope = {
+			add_radicals_in_state = {
+				value = 0.05
+			}
+		}
 		
 	}
 }
