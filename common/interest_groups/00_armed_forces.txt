@@ -12,6 +12,7 @@
 
 	character_ideologies = {
 		ideology_moderate
+		ideology_authoritarian
 	}
 
 	enable = {
@@ -32,7 +33,7 @@
 					owner = {
 						OR = {
 							c:CHI ?= this
-							c:SHU ?= this
+							c:SHU ?= this # dvg
 						}
 					}
 				}
@@ -45,7 +46,7 @@
 					owner = {
 						OR = {
 							c:FRA ?= this
-							c:LOT ?= this
+							c:LOT ?= this # dvg
 							country_has_primary_culture = cu:french
 						}
 					}
@@ -72,23 +73,23 @@
 				limit = {
 					owner = {
 						has_dlc_feature = rp1_content
-						c:LUS ?= this
+						c:LUS ?= this # dvg
 					}
 				}
 				set_ig_trait = ig_trait:ig_trait_coronelismo
 				set_ig_trait = ig_trait:ig_trait_clube_militar
 				set_ig_trait = ig_trait:ig_trait_patriotic_fervor
 			}
-			# else_if = {
-				# limit = {
-					# owner = {
-						# has_dlc_feature = ip2_content
-						# c:BEI ?= this
-					# }
-				# }
-				# set_ig_trait = ig_trait:ig_trait_divided_ranks
-				# set_ig_trait = ig_trait:ig_trait_imperial_service
-				# set_ig_trait = ig_trait:ig_trait_veerta
+			# else_if = { # dvg
+			# 	limit = {
+			# 		owner = {
+			# 			has_dlc_feature = ip2_content
+			# 			c:BIC ?= this
+			# 		}
+			# 	}
+			# 	set_ig_trait = ig_trait:ig_trait_divided_ranks
+			# 	set_ig_trait = ig_trait:ig_trait_imperial_service
+			# 	set_ig_trait = ig_trait:ig_trait_veerta
 			# }
 			else_if = {
 				limit = {
@@ -129,6 +130,7 @@
 					country_has_primary_culture = cu:mexican
 				}
 			}
+			add_modifier = age_of_caudillos_modifier
 			ig:ig_armed_forces ?= {
 				add_ideology = ideology_caudillismo
 			}
@@ -165,7 +167,7 @@
 			}
 		}
 		#HBE
-		else_if = {
+		else_if = {# dvg
 			limit = {
 				c:HBE ?= this
 			}
@@ -200,6 +202,32 @@
 				bedouin swahili baluchi
 			}
 		}
+		# rule = { # dvg
+		# 	trigger = {
+		# 		c:PHI ?= this
+		# 		NOT = { has_variable = je_philippines_main_reliance_happened }
+		# 		NOT = { any_primary_culture = { cu:filipino = this } }
+		# 		NOT = { any_primary_culture = { cu:filipino_hispanophone = this } }
+		# 		any_primary_culture = { cu:spanish = this }
+		# 	}
+		# 	cultures = {
+		# 		spanish filipino_mestizo
+		# 	}
+		# }
+		# rule = {
+		# 	trigger = {
+		# 		c:PHI ?= this
+		# 		any_primary_culture = {
+		# 			AND = {
+		# 				cu:spanish = this
+		# 				cu:filipino_hispanophone = this
+		# 			}
+		# 		}
+		# 	}
+		# 	cultures = {
+		# 		spanish filipino_hispanophone
+		# 	}
+		# }
 	}
 
 	on_character_ig_membership = {}
@@ -220,6 +248,11 @@
 			desc = "POP_NOT_DISCRIMINATED"
 			if = {
 				limit = {
+					NOT = {
+						owner = {
+							has_social_hierarchy = edo_system
+						}
+					}
 					pop_acceptance >= acceptance_status_4
 				}
 				value = 25
@@ -266,6 +299,14 @@
 						}
 					}
 					add = 50
+				}
+				else_if = {
+					limit = {
+						owner = {
+							has_law = law_type:law_warrior_caste
+						}
+					}
+					add = 100
 				}
 				if = { # Pay makes soldiers more inclined to be loyal to Armed Forces
 					limit = {
@@ -328,11 +369,22 @@
 				if = {
 					limit = {
 						owner = {
-							has_law_or_variant = law_type:law_peasant_levies
+							has_law = law_type:law_peasant_levies
 						}
 					}
 					add = 50
 				}
+			}
+		}
+
+		add = {
+			desc = "SAMURAI_TRADITIONS" # Warrior caste
+			if = {
+				limit = {
+					is_pop_type = aristocrats
+					culture = cu:japanese
+				}
+				add = 100
 			}
 		}
 
@@ -394,7 +446,7 @@
 
 		multiply = {
 			desc = "LEADER_POPULARITY"
-			scope:interest_group = {
+			scope:interest_group ?= {
 				leader ?= {
 					value = popularity
 					multiply = 0.0025
@@ -406,7 +458,7 @@
 		}
 		if = {
 			limit = {
-				scope:interest_group = {
+				scope:interest_group ?= {
 					is_in_government = yes
 				}
 			}
@@ -419,7 +471,7 @@
 		}
 		if = {
 			limit = {
-				scope:interest_group = {
+				scope:interest_group ?= {
 					is_in_government = yes
 				}
 			}
@@ -432,7 +484,7 @@
 		}
 		if = {
 			limit = {
-				scope:interest_group = {
+				scope:interest_group ?= {
 					is_in_government = no
 				}
 			}
@@ -517,7 +569,7 @@
 		if = {
 			limit = {
 				owner.ig:ig_armed_forces ?= {
-					is_marginal = yes
+					ig_counts_as_marginal = yes
 				}
 			}
 			multiply = {
@@ -529,6 +581,10 @@
 	commander_weight = {
 		value = 5.0
 	}
+	
+	magnate_weight = {
+		value = 1.0
+	}	
 
 	executive_weight = {
 		value = 0.2
@@ -559,6 +615,10 @@
 
 	female_executive_chance = {
 		value = 0.0
+	}
+
+	female_monarch_chance = {
+		value = 0
 	}
 
 	female_politician_chance = {
@@ -620,16 +680,30 @@
 		}
 	}
 
-	# The chance that a commander belonging to this IG takes over leadership when it changes
-	# scope:character is the most popular commander in the IG
-	commander_leader_chance = {
-		value = 0.75
-		multiply = ig_commander_leader_chance_mult
+	# Multiplier applied to the weight for an appropriate commander will be selected from the character pool to lead the IG
+	# root = interest group
+	commander_leader_weight = {
+		value = 3.0
+	}
+	
+	# Multiplier applied to the weight for an appropriate magnate will be selected from the character pool to lead the IG
+	# root = interest group
+	magnate_leader_weight = {
+		value = 1.0
+		# if = { # dvg
+		# 	limit = {
+		# 		c:JAP ?= owner
+		# 		NOT = {
+		# 			has_variable = japan_restoration_complete
+		# 		}
+		# 	}
+		# 	add = 5
+		# }
 	}
 
-	# The chance that a executive belonging to this IG takes over leadership when it changes
-	# scope:character is the most popular executive in the IG
-	executive_leader_chance = {
+	# Multiplier applied to the weight for an appropriate executive will be selected from the character pool to lead the IG
+	# root = interest group
+	executive_leader_weight = {
 		value = 0.1
 	}
 }
