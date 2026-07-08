@@ -95,6 +95,16 @@ on_game_started_after_lobby = {
 				initialize_electoral_confidence = yes
 			}
 		}
+		clear_global_variable_list = great_power_country_list
+		every_country = {
+			limit = {
+				country_rank >= rank_value:great_power
+			}
+			add_to_global_variable_list = {
+				name = great_power_country_list
+				target = THIS
+			}
+		}
 		set_global_variable = { # Ensures that Abraham Lincoln is not a valid leader of the Chinese Literati in 1836
 			name = ruler_selector_pool_invalidation_global_var
 			days = 30
@@ -215,7 +225,7 @@ on_monthly_pulse = {
 					state_region = {
 						has_harvest_condition = disease_outbreak
 					}
-					count >= 10
+					count >= 15
 				}
 			}
 			set_global_variable = hungry_forties_happened
@@ -458,7 +468,7 @@ on_monthly_pulse_country = {
 	events = {
 		communism.8 # Red Army
 		opium_wars.1
-		native_resettlement.1
+		# native_resettlement.1 dvg - we don't have these
 		# meiji.13 dvg - we don't have these
 		# bic_breakup.1 dvg - we don't have these
 		# dreyfus.1 dvg - we don't have these
@@ -830,6 +840,7 @@ on_monthly_pulse_country = {
 				name = peoples_springtime_recent
 				days = normal_modifier_time
 			}
+			debug_log = "[TimeKeeper.GetCurrentDate.GetString]: Springtime of the Peoples Started - started from [THIS.GetCountry.GetNameNoFormatting]"
 			every_country_in_europe = {
 				limit = {
 					has_technology_researched = egalitarianism
@@ -853,52 +864,52 @@ on_monthly_pulse_country = {
 		}
 
  		#Montenegro ruler dies of Tuberculosis
-		if = {
-			limit = {
-				c:MON ?= THIS
-				NOT = {
-					has_variable = mon_state_formation_6_fired
-				}
-				game_date >= 1851.10.19
-				ruler ?= {
-					has_template = mon_petar_II_petrovic_njegos
-					has_trait = tuberculosis
-					is_immortal = no
-					NOT = {
-						has_variable = is_away
-					}
-				}
-				heir ?= {
-					has_template = mon_danilo_petrovic_njegos
-				}
-			}
-			c:MON ?= {
-				set_variable = petar_died_tuberculosis
-			}
-			trigger_event = { id = mon_state_formation.6 popup = yes }
-		}
+		# if = {
+		# 	limit = {
+		# 		c:MON ?= THIS
+		# 		NOT = {
+		# 			has_variable = mon_state_formation_6_fired
+		# 		}
+		# 		game_date >= 1851.10.19
+		# 		ruler ?= {
+		# 			has_template = mon_petar_II_petrovic_njegos
+		# 			has_trait = tuberculosis
+		# 			is_immortal = no
+		# 			NOT = {
+		# 				has_variable = is_away
+		# 			}
+		# 		}
+		# 		heir ?= {
+		# 			has_template = mon_danilo_petrovic_njegos
+		# 		}
+		# 	}
+		# 	c:MON ?= {
+		# 		set_variable = petar_died_tuberculosis
+		# 	}
+		# 	trigger_event = { id = mon_state_formation.6 popup = yes }
+		# }
 
-		if = { #mon defeats c:TUR
-			limit = {
-				c:MON ?= THIS
-				NOT = {
-					exists = c:TUR
-				}
-			}
-			trigger_event = { id = mon_state_formation.19 popup = yes }
-		}
+		# if = { #mon defeats c:TUR
+		# 	limit = {
+		# 		c:MON ?= THIS
+		# 		NOT = {
+		# 			exists = c:TUR
+		# 		}
+		# 	}
+		# 	trigger_event = { id = mon_state_formation.19 popup = yes }
+		# }
 
-		if = { #mon becomes kingdom
-			limit = {
-				c:MON ?= THIS
-				NOT = {
-					has_variable = mon_state_formation_20_fired
-					is_subject = yes
-				}
-				game_date >= 1910.08.27 #historical date
-			}
-			trigger_event = { id = mon_state_formation.20 popup = yes }
-		}
+		# if = { #mon becomes kingdom
+		# 	limit = {
+		# 		c:MON ?= THIS
+		# 		NOT = {
+		# 			has_variable = mon_state_formation_20_fired
+		# 			is_subject = yes
+		# 		}
+		# 		game_date >= 1910.08.27 #historical date
+		# 	}
+		# 	trigger_event = { id = mon_state_formation.20 popup = yes }
+		# }
 
 		#Montenegro ruler assassinated
 		if = {
@@ -926,21 +937,21 @@ on_monthly_pulse_country = {
 			trigger_event = { id = mon_state_formation.10 popup = yes }
 		}
 
-		if = {
-			limit = {
-				c:MON ?= THIS
-				NOT = {
-					has_variable = mon_state_formation_13_fired
-				}
-				any_scope_state = {
-					has_active_building = building_arms_industry
-				}
-			}
-			trigger_event = {
-				id = mon_state_formation.13
-				popup = yes
-			}
-		}
+		# if = {
+		# 	limit = {
+		# 		c:MON ?= THIS
+		# 		NOT = {
+		# 			has_variable = mon_state_formation_13_fired
+		# 		}
+		# 		any_scope_state = {
+		# 			has_active_building = building_arms_industry
+		# 		}
+		# 	}
+		# 	trigger_event = {
+		# 		id = mon_state_formation.13
+		# 		popup = yes
+		# 	}
+		# }
 
 		# Karl XV gets tuberculosis
 		if = {
@@ -970,7 +981,7 @@ on_monthly_pulse_country = {
 				on_created = {
 					if = {
 						limit = { is_in_exile_pool = no }
-						exile_character = yes
+						exile_character_with_role_cleanup = yes
 					}
 				}
 			}
@@ -1367,6 +1378,25 @@ on_monthly_pulse_country = {
 			}
 			remove_modifier = modifier_reformed_captaincy_general
 		}
+
+		if = {
+			limit = {
+				country_has_voting_franchise = yes
+				NOT = {
+					modifier:country_electoral_confidence_over_time = 0
+				}
+				trigger_if = {
+					limit = {
+						modifier:country_electoral_confidence_over_time < 0
+					}
+					electoral_confidence > { # Can never drift to below 25%
+						value = 0.25
+						subtract = modifier:country_electoral_confidence_over_time
+					}
+				}
+			}
+			add_electoral_confidence = modifier:country_electoral_confidence_over_time
+		}
 	}
 	on_actions = { # delay ensures events won't fire simultaneously
 		coup_monthly_events
@@ -1616,13 +1646,24 @@ on_yearly_pulse_country = {
 			if = { # Keeps track of how long one has been Colonial Governor, and replaces them if needed
 				limit = {
 					has_variable = colonial_governor_term
-					NOT = { has_template = HBC_george_simpson } # Special case
 					owner = {
+						is_country_type = colonial
 						has_law = law_type:law_colonial_administration
 						exists = overlord
 					}
 				}
 				run_colonial_governor_cycle = yes
+			}
+		}
+
+		if = {
+			limit = {
+				c:JAP ?= this
+				has_variable = years_since_opening_of_japan_var
+			}
+			change_variable = {
+				name = years_since_opening_of_japan_var
+				add = 1
 			}
 		}
 	}
@@ -1770,12 +1811,29 @@ on_monthly_pulse_character = {
 		if = { # Updates biannual unit share cache
 			limit = {
 				OR = {
-					has_role = admiral
-					has_role = general
+					has_role_of_type = admiral
+					has_role_of_type = general
 				}
 			}
 			set_variable = { name = monthly_cached_units_share value = this.num_units_share }
 			set_variable = { name = monthly_cached_commander_coup_strength value = this.commander_coup_strength }
+		}
+
+		if = {
+			limit = {
+				is_immortal = yes
+				has_variable = temporary_immortality_var
+				var:temporary_immortality_var != 0
+			}
+			change_variable = { name = temporary_immortality_var subtract = 1 }
+		}
+		else_if = {
+			limit = {
+				is_immortal = yes
+				has_variable = temporary_immortality_var
+				var:temporary_immortality_var = 0
+			}
+			set_character_immortal = no
 		}
 	}
 }
@@ -1786,7 +1844,7 @@ on_yearly_pulse_character = {
 	effect = {
 		if = {
 			limit = {
-				is_ruler = yes
+				is_ruler_of_own_country = yes
 				owner = {
 					has_gov_regency = yes
 				}
@@ -1801,6 +1859,20 @@ on_yearly_pulse_character = {
 				set_variable = { name = regency_years value = 0 } # In case all else fails
 			}
 		}
+		if = { # Handles total years in power, not consecutive years. Mostly for Japan.
+			limit = {
+				is_ruler_of_own_country = yes
+			}
+			if = {
+				limit = {
+					has_variable = year_in_power
+				}
+				change_variable = { name = year_in_power add = 1 } # Keeps track of how long one has been Regent
+			}
+			else = {
+				set_variable = { name = year_in_power value = 1 } # In case all else fails
+			}
+		}
 	}
 }
 on_half_yearly_pulse_character = {
@@ -1812,6 +1884,9 @@ on_decade_pulse_character = {}
 
 # Root = State
 on_monthly_pulse_state = {
+	on_actions = {
+		colonial_claims_check
+	}
 	random_events = {
 	}
 	effect = {
@@ -1905,6 +1980,127 @@ on_battle_lost = {}
 
 # Same as above, but for battles that end with no units for one of the sides
 on_empty_battle_lost = {}
+
+# Root = attacker or defender country
+# scope:enemy_country = enemy of root
+# scope:battle = naval battle
+# scope:attacker = attacking commander
+# scope:defender = defending commander
+# scope:state = location state
+on_naval_battle_started = {}
+
+# Root = attacker or defender country
+# scope:enemy_country = enemy of root
+# scope:battle = naval battle
+# scope:attacker = attacking commander
+# scope:defender = defending commander
+# scope:state = location state
+on_naval_battle_ended = {}
+
+# Root = attacker or defender country
+# scope:enemy_country = enemy of root
+# scope:battle = naval battle
+# scope:attacker = attacking commander
+# scope:defender = defending commander
+# scope:state = location state
+on_naval_battle_won = {
+	# random_events = { # dvg
+	# 	chance_to_happen = 20
+	# 	20 = culture_brazil.1
+	# }
+}
+
+# Root = attacker or defender country
+# scope:enemy_country = enemy of root
+# scope:battle = naval battle
+# scope:attacker = attacking commander
+# scope:defender = defending commander
+# scope:state = location state
+on_naval_battle_lost = {}
+
+# Root = attacker or defender country
+# scope:battle = battle
+# scope:ship = flagship ship
+# scope:attacker = lead attacking country
+# scope:defender = lead defending country
+# scope:attacker_commander = lead attacking commander
+# scope:defender_commander = lead defending commander
+# scope:other_country = the enemy country to the flagship's country in the battle
+on_flagship_battle_won = {
+	effect = {
+		add_modifier = {
+			name = flagship_battle_won
+			months = 12
+			is_decaying = yes
+		}
+	}
+}
+
+# Root = attacker or defender country
+# scope:battle = battle
+# scope:ship = flagship ship
+# scope:attacker = lead attacking country
+# scope:defender = lead defending country
+# scope:attacker_commander = lead attacking commander
+# scope:defender_commander = lead defending commander
+# scope:other_country = the enemy country to the flagship's country in the battle
+on_flagship_battle_lost = {
+	effect = {
+		add_modifier = {
+			name = flagship_battle_lost
+			months = 12
+			is_decaying = yes
+		}
+	}
+}
+
+# Root = flagship country
+# scope:battle = battle
+# scope:ship = flagship ship
+# scope:attacker = lead attacking country
+# scope:defender = lead defending country
+# scope:attacker_commander = lead attacking commander
+# scope:defender_commander = lead defending commander
+# scope:other_country = the enemy country to the flagship's country in the battle
+on_flagship_destroyed = {
+	effect = {
+		add_modifier = {
+			name = flagship_destroyed
+			months = 12
+			is_decaying = yes
+		}
+		if = { # Checking for Nobody Did Their Duty — FRA or SPA can be assumed to have destroyed the flagship
+			limit = {
+				scope:ship.owner ?= c:GBR
+			}
+			scope:battle ?= {
+				if = {
+					limit = {
+						c:GBR ?= scope:attacker
+					}
+					scope:defender ?= { save_scope_as = gbr_flagship_destroyer }
+				}
+				else = {
+					scope:attacker ?= { save_scope_as = gbr_flagship_destroyer }
+				}
+			}
+			if = {
+				limit = {
+					scope:gbr_flagship_destroyer ?= {
+						is_player = yes
+						OR = {
+							c:FRA ?= this
+							c:SPA ?= this
+						}
+					}
+				}
+				scope:gbr_flagship_destroyer ?= {
+					set_variable = nobody_did_their_duty_var
+				}
+			}
+		}
+	}
+}
 
 # Root = Building
 on_building_built = {
@@ -2188,6 +2384,29 @@ on_diplomatic_play_started = {
 				}
 			}
 		}
+		if = {
+			limit = {
+				scope:initiator = {
+					c:TUR ?= this
+					NOT = { has_variable = egyptian_crisis }
+				}
+				scope:target = {
+					c:EGY ?= this
+				}
+				OR = {
+					is_diplomatic_play_type = dp_conquer_state
+					is_diplomatic_play_type = dp_return_state
+					is_diplomatic_play_type = dp_reduce_autonomy
+					is_diplomatic_play_type = dp_make_tributary
+					is_diplomatic_play_type = dp_make_protectorate
+					is_diplomatic_play_type = dp_annex_subject
+				}
+			}
+			save_scope_as = egyptian_crisis_scope
+			scope:initiator = {
+				trigger_event = { id = egyptian_crisis_events.1 popup = yes }
+			}
+		}
 	}
 }
 
@@ -2228,8 +2447,8 @@ on_character_creation = {
 		if = { # Updates biannual unit share cache - just in case a commander spawns another way
 			limit = {
 				OR = {
-					has_role = admiral
-					has_role = general
+					has_role_of_type = admiral
+					has_role_of_type = general
 				}
 			}
 			set_variable = { name = monthly_cached_units_share value = this.num_units_share }
@@ -2361,7 +2580,7 @@ on_character_death = {
 		#JE about Hawaii triggered by an event
 		if = {
 			limit = {
-				is_ruler = yes
+				is_ruler_of_own_country = yes
 				has_template = HAW_kamehameha_iii
 				exists = c:HAW
 				owner = c:HAW
@@ -2392,7 +2611,7 @@ on_character_death = {
 		### Force-generating French monarchs of the correct dynasty if something goes wrong
 		if = {
 			limit = {
-				is_ruler = yes
+				is_ruler_of_own_country = yes
 				owner = {
 					has_law = law_type:law_monarchy
 					NOT = {
@@ -2435,8 +2654,8 @@ on_character_death = {
 		if = {
 			limit = {
 				NOT = { has_variable = caudillo_kingmaker }
-				has_role = politician
-				interest_group = {
+				is_interest_group_leader = yes
+				interest_group ?= {
 					is_interest_group_type = ig_armed_forces
 					ig_counts_as_marginal = no
 				}
@@ -2469,28 +2688,28 @@ on_character_death = {
 			set_global_variable = espartero_is_dead_var
 		}
 
-		if = { # Override to make the ruler of British India always an Industrialist
-			limit = {
-				is_ruler = yes
-				c:BIC ?= owner
-			}
-			owner = {
-				ig:ig_industrialists ?= {
-					leader = {
-						set_character_as_ruler = yes
-					}
-				}
-				generate_new_eic_government_leader = yes
-			}
-		}
+		# if = { # Override to make the ruler of British India always an Industrialist
+		# 	limit = {
+		# 		is_ruler = yes
+		# 		c:BIC ?= owner
+		# 	}
+		# 	owner = {
+		# 		ig:ig_industrialists ?= {
+		# 			leader = {
+		# 				set_character_as_ruler = yes
+		# 			}
+		# 		}
+		# 		generate_new_eic_government_leader = yes
+		# 	}
+		# }
 		# Ethiopian emperor succession pre-unification
 		if = {
 			limit = {
-				is_ruler = yes
+				is_ruler_of_own_country = yes
 				owner ?= {
 					has_law = law_type:law_monarchy
 					any_scope_character = {
-						is_heir = yes
+						is_heir_of_own_country = yes
 					}
 				}
 				has_variable = ethiopian_emperor
@@ -2498,7 +2717,7 @@ on_character_death = {
 			owner ?= {
 				random_scope_character = {
 					limit = {
-						is_heir = yes
+						is_heir_of_own_country = yes
 					}
 					set_variable = ethiopian_emperor
 				}
@@ -2510,7 +2729,7 @@ on_character_death = {
 				owner = {
 					c:AUS ?= this
 				}
-				is_ruler = yes
+				is_ruler_of_own_country = yes
 				has_template = aus_franz_josef_I_habsburg_template
 				AND = {
 					game_date > 1875.6.29
@@ -2532,7 +2751,7 @@ on_character_death = {
 						has_template = mon_danilo_petrovic_njegos
 					}
 				}
-				is_ruler = yes
+				is_ruler_of_own_country = yes
 				has_template = mon_petar_II_petrovic_njegos
 			}
 			trigger_event = { id = mon_state_formation.6 popup = yes }
@@ -2557,14 +2776,16 @@ on_character_death = {
 
 		if = { # Hijacks the deaths of colonial governors
 			limit = {
-				is_ruler = yes
+				is_ruler_of_own_country = yes
 				has_variable = colonial_governor_term
 				owner ?= {
+					is_country_type = colonial
 					has_law = law_type:law_colonial_administration
 				}
 			}
 			save_scope_as = current_governor
 			owner ?= {
+				set_variable = { name = hide_ruler_change_notification days = 3 }
 				save_colonial_governor_generation_scopes = yes
 				generate_governor_of_same_type = yes
 			}
@@ -2577,6 +2798,7 @@ on_new_interest_group_leader = {
 
 }
 
+# Root = Character
 # Root = Character
 on_new_ruler = {
 	effect = {
@@ -2593,7 +2815,7 @@ on_new_ruler = {
 							has_variable = hide_ruler_change_notification
 						}
 					}
-					age >= define:NCharacters|ADULT_AGE
+					is_adult = yes
 				}
 				post_notification = new_ruler
 			}
@@ -2606,14 +2828,17 @@ on_new_ruler = {
 				}
 				change_character_religion = owner.religion
 			}
+
+			# Setup regencies
 			if = {
 				limit = {
 					owner = {
 						has_law = law_type:law_monarchy
 						has_gov_regency = no
 					}
-					age < define:NCharacters|ADULT_AGE
+					is_adult = no
 					NOT = { has_variable = regency_complete }
+					NOT = { has_template = JAP_iemochi_tokugawa } # Has his own event
 				}
 				owner = {
 					trigger_event = {
@@ -2622,6 +2847,8 @@ on_new_ruler = {
 					}
 				}
 			}
+
+			# For handling the Sikh Maharaja achievement
 			if = {
 				limit = {
 					owner = {
@@ -2646,23 +2873,23 @@ on_new_ruler = {
 					}
 				}
 			}
-			if = { # Override to make the ruler of British India always an Industrialist
-				limit = {
-					is_ruler = yes
-					c:BIC ?= owner
-					NOT = {
-						is_interest_group_type = ig_industrialists
-					}
-				}
-				owner = {
-					ig:ig_industrialists ?= {
-						leader = {
-							set_character_as_ruler = yes
-						}
-					}
-					generate_new_eic_government_leader = yes
-				}
-			}
+			# if = { # Override to make the ruler of British India always an Industrialist
+			# 	limit = {
+			# 		is_ruler = yes
+			# 		c:BIC ?= owner
+			# 		NOT = {
+			# 			is_interest_group_type = ig_industrialists
+			# 		}
+			# 	}
+			# 	owner = {
+			# 		ig:ig_industrialists ?= {
+			# 			leader = {
+			# 				set_character_as_ruler = yes
+			# 			}
+			# 		}
+			# 		generate_new_eic_government_leader = yes
+			# 	}
+			# }
 			if = {
 				limit = {
 					owner = {
@@ -2686,9 +2913,10 @@ on_new_ruler = {
 			### Monarchial succession - add all successions here.
 			if = {
 				limit = {
-					is_ruler = yes
+					is_ruler_of_own_country = yes
 					owner ?= {
-						has_law = law_type:law_monarchy
+						country_has_monarchy_law = yes
+						country_has_non_monarchy_law = no # To handle an execution order issue
 					}
 				}
 				### Russian Monarchs
@@ -2827,7 +3055,22 @@ on_new_ruler = {
 					set_heir = scope:portuguese_monarch_scope
 				}
 			}
+			set_variable = { name = year_in_power value = 1 } # In case all else fails
 		}
+	}
+}
+
+# Root = Character
+on_character_became_adult = {
+	effect = {
+		post_notification = character_became_adult
+	}
+}
+
+# Root = Character
+on_character_spawned_in_pool = {
+	effect = {
+		post_notification = character_spawned_in_pool
 	}
 }
 
@@ -3096,6 +3339,24 @@ on_treaty_proposal_declined = {
 on_treaty_entered_into_force = {
 	effect = {
 		post_notification = treaty_entered_into_force
+		if = {
+			limit = {
+				is_enforced = no
+			}
+
+			root.first_country = {
+				create_diplomatic_catalyst = {
+					type = catalyst_treaty_signed
+					target = root.second_country
+				}
+			}
+			root.second_country = {
+				create_diplomatic_catalyst = {
+					type = catalyst_treaty_signed
+					target = root.first_country
+				}
+			}
+		}
 		if = { #add balkan war allies to the list
 			limit = {
 				OR = {
@@ -3136,6 +3397,30 @@ on_treaty_entered_into_force = {
 			}
 			generate_balkan_league_side_list = yes
 			generate_ottoman_side_list = yes
+		}
+
+		# clear ownership transfer fleet(s)
+		if = {
+			limit = {
+				any_scope_article_option = {
+					has_type = ship_transfer
+					target_country = root.first_country
+				}
+			}
+			root.first_country = {
+				clear_ownership_transfer_fleet = yes
+			}
+		}
+		if = {
+			limit = {
+				any_scope_article_option = {
+					has_type = ship_transfer
+					target_country = root.second_country
+				}
+			}
+			root.second_country = {
+				clear_ownership_transfer_fleet = yes
+			}
 		}
 	}
 }
@@ -3834,6 +4119,10 @@ on_capitulation = {
             days = 1825
             value = yes
         }
+		set_variable = {
+			name = recent_capitulation
+			days = short_modifier_time
+		}
 	}
 }
 
@@ -3841,10 +4130,6 @@ on_capitulation = {
 on_self_capitulated_notification = {
 	effect = {
 		post_notification = self_capitulated
-		set_variable = {
-			name = recent_capitulation
-			days = short_modifier_time
-		}
 	}
 }
 
@@ -4077,39 +4362,40 @@ on_production_method_changed = {
 on_law_enactment_started = {
 	effect = {
 		#Montenegro events
-		if = {
-			limit = {
-				c:MON ?= THIS
-			}
-			if = {
-				limit = {
-					has_variable = danilo_dresses_like_a_prince
-					is_enacting_law = law_type:law_monarchy
-				}
-				trigger_event = {
-					ID = mon_state_formation.7
-				}
-			}
-			if = {
-				limit = {
-					OR = {
-						is_enacting_law = law_type:law_consumption_based_taxation
-						is_enacting_law = law_type:law_land_based_taxation
-						is_enacting_law = law_type:law_per_capita_based_taxation
-						is_enacting_law = law_type:law_proportional_taxation
-						is_enacting_law = law_type:law_graduated_taxation
-					}
-				}
-				trigger_event = {
-					ID = mon_state_formation.12
-				}
-			}
-		}
+		# if = {
+		# 	limit = {
+		# 		c:MON ?= THIS
+		# 	}
+		# 	if = {
+		# 		limit = {
+		# 			has_variable = danilo_dresses_like_a_prince
+		# 			is_enacting_law = law_type:law_monarchy
+		# 		}
+		# 		trigger_event = {
+		# 			ID = mon_state_formation.7
+		# 		}
+		# 	}
+		# 	if = {
+		# 		limit = {
+		# 			OR = {
+		# 				is_enacting_law = law_type:law_consumption_based_taxation
+		# 				is_enacting_law = law_type:law_land_based_taxation
+		# 				is_enacting_law = law_type:law_per_capita_based_taxation
+		# 				is_enacting_law = law_type:law_proportional_taxation
+		# 				is_enacting_law = law_type:law_graduated_taxation
+		# 			}
+		# 		}
+		# 		trigger_event = {
+		# 			ID = mon_state_formation.12
+		# 		}
+		# 	}
+		# }
 		#Abolishing Monarchy
 		if = {
 			limit = {
 				has_law = law_type:law_monarchy
 				OR = {
+					is_enacting_law = law_type:law_corporate_state
 					is_enacting_law = law_type:law_presidential_republic
 					is_enacting_law = law_type:law_parliamentary_republic
 					is_enacting_law = law_type:law_council_republic
@@ -4194,9 +4480,9 @@ on_law_checkpoint_advance = {
 		10 = monarchy_law_events.2
 		10 = economy_laws.1
 		10 = economy_laws.4
-		10 = meiji.4
-		10 = meiji.5
-		10 = meiji.6
+		# 10 = meiji.4 # dvg
+		# 10 = meiji.5
+		# 10 = meiji.6
 		10 = conscription_laws.1
 		10 = republic_laws.1
 		10 = internal_security_events.4
@@ -4369,12 +4655,12 @@ on_law_checkpoint_debate = {
 		10 = labour_associations_events.7
 		10 = subjecthood_events.2
 	}
-	events = {
-		tanzimat_events.1
-		tanzimat_events.2
-		tanzimat_events.4
-		tanzimat_events.10
-	}
+	# events = { # dvg
+	# 	tanzimat_events.1
+	# 	tanzimat_events.2
+	# 	tanzimat_events.4
+	# 	tanzimat_events.10
+	# }
 }
 
 # Root = owner Country of the Law
@@ -4486,20 +4772,20 @@ on_law_checkpoint_stall = {
 # will work as expected, even though the enactment is _just_ about to end
 on_law_enactment_pass = {
 	effect = {
-		if = {
-			limit = {
-				c:MON ?= this
-				OR = {
-					ROOT.currently_enacting_law.type ?= law_type:law_religious_schools
-					ROOT.currently_enacting_law.type ?= law_type:law_public_schools
-					ROOT.currently_enacting_law.type ?= law_type:law_private_schools
-				}
-			}
-			trigger_event = {
-				id = mon_state_formation.11
-				days = 1
-			}
-		}
+		# if = {
+		# 	limit = {
+		# 		c:MON ?= this
+		# 		OR = {
+		# 			ROOT.currently_enacting_law.type ?= law_type:law_religious_schools
+		# 			ROOT.currently_enacting_law.type ?= law_type:law_public_schools
+		# 			ROOT.currently_enacting_law.type ?= law_type:law_private_schools
+		# 		}
+		# 	}
+		# 	trigger_event = {
+		# 		id = mon_state_formation.11
+		# 		days = 1
+		# 	}
+		# }
 		if = {
 			limit = {
 				is_player = yes
@@ -4510,7 +4796,7 @@ on_law_enactment_pass = {
 						value > neutral
 					}
 					any_supporting_character = {
-						has_role = agitator
+						has_role_of_type = agitator
 					}
 				}
 			}
@@ -4547,7 +4833,7 @@ on_law_enactment_pass = {
 				is_enacting_law = law_type:law_presidential_republic
 			}
 			set_variable = { name = hide_ruler_change_notification days = 3 }
-			ruler = { place_character_in_void = 6 }
+			set_variable = { name = keep_current_ruler_var days = 7 }
 			trigger_event = { id = pedro.10 popup = yes days = 1 }
 		}
 		if = {
@@ -4866,123 +5152,123 @@ on_revolution_start = {
 				trigger_event = { id = krakow.1 days = 3 popup = yes }
 			}
 		}
-		if = {
-			limit = {
-				has_dlc_feature = voice_of_the_people_content
-				c:FRA ?= ROOT
-			}
-			if = {
-				limit = {
-					scope:target ?= {
-						is_secessionist = no
-						has_law = law_type:law_monarchy
-						var:civil_war_type_var ?= movement_type:movement_orleanist
-					}
-				}
-				scope:target ?= {
-					if = {
-						limit = {
-							has_variable = bonapartist_restoration_var
-						}
-						remove_variable = bonapartist_restoration_var
-					}
-					if = {
-						limit = {
-							has_variable = legitimist_restoration_var
-						}
-						remove_variable = legitimist_restoration_var
-					}
-					set_variable = { name = orleanist_restoration_var }
-					if = {
-						limit = {
-							ROOT.ruler = {
-								has_ideology = ideology:ideology_orleanist
-							}
-						}
-						create_character = {
-							template = dynamic_orleanist_ruler_template
-						}
-					}
-					else = {
-						generate_french_monarch = yes
-					}
-				}
-			}
-			else_if = {
-				limit = {
-					scope:target ?= {
-						is_secessionist = no
-						has_law = law_type:law_monarchy
-						var:civil_war_type_var ?= movement_type:movement_legitimist
-					}
-				}
-				scope:target ?= {
-					if = {
-						limit = {
-							has_variable = bonapartist_restoration_var
-						}
-						remove_variable = bonapartist_restoration_var
-					}
-					if = {
-						limit = {
-							has_variable = orleanist_restoration_var
-						}
-						remove_variable = orleanist_restoration_var
-					}
-					set_variable = { name = legitimist_restoration_var }
-					if = {
-						limit = {
-							ROOT.ruler = {
-								has_ideology = ideology:ideology_legitimist
-							}
-						}
-						create_character = {
-							template = dynamic_legitimist_ruler_template
-						}
-					}
-					else = {
-						generate_french_monarch = yes
-					}
-				}
-			}
-			else_if = {
-				limit = {
-					scope:target ?= {
-						is_secessionist = no
-						has_law = law_type:law_monarchy
-						var:civil_war_type_var ?= movement_type:movement_bonapartist
-					}
-				}
-				scope:target ?= {
-					if = {
-						limit = {
-							has_variable = orleanist_restoration_var
-						}
-						remove_variable = orleanist_restoration_var
-					}
-					if = {
-						limit = {
-							has_variable = legitimist_restoration_var
-						}
-						remove_variable = legitimist_restoration_var
-					}
-					set_variable = { name = bonapartist_restoration_var }
-					if = {
-						limit = {
-							ROOT.ruler = {
-								has_ideology = ideology:ideology_bonapartist
-							}
-						}
-						create_character = {
-							template = dynamic_bonapartist_ruler_template
-						}
-					}
-					else = {
-						generate_french_monarch = yes
-					}
-				}
-			}
-		}
+		# if = {
+		# 	limit = {
+		# 		has_dlc_feature = voice_of_the_people_content
+		# 		c:FRA ?= ROOT
+		# 	}
+		# 	if = {
+		# 		limit = {
+		# 			scope:target ?= {
+		# 				is_secessionist = no
+		# 				has_law = law_type:law_monarchy
+		# 				var:civil_war_type_var ?= movement_type:movement_orleanist
+		# 			}
+		# 		}
+		# 		scope:target ?= {
+		# 			if = {
+		# 				limit = {
+		# 					has_variable = bonapartist_restoration_var
+		# 				}
+		# 				remove_variable = bonapartist_restoration_var
+		# 			}
+		# 			if = {
+		# 				limit = {
+		# 					has_variable = legitimist_restoration_var
+		# 				}
+		# 				remove_variable = legitimist_restoration_var
+		# 			}
+		# 			set_variable = { name = orleanist_restoration_var }
+		# 			if = {
+		# 				limit = {
+		# 					ROOT.ruler = {
+		# 						has_ideology = ideology:ideology_orleanist
+		# 					}
+		# 				}
+		# 				create_character = {
+		# 					template = dynamic_orleanist_ruler_template
+		# 				}
+		# 			}
+		# 			else = {
+		# 				generate_french_monarch = yes
+		# 			}
+		# 		}
+		# 	}
+		# 	else_if = {
+		# 		limit = {
+		# 			scope:target ?= {
+		# 				is_secessionist = no
+		# 				has_law = law_type:law_monarchy
+		# 				var:civil_war_type_var ?= movement_type:movement_legitimist
+		# 			}
+		# 		}
+		# 		scope:target ?= {
+		# 			if = {
+		# 				limit = {
+		# 					has_variable = bonapartist_restoration_var
+		# 				}
+		# 				remove_variable = bonapartist_restoration_var
+		# 			}
+		# 			if = {
+		# 				limit = {
+		# 					has_variable = orleanist_restoration_var
+		# 				}
+		# 				remove_variable = orleanist_restoration_var
+		# 			}
+		# 			set_variable = { name = legitimist_restoration_var }
+		# 			if = {
+		# 				limit = {
+		# 					ROOT.ruler = {
+		# 						has_ideology = ideology:ideology_legitimist
+		# 					}
+		# 				}
+		# 				create_character = {
+		# 					template = dynamic_legitimist_ruler_template
+		# 				}
+		# 			}
+		# 			else = {
+		# 				generate_french_monarch = yes
+		# 			}
+		# 		}
+		# 	}
+		# 	else_if = {
+		# 		limit = {
+		# 			scope:target ?= {
+		# 				is_secessionist = no
+		# 				has_law = law_type:law_monarchy
+		# 				var:civil_war_type_var ?= movement_type:movement_bonapartist
+		# 			}
+		# 		}
+		# 		scope:target ?= {
+		# 			if = {
+		# 				limit = {
+		# 					has_variable = orleanist_restoration_var
+		# 				}
+		# 				remove_variable = orleanist_restoration_var
+		# 			}
+		# 			if = {
+		# 				limit = {
+		# 					has_variable = legitimist_restoration_var
+		# 				}
+		# 				remove_variable = legitimist_restoration_var
+		# 			}
+		# 			set_variable = { name = bonapartist_restoration_var }
+		# 			if = {
+		# 				limit = {
+		# 					ROOT.ruler = {
+		# 						has_ideology = ideology:ideology_bonapartist
+		# 					}
+		# 				}
+		# 				create_character = {
+		# 					template = dynamic_bonapartist_ruler_template
+		# 				}
+		# 			}
+		# 			else = {
+		# 				generate_french_monarch = yes
+		# 			}
+		# 		}
+		# 	}
+		# }
 		if = {
 			limit = {
 				has_dlc_feature = ep1_content
@@ -5369,7 +5655,6 @@ on_secession_end = {
 			days = 1
 			popup = yes
 		}
-		add_to_variable_list = { name = failed_uprisings_culture_list target = scope:rebel_culture years = 20 }
 	}
 }
 
@@ -5459,40 +5744,40 @@ on_civil_war_won = {
 
 			# Generate an Orleanist monarch if somehow there's not an Orleanist in charge and it's either the AI, or the player has set a restoration variable and something's just gotten buggy.
 			# If France is controlled by a player and a dynasty other than the Orleanists has been restored to the throne, nothing in this section applies.
-			if = {
-				limit = {
-					any_scope_character = {
-						is_ruler = yes
-						NOT = { has_variable = house_orleans }
-					}
-					OR = {
-						is_player = no
-						AND = {
-							is_player = yes
-							has_variable = orleanist_restoration_var
-						}
-					}
-				}
-				generate_french_monarch = yes
-				if = {
-					limit = {
-						has_variable = bonapartist_restoration_var
-					}
-					remove_variable = bonapartist_restoration_var
-				}
-				if = {
-					limit = {
-						has_variable = legitimist_restoration_var
-					}
-					remove_variable = legitimist_restoration_var
-				}
-				if = {
-					limit = {
-						NOT = { has_variable = orleanist_restoration_var }
-					}
-					set_variable = orleanist_restoration_var
-				}
-			}
+			# if = {
+			# 	limit = {
+			# 		any_scope_character = {
+			# 			is_ruler_of_own_country = yes
+			# 			NOT = { has_variable = house_orleans }
+			# 		}
+			# 		OR = {
+			# 			is_player = no
+			# 			AND = {
+			# 				is_player = yes
+			# 				has_variable = orleanist_restoration_var
+			# 			}
+			# 		}
+			# 	}
+			# 	generate_french_monarch = yes
+			# 	if = {
+			# 		limit = {
+			# 			has_variable = bonapartist_restoration_var
+			# 		}
+			# 		remove_variable = bonapartist_restoration_var
+			# 	}
+			# 	if = {
+			# 		limit = {
+			# 			has_variable = legitimist_restoration_var
+			# 		}
+			# 		remove_variable = legitimist_restoration_var
+			# 	}
+			# 	if = {
+			# 		limit = {
+			# 			NOT = { has_variable = orleanist_restoration_var }
+			# 		}
+			# 		set_variable = orleanist_restoration_var
+			# 	}
+			# }
 			###
 
 			# If France somehow doesn't have the monarchist JEs, it (re)gains them
@@ -5567,40 +5852,40 @@ on_civil_war_won = {
 
 			# Generate a Bonapartist monarch if somehow there's not an Bonapartist in charge and it's either the AI, or the player has set a restoration variable and something's just gotten buggy.
 			# If France is controlled by a player and a dynasty other than the glorious house of Bonaparte has been restored to the throne, nothing in this section applies.
-			if = {
-				limit = {
-					any_scope_character = {
-						is_ruler = yes
-						NOT = { has_variable = house_bonaparte }
-					}
-					OR = {
-						is_player = no
-						AND = {
-							is_player = yes
-							has_variable = bonapartist_restoration_var
-						}
-					}
-				}
-				generate_french_monarch = yes
-				if = {
-					limit = {
-						has_variable = orleanist_restoration_var
-					}
-					remove_variable = orleanist_restoration_var
-				}
-				if = {
-					limit = {
-						has_variable = legitimist_restoration_var
-					}
-					remove_variable = legitimist_restoration_var
-				}
-				if = {
-					limit = {
-						NOT = { has_variable = bonapartist_restoration_var }
-					}
-					set_variable = bonapartist_restoration_var
-				}
-			}
+			# if = {
+			# 	limit = {
+			# 		any_scope_character = {
+			# 			is_ruler_of_own_country = yes
+			# 			NOT = { has_variable = house_bonaparte }
+			# 		}
+			# 		OR = {
+			# 			is_player = no
+			# 			AND = {
+			# 				is_player = yes
+			# 				has_variable = bonapartist_restoration_var
+			# 			}
+			# 		}
+			# 	}
+			# 	generate_french_monarch = yes
+			# 	if = {
+			# 		limit = {
+			# 			has_variable = orleanist_restoration_var
+			# 		}
+			# 		remove_variable = orleanist_restoration_var
+			# 	}
+			# 	if = {
+			# 		limit = {
+			# 			has_variable = legitimist_restoration_var
+			# 		}
+			# 		remove_variable = legitimist_restoration_var
+			# 	}
+			# 	if = {
+			# 		limit = {
+			# 			NOT = { has_variable = bonapartist_restoration_var }
+			# 		}
+			# 		set_variable = bonapartist_restoration_var
+			# 	}
+			# }
 			###
 
 			# If France somehow doesn't have the monarchist JEs, it (re)gains them
@@ -5675,40 +5960,40 @@ on_civil_war_won = {
 
 			# Generate a Legitimist monarch if somehow there's not an Legitimist in charge and it's either the AI, or the player has set a restoration variable and something's just gotten buggy.
 			# If France is controlled by a player and a dynasty other than the house of Bourbon has been restored to the throne, nothing in this section applies.
-			if = {
-				limit = {
-					any_scope_character = {
-						is_ruler = yes
-						NOT = { has_variable = legitimist_leader }
-					}
-					OR = {
-						is_player = no
-						AND = {
-							is_player = yes
-							has_variable = legitimist_restoration_var
-						}
-					}
-				}
-				generate_french_monarch = yes
-				if = {
-					limit = {
-						has_variable = orleanist_restoration_var
-					}
-					remove_variable = orleanist_restoration_var
-				}
-				if = {
-					limit = {
-						has_variable = bonapartist_restoration_var
-					}
-					remove_variable = bonapartist_restoration_var
-				}
-				if = {
-					limit = {
-						NOT = { has_variable = legitimist_restoration_var }
-					}
-					set_variable = legitimist_restoration_var
-				}
-			}
+			# if = {
+			# 	limit = {
+			# 		any_scope_character = {
+			# 			is_ruler_of_own_country = yes
+			# 			NOT = { has_variable = legitimist_leader }
+			# 		}
+			# 		OR = {
+			# 			is_player = no
+			# 			AND = {
+			# 				is_player = yes
+			# 				has_variable = legitimist_restoration_var
+			# 			}
+			# 		}
+			# 	}
+			# 	generate_french_monarch = yes
+			# 	if = {
+			# 		limit = {
+			# 			has_variable = orleanist_restoration_var
+			# 		}
+			# 		remove_variable = orleanist_restoration_var
+			# 	}
+			# 	if = {
+			# 		limit = {
+			# 			has_variable = bonapartist_restoration_var
+			# 		}
+			# 		remove_variable = bonapartist_restoration_var
+			# 	}
+			# 	if = {
+			# 		limit = {
+			# 			NOT = { has_variable = legitimist_restoration_var }
+			# 		}
+			# 		set_variable = legitimist_restoration_var
+			# 	}
+			# }
 			###
 
 			# If France somehow doesn't have the monarchist JEs, it (re)gains them
@@ -5898,7 +6183,6 @@ on_wargoal_enforced = {
             days = 1825
             value = yes
         }
-
 		### Narrative war-end events
         if = { # Paris Commune - Commune victory event
         	limit = {
@@ -6143,7 +6427,7 @@ on_wargoal_enforced = {
 				scope:target ?= {
 					OR = {
 						is_country_type = recognized
-						is_country_type = colonial
+						country_is_colonial_or_company = yes
 					}
 					country_rank >= rank_value:major_power
 				}
@@ -6221,7 +6505,7 @@ on_wargoal_enforced = {
 				scope:target ?= {
 					OR = {
 						is_country_type = recognized
-						is_country_type = colonial
+						country_is_colonial_or_company = yes
 					}
 					country_rank >= rank_value:great_power
 				}
@@ -6377,6 +6661,8 @@ on_heir_born = {
 				}
 			}
 		}
+		### Royal House Variables
+		# House Orleans
 		if = {
 			limit = {
 				owner.ruler ?= {
@@ -6390,6 +6676,7 @@ on_heir_born = {
 				}
 			}
 		}
+		# House Bonaparte
 		if = {
 			limit = {
 				owner.ruler ?= {
@@ -6403,6 +6690,7 @@ on_heir_born = {
 				}
 			}
 		}
+		# House Savoy
 		if = {
 			limit = {
 				owner.ruler ?= {
@@ -6415,6 +6703,7 @@ on_heir_born = {
 				}
 			}
 		}
+		# House Braganca
 		if = {
 			limit = {
 				owner.ruler ?= {
@@ -6427,6 +6716,7 @@ on_heir_born = {
 				}
 			}
 		}
+		# House Espartero
 		if = {
 			limit = {
 				owner.ruler ?= {
@@ -6439,6 +6729,7 @@ on_heir_born = {
 				}
 			}
 		}
+		# House Bourbon
 		if = {
 			limit = {
 				owner.ruler ?= {
@@ -6451,6 +6742,7 @@ on_heir_born = {
 				}
 			}
 		}
+		# House Hohenzollern
 		if = {
 			limit = {
 				owner.ruler ?= {
@@ -6463,30 +6755,51 @@ on_heir_born = {
 				}
 			}
 		}
+		# House Obrenovic
 		if = {
 			limit = {
-				owner = {
-					c:SER ?= this
+				owner.ruler ?= {
+					has_variable = house_obrenovic
 				}
 			}
-			if = {
-				limit = {
-					owner.ruler ?= {
-						has_variable = house_obrenovic
-					}
-				}
-				owner.heir ?= {
-					set_variable = house_obrenovic
+			owner.heir ?= {
+				set_variable = house_obrenovic
+			}
+		}
+		# House Karadjordjevic
+		if = {
+			limit = {
+				owner.ruler ?= {
+					has_variable = house_karadordevic
 				}
 			}
-			else_if = {
-				limit = {
-					owner.ruler ?= {
-						has_variable = house_karadordevic
-					}
+			owner.heir ?= {
+				set_variable = house_karadordevic
+			}
+		}
+		# House Yamato
+		if = {
+			limit = {
+				owner.ruler ?= {
+					has_variable = house_yamato
 				}
-				owner.heir ?= {
-					set_variable = house_karadordevic
+			}
+			owner = {
+				heir ?= {
+					set_variable = house_yamato
+				}
+			}
+		}
+		# House Tokugawa
+		if = {
+			limit = {
+				owner.ruler ?= {
+					has_variable = house_tokugawa
+				}
+			}
+			owner = {
+				heir ?= {
+					set_variable = house_tokugawa
 				}
 			}
 		}
@@ -6846,7 +7159,7 @@ on_objective_completed = {
 # scope:target = Party created
 on_party_created = {
 	effect = {
-		debug_log = "[SCOPE.sParty('target').GetNameNoFormatting] Created"
+		debug_log = "[SCOPE.sParty('target').GetNameNoFormatting] Created - [THIS.GetCountry.GetNameNoFormatting]"
 	}
 }
 
@@ -6854,14 +7167,14 @@ on_party_created = {
 # scope:target = Party disbanded
 on_party_disbanded = {
 	effect = {
-		debug_log = "[SCOPE.sParty('target').GetNameNoFormatting] Disbanded"
+		debug_log = "[SCOPE.sParty('target').GetNameNoFormatting] Disbanded - [THIS.GetCountry.GetNameNoFormatting]"
 	}
 }
 
 # Root = Country
 on_election_campaign_start = {
 	effect = {
-		debug_log = "Election Campaign Started"
+		debug_log = "[TimeKeeper.GetCurrentDate.GetString]: Election Campaign Started - [THIS.GetCountry.GetNameNoFormatting]"
 		if = {
 			limit = {
 				active_law:lawgroup_distribution_of_power ?= {
@@ -6877,14 +7190,14 @@ on_election_campaign_start = {
 	events = {
 		caciquismo.1
 		caciquismo.2
-		coffee_with_milk.7
+		# coffee_with_milk.7 # dvg
 	}
 }
 
 # Root = Country
 on_election_campaign_end = {
 	effect = {
-		debug_log = "Election Campaign Ended"
+		debug_log = "[TimeKeeper.GetCurrentDate.GetString]: Election Campaign Ended - [THIS.GetCountry.GetNameNoFormatting]"
 		if = {
 			limit = {
 				c:BRZ ?= this
@@ -6951,18 +7264,58 @@ on_stop_supporting_unification = {
 }
 
 # Root = Country
-# scope:region - the sea region where the raid happened
-on_enemy_convoys_raided = {
+# scope:region - the strategic region where the raid happened
+# scope:attacker_commander - the raiding commander
+# scope:attacker - the raiding country
+# scope:defender_commander - the raided commander
+# scope:defender - the raided country
+# scope:num_sunk_ships - the number of sunk supply ships
+# scope:battle - the naval battle
+on_enemy_supply_ships_raided = {
 	effect = {
-		post_notification = enemy_convoys_raided
+		post_notification = enemy_supply_ships_raided
 	}
 }
 
 # Root = Country
-# scope:region - the sea region where the raid happened
-on_our_convoys_raided = {
+# scope:region - the strategic region where the raid happened
+# scope:attacker_commander - the raiding commander
+# scope:attacker - the raiding country
+# scope:defender_commander - the raided commander
+# scope:defender - the raided country
+# scope:num_sunk_ships - the number of sunk supply ships
+# scope:battle - the naval battle
+on_our_supply_ships_raided = {
 	effect = {
-		post_notification = our_convoys_raided
+		post_notification = our_supply_ships_raided
+	}
+}
+
+# Root = Country
+# scope:region - the strategic region where the raid happened
+# scope:attacker_commander - the raiding commander
+# scope:attacker - the raiding country
+# scope:defender_commander - the intercepting commander
+# scope:defender - the intercepting country
+# scope:num_sunk_ships - the number of sunk supply ships
+# scope:battle - the naval battle
+on_our_supply_ship_raiders_intercepted = {
+	effect = {
+		post_notification = our_supply_ship_raiders_intercepted
+	}
+}
+
+# Root = Country
+# scope:region - the strategic region where the raid happened
+# scope:attacker_commander - the raiding commander
+# scope:attacker - the raiding country
+# scope:defender_commander - the intercepting commander
+# scope:defender - the intercepting country
+# scope:num_sunk_ships - the number of sunk supply ships
+# scope:battle - the naval battle
+on_enemy_supply_ship_raiders_intercepted = {
+	effect = {
+		post_notification = enemy_supply_ship_raiders_intercepted
 	}
 }
 
@@ -7043,8 +7396,8 @@ on_character_recruitment = {
 		if = {
 			limit = {
 				OR = {
-					has_role = admiral
-					has_role = general
+					has_role_of_type = admiral
+					has_role_of_type = general
 				}
 			}
 			set_variable = { name = monthly_cached_units_share value = this.num_units_share }
@@ -7317,6 +7670,14 @@ on_travel_track_formation_cancelled = {
 }
 
 # Root = Military Formation
+# scope:state = State we were deploying to
+on_travel_deploy_to_state_cancelled = {
+	effect = {
+		post_notification = formation_travel_deploy_to_state_cancelled
+	}
+}
+
+# Root = Military Formation
 on_military_formation_created = {
 	effect = {
 		if = {
@@ -7329,6 +7690,13 @@ on_military_formation_created = {
 				remove_variable = formation_tutorial_ongoing
 			}
 		}
+	}
+}
+
+# Root = Military Formation
+on_fleet_destroyed = {
+	effect = {
+		post_notification = fleet_destroyed
 	}
 }
 
@@ -7367,7 +7735,68 @@ on_national_awakening_started = {
 }
 
 # Root = Country
+# scope:strait is the strait in question
+on_strait_access_setting_changed = {
+}
+
+# Root = Country
 # scope:amendment = amendment being repealed
 on_amendment_repealed = {
 	effect = {}
+}
+
+# Root = Invader Country
+# scope:invasion = the invasion
+# scope:target_state = the invaded state
+# scope:target_country = the defender country
+on_invasion_succeeded = {
+	effect = {
+		if = {
+			limit = {
+				scope:invasion = {
+					is_naval_invasion = yes
+					invasion_has_marines = yes
+				}
+				scope:target_state = {
+					is_capital = yes
+				}
+			}
+			set_variable = has_taken_enemy_capital_with_marines
+		}
+	}
+}
+
+# Root = Owner Country
+# scope:ship = the newly constructed ship
+# scope:fleet = the fleet the ship was added to
+on_ship_constructed = {
+	effect = {
+		scope:ship = {
+			if = {
+				limit = {
+					is_ship_type = ship_type:ship_type_monitor
+					NOT = { has_global_variable = first_monitor_built }
+				}
+				set_global_variable = first_monitor_built
+				ROOT = {
+					set_variable = son_of_varmland_var
+				}
+			}
+		}
+	}
+}
+
+# Root = Character (the promoted commander)
+# scope:count = number of IGs that received unnecessary_promotion modifier (0 if promotion was not unnecessary)
+on_commander_promoted = {
+	effect = {
+		if = {
+			limit = {
+				scope:count >= 7
+			}
+			owner = {
+				set_variable = achievement_everyone_disliked_that_var
+			}
+		}
+	}
 }

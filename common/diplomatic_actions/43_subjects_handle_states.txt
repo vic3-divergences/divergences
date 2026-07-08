@@ -46,8 +46,8 @@
 			scope:target_country = { is_adjacent_to_state = root } # can always give away states that are adjacent to the subject
 			AND = {
 				is_homeland_of_country_cultures = scope:target_country
-				has_port = yes
-				scope:target_country = { has_port = yes }
+				has_port_state = yes
+				scope:target_country = { has_port_country = yes }
 			}
 		}
 	}
@@ -123,7 +123,7 @@
 				limit = {
 					c:GBR ?= owner
 					owner = { # Whilst the crown colony system remains in place, the AI won't be inclined to change this
-						has_law = law_type:law_monarchy
+						country_has_monarchy_law = yes
 					}
 				}
 				NOR = {
@@ -135,12 +135,13 @@
 				limit = {
 					c:CHI ?= owner
 					owner = { # China won't decentralise for as long as the game-start state of affairs remains in place
-						has_law = law_type:law_monarchy
+						country_has_monarchy_law = yes
 					}
 				}
 				NOR = {
 					state_region = s:STATE_TIANSHAN
 					state_region = s:STATE_DZUNGARIA
+					region = sr:region_north_china
 					region = sr:region_south_china
 				}
 			}
@@ -181,7 +182,7 @@
 					}
 				}
 				scope:first_state = {
-					has_port = no
+					has_port_state = no
 					NOT = {
 						any_neighbouring_state = {
 							owner = root
@@ -291,7 +292,7 @@ take_state = {
 	}
 
 	second_state_trigger = {
-		owner = scope:target_country
+		owner ?= scope:target_country
 		is_capital = no
 		is_under_colonization = no
 
@@ -409,14 +410,14 @@ take_state = {
 			# The AI only uses take state on disconnected colonial bits of subjects which are adjacent to their own lands
 			NOT = {
 				any_neighbouring_state = {
-					owner = root.owner
+					owner ?= root.owner
 					is_incorporated = yes
 				}
 			}
 
 			scope:second_state = {
 				any_neighbouring_state = {
-					owner = root
+					owner ?= root
 				}
 			}
 
@@ -460,19 +461,19 @@ demand_state = {
 			scope:country = { is_adjacent_to_state = root } # must either be adjacent to the initiating country, or
 			AND = {											# be a Homeland of its culture, with a port available for market connection
 				is_homeland_of_country_cultures = scope:country
-				has_port = yes
-				scope:country = { has_port = yes }
+				has_port_state = yes
+				scope:country = { has_port_country = yes }
 			}
 		}
 		OR = {
 			AND = { 										# if owned by the target of the action, it must not be incorporated
-				owner = scope:target_country
+				owner ?= scope:target_country
 				is_incorporated = no
 			}
 			scope:target_country = { 						# if owned by one of the target's subjects, that subject must either be a Puppet or a Vassal
 				any_subject_or_below = {
-					root.owner = this
-					NOT = { root.owner = scope:country }
+					root.owner ?= this
+					NOT = { root.owner ?= scope:country }
 					OR = {
 						is_subject_type = subject_type_colony
 						is_subject_type = subject_type_puppet
