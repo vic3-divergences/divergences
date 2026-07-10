@@ -12,14 +12,12 @@ je_australia_unite_aus_button = {
 		is_at_war = no
 		has_technology_researched = nationalism
 		NOT = { has_modifier = australia_test_modifier }
-		trigger_if = {
-			limit = {
-				country_has_primary_culture = cu:australian
-			}
-			top_overlord ?= {
+		OR = {
+			AND = {
+				top_overlord ?= {
 				relations:root >= relations_threshold:amicable
 			}
-			custom_tooltip = {
+				custom_tooltip = {
 				text = unite_australia_je_aus_tt
 				any_neighbouring_state = {
 					owner = {
@@ -34,9 +32,8 @@ je_australia_unite_aus_button = {
 						this.gdp < root.gdp
 					}
 				}
+				}
 			}
-		}
-		trigger_else = {
 			custom_tooltip = {
 				text = gbr_aus_relations_tt
 				any_subject_or_below = {
@@ -48,7 +45,28 @@ je_australia_unite_aus_button = {
 					count >= 2
 				}
 			}
+			custom_tooltip = {
+			text = australie_confederation_tt
+
+			any_country = {
+				is_at_war = no
+				is_player = no
+				is_adjacent_to_country = ROOT
+				country_has_primary_culture = cu:australian
+				this.gdp < ROOT.gdp
+				relations:ROOT >= relations_threshold:amicable
+				OR = {
+					is_subject = no
+					is_subject_of = ROOT
+					AND = {
+						ROOT = { is_subject = yes }
+						is_subject_of = ROOT.top_overlord
+					}
+				}
+			}
+			}
 		}
+		
 	}
 
 	cooldown = { days = short_modifier_time }
@@ -422,5 +440,51 @@ pyard_treaty_button = {
 	}
 	ai_chance = {
 		value = 1
+	}
+}
+
+australie_allies_button = {
+	name = "australie_allies_button"
+	desc = "australie_allies_button_desc"
+
+	visible = {
+		always = yes
+	}
+
+	possible = {
+		any_country = {
+				is_at_war = no
+				is_player = no
+				is_adjacent_to_country = ROOT
+				country_has_primary_culture = cu:australian
+				this.gdp < ROOT.gdp
+				relations:ROOT >= relations_threshold:amicable
+				NOT = {
+					is_subject = no
+					is_subject_of = ROOT
+					AND = {
+						ROOT = { is_subject = yes }
+						is_subject_of = ROOT.top_overlord
+					}
+				}
+		}
+	}
+
+	cooldown = { months = 12 }
+
+	effect = {
+		trigger_event = {
+			id = dvg_australie.2
+		}
+	}
+
+	ai_chance = {
+		value = 0
+		if = {
+			limit = {
+				has_technology_researched = human_rights
+			}
+			add = 100
+		}
 	}
 }
