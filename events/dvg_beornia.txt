@@ -144,6 +144,7 @@ dvg_beornia.2 = { #Border Raids
 		ig:ig_rural_folk = {
 			save_scope_as = rural_folk_ig
 		}
+
 	}
 	
 	# Border Raids
@@ -175,6 +176,7 @@ dvg_beornia.2 = { #Border Raids
 			add = 2
 		}
 		}
+		set_global_variable = charles_arrested
 
 		
 
@@ -187,27 +189,37 @@ dvg_beornia.2 = { #Border Raids
 	option = {
 		name = dvg_beornia.2.b
 
-		c:TWT = {
-			trigger_event = { id = dvg_beornia.3 }		
+		add_involvement = {
+				strategic_region = sr:region_andes
+				value = 3000
 		}
 
-		s:STATE_CATAMARCA = {
-			add_claim = c:BEO
+		c:TWT = {
+			trigger_event = { id = dvg_beornia.3 }	
+			every_neighbouring_state = {
+			limit = {
+				owner = c:BEO
+			}
+			state_region = {
+				add_claim = c:TWT
+			}
+			}
+			add_involvement = {
+				strategic_region = sr:region_la_plata
+				value = 3000
+			}	
 		}
-		s:STATE_KUCHICHAY = {
-			add_claim = c:BEO
+
+		every_neighbouring_state = {
+			limit = {
+				owner = c:TWT
+			}
+			state_region = {
+				add_claim = ROOT
+			}
 		}
 		s:STATE_NEAR_COLLASUYU = {
-			add_claim = c:BEO
-		}
-		s:STATE_GODWINSON = {
-			add_claim = c:TWT
-		}
-		s:STATE_WESSEX = {
-			add_claim = c:TWT
-		}
-		s:STATE_NORTHUMBRIA = {
-			add_claim = c:TWT
+			add_claim = ROOT
 		}
 
 		create_incident = {
@@ -685,7 +697,7 @@ dvg_beornia.5 = { #BLT Union
 	}
 
 	immediate =  {
-	c:LOT = { save_scope_as = scope_LOT}
+		c:LOT = { save_scope_as = scope_LOT}
 
 	}
 
@@ -702,6 +714,18 @@ dvg_beornia.5 = { #BLT Union
 		c:BEO = {
 			annex = c:LOT
 		}
+		if = {
+			limit = {
+				exists = c:ODO
+				c:ODO = {
+					is_subject_of = ROOT
+				}
+			}
+			c:BEO = {
+			annex = c:ODO
+			}
+		}
+
 		add_primary_culture = cu:lotharian
 		
 		add_radicals = {
@@ -819,6 +843,19 @@ dvg_beornia.6 = { #BLT union
 		c:LOT = {
 			annex = c:BEO
 		}
+		if = {
+			limit = {
+				exists = c:ODO
+				c:ODO = {
+					is_subject_of = ROOT
+				}
+			}
+			c:LOT = {
+			annex = c:ODO
+			}
+		}
+
+		
 		add_radicals = {
 			value = 0.20
 			culture = cu:lotharian
@@ -3050,16 +3087,38 @@ dvg_beornia.27 = {
 				save_scope_as = industrialists_leader
 			}
 		}	
-		random_country = {
+		if = {
 			limit = {
-				scope:rank > rank_value:minor_power
-				is_in_geographic_region = geographic_region_europe
+				exists = c:SCA
 			}
-			save_scope_as = investor_country
-			random_primary_culture = {
+			c:SCA = {
+				save_scope_as = investor_country
+				random_primary_culture = {
 				save_scope_as = migrant_culture
+				}
+			}
+			
+		}
+		if = {
+			limit = {
+				NOT = {
+					exists = c:SCA
+				}
+			}
+			random_country = {
+				limit = {
+				scope:rank > rank_value:minor_power
+				any_primary_culture = {
+					has_discrimination_trait_group = heritage_group_european
+				}
+				}
+				save_scope_as = investor_country
+				random_primary_culture = {
+				save_scope_as = migrant_culture
+				}
 			}
 		}
+		
 	}
 	option = {
 		name = dvg_beornia.27.a
