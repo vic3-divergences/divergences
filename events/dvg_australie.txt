@@ -705,10 +705,23 @@ dvg_australie.9 = {
 	}
 	immediate = {
 		set_global_variable = yolngu_defection
+
+		if = {
+			limit = {
+				exists = c:GRJ
+			}
+			save_scope_as = aboriginal_country
+		}
 		
 		if = {
 			limit = {
-					any_country = {
+				NOT = {
+					exists = c:GRJ
+				}
+				any_country = {
+						NOT = {
+							country_has_primary_culture = cu:australian
+						}
 						is_adjacent_to_country = ROOT
 						OR = {
 							country_has_primary_culture = cu:aborigine_malay
@@ -720,7 +733,10 @@ dvg_australie.9 = {
 			random_country = {
 				limit = {
 					is_adjacent_to_country = ROOT
-					country_has_primary_culture = cu:aborigine
+					OR = {
+							country_has_primary_culture = cu:aborigine_malay
+							country_has_primary_culture = cu:aborigine
+					}
 				}
 				save_scope_as = aboriginal_country
 			}
@@ -744,7 +760,17 @@ dvg_australie.9 = {
 		if = {
 			limit = {
 				NOT = {
-					exists = scope:aboriginal_country
+					exists = c:GRJ
+					any_country = {
+						NOT = {
+							country_has_primary_culture = cu:australian
+						}
+						is_adjacent_to_country = ROOT
+						OR = {
+							country_has_primary_culture = cu:aborigine_malay
+							country_has_primary_culture = cu:aborigine
+						}
+					}
 				}
 			}
 			create_country = {
@@ -752,19 +778,34 @@ dvg_australie.9 = {
 						origin = this
 						state = scope:aboriginal_state
 
+
 			}
-			save_scope_as = aboriginal_country
+			c:YLN = {
+				save_scope_as = aboriginal_country
+			}
 		}
 
 		
-		
+		if = {
+			limit = {
+				scope:aboriginal_country = {
+					is_country_type = decentralized
+				}
+			}
+			scope:aboriginal_country = {
+				set_country_type = unrecognized
+			}
+		}
 
 		add_modifier = {
 			name = dvg_racial_tensions
 			months = 50
 			is_decaying = yes
 		}
-		
+		create_diplomatic_play = {
+			type = dp_annex_war
+			target_country = scope:aboriginal_country
+		}
 	}
 
 	
@@ -772,6 +813,11 @@ dvg_australie.9 = {
 	option = {
 		name = dvg_australie.9.a
 		default_option = yes
+
+		create_diplomatic_play = {
+			type = dp_annex_war
+			target_country = scope:aboriginal_country
+		}
 
 		if = {
 			limit = {
