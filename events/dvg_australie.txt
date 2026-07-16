@@ -1719,6 +1719,7 @@ dvg_australie.14 = {
 			has_modifier = dvg_racial_tensions
 		}
 		country_has_primary_culture = cu:australian
+		
 	}
 
 	immediate = {
@@ -1734,6 +1735,29 @@ dvg_australie.14 = {
 		name = dvg_australie.14.a
 		default_option = yes
 
+		if = {
+			limit = {
+				country_has_primary_culture = cu:burgundian
+			}
+			remove_primary_culture = cu:burgundian
+		}
+		remove_primary_culture = cu:australian
+		add_primary_culture = cu:indo_australien
+
+		activate_law = law_type:law_migration_controls
+
+
+		if = {
+			limit = {
+				NOT = {
+					exists = c:VLD
+				}
+			}
+			trigger_event = {
+				id = dvg_australie.15
+				days = 45
+			}
+		}
 		
 		
 		ai_chance = {
@@ -1747,12 +1771,39 @@ dvg_australie.14 = {
 	option = {
 		name = dvg_australie.14.b
 
-		
+		if = {
+			limit = {
+				NOT = {
+					has_law = law_type:law_migration_controls
+				}
+			}
+			activate_law = law_type:law_migration_controls
+		}
+
+
 		
 		ai_chance = {
 			base = 1
 		}
 
+	}
+
+	option = {
+		name = dvg_australie.14.c
+
+		if = {
+			limit = {
+				NOT = {
+					has_law = law_type:law_no_migration_controls
+				}
+			}
+			activate_law = law_type:law_no_migration_controls
+		}
+
+		
+		ai_chance = {
+			base = 1
+		}
 
 	}
 }
@@ -3987,4 +4038,205 @@ dvg_australie.37 = {
 		}		
 	}
 
+}
+
+#Pride in Antipody, Verland Petition
+dvg_australie.38 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_australie.38.t
+	desc = dvg_australie.38.d
+	flavor = dvg_australie.38.f
+
+	event_image = {
+		video = "gfx/event_pictures/europenorthamerica_gold_prospectors.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	
+
+	trigger = {
+		cu:australian = {
+			culture_current_fervor > 24
+		}
+		any_scope_state = {
+			is_capital = no
+		}
+		NOT = {
+			exists = c:NJY
+			has_global_variable = verland_revolt
+		}
+		any_scope_state = {
+			state_region = {
+				is_homeland = cu:australian
+			}
+		}
+		OR = {
+			NOT = {
+				has_law = law_type:law_racial_segregation
+			}
+			NOT = {
+				has_law = law_type:law_migration_controls
+			}
+		}
+
+	}
+	immediate = {
+		random_scope_state = {
+			limit = {
+				is_capital = no
+			}
+			set_variable = verland_state_var
+			save_scope_as = verland_state_scope
+		}
+	}
+
+
+	option = {
+		name = dvg_australie.38.a
+		default_option = yes
+
+		trigger_event = {
+			id = dvg_australie.16
+			days = 60
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+
+	
+	option = {
+		name = dvg_australie.38.b
+
+		create_country = {
+			tag = NJY
+			origin = THIS
+			state = scope:verland_state_scope
+
+			
+		}
+
+		c:NJY = {
+			activate_law = law_type:law_racial_segregation
+			activate_law = law_type:law_migration_controls
+		}
+		top_overlord = {
+			create_diplomatic_pact = {
+				country = c:NJY
+				type = colony
+			}
+		}
+		
+		
+		ai_chance = {
+			base = 1
+		}
+
+	}
+
+}
+
+#Verland Revolt
+dvg_australie.39 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_australie.39.t
+	desc = dvg_australie.39.d
+	flavor = dvg_australie.39.f
+
+	event_image = {
+		video = "gfx/event_pictures/europenorthamerica_gold_prospectors.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/southamerica/aristocrats"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 3
+
+	trigger = {
+		any_scope_state = {
+			is_capital = no
+
+		}
+		NOT = {
+			exists = c:NJY
+			has_global_variable = new_jersey_revolt
+		}
+		any_scope_state = {
+			state_region = {
+				is_homeland = cu:australian
+			}
+		}
+		has_global_variable = verland_revolt
+	}
+	immediate = {
+		set_global_variable = new_jersey_revolt
+		random_scope_state = {
+			limit = {
+				is_capital = no
+				has_variable = verland_state_var
+			}
+			save_scope_as = verland_state_scope
+		}
+		create_country = {
+			tag = NJY
+			origin = THIS
+			state = scope:verland_state_scope
+
+			
+		}
+		c:NJY = {
+			activate_law = law_type:law_racial_segregation
+			activate_law = law_type:law_migration_controls
+		}
+		set_global_variable = verland_revolt
+	}
+
+	option = {
+		name = dvg_australie.16.a
+		default_option = yes
+
+		create_diplomatic_play = {
+			type = dp_rebellion_annex
+			target_country = c:NJY
+			war = no
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+
+	}
+
+	
+	option = {
+		name = dvg_australie.16.b
+
+		play_as = c:NJY
+
+		create_diplomatic_play = {
+			type = dp_rebellion_annex
+			target_country = c:NJY
+			war = no
+		}
+
+		
+		ai_chance = {
+			base = 1
+		}
+
+
+	}
 }
