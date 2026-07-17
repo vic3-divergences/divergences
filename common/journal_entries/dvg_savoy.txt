@@ -1,7 +1,7 @@
 je_lost_duke = {
 	icon = "gfx\interface\icons\event_icons\event_empty_chair.dds"
 
-	group = je_group_major_events
+	group = je_group_historical_content
 
 
 	complete = {
@@ -11,24 +11,52 @@ je_lost_duke = {
 	}
 
 	on_complete = {
-		scope:scope_luigi = { add_trait = lost_duke_reform remove_trait = lost_duke}
-		scope:scope_amedeo = {kill_character = yes}
-		add_loyalists = 0.20
+		if = {
+			limit = {
+				ruler = {
+					has_variable = is_luigi
+				}
+			}
+			ruler = {
+				add_trait = lost_duke_reform
+				remove_trait = lost_duke
+				remove_trait = grifter
+				add_trait = ambitious
+			}
+		}
+		if = {
+			limit = {
+				heir = {
+					has_variable = is_amedeo
+				}
+			}
+			heir = {kill_character = yes}
+		}
+		add_loyalists = { value = 0.20 }
 	}
 
 	fail = {
-		scope:scope_luigi = { is_ruler_of_own_country = no }
-		NOT = {
-			OR = { 
+		ruler = {
+			NOT = {
+				has_variable = is_luigi
+			}
+		}
+		NOR = {
 			has_law = law_type:law_monarchy
 			has_law = law_type:law_social_monarchy
-			}
 		}
 	}
 	
 	on_fail = {
-		add_radicals = 0.15
-		scope:scope_luigi = {kill_character = yes}
+		add_radicals = { value= 0.15 }
+		if = {
+			limit = {
+				ruler = {
+					has_variable = is_luigi
+				}
+			}
+			ruler = { kill_character = yes }
+		}
 	}
 	current_value = {
 		value = var:lost_duke_var
@@ -47,9 +75,9 @@ je_lost_duke = {
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
 je_lost_duke_king = {
-	icon = "gfx\coat_of_arms\te_crown.dds"
+	icon = "gfx\coat_of_arms\textured_emblems\te_crown.dds"
 	
-	group = je_group_major_events
+	group = je_group_historical_content
 
 	
 	complete = {
@@ -61,7 +89,7 @@ je_lost_duke_king = {
 			name = lost_duke_var
 			add = 1
 		}
-		add_loyalists = 0.1
+		add_loyalists = { value = 0.1 }
 	}
 	
 	fail = {
@@ -73,16 +101,22 @@ je_lost_duke_king = {
 		}
 	}
 	on_fail = {
-		add_radicals = 0.2
+		add_radicals = { value= 0.2 }
 	}
 	
+	invalid = {
+		NOT = {
+			has_journal_entry = je_lost_duke
+		}
+		
+	}
 	should_be_pinned_by_default_uninvolved_or_context = yes
 	
 }
 je_lost_duke_reforms = {
 	icon = "gfx\interface\icons\commander_order_icons\zw_advance_rapid_advance.dds"
 	
-	group = je_group_major_events
+	group = je_group_historical_content
 
 	
 	complete = {
@@ -107,11 +141,10 @@ je_lost_duke_reforms = {
 			name = lost_duke_var
 			add = 1
 		}
-		add_loyalists = 0.1
+		add_loyalists = { value = 0.1 }
 	}
 	
 	fail = {
-		scope:scope_luigi = { is_ruler_of_own_country = no }
 		NOT = { 
 			OR = { 
 			has_law = law_type:law_monarchy
@@ -120,25 +153,30 @@ je_lost_duke_reforms = {
 		}
 	}
 	on_fail = {
-		add_radicals = 0.15
+		add_radicals = { value= 0.15 }
 	}
-	
+	invalid = {
+		NOT = {
+			has_journal_entry = je_lost_duke
+		}
+		
+	}
 	should_be_pinned_by_default_uninvolved_or_context = yes
 	
 }
 je_lost_duke_dictator = {
 	icon = "gfx\interface\icons\ai_strategy_icons\subject_overlord_compliance.dds"
 	
-	group = je_group_major_events
+	group = je_group_historical_content
 	
 	complete = {
 		AND = {
-			has_law	= law_type:autocracy
-			has_law	= law_type:subjecthood
-			haw_law = law_type:total_separation
-			haw_law = law_type:appointed_bureaucrats
-			haw_law = law_type:secret_police
-			haw_law = law_type:censorship
+			has_law	= law_type:law_autocracy
+			has_law	= law_type:law_subjecthood
+			has_law = law_type:law_total_separation
+			has_law = law_type:law_appointed_bureaucrats
+			has_law = law_type:law_secret_police
+			has_law = law_type:law_censorship
 		}
 	}
 	on_complete = {
@@ -146,10 +184,9 @@ je_lost_duke_dictator = {
 			name = lost_duke_var
 			add = 1
 		}
-		add_loyalists = 0.1
+		add_loyalists = { value = 0.1 }
 	}
 	fail = {
-		scope:scope_luigi = { is_ruler_of_own_country = no }
 		NOT = { 
 			OR = { 
 			has_law = law_type:law_monarchy
@@ -158,16 +195,21 @@ je_lost_duke_dictator = {
 		}
 	}
 	on_fail = {
-		add_radicals = 0.15
+		add_radicals = { value= 0.15 }
 	}
 	
-
+	invalid = {
+		NOT = {
+			has_journal_entry = je_lost_duke
+		}
+		
+	}
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
 je_radical_duke = {
 	icon = "gfx\interface\icons\alert_icons\radicalized.dds"
 	
-	group = je_group_major_events
+	group = je_group_historical_content
 	
 	complete = {
 		scope:journal_entry = {
@@ -176,23 +218,47 @@ je_radical_duke = {
 	}
 
 	on_complete = {
-		scope:scope_amedeo = { add_trait = radical_duke_reform remove_trait = radical_duke set_character_as_ruler = yes}
-		add_loyalists = 0.20
+		if = {
+			limit = {
+				heir = {
+					has_variable = is_amedeo
+				}
+			}
+			heir = { set_character_as_ruler = yes }
+		}
+		any_character = {
+			limit = {
+				has_variable = is_amedeo
+			}
+			add_trait = radical_duke_reform
+			add_trait = ambitious
+			remove_trait = radical_duke
+		}
+		add_loyalists = { value = 0.20 }
 	}
 
 	fail = {
-		scope:scope_amedeo = { is_heir_of_own_country = no is_ruler_of_own_country = no }
-		NOT = {
-			OR = { 
-			has_law = law_type:law_monarchy
-			has_law = law_type:law_social_monarchy
+		NOR = {
+			ruler = {
+				has_variable = is_amedeo
+			}
+			heir = {
+				has_variable = is_amedeo
 			}
 		}
 	}
 	
 	on_fail = {
-		add_radicals = 0.15
-		scope:scope_amedeo = { kill_character = yes }
+		add_radicals = { value= 0.15 }
+		
+		if = {
+			limit = {
+				heir = {
+					has_variable = is_amedeo
+				}
+			}
+			heir = { kill_character = yes }
+		}
 	}
 	current_value = {
 		value = var:radical_duke_var
@@ -214,7 +280,7 @@ je_radical_duke = {
 je_radical_duke_reforms = {
 	icon = "gfx\interface\icons\event_icons\event_scales.dds"
 	
-	group = je_group_major_events
+	group = je_group_historical_content
 	
 	complete = {
 		AND = {
@@ -227,14 +293,14 @@ je_radical_duke_reforms = {
 				value >= 25
 			}
 			OR = {
-				has_law	= law_type:wealth_voting
-				has_law	= law_type:census_suffrage
-				has_law	= law_type:universal_suffrage
+				has_law	= law_type:law_wealth_voting
+				has_law	= law_type:law_census_voting
+				has_law	= law_type:law_universal_suffrage
 			}
-			has_law = law_type:cultural_exclusion
-			has_law = law_type:total_seperation
-			has_law = law_type:guaranteed_liberties
-			has_law = law_type:public_schools
+			has_law = law_type:law_cultural_exclusion
+			has_law = law_type:law_total_separation
+			has_law = law_type:law_guaranteed_liberties
+			has_law = law_type:law_public_schools
 		}
 	}
 
@@ -243,32 +309,53 @@ je_radical_duke_reforms = {
 			name = radical_duke_var
 			add = 1
 		}
-		add_loyalists = 0.10
+		add_loyalists = { value = 0.10 }
 	}
 
 	fail = {
-		scope:scope_amedeo = { is_heir_of_own_country = no is_ruler_of_own_country = no }
 		NOT = {
-			OR = { 
+			ruler = {
+				has_variable = is_amedeo
+			}
+			heir = {
+				has_variable = is_amedeo
+			}
 			has_law = law_type:law_monarchy
 			has_law = law_type:law_social_monarchy
-			}
 		}
 	}
 	
 	on_fail = {
-		add_radicals = 0.15
+		add_radicals = { value= 0.15 }
 	}
-
+	invalid = {
+		NOT = {
+			has_journal_entry = je_radical_duke
+		}
+		
+	}
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
 je_radical_duke_champ = {
 	icon = "gfx\interface\icons\character_trait_icons\special_character_traits\special_character_napoleonic_return.dds"
 	
-	group = je_group_major_events
+	group = je_group_historical_content
 	
 	complete = {
-		scope:scope_amedeo = {popularity >=75}
+		OR = {
+			heir = {
+				AND = {
+					popularity >= 75
+					has_variable = is_amedeo
+				}
+			}
+			ruler = {
+				AND = {
+					popularity >= 75
+					has_variable = is_amedeo
+				}
+			}
+		}
 	}
 
 	on_complete = {
@@ -276,22 +363,30 @@ je_radical_duke_champ = {
 			name = radical_duke_var
 			add = 1
 		}
-		add_loyalists = 0.10
+		add_loyalists = { value = 0.10 }
 	}
 
 	fail = {
-		scope:scope_amedeo = { is_heir_of_own_country = no is_ruler_of_own_country = no }
 		NOT = {
-			OR = { 
+			ruler = {
+				has_variable = is_amedeo
+			}
+			heir = {
+				has_variable = is_amedeo
+			}
 			has_law = law_type:law_monarchy
 			has_law = law_type:law_social_monarchy
-			}
 		}
 	}
 	
 	on_fail = {
-		add_radicals = 0.15
+		add_radicals = { value= 0.15 }
 	}
-
+	invalid = {
+		NOT = {
+			has_journal_entry = je_radical_duke
+		}
+		
+	}
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
