@@ -113,7 +113,14 @@ dvg_italian_confederation.2 = {
 				trigger_event = { id = dvg_italian_confederation.3 days = 2 }
 			}
 		}
-
+		if = {
+			limit = {
+				exists = c:SAV
+			}
+			c:SAV = {
+				trigger_event = { id = dvg_italian_confederation.7 days = 2 }
+			}
+		}
 		ai_chance = {
 			base = 100
 		}
@@ -263,6 +270,25 @@ dvg_italian_confederation.4 = {
 	option = {
 		name = dvg_italian_confederation.4.a
 		default_option = yes
+
+		if = {
+			limit = {
+				c:SAV = {
+					has_variable = accepted_ITC
+				}
+			}
+			annex = c:SAV
+		}
+		if = {
+			limit = {
+				c:SAV = {
+					has_variable = blocked_ITC
+				}
+			}
+			c:SAV = {
+				trigger_event = { id = dvg_italian_confederation.8 days = 14 }
+			}
+		}
  		
 		annex = c:PAP
 		annex = c:LOM
@@ -354,12 +380,17 @@ dvg_italian_confederation.5 = {
 		NOT = { has_variable = itc_formation_failure }
 		exists = c:TUS
 		THIS = c:TUS
-		OR = {
-			c:LOM = {
+		AND = {
+			c:SAV = {
 				has_variable = refused_ITC
 			}
-			c:PAP = {
-				has_variable = refused_ITC
+			OR = {
+				c:LOM = {
+					has_variable = refused_ITC
+				}
+				c:PAP = {
+					has_variable = refused_ITC
+				}
 			}
 		}
 	}
@@ -375,6 +406,9 @@ dvg_italian_confederation.5 = {
 		}
 		c:LOM = {
 			save_scope_as = lom_scope
+		}
+		c:SAV = {
+			save_scope_as = sav_scope
 		}
 	}
 
@@ -454,4 +488,186 @@ dvg_italian_confederation.6 = { #Autonomy status
 		add_radicals = 0.1
 
 	}
+}
+dvg_italian_confederation.7 = { #Savoyard block
+	type = country_event
+	placement = ROOT
+
+	title = dvg_italian_confederation.7.t
+	desc = dvg_italian_confederation.7.d
+	flavor = dvg_italian_confederation.7.f
+
+	event_image = {
+		video = "gfx/event_pictures/unspecific_signed_contract.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/signed_contract"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	duration = 1
+
+	trigger = {
+
+	}
+
+	immediate = {
+		c:TUS = {
+			save_scope_as = initiator
+		}
+		c:SAV = {
+			save_scope_as = sav_scope
+		}
+	}
+	option = {#eat poop pope
+		name = dvg_italian_confederation.7.a
+
+		set_variable = blocked_ITC
+	}
+	option = {#pass
+		name = dvg_italian_confederation.7.b
+		default_option = yes
+		
+		set_variable = refused_ITC
+	}
+	option = {# lemme in
+		name = dvg_italian_confederation.7.c
+		
+		set_variable = accepted_ITC
+	}
+}
+dvg_italian_confederation.8 = { #Italian race war starts
+	type = country_event
+	placement = ROOT
+
+	title = dvg_italian_confederation.8.t
+	desc = dvg_italian_confederation.8.d
+	flavor = dvg_italian_confederation.8.f
+
+	event_image = {
+		video = "gfx/event_pictures/unspecific_signed_contract.bk2"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific/signed_contract"
+
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	duration = 1
+
+	trigger = {
+
+	}
+
+	immediate = {
+		c:ITC = {
+			save_scope_as = itc_scope
+		}
+	}
+#	option = {#Liberate our Italian compatriots dont work
+#		name = dvg_italian_confederation.8.a
+#		default_option = yes
+#		
+#		c:SAV = {
+#			create_diplomatic_play = {
+#				type = dp_liberate_country
+#				target_country = c:ITC
+#
+#				add_war_goal = { 
+#					holder = c:SAV 
+#					target_country = c:PAR
+#					type = make_protectorate 
+#				}
+#				add_war_goal = { 
+#					holder = c:SAV 
+#					target_country = c:MOD
+#					type = make_protectorate 
+#				}
+#				add_war_goal = { 
+#					holder = c:SAV 
+#					target_country = c:LUC
+#					type = make_protectorate 
+#				}
+#				add_war_goal = {
+#					holder = c:ITC
+#					type = humiliation
+#					target_country = c:SAV
+#				}
+#				add_war_goal = {
+#					holder = c:PAR
+#					type = humiliation
+#					target_country = c:SAV
+#				}
+#				add_war_goal = {
+#					holder = c:MOD
+#					type = humiliation
+#					target_country = c:SAV
+#				}
+#				add_war_goal = {
+#					holder = c:LUC
+#					type = humiliation
+#					target_country = c:SAV
+#				}
+#				
+#				add_target_backers = {
+#					c:PAR
+#					c:MOD
+#					c:LUC
+#				}
+#			}
+#		}
+#	}
+	option = {#Annex them
+		name = dvg_italian_confederation.8.b
+
+		c:SAV = {
+			create_diplomatic_play = {
+				type = dp_annex_war
+				target_country = c:ITC
+				
+				add_war_goal = {
+					holder = c:SAV
+					type = annex_country
+					target_country = c:PAR
+				}
+				add_war_goal = {
+					holder = c:SAV
+					type = annex_country
+					target_country = c:MOD
+				}
+				add_war_goal = {
+					holder = c:SAV
+					type = annex_country
+					target_country = c:LUC
+				}
+				add_war_goal = {
+					holder = c:ITC
+					type = humiliation
+					target_country = c:SAV
+				}
+				add_war_goal = {
+					holder = c:PAR
+					type = humiliation
+					target_country = c:SAV
+				}
+				add_war_goal = {
+					holder = c:MOD
+					type = humiliation
+					target_country = c:SAV
+				}
+				add_war_goal = {
+					holder = c:LUC
+					type = humiliation
+					target_country = c:SAV
+				}
+				add_target_backers = {
+					c:PAR
+					c:MOD
+					c:LUC
+				}
+			}
+		}
+	}
+
 }
