@@ -337,6 +337,12 @@ je_ameriga_conquer = {
 		
 	}
 
+	immediate = {
+		remove_variable = recently_lost_war
+		remove_variable = recently_had_war
+		remove_variable = recent_capitulation
+	}
+
     possible = {
 
 	}
@@ -416,12 +422,13 @@ je_ameriga_conquer = {
 	fail = {
 		
 		
-		
 		OR = {
 			
 			custom_tooltip = {
 				text = lost_war_tt
+				
 				OR = {
+					has_variable = recent_capitulation
 					has_variable = recently_lost_war
 					AND = {
 						has_variable = recently_had_war
@@ -457,6 +464,7 @@ je_world_conquer = {
 	}
 
     possible = {
+
 	}
 
 	complete = {
@@ -798,6 +806,7 @@ je_cattle_barons_wrath = {
 		}
 	}
 	on_yearly_pulse = {
+		fallback = on_yearly_events
 		effect = {
 			if = {
 				limit = {
@@ -826,32 +835,7 @@ je_cattle_barons_wrath = {
 				}
 			}
 			}
-			if = {
-				limit = {
-					ig:ig_landowners = {
-						is_powerful = no
-						is_in_government = yes
-					}
-					var:cattle_barons_var > 0
-				}
-				change_variable = {
-					name = cattle_barons_var
-					add = -1
-				}
-			}
-			if = {
-				limit = {
-					ig:ig_landowners = {
-						is_powerful = no
-						is_in_government = yes
-					}
-					var:cattle_barons_var > 0
-				}
-				change_variable = {
-					name = cattle_barons_var
-					add = -1
-				}
-			}
+			
 			if = {
 				limit = {
 					ig:ig_landowners = {
@@ -862,9 +846,10 @@ je_cattle_barons_wrath = {
 				}
 				change_variable = {
 					name = cattle_barons_var
-					add = -2
+					add = -1
 				}
 			}
+
 			if = {
 				limit = {
 					ig:ig_landowners = {
@@ -878,6 +863,21 @@ je_cattle_barons_wrath = {
 					add = 1
 				}
 			}
+
+			if = {
+				limit = {
+					ig:ig_landowners = {
+						is_powerful = yes
+						ig_approval > 9
+					}
+					var:cattle_barons_var < 7
+				}
+				change_variable = {
+					name = cattle_barons_var
+					subtract = 1
+				}
+			}
+
 			if = {
 				limit = {
 					ig:ig_landowners = {
@@ -930,7 +930,12 @@ je_cattle_barons_wrath = {
 		}
 		OR = {
 			custom_tooltip = {
-				text = charles_arrested
+				text = charles_arrested_tt
+				any_scope_character = {
+					has_variable = is_charles_cavendish
+					
+				}
+				has_global_variable = charles_arrested
 			}
 			ig:ig_landowners = {
 				is_in_government = no
@@ -1467,13 +1472,13 @@ je_england_reclaim = {
     is_shown_when_inactive = {
         c:BEO ?= this
         NOT = {
-            sr:region_france = {
-                any_scope_state = {
-					is_homeland = cu:english
-                    count = all
-                    owner = root
-                }
-            }
+             any_scope_state = {
+				state_region = {
+					is_homeland = cu:british
+
+				}
+				count > 3
+        	 }
         }
     }
 
@@ -1482,12 +1487,12 @@ je_england_reclaim = {
     }
 
     complete = {
-        sr:region_france = {
-            any_scope_state = {
-				is_homeland = cu:english
-                count = all
-                owner = root
-            }
+        any_scope_state = {
+				state_region = {
+					is_homeland = cu:british
+
+				}
+            count > 3
         }
     }
 
@@ -2126,17 +2131,12 @@ je_beo_hbe = {
 			scope:journal_entry = { is_goal_complete = yes }
 		}
 
-		custom_tooltip = {
-			text = not_lost_war_tt
-			NOR = {
-				has_variable = recently_lost_war
-				AND = {
-					has_variable = recently_had_war
-					NOT = {
-						has_variable = recently_won_war
-					}
-				}
-			}
+		radical_fraction = {
+			value < 0.50
+		}
+
+		ig:ig_devout = {
+			ig_approval > 9
 		}
 
 	}
@@ -2152,6 +2152,7 @@ je_beo_hbe = {
 		OR = {
 			NOT = {
 				has_law = law_type:law_monarchy
+				has_law = law_type:law_social_monarchy
 			}
 			has_law = law_type:law_state_atheism
 			has_law = law_type:law_total_separation
