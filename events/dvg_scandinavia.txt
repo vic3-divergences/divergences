@@ -952,3 +952,121 @@ dvg_scandinavia.110 = { #Kelp industry collapses
 	}
 }
 
+dvg_scandinavia.111 = { #They fucking hate Innerness
+	type = country_event
+	placement = ROOT
+
+	title = dvg_scandinavia.111.t
+	desc = dvg_scandinavia.111.d
+	flavor = dvg_scandinavia.111.f
+	
+	duration = 3
+
+	event_image = {
+		video = "europenorthamerica_springtime_of_nations"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	immediate = {
+		set_variable = var_sca_grr_innerness_triggered
+	}
+	
+	trigger = {
+		NOT = {
+			has_variable = var_sca_grr_innerness_triggered
+		}
+	}
+
+	option = { #Make a public example out of them!
+		name = dvg_scandinavia.111.a
+		s:STATE_HIGHLANDS.region_state:SCA = {
+			add_radicals_in_state = {
+				value = 0.15
+				culture = cu:scottish
+			}
+		}
+	}
+	
+	option = { #Make no charge, these people have been treated unfairly!
+		name = dvg_scandinavia.111.b
+		custom_tooltip = {
+			text = sca_cufc_this_will_upset_the_crown_a_lot_tt
+			je:je_sca_kings_watch ?= {
+				add_progress = { value = 20 name = dvg_scandinavia_kings_anger_progress_bar }
+			}
+		}
+		ig:ig_landowners = {
+			add_modifier = {
+				name = dvg_landowners_pissed_clearances
+				days = long_modifier_time
+			}
+		}
+	}
+	
+	option = { #Send them to Vargo!
+		name = dvg_scandinavia.111.c
+		trigger = {
+			c:VRG = {
+				AND = {
+					is_subject = yes
+					top_overlord = {
+						c:SCA ?= this
+					}
+				}
+			}
+		}
+		c:VRG = {
+			trigger_event = dvg_scandinavia.112
+		}
+		custom_tooltip = {
+			text = sca_highlands_sent_to_vargo_tt
+		}
+	}
+}
+
+dvg_scandinavia.112 = { #Send them to Vargo! Vargo event
+	type = country_event
+	placement = ROOT
+
+	title = dvg_scandinavia.112.t
+	desc = dvg_scandinavia.112.d
+	flavor = dvg_scandinavia.112.f
+	
+	duration = 3
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
+
+	trigger = {
+		###triggered by dvg_scandinavia.111
+	}
+
+	option = {
+		name = dvg_scandinavia.112.a
+		if = {
+			limit = {
+				is_subject = yes
+			}
+			top_overlord = {
+				random_scope_pop = {
+					limit = {
+						culture = cu:scottish
+						total_size > 10000
+						strata = lower
+						is_pop_type = peasants
+					}
+					move_partial_pop = {
+						state = root.capital
+						population_ratio = 0.025
+					}
+				}
+			}
+		}
+	}
+}
