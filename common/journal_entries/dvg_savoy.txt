@@ -1,0 +1,392 @@
+je_lost_duke = {
+	icon = "gfx\interface\icons\event_icons\event_empty_chair.dds"
+
+	group = je_group_historical_content
+
+
+	complete = {
+		scope:journal_entry = {
+			is_goal_complete = yes
+		}
+	}
+
+	on_complete = {
+		if = {
+			limit = {
+				ruler = {
+					has_variable = is_luigi
+				}
+			}
+			ruler = {
+				add_trait = lost_duke_reform
+				remove_trait = lost_duke
+				remove_trait = grifter
+				add_trait = ambitious
+			}
+		}
+		if = {
+			limit = {
+				heir = {
+					has_variable = is_amedeo
+				}
+			}
+			heir = {kill_character = yes}
+		}
+		add_loyalists = { value = 0.20 }
+	}
+
+	fail = {
+		ruler = {
+			NOT = {
+				has_variable = is_luigi
+			}
+		}
+		NOR = {
+			has_law = law_type:law_monarchy
+			has_law = law_type:law_social_monarchy
+		}
+	}
+	
+	on_fail = {
+		add_radicals = { value= 0.15 }
+		if = {
+			limit = {
+				ruler = {
+					has_variable = is_luigi
+				}
+			}
+			ruler = { kill_character = yes }
+		}
+	}
+	current_value = {
+		value = var:lost_duke_var
+	}
+
+	goal_add_value = {
+		add = 3
+	}
+
+	progressbar = yes
+
+	weight = 10000
+	
+	scripted_button = button_lost_duke_school
+
+	should_be_pinned_by_default_uninvolved_or_context = yes
+}
+je_lost_duke_king = {
+	icon = "gfx\coat_of_arms\textured_emblems\te_crown.dds"
+	
+	group = je_group_historical_content
+
+	
+	complete = {
+		country_tier = kingdom	
+	}
+
+	on_complete = {
+		change_variable = {
+			name = lost_duke_var
+			add = 1
+		}
+		add_loyalists = { value = 0.1 }
+	}
+	
+	fail = {
+		NOT = { 
+			OR = { 
+			has_law = law_type:law_monarchy
+			has_law = law_type:law_social_monarchy
+			}
+		}
+	}
+	on_fail = {
+		add_radicals = { value= 0.2 }
+	}
+	
+	invalid = {
+		NOT = {
+			has_journal_entry = je_lost_duke
+		}
+		
+	}
+	should_be_pinned_by_default_uninvolved_or_context = yes
+	
+}
+je_lost_duke_reforms = {
+	icon = "gfx\interface\icons\commander_order_icons\zw_advance_rapid_advance.dds"
+	
+	group = je_group_historical_content
+
+	
+	complete = {
+		AND = {
+			country_has_building_group_levels = {
+				type = bg_heavy_industry
+				value >= 25
+			}
+			country_has_building_group_levels = {
+				type = bg_light_industry
+				value >= 50
+			}
+			country_has_building_group_levels = {
+				type = bg_private_infrastructure
+				value >= 20
+			}	
+		}
+	}
+
+	on_complete = {
+		change_variable = {
+			name = lost_duke_var
+			add = 1
+		}
+		add_loyalists = { value = 0.1 }
+	}
+	
+	fail = {
+		NOT = { 
+			OR = { 
+			has_law = law_type:law_monarchy
+			has_law = law_type:law_social_monarchy
+			}
+		}
+	}
+	on_fail = {
+		add_radicals = { value= 0.15 }
+	}
+	invalid = {
+		NOT = {
+			has_journal_entry = je_lost_duke
+		}
+		
+	}
+	should_be_pinned_by_default_uninvolved_or_context = yes
+	
+}
+je_lost_duke_dictator = {
+	icon = "gfx\interface\icons\ai_strategy_icons\subject_overlord_compliance.dds"
+	
+	group = je_group_historical_content
+	
+	complete = {
+		AND = {
+			has_law	= law_type:law_autocracy
+			has_law	= law_type:law_subjecthood
+			has_law = law_type:law_total_separation
+			has_law = law_type:law_appointed_bureaucrats
+			has_law = law_type:law_secret_police
+			has_law = law_type:law_censorship
+		}
+	}
+	on_complete = {
+		change_variable = {
+			name = lost_duke_var
+			add = 1
+		}
+		add_loyalists = { value = 0.1 }
+	}
+	fail = {
+		NOT = { 
+			OR = { 
+			has_law = law_type:law_monarchy
+			has_law = law_type:law_social_monarchy
+			}
+		}
+	}
+	on_fail = {
+		add_radicals = { value= 0.15 }
+	}
+	
+	invalid = {
+		NOT = {
+			has_journal_entry = je_lost_duke
+		}
+		
+	}
+	should_be_pinned_by_default_uninvolved_or_context = yes
+}
+je_radical_duke = {
+	icon = "gfx\interface\icons\alert_icons\radicalized.dds"
+	
+	group = je_group_historical_content
+	
+	complete = {
+		scope:journal_entry = {
+			is_goal_complete = yes
+		}
+	}
+
+	on_complete = {
+		if = {
+			limit = {
+				heir = {
+					has_variable = is_amedeo
+				}
+			}
+			heir = { set_character_as_ruler = yes }
+		}
+		any_character = {
+			limit = {
+				has_variable = is_amedeo
+			}
+			add_trait = radical_duke_reform
+			add_trait = ambitious
+			remove_trait = radical_duke
+		}
+		add_loyalists = { value = 0.20 }
+	}
+
+	fail = {
+		NOR = {
+			ruler = {
+				has_variable = is_amedeo
+			}
+			heir = {
+				has_variable = is_amedeo
+			}
+		}
+	}
+	
+	on_fail = {
+		add_radicals = { value= 0.15 }
+		
+		if = {
+			limit = {
+				heir = {
+					has_variable = is_amedeo
+				}
+			}
+			heir = { kill_character = yes }
+		}
+	}
+	current_value = {
+		value = var:radical_duke_var
+	}
+
+	goal_add_value = {
+		add = 3
+	}
+
+	progressbar = yes
+
+	weight = 10000
+	
+	scripted_button = button_radical_duke_aids
+	scripted_button = button_radical_duke_kills
+
+	should_be_pinned_by_default_uninvolved_or_context = yes
+}
+je_radical_duke_reforms = {
+	icon = "gfx\interface\icons\event_icons\event_scales.dds"
+	
+	group = je_group_historical_content
+	
+	complete = {
+		AND = {
+			country_has_building_group_levels = {
+				type = bg_arts
+				value >= 15
+			}
+			country_has_building_group_levels = {
+				type = bg_technology 
+				value >= 25
+			}
+			OR = {
+				has_law	= law_type:law_wealth_voting
+				has_law	= law_type:law_census_voting
+				has_law	= law_type:law_universal_suffrage
+			}
+			has_law = law_type:law_cultural_exclusion
+			has_law = law_type:law_total_separation
+			has_law = law_type:law_guaranteed_liberties
+			has_law = law_type:law_public_schools
+		}
+	}
+
+	on_complete = {
+		change_variable = {
+			name = radical_duke_var
+			add = 1
+		}
+		add_loyalists = { value = 0.10 }
+	}
+
+	fail = {
+		NOT = {
+			ruler = {
+				has_variable = is_amedeo
+			}
+			heir = {
+				has_variable = is_amedeo
+			}
+			has_law = law_type:law_monarchy
+			has_law = law_type:law_social_monarchy
+		}
+	}
+	
+	on_fail = {
+		add_radicals = { value= 0.15 }
+	}
+	invalid = {
+		NOT = {
+			has_journal_entry = je_radical_duke
+		}
+		
+	}
+	should_be_pinned_by_default_uninvolved_or_context = yes
+}
+je_radical_duke_champ = {
+	icon = "gfx\interface\icons\character_trait_icons\special_character_traits\special_character_napoleonic_return.dds"
+	
+	group = je_group_historical_content
+	
+	complete = {
+		OR = {
+			heir = {
+				AND = {
+					popularity >= 75
+					has_variable = is_amedeo
+				}
+			}
+			ruler = {
+				AND = {
+					popularity >= 75
+					has_variable = is_amedeo
+				}
+			}
+		}
+	}
+
+	on_complete = {
+		change_variable = {
+			name = radical_duke_var
+			add = 1
+		}
+		add_loyalists = { value = 0.10 }
+	}
+
+	fail = {
+		NOT = {
+			ruler = {
+				has_variable = is_amedeo
+			}
+			heir = {
+				has_variable = is_amedeo
+			}
+			has_law = law_type:law_monarchy
+			has_law = law_type:law_social_monarchy
+		}
+	}
+	
+	on_fail = {
+		add_radicals = { value= 0.15 }
+	}
+	invalid = {
+		NOT = {
+			has_journal_entry = je_radical_duke
+		}
+		
+	}
+	should_be_pinned_by_default_uninvolved_or_context = yes
+}
