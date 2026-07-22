@@ -207,21 +207,15 @@
 #	should_be_pinned_by_default_uninvolved_or_context = yes
 #}
 
-je_reform_indies = {
+je_reform_indies_chr = {
 	icon = "gfx/interface/icons/event_icons/event_industry.dds"
 
 	group = je_group_internal_affairs
 
 	is_shown_when_inactive = {
-		OR = {
-			AND = {
-				exists = c:BEI
-				c:BEI = THIS
-			}
-			AND = {
+		AND = {
 				exists = c:CHR
 				c:CHR = THIS
-			}
 		}
 	}
 
@@ -234,22 +228,58 @@ je_reform_indies = {
 		}
 	}
 
+	
 
 
 	complete = {
-		scope:journal_entry = {
-			is_goal_complete = yes
-		}
-		OR = {
+		
+		calc_true_if = {
+			amount > 4
+
 			has_law = law_type:law_free_trade
 			has_law = law_type:law_mercantilism
+			country_average_cultural_acceptance = {
+				target = cu:filipino
+				value > 40
+			}
+			NOT = { has_law = law_type:law_land_based_taxation }
+			NOT = { has_law = law_type:law_serfdom }
+
+			scope:journal_entry = {
+			is_goal_complete = yes
+			}
+			religion_percent_country = {
+				target = rel:protestant
+				value > 0.50
+			}
+			any_subject_or_below = {
+				count > 1
+				religion_percent_country = {
+				target = rel:protestant
+				value > 0.50
+				}
+			}
+			
 		}
-		NOT = { has_law = law_type:law_land_based_taxation }
-		NOT = { has_law = law_type:law_serfdom }
-		has_law = law_type:law_slavery_banned
+		
+
+
+
 	}
 
 	on_complete = {
+		if = {
+			limit = {
+				country_average_cultural_acceptance = {
+				target = cu:filipino
+				value > 40
+				}
+				NOT = {
+					country_has_primary_culture = cu:filipino
+				}
+			}
+			add_primary_culture = cu:filipino
+		}
 		trigger_event = { id = east_indies.2 }
 		show_as_tooltip = {
 			add_journal_entry = {
@@ -885,7 +915,9 @@ je_consolidate_colonial_rule_bei = {
 	weight = 100
 }
 
-je_reform_indies = {
+
+
+je_reform_indies_bei = {
 	icon = "gfx/interface/icons/event_icons/event_industry.dds"
 	
 	group = je_group_internal_affairs
