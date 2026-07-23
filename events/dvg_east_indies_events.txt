@@ -527,45 +527,164 @@ dvg_east_indies.8 = {
 	}
 
 	immediate = {
+		s:STATE_CELEBES = {
+			random_scope_state = {
+				limit = {
+					OR = {
+						owner = ROOT
+						owner = {
+							top_overlord ?= ROOT.top_overlord
+						}
+					}
+				}
+				save_scope_as = celebes_state
+			}
+		}
 		
 	}
 	
 	# We saved Sulawesi!!
-	option = {
+	option = { # increase ruler popularity and IG attraction
 		name = dvg_east_indies.8.a
-		
+		trigger = {
+				any_scope_state = {
+					state_region = s:STATE_CELEBES
+					is_capital = yes
+				}
+			
+		}
+		ruler = {
+			add_modifier = {
+				name = popular_autocrat
+				days = very_long_modifier_time
+			}
+			interest_group ?= {
+				add_modifier = {
+					name = popular_autocrat_ig
+					days = very_long_modifier_time
+				}
+			}
+		}
+	}
+
+	option = { # increase assimilation and gain same culture loyalists
+		name = dvg_east_indies.8.b
 		add_loyalists = {
-			value = 0.10
+			culture = scope:primary_culture_scope
+			value = 0.05
+		}
+		add_modifier = {
+			name = russification_modifier
+			days = very_long_modifier_time
+		}
+	}
+
+	option = { # increase conversion
+		name = dvg_east_indies.8.c
+		default_option = yes
+		add_loyalists = {
+			pop_type = clergymen
+			religion = root.religion
+			value = 0.6
+		}
+		add_modifier = {
+			name = religious_orthodocy_enforced_mod
+			days = very_long_modifier_time
+		}
+	}
+
+	option = { # Establish Colonial Administration
+		name = dvg_east_indies.8.e
+		trigger = {
+			NOT = {
+				any_scope_state = {
+					state_region = s:STATE_CELEBES
+					is_capital = yes
+				}
+			}
+		}
+		create_country = {
+			tag = CEL
+			state = scope:celebes_state
+			on_created = {
+				save_scope_as = newly_formed_colonial_nation_scope
+			}
 		}
 		if = {
 			limit = {
-				NOT = {
-					has_technology_researched = nationalism
+				is_country_type = colonial
+				has_law = law_type:law_subjecthood
+			}
+			add_primary_culture = scope:primary_culture_scope
+			remove_primary_culture = cu:moluccan
+			remove_primary_culture = cu:makassarese
+		}
+		create_diplomatic_pact = {
+			country = scope:newly_formed_colonial_nation_scope
+			type = chartered_company
+		}
+		custom_tooltip = {
+			text = colonial_administration_events.1_tt_1
+			scope:newly_formed_colonial_nation_scope = {
+				activate_law = law_type:law_colonial_administration
+				activate_law = law_type:law_oligarchy
+				activate_law = law_type:law_subjecthood
+				active_law:lawgroup_citizenship ?= { # Subjecthood
+					add_amendment = {
+						type = amendment_racialized_subjecthood
+						sponsor = PREV.ig:ig_armed_forces
+					}
+				}
+				activate_law = law_type:law_extraction_economy
+				activate_law = law_type:law_colonial_exploitation
+				activate_law = law_type:law_no_schools
+				activate_law = law_type:law_no_health_system
+				activate_law = law_type:law_censorship
+				activate_law = law_type:law_no_workers_rights
+				activate_law = law_type:law_child_labor_allowed
+				activate_law = law_type:law_no_social_security
+				activate_law = law_type:law_migration_controls
+			}
+		}
+		scope:newly_formed_colonial_nation_scope = {
+			set_strategy = ai_strategy_colonial_extraction
+			add_modifier = {
+				name = resource_extraction_charter_modifier
+				days = very_long_modifier_time
+			}
+			ig:ig_industrialists ?= {
+				if = {
+					limit = {
+						has_ideology = ideology:ideology_laissez_faire
+					}
+					remove_ideology = ideology_laissez_faire
+					add_ideology = ideology_colonialist
 				}
 			}
-			add_technology_researched = nationalism
 		}
-		
-		ai_chance = {
-			base = 1
-		}
-	}
-	option = {
-		name = dvg_east_indies.8.b
-
-		create_incident = {
-			country = ROOT
-			value = 10
-		}
-		every_state_region = {
+		every_interest_group = {
 			limit = {
-				is_homeland = cu:moluccan
+				OR = {
+					law_stance = {
+						law = law_type:law_laissez_faire
+						value > neutral
+					}
+					law_stance = {
+						law = law_type:law_free_trade
+						value > neutral
+					}
+					law_stance = {
+						law = law_type:law_interventionism
+						value > neutral
+					}
+				}
+				ig_counts_as_marginal = no
 			}
-			add_claim = ROOT
+			add_modifier = {
+				name = colonial_enterprise_modifier
+				days = normal_modifier_time
+			}
 		}
 		
-		ai_chance = {
-			base = 1
-		}
 	}
 }
