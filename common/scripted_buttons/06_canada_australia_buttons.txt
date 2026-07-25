@@ -1,0 +1,719 @@
+﻿
+
+je_australia_unite_aus_button = {
+	name = "je_australia_unite_aus_button"
+	desc = "je_australia_unite_aus_button_desc"
+
+	visible = {
+		always = yes
+	}
+
+	possible = {
+		is_at_war = no
+		has_technology_researched = nationalism
+		NOT = { has_modifier = australia_test_modifier }
+		AND = {
+				top_overlord ?= {
+				relations:root >= relations_threshold:amicable
+				}
+				custom_tooltip = {
+				text = australie_confederation_tt
+
+				any_country = {
+				is_at_war = no
+				is_player = no
+				is_adjacent_to_country = ROOT
+				country_has_primary_culture = cu:australian
+				this.gdp < ROOT.gdp
+				relations:ROOT >= relations_threshold:amicable
+				OR = {
+					is_subject = no
+					is_subject_of = ROOT
+					AND = {
+						ROOT = { is_subject = yes }
+						is_subject_of = ROOT.top_overlord
+					}
+				}
+			}
+				}
+		}
+			
+			
+		
+		
+	}
+
+	cooldown = { days = short_modifier_time }
+
+	effect = {
+		custom_tooltip = unite_australia_tt
+
+		trigger_event = { id = can_aus.3 popup = yes }
+
+
+		
+		add_modifier = {
+			name = australia_test_modifier
+			days = short_modifier_time
+		}
+	}
+
+	ai_chance = {
+		value = 0
+		if = {
+			limit = {
+				has_technology_researched = nationalism
+			}
+			add = 100
+		}
+	}
+}
+
+more_convicts_button = {
+	name = "more_convicts_button"
+	desc = "more_convicts_button_desc"
+
+	visible = {
+		always = yes
+		NOT = {
+			has_variable = penal_colonies_banned
+		}
+	}
+
+	possible = {
+		any_scope_state = {
+			available_jobs > 0
+		}
+		NOR = {
+			has_law = law_type:law_guaranteed_liberties
+			has_law = law_type:law_slavery_banned
+		}
+		OR = {
+			is_subject = yes
+			is_in_power_bloc = yes
+		}
+		OR = {
+			top_overlord = {
+			any_scope_pop = {
+				pop_radical_fraction > 0.25
+				pop_acceptance > 35
+				total_size < 10000
+			}
+			}	
+			power_bloc = {
+				power_bloc_leader = {
+					any_scope_pop = {
+					pop_radical_fraction > 0.25
+					pop_acceptance > 35
+					total_size < 10000
+					}
+				}
+			}
+		}
+		
+		NOT = {
+			any_scope_state = {
+				has_modifier = dvg_penal_colony
+			}
+		}
+		
+	}
+
+	cooldown = {
+		months = 6
+	}
+	effect = {
+		
+		trigger_event = {
+			id = dvg_australie.20
+		}
+	}
+	ai_chance = {
+		value = 100
+	}
+}
+
+end_convicts_button = {
+	name = "end_convicts_button"
+	desc = "end_convicts_button_desc"
+
+	visible = {
+		always = yes
+
+	}
+	
+
+	possible = {
+		OR = {
+			has_technology_researched = human_rights
+			has_law = law_type:law_slavery_banned
+			any_political_movement = {
+				is_political_movement_type = movement_anti_slavery
+				OR = {
+					political_movement_radicalism > 0.33
+					political_movement_support > 0.33
+				}
+				
+			}
+			OR = {
+				is_subject = no
+				is_in_power_bloc = no
+			}
+		}
+		
+	}
+
+	cooldown = { months = 12 }
+
+	effect = {
+		trigger_event = {
+			id = dvg_australie.2
+		}
+		
+	}
+
+	ai_chance = {
+		value = 0
+		if = {
+			limit = {
+				has_technology_researched = human_rights
+			}
+			add = 100
+		}
+		if = {
+			limit = {
+				has_law = law_type:law_slavery_banned
+			}
+			add = 100
+		}
+	}
+}
+
+enfranchise_indo_button = {
+	name = enfranchise_indo_button
+	desc = enfranchise_indo_button_desc
+
+	visible = {
+		NOR = {
+			country_has_primary_culture = cu:indo_australien
+			country_has_primary_culture = cu:timorese
+			country_has_primary_culture = cu:filipino
+		}
+		
+
+	}
+
+	possible = {
+		country_average_cultural_acceptance = {
+			target = cu:indo_australien
+			value >= acceptance_status_3
+		}
+		OR = {
+			capital = {
+				is_in_geographic_region = geographic_region_australasia
+			}
+			capital = {
+				is_in_geographic_region = geographic_region_indonesia
+			}
+		}
+		
+		has_technology_researched = pan-nationalism
+
+	}
+
+	
+
+	effect = {
+
+		add_primary_culture = cu:indo_australien
+
+		if = {
+			limit = {
+				OR = {
+					top_overlord = {
+						country_has_primary_culture = cu:anglois
+					}
+					country_has_primary_culture = cu:anglois
+				}
+				NOT = {
+					country_has_primary_culture = cu:filipino
+				}
+			}
+			add_primary_culture = cu:timorese
+		}
+		if = {
+			limit = {
+				any_scope_state = {
+					is_homeland = cu:filipino
+				}
+				NOT = {
+					country_has_primary_culture = cu:filipino
+				}
+			}
+			add_primary_culture = cu:filipino
+		}
+		if = {
+			limit = {
+				country_has_state_religion = rel:catholic
+				any_scope_pop = {
+					has_discrimination_trait = heritage_insulindian
+					has_religion = rel:catholic
+					strata = upper
+				}
+			}
+			random_scope_pop = {
+				limit = {
+					has_discrimination_trait = heritage_insulindian
+					has_religion = rel:catholic
+					strata = upper
+				}
+			}
+			change_pop_culture = {
+				target = cu:timorese
+				value = 0.10
+			}
+		}
+
+		every_country = {
+			limit = {
+				NOT = {
+					ROOT = this
+					is_country_type = decentralized
+					country_has_primary_culture = cu:australian
+				}
+				country_has_primary_culture = cu:australian
+			}
+			change_relations = {
+				country = ROOT
+				value = -30
+			}
+		}
+		cu:australian = {
+			add_fervor = 5
+		}
+		every_scope_state = {
+				limit = {
+				has_cultural_community = cu:indo_australien
+				NOT = {
+					any_scope_state = {
+						state_region = {
+							is_homeland = cu:indo_australien
+						}
+					}
+				}
+				}
+				add_homeland = cu:indo_australien
+		}
+		if = {
+			limit = {
+				country_has_state_religion = rel:protestant
+				any_scope_pop = {
+					has_discrimination_trait = heritage_insulindian
+					has_religion = rel:protestant
+					strata = upper
+				}
+				any_overlord_or_above = {
+					country_has_primary_culture = cu:burgundian
+				}
+			}
+			random_scope_pop = {
+				limit = {
+					has_discrimination_trait = heritage_insulindian
+					has_religion = rel:protestant
+					strata = upper
+				}
+			}
+			change_pop_culture = {
+				target = cu:indo_australien
+				value = 0.10
+			}
+		}
+		if = {
+			limit = {
+				country_has_state_religion = rel:protestant
+				any_scope_pop = {
+					has_discrimination_trait = heritage_insulindian
+					has_religion = rel:protestant
+					strata = upper
+				}
+				any_overlord_or_above = {
+					country_has_primary_culture = cu:scandinavian
+				}
+			}
+			random_scope_pop = {
+				limit = {
+					has_discrimination_trait = heritage_insulindian
+					has_religion = rel:protestant
+					strata = upper
+				}
+			}
+			change_pop_culture = {
+				target = cu:filipino
+				value = 0.10
+			}
+		}
+	}
+
+	ai_chance = {
+		value = 1
+	}
+}
+
+enfranchise_aborigine_french_button = {
+	name = enfranchise_aborigine_french_button
+	desc = enfranchise_aborigine_french_button_desc
+
+	visible = {
+
+		NOT = {
+			country_has_primary_culture = cu:aborigine_french
+		}
+		any_scope_pop = {
+			has_culture = cu:aborigine_french
+		}
+	}
+
+	possible = {
+		country_average_cultural_acceptance = {
+			target = cu:aborigine_french
+			value >= acceptance_status_3
+		}
+		any_scope_state = {
+			has_cultural_community = cu:aborigine_french
+		}
+	}
+
+	selected = {
+	}
+
+	effect = {
+		add_primary_culture = cu:aborigine_french
+
+		every_country = {
+			limit = {
+				NOT = {
+					ROOT = this
+					is_country_type = decentralized
+					country_has_primary_culture = cu:aborigine_french
+				}
+				country_has_primary_culture = cu:australian
+			}
+			change_relations = {
+				country = ROOT
+				value = -30
+			}
+			cu:australian = {
+			add_fervor = 5
+			}
+		}
+		every_scope_state = {
+				limit = {
+				has_cultural_community = cu:aborigine_french
+				NOT = {
+					any_scope_state = {
+						state_region = {
+							is_homeland = cu:aborigine_french
+						}
+					}
+				}
+				}
+				add_homeland = cu:aborigine_french
+		}
+	}
+
+	ai_chance = {
+		value = 1
+	}
+}
+
+pyard_treaty_button = {
+	name = pyard_treaty_button
+	desc = pyard_treaty_button_desc
+
+	visible = {
+
+		exists = c:NJY
+		exists = c:YLN
+	}
+
+	possible = {
+		is_subject = yes
+		OR = {
+			AND = {
+				c:NJY = this
+				c:YLN = {
+				is_ai = yes
+				relations:root >= relations_threshold:amicable
+				top_overlord = {
+							THIS = root.top_overlord
+						}
+				this.gdp < root.gdp
+				OR = {
+					has_attitude = {
+					who = ROOT
+					attitude = cooperative
+					}
+					liberty_desire < 25
+				}
+				top_overlord = {
+							THIS = root.top_overlord
+				}
+				}
+			}
+			AND = {
+				c:YLN = this
+				c:NJY = {
+				is_ai = yes
+				relations:root >= relations_threshold:amicable
+				top_overlord = {
+							THIS = root.top_overlord
+						}
+				this.gdp < root.gdp
+				OR = {
+					has_attitude = {
+					who = ROOT
+					attitude = cooperative
+					}
+					liberty_desire < 25
+				}
+				top_overlord = {
+							THIS = root.top_overlord
+				}
+				}
+			}
+		}
+		
+	}
+
+	selected = {
+
+	}
+
+	effect = {
+		if = {
+			limit = {
+				country_average_cultural_acceptance = {
+					target = cu:aborigine_french
+					value >= acceptance_status_3
+					}
+			}
+			add_primary_culture = cu:aborigine_french
+		}
+		if = {
+			limit = {
+				OR = {
+					has_law = law_type:law_racial_segregation
+					has_law = law_type:law_ethnostate
+				}	
+			}
+			activate_law = law_type:law_subjecthood
+		}
+
+		if = {
+			limit = {
+				has_law = law_type:law_national_supremacy
+			}
+			activate_law = law_type:law_cultural_exclusion
+		}
+		if = {
+			limit = {
+				c:NJY = this
+			}
+			change_relations = {
+			country = c:YLN
+			value = 30
+			}
+		}
+		if = {
+			limit = {
+				c:YLN = this
+			}
+			change_relations = {
+			country = c:NJY
+			value = 30
+			}
+		}
+		
+	}
+	ai_chance = {
+		value = 1
+	}
+}
+
+australie_allies_button = {
+	name = "australie_allies_button"
+	desc = "australie_allies_button_desc"
+
+	visible = {
+		always = yes
+		NOT = {
+			any_country = {
+				has_variable = aussie_revolter_1
+			}
+			any_country = {
+				has_variable = aussie_revolter_2
+			}
+		}
+	}
+
+	possible = {
+		NOT = {
+			any_treaty = {
+					any_scope_article = {
+						has_type = support_independence
+					}
+			}
+		}
+		any_country = {
+				is_at_war = no
+				is_player = no
+				is_adjacent_to_country = ROOT
+				country_has_primary_culture = cu:australian
+				this.gdp < ROOT.gdp
+				relations:ROOT >= relations_threshold:amicable
+				NOT = {
+					is_subject_of = ROOT
+					AND = {
+						ROOT = { is_subject = yes }
+						is_subject_of = ROOT.top_overlord
+					}
+					any_treaty = {
+					any_scope_article = {
+						has_type = support_independence
+					}
+					}
+				}
+				
+		}
+	}
+
+	cooldown = { months = 12 }
+
+	effect = {
+		if = {
+			limit = {
+				NOT = {
+					has_variable = aussie_revolter
+				}
+			}
+			set_variable = aussie_revolter_1
+		}
+		every_country = {
+			limit = {
+				country_has_primary_culture = cu:australian
+			}
+		}
+	}
+
+	ai_chance = {
+		value = 0
+		if = {
+			limit = {
+				has_technology_researched = pan-nationalism
+			}
+			add = 100
+		}
+	}
+}
+
+
+dvg_embrace_jesus_button = {
+	name = "dvg_embrace_jesus_button"
+	desc = "dvg_embrace_jesus_button_desc"
+
+	visible = {
+		always = yes
+		NOR = {
+			country_has_state_religion = rel:catholic
+			country_has_state_religion = rel:protestant
+			country_has_state_religion = rel:taiping
+			country_has_state_religion = rel:oriental_orthodox
+			country_has_state_religion = rel:orthodox
+		}
+		is_subject = yes
+	}
+
+	possible = {
+		top_overlord = {
+			OR = {
+				country_has_state_religion = rel:catholic
+				country_has_state_religion = rel:protestant
+				country_has_state_religion = rel:taiping
+			}
+		}
+		has_law_or_variant = law_type:law_freedom_of_conscience
+	}
+
+
+	effect = {
+		trigger_event = {
+			id = dvg_australie.27
+		}
+	}
+
+	ai_chance = {
+		value = 0
+		if = {
+			limit = {
+				has_technology_researched = pan-nationalism
+			}
+			add = 100
+		}
+	}
+}
+
+dvg_aussie_revolution_button = {
+	name = "dvg_aussie_revolution_button"
+	desc = "dvg_aussie_revolution_button_desc"
+
+	visible = { 
+		always = yes
+		is_subject = yes
+	}
+
+	possible = {
+		liberty_desire > 75
+		
+		
+	}
+
+	cooldown = {
+		months = 75
+	}
+
+	effect = {
+		trigger_event = {
+			id = dvg_australie.33
+		}
+		every_country = {
+			limit = {
+				is_ai = yes
+				OR = {
+					has_variable = aussie_revolter_2
+					any_treaty = {
+						any_scope_article = {
+							has_type = support_independence
+						}
+					}
+				}
+			}
+			trigger_event = {
+				id = dvg_australie.33
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_journal_entry = je_aussie_revolt
+					}
+				}
+				add_journal_entry = {
+					type = je_aussie_revolt
+				}
+			}
+		}
+	}
+
+	ai_chance = {
+		value = 100
+	}
+}
