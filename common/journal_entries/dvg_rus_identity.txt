@@ -1,0 +1,308 @@
+je_russian_identity = {
+	icon = "gfx\interface\icons\event_icons\event_russia_indetity.dds"
+
+	group = je_group_internal_affairs
+
+	modifiers_while_active = {
+	}
+
+	immediate = {
+		rus_set_russian_identity_variables = yes
+		rus_weekly_pulse_eurasianist_progress = yes #Calculates how much the Legitimists will get next month. Updates weekly, but is not added until the monthly.
+		rus_weekly_pulse_russist_progress = yes  #Calculates how much the Orleanists will get next month. Updates weekly, but is not added until the monthly.
+		rus_weekly_pulse_slavist_progress = yes  #Calculates how much the Bonapartists will get next month. Updates weekly, but is not added until the monthly.
+	}
+
+	scripted_progress_bar = russian_identity_slavist_progress_bar
+	scripted_progress_bar = russian_identity_eurasianist_progress_bar
+	scripted_progress_bar = russian_identity_russist_progress_bar
+
+	complete = {
+		custom_tooltip = {
+			text = je_russian_identity_complete_tt
+			has_variable = rus_bureacratic_je_done
+			has_variable = rus_tatar_question_je_done
+			scope:journal_entry = {
+				is_goal_complete = yes
+			}
+		}
+	}
+
+	on_complete = {
+		change_tag = HRU
+		custom_tooltip = {
+			text = je_russian_identity_oncomplete_tt
+			rus_clear_identity_variables = yes #Removes all variables used for math in this JE, to save memory and performance.
+		}
+	}
+
+	status_desc = {
+			triggered_desc = { # In the lead and on chosen
+				desc = status_in_lead_and_chosen
+				trigger = {
+					OR = {
+						AND = {
+							has_global_variable = slav_supported
+							scope:journal_entry = {
+								"scripted_bar_progress(russian_identity_slavist_progress_bar)" > "scripted_bar_progress(russian_identity_eurasianist_progress_bar)"
+								"scripted_bar_progress(russian_identity_slavist_progress_bar)" > "scripted_bar_progress(russian_identity_russist_progress_bar)"
+							}
+						}
+						AND = {
+							has_global_variable = eura_supported
+							scope:journal_entry = {
+								"scripted_bar_progress(russian_identity_eurasianist_progress_bar)" > "scripted_bar_progress(russian_identity_slavist_progress_bar)"
+								"scripted_bar_progress(russian_identity_eurasianist_progress_bar)" > "scripted_bar_progress(russian_identity_russist_progress_bar)"
+							}
+						}
+						AND = {
+							has_global_variable = allrussia_supported
+							scope:journal_entry = {
+								"scripted_bar_progress(russian_identity_russist_progress_bar)" > "scripted_bar_progress(russian_identity_slavist_progress_bar)"
+								"scripted_bar_progress(russian_identity_russist_progress_bar)" > "scripted_bar_progress(russian_identity_eurasianist_progress_bar)"
+							}
+						}
+					}
+				}
+			}
+			triggered_desc = { # Bar not moving, either no supported or not in government
+				desc = status_russian_identity_start
+				trigger = {
+					always = yes
+				}
+			}
+	}
+
+	on_weekly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					NOT = {
+						has_variable = rus_identity_freeze #This variable stops iteration, and is granted by reaching 480 with one dynasty. It's reset when this JE is completed, or when je_cement_the_rightful_dynasty fails.
+					}
+				}
+				rus_weekly_pulse_slavist_progress = yes #Calculates how much the Legitimists will get next month. Updates weekly, but is not added until the monthly.
+				rus_weekly_pulse_russist_progress = yes  #Calculates how much the Orleanists will get next month. Updates weekly, but is not added until the monthly.
+				rus_weekly_pulse_eurasianist_progress = yes  #Calculates how much the Bonapartists will get next month. Updates weekly, but is not added until the monthly.
+			}
+		}
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					NOT = { has_variable = two_identity_fail }
+					NOT = { has_variable = rus_identity_freeze }
+					scope:journal_entry = {
+						OR = {
+							AND = {
+								"scripted_bar_progress(russian_identity_slavist_progress_bar)" >= 1000
+								NOT = { has_global_variable = slav_supported }
+							}
+							AND = {
+								"scripted_bar_progress(russian_identity_eurasianist_progress_bar)" >= 1000
+								NOT = { has_global_variable = eura_supported }
+							}
+							AND = {
+								"scripted_bar_progress(russian_identity_russist_progress_bar)" >= 1000
+								NOT = { has_global_variable = allrussia_supported}
+							}
+						}
+					}
+				}
+				trigger_event = dvg_rus_iden.113
+			}
+		}
+		random_events = {
+			400 = 0
+			30 = dvg.rus_iden.104
+			30 = dvg.rus_iden.105
+			30 = dvg.rus_iden.106
+			100 = dvg.rus_iden.110
+			100 = dvg.rus_iden.111
+			100 = dvg.rus_iden.112
+		}
+	}
+
+	fail = {
+		custom_tooltip = {
+			text = rus_identity_fail_tt
+			AND = {
+				has_variable = two_identity_fail 
+				has_global_variable = proletariat_unrest
+				NAND = {
+					has_global_variable = rus_bureacratic_je_done
+					has_global_variable = rus_tatar_question_je_done
+				}
+			}
+		}
+	}
+
+	on_fail = {
+		trigger_event = { id = dvg_rus_iden.101 popup = yes }
+		rus_clear_identity_variables = yes #Removes all variables used for math in this JE, to save memory and performance.
+	}
+	goal_add_value = {
+		value = 1000
+	}
+	invalid = {
+	}
+
+	on_invalid = {
+	}
+
+	weight = 100
+
+	should_be_pinned_by_default_uninvolved_or_context = yes
+}
+je_tatar_question = {
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+	
+	group = je_group_internal_affairs
+	
+	complete = {
+		is_at_war = no
+		NOT = {
+			TAR = exists
+		}
+		radical_fraction = {
+			value <= 0.25
+			religion = rel:sunni
+		}
+		OR = { 
+			has_law = law_type:law_multiculturalism
+			has_variable = tatar_staged_coup
+			has_variable = tatars_in_eurasia
+			haw_law = law_type:law_rossijane_solidarity
+	
+		}
+		
+	}
+	on_complete = {
+		set_variable = rus_tatar_question_je_done
+		add_loyalists = {
+			value = 0.15
+		}
+	
+	}
+
+	timeout = 2000
+	
+	on_timeout = {
+		trigger_event = {
+			id = dvg_rus_iden.103
+		}
+	}
+	
+	scripted_button = stage_tatar_revolt_button
+
+	weight = 100
+
+	should_be_pinned_by_default_uninvolved_or_context = yes
+}
+je_bureaucratic_burden = {
+	icon = "gfx/interface/icons/event_icons/scales.dds"
+	
+	group = je_group_internal_affairs
+
+	modifiers_while_active = {
+		dvg_overburdened_bureaucracy
+	}
+	complete = {
+		and = {
+			not = {
+				has_law = law_type:law_hereditary_bureaucrats
+				has_law = law_type:law_no_home_affairs
+				has_law = law_type:law_no_police
+				has_law = law_type:law_no_police 
+			}
+			taking_loans = no
+			bureaucracy >= 0 
+			approaching_bureaucracy_shortage = no
+			custom_tooltip = {
+				text = bureaucracy_constitution_tt
+				has_global_variable = constitution_done
+			}
+		}
+	}
+	fail = {
+		custom_tooltip = {
+			text = bureaucracy_fail_tt
+			has_global_variable = constitution_failed
+		}
+		bureaucracy <= 0 
+	}
+	on_fail = {
+		set_global_variable = rus_bureacratic_je_fail
+		trigger_event = {id = dvg_rus_iden.109 days = 14}
+		add_modifier = {
+			name = dvg_overburdened_bureaucracy 
+			months = 48
+			is_decaying = yes
+		}
+	}
+	on_complete = {
+		set_global_variable = rus_bureacratic_je_done
+		add_loyalists = {
+			value = 0.1
+		}
+	}
+
+	should_be_pinned_by_default_uninvolved_or_context = yes
+	timeout = 2000
+
+	on_timeout = {
+		set_global_variable = rus_bureacratic_je_fail
+		trigger_event = {id = dvg_rus_iden.109 days = 14}
+		add_modifier = {
+			name = dvg_overburdened_bureaucracy 
+			months = 48
+			is_decaying = yes
+		}
+	}
+}
+je_united_eurasians = {
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+	
+	group = je_group_internal_affairs
+	
+	complete = {
+		custom_tooltip = {
+			text = integrate_tatars_tt
+			has_variable = tatars_and_turks_in_eurasia
+		}
+		custom_tooltip = {
+			text = integrate_slavs_tt
+			has_variable = east_slavs_in_eurasia
+		}
+		custom_tooltip = {
+			text = integrate_urals_tt
+			has_variable = uralics_and_baltics_in_eurasia
+		}
+		custom_tooltip = {
+			text = integrate_caucasians_tt
+			has_variable = caucasians_in_eurasia
+		}
+		custom_tooltip = {
+			text = integrate_sibir_tt
+			has_variable = siberians_and_mongols_in_eurasia
+		}
+		
+	}
+	on_complete = {
+		add_loyalists = {
+			value = 0.25 culture = cu:eurasian
+		}
+	
+	}
+	scripted_button = integrate_east_slavs
+	scripted_button = integrate_uralics_and_baltics
+	scripted_button = integrate_tatars_and_turks
+	scripted_button = integrate_caucasians
+	scripted_button = integrate_siberians_and_mongols
+
+	weight = 100
+
+	should_be_pinned_by_default_uninvolved_or_context = yes
+}

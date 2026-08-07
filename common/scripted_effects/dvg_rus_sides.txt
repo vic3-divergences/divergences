@@ -1,0 +1,208 @@
+rus_set_russian_identity_variables = {
+	#Slavist Variables
+	set_variable = { name = slavist_progress_from_igs value = 0 } 
+	set_variable = { name = slavist_progress_from_military value = 0 } 
+	set_variable = { name = slavist_progress_from_legitimacy value = 0 } 
+	set_variable = { name = slavist_progress_from_effects value = 0 }
+
+	#Eurasianist Variables
+	set_variable = { name = eurasianist_progress_from_igs value = 0 }
+	set_variable = { name = eurasianist_progress_from_smarties value = 0 }
+	set_variable = { name = eurasianist_progress_from_legitimacy value = 0 }
+	set_variable = { name = eurasianist_progress_from_effects value = 0 }
+
+	#Russist Variables
+	set_variable = { name = russist_progress_from_igs value = 0 }
+	set_variable = { name = russist_progress_from_factories value = 0 } #These variables use the same scheme as the Bonapartist ones, with the exception that Legitimists derive from the sum of agricultural building levels in France.
+	set_variable = { name = russist_progress_from_legitimacy value = 0 }
+	set_variable = { name = russist_progress_from_effects value = 0 }
+
+	set_variable = { name = ig_weight value = 0 } #This variable is used solely for mathematical purposes, and is set as equivalent to the clout of a given interest group. It exists so that IGs can be weighted higher or lower depending on whether they're in-government or not.
+}
+
+rus_weekly_pulse_slavist_progress = { #Effects like these are run three times, one for each house. All of them function essentially the same way.
+	set_variable = { name = slavist_progress_from_igs value = 0 }
+	set_variable = { name = slavist_progress_from_military value = 0 }
+	set_variable = { name = slavist_progress_from_legitimacy value = root.government_legitimacy } #Government legitimacy is a single constant, and so this variable is set immediately rather than needing a calculation.
+	# From Interest Groups
+	every_interest_group = {
+		limit = {
+			OR = {
+				is_interest_group_type = ig_petite_bourgeoisie
+				is_interest_group_type = ig_armed_forces
+			}		
+		}
+		ROOT = {														#for_each loop. For each interest group of ideology_bonapartist, perform the following steps in sequence.
+			set_variable = { name = ig_weight value = prev.ig_clout } 	#1. Set ig_weight as equal to the interest group's clout.
+		}
+		if = {
+			limit = {
+				is_in_government = yes
+			}
+			ROOT = {
+				change_variable = { name = ig_weight multiply = 2 }		#2. If that IG is in government, multiply ig_weight by a given value.
+			}
+		}
+		ROOT = {
+			change_variable = { name = slavist_progress_from_igs add = var:ig_weight }	#3. Add ig_weight to the central bonapartist_progress_from_igs variable. This will run until there are no more Bonapartist IGs.
+		}
+	}
+	# From Buildings
+	every_scope_building = {
+		limit = {
+			is_building_group = bg_military # Derives from barracks and naval bases.
+			occupancy >= 0.5
+		}
+		ROOT = {
+			change_variable = { name = slavist_progress_from_military add = prev.level } #for_each loop, uses similar context to the character component. Iterates through every building in the country matching the filter, gets that building's level, and adds it to the central bonapartist_progress_from_military variable.
+		}
+	}
+	change_variable = { name = slavist_progress_from_military divide = 150 } #Building levels are converted to decimal. This usually equals something between 1 and 3, with 0.01 = one building level.
+	# From Legitimacy
+	change_variable = { name = slavist_progress_from_legitimacy divide = 100 } #Legitimacy divided by 100, to make it minimum 0 and maximum 1.
+	change_variable = { name = slavist_progress_from_legitimacy subtract = 0.5 } #Legitimacy subtracted by 0.5, to make it minimum -0.5 and maximum 0.5. Balanced scale of negative to absolute value.
+	if = {
+		limit = {
+			NOT = {
+				has_global_variable = slav_supported #If the ruler is Bonapartist, then the Bonapartists benefit from high legitimacy and suffer from low legitimacy.
+			}
+		}
+		change_variable = { name = slavist_progress_from_legitimacy multiply = -0.5 } #If the ruler is not Bonapartist, they benefit from low legitimacy and suffer from high legitimacy.
+	}
+}
+
+rus_weekly_pulse_russist_progress = { #See Bonapartist progress to see how this works.
+	set_variable = { name = russist_progress_from_igs value = 0 }
+	set_variable = { name = russist_progress_from_factories value = 0 }
+	set_variable = { name = russist_progress_from_legitimacy value = root.government_legitimacy }
+	# From Interest Groups
+	every_interest_group = {
+		limit = {
+			OR = {
+				is_interest_group_type = ig_devout
+				is_interest_group_type = ig_landowners
+				is_interest_group_type = ig_industrialists
+			}
+		}
+		ROOT = {
+			set_variable = { name = ig_weight value = prev.ig_clout }
+		}
+		if = {
+			limit = {
+				is_in_government = yes
+			}
+			ROOT = {
+				change_variable = { name = ig_weight multiply = 2 }
+			}
+		}
+		ROOT = {
+			change_variable = { name = russist_progress_from_igs add = var:ig_weight }
+		}
+	}
+	# From Buildings
+	every_scope_building = {
+		limit = {
+			OR = {
+				AND = {
+					is_building_group = bg_manufacturing
+					weekly_profit > 0
+				}
+				AND = {
+					is_building_group = bg_agriculture
+					NOT = {
+						is_building_group = bg_subsistence_agriculture
+					}
+					weekly_profit > 0
+				}
+			}
+		}
+		ROOT = {
+			change_variable = { name = russist_progress_from_factories add = prev.level }
+		}
+	}
+	change_variable = { name = russist_progress_from_factories divide = 100 }
+	# From Legitimacy
+	change_variable = { name = russist_progress_from_legitimacy divide = 100 }
+	change_variable = { name = russist_progress_from_legitimacy subtract = 0.5 }
+	if = {
+		limit = {
+			NOT = {
+				has_global_variable = allrussia_supported
+			}
+		}
+		change_variable = { name = russist_progress_from_legitimacy multiply = -0.5 }
+	}
+}
+
+rus_weekly_pulse_eurasianist_progress = { #See Legitimist progress to see how this works.
+	set_variable = { name = eurasianist_progress_from_igs value = 0 }
+	set_variable = { name = eurasianist_progress_from_smarties value = 0 }
+	set_variable = { name = eurasianist_progress_from_legitimacy value = root.government_legitimacy }
+	# From Interest Groups
+	every_interest_group = {
+		limit = {
+			is_interest_group_type = ig_intelligentsia
+		}
+		ROOT = {
+			set_variable = { name = ig_weight value = prev.ig_clout }
+		}
+		if = {
+			limit = {
+				is_in_government = yes
+			}
+			ROOT = {
+				change_variable = { name = ig_weight multiply = 2 }
+			}
+		}
+		ROOT = {
+			change_variable = { name = eurasianist_progress_from_igs add = var:ig_weight }
+		}
+	}
+	# From Buildings
+	every_scope_building = {
+		limit = {
+			AND = {
+				is_building_group = bg_technology
+				occupancy >= 0.5
+			}
+			AND = {
+				is_building_group = bg_arts
+				occupancy >= 0.5
+			}
+		}
+		ROOT = {
+			change_variable = { name = eurasianist_progress_from_smarties add = prev.level }
+		}
+	}
+	change_variable = { name = eurasianist_progress_from_smarties divide = 100 }
+	# From Legitimacy
+	change_variable = { name = eurasianist_progress_from_legitimacy divide = 100 }
+	change_variable = { name = eurasianist_progress_from_legitimacy subtract = 0.5 }
+	if = {
+		limit = {
+			NOT = {
+				has_global_variable = eura_supported
+			}
+		}
+		change_variable = { name = eurasianist_progress_from_legitimacy multiply = -0.5 }
+	}
+}
+
+rus_clear_identity_variables = { #Clears all variables, to save memory/performance. Should be executed by anything that makes Divided Monarchists irrelevant.
+	remove_variable = slavist_progress_from_igs
+	remove_variable = slavist_progress_from_military
+	remove_variable = slavist_progress_from_legitimacy
+	remove_variable = slavist_progress_from_effects
+	remove_variable = russist_progress_from_igs
+	remove_variable = russist_progress_from_factories
+	remove_variable = russist_progress_from_legitimacy
+	remove_variable = russist_progress_from_effects
+	remove_variable = eurasianist_progress_from_igs
+	remove_variable = eurasianist_progress_from_smarties
+	remove_variable = eurasianist_progress_from_legitimacy
+	remove_variable = eurasianist_progress_from_effects
+	remove_variable = ig_weight
+}
+rus_freeze_identity_progress = { #Used upon initiation of cement_the_rightful_dynasty, to prevent the bars from excessively accumulating.
+	set_variable = rus_identity_freeze
+}
