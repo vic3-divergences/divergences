@@ -207,21 +207,15 @@
 #	should_be_pinned_by_default_uninvolved_or_context = yes
 #}
 
-je_reform_indies = {
+je_reform_indies_chr = {
 	icon = "gfx/interface/icons/event_icons/event_industry.dds"
 
 	group = je_group_internal_affairs
 
 	is_shown_when_inactive = {
-		OR = {
-			AND = {
-				exists = c:BEI
-				c:BEI = THIS
-			}
-			AND = {
+		AND = {
 				exists = c:CHR
 				c:CHR = THIS
-			}
 		}
 	}
 
@@ -234,20 +228,58 @@ je_reform_indies = {
 		}
 	}
 
+	
+
+
 	complete = {
-		scope:journal_entry = {
-			is_goal_complete = yes
-		}
-		OR = {
+		
+		calc_true_if = {
+			amount > 4
+
 			has_law = law_type:law_free_trade
 			has_law = law_type:law_mercantilism
+			country_average_cultural_acceptance = {
+				target = cu:filipino
+				value > 40
+			}
+			NOT = { has_law = law_type:law_land_based_taxation }
+			NOT = { has_law = law_type:law_serfdom }
+
+			scope:journal_entry = {
+			is_goal_complete = yes
+			}
+			religion_percent_country = {
+				target = rel:protestant
+				value > 0.50
+			}
+			any_subject_or_below = {
+				count > 1
+				religion_percent_country = {
+				target = rel:protestant
+				value > 0.50
+				}
+			}
+			
 		}
-		NOT = { has_law = law_type:law_land_based_taxation }
-		NOT = { has_law = law_type:law_serfdom }
-		has_law = law_type:law_slavery_banned
+		
+
+
+
 	}
 
 	on_complete = {
+		if = {
+			limit = {
+				country_average_cultural_acceptance = {
+				target = cu:filipino
+				value > 40
+				}
+				NOT = {
+					country_has_primary_culture = cu:filipino
+				}
+			}
+			add_primary_culture = cu:filipino
+		}
 		trigger_event = { id = east_indies.2 }
 		show_as_tooltip = {
 			add_journal_entry = {
@@ -280,6 +312,9 @@ je_ethical_policy = {
 	icon = "gfx/interface/icons/event_icons/event_scales.dds"
 
 	group = je_group_internal_affairs
+
+	scripted_button = enfranchise_indo_button
+
 
 	complete = {
 		literacy_rate > 0.5
@@ -322,6 +357,7 @@ je_retaking_java = {
 
 	weight = 5000
 }
+
 je_lanfang_migration = {
 	icon = "gfx/interface/icons/event_icons/event_map.dds"
 
@@ -588,6 +624,9 @@ je_nusantara = {
 
 	}
 
+	scripted_button = enfranchise_indo_button
+
+
 	complete = {
 		exists = c:NUS
 		c:NUS = ROOT
@@ -638,4 +677,439 @@ je_nusantara = {
 	progressbar = yes
 
 	weight = 100
+}
+
+je_riau_mission = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	group = je_group_foreign_affairs
+
+	scripted_button = enfranchise_indo_button
+
+	complete = {
+		religion_percent_country = {
+			target = rel:protestant
+			value > 0.50
+		}
+		calc_true_if = {
+			amount > 3
+
+			any_scope_state = {
+				is_under_colonization = no
+			}
+			has_technology_researched = civilizing_mission
+
+			culture_percent_country = {
+				target = cu:burgundian
+				value = 0.33
+			}
+			AND = {
+				is_subject = yes
+				top_overlord = {
+					country_or_subject_owns_entire_state_region = STATE_SOUTH_SUMATRA 
+				}
+			}
+			country_or_subject_owns_entire_state_region = STATE_SOUTH_SUMATRA 
+			country_or_subject_owns_entire_state_region = STATE_NORTH_SUMATRA
+			country_or_subject_owns_entire_state_region = STATE_ACEH
+
+		}
+		
+	}
+
+	scripted_button = sumatra_presidency_button
+
+	on_complete = {
+		trigger_event = {
+			id = dvg_east_indies.6
+		}
+	}
+
+	fail = {
+		OR = {
+			has_law = law_type:law_total_separation
+			has_law = law_type:law_state_atheism
+			NOT = {
+				country_has_state_religion = rel:protestant
+			}
+		}
+	}
+	on_fail = {
+		remove_modifier = religious_missions_colonial_modifier
+	}
+	should_be_pinned_by_default_uninvolved_or_context = yes
+
+	should_be_involved = {
+		c:RIA = this
+	}
+
+	invalid = {
+
+	}
+
+	#inheritable = no
+
+	weight = 5000
+}
+
+je_aceh_mission = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	group = je_group_foreign_affairs
+
+	complete = {
+		religion_percent_country = {
+			target = rel:sunni
+			value > 0.50
+		}
+		
+		country_or_subject_owns_entire_state_region = STATE_ACEH
+		country_or_subject_owns_entire_state_region = STATE_NORTH_SUMATRA
+		country_or_subject_owns_entire_state_region = STATE_SOUTH_SUMATRA
+	}
+
+	on_complete = {
+		trigger_event = {
+			id = dvg_east_indies.7
+		}
+		cu:sumatran = {
+			add_fervor = 10
+		}
+	}
+
+	fail = {
+		OR = {
+			has_law = law_type:law_total_separation
+			has_law = law_type:law_state_atheism
+			NOT = {
+				country_has_state_religion = rel:sunni
+			}
+		}
+	}
+	on_fail = {
+		cu:sumatran = {
+			add_fervor = -10
+		}
+	}
+	
+
+	invalid = {
+		
+	}
+	should_be_pinned_by_default_uninvolved_or_context = yes
+
+	should_be_involved = {
+		c:ACE = this
+	}
+
+	#inheritable = no
+
+	weight = 5000
+}
+
+je_consolidate_colonial_rule_bei = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	group = je_group_historical_content
+
+
+	complete = {
+		any_state = {
+			filter = {
+				OR = {
+					state_region = s:STATE_NORTH_SUMATRA
+					state_region = s:STATE_SOUTH_SUMATRA
+					state_region = s:STATE_ACEH
+					state_region = s:STATE_WEST_JAVA
+					state_region = s:STATE_EAST_JAVA
+					state_region = s:STATE_CENTRAL_JAVA
+					state_region = s:STATE_CELEBES
+					state_region = s:STATE_MOLUCCAS
+					state_region = s:STATE_SUNDA_ISLANDS
+					state_region = s:STATE_WEST_BORNEO
+					state_region = s:STATE_EAST_BORNEO
+					state_region = s:STATE_NORTH_BORNEO
+					state_region = s:STATE_MINDANAO
+					state_region = s:STATE_LUZON
+					state_region = s:STATE_VISAYAS
+					state_region = s:STATE_WESTERN_NEW_GUINEA
+					state_region = s:STATE_EASTERN_NEW_GUINEA
+					state_region = s:STATE_TIMOR
+				}
+			}
+			OR = {
+				owner = ROOT
+				owner = {
+					is_subject_of = ROOT
+				}
+				trigger_if = {
+					limit = {
+						exists = ROOT.top_overlord
+					}
+					OR = {
+						owner = ROOT.top_overlord
+						owner = {
+							is_subject_of = ROOT.top_overlord
+						}
+					}
+				}
+			}
+			percent >= 0.80
+		}
+		
+		
+		highest_secession_progress < 0.5
+	}
+
+	on_complete = {
+		trigger_event = { id = east_indies.1 }
+		set_variable = consolidated_colonial_rule
+	}
+
+	fail = {
+		OR = {
+			NOT = {
+				exists = c:BRG
+			}
+			trigger_if = {
+				limit = {
+					exists = c:BRG
+				}
+				NOT = {
+					is_subject_of = c:BRG
+				}
+			}
+			is_subject_type = subject_type_colony
+		}
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					highest_secession_progress < 0.3
+				}
+				change_variable = {
+					name = east_indies_revolt_var
+					add = 1
+				}
+				clamp_variable = { name = east_indies_revolt_var max = 120 min = 0 }
+			}
+		}
+	}
+
+	invalid = {
+		has_variable = bic_collapse_var
+	}
+
+	current_value = {
+		value = root.var:east_indies_revolt_var
+	}
+
+	goal_add_value = {
+		add = 120
+	}
+
+	should_be_pinned_by_default_uninvolved_or_context = yes
+
+	weight = 100
+}
+
+
+
+je_reform_indies_bei = {
+	icon = "gfx/interface/icons/event_icons/event_industry.dds"
+	
+	group = je_group_internal_affairs
+
+	is_shown_when_inactive = {
+		AND = {
+			exists = c:BEI
+			c:BEI = THIS
+		}
+	}
+
+	possible = {
+		OR = {
+			has_law = law_type:law_free_trade
+			has_law = law_type:law_mercantilism
+			NOT = { has_law = law_type:law_land_based_taxation }
+			NOT = { has_law = law_type:law_serfdom }
+		}
+	}
+
+
+
+	complete = {
+		scope:journal_entry = {
+			is_goal_complete = yes
+		}
+		calc_true_if = {
+			amount > 3
+
+			has_law = law_type:law_free_trade
+			has_law = law_type:law_mercantilism
+			NOT = { has_law = law_type:law_land_based_taxation }
+			NOT = { has_law = law_type:law_serfdom }
+			NOT = { has_law = law_type:law_no_schools }
+			NOT = { has_law = law_type:law_no_home_affairs }
+			NOT = { has_law = law_type:law_no_health_system }
+
+		}
+		
+	}
+
+	on_complete = {
+		trigger_event = { id = east_indies.2 }
+		show_as_tooltip = {
+			add_journal_entry = {
+				type = je_ethical_policy
+			}
+		}
+	}
+
+	invalid = {
+		has_variable = bic_collapse_var
+	}
+
+
+	current_value = {
+		value = root.gdp
+	}
+
+	goal_add_value = {
+		value = root.gdp
+		multiply = 0.5
+	}
+
+	progressbar = yes
+
+	weight = 100
+
+	should_be_pinned_by_default_uninvolved_or_context = yes
+}
+
+je_ethical_policy = {
+	icon = "gfx/interface/icons/event_icons/event_scales.dds"
+	
+	group = je_group_internal_affairs
+
+
+	scripted_button = enfranchise_indo_button
+
+
+	complete = {
+		literacy_rate > 0.5
+		root.average_sol > 15
+		OR = {
+			has_technology_researched = civilizing_mission
+			has_technology_researched = pan-nationalism
+		}
+	}
+
+	on_complete = {
+		trigger_event = { id = east_indies.3 }
+	}
+
+	invalid = {
+		has_variable = bic_collapse_var
+	}
+
+	weight = 100
+}
+
+je_sulawesi = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	group = je_group_foreign_affairs
+
+	is_shown_when_inactive = {
+		any_scope_state = {
+			state_region = s:STATE_CELEBES
+		}
+	}
+
+	possible = {
+		has_technology_researched = colonization
+	}
+
+	scripted_button = dvg_embrace_jesus_button
+	scripted_button = enfranchise_indo_button
+
+	complete = {
+		owns_entire_state_region = STATE_CELEBES
+
+		any_scope_state = {
+			state_region = s:STATE_CELEBES
+			state_has_building_group_levels = {
+ 				type = bg_iron_mining
+ 				value > 3
+			}
+		}
+
+		
+	}
+
+	on_complete = {
+		trigger_event = { id = dvg_east_indies.8 }
+	}
+	
+	fail = {
+		NOT = {
+			any_scope_state = {
+				state_region = s:STATE_CELEBES
+			}
+		}
+	}
+
+	#inheritable = no
+
+	weight = 5000
+}
+
+je_new_guinea = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	group = je_group_foreign_affairs
+
+	is_shown_when_inactive = {
+		any_scope_state = {
+			state_region = {
+				is_homeland = cu:melanesian
+			}
+		}
+	}
+
+	possible = {
+		has_technology_researched = colonization
+	}
+
+	scripted_button = dvg_embrace_jesus_button
+	scripted_button = enfranchise_indo_button
+
+	complete = {
+		
+		OR = {
+			owns_entire_state_region = STATE_WESTERN_NEW_GUINEA
+			owns_entire_state_region = STATE_EASTERN_NEW_GUINEA
+		}
+
+		
+	}
+
+	on_complete = {
+		trigger_event = { id = dvg_east_indies.9 }
+	}
+	
+	fail = {
+		NOT = {
+			any_scope_state = {
+				state_region = s:STATE_CELEBES
+			}
+		}
+	}
+
+	#inheritable = no
+
+	weight = 5000
 }
