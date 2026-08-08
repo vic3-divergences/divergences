@@ -7,7 +7,11 @@ dvg_establish_ducal_finland_button = {
 	desc = "dvg_establish_ducal_finland_button_loc_desc"
 	
 	#keep visible for now
-	visible = { always = yes } 
+	visible = { 
+		NOT = {
+			has_variable = sca_established_ducal_finland_var
+		}
+	}
 	
 	#leave for now until i can understand how scoping a geo region works lmoa
 	possible = {
@@ -18,8 +22,45 @@ dvg_establish_ducal_finland_button = {
 				owns_entire_state_region = STATE_OSTROBOTHNIA
 			}
 		}
+		custom_tooltip = {
+			NOT = {
+				any_civil_war = {
+					is_civil_war_type = revolution
+				}
+			}
+			text = sca_not_in_civil_war_tt
+		}
 	}
 	
+	effect = {
+		set_variable = sca_established_ducal_finland_var
+		custom_tooltip = {
+			text = sca_establish_new_country_ducal_finland_tt
+			create_country = {
+				tag = DFN
+				origin = this
+				state = s:STATE_UUSIMAA.region_state:SCA
+				state = s:STATE_OSTROBOTHNIA.region_state:SCA
+				on_created = {
+					activate_law = law_type:law_monarchy
+					activate_law = law_type:law_landed_voting
+					activate_law = law_type:law_subjecthood
+					activate_law = law_type:law_no_colonial_affairs
+					activate_law = law_type:law_slavery_banned
+					c:SCA = {
+						create_diplomatic_pact = {
+							country = c:DFN
+							type = dominion
+						}
+						change_relations = {
+							country = c:DFN
+							value = 100
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 #Baltic JE buttons
