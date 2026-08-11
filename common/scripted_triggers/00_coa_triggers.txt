@@ -18,7 +18,8 @@
 coa_monarchy_trigger = {
 	OR = {
 		has_law_or_variant = law_type:law_chiefdom
-		has_law_or_variant = law_type:law_monarchy
+		has_law = law_type:law_monarchy
+		has_law = law_type:law_social_monarchy
 	}
 }
 
@@ -45,9 +46,25 @@ coa_republic_trigger = {
 	}
 }
 
+coa_corporate_state_trigger = {
+	has_law_or_variant = law_type:law_corporate_state
+}
+
 coa_dictatorship_trigger = {
 	coa_republic_trigger = yes
-	coa_autocracy_trigger = yes
+	OR = {
+		coa_autocracy_trigger = yes
+		coa_single_party_state_trigger = yes
+	}
+}
+
+coa_fascist_social_monarchy_trigger = {
+	has_law = law_type:law_social_monarchy
+	OR = {
+		has_law_or_variant = law_type:law_autocracy
+		has_law_or_variant = law_type:law_oligarchy
+		has_law_or_variant = law_type:law_single_party_state
+	}
 }
 
 coa_oligarchy_trigger = {
@@ -64,10 +81,11 @@ coa_multicultural_trigger = {
 }
 
 coa_autocracy_trigger = {
-	OR = {
-		has_law_or_variant = law_type:law_autocracy
-		has_law_or_variant = law_type:law_single_party_state
-	}
+	has_law_or_variant = law_type:law_autocracy
+}
+
+coa_single_party_state_trigger = {
+	has_law_or_variant = law_type:law_single_party_state
 }
 
 coa_anarchy_trigger = {
@@ -116,9 +134,11 @@ coa_fascist_trigger = {
 	OR = {
 		coa_oligarchy_trigger = yes
 		coa_dictatorship_trigger = yes
+		coa_fascist_social_monarchy_trigger = yes
 	}
 	OR = {
 		has_law_or_variant = law_type:law_corporate_state
+		has_law_or_variant = law_type:law_social_monarchy
 		ruler ?= {
 			OR = {
 				has_ideology = ideology:ideology_fascist
@@ -128,11 +148,16 @@ coa_fascist_trigger = {
 	}
 }
 
+coa_technocracy_trigger = {
+	has_law_or_variant = law_type:law_technocracy
+}
+
 coa_nihilist_trigger = {
 	has_law_or_variant = law_type:law_state_atheism
 	NOR = {
 		has_law_or_variant = law_type:law_theocracy
-		has_law_or_variant = law_type:law_monarchy
+		has_law = law_type:law_monarchy
+		has_law = law_type:law_social_monarchy
 		has_law_or_variant = law_type:law_council_republic
 	}
 	ruler ?= {
@@ -160,11 +185,13 @@ coa_def_independent_trigger = {
 }
 
 coa_def_subject_trigger = {
+	NOT = { has_game_rule = no_subject_flags }
 	exists = scope:actor
 	scope:actor ?= { is_subject = yes }
 }
 
 coa_def_lesser_subject_trigger = {
+	NOT = { has_game_rule = no_subject_flags }
 	OR = {
 		NOT = { exists = scope:actor }
 		AND = {
@@ -175,6 +202,23 @@ coa_def_lesser_subject_trigger = {
 					is_subject_type = subject_type_puppet
 					is_subject_type = subject_type_vassal
 				}
+			}
+		}
+	}
+}
+
+coa_def_independence_war_trigger = { #checks if subject is in Independence diplomatic play/war
+	exists = scope:actor
+	scope:actor ?= {
+		is_subject = yes
+		OR = {
+			play_participant_has_war_goal_of_type_against = {
+				type = independence
+				target = overlord
+			}
+			war_participant_has_war_goal_of_type_against = {
+				type = independence
+				target = overlord
 			}
 		}
 	}
@@ -200,6 +244,11 @@ coa_def_undemocratic_monarchy_flag_trigger = {
 coa_def_republic_flag_trigger = {
 	exists = scope:actor
 	scope:actor ?= { coa_republic_trigger = yes }
+}
+
+coa_def_corporate_state_flag_trigger = {
+	exists = scope:actor
+	scope:actor ?= { coa_corporate_state_trigger = yes }
 }
 
 coa_def_theocracy_flag_trigger = {
@@ -266,6 +315,11 @@ coa_def_chartered_company_trigger = {
 	scope:actor ?= {
 		coa_chartered_company_trigger = yes
 	}
+}
+
+coa_def_technocracy_flag_trigger = {
+	exists = scope:actor
+	scope:actor ?= { coa_technocracy_trigger = yes }
 }
 
 # Overlord
@@ -443,18 +497,15 @@ coa_def_netherlands_ensign_trigger = {
 }
 
 coa_def_colonial_ensign_trigger = {
-	OR = {
-		coa_def_british_ensign_trigger = yes
-		coa_def_french_ensign_trigger = yes
-		coa_def_german_ensign_trigger = yes
-		coa_def_spanish_ensign_trigger = yes
-		# coa_def_american_ensign_trigger = yes
-		coa_def_austrian_ensign_trigger = yes
-		coa_def_russian_ensign_trigger = yes
-		coa_def_swedish_ensign_trigger = yes
-		coa_def_danish_ensign_trigger = yes
-		coa_def_scandinavian_ensign_trigger = yes
-		coa_def_netherlands_ensign_trigger = yes
+	NOT = { has_game_rule = no_subject_flags }
+	scope:actor ?= {
+		exists = scope:overlord
+		NOT = {
+			is_country_type = recognized
+		}
+		any_overlord_or_above = {
+			is_country_type = recognized
+		}
 	}
 }
 

@@ -12,7 +12,7 @@
 				owner = {
 					any_scope_state = {
 						is_incorporated = yes
-						loyalty >= 0.10
+						loyalists >= 0.10
 					}
 				}
 			}
@@ -22,9 +22,9 @@
 					every_scope_state = {
 						limit = {
 							is_incorporated = yes
-							loyalty >= 0.10
+							loyalists >= 0.10
 						}
-						add = this.loyalty
+						add = this.loyalists
 					}
 					divide = num_incorporated_states
 					multiply = 3 # Maxes out at -3
@@ -34,24 +34,14 @@
 		if = {
 			limit = {
 				any_political_movement = {
-					OR = {
-						is_political_movement_type = movement_socialist
-						is_political_movement_type = movement_communist
-						is_political_movement_type = movement_anarchist
-						is_political_movement_type = movement_nihilist
-					}
+					movement_is_socialist = yes
 				}
 			}
 			add = {
 				desc = "communism_progress_from_movement_support_tt"
 				every_political_movement = {
 					limit = {
-						OR = {
-							is_political_movement_type = movement_socialist
-							is_political_movement_type = movement_communist
-							is_political_movement_type = movement_anarchist
-							is_political_movement_type = movement_nihilist
-						}
+						movement_is_socialist = yes
 					}
 					add = {
 						value = this.political_movement_support
@@ -63,24 +53,14 @@
 		if = {
 			limit = {
 				any_political_movement = {
-					OR = {
-						is_political_movement_type = movement_socialist
-						is_political_movement_type = movement_communist
-						is_political_movement_type = movement_anarchist
-						is_political_movement_type = movement_nihilist
-					}
+					movement_is_socialist = yes
 				}
 			}
 			add = {
 				desc = "communism_progress_from_movement_activism_tt"
 				every_political_movement = {
 					limit = {
-						OR = {
-							is_political_movement_type = movement_socialist
-							is_political_movement_type = movement_communist
-							is_political_movement_type = movement_anarchist
-							is_political_movement_type = movement_nihilist
-						}
+						movement_is_socialist = yes
 					}
 					add = {
 						value = this.political_movement_radicalism
@@ -93,13 +73,7 @@
 			limit = {
 				owner = {
 					any_scope_character = {
-						OR = {
-							has_ideology = ideology:ideology_communist
-							has_ideology = ideology:ideology_vanguardist
-							has_ideology = ideology:ideology_anarchist
-							has_ideology = ideology:ideology_nihilist
-							has_ideology = ideology:ideology_utopian
-						}
+						has_socialist_ideology = yes
 					}
 				}
 			}
@@ -108,13 +82,7 @@
 				owner = {
 					every_scope_character = {
 						limit = {
-							OR = {
-								has_ideology = ideology:ideology_communist
-								has_ideology = ideology:ideology_vanguardist
-								has_ideology = ideology:ideology_anarchist
-								has_ideology = ideology:ideology_nihilist
-								has_ideology = ideology:ideology_utopian
-							}
+							has_socialist_ideology = yes
 						}
 						add = this.popularity
 						divide = 100
@@ -123,8 +91,6 @@
 			}
 		}
 		if = {
-
-
 			limit = {
 				owner = {
 					any_interest_group = {
@@ -165,13 +131,21 @@
 		if = {
 			limit = {
 				exists = owner.var:communism_progress_from_laws
-				NOT = {
+			}
+			if = {
+				limit = {
 					owner.var:communism_progress_from_laws = 0
 				}
+				add = {
+					desc = "communism_progress_from_no_laws_tt"
+					value = 0.05
+				}
 			}
-			add = {
-				desc = "communism_progress_from_laws_tt"
-				value = owner.var:communism_progress_from_laws
+			else ={
+				add = {
+					desc = "communism_progress_from_laws_tt"
+					value = owner.var:communism_progress_from_laws
+				}
 			}
 		}
 		if = {
@@ -209,7 +183,7 @@
 				owner = {
 					any_scope_state = {
 						is_incorporated = yes
-						loyalty >= 0.10
+						loyalists >= 0.10
 					}
 				}
 			}
@@ -218,9 +192,9 @@
 				every_scope_state = {
 					limit = {
 						is_incorporated = yes
-						loyalty >= 0.10
+						loyalists >= 0.10
 					}
-					add = this.loyalty
+					add = this.loyalists
 				}
 				divide = num_incorporated_states
 				multiply = 3 # Maxes out at -3
@@ -281,8 +255,8 @@
 			if = {
 				limit = {
 					owner = {
-						ig:ig_petty_bourgeoisie = {
-							is_marginal = yes
+						ig:ig_petty_bourgeoisie ?= {
+							ig_counts_as_marginal = yes
 						}
 					}
 				}
@@ -291,7 +265,7 @@
 			else_if = {
 				limit = {
 					owner = {
-						ig:ig_petty_bourgeoisie = {
+						ig:ig_petty_bourgeoisie ?= {
 							is_powerful = yes
 						}
 					}
@@ -444,9 +418,8 @@
 			limit = {
 				# Slavery is legal
 				NOT = {
-					has_law = law_type:law_slavery_banned
+					has_law_or_variant = law_type:law_slavery_banned
 				}
-				has_global_variable = slavery_catholic_bad
 			}
 			subtract = {
 				desc = "earning_recognition_slavery_tt"
@@ -466,7 +439,7 @@
 		if = {
 			limit = {
 				# Serfdom is legal
-				has_law = law_type:law_serfdom
+				has_law_or_variant = law_type:law_serfdom
 			}
 			subtract = {
 				desc = "earning_recognition_serfdom_tt"
@@ -476,7 +449,7 @@
 		if = {
 			limit = {
 				# Traditional economic system
-				has_law = law_type:law_traditionalism
+				has_law_or_variant = law_type:law_traditionalism
 			}
 			subtract = {
 				desc = "earning_recognition_traditionalism_tt"
@@ -486,7 +459,7 @@
 		if = {
 			limit = {
 				# 'Draconic' law
-				has_law = law_type:law_outlawed_dissent
+				has_law_or_variant = law_type:law_outlawed_dissent
 			}
 			subtract = {
 				desc = "earning_recognition_outlawed_dissent_tt"
@@ -559,7 +532,7 @@ fascism_progress_bar = {
 			limit = {
 				any_interest_group = {
 					is_in_government = yes
-					leader = {
+					leader ?= {
 						has_variable = var_fascism_1_char_checked # So that you don't get massive progress without being notified
 						OR = {
 							has_ideology = ideology:ideology_fascist
@@ -630,9 +603,9 @@ fascism_progress_bar = {
 			limit = {
 				owner = {
 					any_interest_group = {
-						is_marginal = no
+						ig_counts_as_marginal = no
 						OR = {
-							leader = {
+							leader ?= {
 								OR = {
 									has_ideology = ideology:ideology_fascist
 									has_ideology = ideology:ideology_integralist
@@ -649,7 +622,7 @@ fascism_progress_bar = {
 					every_interest_group = {
 						limit = {
 							OR = {
-								leader = {
+								leader ?= {
 									OR = {
 										has_ideology = ideology:ideology_fascist
 										has_ideology = ideology:ideology_integralist
@@ -748,40 +721,40 @@ positivist_progress_bar = {
 	default = yes
 
 	monthly_progress = { # To advance progress bar
-	if = {
-		limit = {
-			any_political_movement = {
-				is_political_movement_type = movement_positivist
-			}
-		}
-		add = {
-			desc = "positivism_progress_from_movement_support_tt"
-			every_political_movement = {
-				limit = {
+		if = {
+			limit = {
+				any_political_movement = {
 					is_political_movement_type = movement_positivist
 				}
-				add = this.political_movement_support
-				multiply = 10
+			}
+			add = {
+				desc = "positivism_progress_from_movement_support_tt"
+				every_political_movement = {
+					limit = {
+						is_political_movement_type = movement_positivist
+					}
+					add = this.political_movement_support
+					multiply = 10
+				}
 			}
 		}
-	}
-	if = {
-		limit = {
-			any_political_movement = {
-				is_political_movement_type = movement_positivist
-			}
-		}
-		add = {
-			desc = "positivism_progress_from_movement_activism_tt"
-			every_political_movement = {
-				limit = {
+		if = {
+			limit = {
+				any_political_movement = {
 					is_political_movement_type = movement_positivist
 				}
-				add = this.political_movement_radicalism
-				multiply = 5
+			}
+			add = {
+				desc = "positivism_progress_from_movement_activism_tt"
+				every_political_movement = {
+					limit = {
+						is_political_movement_type = movement_positivist
+					}
+					add = this.political_movement_radicalism
+					multiply = 5
+				}
 			}
 		}
-	}
 	}
 
 	start_value = 1
@@ -789,6 +762,344 @@ positivist_progress_bar = {
 	max_value = 100
 
 }
+
+red_summer_progress_bar = {
+	name = "red_summer_progress_bar"
+	desc = "red_summer_progress_bar_desc"
+
+	default_green = yes
+
+	monthly_progress = {
+		add = {
+			desc = "red_summer_legitimacy_tt"
+			value = legitimacy
+			subtract = 50
+			divide = 25
+		}
+
+		if = {
+			limit = {
+				any_political_movement = {
+					OR = {
+						is_political_movement_type = movement_liberal
+						is_political_movement_type = movement_modernizer
+					}
+				}
+			}
+			add = {
+				desc = "red_summer_liberal_movements_tt"
+				every_political_movement = {
+					limit = {
+						OR = {
+							is_political_movement_type = movement_liberal
+							is_political_movement_type = movement_modernizer
+						}
+					}
+					add = this.political_movement_support
+					multiply = 10
+				}
+			}
+		}
+
+		if = {
+			limit = {
+				ig:ig_intelligentsia ?= {
+					ig_counts_as_marginal = no
+				}
+			}
+			add = {
+				desc = "red_summer_intelligentsia_tt"
+				value = ig:ig_intelligentsia.ig_clout
+				multiply = 10
+			}
+		}
+
+		if = {
+			limit = {
+				ig:ig_landowners ?= {
+					ig_counts_as_marginal = yes
+				}
+			}
+			add = {
+				desc = "red_summer_marginal_landowners_tt"
+				value = 1
+			}
+		}
+
+		if = {
+			limit = {
+				ig:ig_armed_forces ?= {
+					ig_counts_as_marginal = yes
+				}
+			}
+			add = {
+				desc = "red_summer_marginal_armed_forces_tt"
+				value = 1
+			}
+		}
+
+		if = {
+			limit = {
+				has_law = law_type:law_monarchy
+				ruler.popularity < 0
+			}
+			add = {
+				desc = "red_summer_unpopular_monarch_tt"
+				value = ruler.popularity
+				multiply = -1
+				divide = 50
+			}
+		}
+	}
+
+	start_value = 10
+	min_value = 0
+	max_value = 100
+
+ }
+
+red_summer_counter_revolution_progress_bar = {
+	name = "red_summer_counter_revolution_progress_bar"
+	desc = "red_summer_counter_revolution_progress_bar_desc"
+
+	default_bad = yes
+
+	monthly_progress = {
+		if = {
+			limit = {
+				owner = {
+					has_law = law_type:law_monarchy
+				}
+			}
+			add = {
+				desc = "red_summer_monarchy_tt"
+				value = 1
+			}
+		}
+		if = {
+			limit = {
+				ig:ig_landowners ?= {
+					ig_counts_as_marginal = no
+				}
+			}
+			add = {
+				desc = "red_summer_landowners_tt"
+				value = ig:ig_landowners.ig_clout
+				multiply = 10
+			}
+		}
+		if = {
+			limit = {
+				ig:ig_armed_forces ?= {
+					ig_counts_as_marginal = no
+					leader ?= {
+						NOR = {
+							has_liberal_ideology = yes
+							has_progressive_ideology = yes
+							has_socialist_ideology = yes
+						}
+					}
+				}
+			}
+			add = {
+				desc = "red_summer_armed_forces_tt"
+				value = ig:ig_armed_forces.ig_clout
+				multiply = 10
+			}
+		}
+		if = {
+			limit = {
+				in_election_campaign = no
+				NOT = {
+					any_interest_group = {
+						is_in_government = yes
+						OR = {
+							has_ideology = ideology:ideology_liberal
+							has_ideology = ideology:ideology_proletarian
+							leader ?= {
+								OR = {
+									has_liberal_ideology = yes
+									has_progressive_ideology = yes
+									has_socialist_ideology = yes
+								}
+							}
+						}
+					}
+				}
+			}
+			add = {
+				desc = "red_summer_no_liberal_igs_in_government_tt"
+				value = 25
+			}
+		}
+		if = {
+			limit = {
+				any_political_movement = {
+					is_insurrectionary = yes
+					OR = {
+						movement_is_liberal = yes
+						movement_is_socialist = yes
+					}
+				}
+			}
+			add = {
+				desc = "red_summer_active_insurrection_tt"
+				value = 5
+			}
+		}
+		if = {
+			limit = {
+				any_political_movement = {
+					is_insurrectionary = yes
+					movement_is_conservative = yes
+				}
+			}
+			add = {
+				desc = "red_summer_conservative_insurrection_tt"
+				value = -5
+			}
+		}
+		if = {
+			limit = {
+				any_subject_or_below = {
+					is_diplomatic_play_enemy_of = ROOT
+				}
+			}
+			add = {
+				desc = "red_summer_subject_rebellion_tt"
+				value = 5
+			}
+		}
+		if = {
+			limit = {
+				has_variable = var_counter_revolution_bonus
+			}
+			add = {
+				desc = "red_summer_events_and_effects_tt"
+				value = var:var_counter_revolution_bonus
+			}
+		}
+	}
+
+	start_value = 10
+	min_value = 0
+	max_value = 100
+ }
+
+ je_technocracy_progress_bar = {
+	name = "je_technocracy_progress_bar"
+	desc = "je_technocracy_progress_bar_desc"
+
+	default = yes
+
+	monthly_progress = {
+		if = {
+			limit = {
+				owner = {
+					NOT = {
+						any_political_movement = {
+							is_insurrectionary = yes
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					owner.legitimacy >= 60
+				}
+				add = {
+					desc = "technocracy_legitimacy_tt"
+					value = owner.legitimacy
+					divide = 50
+				}
+			}
+			if = {
+				limit = {
+					owner = {
+						has_law_or_variant = law_type:law_command_economy
+					}
+				}
+				add = {
+					desc = "technocracy_command_economy_tt"
+					value = 2
+				}
+			}
+			else_if = {
+				limit = {
+					owner = {
+						has_law_or_variant = law_type:law_interventionism # TODO make this state capitalism
+					}
+				}
+				add = {
+					desc = "technocracy_state_capitalism_tt"
+					value = 1
+				}
+			}
+			else = {
+				if = {
+					limit = {
+						owner = {
+							OR = {
+								has_law_or_variant = law_type:law_traditionalism
+								has_law_or_variant = law_type:law_industry_banned
+							}
+						}
+					}
+					add = {
+						desc = "technocracy_economy_laws_tt"
+						value = -1
+					}
+				}
+				else = {
+					add = {
+						desc = "technocracy_economy_laws_tt"
+						value = -0.5
+					}
+				}
+			}
+			if = {
+				limit = {
+					owner.loyalist_fraction > 0.05
+				}
+				add = {
+					desc = "technocracy_loyalists_tt"
+					value = owner.loyalist_fraction
+					multiply = 5
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						owner = {
+							any_interest_group = {
+								is_in_government = yes
+								law_stance = {
+									law = law_type:law_technocracy
+									value > neutral
+								}
+							}
+						}
+					}
+				}
+				add = {
+					desc = "technocracy_no_supporting_igs_tt"
+					value = -5
+				}
+			}
+		}
+		else = {
+			add = {
+				desc = "technocracy_insurrection_tt"
+				value = -1
+			}
+		}
+	}
+
+	start_value = 24
+	min_value = 0
+	max_value = 144 # Tied to technocracy_upper_bound
+ }
+
 
  ### For Black Knights 
 

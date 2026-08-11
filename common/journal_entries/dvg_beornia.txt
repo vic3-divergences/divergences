@@ -24,7 +24,7 @@ je_new_mercia_independent = {
     }
 	weight = 10000
 
-	should_be_pinned_by_default = yes
+	should_be_pinned_by_default_uninvolved_or_context = yes
 }
 
 je_new_mercia_revolt = {
@@ -261,8 +261,9 @@ je_new_mercia_revolt = {
 						state_population > 90000
 					}
 					random_scope_pop = {
-						limit = { culture = cu:aimara
-						pop_type = peasants 
+						limit = { 
+							culture = cu:aimara
+							is_pop_type = peasants 
 						}
 						move_pop = s:STATE_CUZCO.region_state:TWT
 					}
@@ -325,7 +326,7 @@ je_new_mercia_revolt = {
 	
 
 	weight = 10000
-	should_be_pinned_by_default = yes
+	should_be_pinned_by_default_uninvolved_or_context = yes
 }
 
 je_ameriga_conquer = {
@@ -335,6 +336,12 @@ je_ameriga_conquer = {
 
 	is_shown_when_inactive = {	
 		
+	}
+
+	immediate = {
+		remove_variable = recently_lost_war
+		remove_variable = recently_had_war
+		remove_variable = recent_capitulation
 	}
 
     possible = {
@@ -416,12 +423,13 @@ je_ameriga_conquer = {
 	fail = {
 		
 		
-		
 		OR = {
 			
 			custom_tooltip = {
 				text = lost_war_tt
+				
 				OR = {
+					has_variable = recent_capitulation
 					has_variable = recently_lost_war
 					AND = {
 						has_variable = recently_had_war
@@ -443,7 +451,7 @@ je_ameriga_conquer = {
 			id = dvg_hbe.7
 		}
 	}
-	should_be_pinned_by_default = yes
+	should_be_pinned_by_default_uninvolved_or_context = yes
 
 }
 
@@ -457,6 +465,7 @@ je_world_conquer = {
 	}
 
     possible = {
+
 	}
 
 	complete = {
@@ -499,7 +508,7 @@ je_world_conquer = {
 			id = dvg_hbe.7
 		}
 	}
-	should_be_pinned_by_default = yes
+	should_be_pinned_by_default_uninvolved_or_context = yes
 
 }
 
@@ -603,13 +612,18 @@ je_anglo_summit = {
 	
 
 	weight = 10000
-	should_be_pinned_by_default = yes
+	should_be_pinned_by_default_uninvolved_or_context = yes
 }
 
 je_cattle_barons_wrath = {
-	icon = "gfx/interface/icons/invention_icons/medical_degree.dds"
+	icon = "gfx/interface/icons/invention_icons/medical_degrees.dds"
 
 	group = je_group_historical_content	
+
+	is_shown_in_lobby = {
+		c:BEO ?= THIS
+
+	}
 
 	possible = {
 		
@@ -793,6 +807,7 @@ je_cattle_barons_wrath = {
 		}
 	}
 	on_yearly_pulse = {
+		fallback = on_yearly_events
 		effect = {
 			if = {
 				limit = {
@@ -821,32 +836,7 @@ je_cattle_barons_wrath = {
 				}
 			}
 			}
-			if = {
-				limit = {
-					ig:ig_landowners = {
-						is_powerful = no
-						is_in_government = yes
-					}
-					var:cattle_barons_var > 0
-				}
-				change_variable = {
-					name = cattle_barons_var
-					add = -1
-				}
-			}
-			if = {
-				limit = {
-					ig:ig_landowners = {
-						is_powerful = no
-						is_in_government = yes
-					}
-					var:cattle_barons_var > 0
-				}
-				change_variable = {
-					name = cattle_barons_var
-					add = -1
-				}
-			}
+			
 			if = {
 				limit = {
 					ig:ig_landowners = {
@@ -857,9 +847,10 @@ je_cattle_barons_wrath = {
 				}
 				change_variable = {
 					name = cattle_barons_var
-					add = -2
+					add = -1
 				}
 			}
+
 			if = {
 				limit = {
 					ig:ig_landowners = {
@@ -873,6 +864,21 @@ je_cattle_barons_wrath = {
 					add = 1
 				}
 			}
+
+			if = {
+				limit = {
+					ig:ig_landowners = {
+						is_powerful = yes
+						ig_approval > 9
+					}
+					var:cattle_barons_var < 7
+				}
+				change_variable = {
+					name = cattle_barons_var
+					subtract = 1
+				}
+			}
+
 			if = {
 				limit = {
 					ig:ig_landowners = {
@@ -925,7 +931,12 @@ je_cattle_barons_wrath = {
 		}
 		OR = {
 			custom_tooltip = {
-				text = charles_arrested
+				text = charles_arrested_tt
+				any_scope_character = {
+					has_variable = is_charles_cavendish
+					
+				}
+				has_global_variable = charles_arrested
 			}
 			ig:ig_landowners = {
 				is_in_government = no
@@ -1248,7 +1259,7 @@ je_cattle_barons_wrath = {
 	
 
 	weight = 10000
-	should_be_pinned_by_default = yes
+	should_be_pinned_by_default_uninvolved_or_context = yes
 }
 
 je_england_conquer = {
@@ -1307,7 +1318,7 @@ je_england_conquer = {
 	on_fail = {	
 		
 	}
-	should_be_pinned_by_default = yes
+	should_be_pinned_by_default_uninvolved_or_context = yes
 }
 
 
@@ -1315,6 +1326,10 @@ je_beornian_awakening = {
 	icon = "gfx/interface/icons/religion_icons/protestant.dds"
 
 	group = je_group_internal_affairs
+
+	is_shown_in_lobby = {
+		c:BEO ?= THIS
+	}
 
 	is_shown_when_inactive = {
 		exists = c:BEO
@@ -1440,7 +1455,7 @@ je_beornian_awakening = {
 		
 	}
 
-	should_be_pinned_by_default = yes
+	should_be_pinned_by_default_uninvolved_or_context = yes
 
 	
 }
@@ -1458,12 +1473,13 @@ je_england_reclaim = {
     is_shown_when_inactive = {
         c:BEO ?= this
         NOT = {
-            sr:region_england = {
-                any_scope_state = {
-                    count = all
-                    owner = root
-                }
-            }
+             any_scope_state = {
+				state_region = {
+					is_homeland = cu:british
+
+				}
+				count > 3
+        	 }
         }
     }
 
@@ -1472,11 +1488,12 @@ je_england_reclaim = {
     }
 
     complete = {
-        sr:region_england = {
-            any_scope_state = {
-                count = all
-                owner = root
-            }
+        any_scope_state = {
+				state_region = {
+					is_homeland = cu:british
+
+				}
+            count > 3
         }
     }
 
@@ -1484,7 +1501,7 @@ je_england_reclaim = {
         trigger_event = { id = dvg_england.14 days = 0 popup = yes }
     }
 
-    should_be_pinned_by_default = yes
+    should_be_pinned_by_default_uninvolved_or_context = yes
 }
 
 
@@ -1691,6 +1708,14 @@ je_beo_parishers = {
 				cu:beornian = {
 					culture_current_fervor > 40
 				}
+				any_political_movement = {
+				is_political_movement_type = movement_parisher
+				OR = {
+					political_movement_radicalism > 0.33
+					political_movement_support > 0.33
+				}
+
+				}
 		}
 		
 		scope:journal_entry = {is_goal_complete = yes}
@@ -1754,7 +1779,7 @@ je_beo_parishers = {
 
 	progressbar = yes
 
-	should_be_pinned_by_default = yes
+	should_be_pinned_by_default_uninvolved_or_context = yes
 
 	transferable = yes
 
@@ -1792,10 +1817,10 @@ je_beo_presbyterians = {
 			
 	}
 	on_yearly_pulse = {
-		
+		fallback = on_yearly_events
 	}
 	on_monthly_pulse = {
-
+		fallback = on_yearly_events
 		random_events = {
 			100 = 0
 			15 = dvg_hbe.26
@@ -1938,6 +1963,14 @@ je_beo_presbyterians = {
 				target = rel:protestant
 				value < average_expected_sol
 			}
+			any_political_movement = {
+				is_political_movement_type = movement_presbyterian
+				OR = {
+					political_movement_radicalism > 0.33
+					political_movement_support > 0.33
+				}
+
+			}
 		}
 
 		OR = {
@@ -2015,7 +2048,7 @@ je_beo_presbyterians = {
 	transferable = yes
 
 
-	should_be_pinned_by_default = yes
+	should_be_pinned_by_default_uninvolved_or_context = yes
 }
 
 
@@ -2026,12 +2059,16 @@ je_beo_hbe = {
 
 
 	is_shown_when_inactive = {
-	
+	    c:BEO ?= THIS
+		has_game_rule = all_formable_nations
 	
 	}
 
     possible = {
 			
+		has_journal_entry = je_beornian_awakening
+
+		has_modifier = making_communion 
 	}
 
 	
@@ -2111,17 +2148,12 @@ je_beo_hbe = {
 			scope:journal_entry = { is_goal_complete = yes }
 		}
 
-		custom_tooltip = {
-			text = not_lost_war_tt
-			NOR = {
-				has_variable = recently_lost_war
-				AND = {
-					has_variable = recently_had_war
-					NOT = {
-						has_variable = recently_won_war
-					}
-				}
-			}
+		radical_fraction = {
+			value < 0.50
+		}
+
+		ig:ig_devout = {
+			ig_approval > 9
 		}
 
 	}
@@ -2137,6 +2169,7 @@ je_beo_hbe = {
 		OR = {
 			NOT = {
 				has_law = law_type:law_monarchy
+				has_law = law_type:law_social_monarchy
 			}
 			has_law = law_type:law_state_atheism
 			has_law = law_type:law_total_separation
@@ -2151,7 +2184,7 @@ je_beo_hbe = {
 	}
 	
 	progressbar = yes
-	should_be_pinned_by_default = yes
+	should_be_pinned_by_default_uninvolved_or_context = yes
 
 	current_value = {
         value = root.var:new_hbe_var
@@ -2221,7 +2254,7 @@ je_beornia_development = {
 	}
 
 	transferable = no
-	should_be_pinned_by_default = yes
+	should_be_pinned_by_default_uninvolved_or_context = yes
 
 	weight = 5000
 }
@@ -2280,7 +2313,7 @@ je_king_edward = {
 	}
 
 	transferable = no
-	should_be_pinned_by_default = yes
+	should_be_pinned_by_default_uninvolved_or_context = yes
 
 	weight = 5000
 }
@@ -2314,7 +2347,7 @@ je_beornia_conquer = {
 	}
 
 	weight = 100
-	should_be_pinned_by_default = yes
+	should_be_pinned_by_default_uninvolved_or_context = yes
 }
 
 je_destroy_beornia = {
@@ -2345,7 +2378,7 @@ je_destroy_beornia = {
 	}
 
 	weight = 100
-	should_be_pinned_by_default = yes
+	should_be_pinned_by_default_uninvolved_or_context = yes
 }
 
 je_destroy_hbe = {
@@ -2374,7 +2407,7 @@ je_destroy_hbe = {
 	}
 
 	weight = 100
-	should_be_pinned_by_default = yes
+	should_be_pinned_by_default_uninvolved_or_context = yes
 }
 
 je_black_knights = {
@@ -2576,7 +2609,7 @@ je_black_knights = {
 	#scripted_progress_bar = black_knights_progress_bar
 
 	weight = 100
-	should_be_pinned_by_default = yes
+	should_be_pinned_by_default_uninvolved_or_context = yes
 }
 
 
@@ -2705,7 +2738,7 @@ je_opium_wars_beornia = {
 	}
 
 	weight = 10000
-	should_be_pinned_by_default = yes
+	should_be_pinned_by_default_uninvolved_or_context = yes
 
 	timeout = 3650
 }
@@ -2745,5 +2778,5 @@ je_beornia_replace = {
 	}
 
 	weight = 100
-	should_be_pinned_by_default = yes
+	should_be_pinned_by_default_uninvolved_or_context = yes
 }

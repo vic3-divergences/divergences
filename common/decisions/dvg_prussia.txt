@@ -1,0 +1,138 @@
+﻿dvg_new_capital = {
+	is_shown = {
+		exists = c:PRU
+		this = c:PRU
+		NOT = {
+			has_global_variable = new_capital_pru
+		}
+		owns_entire_state_region = STATE_EAST_PRUSSIA
+	}
+
+    possible = {
+		has_technology_researched = railways
+		has_technology_researched = modern_sewerage
+		gold_reserves >= 300000
+		OR = {
+			owns_entire_state_region = STATE_BRANDENBURG
+			owns_entire_state_region = STATE_RIGA
+		}
+	}
+
+    when_taken = {
+		add_treasury = -300000
+		set_global_variable = new_capital_pru
+		trigger_event = { id = dvg_prussia.3 }
+    }
+
+	ai_chance = {
+		value = 100
+	}
+}
+dvg_scandi_prussia = {
+	is_shown = {
+		exists = c:PRU
+		this = c:PRU
+		NOT = {
+			has_global_variable = scandi_say_yes
+		}
+		NOT = {
+			has_variable = scandi_pru_cooldown
+		}
+	}
+	possible = {
+		is_subject = no
+		AND = {
+			AND = {
+				gold_reserves >= 400000
+				has_attitude = {
+					who = c:SCA
+					attitude = genial
+				}
+			}
+			OR = {
+				c:SCA = {
+					taking_loans = yes
+				}
+				# (scandi je fail) has_global_variable = scandi_je_failed 
+				any_country = {
+					any_primary_culture = {
+						OR = {
+							cu:czech ?= this
+							cu:north_german ?= this
+							cu:south_german ?= this
+							cu:rheinish ?= this
+							cu:balters ?= this
+						}
+					}
+				global_country_ranking > 5
+				}
+			}
+		}
+	}	
+
+	when_taken = {
+		hidden_effect = {
+			set_variable = {
+				name = scandi_pru_cooldown
+				value = yes
+				days = 365
+			}
+		}
+		c:PRU = {
+			trigger_event = { id = dvg_prussia.13 }
+		}
+	}
+}
+
+dvg_ger_accept_polish = {
+	is_shown = {
+		was_formed_from = PRU
+		NOT = { has_variable = dvg_ger_polish_accepted }
+	}
+
+	possible = {
+		has_global_variable = pru_poles_happy
+		was_formed_from = PRU
+		OR = {
+			AND = {
+				exists = c:GER
+				c:GER = ROOT
+			}
+			AND = {
+				exists = c:UBT
+				c:UBT = ROOT
+			}
+			AND = {
+				exists = c:NGF
+				c:NGF = ROOT
+			}
+		}
+	}
+    when_taken = {
+		IF = {
+			limit = {
+				c:GER = ROOT
+			}
+			add_primary_culture = cu:polish
+		}
+		IF = {
+			limit = {
+				c:UBT = ROOT
+			}
+			add_primary_culture = cu:polish
+		}
+		IF = {
+			limit = {
+				c:NGF = ROOT
+			}
+			add_primary_culture = cu:polish
+		}
+		set_variable = dvg_ger_polish_accepted
+
+    }
+
+	ai_chance = {
+		value = 100
+	}
+}
+

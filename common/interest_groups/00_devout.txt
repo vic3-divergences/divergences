@@ -146,7 +146,7 @@
 				country_has_primary_culture = cu:japanese
 			}
 			ig:ig_devout ?= {
-				set_interest_group_name = ig_buddhist_monks
+				set_interest_group_name = ig_jisha
 				remove_ideology = ideology_moralist
 				add_ideology = ideology_buddhist_moralist
 			}
@@ -174,6 +174,20 @@
 				add_ideology = ideology_laissez_faire
 			}
 		}
+		# London Missionary Society (in South Africa)
+		# else_if = { # dvg
+		# 	limit = {
+		# 		country_has_state_religion = rel:protestant
+		# 		OR = {
+		# 			c:WBL ?= this
+		# 			c:PHL ?= this
+		# 		}
+		# 	}
+		# 	ig:ig_devout = {
+		# 		set_interest_group_name = ig_london_missionary_society
+		# 		add_ideology = ideology_laissez_faire
+		# 	}
+		# }
 		# Anglicans
 		else_if = {
 			limit = {
@@ -261,6 +275,12 @@
 		else_if = {
 			limit = {
 				country_has_state_religion = rel:protestant
+				# OR = { # dvg
+				# 	country_has_primary_culture = cu:yankee
+				# 	country_has_primary_culture = cu:dixie
+				# 	country_has_primary_culture = cu:afro_american
+				# 	country_has_primary_culture = cu:cherokee
+				# }
 			}
 			ig:ig_devout ?= {
 				set_interest_group_name = ig_evangelicals
@@ -292,6 +312,9 @@
 		else_if = {
 			limit = {
 				country_has_state_religion = rel:protestant
+				# NOT = { # dvg
+				# 	c:BIC ?= this
+				# }
 			}
 			ig:ig_devout ?= {
 				set_interest_group_name = ig_evangelical_church
@@ -435,15 +458,15 @@
 
 	priority_cultures = { #Country scope
 		# rule = {
-			# trigger = {
-				# c:BIC ?= this
-				# any_primary_culture = {
-					# cu:british = this
-				# }
-			# }
-			# cultures = {
-				# assamese avadhi baluchi bengali bihari gujarati kannada malayalam marathi oriya panjabi pathan rajput sindi tamil telegu hindustani bundeli pahari gondi bageli chhattisgarhi deccani
-			# }
+		# 	trigger = {
+		# 		c:BIC ?= this
+		# 		any_primary_culture = {
+		# 			cu:british = this
+		# 		}
+		# 	}
+		# 	cultures = {
+		# 		assamese avadhi baluchi bengali bihari gujarati kannada malayalam marathi oriya panjabi pathan rajput sindi tamil telegu hindustani bundeli pahari gondi bageli chhattisgarhi deccani
+		# 	}
 		# }
 		rule = {
 			trigger = {
@@ -456,27 +479,68 @@
 				swahili
 			}
 		}
+		# rule = { # dvg
+		# 	trigger = {
+		# 		c:HAW ?= this
+		# 		NOT = { has_variable = deported_americans }
+		# 	}
+		# 	cultures = {
+		# 		yankee dixie british hawaiian
+		# 	}
+		# }
 		# rule = {
-			# trigger = {
-				# c:HAW ?= this
-				# NOT = { has_variable = deported_americans }
-			# }
-			# cultures = {
-				# yankee dixie british hawaiian
-			# }
-		# } #Probably return to this once we work on QQ-Hawaii content
+		# 	trigger = {
+		# 		country_has_state_religion = rel:protestant
+		# 		OR = {
+		# 			c:WBL ?= this
+		# 			c:PHL ?= this
+		# 		}
+		# 		c:GBR ?= {
+		# 			country_rank >= rank_value:major_power
+		# 		}
+		# 	}
+		# 	cultures = {
+		# 		british scottish
+		# 	}
+		# }
+		# rule = {
+		# 	trigger = {
+		# 		c:PHI ?= this
+		# 		NOT = { has_variable = je_philippines_main_reliance_happened }
+		# 		NOT = { any_primary_culture = { cu:filipino = this } }
+		# 		NOT = { any_primary_culture = { cu:filipino_hispanophone = this } }
+		# 		any_primary_culture = { cu:spanish = this }
+		# 	}
+		# 	cultures = {
+		# 		spanish filipino_mestizo
+		# 	}
+		# }
+		# rule = {
+		# 	trigger = {
+		# 		c:PHI ?= this
+		# 		any_primary_culture = {
+		# 			AND = {
+		# 				cu:spanish = this
+		# 				cu:filipino_hispanophone = this
+		# 			}
+		# 		}
+		# 	}
+		# 	cultures = {
+		# 		spanish filipino_hispanophone
+		# 	}
+		# }
 	}
 
 	on_character_ig_membership = {
-		# if = {
-			# limit = {
-				# owner = {
-					# c:BIC ?= this
-				# }
-			# }
-			# change_character_religion = rel:hindu
-		# }
 		if = {
+		# 	limit = { # dvg
+		# 		owner = {
+		# 			c:BIC ?= this
+		# 		}
+		# 	}
+		# 	change_character_religion = rel:hindu
+		# }
+		# else_if = {
 			limit = {
 				owner = {
 					c:ZAN ?= this
@@ -503,10 +567,10 @@
 	pop_potential = {
 		OR = {
 			has_state_religion = yes
-			# AND = {
-				# exists = c:BIC
-				# owner ?= c:BIC
-				# has_pop_religion = hindu
+			# AND = { # dvg
+			# 	exists = c:BIC
+			# 	owner ?= c:BIC
+			# 	has_pop_religion = hindu
 			# }
 			AND = {
 				exists = c:ZAN
@@ -615,13 +679,13 @@
 			desc = "POP_LITERACY"
 			this = {
 				value = literacy_rate
-				multiply = -25
+				multiply = -15
 			}
 		}
 
 		multiply = {
 			desc = "LEADER_POPULARITY"
-			scope:interest_group = {
+			scope:interest_group ?= {
 				leader ?= {
 					value = popularity
 					multiply = 0.0025
@@ -634,7 +698,7 @@
 
 		if = {
 			limit = {
-				scope:interest_group = {
+				scope:interest_group ?= {
 					is_in_government = yes
 				}
 			}
@@ -648,7 +712,7 @@
 
 		if = {
 			limit = {
-				scope:interest_group = {
+				scope:interest_group ?= {
 					is_in_government = yes
 				}
 			}
@@ -661,7 +725,7 @@
 		}
 		if = {
 			limit = {
-				scope:interest_group = {
+				scope:interest_group ?= {
 					is_in_government = no
 				}
 			}
@@ -679,7 +743,7 @@
 		# Monarch is not likely to adopt a marginal IG
 		if = {
 			limit = {
-				is_marginal = yes
+				ig_counts_as_marginal = yes
 			}
 			multiply = {
 				value = 0.1
@@ -748,7 +812,7 @@
 		if = {
 			limit = {
 				owner.ig:ig_devout ?= {
-					is_marginal = yes
+					ig_counts_as_marginal = yes
 				}
 			}
 			multiply = {
@@ -760,16 +824,20 @@
 	commander_weight = {
 		value = 1.0
 	}
+	
+	magnate_weight = {
+		value = 1.0
+	}
 
 	executive_weight = {
 		value = 1.0
 
-		# The company owning BIC should not get non-industrialist executives
-		if = {
+		# The company owning BEI should not get non-industrialist executives
+		if = { # dvg
 			limit = {
 				exists = scope:company
 				exists = c:BEI
-				c:BEI = {
+				c:BEI ?= {
 					exists = owning_company
 					owning_company = scope:company
 				}
@@ -790,6 +858,10 @@
 
 	female_executive_chance = {
 		value = 0.0
+	}
+
+	female_monarch_chance = {
+		value = 0.05
 	}
 
 	female_politician_chance = {
@@ -848,16 +920,30 @@
 		}
 	}
 
-	# The chance that a commander belonging to this IG takes over leadership when it changes
-	# scope:character is the most popular commander in the IG
-	commander_leader_chance = {
-		value = 0.25
-		multiply = ig_commander_leader_chance_mult
+	# Multiplier applied to the weight for an appropriate commander will be selected from the character pool to lead the IG
+	# root = interest group
+	commander_leader_weight = {
+		value = 0.5
 	}
 
-	# The chance that a executive belonging to this IG takes over leadership when it changes
-	# scope:character is the most popular executive in the IG
-	executive_leader_chance = {
+	# Multiplier applied to the weight for an appropriate magnate will be selected from the character pool to lead the IG
+	# root = interest group
+	magnate_leader_weight = {
+		value = 1.0
+		# if = { # dvg
+		# 	limit = {
+		# 		c:JAP ?= owner
+		# 		NOT = {
+		# 			has_variable = japan_restoration_complete
+		# 		}
+		# 	}
+		# 	add = 5
+		# }
+	}
+
+	# Multiplier applied to the weight for an appropriate executive will be selected from the character pool to lead the IG
+	# root = interest group
+	executive_leader_weight = {
 		value = 0.25
 	}
 }
