@@ -1,4 +1,252 @@
-﻿je_pol_early_industrial_development = {
+﻿je_golden_liberty = {
+    icon = "gfx/interface/icons/event_icons/event_broken_crown.dds"
+
+	group = je_group_internal_affairs
+
+    complete = {
+        OR = {
+            AND = {
+                ig:ig_landowners = {
+			        is_powerful = yes
+			        is_in_government = yes
+		        }
+		        has_insurrectionary_interest_groups = no
+                owns_entire_state_region = STATE_MAZOVIA
+                owns_entire_state_region = STATE_GREATER_POLAND
+                has_law = law_type:law_hereditary_bureaucrats
+                
+                has_law = law_type:law_serfdom
+                has_law = law_type:law_oligarchy
+            }
+            AND = {
+                ig:ig_landowners = {
+			        is_powerful = no
+			        is_in_government = no
+		        }
+                has_insurrectionary_interest_groups = no
+                owns_entire_state_region = STATE_MAZOVIA
+                owns_entire_state_region = STATE_GREATER_POLAND
+                has_law = law_type:law_interventionism
+                has_law = law_type:law_wealth_voting
+                NOT = {
+                    has_law = law_type:law_hereditary_bureaucrats
+                    has_law = law_type:law_serfdom
+					has_law = law_type:law_agrarianism
+                }	
+            }
+        }
+    }
+
+    on_complete = {
+        if = {
+            limit = {
+                ig:ig_landowners = {
+			        is_powerful = yes
+			        is_in_government = yes
+		        }
+            }
+            trigger_event = {
+			    id = poland.2
+		    }
+        }
+        else = {
+            trigger_event = {
+			    id = poland.3
+		    }
+        }
+    }
+
+    timeout = 16425
+
+    on_timeout = {
+        if = {
+            limit = {
+                ig:ig_landowners = {
+			        is_powerful = yes
+			        is_in_government = yes
+		        }
+            }
+            trigger_event = {
+			    id = poland.2
+		    }
+        }
+        else = {
+            trigger_event = {
+			    id = poland.3
+		    }
+        }
+	}
+
+    weight = 100
+	should_be_pinned_by_default_uninvolved_or_context = yes
+	
+	scripted_button = dvg_pol_transfer_plock_button
+}
+
+je_uniting_the_commonwealth = {
+    icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	group = je_group_internal_affairs
+
+    is_shown_when_inactive = {
+        exists = c:POL
+        c:POL = ROOT
+    }
+
+    possible = {
+        NOT = {
+            has_modifier = modifier_slave_to_liberty
+        }
+    }
+
+    complete = {
+        custom_tooltip = {
+            text = plc_united
+            exists = c:PLC
+            c:PLC = ROOT
+        }
+    }
+
+    on_complete = {
+        trigger_event = {
+            id = poland.4
+        }
+
+        add_journal_entry = {
+            type = je_eastern_resistance
+        }
+    }
+
+    weight = 100
+	should_be_pinned_by_default_uninvolved_or_context = yes
+}
+
+je_eastern_resistance = {
+    icon = "gfx/interface/icons/event_icons/event_military.dds"
+    
+	group = je_group_internal_affairs
+	
+
+    complete = { 
+        NOT = { 
+            has_law = law_type:law_serfdom
+        }
+        cu:cossack = {
+            root = { 
+				cultural_acceptance_base = { target = prev value >= acceptance_status_5 }
+			}
+        }
+    }  
+
+    fail = {
+        c:PLC = {
+            is_diplomatic_play_initiator = yes
+        }
+        any_country = { 	
+            is_secessionist = yes
+            is_diplomatic_play_target = yes
+            OR = {
+                country_has_primary_culture = cu:cossack
+                country_has_primary_culture = cu:byelorussian 
+            }
+        }
+    }
+
+    on_fail = {
+        trigger_event = {
+            id = poland.5
+            days = 21
+        }
+    }
+
+    on_complete = {
+        trigger_event = {
+            id = poland.6
+        }
+    }
+
+    weight = 100
+	should_be_pinned_by_default_uninvolved_or_context = yes
+}
+
+
+je_pol_king_maximilian = {
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	group = je_group_internal_affairs
+
+	complete = {
+		custom_tooltip = {
+			text = pol_maximilian_died
+			c:POL = {
+				ruler = {
+					NOT = { has_variable = is_maximilian_jagiello }
+				}
+			}
+		}
+	}
+
+	on_complete = {
+		custom_tooltip = pol_east_withdraws
+		if = {
+			limit = {
+				exists = c:POL
+				c:POL = ROOT
+			}
+			trigger_event = { id = poland.10 }
+		}
+		if = {
+			limit = {
+				exists = c:POL
+				c:POL = ROOT
+			}
+			remove_modifier = diplomatic_plays_blocked
+		}
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					exists = c:POL
+					c:POL = ROOT
+					ruler = { has_variable = is_maximilian_jagiello }
+					year >= 1840
+				}
+				ruler = { kill_character = yes }
+			}
+			if = {
+				limit = {
+					exists = c:POL
+					c:POL = ROOT
+					ruler = { has_variable = is_maximilian_jagiello }
+					year >= 1839
+				}
+				random_list = {
+					8 = { }
+					4 = {
+						ruler = { kill_character = yes }
+					}
+				}
+			}
+		}
+	}
+
+	invalid = {
+		OR = {
+			NOT = {
+				exists = c:POL
+			}
+		}
+	}
+
+	weight = 10
+
+	should_be_pinned_by_default_uninvolved_or_context = yes
+}
+
+
+je_pol_early_industrial_development = {
 
 	#You should build factories! It's fun for everyone!	
 	
