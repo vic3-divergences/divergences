@@ -1115,34 +1115,6 @@ on_monthly_pulse_country = {
 				}
 			}
 		}
-		if = { # Removes the Berar lease modifier if no longer relevant
-			limit = {
-				c:BIC ?= this
-				c:BIC ?= {
-					has_modifier = lease_of_berar_costs
-				}
-				OR = {
-					NOT = { exists = c:HYD }
-					c:BIC ?= {
-						has_war_with = c:HYD
-					}
-					c:BIC ?= {
-						NOT = {
-							any_scope_state = {
-								state_region = s:STATE_CENTRAL_PROVINCES
-							}
-						}
-					}
-				}
-			}
-			c:BIC ?= {
-				remove_modifier = lease_of_berar_costs
-			}
-			c:HYD ?= {
-				remove_modifier = lease_of_berar_income
-			}
-		}
-
 		if = {
 			limit = {
 				NOT = {
@@ -2744,20 +2716,6 @@ on_character_death = {
 			set_global_variable = espartero_is_dead_var
 		}
 
-		# if = { # Override to make the ruler of British India always an Industrialist
-		# 	limit = {
-		# 		is_ruler = yes
-		# 		c:BIC ?= owner
-		# 	}
-		# 	owner = {
-		# 		ig:ig_industrialists ?= {
-		# 			leader = {
-		# 				set_character_as_ruler = yes
-		# 			}
-		# 		}
-		# 		generate_new_eic_government_leader = yes
-		# 	}
-		# }
 		# Ethiopian emperor succession pre-unification
 		if = {
 			limit = {
@@ -2930,23 +2888,6 @@ on_new_ruler = {
 					}
 				}
 			}
-			# if = { # Override to make the ruler of British India always an Industrialist
-			# 	limit = {
-			# 		is_ruler = yes
-			# 		c:BIC ?= owner
-			# 		NOT = {
-			# 			is_interest_group_type = ig_industrialists
-			# 		}
-			# 	}
-			# 	owner = {
-			# 		ig:ig_industrialists ?= {
-			# 			leader = {
-			# 				set_character_as_ruler = yes
-			# 			}
-			# 		}
-			# 		generate_new_eic_government_leader = yes
-			# 	}
-			# }
 			if = {
 				limit = {
 					owner = {
@@ -5372,96 +5313,6 @@ on_revolution_start = {
 				trigger_event = { id = gg_korea.7 popup = yes }
 			}
 		}
-		if = { # Script hack for Indian revolutions
-			limit = {
-				c:BIC ?= ROOT
-				ROOT = {
-					any_civil_war = {
-						is_civil_war_type = revolution
-						political_movement ?= {
-							NOR = {
-								is_political_movement_type = movement_religious_majority
-								is_political_movement_type = movement_cultural_majority
-								is_political_movement_type = movement_utilitarian
-								culture ?= {
-									has_discrimination_trait_group = heritage_group_european
-								}
-							}
-						}
-					}
-				}
-			}
-			scope:target ?= {
-				change_tag = BHT
-				remove_primary_culture = cu:british
-				grant_indian_cultures = yes
-				if = {
-					limit = {
-						NOT = {
-							has_law_or_variant = law_type:law_state_atheism
-						}
-					}
-					if = {
-						limit = {
-							religion_percent_country = {
-								target = rel:hindu
-								value >= 0.5
-							}
-						}
-						set_state_religion = rel:hindu
-					}
-					else_if = {
-						limit = {
-							religion_percent_country = {
-								target = rel:sunni
-								value >= 0.5
-							}
-						}
-						set_state_religion = rel:sunni
-					}
-					else = {
-						set_state_religion = rel:hindu
-					}
-				}
-				india_independence_ig_effects = yes
-				if = {
-					limit = {
-						has_modifier = modifier_india_crown_rule
-					}
-					remove_modifier = modifier_india_crown_rule
-				}
-				if = {
-					limit = {
-						has_modifier = modifier_india_company_rule
-					}
-					remove_modifier = modifier_india_company_rule
-				}
-				if = {
-					limit = {
-						has_modifier = modifier_india_company_rule_upgraded
-					}
-					remove_modifier = modifier_india_company_rule_upgraded
-				}
-				if = {
-					limit = {
-						has_modifier = modifier_indian_imperial_police
-					}
-					remove_modifier = modifier_indian_imperial_police
-				}
-				recalculate_pop_ig_support = yes
-				every_scope_character = {
-					limit = {
-						OR = {
-							culture = cu:british
-							culture = cu:scottish
-							culture = cu:irish
-						}
-						is_immortal = no
-					}
-					kill_character = yes
-				}
-			}
-		}
 		### Carlists and Miguelists
 		if = {
 			limit = {
@@ -5622,80 +5473,6 @@ on_secession_start = {
 
 				}
 				trigger_event = { id = poland_events.5 days = 7 popup = yes }
-			}
-		}
-		if = { # Script hack for Indian secessions
-			limit = {
-				c:BIC ?= ROOT
-			}
-			scope:target ?= {
-				remove_primary_culture = cu:british
-				grant_indian_regional_cultures = yes
-				if = {
-					limit = {
-						NOT = {
-							has_law_or_variant = law_type:law_state_atheism
-						}
-					}
-					if = {
-						limit = {
-							religion_percent_country = {
-								target = rel:hindu
-								value >= 0.5
-							}
-						}
-						set_state_religion = rel:hindu
-					}
-					else_if = {
-						limit = {
-							religion_percent_country = {
-								target = rel:sunni
-								value >= 0.5
-							}
-						}
-						set_state_religion = rel:sunni
-					}
-					else = {
-						set_state_religion = rel:hindu
-					}
-				}
-				india_independence_ig_effects = yes
-				if = {
-					limit = {
-						has_modifier = modifier_india_crown_rule
-					}
-					remove_modifier = modifier_india_crown_rule
-				}
-				if = {
-					limit = {
-						has_modifier = modifier_india_company_rule
-					}
-					remove_modifier = modifier_india_company_rule
-				}
-				if = {
-					limit = {
-						has_modifier = modifier_india_company_rule_upgraded
-					}
-					remove_modifier = modifier_india_company_rule_upgraded
-				}
-				if = {
-					limit = {
-						has_modifier = modifier_indian_imperial_police
-					}
-					remove_modifier = modifier_indian_imperial_police
-				}
-				recalculate_pop_ig_support = yes
-				every_scope_character = {
-					limit = {
-						OR = {
-							culture = cu:british
-							culture = cu:scottish
-							culture = cu:irish
-						}
-						is_immortal = no
-					}
-					kill_character = yes
-				}
 			}
 		}
 	}
@@ -6449,22 +6226,6 @@ on_wargoal_enforced = {
         	}
         	owner = {
         		remove_modifier = modifier_herat_inspiration
-        	}
-        }
-        if = { # India - Capture of the Koh-i-Noor
-        	limit = {
-        		owner = {
-        			NOT = {
-        				has_variable = punjab_captured
-        			}
-	        		c:BIC ?= this
-					is_subject = yes
-					country_or_subject_owns_entire_state_region = STATE_PUNJAB
-				}
-        	}
-        	owner = {
-        		set_variable = punjab_captured
-        		trigger_event = { id = india_events.3 days = 7 popup = yes }
         	}
         }
 
@@ -7638,14 +7399,6 @@ on_impose_law = {
 		scope:initiator = {
 			post_notification = imposition_demand_sent
 			save_scope_as = foreign_imposition_country
-		}
-		if = {
-			limit = {
-				c:BIC ?= this
-				is_subject = yes
-				has_dlc_feature = ip2_content
-			}
-			trigger_event = { id = british_dictates.3 days = 0 popup = yes }
 		}
 		else = {
 			trigger_event = { id = law_imposition_events.1 days = 0 popup = yes }
