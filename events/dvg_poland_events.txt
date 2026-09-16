@@ -49,7 +49,7 @@ poland.1 = {
 	}
 }
 
-poland.2 = {
+poland.2 = { #Reactionary win
     type = country_event
     placement = root
     title = poland.2.t
@@ -69,25 +69,28 @@ poland.2 = {
 
     option = {
         name = poland.2.a
-        c:POL = {
-		    remove_diplomatic_pact = {
-		    	country = c:LIT
-		    	type = personal_union
-		    }
-		    create_diplomatic_pact = {
-		    	country = c:LIT
-		    	type = puppet
-		    }
+		if = {
+			limit = {
+				ROOT = {
+					has_diplomatic_pact = {
+						who = c:LIT
+						type = personal_union
+					}
+				}
+			}
+			annex_with_incorporation = c:LIT
+			add_primary_culture = cu:lithuanian
 		}
         add_modifier = {
             name = modifier_magnate_oligarchy
-            months = -1
+            days = 7300
+			is_decaying = yes
         }
         remove_modifier = modifier_slave_to_liberty
 	}
 }
 
-poland.3 = {
+poland.3 = { #Trickle of Democracy win
     type = country_event
     placement = root
     title = poland.3.t
@@ -107,20 +110,23 @@ poland.3 = {
 
     option = {
         name = poland.3.a
-        c:POL = {
-		    remove_diplomatic_pact = {
-		    	country = c:LIT
-		    	type = personal_union
-		    }
-		    create_diplomatic_pact = {
-		    	country = c:LIT
-		    	type = puppet
-		    }
+		if = {
+			limit = {
+				ROOT = {
+					has_diplomatic_pact = {
+						who = c:LIT
+						type = personal_union
+					}
+				}
+			}
+			annex_with_incorporation = c:LIT
+			add_primary_culture = cu:lithuanian
 		}
         ROOT = {
             add_modifier = {
                 name = modifier_noble_democracy
-                months = -1
+				days = 7300
+				is_decaying = yes
             }
             remove_modifier = modifier_slave_to_liberty
         }
@@ -155,14 +161,16 @@ poland.4 = {
             }
             add_modifier = {
                 name = modifier_eastern_slavery
-                months = -1
+				days = 7300
+				is_decaying = yes
             }
         }
         else = {
             ROOT = {
                 add_modifier = {
                     name = modifier_eastern_oppression
-                    months = -1
+					days = 7300
+					is_decaying = yes
                 }
             }
         }
@@ -283,7 +291,7 @@ poland.6 = {
     }
 }
 
-poland.10 = {
+poland.10 = { #The East Withdraws
     type = country_event
     placement = root
     title = poland.10.t
@@ -307,54 +315,562 @@ poland.10 = {
             if = {
                 limit = {
                     exists = c:SMO
+					c:SMO = {
+						is_subject = yes
+						top_overlord = {
+							THIS = c:POL
+						}
+					}
                 }
-                remove_diplomatic_pact = {
-                    country = c:SMO
-                    type = puppet
-                }
+				c:SMO = {
+					make_independent = yes
+				}
                 create_bidirectional_truce = { country = c:SMO months = 24 }
             }
             if = {
                 limit = {
                     exists = c:KHK
+					c:KHK = {
+						is_subject = yes
+						top_overlord = {
+							THIS = c:POL
+						}
+					}
                 }
-                remove_diplomatic_pact = {
-                    country = c:KHK
-                    type = puppet
-                }
-                c:KHK = {
-                    trigger_event = { id = dvg_cossack_ambition.1 }
-                }
+				c:KHK = {
+					make_independent = yes
+				}
                 create_bidirectional_truce = { country = c:KHK months = 24 }
             }
             if = {
                 limit = {
                     exists = c:ZAZ
+					c:ZAZ = {
+						is_subject = yes
+						top_overlord = {
+							THIS = c:POL
+						}
+					}
                 }
-                remove_diplomatic_pact = {
-                    country = c:ZAZ
-                    type = puppet
-                }
+				c:ZAZ = {
+					make_independent = yes
+				}
                 create_bidirectional_truce = { country = c:ZAZ months = 24 }
             }
-            #if = {
-            #    limit = {
-            #        exists = c:KIE
-            #    }
-            #    remove_diplomatic_pact = {
-            #        country = c:KIE
-            #        type = puppet
-            #    }
-            #    s:STATE_DVG_KIEV = {
-            #        add_claim = c:KIE
-            #    }
-            #    c:KIE = {
-            #        change_tag = UKR
-            #    }
-            #    create_bidirectional_truce = { country = c:UKR months = 24 }
-            #}
 		}
 
         set_global_variable = move_CSK
+	}
+}
+
+poland.100 = { #The completion of the Vistula Works
+    type = country_event
+    placement = root
+    title = poland.100.t
+    desc = poland.100.d
+    flavor = poland.100.f
+
+    duration = 3  
+
+    event_image = {
+		video = "gfx/event_pictures/unspecific_ruler_speaking_to_people.bk2"
+	}
+
+    on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/unspecific_ruler_speaking_to_people"
+
+	icon = "gfx/interface/icons/event_icons/event_industry.dds"
+
+	immediate = {
+		
+	}
+
+	option = {
+		name = poland.100.a
+		if = {
+			limit = {
+				has_variable = dvg_pol_vistula_warta_works_button_taken_var
+				has_variable = dvg_pol_vistula_krakow_portage_button_taken_var
+				has_variable = dvg_pol_vistula_connecting_eastern_poland_button_taken_var
+			}
+			add_modifier = {
+				name = dvg_pol_completed_vistula_works_full_bonus
+				days = 3650
+			}
+		}
+		else = {
+			add_modifier = {
+				name = dvg_pol_completed_vistula_works_no_bonus
+				days = 3650
+			}
+		}
+	}
+
+}
+
+poland.101 = { #The cancellation of the Vistula Works
+    type = country_event
+    placement = root
+    title = poland.101.t
+    desc = poland.101.d
+    flavor = poland.101.f
+
+    duration = 3  
+
+	event_image = {
+		video = "unspecific_factory_closed"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+ 	icon = "gfx/interface/icons/event_icons/event_industry.dds"
+
+	immediate = {
+		ig:ig_industrialists = {
+			save_scope_as = industrialists_ig_pol
+			leader = {
+				save_scope_as = landowners_leader
+			}
+		}
+	}
+
+	option = {
+		name = poland.101.a
+		ig:ig_industrialists = {
+			add_modifier = {
+				name = dvg_pol_failed_vistula_works
+				days = 3650
+			}
+		}
+	}
+
+}
+
+poland.102 = { #Redirecting the end of the Vistula
+    type = country_event
+    placement = root
+    title = poland.102.t
+    desc = poland.102.d
+    flavor = poland.102.f
+
+    duration = 3  
+
+	event_image = {
+		video = "southamerica_aristocrats"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+
+	icon = "gfx/interface/icons/event_icons/event_industry.dds"
+	
+	immediate = {
+		random_scope_state = {
+			limit = {
+				state_region = s:STATE_WEST_PRUSSIA
+			}
+			save_scope_as = west_prussia_state
+		}	
+	}
+
+	option = { #Redirect though Gdansk
+		name = poland.102.a
+		scope:west_prussia_state = {
+			add_modifier = {
+				name = dvg_pol_vistula_works_gdansk_buff
+				days = 3650
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_technology_researched = modern_sewerage
+				}
+			}
+			add_technology_progress = {
+				progress = 3500 technology = modern_sewerage
+			}
+		}
+		default_option = yes
+	}
+	
+	option = { #Redirect to baltic sea
+		name = poland.102.b
+		every_scope_state = {
+			limit = {
+				has_state_trait = state_trait_vistula_river
+				owner = ROOT
+				NOT = {
+					state_region = s:STATE_WEST_PRUSSIA
+				}
+			}
+			add_modifier = {
+				name = dvg_pol_vistula_works_upper_vistula_buff
+				days = 1830
+			}
+		}
+	}
+	
+	option = { #Do nothing and win anyway
+		name = poland.102.c
+		scope:west_prussia_state = {
+			state_region = {
+				add_arable_land = 5
+			}
+		}
+	}
+}
+
+poland.103 = { #Connecting Lublin to the Vistula
+    type = country_event
+    placement = root
+    title = poland.103.t
+    desc = poland.103.d
+    flavor = poland.103.f
+
+    duration = 3  
+
+	event_image = {
+		video = "middleeast_engineer_blueprint"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_industry.dds"
+
+	immediate = {
+		random_scope_state = {
+			limit = {
+				state_region = s:STATE_GREATER_POLAND
+			}
+			save_scope_as = warsaw_state
+		}	
+		random_scope_state = {
+			limit = {
+				state_region = s:STATE_WEST_GALICIA
+			}
+			save_scope_as = krakow_state
+		}	
+		random_scope_state = {
+			limit = {
+				state_region = s:STATE_LESSER_POLAND
+			}
+			save_scope_as = lublin_state
+		}	
+	}
+	
+
+	option = { #Build a canal!
+		name = poland.103.a
+		scope:lublin_state = {
+			add_modifier = {
+				name = dvg_pol_vistula_works_lublin_canal_buff
+				days = 1825
+			}
+		}
+		default_option = yes
+	}
+	
+	option = { #Use the newly constructed railways!
+		name = poland.103.b
+		trigger = {
+			any_scope_state = {
+				state_region = s:STATE_LESSER_POLAND
+				any_scope_building = {
+					is_building_type = building_railway
+					level >= 1
+				}
+			}
+		}
+		scope:lublin_state = {
+			add_modifier = {
+				name = dvg_pol_vistula_works_lublin_rail_buff
+				days = 1825
+			}
+		}
+	}
+	
+	option = { #Connect it to the Krakow-Warsaw railway!
+		name = poland.103.c
+		trigger = {
+			has_variable = krakow_warsaw_railway_completed_var
+		}
+		scope:lublin_state = {
+			add_modifier = {
+				name = dvg_pol_vistula_works_lublin_big_rail_buff
+				days = 3650
+			}
+		}
+		scope:krakow_state = {
+			add_modifier = {
+				name = dvg_pol_vistula_works_lublin_big_rail_krakow_warsaw_buff
+				days = 1825
+			}
+		}
+		scope:warsaw_state = {
+			add_modifier = {
+				name = dvg_pol_vistula_works_lublin_big_rail_krakow_warsaw_buff
+				days = 1825
+			}
+		}
+	}
+}
+
+poland.104 = { #Krakow-Warsaw Railway
+    type = country_event
+    placement = root
+    title = poland.104.t
+    desc = poland.104.d
+    flavor = poland.104.f
+
+    duration = 3  
+
+	event_image = {
+		video = "unspecific_trains"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_industry.dds"
+
+	immediate = {
+		set_variable = krakow_warsaw_railway_completed_var
+	}
+	
+	immediate = {
+		random_scope_state = {
+			limit = {
+				state_region = s:STATE_GREATER_POLAND
+			}
+			save_scope_as = warsaw_state
+		}	
+		random_scope_state = {
+			limit = {
+				state_region = s:STATE_WEST_GALICIA
+			}
+			save_scope_as = krakow_state
+		}
+	}
+
+	option = { #Dedicate it to passenger services
+		name = poland.104.a
+		scope:krakow_state = {
+			add_modifier = {
+				name = dvg_pol_vistula_works_warsaw_krakow_railway_passenger
+				days = 1825
+			}
+		}
+		scope:warsaw_state = {
+			add_modifier = {
+				name = dvg_pol_vistula_works_warsaw_krakow_railway_passenger
+				days = 1825
+			}
+		}	
+		default_option = yes
+	}
+
+	option = { #Use it for freight
+		name = poland.104.b
+		scope:krakow_state = {
+			add_modifier = {
+				name = dvg_pol_vistula_works_warsaw_krakow_railway_freight
+				days = 1825
+			}
+		}
+		scope:warsaw_state = {
+			add_modifier = {
+				name = dvg_pol_vistula_works_warsaw_krakow_railway_freight
+				days = 1825
+			}
+		}		
+	}
+	
+	option = { #Sell it to private landowners 
+		name = poland.104.c
+		add_treasury = 145000
+		add_modifier = {
+			name = dvg_pol_vistula_works_sold_railway_to_magnates
+			days = 1825
+		}
+	}
+}
+
+poland.105 = { #Bonus project - Poznan Warta Works
+    type = country_event
+    placement = root
+    title = poland.105.t
+    desc = poland.105.d
+    flavor = poland.105.f
+
+    duration = 3  
+
+	event_image = {
+		video = "middleeast_engineer_blueprint"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+    icon = "gfx/interface/icons/event_icons/event_scales.dds"
+
+	immediate = {
+		random_scope_state = {
+			limit = {
+				state_region = s:STATE_POSEN
+			}
+			save_scope_as = poznan_state
+		}
+	}
+
+	option = { #Construct a treatment plant to serve the city
+		name = poland.105.a
+		scope:poznan_state = {
+			add_modifier = {
+				name = dvg_pol_vistula_works_bonus_poznan_treatment
+				days = 1825
+			}
+		}
+		default_option = yes
+	}
+	
+	option = { #Renovate the city, giving it plenty of canals!
+		name = poland.105.b
+		scope:poznan_state = {
+			add_modifier = {
+				name = dvg_pol_vistula_works_bonus_poznan_renovation
+				days = 1825
+			}
+		}	
+		add_treasury = -75000
+	}
+}
+
+poland.106 = { #Bonus project - Krakow Portage
+    type = country_event
+    placement = root
+    title = poland.106.t
+    desc = poland.106.d
+    flavor = poland.106.f
+
+    duration = 3  
+
+	event_image = {
+		video = "unspecific_trains"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+    icon = "gfx/interface/icons/event_icons/event_scales.dds"
+
+	immediate = {
+		random_scope_state = {
+			limit = {
+				state_region = s:STATE_WEST_GALICIA
+			}
+			save_scope_as = krakow_state
+		}
+	}
+
+	option = { #Build a series of canals and locks to the city
+		name = poland.106.a
+		s:STATE_WEST_GALICIA = {
+			add_state_trait = state_trait_vistula_river
+		}
+		default_option = yes
+	}
+	
+	option = { #extend the project to Tarnow too
+		name = poland.106.b
+		add_treasury = -75000
+		s:STATE_WEST_GALICIA = {
+			add_state_trait = state_trait_vistula_river
+		}
+		scope:krakow_state = {
+			add_modifier = {
+				name = dvg_pol_vistula_works_bonus_tarnow_canal
+				days = 1825
+			}
+		}	
+	}
+}
+
+poland.107 = { #Bonus project - Connecting the east
+    type = country_event
+    placement = root
+    title = poland.107.t
+    desc = poland.107.d
+    flavor = poland.107.f
+
+    duration = 3  
+
+	event_image = {
+		video = "unspecific_trains"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+    icon = "gfx/interface/icons/event_icons/event_scales.dds"
+
+	immediate = {
+		random_scope_state = {
+			limit = {
+				state_region = s:STATE_EAST_GALICIA
+			}
+			save_scope_as = east_galicia_state
+		}
+		random_scope_state = {
+			limit = {
+				state_region = s:STATE_VOLHYNIA
+			}
+			save_scope_as = volhynia_state
+		}
+	}
+
+	option = { #Focus on construction
+		name = poland.107.a
+		scope:east_galicia_state = {
+			add_modifier = {
+				name = dvg_pol_vistula_works_bonus_eastern_construction
+				days = 1825
+			}
+		}
+		scope:volhynia_state = {
+			add_modifier = {
+				name = dvg_pol_vistula_works_bonus_eastern_construction
+				days = 1825
+			}
+		}
+		default_option = yes
+	}	
+	
+	option = { #Focus on education
+		name = poland.107.b
+		scope:east_galicia_state = {
+			add_modifier = {
+				name = dvg_pol_vistula_works_bonus_eastern_education
+				days = 1825
+			}
+		}
+		scope:volhynia_state = {
+			add_modifier = {
+				name = dvg_pol_vistula_works_bonus_eastern_education
+				days = 1825
+			}
+		}	
+	}
+	
+	option = { #Focus on sanitation
+		name = poland.107.c
+		scope:east_galicia_state = {
+			add_modifier = {
+				name = dvg_pol_vistula_works_bonus_eastern_sanitation
+				days = 1825
+			}
+		}
+		scope:volhynia_state = {
+			add_modifier = {
+				name = dvg_pol_vistula_works_bonus_eastern_sanitation
+				days = 1825
+			}
+		}	
 	}
 }

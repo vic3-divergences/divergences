@@ -155,7 +155,7 @@ culture_is_intuitive_slave_revolt_culture = {
         $COUNTRY$ ?= {
             any_primary_culture = {
 		OR = {
-                	has_discrimination_trait = language_hispanophone
+                has_discrimination_trait = language_hispanophone
                 	has_discrimination_trait = language_lusophone
                 	has_discrimination_trait = language_venetian
 		}
@@ -226,11 +226,11 @@ carlist_coup_trigger = {
         }
         has_law = law_type:law_monarchy
         scope:golpista_general ?= {
-            has_ideology = ideology:ideology_carlist
+            character_has_carlist_ideology = yes
         }
         ROOT.ruler ?= {
             NOT = {
-                has_ideology = ideology:ideology_carlist
+                character_has_carlist_ideology = yes
             }
         }
     }
@@ -250,7 +250,7 @@ isabelline_coup_trigger = {
             }
         }
         ROOT.ruler ?= {
-            has_ideology = ideology:ideology_carlist
+            character_has_carlist_ideology = yes
         }
     }
 }
@@ -263,11 +263,11 @@ miguelist_coup_trigger = {
         }
         has_law = law_type:law_monarchy
         scope:golpista_general ?= {
-            has_ideology = ideology:ideology_miguelist
+            character_has_miguelist_ideology = yes
         }
         ROOT.ruler ?= {
             NOT = {
-                has_ideology = ideology:ideology_miguelist
+                character_has_miguelist_ideology = yes
             }
         }
     }
@@ -287,7 +287,7 @@ constitutional_portugal_coup_trigger = {
             }
         }
         ROOT.ruler ?= {
-            has_ideology = ideology:ideology_miguelist
+            character_has_miguelist_ideology = yes
         }
     }
 }
@@ -557,7 +557,7 @@ character_has_ideology_conflicting_with_ruling_dynasty = {
                 limit = {
                     owner.ruler = {
                         has_variable = house_bourbon
-                        has_ideology = ideology:ideology_carlist
+                        character_has_carlist_ideology = yes
                     }
                 }
                 AND = {
@@ -569,7 +569,7 @@ character_has_ideology_conflicting_with_ruling_dynasty = {
                         text = ruler_is_carlist_claimant_tt
                         owner.ruler = {
                             has_variable = house_bourbon
-                            has_ideology = ideology:ideology_carlist
+                            character_has_carlist_ideology = yes
                         }
                     }
                 }
@@ -579,18 +579,18 @@ character_has_ideology_conflicting_with_ruling_dynasty = {
                     owner.ruler = {
                         has_variable = house_bourbon
                         NOT = {
-                            has_ideology = ideology:ideology_carlist
+                            character_has_carlist_ideology = yes
                         }
                     }
                 }
                 AND = {
-                    has_ideology = ideology:ideology_carlist
+                    character_has_carlist_ideology = yes
                     custom_tooltip = {
                         text = ruler_is_isabellist_claimant_tt
                         owner.ruler = {
                             has_variable = house_bourbon
                             NOT = {
-                                has_ideology = ideology:ideology_carlist
+                                character_has_carlist_ideology = yes
                             }
                         }
                     }
@@ -612,7 +612,7 @@ character_has_ideology_conflicting_with_ruling_dynasty = {
                 limit = {
                     owner.ruler = {
                         has_variable = house_braganca
-                        has_ideology = ideology:ideology_miguelist
+                        character_has_miguelist_ideology = yes
                     }
                 }
                 AND = {
@@ -624,7 +624,7 @@ character_has_ideology_conflicting_with_ruling_dynasty = {
                         text = ruler_is_miguelist_claimant_tt
                         owner.ruler = {
                             has_variable = house_braganca
-                            has_ideology = ideology:ideology_miguelist
+                            character_has_miguelist_ideology = yes
                         }
                     }
                 }
@@ -634,18 +634,18 @@ character_has_ideology_conflicting_with_ruling_dynasty = {
                     owner.ruler = {
                         has_variable = house_braganca
                         NOT = {
-                            has_ideology = ideology:ideology_miguelist
+                            character_has_miguelist_ideology = yes
                         }
                     }
                 }
                 AND = {
-                    has_ideology = ideology:ideology_miguelist
+                    character_has_miguelist_ideology = yes
                     custom_tooltip = {
                         text = ruler_is_constitutionalist_claimant_tt
                         owner.ruler = {
                             has_variable = house_braganca
                             NOT = {
-                                has_ideology = ideology:ideology_miguelist
+                                character_has_miguelist_ideology = yes
                             }
                         }
                     }
@@ -662,6 +662,12 @@ is_personal_union_junior_partner = {
 
 can_generate_scripted_heirs = {
     has_law = law_type:law_monarchy
+    NAND = { # Has a historical heir
+        exists = heir
+        heir = {
+            is_historical = yes
+        }
+    }
     NAND = { # Austrian personal unions can cause some strange edge cases
         exists = overlord
         is_subject_type = subject_type_personal_union
@@ -676,7 +682,7 @@ interest_group_is_not_less_tolerant_than_current_citizenship_law = {
         AND = {
             ROOT.owner = { has_law_or_variant = law_type:law_national_supremacy }
             NOT = {
-                interest_group = {
+                interest_group ?= {
                     law_stance = {
                         law = law_type:law_ethnostate
                         value >= approve
@@ -687,7 +693,7 @@ interest_group_is_not_less_tolerant_than_current_citizenship_law = {
         AND = {
             ROOT.owner = { has_law_or_variant = law_type:law_racial_segregation }
             NOT = {
-                interest_group = {
+                interest_group ?= {
                     law_stance = {
                         law = law_type:law_national_supremacy
                         value >= approve
@@ -698,7 +704,7 @@ interest_group_is_not_less_tolerant_than_current_citizenship_law = {
         AND = {
             ROOT.owner = { has_law_or_variant = law_type:law_subjecthood }
             NOT = {
-                interest_group = {
+                interest_group ?= {
                     law_stance = {
                         law = law_type:law_national_supremacy
                         value >= approve
@@ -709,7 +715,7 @@ interest_group_is_not_less_tolerant_than_current_citizenship_law = {
         AND = {
             ROOT.owner = { has_law_or_variant = law_type:law_cultural_exclusion }
             NOT = {
-                interest_group = {
+                interest_group ?= {
                     law_stance = {
                         law = law_type:law_racial_segregation
                         value >= approve
@@ -720,7 +726,7 @@ interest_group_is_not_less_tolerant_than_current_citizenship_law = {
         AND = {
             ROOT.owner = { has_law_or_variant = law_type:law_multicultural }
             NOT = {
-                interest_group = {
+                interest_group ?= {
                     law_stance = {
                         law = law_type:law_cultural_exclusion
                         value >= approve
@@ -779,5 +785,44 @@ amendment_banned_from_enactment = {
     OR = {
         this = amendment_type:amendment_economic_regeneration_1
         this = amendment_type:amendment_economic_regeneration_2
+        AND = {
+            owner ?= { authority < political_concession_level_1_auth }
+            this = amendment_type:amendment_generic_sponsor_polstr_increase_negotiation_1
+        }
+        AND = {
+            owner ?= { authority < political_concession_level_2_auth }
+            this = amendment_type:amendment_generic_sponsor_polstr_increase_negotiation_2
+        }
+        AND = {
+            owner ?= { authority < political_concession_level_3_auth }
+            this = amendment_type:amendment_generic_sponsor_polstr_increase_negotiation_3
+        }
+    }
+}
+
+character_has_carlist_ideology = {
+    OR = {
+        has_ideology = ideology:ideology_carlist
+        hidden_trigger = {
+            has_ideology = ideology:ideology_carlist_2
+        }
+    }
+}
+
+ig_has_carlist_ideology = {
+    OR = {
+        has_ideology = ideology:ideology_carlist_ig
+        hidden_trigger = {
+            has_ideology = ideology:ideology_carlist_ig_2
+        }
+    }
+}
+
+character_has_miguelist_ideology = {
+    OR = {
+        has_ideology = ideology:ideology_miguelist
+        hidden_trigger = {
+            has_ideology = ideology:ideology_miguelist_2
+        }
     }
 }
