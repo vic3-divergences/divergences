@@ -91,6 +91,10 @@ ceylon_presidency_button = {
 			state_region = s:STATE_CEYLON
 		}
 		OR = {
+			has_law = law_type:law_subjecthood
+			has_law = law_type:law_multicultural
+		}
+		OR = {
 			owns_entire_state_region = STATE_CEYLON
 			AND = {
 				exists = c:KDY
@@ -250,4 +254,114 @@ timor_chougie_button = {
 	 }	
 }
 
+je_colonial_administration_button_malabar = {
+	name = "je_colonial_administration_button_malabar"
+	desc = "je_colonial_administration_button_malabar_desc"
 
+	visible = {
+		is_not_in_geographic_region = geographic_region_malabar
+		any_scope_state = {
+			is_in_geographic_region = geographic_region_malabar
+		}
+		NOT = {
+			any_subject_or_below = {
+				has_variable = india_subject_var
+			}
+		}
+		scope:capital_state_scope = {
+			is_in_geographic_region = geographic_region_europe
+		}
+	}
+
+	cooldown = { days = 90 }
+
+	possible = {
+		any_scope_state = {
+			region = sr:region_senegal
+			is_largest_state_in_region = yes
+			count >= 2
+		}
+
+		#prevents splitting off during diplo play or war as it invalidates wargoals. is_at_war is there for clarity for players even though it's technically included in the former
+		is_diplomatic_play_committed_participant = no
+		is_at_war = no
+
+		custom_tooltip = {
+			text = colonial_administration_cooldown
+			NOT = {
+				any_subject_or_below = {
+					has_variable = newly_formed_colonial_nation_var
+				}
+			}
+		}
+	}
+
+	ai_chance = {
+		value = 100
+	}
+
+	effect = {
+		if = {
+			limit = {
+				any_scope_state = {
+					region = sr:region_senegal
+					has_decree = decree_greener_grass_campaign
+				}
+			}
+			random_scope_state = {
+				limit = {
+					region = sr:region_senegal
+					has_decree = decree_greener_grass_campaign
+				}
+				save_scope_as = newly_formed_colonial_nation_capital_scope
+			}
+		}
+		else = {
+			random_scope_state = {
+				limit = {
+					region = sr:region_senegal
+				}
+				save_scope_as = newly_formed_colonial_nation_capital_scope
+			}
+		}
+		every_scope_state = {
+			limit = {
+				region = sr:region_senegal
+			}
+			set_variable = state_to_cede
+		}
+		create_dynamic_country = {
+			origin = root
+			country_type = colonial
+			tier = principality
+			capital = scope:newly_formed_colonial_nation_capital_scope
+			cede_state_trigger = {
+				has_variable = state_to_cede
+			}
+			on_created = {
+				set_variable = senegal_subject_var
+				set_variable = {
+					name = newly_formed_colonial_nation_var
+					months = 3
+				}
+				every_scope_state = {
+					remove_variable = state_to_cede
+				}
+				activate_law = law_type:law_frontier_colonization
+				activate_law = law_type:law_presidential_republic
+				add_modifier = {
+					name = colonial_administration
+				}
+			}
+		}
+		hidden_effect = {
+			create_diplomatic_pact = {
+				country = scope:newly_formed_colonial_nation_capital_scope.owner
+				type = colony
+			}
+		}
+		trigger_event = { id = colonial_administration_events.1 days = 1 popup = yes }
+		custom_tooltip = je_colonial_administration_button_tt_1
+		custom_tooltip = je_colonial_administration_button_tt_2
+	}
+}
