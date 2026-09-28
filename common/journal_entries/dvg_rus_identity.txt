@@ -1,4 +1,4 @@
-je_russian_identity = {
+﻿je_russian_identity = {
 	icon = "gfx\interface\icons\event_icons\event_russia_indetity.dds"
 
 	group = je_group_internal_affairs
@@ -19,20 +19,24 @@ je_russian_identity = {
 
 	complete = {
 		custom_tooltip = {
-			text = je_russian_identity_complete_tt
-			has_variable = rus_bureacratic_je_done
-			has_variable = rus_tatar_question_je_done
-			scope:journal_entry = {
-				is_goal_complete = yes
-			}
+			text = je_russian_identity_tatars
+			has_global_variable = rus_tatar_question_je_done
+		}
+		custom_tooltip = {
+			text = je_russian_identity_bureaucracy
+			has_global_variable = rus_bureacratic_je_done
+		}
+		custom_tooltip = {
+			text = je_russian_identity_goal
+			has_global_variable = rus_goal_completed
 		}
 	}
 
 	on_complete = {
-		change_tag = HRU
 		custom_tooltip = {
 			text = je_russian_identity_oncomplete_tt
 			rus_clear_identity_variables = yes #Removes all variables used for math in this JE, to save memory and performance.
+			change_tag = HRU
 		}
 	}
 
@@ -43,21 +47,21 @@ je_russian_identity = {
 					OR = {
 						AND = {
 							has_global_variable = slav_supported
-							scope:journal_entry = {
+							je:je_russian_identity = {
 								"scripted_bar_progress(russian_identity_slavist_progress_bar)" > "scripted_bar_progress(russian_identity_eurasianist_progress_bar)"
 								"scripted_bar_progress(russian_identity_slavist_progress_bar)" > "scripted_bar_progress(russian_identity_russist_progress_bar)"
 							}
 						}
 						AND = {
 							has_global_variable = eura_supported
-							scope:journal_entry = {
+							je:je_russian_identity = {
 								"scripted_bar_progress(russian_identity_eurasianist_progress_bar)" > "scripted_bar_progress(russian_identity_slavist_progress_bar)"
 								"scripted_bar_progress(russian_identity_eurasianist_progress_bar)" > "scripted_bar_progress(russian_identity_russist_progress_bar)"
 							}
 						}
 						AND = {
 							has_global_variable = allrussia_supported
-							scope:journal_entry = {
+							je:je_russian_identity = {
 								"scripted_bar_progress(russian_identity_russist_progress_bar)" > "scripted_bar_progress(russian_identity_slavist_progress_bar)"
 								"scripted_bar_progress(russian_identity_russist_progress_bar)" > "scripted_bar_progress(russian_identity_eurasianist_progress_bar)"
 							}
@@ -94,18 +98,18 @@ je_russian_identity = {
 				limit = {
 					NOT = { has_variable = two_identity_fail }
 					NOT = { has_variable = rus_identity_freeze }
-					scope:journal_entry = {
+					je:je_russian_identity = {
 						OR = {
 							AND = {
-								"scripted_bar_progress(russian_identity_slavist_progress_bar)" >= 1000
+								"scripted_bar_progress(russian_identity_slavist_progress_bar)" >= 999
 								NOT = { has_global_variable = slav_supported }
 							}
 							AND = {
-								"scripted_bar_progress(russian_identity_eurasianist_progress_bar)" >= 1000
+								"scripted_bar_progress(russian_identity_eurasianist_progress_bar)" >= 999
 								NOT = { has_global_variable = eura_supported }
 							}
 							AND = {
-								"scripted_bar_progress(russian_identity_russist_progress_bar)" >= 1000
+								"scripted_bar_progress(russian_identity_russist_progress_bar)" >= 999
 								NOT = { has_global_variable = allrussia_supported}
 							}
 						}
@@ -114,14 +118,17 @@ je_russian_identity = {
 				trigger_event = dvg_rus_iden.113
 			}
 		}
+		events = {
+			trigger_event = dvg_rus_iden.114
+		}
 		random_events = {
-			400 = 0
-			30 = dvg.rus_iden.104
-			30 = dvg.rus_iden.105
-			30 = dvg.rus_iden.106
-			100 = dvg.rus_iden.110
-			100 = dvg.rus_iden.111
-			100 = dvg.rus_iden.112
+			300 = 0
+			100 = dvg_rus_iden.104
+			50 = dvg_rus_iden.105
+			50 = dvg_rus_iden.106
+			200 = dvg_rus_iden.110
+			200 = dvg_rus_iden.111
+			200 = dvg_rus_iden.112
 		}
 	}
 
@@ -171,16 +178,16 @@ je_tatar_question = {
 			religion = rel:sunni
 		}
 		OR = { 
-			has_law = law_type:law_multiculturalism
-			has_variable = tatar_staged_coup
-			has_variable = tatars_in_eurasia
-			haw_law = law_type:law_rossijane_solidarity
+			has_law = law_type:law_multicultural
+			has_global_variable = tatar_staged_coup
+			has_global_variable = tatars_in_eurasia
+			has_law = law_type:law_rossijane_solidarity
 	
 		}
 		
 	}
 	on_complete = {
-		set_variable = rus_tatar_question_je_done
+		set_global_variable = rus_tatar_question_je_done
 		add_loyalists = {
 			value = 0.15
 		}
@@ -297,12 +304,211 @@ je_united_eurasians = {
 	
 	}
 	scripted_button = integrate_east_slavs
+	
 	scripted_button = integrate_uralics_and_baltics
+	
 	scripted_button = integrate_tatars_and_turks
+	
 	scripted_button = integrate_caucasians
+	
 	scripted_button = integrate_siberians_and_mongols
 
 	weight = 100
 
 	should_be_pinned_by_default_uninvolved_or_context = yes
+}
+je_old_believers = {
+	icon = "gfx/interface/icons/religion_icons/orthodox.dds"
+
+	group = je_group_internal_affairs
+
+	modifiers_while_active = {
+		dvg_russian_believer_conflict
+	}
+	immediate = {
+		set_variable = {
+			name = believer_var
+			value = 0
+		}
+		
+	}
+	current_value = {
+		value = root.var:believer_var
+	}
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					has_law = law_type:law_state_religion
+				}
+				change_variable = {
+					name = believer_var
+					subtract = 1
+				}
+			}
+			if = {
+				limit = {
+					has_law = law_type:law_freedom_of_conscience 
+				}
+				change_variable = {
+					name = believer_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					has_technology_researched = egalitarianism
+				}
+				change_variable = {
+					name = believer_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					has_technology_researched = nationalism
+				}
+				change_variable = {
+					name = believer_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					radical_fraction = {
+						value <= 0.25
+						religion = rel:orthodox
+					}
+				}
+				change_variable = {
+					name = believer_var
+					add = 2
+				}
+			}
+			if = {
+				limit = {
+					radical_fraction = {
+						value >= 0.25
+						religion = rel:orthodox
+					}
+				}
+				change_variable = {
+					name = believer_var
+					subtract = 2
+				}
+			}
+			if = {
+				limit = {
+					radical_fraction = {
+						value <= 0.25
+						religion = rel:jewish
+					}
+				}
+				change_variable = {
+					name = believer_var
+					add = 1
+				}
+			}
+			if = {
+				limit = {
+					radical_fraction = {
+						value >= 0.25
+						religion = rel:jewish
+					}
+				}
+				change_variable = {
+					name = believer_var
+					subtract = 1
+				}
+			}
+			if = {
+				limit = {
+					this = { var:believer_var >= 500 }
+				}
+				trigger_event = {
+					id = dvg_rus_iden.306
+				}
+			}
+		}
+		random_events = {
+			200 = 0
+			100 = dvg_rus_iden.301
+			100 = dvg_rus_iden.302
+			100 = dvg_rus_iden.303
+			100 = dvg_rus_iden.304
+			100 = dvg_rus_iden.305
+		}
+	}
+	complete = {
+		custom_tooltip = {
+			text = believer_conflict_settled
+			has_global_variable = believers_united
+		}
+	}
+	on_complete = {
+		add_loyalists = {
+			value = 0.15
+			religion = rel:orthodox
+		}
+		add_loyalists = {
+			value = 0.15
+			religion = rel:jewish
+		}
+		if = {
+			limit = {
+				OR = {
+					ig:ig_devout = {
+						has_ideology = ideology:ideology_kirilovite
+					}
+					ig:ig_devout = {
+						has_ideology = ideology:ideology_nikonite
+					}
+				}
+			}
+			ig:ig_devout = {
+				remove_ideology = ideology:ideology_kirilovite
+				remove_ideology = ideology:ideology_nikonite
+				add_ideology = ideology:ideology_russian_patriarch 
+			}
+		}
+
+	}
+	timeout = 3650
+
+	on_timeout = {
+		set_global_variable = believers_tolerated
+		trigger_event = {
+			id = dvg_rus_iden.306
+		}
+	}
+	fail = {
+		custom_tooltip = {
+			text = believer_seperation_continues
+			OR = {
+				has_law = law_type:law_state_atheism
+				AND = {
+					radical_fraction = {
+						value >= 0.25
+						religion = rel:orthodox
+					}
+					radical_fraction = {
+						value >= 0.25
+						religion = rel:jewish
+					}
+				}
+			}
+		}
+	}
+	on_fail = {
+		add_radicals = {
+			value = 0.15
+			religion = rel:orthodox
+		}
+		add_radicals = {
+			value = 0.15
+			religion = rel:jewish
+		}
+	}
+	progressbar = yes
+	goal_add_value = 500
 }
