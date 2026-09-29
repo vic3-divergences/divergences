@@ -1,7 +1,7 @@
 ﻿
-je_maratha_unite_aus_button = {
-	name = "je_maratha_unite_aus_button"
-	desc = "je_maratha_unite_aus_button_desc"
+je_maratha_unite_button = {
+	name = "je_maratha_unite_button"
+	desc = "je_maratha_unite_button"
 
 	visible = {
 		always = yes
@@ -10,15 +10,13 @@ je_maratha_unite_aus_button = {
 	possible = {
 		is_at_war = no
 		has_technology_researched = nationalism
-		NOT = { has_modifier = australia_test_modifier }
+		NOT = { has_modifier = unification_prestige }
 		AND = {
-				top_overlord ?= {
-				relations:root >= relations_threshold:amicable
-				}
 				custom_tooltip = {
 				text = marathi_confederation_tt
 
 				any_country = {
+				is_player = no
 				is_at_war = no
 				is_player = no
 				is_adjacent_to_country = ROOT
@@ -27,7 +25,6 @@ je_maratha_unite_aus_button = {
 				relations:ROOT >= relations_threshold:amicable
 				OR = {
 					is_subject = no
-					is_subject_of = ROOT
 					AND = {
 						ROOT = { is_subject = yes }
 						is_subject_of = ROOT.top_overlord
@@ -45,14 +42,38 @@ je_maratha_unite_aus_button = {
 	cooldown = { days = short_modifier_time }
 
 	effect = {
-		custom_tooltip = unite_australia_tt
+		custom_tooltip = unite_marathas_tt
 
-		trigger_event = { id = can_aus.3 popup = yes }
+		#Insert Marathi Union event here
+
+		random_country = {
+			limit = {
+				is_player = no
+				is_at_war = no
+				is_player = no
+				is_adjacent_to_country = ROOT
+				country_has_primary_culture = cu:marathi
+				this.gdp < ROOT.gdp
+				relations:ROOT >= relations_threshold:amicable
+				OR = {
+					is_subject = no
+					AND = {
+						ROOT = { is_subject = yes }
+						is_subject_of = ROOT.top_overlord
+					}
+				}
+			}
+			save_scope_as = maratha_unite_target
+		}
+		create_diplomatic_pact = {
+			country = scope:maratha_unite_target
+			type = personal_union
+		}
 
 
 		
 		add_modifier = {
-			name = australia_test_modifier
+			name = unification_prestige
 			days = short_modifier_time
 		}
 	}
