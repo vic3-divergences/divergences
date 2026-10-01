@@ -27,7 +27,6 @@ je_dua_navy = {
 
 	group = je_group_internal_affairs
 
-	
 	scripted_button = burgundy_fortress_button
     scripted_button = rhone_iron_works_button
     scripted_button = brest_naval_yards_button
@@ -82,4 +81,134 @@ je_dua_navy = {
 
 	weight = 1000
 	}
+
+je_nayezpaspeur = {
+	icon = "gfx/interface/icons/event_icons/bicorne_hat.dds"
+
+	group = je_group_internal_affairs
+
+	is_shown_when_inactive = {
+		c:DUA ?= THIS
+	}
+
+	possible = {
+		country_rank >= rank_value:minor_power
+		any_scope_character = {
+			has_role_of_type = admiral
+		}
+		OR = {
+			has_technology_researched = dreadnought_tech
+			has_technology_researched = sea_lane_strategies
+		}
+	}
+
+	immediate = {
+		set_variable = {
+			name = dua_navy_var
+			value = 0
+		}
+		# startup event
+		trigger_event = {
+			id = dua_navy.1
+			popup = yes
+		}
+	}
+
+	on_monthly_pulse = {
+		random_events = {
+			100 = 0
+			5 = dua_navy.2 # Navy complains that it's not as powerful as it should be
+			5 = dua_navy.3 # navy is strong
+		}
+		effect = {
+			if = {
+				limit = {
+					NOT = {
+						any_country = {
+							naval_power_projection > root.naval_power_projection
+							count > 10
+						}
+					}
+					NOT = {
+						any_country_in_south_america = {
+							naval_power_projection > root.naval_power_projection
+						}
+					}
+				}
+				change_variable = {
+					name = brazil_navy_var
+					add = 1
+				}
+			}
+		}
+	}
+
+	is_progressing = {
+		NOT = {
+			any_country = {
+				naval_power_projection > root.naval_power_projection
+				count > 10
+			}
+		}
+		NOT = {
+			any_country_in_south_america = {
+				naval_power_projection > root.naval_power_projection
+			}
+		}
+	}
+
+	complete = {
+		any_scope_character = {
+			has_role_of_type = admiral
+		}
+		has_law_or_variant = law_type:law_professional_navy
+		scope:journal_entry = {
+			is_goal_complete = yes
+		}
+		NOT = {
+			any_country = {
+				naval_power_projection > root.naval_power_projection
+				count > 10
+			}
+		}
+		custom_tooltip = {
+			text = best_european_navy
+			NOT = {
+				any_country_in_west_europe = {
+					naval_power_projection > root.naval_power_projection
+				}
+			}
+		}
+	}
+
+	on_complete = {
+		trigger_event = {
+			id = dua_navy.4
+			popup = yes
+		}
+	}
+
+	fail = {
+		country_rank < rank_value:minor_power
+	}
+
+	timeout = 25550
+
+	current_value = {
+		value = root.var:dua_navy_var
+	}
+
+	goal_add_value = {
+		add = 480
+	}
+
+	progressbar = yes
+
+	weight = 100
+
+	can_revolution_inherit = no
+	transferable = no
+		
+	should_be_pinned_by_default_uninvolved_or_context = yes
+}
 	
