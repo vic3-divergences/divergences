@@ -4339,12 +4339,403 @@ dvg_dua.529 = { # Pearl of the europe
 
 #dua naval and Army
 
-dua_navy.1
-dua_navy.2
-dua_navy.3
-dua_navy.4
+namespace = dua_navy
 
-modernizing_naval_dua.1
+# Dual Monarchy Renaissance Navale
+dua_navy.1 = {
+	type = country_event
+	placement = ROOT
+
+	title = dua_navy.1.t
+	desc = dua_navy.1.d
+	flavor = dua_navy.1.f
+
+	event_image = {
+		video = "ep2_active_shipyard"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/bicorne_hat.dds"
+
+	duration = 3
+
+	dlc = dlc008
+
+	trigger = {
+		# triggered by je_dua_navy
+	}
+
+	immediate = {
+		ruler = {
+			save_scope_as = ruler_scope
+		}
+		if = {
+			limit = {
+				any_scope_character = {
+					has_role_of_type = admiral
+					commander_rank >= 5
+				}
+			}
+			random_scope_character = {
+				limit = {
+					has_role_of_type = admiral
+					commander_rank >= 5
+				}
+				save_scope_as = admiral_scope
+			}
+		}
+		else_if = {
+			limit = {
+				any_scope_character = {
+					has_role_of_type = admiral
+					commander_rank >= 4
+				}
+			}
+			random_scope_character = {
+				limit = {
+					has_role_of_type = admiral
+					commander_rank >= 4
+				}
+				save_scope_as = admiral_scope
+			}
+		}
+		else_if = {
+			limit = {
+				any_scope_character = {
+					has_role_of_type = admiral
+					commander_rank >= 3
+				}
+			}
+			random_scope_character = {
+				limit = {
+					has_role_of_type = admiral
+					commander_rank >= 3
+				}
+				save_scope_as = admiral_scope
+			}
+		}
+		else_if = {
+			limit = {
+				any_scope_character = {
+					has_role_of_type = admiral
+					commander_rank >= 2
+				}
+			}
+			random_scope_character = {
+				limit = {
+					has_role_of_type = admiral
+					commander_rank >= 2
+				}
+				save_scope_as = admiral_scope
+			}
+		}
+		else = {
+			random_scope_character = {
+				limit = {
+					has_role_of_type = admiral
+				}
+				save_scope_as = admiral_scope
+			}
+		}
+	}
+
+	option = { # Brazil needs a strong navy
+		name = dua_navy.1.a
+		default_option = yes
+		show_as_tooltip = {
+			add_journal_entry = {
+				type = je_nayezpaspeur
+			}
+		}
+		scope:admiral_scope = {
+			add_modifier = {
+				name = dua_navy_advocate
+			}
+		}
+	}
+}
+
+# Navy complains that other countries are too relatively powerful
+dua_navy.2 = {
+	type = country_event
+	placement = ROOT
+
+	title = dua_navy.2.t
+	desc = dua_navy.2.d
+	flavor = dua_navy.2.f
+
+	event_image = {
+		video = "unspecific_naval_battle"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/bicorne_hat.dds"
+
+	cooldown = { days = long_modifier_time }
+
+	duration = 3
+
+	dlc = dlc008
+
+	trigger = {
+		# triggered by je_nayezpaspeur
+		OR = {
+			any_country = {
+				naval_power_projection > root.naval_power_projection
+				count > 10
+			}
+			any_country = {
+				naval_power_projection > root.naval_power_projection
+				is_in_geographic_region = geographic_region_south_america
+			}
+		}
+		any_scope_character = {
+			has_role_of_type = admiral
+		}
+	}
+
+	immediate = {
+		ruler = {
+			save_scope_as = ruler_scope
+		}
+		if = {
+			limit = {
+				any_scope_character = {
+					has_role_of_type = admiral
+					NOT = { has_modifier = dua_navy_advocate }
+				}
+			}
+			random_scope_character = {
+				limit = {
+					has_role_of_type = admiral
+					NOT = { has_modifier = dua_navy_advocate }
+				}
+				save_scope_as = admiral_scope
+			}
+		}
+		else = {
+			random_scope_character = {
+				limit = {
+					has_role_of_type = admiral
+				}
+				save_scope_as = admiral_scope
+			}
+		}
+		ig:ig_armed_forces ?= {
+			save_scope_as = navy_scope
+		}
+		if = {
+			limit = {
+				any_country = {
+					naval_power_projection > root.naval_power_projection
+					is_in_geographic_region = geographic_region_west_europe
+				}
+			}
+			random_country = {
+				limit = {
+					naval_power_projection > root.naval_power_projection
+					is_in_geographic_region = geographic_region_west_europe
+				}
+				save_scope_as = naval_rival
+			}
+		}
+		else = {
+			random_country = {
+				limit = {
+					naval_power_projection > root.naval_power_projection
+				}
+				save_scope_as = naval_rival
+			}
+		}
+	}
+
+	option = { # We will have to do better
+		name = dua_navy.2.a
+		default_option = yes
+		scope:navy_scope = {
+			add_modifier = {
+				name = dua_eclipsed_navy
+				days = normal_modifier_time
+			}
+		}
+		scope:admiral_scope = {
+			if = {
+				limit = {
+					NOT = { has_modifier = dua_navy_advocate }
+				}
+				add_modifier = {
+					name = dua_navy_advocate
+				}
+			}
+		}
+	}
+}
+
+# Admirality is happy that the navy is strong
+dua_navy.3 = {
+	type = country_event
+	placement = ROOT
+
+	title = dua_navy.3.t
+	desc = dua_navy.3.d
+	flavor = dua_navy.3.f
+
+	event_image = {
+		video = "unspecific_naval_battle"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/bicorne_hat.dds"
+
+	cooldown = { days = long_modifier_time }
+
+	duration = 3
+
+	dlc = dlc008
+
+	trigger = {
+		# triggered by je_dua_navy
+		NOR = {
+			any_country = {
+				naval_power_projection > root.naval_power_projection
+				count > 6
+			}
+			any_country = {
+				naval_power_projection > root.naval_power_projection
+				is_in_geographic_region = geographic_region_west_europe
+			}
+		}
+		any_scope_character = {
+			has_role_of_type = admiral
+		}
+	}
+
+	immediate = {
+		random_scope_character = {
+			limit = {
+				has_role_of_type = admiral
+			}
+			save_scope_as = admiral_scope
+		}
+		ig:ig_armed_forces ?= {
+			save_scope_as = navy_scope
+		}
+	}
+
+	option = { # Good to hear
+		name = dua_navy.3.a
+		default_option = yes
+		scope:navy_scope = {
+			add_modifier = {
+				name = dua_strong_navy
+				days = normal_modifier_time
+			}
+		}
+	}
+}
+
+# Completion event
+dua_navy.4 = {
+	type = country_event
+	placement = ROOT
+
+	title = dua_navy.4.t
+	desc = dua_navy.4.d
+	flavor = dua_navy.4.f
+
+	event_image = {
+		video = "unspecific_naval_battle"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/bicorne_hat.dds"
+
+	duration = 3
+
+	dlc = dlc008
+
+	trigger = {
+		# triggered by je_nayezpaspeur
+	}
+
+	immediate = {
+		ig:ig_armed_forces ?= {
+			save_scope_as = navy_scope
+		}
+		random_scope_character = {
+			limit = {
+				has_role_of_type = admiral
+			}
+			save_scope_as = admiral_scope
+		}
+		ruler = {
+			save_scope_as = ruler_scope
+		}
+		ROOT = {
+			save_scope_as = dua_scope
+		}
+	}
+
+	option = { # Good to hear
+		name = dua_navy.4.a
+		default_option = yes
+		custom_tooltip = {
+			text = dua_navy_loyalists
+		}
+		show_as_tooltip = {
+			random_scope_state = {
+				limit = {
+					any_scope_building = {
+						is_building_type = building_naval_administration
+						level >= 1
+					}
+				}
+				add_loyalists_in_state = {
+					pop_type = officers
+					value = 0.5
+				}
+				add_loyalists_in_state = {
+					pop_type = soldiers
+					value = 0.25
+				}
+			}
+		}
+		hidden_effect = {
+			every_scope_state = {
+				limit = {
+					any_scope_building = {
+						is_building_type = building_naval_administration
+						level >= 1
+					}
+				}
+				add_loyalists_in_state = {
+					pop_type = officers
+					value = 0.5
+				}
+				add_loyalists_in_state = {
+					pop_type = soldiers
+					value = 0.25
+				}
+			}
+		}
+
+		every_country = {
+			limit = {
+				NOT = {
+					THIS = ROOT
+				}
+				has_interest_marker_in_region = sr:geographic_region_west_europe
+			}
+			post_notification = dua_navy_completed
+		}
+	}
+}
+
+modernizing_naval_dua.1 
 modernizing_naval_dua.2
 modernizing_naval_dua.3
 modernizing_naval_dua.4
