@@ -168,7 +168,7 @@ dvg_afghanistan.2 = {
 						}
 						religion_percent_state = {
 							target = rel:sikh
-							value > 0.45
+							value > 0.33
 						}
 					}
 				}
@@ -177,11 +177,16 @@ dvg_afghanistan.2 = {
 				set_state_owner = c:PAN
 			}
 		}
+		c:PAN = {
+			add_journal_entry = {
+				type = je_punjab_independence
+			}
+		}
 		
 		create_diplomatic_play = {
 			target_country = c:PAN
 			war = no
-			type = dp_annex_war
+			type = dp_rebellion_annex
 			
 			add_war_goal = {
 				holder = c:PAN
@@ -202,6 +207,11 @@ dvg_afghanistan.2 = {
 			set_interest_group_name = ig_petty_bourgeoisie
 			add_ideology = ideology_reactionary
 			remove_ideology = ideology_sovereignist
+		}
+		c:PAN = {
+			add_journal_entry = {
+				type = je_punjab_independence
+			}
 		}
 
 		if = {
@@ -851,14 +861,6 @@ dvg_afghanistan.8 = {
 			religion = rel:sunni
 		}
 
-		add_modifier = {
-			name = hazara_cultural_acceptance_modifier_negative
-			
-		}
-
-		add_modifier = {
-			name = panjabi_cultural_acceptance_modifier_negative		
-		}
 
 		ai_chance = {
 			base = 100
@@ -868,13 +870,13 @@ dvg_afghanistan.8 = {
 
 
 	option = {
-		name = dvg_afghanistan.8.a
+		name = dvg_afghanistan.8.b
 		
 		activate_law = law_type:law_freedom_of_conscience
 		activate_law = law_type:law_subjecthood
 
 		add_radicals = {
-			value = 0.15
+			value = 0.08
 			religion = rel:sunni
 		}
 
@@ -883,6 +885,34 @@ dvg_afghanistan.8 = {
 		}
 		
 	}
+
+	option = {
+		name = dvg_afghanistan.8.c
+		
+		activate_law = law_type:law_total_separation
+		activate_law = law_type:law_racial_segregation
+
+		add_radicals = {
+			value = 0.20
+			religion = rel:sunni
+		}
+
+		add_loyalists = {
+			value = 0.10
+			religion = rel:shiite
+		}
+
+		add_loyalists = {
+			value = 0.10
+			religion = rel:sikh
+		}
+
+		ai_chance = {
+			base = 1
+		}
+		
+	}
+
 }
 
 #Consolidating Culture
@@ -1035,7 +1065,7 @@ dvg_afghanistan.11 = {
 	flavor = dvg_afghanistan.11.f
 	
 	event_image = {
-		video = "middleeast_battlefield_trenches"
+		video = "unspecific_military_parade"
 	}
 
 	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
@@ -1062,10 +1092,19 @@ dvg_afghanistan.11 = {
 		ai_chance = {
 			base = 100
 		}
+
+		if = {
+			limit = {
+				NOT = {
+					exists = c:PER
+				}
+			}
+			change_tag = PER
+		}
 		
 	}
 
-		option = {
+	option = {
 		name = dvg_afghanistan.11.b
 
 		every_subject_or_below = {
@@ -1078,6 +1117,130 @@ dvg_afghanistan.11 = {
 			value = 0.10
 			culture = cu:persian
 		}
+
+		if = {
+			limit = {
+				NOT = {
+					exists = c:PER
+				}
+			}
+			change_tag = PER
+
+			every_scope_state = {
+				limit = {
+					strategic_region = sr:region_greater_persia
+
+					NOT = {
+						state_region = {
+							is_homeland = cu:persian
+						}
+					}
+				}
+				state_region = {
+					add_homeland = cu:persian
+				}
+			}
+		}
+		
+		ai_chance = {
+			base = 100
+		}
+		
+	}
+}
+
+#Sikhs request Scandinavian Aid
+dvg_afghanistan.12 = {
+	type = country_event
+	placement = ROOT
+
+	title = dvg_afghanistan.12.t
+	desc = dvg_afghanistan.12.d
+	flavor = dvg_afghanistan.12.f
+	
+	event_image = {
+		video = "middleeast_battlefield_trenches"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/middleeast/courtroom_upheaval"
+
+	icon = "gfx/interface/icons/event_icons/event_fire.dds"
+
+	duration = 1
+
+	trigger = {
+		
+	}
+	
+	
+	# Side with Sikhs
+	option = {
+		name = dvg_afghanistan.12.a
+		
+		create_diplomatic_pact = {
+			country = c:PAN
+			type = protectorate
+		}
+
+		create_incident = {
+			country = c:AFG
+			value = 7
+		}
+		
+		every_diplomatic_play = {
+			limit = {
+				initiator_is = c:AFG
+				target_is = c:PAN
+			}
+			add_target_backers = {
+				ROOT
+			}
+		}
+
+		add_radicals = {
+			value = 0.10
+			religion = rel:sunni
+		}
+		every_subject_or_below = {
+			limit = {
+				religion_percent_country = {
+					target = rel:sunni
+					value > 0.25
+				}
+			}
+			add_radicals = {
+			value = 0.10
+			religion = rel:sunni
+			}
+		}
+		
+		ai_chance = {
+			base = 100
+		}
+		
+	}
+
+		option = {
+		name = dvg_afghanistan.12.b
+
+		change_relations = {
+			country = c:PAN
+			value = -20
+		}
+
+		if = {
+			limit = {
+				is_power_bloc_leader = yes
+			}
+			add_leverage = {
+			target = c:PAN
+			value = -50
+			}
+		}
+
+		
+
 
 		
 		ai_chance = {

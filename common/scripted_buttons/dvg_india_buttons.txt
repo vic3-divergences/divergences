@@ -386,3 +386,114 @@ je_colonial_administration_button_malabar = {
 		custom_tooltip = je_colonial_administration_button_tt_2
 	}
 }
+
+je_panjab_unification_appeal_to_scandi_button = {
+	name = "je_panjab_unification_appeal_to_scandi_button"
+	desc = "je_panjab_unification_appeal_to_scandi_button_desc"
+
+	selected = {
+		has_variable = PAN_appealed_to_SCA
+	}
+
+	visible = {
+		exists = c:SCA
+		exists = c:PAN
+	}
+
+	cooldown = { days = long_modifier_time }
+
+	possible = {
+		has_technology_researched = mandatory_service
+		NOR = {
+			OR = {
+					has_war_with = c:SCA
+					is_diplomatic_play_enemy_of = c:SCA
+			}
+			has_diplomatic_pact = {
+				who = c:SCA
+				type = rivalry
+			}
+		}
+		any_scope_treaty = {
+			count < 1
+			binds = c:SCA
+			any_scope_article = {
+				has_type = military_assistance
+			}
+		}
+		c:SCA ?= {
+			OR = {
+				has_interest_marker_in_region = sr:region_north_india
+				any_subject_or_below = {
+					has_interest_marker_in_region = sr:region_north_india
+				}
+				has_interest_marker_in_region = sr:region_greater_persia
+				any_subject_or_below = {
+					has_interest_marker_in_region = sr:region_greater_persia
+				}
+			}
+		}
+		
+	}
+
+	effect = {
+		set_variable = { name = pending_aid_request value = c:SCA }
+		save_scope_as = sikh_nation_scope
+		c:SCA ?= {
+			save_scope_as = relevant_country
+			trigger_event = { id = dvg_afghanistan.12 popup = yes }
+		}
+		custom_tooltip = if_they_accept_tt
+		custom_tooltip = AFG_appeal_accept_tt
+		show_as_tooltip = {
+			c:SCA ?= {
+				create_treaty = {
+					first_country = c:SCA
+					second_country = ROOT
+
+					is_draft = no
+					binding_period = { years = 2 }
+
+					articles_to_create = {
+						{
+							article = military_assistance
+							source_country = c:SCA
+							target_country = ROOT
+						}
+					}
+				}
+			}
+			
+			scope:relevant_country.power_bloc = {
+				add_leverage = { target = ROOT value = 25 }
+			}
+		}
+	}
+
+	ai_chance = {
+		value = 0
+
+		if = {
+			limit = {
+				c:SCA ?= {
+					relations:root >= relations_threshold:cordial
+				}
+			}
+			add = 15
+		}
+
+		if = {
+			limit = {
+				is_diplomatic_play_committed_participant = yes
+			}
+			add = 10
+		}
+
+		if = {
+			limit = {
+				has_variable = player_GBR_denied_aid_request
+			}
+			add = -1000
+		}
+	}
+}
