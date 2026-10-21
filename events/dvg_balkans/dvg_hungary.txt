@@ -16,7 +16,21 @@ dvg_hungary.1 = {
 	title = dvg_hungary.1.t
 	desc = dvg_hungary.1.d
 	flavor = dvg_hungary.1.f
-
+	immediate = {
+		c:TRS = {
+			save_scope_as = scope_TRS
+		}
+		random_scope_character = {
+			limit = {
+				has_variable = is_duke_nitra
+			}
+			save_scope_as = nitra_scope
+		}
+		c:BOH = {
+			save_scope_as = scope_BOH
+		}
+			
+	}
 	option = {
 		name = dvg_hungary.1.a
 		default_option = yes
@@ -127,7 +141,7 @@ dvg_hungary.5 = {
 		default_option = yes
 		
 		hidden_effect = {
-			trigger_event = {id = dvg_hungary.6 days = 300 }	
+			c:HUN = { trigger_event = {id = dvg_hungary.6 days = 300 } }
 		}
 	}
 }
@@ -152,8 +166,9 @@ dvg_hungary.6 = {
 		default_option = yes
 		
 		hidden_effect = {
-			trigger_event = {id = dvg_hungary.8 days = 30 }
+			c:BOH = {trigger_event = {id = dvg_hungary.8 days = 35 } }
 			c:BOH = { trigger_event = {id = dvg_hungary.7 days = 30 } }
+			c:TRS = {trigger_event = { id = dvg_transylvania.3} }
 		}
 	}
 }
@@ -319,6 +334,9 @@ dvg_hungary.12 = {
 			add_journal_entry = {
 				type = je_hungarian_crisis
 			}
+		}
+		c:TRS = {
+			trigger_event = {id = dvg_transylvania.4}
 		}
 
 		trigger_event = { id = dvg_hungary.21 months = 2 }
@@ -655,8 +673,7 @@ dvg_hungary.22 = {
 		trigger = {
 			this = c:BOH	
 		}
-
-		#dvg_hungary_crisis_boh_power_gain = yes
+		dvg_hungary_crisis_boh_power_gain = yes
 
 		if = {
 			limit = {
@@ -678,7 +695,7 @@ dvg_hungary.22 = {
 		trigger = {
 			NOT = { this = c:BOH }
 		}
-		#custom_tooltip  = DVG_HUNGARIAN_CRISIS_BOH_POWER_GAIN
+		custom_tooltip = DVG_HUNGARIAN_CRISIS_BOH_POWER_GAIN
 	}
 }
 
@@ -705,7 +722,7 @@ dvg_hungary.23 = {
 			this = c:TUR	
 		}
 
-		dvg_hungary_crisis_hun_power_gain = yes
+		dvg_hungary_crisis_trs_power_gain = yes
 		set_global_variable = dvg_hungarian_crisis_tur_support_hun
 		
 		every_country = {
@@ -719,7 +736,20 @@ dvg_hungary.23 = {
 		c:SCA = { trigger_event = {id = dvg_hungary.24 days = 90 } }
 
 		ai_chance = {
-			base = 80
+			base = 100
+
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_backstab_burgundy
+				}
+				add = -100
+			}
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_random 
+				}
+				add = -50
+			}
 		}
 	}
 
@@ -730,9 +760,8 @@ dvg_hungary.23 = {
 			this = c:TUR	
 		}
 
-		#dvg_hungary_crisis_boh_power_gain = yes ### Removed
 		set_global_variable = dvg_hungarian_crisis_tur_support_boh
-		
+		dvg_hungary_crisis_boh_power_gain = yes
 		every_country = {
 			limit = {
 				has_variable = dvg_attend_hungarian_conference
@@ -743,8 +772,23 @@ dvg_hungary.23 = {
 
 		c:SCA = { trigger_event = {id = dvg_hungary.24 days = 90 } }
 
+
 		ai_chance = {
-			base = 20
+			base = 0
+
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_backstab_burgundy
+				}
+				add = 100
+			}
+
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_random 
+				}
+				add = 50
+			}
 		}
 	}
 
@@ -755,7 +799,7 @@ dvg_hungary.23 = {
 			NOT = { this = c:TUR }
 			has_global_variable = dvg_hungarian_crisis_tur_support_hun
 		}
-		custom_tooltip  = DVG_HUNGARIAN_CRISIS_HUN_POWER_GAIN
+		custom_tooltip = DVG_HUNGARIAN_CRISIS_TRS_POWER_GAIN
 	}
 
 	option = {
@@ -765,7 +809,7 @@ dvg_hungary.23 = {
 			NOT = { this = c:TUR }
 			has_global_variable = dvg_hungarian_crisis_tur_support_boh
 		}
-		#custom_tooltip  = DVG_HUNGARIAN_CRISIS_BOH_POWER_GAIN
+		custom_tooltip = DVG_HUNGARIAN_CRISIS_BOH_POWER_GAIN
 	}
 
 }
@@ -793,7 +837,7 @@ dvg_hungary.24 = {
 		trigger = {
 			this = c:SCA	
 		}
-
+		dvg_hungary_crisis_trs_power_gain = yes
 		every_country = {
 			limit = {
 				has_variable = dvg_attend_hungarian_conference
@@ -813,6 +857,7 @@ dvg_hungary.24 = {
 		trigger = {
 			NOT = { this = c:SCA }
 		}
+		custom_tooltip = DVG_HUNGARIAN_CRISIS_TRS_POWER_GAIN
 		
 	}
 
@@ -841,7 +886,7 @@ dvg_hungary.25 = {
 			this = c:BRG	
 		}
 
-		dvg_hungary_crisis_hun_power_gain = yes
+		dvg_hungary_crisis_trs_power_gain = yes
 		set_global_variable = dvg_hungarian_crisis_brg_support_hun
 		
 		every_country = {
@@ -881,6 +926,12 @@ dvg_hungary.25 = {
 				}
 				add = 100
 			}
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_random 
+				}
+				add = 50
+			}
 		}
 		
 		
@@ -893,10 +944,10 @@ dvg_hungary.25 = {
 			this = c:BRG	
 		}
 
-		#dvg_hungary_crisis_boh_power_gain = yes
 		set_global_variable = dvg_hungarian_crisis_brg_support_boh
 		set_global_variable = dvg_hungarian_crisis_pommerania_deal
-		
+		dvg_hungary_crisis_boh_power_gain = yes
+		dvg_hungary_crisis_trs_power_loss = yes
 		every_country = {
 			limit = {
 				has_variable = dvg_attend_hungarian_conference
@@ -934,6 +985,12 @@ dvg_hungary.25 = {
 				}
 				add = 100
 			}
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_random 
+				}
+				add = 50
+			}
 		}
 		
 	}
@@ -945,7 +1002,7 @@ dvg_hungary.25 = {
 			NOT = { this = c:BRG }
 			has_global_variable = dvg_hungarian_crisis_brg_support_hun
 		}
-		custom_tooltip  = DVG_HUNGARIAN_CRISIS_HUN_POWER_GAIN
+		custom_tooltip  = DVG_HUNGARIAN_CRISIS_TRS_POWER_GAIN
 	}
 
 	option = {
@@ -955,7 +1012,8 @@ dvg_hungary.25 = {
 			NOT = { this = c:BRG }
 			has_global_variable = dvg_hungarian_crisis_brg_support_boh
 		}
-		#custom_tooltip  = DVG_HUNGARIAN_CRISIS_BOH_POWER_GAIN
+		custom_tooltip  = DVG_HUNGARIAN_CRISIS_TRS_POWER_LOSS
+		custom_tooltip  = DVG_HUNGARIAN_CRISIS_BOH_POWER_GAIN
 	}
 
 }
@@ -983,7 +1041,8 @@ dvg_hungary.26 = {
 			this = c:POL	
 		}
 
-		dvg_hungary_crisis_hun_power_gain = yes
+		dvg_hungary_crisis_trs_power_gain = yes
+		dvg_hungary_crisis_boh_power_loss = yes
 		set_global_variable = dvg_hungarian_crisis_plc_support_hun
 		
 		every_country = {
@@ -1007,7 +1066,19 @@ dvg_hungary.26 = {
 		}
 
 		ai_chance = {
-			base = 10
+			base = 0
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_historical_burgundy
+				}
+				add = 100
+			}
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_random 
+				}
+				add = 50
+			}
 		}
 	}
 
@@ -1018,7 +1089,8 @@ dvg_hungary.26 = {
 			this = c:POL	
 		}
 
-		#dvg_hungary_crisis_boh_power_gain = yes ### Removed
+		dvg_hungary_crisis_trs_power_loss = yes
+		dvg_hungary_crisis_boh_power_gain = yes
 		set_global_variable = dvg_hungarian_crisis_plc_support_boh
 		
 		every_country = {
@@ -1042,7 +1114,19 @@ dvg_hungary.26 = {
 		}
 
 		ai_chance = {
-			base = 90
+			base = 0
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_backstab_burgundy
+				}
+				add = 100
+			}
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_random 
+				}
+				add = 50
+			}
 		}
 	}
 
@@ -1053,7 +1137,7 @@ dvg_hungary.26 = {
 			NOT = { this = c:POL }
 			has_global_variable = dvg_hungarian_crisis_plc_support_hun
 		}
-		custom_tooltip  = DVG_HUNGARIAN_CRISIS_HUN_POWER_GAIN
+		custom_tooltip  = DVG_HUNGARIAN_CRISIS_TRS_POWER_GAIN
 	}
 
 	option = {
@@ -1063,7 +1147,8 @@ dvg_hungary.26 = {
 			NOT = { this = c:POL }
 			has_global_variable = dvg_hungarian_crisis_plc_support_boh
 		}
-		#custom_tooltip  = DVG_HUNGARIAN_CRISIS_BOH_POWER_GAIN
+		custom_tooltip  = DVG_HUNGARIAN_CRISIS_TRS_POWER_LOSS
+		custom_tooltip  = DVG_HUNGARIAN_CRISIS_BOH_POWER_GAIN
 	}
 
 }
@@ -1091,7 +1176,8 @@ dvg_hungary.27 = {
 			this = c:AUS	
 		}
 
-		dvg_hungary_crisis_hun_power_gain = yes
+		dvg_hungary_crisis_trs_power_gain = yes
+		dvg_hungary_crisis_boh_power_loss = yes
 		set_global_variable = dvg_hungarian_crisis_aus_support_hun
 		
 		every_country = {
@@ -1105,7 +1191,19 @@ dvg_hungary.27 = {
 		c:DUA = { trigger_event = { id = dvg_hungary.28 days = 90 } }
 
 		ai_chance = {
-			base = 20
+			base = 0
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_historical_burgundy
+				}
+				add = 100
+			}
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_random 
+				}
+				add = 50
+			}
 		}
 		
 	}
@@ -1117,7 +1215,8 @@ dvg_hungary.27 = {
 			this = c:AUS	
 		}
 
-		#dvg_hungary_crisis_boh_power_gain = yes ### Removed
+		dvg_hungary_crisis_boh_power_gain = yes 
+		dvg_hungary_crisis_trs_power_loss = yes
 		set_global_variable = dvg_hungarian_crisis_aus_support_boh
 		set_global_variable = dvg_hungarian_crisis_austria_deal
 		
@@ -1132,7 +1231,19 @@ dvg_hungary.27 = {
 		c:DUA = { trigger_event = { id = dvg_hungary.28 days = 90 } }
 
 		ai_chance = {
-			base = 80
+			base = 0
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_backstab_burgundy 
+				}
+				add = 100
+			}
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_random 
+				}
+				add = 50
+			}
 		}
 	}
 
@@ -1143,7 +1254,8 @@ dvg_hungary.27 = {
 			NOT = { this = c:AUS }
 			has_global_variable = dvg_hungarian_crisis_aus_support_hun
 		}
-		custom_tooltip  = DVG_HUNGARIAN_CRISIS_HUN_POWER_GAIN
+		custom_tooltip  = DVG_HUNGARIAN_CRISIS_TRS_POWER_GAIN
+		custom_tooltip  = DVG_HUNGARIAN_CRISIS_BOH_POWER_LOSS
 	}
 
 	option = {
@@ -1153,7 +1265,8 @@ dvg_hungary.27 = {
 			NOT = { this = c:AUS }
 			has_global_variable = dvg_hungarian_crisis_aus_support_boh
 		}
-		#custom_tooltip  = DVG_HUNGARIAN_CRISIS_BOH_POWER_GAIN
+		custom_tooltip  = DVG_HUNGARIAN_CRISIS_BOH_POWER_GAIN
+		custom_tooltip  = DVG_HUNGARIAN_CRISIS_TRS_POWER_LOSS
 	}
 }
 
@@ -1180,7 +1293,7 @@ dvg_hungary.28 = {
 			this = c:DUA	
 		}
 
-		dvg_hungary_crisis_hun_power_gain = yes
+		dvg_hungary_crisis_trs_power_gain = yes
 		set_global_variable = dvg_hungarian_crisis_dua_support_hun
 		
 		every_country = {
@@ -1196,11 +1309,22 @@ dvg_hungary.28 = {
 				has_variable = dvg_attend_hungarian_conference
 				
 			}
-			trigger_event = { id = dvg_hungary.29 days = 40 }
+			trigger_event = { id = dvg_hungary.281 days = 40 }
 		}
-
 		ai_chance = {
-			base = 60
+			base = 0
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_historical_burgundy 
+				}
+				add = 100
+			}
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_random 
+				}
+				add = 50
+			}
 		}
 	}
 
@@ -1211,7 +1335,7 @@ dvg_hungary.28 = {
 			this = c:DUA	
 		}
 
-		#dvg_hungary_crisis_boh_power_gain = yes ### Removed
+		dvg_hungary_crisis_boh_power_gain = yes
 		set_global_variable = dvg_hungarian_crisis_dua_support_boh
 		
 		every_country = {
@@ -1227,12 +1351,24 @@ dvg_hungary.28 = {
 				has_variable = dvg_attend_hungarian_conference
 				
 			}
-			trigger_event = { id = dvg_hungary.29 days = 40 }
+			trigger_event = { id = dvg_hungary.281 days = 40 }
 		}
 		
-		dvg_hungary_crisis_hun_power_loss = yes
+		dvg_hungary_crisis_trs_power_loss = yes
 		ai_chance = {
-			base = 40
+			base = 0
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_backstab_burgundy 
+				}
+				add = 100
+			}
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_random 
+				}
+				add = 50
+			}
 		}
 	}
 
@@ -1243,7 +1379,7 @@ dvg_hungary.28 = {
 			NOT = { this = c:DUA }
 			has_global_variable = dvg_hungarian_crisis_dua_support_hun
 		}
-		custom_tooltip  = DVG_HUNGARIAN_CRISIS_HUN_POWER_GAIN
+		custom_tooltip  = DVG_HUNGARIAN_CRISIS_TRS_POWER_GAIN
 	}
 
 	option = {
@@ -1253,7 +1389,64 @@ dvg_hungary.28 = {
 			NOT = { this = c:DUA }
 			has_global_variable = dvg_hungarian_crisis_dua_support_boh
 		}
-		custom_tooltip  = DVG_HUNGARIAN_CRISIS_HUN_POWER_LOSS
+		custom_tooltip  = DVG_HUNGARIAN_CRISIS_TRS_POWER_LOSS
+		custom_tooltip  = DVG_HUNGARIAN_CRISIS_BOH_POWER_GAIN
+	}
+
+}
+### The Transylvanian Speech
+dvg_hungary.281 = {
+
+	event_image = { video = "unspecific_ruler_speaking_to_people" }
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds" # "gfx/interface/icons/event_icons/newspaper.dds"
+	duration = 3
+
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_hungary.281.t
+	desc = dvg_hungary.281.d
+	flavor = dvg_hungary.281.f
+
+	option = {
+		name = dvg_hungary.281.a
+		default_option = yes
+		
+		trigger = {
+			this = c:TRS	
+		}
+
+		dvg_hungary_crisis_trs_power_gain = yes 
+		
+		every_country = {
+			limit = {
+				has_variable = dvg_attend_hungarian_conference
+				NOT = { this = c:TRS }
+			}
+			trigger_event = { id = dvg_hungary.281 }
+		}
+
+		every_country = {
+			limit = {
+				has_variable = dvg_attend_hungarian_conference
+				
+			}
+			trigger_event = { id = dvg_hungary.29 days = 40 }
+		}
+
+		ai_chance = {
+			base = 100
+		}
+	}
+
+	option = {
+		name = dvg_hungary.281.a
+		default_option = yes
+		trigger = {
+			NOT = { this = c:TRS }
+		}
+		custom_tooltip  = DVG_HUNGARIAN_CRISIS_TRS_POWER_GAIN
 	}
 
 }
@@ -1331,9 +1524,21 @@ dvg_hungary.30 = {
 		
 
 		c:BOH = { trigger_event = dvg_hungary.31 }
-
+		dvg_hungary_crisis_pom_power_gain = yes
 		ai_chance = {
-			base = 75
+			base = 0
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_backstab_burgundy
+				}
+				add = 100
+			}
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_random 
+				}
+				add = 50
+			}
 		}
 	}
 
@@ -1345,11 +1550,23 @@ dvg_hungary.30 = {
 			limit = {
 				has_variable = dvg_attend_hungarian_conference
 			}
-			#trigger_event = { id = dvg_hungary.34 months = 2 }
+			trigger_event = { id = dvg_hungary.34 months = 2 }
 		}
 		
 		ai_chance = {
-			base = 25
+			base = 0
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_historical_burgundy 
+				}
+				add = 100
+			}
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_random 
+				}
+				add = 50
+			}
 		}
 	}
 
@@ -1374,6 +1591,8 @@ dvg_hungary.31 = {
 		name = dvg_hungary.31.a
 		default_option = yes
 		
+		dvg_hungary_crisis_pom_power_gain = yes
+		dvg_hungary_crisis_pom_power_gain = yes
 		### TODO: MAKE SOME CHANGES
 		set_global_variable = dvg_hungarian_crisis_pommerania_deal_success
 
@@ -1385,25 +1604,48 @@ dvg_hungary.31 = {
 			}
 			trigger_event = { id = dvg_hungary.35 months = 2 }
 		}
-
 		ai_chance = {
-			base = 80
+			base = 0
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_backstab_burgundy
+				}
+				add = 100
+			}
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_random 
+				}
+				add = 50
+			}
 		}
 	}
 
 	option = {
 		name = dvg_hungary.31.b
-		dvg_hungary_crisis_hun_power_gain = yes
+		dvg_hungary_crisis_boh_power_gain = yes
 
 		every_country = {
 			limit = {
 				has_variable = dvg_attend_hungarian_conference
 			}
-			#trigger_event = { id = dvg_hungary.34 months = 2 }
+			trigger_event = { id = dvg_hungary.34 months = 2 }
 		}
 
 		ai_chance = {
-			base = 20
+			base = 0
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_historical_burgundy 
+				}
+				add = 100
+			}
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_random 
+				}
+				add = 50
+			}
 		}
 		
 	}
@@ -1438,7 +1680,19 @@ dvg_hungary.32 = {
 		}
 
 		ai_chance = {
-			base = 50
+			base = 0
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_historical_burgundy 
+				}
+				add = 100
+			}
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_random 
+				}
+				add = 50
+			}
 		}
 		
 	}
@@ -1448,11 +1702,23 @@ dvg_hungary.32 = {
 
 		set_global_variable = dvg_hungarian_crisis_austria_deal_success
 
-		#dvg_hungary_crisis_hun_power_loss = yes
-		#dvg_hungary_crisis_hun_power_loss = yes
+		dvg_hungary_crisis_boh_power_gain = yes
+		dvg_hungary_crisis_trs_power_loss = yes
 
 		ai_chance = {
-			base = 50
+			base = 0
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_backstab_burgundy 
+				}
+				add = 100
+			}
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_random 
+				}
+				add = 50
+			}
 		}
 		
 	}
@@ -1482,15 +1748,11 @@ dvg_hungary.33 = {
 			this = c:BOH
 		}
 		
-		#dvg_hungary_crisis_boh_power_loss = yes ### Removed
-		#dvg_hungary_crisis_boh_power_loss = yes ### Removed
-		#dvg_hungary_crisis_boh_power_loss = yes ### Removed
-		#dvg_hungary_crisis_boh_power_loss = yes ### Removed
+		dvg_hungary_crisis_boh_power_loss = yes
+		dvg_hungary_crisis_boh_power_loss = yes
 
-		dvg_hungary_crisis_hun_power_loss = yes
-		dvg_hungary_crisis_hun_power_loss = yes
-		dvg_hungary_crisis_hun_power_loss = yes
-		dvg_hungary_crisis_hun_power_loss = yes
+		dvg_hungary_crisis_trs_power_gain = yes
+		dvg_hungary_crisis_trs_power_gain = yes
 
 		
 	}
@@ -1502,7 +1764,8 @@ dvg_hungary.33 = {
 			NOT = { this = c:BOH }
 		}
 
-		#custom_tooltip = DVG_HUNGARIAN_CRISIS_BOH_POWER_LOSS
+		custom_tooltip = DVG_HUNGARIAN_CRISIS_BOH_POWER_LOSS
+		custom_tooltip = DVG_HUNGARIAN_CRISIS_TRS_POWER_GAIN
 		
 	}
 
@@ -1598,9 +1861,20 @@ dvg_hungary.36 = {
 		c:BOH = {
 			trigger_event = { id = dvg_hungary.37 days = 50 }
 		}
-
 		ai_chance = {
-			base = 30
+			base = 0
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_historical_burgundy 
+				}
+				add = 100
+			}
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_random 
+				}
+				add = 50
+			}
 		}
 	}
 
@@ -1612,8 +1886,21 @@ dvg_hungary.36 = {
 			trigger_event = { id = dvg_hungary.38 days = 50 }
 		}
 
+
 		ai_chance = {
-			base = 70
+			base = 0
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_backstab_burgundy 
+				}
+				add = 100
+			}
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_random 
+				}
+				add = 50
+			}
 		}
 	}
 
@@ -1638,10 +1925,14 @@ dvg_hungary.37 = {
 		name = dvg_hungary.37.a
 		default_option = yes
 
-		s:STATE_POMERANIA.region_state:SCA = { set_state_owner = c:MSZ }
-		s:STATE_MECKLENBURG.region_state:SCA = { set_state_owner = c:MSZ }
-
-		### TODO: Trigger end of confeence somehow
+		every_country = {
+			limit = {
+				AND = {
+					has_variable = dvg_attend_hungarian_conference
+				}
+			}
+			trigger_event = { id = dvg_hungary.44 days = 30 }
+		}
 	}
 
 
@@ -1670,20 +1961,41 @@ dvg_hungary.38 = {
 		
 
 		create_diplomatic_play = {
-
+			name = dvg_european_war
 			target_state = s:STATE_POMERANIA.region_state:SCA
 			target_country = c:SCA
 			war = yes			
-			type = dp_conquer_state
-			
-
+			type = dp_return_state
+			add_initiator_backers = { c:BRG}
+			add_target_backers = { c:DUA }
+			add_war_goal = {
+				target_state = s:STATE_CHAMPAGNE.region_state:DUA
+				holder = c:BRG
+				type = return_state
+				target_country = c:DUA
+			}
+			add_war_goal = {
+				target_state = s:STATE_PICARDY.region_state:BRG
+				holder = c:DUA
+				type = return_state
+				target_country = c:BRG
+			}
 			add_war_goal = {
 				target_state = s:STATE_MECKLENBURG.region_state:SCA
 				holder = c:BOH
-				type = conquer_state
+				type = return_state
 				target_country = c:SCA
 			}
-
+			add_war_goal = {
+				holder = c:DUA
+				type = humiliation
+				target_country = c:BRG
+			}
+			add_war_goal = {
+				holder = c:BRG
+				type = humiliation
+				target_country = c:DUA
+			}
 			add_war_goal = {
 				holder = c:SCA
 				type = humiliation
@@ -1697,9 +2009,20 @@ dvg_hungary.38 = {
 		}
 
 		set_global_variable = dvg_pommerania_war
-
 		ai_chance = {
-			base = 80
+			base = 0
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_backstab_burgundy 
+				}
+				add = 100
+			}
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_random 
+				}
+				add = 50
+			}
 		}
 
 	}
@@ -1710,7 +2033,19 @@ dvg_hungary.38 = {
 		set_global_variable = dvg_mecklenburg_compromised
 
 		ai_chance = {
-			base = 20
+			base = 0
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_historical_burgundy 
+				}
+				add = 100
+			}
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_random 
+				}
+				add = 50
+			}
 		}
 	}
 
@@ -1798,7 +2133,14 @@ dvg_hungary.41 = {
 	option = {
 		name = dvg_hungary.41.a
 		default_option = yes
-
+		
+		every_country = {
+			limit = {
+				has_variable = dvg_attend_hungarian_conference
+			}
+			trigger_event = { id = dvg_hungary.46 days = 40 }
+		}
+			
 		s:STATE_POMERANIA.region_state:SCA = { set_state_owner = c:MSZ }
 		s:STATE_MECKLENBURG.region_state:SCA = { set_state_owner = c:MSZ }
 	}
@@ -1863,10 +2205,177 @@ dvg_hungary.43 = {
 		name = dvg_hungary.43.a
 		default_option = yes
 
-		
-		### TODO: Some effect
+		c:SCA = {
+			annex = c:MSZ
+			s:STATE_BRANDENBURG.region_state:BOH = { set_state_owner = c:SCA }
+			s:STATE_ANHALT.region_state:BOH = { set_state_owner = c:SCA }
+		}
+		c:BOH = {
+			add_modifier = {
+				name = boh_international_bottom
+				years = 20
+				is_decaying = yes
+			}
+		}
+		every_country = {
+			limit = {
+				has_variable = dvg_attend_hungarian_conference
+			}
+			trigger_event = { id = dvg_hungary.46 days = 40 }
+		}
 	}
 
+}
+### The Pomeranian ender
+dvg_hungary.44 = {
+
+	event_image = { video = "unspecific_military_parade" }
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds" # "gfx/interface/icons/event_icons/skull.dds"
+	duration = 3
+
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_hungary.44.t
+	desc = dvg_hungary.44.d
+	flavor = dvg_hungary.44.f
+
+	option = {
+		name = dvg_hungary.44.a
+		default_option = yes
+		trigger = {
+			this = c:BOH
+		}
+		change_variable = {
+			name = dvg_hungarian_crisis_pom_power
+			add = 7
+		}
+		every_country = {
+			limit = {
+				has_variable = dvg_attend_hungarian_conference
+			}
+			trigger_event = { id = dvg_hungary.45 days = 40 }
+		}
+		
+	}
+
+	option = {
+		name = dvg_hungary.44.b
+		default_option = yes
+		trigger = {
+			NOT = { this = c:BOH }
+		}
+		custom_tooltip = DVG_HUNGARIAN_CRISIS_BOH_POWER_LOSS
+		custom_tooltip = DVG_HUNGARIAN_CRISIS_POM_POWER_GAIN
+		
+		
+	}
+
+}
+### The Bohemia quits
+dvg_hungary.45 = {
+
+	event_image = { video = "unspecific_ruler_speaking_to_people" }
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds" # "gfx/interface/icons/event_icons/newspaper.dds"
+	duration = 3
+
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_hungary.45.t
+	desc = dvg_hungary.45.d
+	flavor = dvg_hungary.45.f
+
+	immediate = {	
+	}
+
+	option = {
+		name = dvg_hungary.45.a
+		default_option = yes
+
+		trigger = {
+			this = c:BOH
+		}
+		change_variable = {
+			name = dvg_hungarian_crisis_boh_power
+			add = -6
+		}
+		change_variable = {
+			name = dvg_hungarian_crisis_trs_power
+			add = 6
+		}
+		set_global_variable = dvg_hungarian_crisis_complete
+
+		ai_chance = {
+			base = 100
+		}
+	}
+
+	option = {
+		name = dvg_hungary.45.a
+		default_option = yes
+		trigger = {
+			NOT = { this = c:BOH }
+		}
+		set_global_variable = dvg_hungarian_crisis_complete
+		ai_chance = {
+			base = 100
+		}
+	}
+}
+### The War ends
+dvg_hungary.46 = {
+
+	event_image = { video = "unspecific_ruler_speaking_to_people" }
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds" # "gfx/interface/icons/event_icons/newspaper.dds"
+	duration = 3
+
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_hungary.46.t
+	desc = dvg_hungary.46.d
+	flavor = dvg_hungary.46.f
+
+	immediate = {	
+	}
+
+	option = {
+		name = dvg_hungary.46.a
+		default_option = yes
+
+		trigger = {
+			this = c:BOH
+		}
+		change_variable = {
+			name = dvg_hungarian_crisis_boh_power
+			add = -6
+		}
+		change_variable = {
+			name = dvg_hungarian_crisis_trs_power
+			add = 6
+		}
+		set_global_variable = dvg_hungarian_crisis_complete
+
+		ai_chance = {
+			base = 100
+		}
+	}
+
+	option = {
+		name = dvg_hungary.46.a
+		default_option = yes
+		trigger = {
+			NOT = { this = c:BOH }
+		}
+		set_global_variable = dvg_hungarian_crisis_complete
+		ai_chance = {
+			base = 100
+		}
+	}
 }
 
 ### The Imperial Speech
@@ -1890,7 +2399,7 @@ dvg_hungary.50 = {
 		trigger = {
 			this = c:BOH
 		}
-		
+		dvg_hungary_crisis_pom_power_gain = yes
 		every_country = {
 			limit = {
 				has_variable = dvg_attend_hungarian_conference
@@ -1907,6 +2416,7 @@ dvg_hungary.50 = {
 		trigger = {
 			NOT = { this = c:BOH }
 		}
+		custom_tooltip = DVG_HUNGARIAN_CRISIS_POM_POWER_GAIN
 		
 		
 	}
@@ -1934,7 +2444,7 @@ dvg_hungary.51 = {
 		trigger = {
 			this = c:BOH
 		}
-		
+		dvg_hungary_crisis_pom_power_gain = yes
 		every_country = {
 			limit = {
 				has_variable = dvg_attend_hungarian_conference
@@ -1952,7 +2462,7 @@ dvg_hungary.51 = {
 			NOT = { this = c:BOH }
 		}
 		
-		
+		custom_tooltip = DVG_HUNGARIAN_CRISIS_POM_POWER_GAIN
 	}
 
 }
@@ -1978,7 +2488,8 @@ dvg_hungary.52 = {
 		trigger = {
 			this = c:SCA
 		}
-		
+		dvg_hungary_crisis_pom_power_loss = yes
+		dvg_hungary_crisis_boh_power_loss = yes
 		every_country = {
 			limit = {
 				AND = {
@@ -1997,7 +2508,8 @@ dvg_hungary.52 = {
 		trigger = {
 			NOT = { this = c:SCA }
 		}
-		
+		custom_tooltip = DVG_HUNGARIAN_CRISIS_POM_POWER_LOSS
+		custom_tooltip = DVG_HUNGARIAN_CRISIS_BOH_POWER_LOSS
 		
 	}
 
@@ -2024,7 +2536,9 @@ dvg_hungary.53 = {
 		trigger = {
 			this = c:BRG
 		}
-		
+		dvg_hungary_crisis_pom_power_loss = yes
+		dvg_hungary_crisis_boh_power_loss = yes
+		dvg_hungary_crisis_trs_power_gain = yes
 		if = {
 			limit = {
 				c:POL = {has_variable = dvg_attend_hungarian_conference}
@@ -2059,6 +2573,9 @@ dvg_hungary.53 = {
 		trigger = {
 			NOT = { this = c:BRG }
 		}	
+		custom_tooltip = DVG_HUNGARIAN_CRISIS_POM_POWER_LOSS
+		custom_tooltip = DVG_HUNGARIAN_CRISIS_BOH_POWER_LOSS
+		custom_tooltip = DVG_HUNGARIAN_CRISIS_TRS_POWER_GAIN
 	}
 }
 
@@ -2112,7 +2629,7 @@ dvg_hungary.54 = {
 	}
 
 	option = {
-		name = dvg_hungary.54.a
+		name = dvg_hungary.54.b
 		default_option = yes
 
 		trigger = {
@@ -2143,12 +2660,24 @@ dvg_hungary.54 = {
 		}
 		
 		ai_chance = {
-			base = 50
+			base = 0
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_historical_burgundy 
+				}
+				add = 100
+			}
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_random 
+				}
+				add = 50
+			}
 		}	
 	}
 
 	option = {
-		name = dvg_hungary.54.b
+		name = dvg_hungary.54.a
 		default_option = yes		
 
 		trigger = {
@@ -2157,7 +2686,16 @@ dvg_hungary.54 = {
 				NOT = { has_global_variable = dvg_hungarian_crisis_plc_support_pom }
 			}
 		}
+		if = {
+			limit = {
+				this = c:POL
+			}
 
+			dvg_hungary_crisis_trs_power_gain = yes
+		} 
+		else = {
+			custom_tooltip  = DVG_HUNGARIAN_CRISIS_TRS_POWER_GAIN
+		}
 		every_country = {
 			limit = {
 				has_variable = dvg_attend_hungarian_conference
@@ -2169,7 +2707,19 @@ dvg_hungary.54 = {
 
 
 		ai_chance = {
-			base = 50
+			base = 0
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_backstab_burgundy 
+				}
+				add = 100
+			}
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_random 
+				}
+				add = 50
+			}
 		}	
 	}
 }
@@ -2211,7 +2761,7 @@ dvg_hungary.55 = {
 	}
 
 	option = {
-		name = dvg_hungary.55.a
+		name = dvg_hungary.55.b
 		default_option = yes
 
 		trigger = {
@@ -2222,7 +2772,19 @@ dvg_hungary.55 = {
 		}
 
 		ai_chance = {
-			base = 70
+			base = 0
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_backstab_burgundy 
+				}
+				add = 100
+			}
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_random 
+				}
+				add = 50
+			}
 		}
 
 
@@ -2246,7 +2808,7 @@ dvg_hungary.55 = {
 	}
 
 	option = {
-		name = dvg_hungary.55.b
+		name = dvg_hungary.55.a
 		default_option = yes		
 
 		trigger = {
@@ -2258,6 +2820,7 @@ dvg_hungary.55 = {
 
 		if = {
 			limit = { this = c:TUR } 
+			dvg_hungary_crisis_trs_power_gain = yes
 			every_country = {
 				limit = {
 					has_variable = dvg_attend_hungarian_conference
@@ -2268,7 +2831,19 @@ dvg_hungary.55 = {
 		}
 
 		ai_chance = {
-			base = 30
+			base = 0
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_historical_burgundy 
+				}
+				add = 100
+			}
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_random 
+				}
+				add = 50
+			}
 		}
 	}
 }
@@ -2306,9 +2881,23 @@ dvg_hungary.56 = {
 		default_option = yes
 
 		dvg_hungary_crisis_pom_power_loss = yes
+		dvg_hungary_crisis_boh_power_loss = yes
+		dvg_hungary_crisis_trs_power_gain = yes
 
 		ai_chance = {
-			base = 30
+			base = 0
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_historical_burgundy 
+				}
+				add = 100
+			}
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_random 
+				}
+				add = 50
+			}
 		}
 	}
 
@@ -2322,7 +2911,19 @@ dvg_hungary.56 = {
 
 		
 		ai_chance = {
-			base = 70
+			base = 0
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_backstab_burgundy 
+				}
+				add = 100
+			}
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_random 
+				}
+				add = 50
+			}
 		}
 	}
 }
@@ -2354,7 +2955,19 @@ dvg_hungary.57 = {
 		}
 
 		ai_chance = {
-			base = 50
+			base = 0
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_historical_burgundy 
+				}
+				add = 100
+			}
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_random 
+				}
+				add = 50
+			}
 		}
 	}
 
@@ -2363,7 +2976,19 @@ dvg_hungary.57 = {
 		default_option = yes		
 
 		ai_chance = {
-			base = 50
+			base = 0
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_backstab_burgundy 
+				}
+				add = 100
+			}
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_random 
+				}
+				add = 50
+			}
 		}
 
 		set_global_variable = dvg_bohemia_support_austria_demands
@@ -2396,11 +3021,7 @@ dvg_hungary.58 = {
 			}
 			dvg_hungary_crisis_pom_power_loss = yes
 			dvg_hungary_crisis_pom_power_loss = yes
-			dvg_hungary_crisis_pom_power_loss = yes
-			dvg_hungary_crisis_pom_power_loss = yes
 		} else = {
-			custom_tooltip  = DVG_HUNGARIAN_CRISIS_POM_POWER_LOSS
-			custom_tooltip  = DVG_HUNGARIAN_CRISIS_POM_POWER_LOSS
 			custom_tooltip  = DVG_HUNGARIAN_CRISIS_POM_POWER_LOSS
 			custom_tooltip  = DVG_HUNGARIAN_CRISIS_POM_POWER_LOSS
 		}
@@ -2441,8 +3062,12 @@ dvg_hungary.60 = {
 				this = c:DUA
 			}
 			dvg_hungary_crisis_pom_power_gain = yes
+			dvg_hungary_crisis_pom_power_gain = yes
+			dvg_hungary_crisis_pom_power_gain = yes
 			set_global_variable = dvg_hungarian_crisis_dua_support_pom
 		} else = {
+			custom_tooltip  = DVG_HUNGARIAN_CRISIS_POM_POWER_GAIN
+			custom_tooltip  = DVG_HUNGARIAN_CRISIS_POM_POWER_GAIN
 			custom_tooltip  = DVG_HUNGARIAN_CRISIS_POM_POWER_GAIN
 			set_global_variable = dvg_hungarian_crisis_complete
 		}
@@ -2461,9 +3086,20 @@ dvg_hungary.60 = {
 		}
 
 
-
 		ai_chance = {
-			base = 30
+			base = 0
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_backstab_burgundy 
+				}
+				add = 100
+			}
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_random 
+				}
+				add = 50
+			}
 		}
 	}
 
@@ -2496,7 +3132,19 @@ dvg_hungary.60 = {
 		}
 
 		ai_chance = {
-			base = 70
+			base = 0
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_historical_burgundy 
+				}
+				add = 100
+			}
+			modifier = {
+				trigger = {
+					has_game_rule = hungary_crisis_random 
+				}
+				add = 50
+			}
 		}
 	}
 }
@@ -2531,9 +3179,17 @@ dvg_hungary.61 = {
 
 			s:STATE_POMERANIA.region_state:SCA = { set_state_owner = c:MSZ }
 			s:STATE_MECKLENBURG.region_state:SCA = { set_state_owner = c:MSZ }
-			### TODO: Add other effects
 		}
-
+		if ={
+			limit = {
+				this = c:SCA
+			}
+			add_modifier = {
+				name = boh_international_bottom
+				years = 10
+				is_decaying = yes
+			}
+		}
 		
 		
 		
@@ -2595,11 +3251,16 @@ dvg_hungary.71 = {
 	flavor = dvg_hungary.71.f
 
 
-
+	immediate = {
+		c:BOH = {
+		save_scope_as = scope_BOH
+		}
+	}
 	option = {
 		name = dvg_hungary.71.a
 		default_option = yes
 
+		set_global_variable = jagiellon_hungry
 		if = {
 			limit = {
 				this = c:BOH
@@ -2608,11 +3269,17 @@ dvg_hungary.71 = {
 			c:BOH = {
 				create_diplomatic_pact = {
 					country = c:HUN
-					type = puppet
+					type = personal_union
 				}
 			}
 			
 	
+		}
+		if = {
+			limit = {
+				this ?= c:HUN
+			}
+			trigger_event = {id = dvg_hungary.74 }
 		}
 
 		
@@ -2638,18 +3305,690 @@ dvg_hungary.72 = {
 	flavor = dvg_hungary.72.f
 
 
-
+	immediate = {
+		c:BOH = {
+		save_scope_as = scope_BOH
+		}
+	}
 	option = {
 		name = dvg_hungary.72.a
 		default_option = yes
+		set_global_variable = magyar_independence
+
+		if = {
+			limit = {
+				this ?= c:BOH
+			}
+			add_modifier = {
+				name = boh_international_bottom
+				years = 10
+				is_decaying = yes
+			}		
+		}
+		if = {
+			limit = {
+				this ?= c:HUN
+			}
+			trigger_event = {id = dvg_hungary.74 }
+		}
+		if = {
+			limit = {
+				this ?= c:TRS
+			}
+			trigger_event = {id = dvg_transylvania.5}
+		}
+	}
+}
+### The Second Act of the Congress of Venice - Magyar Compromise
+dvg_hungary.73 = {
+
+	event_image = { video = "unspecific_signed_contract" }
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds" # "gfx/interface/icons/event_icons/scales.dds"
+	duration = 3
+
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_hungary.73.t
+	desc = dvg_hungary.73.d
+	flavor = dvg_hungary.73.f
+
+	immediate = {
+		c:BOH = {
+		save_scope_as = scope_BOH
+		}
+	}
+
+	option = {
+		name = dvg_hungary.73.a
+		default_option = yes
+		set_global_variable = magyar_compromise
 
 		if = {
 			limit = {
 				this = c:BOH
 			}
-
-			
-			### TODO: Add Effects
+			add_modifier = {
+				name = boh_international_bottom
+				years = 5
+				is_decaying = yes
+			}
 		}
+		if = {
+			limit = {
+				this ?= c:HUN
+			}
+			trigger_event = {id = dvg_hungary.74 }
+		}
+	}
+}
+### Hungary gets the news
+dvg_hungary.74 = {
+
+	event_image = { video = "unspecific_signed_contract" }
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds" # "gfx/interface/icons/event_icons/scales.dds"
+	duration = 3
+
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_hungary.74.t
+	desc = {
+		triggered_desc = {
+			desc = dvg_hungary.74.d1
+			trigger = {
+				has_global_variable = jagiellon_hungry
+			}
+		}
+		triggered_desc = {
+			desc = dvg_hungary.74.d2
+			trigger = {
+				has_global_variable = magyar_independence
+			}
+		}
+		triggered_desc = {
+			desc = dvg_hungary.74.d3
+			trigger = {
+				has_global_variable = magyar_compromise
+			}
+		}
+	}
+	flavor = dvg_hungary.74.f
+
+
+
+	option = {
+		name = dvg_hungary.74.a
+		default_option = yes
+
+		trigger = {
+			has_global_variable = jagiellon_hungry
+		}
+		set_global_variable = interregnum_over
+		set_global_variable = hungarian_constitutional_crisis_over
+		c:TRS = {
+			trigger_event = {id = dvg_transylvania.52 days = 180}
+		}
+
+	}
+	option = {
+		name = dvg_hungary.74.b
+		default_option = yes
+
+		trigger = {
+			has_global_variable = magyar_independence
+		}
+		c:TRS = {
+			trigger_event = { id = dvg_transylvania.51 days=7}
+
+		}
+		if = {
+			limit = {
+				c:TRZ = {
+					is_player = no
+				}
+			}
+			play_as = c:TRS
+		}
+
+	}
+	option = {
+		name = dvg_hungary.74.c
+		default_option = yes
+
+		trigger = {
+			has_global_variable = magyar_compromise
+		}
+		trigger_event = { id=dvg_hungary.75 days = 180}
+
+	}
+}
+dvg_hungary.75 = {
+
+	event_image = { video = "unspecific_signed_contract" }
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds" # "gfx/interface/icons/event_icons/scales.dds"
+	duration = 3
+
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_hungary.75.t
+	desc = dvg_hungary.75.d
+	flavor = dvg_hungary.75.f
+
+
+
+	option = { #local
+		name = dvg_hungary.75.a
+		heir = {
+			kill_character = yes
+		}
+		create_character = {# Andrassy
+			historical = yes
+			last_name = Andrassy #Andrassy
+			noble = yes
+			ruler = yes
+			age = 39 
+			interest_group = ig_landowners
+			ideology = ideology_royalist
+			traits = {
+				war_hero
+				ambitious
+				honorable
+				pious 
+			}
+		}
+		c:TRS = {
+			trigger_event = {id = dvg_transylvania.52 days = 30}
+		}
+		add_loyalists = {
+			value = 0.02
+			strata = lower
+		}
+		add_loyalists = {
+			value = 0.02
+			strata = middle
+		}
+		add_loyalists = {
+			value = 0.02
+			strata = upper
+		}
+		set_global_variable = hungarian_constitutional_crisis_over
+		set_global_variable = hungarian_localists
+
+	}
+
+	option = { #Kemeny
+		name = dvg_hungary.75.b
+		
+		c:TRS = {
+			trigger_event = {id = dvg_transylvania.51}
+		}
+		if = {
+			limit = {
+				c:TRZ = {
+					is_player = no
+				}
+			}
+			play_as = c:TRS
+		}
+		add_loyalists = {
+			value = 0.15
+			strata = lower
+		}
+		set_global_variable = hungarian_hunyadis
+	}
+
+	option = { #Habsburg
+		name = dvg_hungary.75.c
+		default_option = yes
+
+		set_global_variable = hungarian_constitutional_crisis_over
+		add_loyalists = {
+			value = 0.05
+			strata = lower
+		}
+		add_loyalists = {
+			value = 0.05
+			strata = middle
+		}
+		heir = {
+			kill_character = yes
+		}
+		c:TRS = {
+			trigger_event = {id = dvg_transylvania.52 days = 30}
+		}
+		create_character = {# ferencz josef
+			historical = yes
+			first_name = Ferencz #Franz
+			last_name = von_Habsburg #von Habsburg
+			noble = yes
+			ruler = yes
+			age = 21 
+			interest_group = ig_armed_forces
+			ideology = ideology_royalist
+			traits = {
+				ambitious
+				charismatic 
+			}
+		}
+		set_global_variable = hungarian_habsburgs
+	}
+}
+dvg_hungary.76 = { #kill croatia
+
+	event_image = { video = "europenorthamerica_before_the_battle" }
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/before_the_battle"
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+	duration = 1
+
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_hungary.76.t
+	desc = dvg_hungary.76.d
+	flavor = dvg_hungary.76.f
+
+
+
+	option = { #diplo
+		default_option = yes
+		name = dvg_hungary.76.a
+		trigger = {
+			NOT = { has_global_variable = croatia_je_done }
+		}
+		c:CRO = {
+			trigger_event = {id = dvg_hungary.761 days=7}
+		}
+		ai_chance = {
+			base = 80
+		}
+	}
+
+	option = { #war
+		name = dvg_hungary.76.b
+		
+		create_diplomatic_play = {
+			escalation = 80
+			target_country = c:CRO
+			type = dp_annex_war
+			
+			 add_war_goal = {
+  				holder = c:CRO
+  				war_goal = humiliate
+  				target_country = c:HUN
+ 			}
+			 add_war_goal = {
+  				holder = c:CRO
+  				war_goal = revoke_all_claims
+  				target_country = c:HUN
+ 			}
+		}
+		ai_chance = {
+			base = 20
+		}
+
+	}
+
+	option = { #hold up
+		name = dvg_hungary.76.c
+
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+dvg_hungary.761 = { #kill croatia - croatian pow
+
+	event_image = { video = "europenorthamerica_before_the_battle" }
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/before_the_battle"
+
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds" # "gfx/interface/icons/event_icons/scales.dds"
+	duration = 1
+
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_hungary.761.t
+	desc = dvg_hungary.761.d
+	flavor = dvg_hungary.761.f
+
+
+
+	option = { #diplo
+		default_option = yes
+		name = dvg_hungary.761.a
+		c:HUN = {
+			annex = c:CRO
+			add_primary_culture = cu:croat
+			add_primary_culture = cu:bosniak
+		}
+		ai_chance = {
+			base = 20
+			modifier = {
+				trigger = {
+					c:HUN = {
+						army_power_projection > root.army_power_projection
+					}
+				}
+				add = 50
+			}
+			modifier = {
+				trigger = {
+					OR = {
+						c:HUN = {
+							has_diplomatic_pact = {
+								 who = c:CRO
+								 type = alliance
+							}
+						}
+						c:HUN = {
+							has_diplomatic_pact = {
+								 who = c:CRO
+								 type = defensive_pact
+							}
+						}
+					}
+				add = 100
+			}
+		}
+	}
+
+	option = { #semi diplo
+		name = dvg_hungary.761.b
+		
+		c:HUN = {	
+			create_diplomatic_pact = {
+ 				country = c:CRO
+ 				type = personal_union
+			}
+
+		}
+		ai_chance = {
+			base = 20
+		
+			modifier = {
+				trigger = {
+					c:HUN = {
+						army_power_projection > root.army_power_projection
+					}
+				}
+				add = 50
+			}
+		}
+
+	}
+
+	option = { #war
+		name = dvg_hungary.761.c
+
+		ai_chance = {
+			base = 10
+		}
+		c:HUN = {
+			create_diplomatic_play = {
+				escalation = 80
+				target_country = c:CRO
+				type = dp_annex_war
+			
+			 	add_war_goal = {
+  					holder = c:CRO
+  					war_goal = humiliate
+  					target_country = c:HUN
+ 				}
+			 	add_war_goal = {
+  					holder = c:CRO
+  					war_goal = revoke_all_claims
+  					target_country = c:HUN
+ 				}
+			}
+		}
+	}
+}
+dvg_hungary.77 = { #kill banat
+
+	event_image = { video = "europenorthamerica_before_the_battle" }
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/before_the_battle"
+
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds" # "gfx/interface/icons/event_icons/scales.dds"
+	duration = 1
+
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_hungary.77.t
+	desc = dvg_hungary.77.d
+	flavor = dvg_hungary.77.f
+
+
+
+	option = { #diplo
+		default_option = yes
+		name = dvg_hungary.77.a
+		trigger = {
+			c:HUN = {
+				has_law = law_type:law_total_separation
+				OR = {
+					has_law = law_type:law_racial_segregation
+					has_law = law_type:law_cultural_exclusion
+					has_law = law_type:law_multicultural
+				}
+			}
+		}
+		c:BSG = {
+			trigger_event = {id=dvg_hungary.771 days = 7}
+		}
+		ai_chance = {
+			base = 80
+		}
+
+	}
+
+	option = { #war
+		name = dvg_hungary.77.b
+		
+		create_diplomatic_play = {
+			escalation = 80
+			target_country = c:BSG
+			type = dp_annex_war
+			
+			 add_war_goal = {
+  				holder = c:BSG
+  				war_goal = humiliate
+  				target_country = c:HUN
+ 			}
+			 add_war_goal = {
+  				holder = c:BSG
+  				war_goal = revoke_all_claims
+  				target_country = c:HUN
+ 			}
+		}
+		ai_chance = {
+			base = 20
+		}
+		
+
+	}
+	option = { #hold up
+		name = dvg_hungary.77.c
+
+		ai_chance = {
+			base = 0
+		}
+
+	}
+}
+dvg_hungary.771 = { #kill banat - banat pov
+
+	event_image = { video = "europenorthamerica_before_the_battle" }
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/before_the_battle"
+
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds" # "gfx/interface/icons/event_icons/scales.dds"
+	duration = 1
+
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_hungary.771.t
+	desc = dvg_hungary.771.d
+	flavor = dvg_hungary.771.f
+
+
+
+	option = { #full diplo
+		default_option = yes
+		name = dvg_hungary.771.a
+		c:HUN = {
+			annex = c:BSG
+		}
+		ai_chance = {
+			base = 20
+			modifier = {
+				trigger = {
+					c:HUN = {
+						army_power_projection > root.army_power_projection
+					}
+				}
+				add = 50
+			}
+			modifier = {
+				trigger = {
+					OR = {
+						c:HUN = {
+							has_diplomatic_pact = {
+								 who = c:BSG
+								 type = alliance
+							}
+						}
+						c:HUN = {
+							has_diplomatic_pact = {
+								 who = c:BSG
+								 type = defensive_pact
+							}
+						}
+					}
+				add = 100
+			}
+		}
+
+	}
+
+	option = { #semi diplo
+		name = dvg_hungary.771.b
+		
+		c:HUN = {	
+			create_diplomatic_pact = {
+ 				country = c:BSG
+ 				type = personal_union
+			}
+
+		}
+		ai_chance = {
+			base = 20
+		
+			modifier = {
+				trigger = {
+					c:HUN = {
+						army_power_projection > root.army_power_projection
+					}
+				}
+				add = 50
+			}
+		}
+
+	}
+	option = { #war
+		name = dvg_hungary.771.c
+		ai_chance = {
+			base = 10
+		}
+		c:HUN = {
+			create_diplomatic_play = {
+				escalation = 80
+				target_country = c:BSG
+				type = dp_annex_war
+			
+			 	add_war_goal = {
+  					holder = c:BSG
+  					war_goal = humiliate
+  					target_country = c:HUN
+ 				}
+			 	add_war_goal = {
+  					holder = c:BSG
+  					war_goal = revoke_all_claims
+  					target_country = c:HUN
+ 				}
+			}
+		}
+	}
+}
+dvg_hungary.78 = {
+	event_image = { video = "europenorthamerica_before_the_battle" }
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/europenorthamerica/before_the_battle"
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
+	duration = 1
+
+	type = country_event
+	placement = ROOT
+	
+	title = dvg_hungary.78.t
+	desc = dvg_hungary.78.d
+	flavor = dvg_hungary.78.f
+
+
+
+	option = { #Turans
+		default_option = yes
+		name = dvg_hungary.78.a
+
+		trigger = {
+			has_global_variable = hungarian_localists
+		}
+		
+		add_journal_entry = {
+			type = je_turan_magyar
+		}
+
+
+	}
+
+	option = { #Carpato
+		name = dvg_hungary.78.b
+		default_option = yes
+		trigger = {
+			has_global_variable = hungarian_hunyadis
+		}
+		add_journal_entry = {
+			type = je_carpathia_magyar
+		}
+
+	}
+
+	option = { #Danubs
+		name = dvg_hungary.78.c
+		default_option = yes
+		trigger = {
+			has_global_variable = hungarian_habsburgs
+		}
+		add_journal_entry = {
+			type = je_danubia_magyar
+		}
+
+	}
+	option = { #Great Hungry
+		name = dvg_hungary.78.e
+
+		ai_chance = {
+		base = 100
+		}
+
 	}
 }

@@ -1,12 +1,17 @@
 ﻿je_hungarian_crisis = {
-	icon = "gfx/interface/icons/event_icons/event_cross_and_crescent.dds"
+	icon = "gfx/interface/icons/event_icons/event_hungary_in_jail.dds"
 	should_be_pinned_by_default_uninvolved_or_context = yes
 
 	group = je_group_crises
 
 	immediate = {
 		set_variable = {
-			name = dvg_hungarian_crisis_hun_power
+			name = dvg_hungarian_crisis_boh_power
+			value = 0
+		}
+
+		set_variable = {
+			name = dvg_hungarian_crisis_trs_power
 			value = 0
 		}
 
@@ -23,11 +28,43 @@
 			has_global_variable = dvg_hungarian_crisis_complete
 		}
 	}
-
-	fail = {
+	timeout = 3650
+	on_timeout = {
 		custom_tooltip = {
-			text = je_hungarian_crisis_fail_tooltip
-			has_global_variable = dvg_hungarian_crisis_fail
+			text = je_hungarian_crisis_timeout_tooltip
+			if = {
+				
+				limit = {
+					this = c:BOH
+				}
+				every_country = {
+					limit = {
+						has_variable = dvg_attend_hungarian_conference
+					}
+					trigger_event = { id = dvg_hungary.62 days = 10 }
+					
+				}
+
+				c:BOH = {
+					trigger_event = { id = dvg_bohemia.10 days = 72 }
+					
+				}
+	
+			}
+			if = {#independent
+
+				limit = {
+					this = c:BOH
+				}
+	
+				every_country = {
+					limit = {
+						has_variable = dvg_attend_hungarian_conference
+					}
+					trigger_event = { id = dvg_hungary.73 days = 10 }
+					
+				}
+			}
 		}
 	}
 
@@ -37,7 +74,7 @@
 			if = {
 				limit = {
 					this = c:BOH
-					var:dvg_hungarian_crisis_pom_power > 8 }
+					var:dvg_hungarian_crisis_pom_power >= 6 }
 	
 				every_country = {
 					limit = {
@@ -67,10 +104,14 @@
 	
 			}
 	
-			if = {
+			if = {#jagiellon hungary
 				limit = { 
 					this = c:BOH
-					var:dvg_hungarian_crisis_hun_power > 8 }
+					AND = {
+						var:dvg_hungarian_crisis_boh_power >= 6 
+						var:dvg_hungarian_crisis_boh_power > var:dvg_hungarian_crisis_trs_power
+					}
+				}
 	
 				every_country = {
 					limit = {
@@ -80,10 +121,15 @@
 					
 				}
 	
-			} else_if = {
+			} 
+			else_if = {#kemeny hungary
 
 				limit = {
 					this = c:BOH
+					AND = {
+						var:dvg_hungarian_crisis_trs_power >= 6
+						var:dvg_hungarian_crisis_trs_power > var:dvg_hungarian_crisis_boh_power
+					}
 				}
 	
 				every_country = {
@@ -94,23 +140,158 @@
 					
 				}
 			}
+			else_if = {#independent
+
+				limit = {
+					this = c:BOH
+				}
+	
+				every_country = {
+					limit = {
+						has_variable = dvg_attend_hungarian_conference
+					}
+					trigger_event = { id = dvg_hungary.73 days = 10 }
+					
+				}
+			}
 		}
 	}
 }
+je_hungarian_interregnum = {
+	icon = "gfx/interface/icons/event_icons/event_empty_chair.dds"
+	should_be_pinned_by_default_uninvolved_or_context = yes
+	group = je_group_internal_affairs
+
+	is_shown_when_inactive = {
+	}
+	modifiers_while_active = {
+		diplomatic_plays_blocked
+	}
+	possible = {
+	}
+
+	immediate = {
+	}
+
+	complete = {
+		custom_tooltip = {
+			text = interregnum_over_tt
+			has_global_variable = hungarian_constitutional_crisis_over
+		}
+		
+	}
+
+	on_complete = {
+		add_loyalists = {
+			value = 0.05
+		}
+		add_journal_entry = {
+			type = je_hungarian_expansion
+		}
+		set_capital = STATE_CENTRAL_HUNGARY
+	}
+
+	fail = {
+		NOT = {has_law = law_type:law_monarchy}
+		
+	}
+	on_fail = {
+		add_radicals = {
+			value = 0.20
+		}
+		add_modifier = {
+			name = dvg_overburdened_bureaucracy 
+			months = 48
+			is_decaying = yes
+		}
+		
+	}
+	
+}
+je_hungarian_expansion = {
+	icon = "gfx/interface/icons/event_icons/event_map.dds"
+	should_be_pinned_by_default_uninvolved_or_context = yes
+	group = je_group_internal_affairs
+
+	is_shown_when_inactive = {
+		OR = {
+			c:HUN ?= this
+			c:TRS ?= this
+		}
+		
+	}
 
 
+	immediate = {
+		s:STATE_CROATIA = {
+			add_claim = c:HUN
+		}
+		s:STATE_SLAVONIA = {
+			add_claim = c:HUN
+		}
+		s:STATE_BOSNIA = {
+			add_claim = c:HUN
+		}
+		s:STATE_BANAT = {
+			add_claim = c:HUN
+		}
+		s:STATE_VOJVODINA = {
+			add_claim = c:HUN
+		}
+	}
+
+	complete = {
+		OR = {
+			custom_tooltip = {
+				text = croatian_lands_tt
+				country_or_subject_owns_entire_state_region = STATE_CROATIA
+				country_or_subject_owns_entire_state_region = STATE_SLAVONIA
+				country_or_subject_owns_entire_state_region = STATE_BOSNIA
+			}
+			custom_tooltip = {
+				text = croatian_independence_tt
+				has_global_variable = croatia_je_done
+			}
+		}
+		custom_tooltip = {
+			text = banat_lands_tt
+			country_or_subject_owns_entire_state_region = STATE_BANAT
+			country_or_subject_owns_entire_state_region = STATE_VOJVODINA
+		}
+		
+	}
+
+	on_complete = {
+		#trigger_event = {id = dvg_hungary.78 days = 7}
+		add_loyalists = {
+			value = 0.15
+		}
+	}
+
+	fail = {
+		c:CRO = {
+			country_rank > rank_value:minor_power
+		}
+		c:BSG = {
+			country_rank > rank_value:minor_power
+		}
+	}
+	on_fail = {
+		add_radicals = {
+			value = 0.5
+		}
+		
+	}
+	scripted_button = hun_croatian_button
+	scripted_button = hun_banat_button
+}
 je_turan_magyar = {
-	icon = "gfx/interface/icons/event_icons/event_cross_and_crescent.dds"
+	icon = "gfx\coat_of_arms\textured_emblems\te_hungary_turan_monarchy.dds"
 	should_be_pinned_by_default_uninvolved_or_context = yes
 	group = je_group_expeditions
 
 	is_shown_when_inactive = {
 		country_has_primary_culture = cu:hungarian
-	}
-
-	possible = {
-		has_technology_researched = romanticism
-		has_technology_researched = nationalism
 	}
 
 	immediate = {
@@ -143,3 +324,83 @@ je_turan_magyar = {
 	}
 	
 }
+#je_danubia_magyar = {
+#	icon = "gfx\coat_of_arms\textured_emblems\te_hungary_danubian_monarchy.dds"
+#	should_be_pinned_by_default_uninvolved_or_context = yes
+#	group = je_group_internal_affairs
+#
+#	is_shown_when_inactive = {
+#		country_has_primary_culture = cu:hungarian
+#	}
+#
+#	possible = {
+#		has_technology_researched = romanticism
+#		has_technology_researched = nationalism
+#	}
+#
+#	immediate = {
+#
+#	}
+#
+#	on_monthly_pulse = {
+#		random_events = {
+#			
+#		}
+#	}
+#
+#	complete = {
+#		
+#	}
+#
+#	on_complete = {
+#
+#	}
+#
+#	fail = {
+#		
+#	}
+#	on_fail = {
+#		
+#	}
+#	
+#}
+#je_carpathia_magyar = {
+#	icon = "gfx\coat_of_arms\textured_emblems\te_hungary_carpathian_monarchy.dds"
+#	should_be_pinned_by_default_uninvolved_or_context = yes
+#	group = je_group_internal_affairs
+#
+#	is_shown_when_inactive = {
+#		country_has_primary_culture = cu:hungarian
+#	}
+#
+#	possible = {
+#		has_technology_researched = romanticism
+#		has_technology_researched = nationalism
+#	}
+#
+#	immediate = {
+#
+#	}
+#
+#	on_monthly_pulse = {
+#		random_events = {
+#			
+#		}
+#	}
+#
+#	complete = {
+#		
+#	}
+#
+#	on_complete = {
+#
+#	}
+#
+#	fail = {
+#		
+#	}
+#	on_fail = {
+#		
+#	}
+#	
+#}
