@@ -1,65 +1,156 @@
-﻿je_italian_unification = { #Replace with DVG specific when able
-	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+﻿je_risorgimento = {
+	icon = "gfx/interface/icons/event_icons/waving_flag.dds"
 
-	group = je_group_foreign_affairs
+	group = je_group_historical_content
+
+	activation_description = {
+		always = yes
+	}
+
+	is_shown_in_lobby = {
+		OR = {
+			country_has_primary_culture = cu:north_italian
+			country_has_primary_culture = cu:south_italian
+		}
+		is_in_geographic_region = geographic_region_italy_old
+        NOR = {
+            c:AUS ?= this
+            c:KUK ?= this
+        }
+	}
 
 	is_shown_when_inactive = {
 		OR = {
 			country_has_primary_culture = cu:north_italian
 			country_has_primary_culture = cu:south_italian
-			country_has_primary_culture = cu:venetian
-			country_has_primary_culture = cu:sardinian
-			country_has_primary_culture = cu:central_italian
-			
 		}
+		is_in_geographic_region = geographic_region_italy_old
+		NOR = {
+			is_revolutionary = yes
+			is_secessionist = yes
+		}
+        NOR = {
+            c:AUS ?= this
+            c:KUK ?= this
+        }
+	}
+
+	status_desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = je_risorgimento_italian_minors_tt
+				trigger = {
+					has_journal_entry = je_risorgimento
+				}
+			}
+			triggered_desc = {
+				desc = blank_tt
+				trigger = {
+					NOT = {
+						has_journal_entry = je_risorgimento
+					}
+				}
+			}
+		}
+	}
+
+	scripted_button = je_risorgimento_austrian_radicals_button
+	scripted_button = je_risorgimento_italian_radicals_button
+
+	immediate = {
+		cu:north_italian = {
+			save_scope_as = north_italian_scope
+		}
+		cu:south_italian = {
+			save_scope_as = south_italian_scope
+		}
+		random_political_movement = {
+			limit = {
+				is_political_movement_type = movement_italian_national
+			}
+			save_scope_as = italian_national_movement
+		}
+		trigger_event = { id = italian_unification.10 popup = yes }
 	}
 
 	possible = {
-		country_rank >= rank_value:major_power
 		has_technology_researched = nationalism
-		is_subject = no
+		NOR = {
+			country_tier = hegemony
+			country_tier = empire
+		}
 	}
 
-	complete = {
-		hidden_trigger = {
-			has_variable = je_unification_progress
+	outcome = {
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			hidden_trigger = {
+				has_variable = je_unification_progress
+			}
+			custom_tooltip = {
+				text = is_italy_tt
+				c:ITA ?= this
+			}
+
 		}
-		calc_true_if = {
-			amount > 13 #DVG
-			owns_entire_state_region = STATE_LOMBARDY
-			owns_entire_state_region = STATE_PIEDMONT
-			owns_entire_state_region = STATE_UMBRIA
-			owns_entire_state_region = STATE_CAMPANIA
-			owns_entire_state_region = STATE_CALABRIA
-			owns_entire_state_region = STATE_APULIA
-			owns_entire_state_region = STATE_ABRUZZO
-			owns_entire_state_region = STATE_SAVOY
-			owns_entire_state_region = STATE_EMILIA
-			owns_entire_state_region = STATE_TUSCANY
-			owns_entire_state_region = STATE_ROMAGNA
-			owns_entire_state_region = STATE_LAZIO
-			owns_entire_state_region = STATE_VENETIA
-			owns_entire_state_region = STATE_SICILY
-			owns_entire_state_region = STATE_ISTRIA
+		effect = {
+			show_as_tooltip = {
+				trigger_event = { id = italian_unification.1 popup = yes }
+			}
+			je_risorgimento_cleanup = yes
+		}
+	}
+
+	outcome = {
+		header = je_standard_failure_header
+		effect_header = je_standard_on_failure_header
+		color = "blue_negative"
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			is_at_war = no
+			custom_tooltip = {
+				text = owns_no_italian_homelands_tt
+				NOT = {
+					any_scope_state = {
+						state_region = {
+							OR = {
+								is_homeland = cu:north_italian
+								is_homeland = cu:south_italian
+							}
+						}
+					}
+				}
+			}
+		}
+		effect = {
+			je_risorgimento_cleanup = yes
+		}
+	}
+
+	on_weekly_pulse = {
+		events = {
+			italian_unification.4
 		}
 	}
 
 	on_monthly_pulse = {
-		events = {
-			italian_unification.2 # confederation
+		random_events = {
+			180 = 0
+			20 = italian_unification.2
 		}
 		effect = {
-			if = { 
-				limit = { NOT = { has_variable = je_unification_progress } } 
+			if = {
+				limit = { NOT = { has_variable = je_unification_progress } }
 				set_variable = je_unification_progress
 			}
 		}
 	}
 
-	on_complete = {
-		trigger_event = { id = italian_unification.1 }
-		remove_variable = je_unification_progress
-	}
-
 	weight = 100
+
+		
+	should_be_pinned_by_default_uninvolved_or_context = yes
 }

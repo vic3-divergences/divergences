@@ -4,33 +4,37 @@
 
 	group = je_group_internal_affairs
 
+	activation_description = {
+		always = yes
+	}
+
 	is_shown_when_inactive = {
 		OR = {
-			has_law = law_type:law_slave_trade
-			has_law = law_type:law_legacy_slavery
-		}
-		radical_fraction = {
-			value >= 0.1
-			pop_type = slaves
+			has_law_or_variant = law_type:law_slave_trade
+			has_law_or_variant = law_type:law_legacy_slavery
+			has_law_or_variant = law_type:law_colonial_slavery
 		}
 		NOT = { has_journal_entry = je_matter_of_slavery } # Disabled for Brazil
 	}
-	
+
 	possible = {
-		radical_fraction = {
-			value >= 0.2
-			pop_type = slaves
+		any_political_movement = {
+			is_political_movement_type = movement_slave_revolt
+			political_movement_radicalism >= define:NPolitics|RADICALISM_AGITATING_THRESHOLD
 		}
 		any_interest_group = {
 			any_scope_character = {
 				OR = {
-					has_role = politician
-					has_role = agitator
+					AND = {
+						prominence >= define:NCharacters|PROMINENCE_IMPORTANT_THRESHOLD
+						has_role_of_type = politician
+					}
+					has_role_of_type = agitator
 				}
 				has_ideology = ideology:ideology_abolitionist
 			}
 		}
-		
+		NOT = { c:BRZ ?= this }
 	}
 
 	status_desc = {
@@ -38,18 +42,18 @@
 			triggered_desc = {
 				desc = slave_owner_paranoia_radicalization_high
 				trigger = {
-					radical_fraction = {
-						value >= 0.5
-						pop_type = slaves
+					any_political_movement = {
+						is_political_movement_type = movement_slave_revolt
+						political_movement_radicalism >= define:NPolitics|RADICALISM_PROTESTING_THRESHOLD
 					}
 				}
 			}
 			triggered_desc = {
 				desc = slave_owner_paranoia_radicalization_mid
 				trigger = {
-					radical_fraction = {
-						value >= 0.2
-						pop_type = slaves
+					any_political_movement = {
+						is_political_movement_type = movement_slave_revolt
+						political_movement_radicalism >= define:NPolitics|RADICALISM_AGITATING_THRESHOLD
 					}
 				}
 			}
@@ -59,16 +63,45 @@
 		}
 	}
 
-	complete = {
-		radical_fraction = {
-			value < 0.05
-			pop_type = slaves
+	immediate = {
+		random_political_movement = {
+			limit = {
+				is_political_movement_type = movement_slave_revolt
+			}
+			save_scope_as = slave_revolt_movement_scope
+		}
+	}
+
+	outcome = {
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			NOT = {
+				any_political_movement = {
+					is_political_movement_type = movement_slave_revolt
+				}
+			}
+		}
+		effect = {
+			slave_owner_paranoia_cleanup = yes
+		}
+	}
+
+	outcome = {
+		header = JOURNAL_ENTRY_TIMEOUT
+		effect_header = JOURNAL_ENTRY_ON_TIMEOUT
+		flags = { timeout }
+		conclusion_desc = JOURNAL_ENTRY_TIMEOUT_CONCLUSION_DESC
+		effect = {
+			slave_owner_paranoia_cleanup = yes
 		}
 	}
 
 	# 5 years
 	timeout = 1825
-	
+
 	on_yearly_pulse = {
 		random_events = {
 			40  = 0
@@ -77,6 +110,6 @@
 			10 = slave_owner_paranoia_events.3
 		}
 	}
-	
+
 	weight = 200
 }
