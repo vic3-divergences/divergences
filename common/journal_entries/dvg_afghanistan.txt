@@ -78,27 +78,38 @@
 			}  
 	}
 	}
-
-	complete = {
-		# If-else clause to avoid errors because of missing variable before JE activates
-		OR = {
-		trigger_if = {
-			limit = { exists = var:punjab_var }
-			scope:journal_entry = { is_goal_complete = yes }
-		}
-		}
-
-	}
 	
-	on_complete = {
-		#set_variable = dvg_panjabi_revolt_complete
-		trigger_event = {
-			id = dvg_afghanistan.2
+	outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			# If-else clause to avoid errors because of missing variable before JE activates
+			OR = {
+			trigger_if = {
+				limit = { exists = var:punjab_var }
+				scope:journal_entry = { is_goal_complete = yes }
+			}
 		}
-	}
-	
-	fail = {
-		OR = {
+		}
+        effect = {
+			#set_variable = dvg_panjabi_revolt_complete
+			trigger_event = {
+				id = dvg_afghanistan.2
+			}
+		}
+        event_outcome_desc = {
+		} # complex desc like a status_desc field
+    }
+
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			OR = {
 			s:STATE_PUNJAB.region_state:AFG = {
 				religion_percent_state = {
 					target = rel:sikh
@@ -111,21 +122,26 @@
 			has_law = law_type:law_total_separation
 		}
 		has_technology_researched = egalitarianism
-	}
-	
-	on_fail = {
-		set_variable = dvg_sikh_accepted
-		trigger_event = {
-			id = dvg_afghanistan.3
 		}
-	}
-
-	invalid = { 
-	NOT = {
-					has_state_in_state_region = STATE_PUNJAB
-				}
-	}
+        effect = {
+			set_variable = dvg_sikh_accepted
+			trigger_event = {
+				id = dvg_afghanistan.3
+			}
+		}
+    }
 	
+    outcome = {
+        flags = { hidden invalid_outcome }
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			NOT = {
+				has_state_in_state_region = STATE_PUNJAB
+			}
+		}
+        effect = {}
+    }
+
 	current_value = {
 		value = root.var:punjab_var
 	}
@@ -177,42 +193,47 @@ je_panjabi_revolt2 = {
 		}
 	}
 
-	complete = {
-		# If-else clause to avoid errors because of missing variable before JE activates
-		trigger_if = {
+	outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			# If-else clause to avoid errors because of missing variable before JE activates
+			trigger_if = {
 			limit = { exists = var:punjab_var }
 			scope:journal_entry = { is_goal_complete = yes }
+			}
+			is_at_war = yes
 		}
-		is_at_war = yes
-		
-		
-		
-	}
-	
-	on_complete = {
-		#set_variable = dvg_panjabi_revolt_complete
-		trigger_event = {
-			id = dvg_persia.2
+        effect = {
+			#set_variable = dvg_panjabi_revolt_complete
+			trigger_event = {
+				id = dvg_persia.2
+			}
 		}
-	}
-	
-	fail = {
-		NOT = { has_law = law_type:law_total_separation }
-		OR = {
-			NOT = {owns_entire_state_region = STATE_PUNJAB}
-			cultural_acceptance_base = { target = cu:panjabi value >= acceptance_status_5 }
-		}
-		
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }
 
-	}
-	
-	on_fail = {
-		set_variable = dvg_sikh_accepted
-		trigger_event = {
-			id = dvg_persia.3
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			NOT = { has_law = law_type:law_total_separation }
+			OR = {
+				NOT = {owns_entire_state_region = STATE_PUNJAB}
+				cultural_acceptance_base = { target = cu:panjabi value >= acceptance_status_5 }
+			}
 		}
-	}
-
+        effect = {
+			set_variable = dvg_sikh_accepted
+			trigger_event = {
+				id = dvg_persia.3
+			}
+		}
+    }
 	
 	current_value = {
 		value = root.var:punjab_var
