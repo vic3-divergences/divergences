@@ -1,4 +1,4 @@
-﻿je_road_to_rickusdorp = {
+je_road_to_rickusdorp = {
 	icon = "gfx/interface/icons/event_icons/event_map.dds"
 
 	group = je_group_foreign_affairs
@@ -9,27 +9,33 @@
 		c:OPS = { save_scope_as = scope_OPS }
 		c:NFL = { save_scope_as = scope_NFL }
 	}
-	complete = {
-		owns_entire_state_region = STATE_VRYSTAAT 
-		custom_tooltip = {
-		text = dvg_basuto_no_rickusdorp_tt
-			OR = {
-				c:BST = {
-					NOT = {
-						has_state_in_state_region = STATE_NORTHERN_CAPE
+
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			owns_entire_state_region = STATE_VRYSTAAT 
+			custom_tooltip = {
+			text = dvg_basuto_no_rickusdorp_tt
+				OR = {
+					c:BST = {
+						NOT = {
+							has_state_in_state_region = STATE_NORTHERN_CAPE
+						}
+					}
+					owns_entire_state_region = STATE_NORTHERN_CAPE
+					c:LEW = {
+						owns_entire_state_region = STATE_NORTHERN_CAPE
 					}
 				}
-				owns_entire_state_region = STATE_NORTHERN_CAPE
-				c:LEW = {
-					owns_entire_state_region = STATE_NORTHERN_CAPE
-				}
-			}
-			
-		}	
-	}
-
-    on_complete = {
-		trigger_event = { id = dvg_opstalia.4 days = 365 }
+				
+			}	
+		}
+		effect = {
+			trigger_event = { id = dvg_opstalia.4 days = 365 }
+		}
 	}
 	
 	weight = 10000
@@ -41,61 +47,77 @@ je_return_of_hendrik = {
 
 	group = je_group_internal_affairs
 
-	complete = {
-		OR = {
-			c:NFL = {
-				NOT = {
-					exists = yes 
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			OR = {
+				c:NFL = {
+					NOT = {
+						exists = yes 
+					}
+				}
+				AND = {
+					custom_tooltip = {
+					text = dvg_ready_for_noordveld_war_tt
+					NOT = {
+						c:NFL = {
+							
+				
+							army_size > root.army_size
+						}
+						}
+					}
+					c:OPS = {
+						has_state_in_state_region = STATE_LOURENCO_MARQUES
+					}
+					
 				}
 			}
-			AND = {
-				custom_tooltip = {
-				text = dvg_ready_for_noordveld_war_tt
-				NOT = {
-					c:NFL = {
-						
 			
-						army_size > root.army_size
-					}
-					}
-				}
+		}
+		effect = {
+			trigger_event = { id = dvg_opstalia.12 popup = yes }
+		}
+	}
+
+	outcome = { #lose
+		header = je_standard_failure_header
+		effect_header = je_standard_on_failure_header
+		color = "blue_negative"
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			custom_tooltip = {
+			text = dvg_ops_lost_noordveld_war_tt
 				c:OPS = {
+					has_truce_with = c:NFL
+				}
+				c:NFL = {
 					has_state_in_state_region = STATE_LOURENCO_MARQUES
 				}
-				
 			}
 		}
-		
+		effect = {
+			trigger_event = { id = dvg_opstalia.9 }
+		}
 	}
 
-	on_complete = {
-		trigger_event = { id = dvg_opstalia.12 popup = yes }
-	}
-
-	fail = {
-		custom_tooltip = {
-		text = dvg_ops_lost_noordveld_war_tt
-			c:OPS = {
-				has_truce_with = c:NFL
-			}
-			c:NFL = {
-				has_state_in_state_region = STATE_LOURENCO_MARQUES
+	outcome = {
+		flags = { hidden invalid_outcome }
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			custom_tooltip = {
+				text = dvg_hendrik_dead
+				ruler = { 
+	                not = {
+	                	has_variable = is_hendrik
+	                }
+	            }
 			}
 		}
-	} 
-
-	on_fail = {
-		trigger_event = { id = dvg_opstalia.9 }
-	}
-
-	invalid = {
-		custom_tooltip = {
-			text = dvg_hendrik_dead
-			ruler = { 
-                not = {
-                	has_variable = is_hendrik
-                }
-            }
+		effect = {
 		}
 	}
 
@@ -269,39 +291,6 @@ je_king_aloysius = {
 		}
 	}
 
-	complete = {
-		scope:journal_entry = {
-			is_goal_complete = yes
-		}
-		NOT = {
-			any_civil_war = {
-				civil_war_progress > 0.5
-			}
-		}
-		root.average_sol > 5
-		in_default = no
-		government_legitimacy > 49 
-	}
-
-	on_complete = {
-		trigger_event = {
-			id = dvg_leeuwin.12
-		}
-	}
-
-	fail = {
-		OR = {
-			NOT = { has_law = law_type:law_state_religion }
-			NOT = { has_law = law_type:law_autocracy }
-			is_subject = yes
-			NOT = {
-				has_state_in_state_region = STATE_NORTHERN_CAPE
-			}
-			this = { var:aloysius_legitimacy <= 0 }
-
-		}
-	}
-
 	current_value = {
 		value = root.var:aloysius_legitimacy
 	}
@@ -309,18 +298,68 @@ je_king_aloysius = {
 	goal_add_value = {
 		add = 240
 	}
-	invalid = {
-		OR = {
+
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			scope:journal_entry = {
+				is_goal_complete = yes
+			}
 			NOT = {
-				any_scope_character = {
-					has_variable = is_aloysius
+				any_civil_war = {
+					civil_war_progress > 0.5
 				}
 			}
-			has_law = law_type:law_monarchy
+			root.average_sol > 5
+			in_default = no
+			government_legitimacy > 49 
+		}
+		effect = {
+			trigger_event = {
+				id = dvg_leeuwin.12
+			}
 		}
 	}
-	on_invalid = {
-		
+
+	outcome = { #lose
+		header = je_standard_failure_header
+		effect_header = je_standard_on_failure_header
+		color = "blue_negative"
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			OR = {
+				NOT = { has_law = law_type:law_state_religion }
+				NOT = { has_law = law_type:law_autocracy }
+				is_subject = yes
+				NOT = {
+					has_state_in_state_region = STATE_NORTHERN_CAPE
+				}
+				this = { var:aloysius_legitimacy <= 0 }
+
+			}
+		}
+		effect = {
+		}
+	}
+
+	outcome = {
+		flags = { hidden invalid_outcome }
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			OR = {
+				NOT = {
+					any_scope_character = {
+						has_variable = is_aloysius
+					}
+				}
+				has_law = law_type:law_monarchy
+			}
+		}
+		effect = {
+		}
 	}
 
 	progressbar = yes
@@ -379,38 +418,48 @@ je_cap_moderate = {
 		}
 	}
 
-	complete = {
-		AND = {
-			root.var:geus_agitation_var = 0
-			cu:boer = {
-				C:CAP = { 
-					cultural_acceptance_base = { target = prev value < acceptance_status_5 }
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			AND = {
+				root.var:geus_agitation_var = 0
+				cu:boer = {
+					C:CAP = { 
+						cultural_acceptance_base = { target = prev value < acceptance_status_5 }
+					}
 				}
-			}
-			has_variable = moderate_progress_add
-		}
-	}
-
-	on_complete = {
-		trigger_event = {
-			id = dvg_cape_colony.110
-		}
-	}
-
-	fail = {
-		hidden_trigger = {
-			c:CAP = {
 				has_variable = moderate_progress_add
 			}
 		}
-		scope:journal_entry = {
-			is_goal_complete = yes
+		effect = {
+			trigger_event = {
+				id = dvg_cape_colony.110
+			}
 		}
 	}
 
-	on_fail = {
-		trigger_event = {
-			id = dvg_cape_colony.111
+	outcome = { #lose
+		header = je_standard_failure_header
+		effect_header = je_standard_on_failure_header
+		color = "blue_negative"
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			hidden_trigger = {
+				c:CAP = {
+					has_variable = moderate_progress_add
+				}
+			}
+			scope:journal_entry = {
+				is_goal_complete = yes
+			}
+		}
+		effect = {
+			trigger_event = {
+				id = dvg_cape_colony.111
+			}
 		}
 	}
 
@@ -544,30 +593,47 @@ je_cap_militarist = {
 		}
 	}
 
-	complete = {
-		scope:journal_entry = {
-			is_goal_complete = yes
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			scope:journal_entry = {
+				is_goal_complete = yes
+			}
+		}
+		effect = {
+			trigger_event = {
+				id = dvg_cape_colony.112
+			}
 		}
 	}
 
-	on_complete = {
-		trigger_event = {
-			id = dvg_cape_colony.112
+	outcome = { #lose
+		header = je_standard_failure_header
+		effect_header = je_standard_on_failure_header
+		color = "blue_negative"
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			var:geus_supression_var = 0
+			has_variable = militarist_progress_add
+		}
+		effect = {
+			trigger_event = {
+				id = dvg_cape_colony.113
+			}
 		}
 	}
 
-	fail = {
-		var:geus_supression_var = 0
-		has_variable = militarist_progress_add
-	}
-
-	on_fail = {
-		trigger_event = {
-			id = dvg_cape_colony.113
+	outcome = {
+		flags = { hidden invalid_outcome }
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			NOT = { country_has_primary_culture = cu:boer }
 		}
-	}
-	invalid = {
-		NOT = { country_has_primary_culture = cu:boer }
+		effect = {
+		}
 	}
 
 	current_value = {
@@ -650,37 +716,57 @@ je_btv_autocracy = {
 		}
 	}
 
-	complete = {
-		scope:journal_entry = {
-			is_goal_complete = yes
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			scope:journal_entry = {
+				is_goal_complete = yes
+			}
+			OR = {
+				has_law = law_type:law_monarchy
+				has_law = law_type:law_theocracy
+			}
+			has_law = law_type:law_state_religion
+			has_law = law_type:law_autocracy
+			NOT = {
+				any_civil_war = {
+					civil_war_progress > 50
+				}
+			}
 		}
-		OR = {
-			has_law = law_type:law_monarchy
-			has_law = law_type:law_theocracy
-		}
-		has_law = law_type:law_state_religion
-		has_law = law_type:law_autocracy
-		NOT = {
-			any_civil_war = {
-				civil_war_progress > 50
+		effect = {
+			trigger_event = {
+				id = autocracy.1
 			}
 		}
 	}
 
-	on_complete = {
-		trigger_event = {
-			id = autocracy.1
+	outcome = { #lose
+		header = je_standard_failure_header
+		effect_header = je_standard_on_failure_header
+		color = "blue_negative"
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			OR = {
+				NOT = { has_law = law_type:law_state_religion }
+				NOT = { has_law = law_type:law_autocracy }
+			}
+		}
+		effect = {
 		}
 	}
 
-	fail = {
-		OR = {
-			NOT = { has_law = law_type:law_state_religion }
-			NOT = { has_law = law_type:law_autocracy }
+	outcome = {
+		flags = { hidden invalid_outcome }
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			NOT = { country_has_primary_culture = cu:boer }
 		}
-	}
-	invalid = {
-		NOT = { country_has_primary_culture = cu:boer }
+		effect = {
+		}
 	}
 
 	current_value = {
@@ -695,6 +781,6 @@ je_btv_autocracy = {
 
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
-} 
+}
 
 
