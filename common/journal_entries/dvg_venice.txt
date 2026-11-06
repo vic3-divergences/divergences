@@ -4,12 +4,36 @@ je_ven_patricians_success = {
 
 	group = je_group_internal_affairs
 
-	complete = {
-		scope:journal_entry = {
-			is_goal_complete = yes
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			scope:journal_entry = {
+				is_goal_complete = yes
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					has_variable = dvg_ven_supported_positivist
+				}
+				trigger_event = {
+					id = dvg_ven.102
+					popup = yes
+				}
+				set_variable = dvg_ven_patricians_victory_var
+			}
+			else = {
+				trigger_event = {
+					id = dvg_ven.1021
+					popup = yes
+				}
+				set_variable = dvg_ven_patricians_victory_var
+			}
 		}
 	}
-
 	is_shown_when_inactive = {
         exists = c:VEN
         THIS = c:VEN
@@ -42,26 +66,6 @@ je_ven_patricians_success = {
 		}
     }
 
-	on_complete = {
-		if = {
-			limit = {
-				has_variable = dvg_ven_supported_positivist
-			}
-			trigger_event = {
-				id = dvg_ven.102
-				popup = yes
-			}
-			set_variable = dvg_ven_patricians_victory_var
-		}
-		else = {
-			trigger_event = {
-				id = dvg_ven.1021
-				popup = yes
-			}
-			set_variable = dvg_ven_patricians_victory_var
-		}
-	}
-
 	immediate = {
 		trigger_event = {
 			id = dvg_ven.101
@@ -69,25 +73,29 @@ je_ven_patricians_success = {
 			popup = yes
 		}
 	}
-
-	fail = {
-		custom_tooltip = {
-			text = dvg_ven_radicals_fail_tt
-			root.var:ven_patricians_success_count_var < 0 #has to be less than 0 because game checks it too fast and the event needs a day
+	outcome = { #lose
+		header = je_standard_failure_header
+		effect_header = je_standard_on_failure_header
+		color = "blue_negative"
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			custom_tooltip = {
+				text = dvg_ven_radicals_fail_tt
+				root.var:ven_patricians_success_count_var < 0 #has to be less than 0 because game checks it too fast and the event needs a day
+			}
+		}
+		effect = {
+			trigger_event = {
+				id = dvg_ven.103
+				popup = yes
+			}
+			set_variable = dvg_ven_radicals_victory_var
+			add_modifier = {
+				name = dvg_ven_radicals_victory_modifier
+				days = normal_modifier_time
+			}
 		}
 	}
-	on_fail = {
-		trigger_event = {
-			id = dvg_ven.103
-			popup = yes
-		}
-		set_variable = dvg_ven_radicals_victory_var
-		add_modifier = {
-			name = dvg_ven_radicals_victory_modifier
-			days = normal_modifier_time
-		}
-	}
-
 	
 	on_timeout = { }
 	on_weekly_pulse = {
