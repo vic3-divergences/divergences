@@ -1,5 +1,4 @@
-﻿
-je_nvz_colonization = {
+﻿je_nvz_colonization = {
 	icon = "gfx/interface/icons/event_icons/event_zhourao_one.dds"
 
 	group = je_group_foreign_affairs
@@ -7,17 +6,19 @@ je_nvz_colonization = {
 	is_shown_in_lobby = {
 		country_has_primary_culture = cu:australian
 	}
+
 	is_shown_when_inactive = {
 		country_has_primary_culture = cu:australian
 	}
+
 	possible = {
 		has_technology_researched = colonization
 		NOT = {
 			has_law = law_type:law_no_colonial_affairs
 		}
 	}
-	immediate = {
-		
+
+	immediate = {	
 	}
 
 	on_monthly_pulse = {
@@ -65,83 +66,90 @@ je_nvz_colonization = {
 		}
 	}
 
-	complete = {
-		NOT = {
-			any_neighbouring_state = {
-				owner = {
-					is_country_type = decentralized
+	outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			NOT = {
+				any_neighbouring_state = {
+					owner = {
+						is_country_type = decentralized
+					}
 				}
 			}
 		}
-	}
-	
-	fail = {
-		has_law = law_type:law_no_colonial_affairs
-	}
+        effect = {
+			every_scope_state = {
+				state_region = {
+					add_homeland = cu:australian
+				}
+				if = {
+					limit = {
+					culture_percent_state = {
+						target = cu:javan
+						value > 0.33
+					}
+					}
+					state_region = {
+					add_homeland = cu:javan
+					}
+				}
 
-    on_complete = {
-		every_scope_state = {
-			
-			state_region = {
-				add_homeland = cu:australian
-			}
-			if = {
-				limit = {
-				culture_percent_state = {
-					target = cu:javan
-					value > 0.33
+				if = {
+					limit = {
+					culture_percent_state = {
+						target = cu:sundanese
+						value > 0.33
+					}
+					}
+					state_region = {
+					add_homeland = cu:sundanese
+					}
 				}
-				}
-				state_region = {
-				add_homeland = cu:javan
-				}
-			}
 
-			if = {
-				limit = {
-				culture_percent_state = {
-					target = cu:sundanese
-					value > 0.33
+				if = {
+					limit = {
+						culture_percent_state = {
+							target = cu:minangkabau
+							value > 0.33
+						}
+					}
+					state_region = {
+					add_homeland = cu:minangkabau
+					}
 				}
-				}
-				state_region = {
-				add_homeland = cu:sundanese
-				}
-			}
-
-			if = {
-				limit = {
-				culture_percent_state = {
-					target = cu:minangkabau
-					value > 0.33
-				}
-				}
-				state_region = {
-				add_homeland = cu:minangkabau
-				}
-			}
-			if = {
-				limit = {
-				culture_percent_state = {
-					target = cu:malay
-					value > 0.33
-				}
-				}
-				state_region = {
-				add_homeland = cu:malay
+				if = {
+					limit = {
+						culture_percent_state = {
+							target = cu:malay
+							value > 0.33
+						}
+					}
+					state_region = {
+					add_homeland = cu:malay
+					}
 				}
 			}
 		}
-		
-	}
-	
-    on_fail = {
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }
 
-	}
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			has_law = law_type:law_no_colonial_affairs
+		}
+        effect = {}
+    }	
 	
 	weight = 100
-	should_be_pinned_by_default_uninvolved_or_context = yes
 
+	should_be_pinned_by_default_uninvolved_or_context = yes
 }
 
 
@@ -154,19 +162,20 @@ je_chougie_unite = {
 		exists = c:NJY
 		c:NJY = this
 	}
+
 	is_shown_when_inactive = {
 		exists = c:NJY
 		c:NJY = this
 	}
+
 	immediate = {
-		
 	}
+
 	possible = {
 		has_technology_researched = colonization
 	}
 
 	scripted_button = pyard_treaty_button
-	
 
 	on_monthly_pulse = {
 		fallback = on_yearly_events
@@ -190,8 +199,8 @@ je_chougie_unite = {
 				}
 			}
 		}
-		
 	}
+
 	on_yearly_pulse = {
 		fallback = on_yearly_events
 
@@ -202,77 +211,81 @@ je_chougie_unite = {
 		}
 	}
 	
-
-	complete = {
-		has_technology_researched = egalitarianism
-		AND = {
-			exists = c:YLN
-			c:YLN = {
-				is_ai = yes
-				relations:root >= relations_threshold:amicable
-				top_overlord = {
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+					has_technology_researched = egalitarianism
+					AND = {
+						exists = c:YLN
+						c:YLN = {
+							is_ai = yes
+							relations:root >= relations_threshold:amicable
+							top_overlord = {
+								THIS = root.top_overlord
+							}
+						this.gdp < root.gdp
+						OR = {
+							has_attitude = {
+							who = ROOT
+							attitude = cooperative
+							}
+							has_attitude = {
+							who = ROOT
+							attitude = genial
+							}
+							liberty_desire < 25
+						}
+						top_overlord = {
 							THIS = root.top_overlord
 						}
-				this.gdp < root.gdp
-				OR = {
-					has_attitude = {
-					who = ROOT
-					attitude = cooperative
+						}
 					}
-					has_attitude = {
-					who = ROOT
-					attitude = genial
+					OR = {
+						has_law = law_type:law_subjecthood
+						has_law = law_type:law_cultural_exclusion
+						has_law = law_type:law_multicultural
 					}
-					liberty_desire < 25
+		}
+        effect = {
+			trigger_event = {
+				id = dvg_australie.7
+			}
+		}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }	
+
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			has_technology_researched = nationalism
+			OR = {
+				cu:aborigine_malay = {
+					culture_current_fervor > 24
 				}
-
-				
-
-				top_overlord = {
-							THIS = root.top_overlord
+				cu:aborigine_french = {
+					culture_current_fervor > 24
 				}
 			}
-			
-		}
-		OR = {
-			has_law = law_type:law_subjecthood
-			has_law = law_type:law_cultural_exclusion
-			has_law = law_type:law_multicultural
-		}
-	}
-	
-	fail = {
-		has_technology_researched = nationalism
-		OR = {
-			cu:aborigine_malay = {
-				culture_current_fervor > 24
-			}
-			cu:aborigine_french = {
-				culture_current_fervor > 24
+			any_scope_state = {
+				state_region = s:STATE_YOLNGU
+				turmoil > 0.50
 			}
 		}
-		any_scope_state = {
-			state_region = s:STATE_YOLNGU
-			turmoil > 0.50
+        effect = {
+			trigger_event = {
+				id = dvg_australie.9
+			}
 		}
-		
-	}
-
-    on_complete = {
-		trigger_event = {
-			id = dvg_australie.7
-		}
-	}
-	
-    on_fail = {
-		trigger_event = {
-			id = dvg_australie.9
-		}
-	}
+    }
 	
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
-
 }
 
 
@@ -285,11 +298,11 @@ je_chougie_racism = {
 		exists = c:CGI
 		c:CGI = this
 	}
-	is_shown_when_inactive = {
-	
-	}
-	possible = {
 
+	is_shown_when_inactive = {
+	}
+
+	possible = {
 	}
 
 	scripted_button = enfranchise_indo_button
@@ -298,14 +311,12 @@ je_chougie_racism = {
 
 	on_monthly_pulse = {
 		fallback = on_yearly_events
-
 		random_events = {
 			25 = dvg_australie.9
 			100 = 0
 			25 = dvg_australie.12
 			25 = dvg_australie.13
 			25 = dvg_australie.17
-
 		}
 		effect = {
 			
@@ -365,62 +376,68 @@ je_chougie_racism = {
 		}
 	}
 
-	complete = {
-		owns_entire_state_region = STATE_YOLNGU
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			owns_entire_state_region = STATE_YOLNGU
 		
-		NOT = {
-			any_scope_state = {
-				turmoil > 0.20
+			NOT = {
+				any_scope_state = {
+					turmoil > 0.20
+				}
+				any_neighbouring_state = {
+					owner = {
+						is_country_type = decentralized
+					}
+				}
 			}
-			any_neighbouring_state = {
-				owner = {
-					is_country_type = decentralized
+		
+			OR = {
+				has_technology_researched = pan-nationalism
+				has_technology_researched = human_rights
+			}
+			country_average_cultural_acceptance = {
+				target = cu:aborigine_french
+				value > 40
+			}
+			cu:australian = {
+				culture_current_fervor < 30
+			}
+			cu:aborigine_french = {
+				culture_current_fervor < 30
+			}
+		}
+        effect = {}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }
+
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			is_at_war = yes
+			any_enemy_in_war = {
+				c:YLN = this	
+			}
+			OR = {
+				cu:australian = {
+					culture_current_fervor > 30
+				}
+				cu:aborigine_french = {
+					culture_current_fervor > 30
 				}
 			}
 		}
-		
-		OR = {
-			has_technology_researched = pan-nationalism
-			has_technology_researched = human_rights
-		}
-		country_average_cultural_acceptance = {
-				target = cu:aborigine_french
-				value > 40
-		}
-		cu:australian = {
-			culture_current_fervor < 30
-		}
-		cu:aborigine_french = {
-			culture_current_fervor < 30
-		}
-	}
-	
-	fail = {
-		is_at_war = yes
-		any_enemy_in_war = {
-			c:YLN = this	
-		}
-		OR = {
-			cu:australian = {
-			culture_current_fervor > 30
-			}
-		cu:aborigine_french = {
-			culture_current_fervor > 30
-			}
-		}
-	}
-
-    on_complete = {
-		
-	}
-	
-    on_fail = {
-
-	}
+        effect = {}
+    }		
 	
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
-
 }
 
 je_nvz_racism = {
@@ -432,6 +449,7 @@ je_nvz_racism = {
 		exists = c:NVZ
 		c:NVZ = this
 	}
+
 	is_shown_when_inactive = {
 		OR = {
 			c:NVZ ?= this
@@ -449,6 +467,7 @@ je_nvz_racism = {
 				}
 		}
 	}
+
 	possible = {
 		OR = {
 			cu:australian = {
@@ -467,21 +486,17 @@ je_nvz_racism = {
 		}
 	}
 
-
 	scripted_button = enfranchise_indo_button
 	scripted_button = enfranchise_aborigine_french_button
 
-
 	on_monthly_pulse = {
 		fallback = on_yearly_events
-
 		random_events = {
 			25 = dvg_australie.15
 			100 = 0
 			25 = dvg_australie.12
 			25 = dvg_australie.13
 			15 = dvg_australie.21
-
 		}
 		effect = {
 			if = {
@@ -546,52 +561,64 @@ je_nvz_racism = {
 		}
 	}
 
-	complete = {
-		radical_fraction = {
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {		
+			radical_fraction = {
 				value < 0.33
-		}
+			}
 
-		OR = {
-			culture_percent_country = {
-				target = cu:australian
-				value > 0.50
+			OR = {
+				culture_percent_country = {
+					target = cu:australian
+					value > 0.50
+				}
+				culture_percent_country = {
+					target = cu:indo_australien
+					value > 0.50
+				}
 			}
-			culture_percent_country = {
-				target = cu:indo_australien
-				value > 0.50
-			}
+			liberty_desire < 25
 		}
-		liberty_desire < 25
-	}
-	
-	fail = {
-		OR = {
-			cu:australian = {
-			culture_current_fervor > 25
-			}
-			cu:aborigine_french = {
-			culture_current_fervor > 25
-			}
-		}
-	}
+        effect = {}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }	
 
-    on_complete = {
-		
-	}
-	
-    on_fail = {
-
-	}
-	invalid = {
-		custom_tooltip = {
-			text = united_chougie_tt
-			c:CGI ?= this
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			OR = {
+				cu:australian = {
+					culture_current_fervor > 25
+				}
+				cu:aborigine_french = {
+					culture_current_fervor > 25
+				}
+			}
 		}
-	}
+        effect = {}
+    }
+
+    outcome = {
+        flags = { hidden invalid_outcome }
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			custom_tooltip = {
+				text = united_chougie_tt
+				c:CGI ?= this
+			}
+		}
+        effect = {}
+    }
 	
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
-
 }
 
 je_australie = {
@@ -613,42 +640,54 @@ je_australie = {
 	scripted_button = je_australia_unite_aus_button
 	scripted_button = australie_allies_button
 
-	complete = {
-		NOT = {
-			any_state = {
-				state_region = {
-					is_homeland = cu:australian
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			NOT = {
+				any_state = {
+					state_region = {
+						is_homeland = cu:australian
+					}
+				}
+				NOT = {
+					owner = ROOT
 				}
 			}
-			NOT = {
-				owner = ROOT
+		}
+        effect = {
+			trigger_event = {
+				id = dvg_australie.35
 			}
 		}
-	}
-	
-	fail = {
-		exists = c:ZHR
-		c:ZHR = {
-			is_country_type = recognized
-			owns_entire_state_region = STATE_YOLNGU
-			owns_entire_state_region = STATE_COOMALONG
-			owns_entire_state_region = STATE_OODNATTA
-			owns_entire_state_region = STATE_PITJANTJAJARA
-			owns_entire_state_region = STATE_YONGJIA
-		}
-	}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }
 
-    on_complete = {
-		trigger_event = {
-			id = dvg_australie.35
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			exists = c:ZHR
+			c:ZHR = {
+				is_country_type = recognized
+				owns_entire_state_region = STATE_YOLNGU
+				owns_entire_state_region = STATE_COOMALONG
+				owns_entire_state_region = STATE_OODNATTA
+				owns_entire_state_region = STATE_PITJANTJAJARA
+				owns_entire_state_region = STATE_YONGJIA
+			}
 		}
-	}
-	
-    on_fail = {
-		trigger_event = {
-			id = dvg_australie.36
+        effect = {
+			trigger_event = {
+				id = dvg_australie.36
+			}
 		}
-	}
+    }	
+
 	should_be_involved = {
 		capital = {
 			state_region = {
@@ -680,11 +719,8 @@ je_australie = {
 	}
 	
 	weight = 1000
-
 	should_be_pinned_by_default_uninvolved_or_context = yes
-
 }
-
 
 je_penal_australia = {
 	icon = "gfx/interface/icons/event_icons/event_zhourao_one.dds"
@@ -716,33 +752,42 @@ je_penal_australia = {
 	scripted_button = more_convicts_button
 	scripted_button = end_convicts_button
 
-	complete = {
-		calc_true_if = {
-			amount >= 2
-
-			has_variable = penal_colonies_banned
-			has_technology_researched = human_rights
-			has_law_or_variant = law_type:law_slavery_banned
-			is_subject = no
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			calc_true_if = {
+				amount >= 2
+				has_variable = penal_colonies_banned
+				has_technology_researched = human_rights
+				has_law_or_variant = law_type:law_slavery_banned
+				is_subject = no
+			}
 		}
-	}
+        effect = {}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }	
+
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {}
+        effect = {}
+    }
 	
-	fail = {
-
-	}
-
-    on_complete = {
-		
-	}
-	
-    on_fail = {
-
-	}
+    outcome = {
+        flags = { hidden invalid_outcome }
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {}
+        effect = {}
+    }
 	
 	weight = 1000
-
 	should_be_pinned_by_default_uninvolved_or_context = yes
-
 }
 
 je_chougie_unite_yln = {
@@ -806,79 +851,84 @@ je_chougie_unite_yln = {
 
 	scripted_button = pyard_treaty_button
 
-
-	complete = {
-		has_technology_researched = egalitarianism
-		AND = {
-			exists = c:NJY
-			c:NJY = {
-				is_ai = yes
-				relations:root >= relations_threshold:amicable
-				top_overlord = {
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			has_technology_researched = egalitarianism
+				AND = {
+					exists = c:NJY
+					c:NJY = {
+						is_ai = yes
+						relations:root >= relations_threshold:amicable
+						top_overlord = {
 							THIS = root.top_overlord
 						}
-				this.gdp < root.gdp
-				OR = {
-					has_attitude = {
-					who = ROOT
-					attitude = cooperative
+					this.gdp < root.gdp
+					OR = {
+						has_attitude = {
+							who = ROOT
+							attitude = cooperative
+						}
+						has_attitude = {
+							who = ROOT
+							attitude = genial
+						}
+						liberty_desire < 25
 					}
-					has_attitude = {
-					who = ROOT
-					attitude = genial
+					top_overlord = {
+						THIS = root.top_overlord
 					}
-					liberty_desire < 25
+					}	
 				}
+			OR = {
+				has_law = law_type:law_subjecthood
+				has_law = law_type:law_cultural_exclusion
+				has_law = law_type:law_multicultural
+			}
+		}
+        effect = {
+			trigger_event = {
+				id = dvg_australie.26
+			}
+		}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }
 
-				
-
-				top_overlord = {
-					THIS = root.top_overlord
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			OR = {
+				cu:aborigine_malay = {
+					culture_current_fervor > 24
+				}
+				cu:aborigine_french = {
+					culture_current_fervor > 24
 				}
 			}
-			
-		}
-		OR = {
-			has_law = law_type:law_subjecthood
-			has_law = law_type:law_cultural_exclusion
-			has_law = law_type:law_multicultural
-		}
-	}
-	
-	fail = {
-		OR = {
-			cu:aborigine_malay = {
-				culture_current_fervor > 24
+			any_scope_state = {
+				state_region = s:STATE_YOLNGU
+				turmoil > 0.50
 			}
-			cu:aborigine_french = {
-				culture_current_fervor > 24
-			}
-		}
-		any_scope_state = {
-			state_region = s:STATE_YOLNGU
-			turmoil > 0.50
-		}
-		cu:australian = {
+			cu:australian = {
 				culture_current_fervor > 29
+			}
 		}
-	}
-
-    on_complete = {
-		trigger_event = {
-			id = dvg_australie.26
+        effect = {
+			change_relations = {
+				country = scope:top_overlord_scope
+				value = -15
+			}
 		}
-	}
-	
-    on_fail = {
-		change_relations = {
-			country = scope:top_overlord_scope
-			value = -15
-		}
-	}
+    }
 	
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
-
 }
 
 je_aboriginal_revolt = {
@@ -887,64 +937,66 @@ je_aboriginal_revolt = {
 	group = je_group_historical_content
 
 	is_shown_in_lobby = {
-		
 	}
+
 	is_shown_when_inactive = {
-		
 	}
 
 	possible = {
-		
 	}
 
-
-	complete = {
-	
-		OR = {
-			any_scope_state = {
-			state_region = {
-				is_homeland = cu:aborigine_malay 
-			}
-			}
-			any_scope_state = {
-			state_region = {
-				is_homeland = cu:aborigine 
-			}
-			}
-		}
-		is_diplomatic_play_committed_participant = no
-	}
-	
-	fail = {
-
-	}
-
-    on_complete = {
-		set_variable = anti_njy_state
-		trigger_event = {
-				id = dvg_australie.30
-		}
-		every_country = {
-			limit = {
-				country_has_primary_culture = cu:australian
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			OR = {
 				any_scope_state = {
-					is_mass_migration_target = yes
+					state_region = {
+						is_homeland = cu:aborigine_malay 
+					}
+				}
+				any_scope_state = {
+					state_region = {
+						is_homeland = cu:aborigine 
+					}
 				}
 			}
+			is_diplomatic_play_committed_participant = no
+		}
+        effect = {
+			set_variable = anti_njy_state
+			trigger_event = {
+				id = dvg_australie.30
+			}
+			every_country = {
+				limit = {
+					country_has_primary_culture = cu:australian
+					any_scope_state = {
+						is_mass_migration_target = yes
+					}
+				}
 			trigger_event = {
 				id = dvg_australie.28
 			}
+			}
 		}
-	}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }	
 	
-    on_fail = {
-
-	}
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {}
+        effect = {}
+    }
 	
 	weight = 1000
 
 	should_be_pinned_by_default_uninvolved_or_context = yes
-
 }
 
 
@@ -956,13 +1008,12 @@ je_aussie_revolt = {
 	is_shown_in_lobby = {
 		country_has_primary_culture = cu:australian
 	}
+
 	is_shown_when_inactive = {
-		
 	}
 
 	possible = {
-		
-	}
+	
 	immediate = {
 		overlord = {
 			save_scope_as = overlord_scope
@@ -971,45 +1022,50 @@ je_aussie_revolt = {
 
 	scripted_button = button_proclaim_independence
 
-	complete = {
-	
-		is_subject = no
-
-		any_country = {
-			filter = {
-				country_has_primary_culture = cu:australian
-			}
-			percent > 0.67
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
 			is_subject = no
+			any_country = {
+				filter = {
+					country_has_primary_culture = cu:australian
+				}
+				percent > 0.67
+				is_subject = no
+			}
 		}
-	}
-	
-	fail = {
-		is_subject = yes
-		has_variable = recently_lost_war
-		is_diplomatic_play_committed_participant = no
-		has_truce_with = scope:overlord_scope
-	}
-
-    on_complete = {
-		trigger_event = {
-			id = dvg_australie.34
-		}
-		overlord = {
+        effect = {
 			trigger_event = {
+				id = dvg_australie.34
+			}
+			overlord = {
+				trigger_event = {
 				id = dvg_australie.37
 			}
+			}
 		}
-	}
-	
-    on_fail = {
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }
 
-	}
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			is_subject = yes
+			has_variable = recently_lost_war
+			is_diplomatic_play_committed_participant = no
+			has_truce_with = scope:overlord_scope
+		}
+        effect = {}
+    }
 	
 	weight = 1000
-
 	should_be_pinned_by_default_uninvolved_or_context = yes
-
 }
 
 je_aussie_wildlife = {
@@ -1018,10 +1074,9 @@ je_aussie_wildlife = {
 	group = je_group_internal_affairs
 
 	is_shown_in_lobby = {
-		
 	}
+
 	is_shown_when_inactive = {
-		
 	}
 
 	possible = {
@@ -1043,26 +1098,22 @@ je_aussie_wildlife = {
 		}
 	}
 
-	complete = {
-		
-		NOT = {
-			has_modifier = dvg_australian_wildlife
-			has_modifier = dvg_dingoes
-			has_modifier = dvg_emus
+	outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			NOT = {
+				has_modifier = dvg_australian_wildlife
+				has_modifier = dvg_dingoes
+				has_modifier = dvg_emus
+			}
 		}
-	}
+        effect = {}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }
 	
-	fail = {
-
-	}
-
-    on_complete = {
-		
-	}
-	
-    on_fail = {
-
-	}
 	timeout = 3650
 
 	on_timeout = {
@@ -1076,7 +1127,6 @@ je_aussie_wildlife = {
 	weight = 1000
 
 	should_be_pinned_by_default_uninvolved_or_context = yes
-
 }
 
 je_penal_generic = {
@@ -1084,13 +1134,10 @@ je_penal_generic = {
 
 	group = je_group_historical_content
 
-	
 	is_shown_when_inactive = {
-		
 	}
 
 	possible = {
-		
 	}
 
 	scripted_button = more_convicts_button
@@ -1102,35 +1149,34 @@ je_penal_generic = {
 		}
 	}
 
-	complete = {
-		calc_true_if = {
-			amount >= 2
-
-			has_variable = penal_colonies_banned
-			has_technology_researched = human_rights
-			has_law_or_variant = law_type:law_slavery_banned
-			is_subject = no
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			calc_true_if = {
+				amount >= 2
+				has_variable = penal_colonies_banned
+				has_technology_researched = human_rights
+				has_law_or_variant = law_type:law_slavery_banned
+				is_subject = no
+			}
 		}
-	}
-	
-	fail = {
+        effect = {}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }	
 
-	}
-
-    on_complete = {
-		
-	}
-	
-    on_fail = {
-
-	}
+    outcome = {
+        flags = { hidden invalid_outcome }
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			has_journal_entry = je_penal_australia
+		}
+        effect = {}
+    }
 	
 	weight = 1000
 
 	should_be_pinned_by_default_uninvolved_or_context = yes
-
-	invalid = {
-		has_journal_entry = je_penal_australia
-	}
-
 }
