@@ -1,4 +1,4 @@
-﻿je_japan_regency = {
+je_japan_regency = {
     icon = "gfx/interface/icons/event_icons/event_empty_chair.dds"
     # note that if you change this, also update the decision
 
@@ -17,102 +17,115 @@
         value = var:dvg_nippon_var
     }
 
+    outcome = { #win
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
 
+            custom_tooltip = {
+                text = japan_je_complete_tt
+                c:JAP = {
+                    ruler = {
+                        NOT = { has_variable = komei_variable }
+                    }
+                }
+                AND = {
 
-    complete = {
-
-        custom_tooltip = {
-            text = japan_je_complete_tt
-            c:JAP = {
-                ruler = {
-                    NOT = { has_variable = komei_variable }
+                    this = { var:dvg_nippon_var >= 4 }
+                    this = { var:dvg_nippon_var <= 7 }
                 }
             }
-            AND = {
 
-                this = { var:dvg_nippon_var >= 4 }
-                this = { var:dvg_nippon_var <= 7 }
-            }
         }
+        effect = {
 
+
+            every_scope_character = {
+                limit = {
+                    has_trait = immortal
+                }
+                remove_trait = immortal
+            }
+            trigger_event = {
+
+                id = dvg_japan.17
+            }
+
+
+        }
     }
 
-    on_complete = {
+    outcome = { #lose
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
 
-
-        every_scope_character = {
-            limit = {
-                has_trait = immortal
-            }
-            remove_trait = immortal
-        }
-        trigger_event = {
-
-            id = dvg_japan.17
-        }
-
-
-    }
-
-    fail = {
-
-        custom_tooltip = {
-            text = japan_je_fail_tt
-            c:JAP = {
-                ruler = {
-                    NOT = { has_variable = komei_variable }
+            custom_tooltip = {
+                text = japan_je_fail_tt
+                c:JAP = {
+                    ruler = {
+                        NOT = { has_variable = komei_variable }
+                    }
+                }
+                has_variable = dvg_nippon_var
+                OR = {
+                    this = { var:dvg_nippon_var < 4 }
+                    this = { var:dvg_nippon_var > 7 }
+                    scope:journal_entry = { is_goal_complete = yes }
                 }
             }
-            has_variable = dvg_nippon_var
-            OR = {
-                this = { var:dvg_nippon_var < 4 }
-                this = { var:dvg_nippon_var > 7 }
-                scope:journal_entry = { is_goal_complete = yes }
+        }
+        effect = {
+            if ={
+                limit = {
+                    this = { var:dvg_nippon_var > 7 }
+                }
+                trigger_event = { id = dvg_japan.15 }
+
+            }
+            if ={
+                limit = {
+                    this = { var:dvg_nippon_var < 4 }
+                }
+                trigger_event = { id = dvg_japan.16 }
+
+            }
+            every_scope_character = {
+                limit = {
+                    has_trait = immortal
+                }
+
+                remove_trait = immortal
             }
         }
     }
 
-    on_fail = {
-        if ={
-            limit = {
-                this = { var:dvg_nippon_var > 7 }
+    outcome = {
+        flags = { hidden invalid_outcome }
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+            NOT = {
+                has_law = law_type:law_monarchy
             }
-            trigger_event = { id = dvg_japan.15 }
 
         }
-        if ={
-            limit = {
-                this = { var:dvg_nippon_var < 4 }
-            }
-            trigger_event = { id = dvg_japan.16 }
+        effect = {
+            every_scope_character = {
+                limit = {
+                    has_trait = immortal
+                }
 
-        }
-        every_scope_character = {
-            limit = {
-                has_trait = immortal
+                remove_trait = immortal
             }
-
-            remove_trait = immortal
         }
     }
 
     goal_add_value = {
         add = 10
-    }
-    invalid = {
-        NOT = {
-            has_law = law_type:law_monarchy
-        }
-
-    }
-    on_invalid = {
-        every_scope_character = {
-            limit = {
-                has_trait = immortal
-            }
-
-            remove_trait = immortal
-        }
     }
 
     on_monthly_pulse = {
@@ -292,34 +305,39 @@ je_unify_japan = {
         }
     }
 
-    complete = {
+    outcome = { #win
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
 
 
-        custom_tooltip = {
-            text = japan_united_tt
-            NOT = {
-                exists = c:EJP
-                exists = c:WJP
+            custom_tooltip = {
+                text = japan_united_tt
+                NOT = {
+                    exists = c:EJP
+                    exists = c:WJP
+                }
+            }
+        }
+        effect = {
+
+            every_scope_character = {
+                limit = {
+                    has_trait = immortal
+                }
+                remove_trait = immortal
+            }
+            trigger_event = {
+                id = dvg_japan.22
             }
         }
     }
 
-    on_complete = {
-
-        every_scope_character = {
-            limit = {
-                has_trait = immortal
-            }
-            remove_trait = immortal
-        }
-        trigger_event = {
-            id = dvg_japan.22
-        }
-    }
     should_be_pinned_by_default_uninvolved_or_context = yes
     #inheritable = no
 }
-
 je_siberia_expedition = {
 
     group = je_group_expeditions
@@ -476,84 +494,104 @@ je_siberia_expedition = {
         }
     }
 
-    complete = {
-        custom_tooltip = {
-            text = je_expedition_success
-            scope:journal_entry = {
-                is_goal_complete = yes
+    outcome = { #win
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+            custom_tooltip = {
+                text = je_expedition_success
+                scope:journal_entry = {
+                    is_goal_complete = yes
+                }
             }
         }
-    }
-
-    on_complete = {
-        if = {
-            limit = {
-                has_game_rule = siberia_railroaded
-            }
-            trigger_event = { id = dvg_expedition.301 }
-
-        }
-        random_list = {
-            33 = {
-                trigger = { NOT = { has_global_variable = buenaventura_river_disproven } }
-                trigger_event = { id = dvg_expedition.300 }
-            }
-            33 = {
-                trigger = { NOT = { has_global_variable = oregon_trail_mapped } }
+        effect = {
+            if = {
+                limit = {
+                    has_game_rule = siberia_railroaded
+                }
                 trigger_event = { id = dvg_expedition.301 }
+
             }
-            33 = {
-                trigger = { NOT = { has_global_variable = great_salt_lake_mapped } }
-                trigger_event = { id = dvg_expedition.302 }
+            random_list = {
+                33 = {
+                    trigger = { NOT = { has_global_variable = buenaventura_river_disproven } }
+                    trigger_event = { id = dvg_expedition.300 }
+                }
+                33 = {
+                    trigger = { NOT = { has_global_variable = oregon_trail_mapped } }
+                    trigger_event = { id = dvg_expedition.301 }
+                }
+                33 = {
+                    trigger = { NOT = { has_global_variable = great_salt_lake_mapped } }
+                    trigger_event = { id = dvg_expedition.302 }
+                }
+
+            }
+            remove_variable = on_expedition
+            remove_variable = congo_river_expedition_var
+            remove_modifier = modifier_large_expedition_cost
+            remove_expedition_events_effect = yes
+            remove_modifier = modifier_small_expedition_cost
+            remove_expedition_events_effect = yes
+            remove_variable = AI_EXPEDITION_NASIA
+            ai_expedition_simulator_start = no
+            ai_expedition_simulator_end = yes
+            set_variable = west_america_expedition_success_var #grand exhibition check
+
+
+
+            random_scope_character = {
+                limit = {
+                    has_variable = expedition_leader_var
+                }
+                remove_variable = expedition_leader_var
             }
 
         }
-        remove_variable = on_expedition
-        remove_variable = congo_river_expedition_var
-        remove_modifier = modifier_large_expedition_cost
-        remove_expedition_events_effect = yes
-        remove_modifier = modifier_small_expedition_cost
-        remove_expedition_events_effect = yes
-        remove_variable = AI_EXPEDITION_NASIA
-        ai_expedition_simulator_start = no
-        ai_expedition_simulator_end = yes
-        set_variable = west_america_expedition_success_var #grand exhibition check
-
-
-
-        random_scope_character = {
-            limit = {
-                has_variable = expedition_leader_var
-            }
-            remove_variable = expedition_leader_var
-        }
-
     }
 
-    fail = {
-        custom_tooltip = {
-            text = je_expedition_fail
-            var:expedition_peril >= 8
+    outcome = { #lose
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+            custom_tooltip = {
+                text = je_expedition_fail
+                var:expedition_peril >= 8
+            }
+        }
+        effect = {
+            trigger_event = { id = dvg_expedition.205 }
+            remove_variable = on_expedition
+            remove_variable = west_america_expedition_var
+            remove_modifier = modifier_large_expedition_cost
+            remove_expedition_events_effect = yes
+            remove_modifier = modifier_small_expedition_cost
+            remove_expedition_events_effect = yes
+            remove_variable = AI_EXPEDITION_NASIA
+            ai_expedition_simulator_start = no
+            ai_expedition_simulator_end = yes
+
+            random_scope_character = {
+                limit = {
+                    has_variable = expedition_leader_var
+                }
+                remove_variable = expedition_leader_var
+            }
         }
     }
 
-    on_fail = {
-        trigger_event = { id = dvg_expedition.205 }
-        remove_variable = on_expedition
-        remove_variable = west_america_expedition_var
-        remove_modifier = modifier_large_expedition_cost
-        remove_expedition_events_effect = yes
-        remove_modifier = modifier_small_expedition_cost
-        remove_expedition_events_effect = yes
-        remove_variable = AI_EXPEDITION_NASIA
-        ai_expedition_simulator_start = no
-        ai_expedition_simulator_end = yes
-
-        random_scope_character = {
-            limit = {
-                has_variable = expedition_leader_var
-            }
-            remove_variable = expedition_leader_var
+    outcome = {
+        flags = { hidden invalid_outcome }
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+            has_variable = expedition_cancelled
+        }
+        effect = {
         }
     }
 
@@ -566,10 +604,6 @@ je_siberia_expedition = {
     }
 
     progressbar = yes
-
-    invalid = {
-        has_variable = expedition_cancelled
-    }
 
     weight = 200
     transferable = no
@@ -596,43 +630,53 @@ je_edo_commune = {
         owns_entire_state_region = STATE_KANTO
     }
 
-    complete = {
-        any_country = {
-            is_revolutionary = yes
-            country_definition = root.country_definition
-            ig:ig_intelligentsia = {
-                is_in_government = yes
-            }
-        }
-    }
-
-    on_complete = {
-
-        trigger_event = { id = dvg_japan.22 popup = yes }
-    }
-
-    fail = {
-        NOT = {
-            owns_entire_state_region = STATE_KANTO
-            any_interest_group = {
-                leader = {
-                    has_ideology = ideology:ideology_radical
-                    has_ideology = ideology:ideology_anarchist
-                    has_ideology = ideology:ideology_reformer
-                    has_ideology = ideology:ideology_positivist
-                }
-                AND = {
-                    has_ideology = ideology:ideology_egalitarian
-                    is_powerful = yes
+    outcome = { #win
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+            any_country = {
+                is_revolutionary = yes
+                country_definition = root.country_definition
+                ig:ig_intelligentsia = {
+                    is_in_government = yes
                 }
             }
         }
+        effect = {
 
+            trigger_event = { id = dvg_japan.22 popup = yes }
+        }
     }
-    on_fail = {
 
+    outcome = { #lose
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+            NOT = {
+                owns_entire_state_region = STATE_KANTO
+                any_interest_group = {
+                    leader = {
+                        has_ideology = ideology:ideology_radical
+                        has_ideology = ideology:ideology_anarchist
+                        has_ideology = ideology:ideology_reformer
+                        has_ideology = ideology:ideology_positivist
+                    }
+                    AND = {
+                        has_ideology = ideology:ideology_egalitarian
+                        is_powerful = yes
+                    }
+                }
+            }
+
+        }
+        effect = {
+
+        }
     }
-
 
     should_be_pinned_by_default_uninvolved_or_context = yes
     weight = 5000
@@ -712,69 +756,82 @@ je_japan_treaty_ports = {
 
     }
 
-    complete = {
-        is_country_type = recognized
+    outcome = { #win
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+            is_country_type = recognized
 
-        custom_tooltip = {
-            text = not_capitulate_tt
-            NOT = {
-                has_variable = recent_capitulation
-            }
-
-
-        }
-
-        OR = {
-            scope:nagasaki_owner = {
-                has_truce_with = ROOT
-            }
-            scope:yokohama_owner = {
-                has_truce_with = ROOT
-            }
-        }
-
-
-    }
-
-    on_complete = {
-        every_scope_state = {
-            limit = {
-                state_region = {
-                    is_homeland = japanese
+            custom_tooltip = {
+                text = not_capitulate_tt
+                NOT = {
+                    has_variable = recent_capitulation
                 }
-                is_treaty_port = yes
+
+
             }
-            set_state_owner = ROOT
-        }
-        every_diplomatic_play = {
-            limit = {
-                initiator_is = c:JAP
-                has_play_goal = force_recognition
-            }
-            end_play = yes
-        }
-        s:STATE_KYUSHU = {
-            set_owner_of_provinces = {
-                country = ROOT
-                provinces = {
-                    xAE5874
+
+            OR = {
+                scope:nagasaki_owner = {
+                    has_truce_with = ROOT
+                }
+                scope:yokohama_owner = {
+                    has_truce_with = ROOT
                 }
             }
+
+
         }
-        s:STATE_KANTO = {
-            set_owner_of_provinces = {
-                country = ROOT
-                provinces = {
-                    x7010C0
+        effect = {
+            every_scope_state = {
+                limit = {
+                    state_region = {
+                        is_homeland = japanese
+                    }
+                    is_treaty_port = yes
+                }
+                set_state_owner = ROOT
+            }
+            every_diplomatic_play = {
+                limit = {
+                    initiator_is = c:JAP
+                    has_play_goal = force_recognition
+                }
+                end_play = yes
+            }
+            s:STATE_KYUSHU = {
+                set_owner_of_provinces = {
+                    country = ROOT
+                    provinces = {
+                        xAE5874
+                    }
                 }
             }
-        }
+            s:STATE_KANTO = {
+                set_owner_of_provinces = {
+                    country = ROOT
+                    provinces = {
+                        x7010C0
+                    }
+                }
+            }
 
+        }
     }
-    invalid = {
-        owns_entire_state_region = STATE_KYUSHU
-        owns_entire_state_region = STATE_KANTO
+
+    outcome = {
+        flags = { hidden invalid_outcome }
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+            owns_entire_state_region = STATE_KYUSHU
+            owns_entire_state_region = STATE_KANTO
+        }
+        effect = {
+        }
     }
+
     should_be_pinned_by_default_uninvolved_or_context = yes
     #inheritable = no
 }
@@ -817,25 +874,30 @@ je_kaigan_railway = {
         }
     }
 
-    complete = {
-        any_scope_state = {
-            state_region = s:STATE_KITA_KAIGAN
-            has_building = building_railway
-        }
-        any_scope_state = {
-            state_region = s:STATE_KITA_KAIGAN
-            has_building = building_railway
-        }
-        any_scope_state = {
-            state_region = s:STATE_CHUKOTKA
-            has_building = building_railway
-        }
+    outcome = { #win
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+            any_scope_state = {
+                state_region = s:STATE_KITA_KAIGAN
+                has_building = building_railway
+            }
+            any_scope_state = {
+                state_region = s:STATE_KITA_KAIGAN
+                has_building = building_railway
+            }
+            any_scope_state = {
+                state_region = s:STATE_CHUKOTKA
+                has_building = building_railway
+            }
 
-    }
-
-    on_complete = {
-        set_global_variable = kaigan_railway
-        #trigger_event = { id = dvg_japan_railways.1 } #This event does not exist
+        }
+        effect = {
+            set_global_variable = kaigan_railway
+            #trigger_event = { id = dvg_japan_railways.1 } #This event does not exist
+        }
     }
 
     weight = 50
@@ -906,26 +968,32 @@ je_japan_railway = {
         }
     }
 
-    complete = {
-        any_scope_state = {
-            count = 9
-            state_region = {
-                is_homeland = cu:japanese
+    outcome = { #win
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+            any_scope_state = {
+                count = 9
+                state_region = {
+                    is_homeland = cu:japanese
+                }
+                infrastructure >= 10
+                has_building = building_railway
             }
-            infrastructure >= 10
-            has_building = building_railway
+
+
         }
-
-
-    }
-
-    on_complete = {
-        set_global_variable = japan_railways_built
-        #trigger_event = { id = dvg_japan_railways.2 } #this event does not exist
+        effect = {
+            set_global_variable = japan_railways_built
+            #trigger_event = { id = dvg_japan_railways.2 } #this event does not exist
+        }
     }
 
     weight = 50
 }
+
 je_japan_asia_railway = {
     icon = "gfx/interface/icons/event_icons/event_industry.dds"
 
@@ -970,52 +1038,57 @@ je_japan_asia_railway = {
         }
     }
 
-    complete = {
-        OR = {
-            AND = {
-                any_scope_state = {
-                    state_region = s:STATE_HOKKAIDO
-                    has_building = building_railway
-                    b:building_railway = {
-                        level = 3
+    outcome = { #win
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+            OR = {
+                AND = {
+                    any_scope_state = {
+                        state_region = s:STATE_HOKKAIDO
+                        has_building = building_railway
+                        b:building_railway = {
+                            level = 3
+                        }
+                    }
+                    any_scope_state = {
+                        state_region = s:STATE_KAMCHATKA
+                        b:building_railway = {
+                            level = 3
+                        }
+                    }
+                    any_scope_state = {
+                        state_region = s:STATE_OKHOTSK
+                        has_building = building_railway
                     }
                 }
-                any_scope_state = {
-                    state_region = s:STATE_KAMCHATKA
-                    b:building_railway = {
-                        level = 3
+                AND = {
+                    any_scope_state = {
+                        state_region = s:STATE_SAKHALIN
+                        has_building = building_railway
+                        b:building_railway = {
+                            level = 2
+                        }
                     }
-                }
-                any_scope_state = {
-                    state_region = s:STATE_OKHOTSK
-                    has_building = building_railway
+                    any_scope_state = {
+                        state_region = s:STATE_OUTER_MANCHURIA
+                        has_building = building_railway
+                        b:building_railway = {
+                            level = 2
+                        }
+                    }
                 }
             }
-            AND = {
-                any_scope_state = {
-                    state_region = s:STATE_SAKHALIN
-                    has_building = building_railway
-                    b:building_railway = {
-                        level = 2
-                    }
-                }
-                any_scope_state = {
-                    state_region = s:STATE_OUTER_MANCHURIA
-                    has_building = building_railway
-                    b:building_railway = {
-                        level = 2
-                    }
-                }
-            }
+
+
+
         }
-
-
-
-    }
-
-    on_complete = {
-        set_global_variable = japan_asia_railway_done
-        #trigger_event = { id = dvg_japan_railways.3 } #This event does not exist
+        effect = {
+            set_global_variable = japan_asia_railway_done
+            #trigger_event = { id = dvg_japan_railways.3 } #This event does not exist
+        }
     }
 
     weight = 50
