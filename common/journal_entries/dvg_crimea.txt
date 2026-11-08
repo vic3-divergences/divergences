@@ -11,25 +11,31 @@
 		}
 	}
 
-	complete = {
-		custom_tooltip = {
-			text = je_crimea_succession_complete_tt
-			ruler = {
-				NOT = { has_variable = is_old_selim_giray }
-			}
-		}
-	}
-
-	on_complete = {
-		if = {
-			limit = {
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			custom_tooltip = {
+				text = je_crimea_succession_complete_tt
 				ruler = {
-					has_variable = is_murad_giray
+					NOT = { has_variable = is_old_selim_giray }
 				}
 			}
-			trigger_event = { id = dvg_kipchak.3 }
 		}
-	}
+        effect = {
+			if = {
+				limit = {
+					ruler = {
+						has_variable = is_murad_giray
+					}
+				}
+				trigger_event = { id = dvg_kipchak.3 }
+			}
+		}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }
 
 	on_monthly_pulse = {
 		effect = {
@@ -69,23 +75,40 @@ je_murad_education = {
 
 	group = je_group_internal_affairs
 
-	complete = {
-		any_scope_building = {
-			is_building_type = building_university
-			occupancy > 0.9
-			level >= 5
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			any_scope_building = {
+				is_building_type = building_university
+				occupancy > 0.9
+				level >= 5
+			}
+			scope:journal_entry = {
+				is_goal_complete = yes
+			}			
 		}
-		scope:journal_entry = {
-			is_goal_complete = yes
+        effect = {
+			add_modifier = {
+				name = murad_education
+				days = normal_modifier_time
+			}			
 		}
-	}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }
 
-	on_complete = {
-		add_modifier = {
-			name = murad_education
-			days = normal_modifier_time
+    outcome = {
+        flags = { hidden invalid_outcome }
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			ruler = {
+				NOT = { has_variable = is_murad_giray }
+			}			
 		}
-	}
+        effect = {}
+    }
 
 	current_value = {
 		value = root.literacy_rate
@@ -94,12 +117,6 @@ je_murad_education = {
 	goal_add_value = {
 		value = root.literacy_rate
 		add = 0.2
-	}
-
-	invalid = {
-		ruler = {
-			NOT = { has_variable = is_murad_giray }
-		}
 	}
 
 	transferable = no
@@ -114,35 +131,52 @@ je_murad_army = {
 
 	group = je_group_internal_affairs
 
-	complete = {
-		army_size >= 50
-		has_technology_researched = napoleonic_warfare
-		NOR = {
-			any_scope_building = {
-				is_building_type = building_barrack				
-				OR = {
-					building_has_goods_shortage = yes
-					has_active_production_method = pm_no_organization
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			army_size >= 50
+			has_technology_researched = napoleonic_warfare
+			NOR = {
+				any_scope_building = {
+					is_building_type = building_barrack				
+					OR = {
+						building_has_goods_shortage = yes
+						has_active_production_method = pm_no_organization
+					}
 				}
-			}
-			any_military_formation = {
-				filter = {
-					is_army = yes
+				any_military_formation = {
+					filter = {
+						is_army = yes
+					}
+					any_combat_unit = {
+						has_unit_type = unit_type:combat_unit_type_irregular_infantry
+					}
+					percent >= 0.25
 				}
-				any_combat_unit = {
-					has_unit_type = unit_type:combat_unit_type_irregular_infantry
-				}
-				percent >= 0.25
-			}
+			}			
 		}
-	}
+        effect = {
+			add_modifier = {
+				name = murad_army_reform
+				days = normal_modifier_time
+			}			
+		}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }
 
-	on_complete = {
-		add_modifier = {
-			name = murad_army_reform
-			days = normal_modifier_time
+    outcome = {
+        flags = { hidden invalid_outcome }
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			ruler = {
+				NOT = { has_variable = is_murad_giray }
+			}			
 		}
-	}
+        effect = {}
+    }
 
 	on_monthly_pulse = {
 		effect = {
@@ -153,12 +187,6 @@ je_murad_army = {
 				}
 				activate_law = law_type:law_peasant_levies
 			}
-		}
-	}
-
-	invalid = {
-		ruler = {
-			NOT = { has_variable = is_murad_giray }
 		}
 	}
 
