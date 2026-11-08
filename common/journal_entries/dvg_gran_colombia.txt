@@ -6,16 +6,21 @@
 	modifiers_while_active = {
 		dvg_colombian_independence_war
 	}
-	complete = {
-		c:GCO = {
-			is_subject = no
-			is_at_war = no
-			NOT = { has_modifier = dvg_war_preparation }
+	outcome = {
+		header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			c:GCO = {
+				is_subject = no
+				is_at_war = no
+				NOT = { has_modifier = dvg_war_preparation }
+			}
 		}
-		c:SPA = { has_truce_with = c:GCO }
-	}
-    on_complete = {
-		trigger_event = { id = dvg_gran_colombia.3 }
+		effect = {
+			trigger_event = { id = dvg_gran_colombia.3 }
+		}
 	}
 	
 	weight = 100
@@ -26,21 +31,33 @@ je_herrerian_revolution_GCO = {
 	
 	group = je_group_historical_content
 	
-	complete = {
-		c:GCO = {
-			is_at_war = no
-			has_truce_with = c:SPA
-		}
-		c:SPA = { has_truce_with = c:GCO }
-		AND = {
-			exists = c:SAN
-			NOR = {
-				exists = c:GRA
-				exists = c:CST
+	outcome = {
+		header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			c:GCO = {
+				is_at_war = no
+			}
+			c:SAN = {
+				owns_entire_state_region = STATE_ZULIA
+				owns_entire_state_region = STATE_MIRANDA
+				owns_entire_state_region = STATE_GUAVIARE
+				owns_entire_state_region = STATE_ANGOSTURA
+				owns_entire_state_region = STATE_BOLIVAR
+				owns_entire_state_region = STATE_ANTIOQUIA
+				owns_entire_state_region = STATE_CUNDINAMARCA
+				owns_entire_state_region = STATE_CAUCA
 			}
 		}
+		effect = {
+			trigger_event = { id = dvg_gran_colombia.15 }
+		}
 	}
-	invalid = {
+	outcome = {
+		flags = { hidden invalid_outcome }
+        conclusion_desc = je_standard_failure_conclusion_desc
 		exists = c:SAN
 		exists = c:GRA
 		
@@ -50,22 +67,23 @@ je_herrerian_revolution_GCO = {
 		c:GRA = {
 			has_truce_with = c:SAN
 		}
+		effect = {
+			trigger_event = { id = dvg_gran_colombia.15 }
+		}
 	}
-	fail = {
+	outcome = {
+		header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
 		c:GRA = {
-			has_truce_with = c:SPA
+			is_at_war = no
 			is_subject_of = c:SPA
 		}
 		c:SPA = { has_truce_with = c:GCO }
-	}
-	on_complete = { #You helped Herreria
-		trigger_event = { id = dvg_gran_colombia.15 }
-	}
-	on_invalid = { #White peace
-		trigger_event = { id = dvg_gran_colombia.15 }
-	}
-	on_fail = { #You fucked up and Santander coups you
-		trigger_event = { id = dvg_gran_colombia.7 }
+		effect = { #You fucked up and Santander coups you
+			trigger_event = { id = dvg_gran_colombia.7 }
+		}
 	}
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
@@ -75,11 +93,11 @@ je_herrerian_revolution_GCO = {
 	
 	# group = je_group_historical_content
 	
-	# complete = {
+	# outcome = {
 		# navy_size >= 20
 	# }
 	
-	# fail = {
+	# outcome = {
 	# }
 
     # on_complete = {
@@ -98,11 +116,17 @@ je_conquer_kuba_GCO_castro = { #Plan mainly for Castro
 	
 	group = je_group_foreign_affairs
 	
-	complete = {
-		OR = {
-			owns_entire_state_region = STATE_WESTERN_CUBA
-			owns_entire_state_region = STATE_CENTRAL_CUBA
-			owns_entire_state_region = STATE_EASTERN_CUBA
+	outcome = {
+		header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			OR = {
+				owns_entire_state_region = STATE_WESTERN_CUBA
+				owns_entire_state_region = STATE_CENTRAL_CUBA
+				owns_entire_state_region = STATE_EASTERN_CUBA
+			}
 			AND = {
 				c:CUB = {
 					is_subject_of = c:GCO
@@ -112,31 +136,34 @@ je_conquer_kuba_GCO_castro = { #Plan mainly for Castro
 					has_truce_with = c:CUB
 				}
 			}
-			
+			year < 1860
 		}
-		year < 1860
+		
 	}
-	fail = {
-		OR = {
-			AND = {
-				c:CUB = {
-					is_subject_of = c:SPA
-					is_at_war = no
+	outcome = {
+		header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			OR = {
+				AND = {
+					c:CUB = {
+						is_subject_of = c:SPA
+						is_at_war = no
+					}
+					c:SPA = {
+						has_truce_with = c:CUB
+					}
 				}
-				c:SPA = {
-					has_truce_with = c:CUB
-				}
+				year = 1860
 			}
-			year = 1860
+		}
+		effect = {
+			trigger_event = { id = dvg_cuba.22 }
 		}
 	}
-
-	on_complete = {
-	}
-	on_fail = {
-		trigger_event = { id = dvg_cuba.22 }
-	}
-
+	
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
@@ -152,7 +179,7 @@ je_conquer_kuba_GCO_castro = { #Plan mainly for Castro
 		# is_player = yes
 	# }
 	
-	# complete = {
+	# outcome = {
 		# owns_entire_state_region = STATE_ANGOSTURA
 		# owns_entire_state_region = STATE_BOLIVAR
 		# owns_entire_state_region = STATE_MIRANDA
@@ -181,7 +208,7 @@ je_conquer_kuba_GCO_castro = { #Plan mainly for Castro
 		# is_player = yes
 	# }
 	
-	# complete = {
+	# outcome = {
 		# AND = {
 			# any_scope_state = {
 				# state_region = s:STATE_ANGOSTURA
@@ -238,7 +265,7 @@ je_conquer_kuba_GCO_castro = { #Plan mainly for Castro
 		# is_player = yes
 	# }
 	
-	# complete = {
+	# outcome = {
 		# owns_entire_state_region = STATE_LIMA
 		# owns_entire_state_region = STATE_CAJAMARCA
 		# owns_entire_state_region = STATE_ECUADOR
@@ -264,32 +291,38 @@ je_conquer_new_spain_gran_colombia = { #Ai should NOT have strategies for this, 
 		is_player = yes
 	}
 	
-	complete = {
-		owns_entire_state_region = STATE_LIMA
-		owns_entire_state_region = STATE_CAJAMARCA
-		owns_entire_state_region = STATE_ECUADOR
-		owns_entire_state_region = STATE_PASTAZA
-		owns_entire_state_region = STATE_CAUCA
-		owns_entire_state_region = STATE_CUZCO
-		owns_entire_state_region = STATE_CUNTISUYU
-		owns_entire_state_region = STATE_NEAR_ANTISUYU
-		owns_entire_state_region = STATE_ANGOSTURA
-		owns_entire_state_region = STATE_BOLIVAR
-		owns_entire_state_region = STATE_MIRANDA
-		owns_entire_state_region = STATE_GUAVIARE
-		owns_entire_state_region = STATE_ZULIA
-		owns_entire_state_region = STATE_ANTIOQUIA
-		owns_entire_state_region = STATE_CUNDINAMARCA
-		owns_entire_state_region = STATE_CAUCA
-		owns_entire_state_region = STATE_WESTERN_CUBA
-		owns_entire_state_region = STATE_CENTRAL_CUBA
-		owns_entire_state_region = STATE_EASTERN_CUBA
-		owns_entire_state_region = STATE_TERRAS_VERMELHAS
-		owns_entire_state_region = STATE_APACHERIA
-		owns_entire_state_region = STATE_COMANCHERIE
-		owns_entire_state_region = STATE_XINGTIAN
-		owns_entire_state_region = STATE_JINSHAN
-		owns_entire_state_region = STATE_YICHENG
+	outcome = {
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			owns_entire_state_region = STATE_LIMA
+			owns_entire_state_region = STATE_CAJAMARCA
+			owns_entire_state_region = STATE_ECUADOR
+			owns_entire_state_region = STATE_PASTAZA
+			owns_entire_state_region = STATE_CAUCA
+			owns_entire_state_region = STATE_CUZCO
+			owns_entire_state_region = STATE_CUNTISUYU
+			owns_entire_state_region = STATE_NEAR_ANTISUYU
+			owns_entire_state_region = STATE_ANGOSTURA
+			owns_entire_state_region = STATE_BOLIVAR
+			owns_entire_state_region = STATE_MIRANDA
+			owns_entire_state_region = STATE_GUAVIARE
+			owns_entire_state_region = STATE_ZULIA
+			owns_entire_state_region = STATE_ANTIOQUIA
+			owns_entire_state_region = STATE_CUNDINAMARCA
+			owns_entire_state_region = STATE_CAUCA
+			owns_entire_state_region = STATE_WESTERN_CUBA
+			owns_entire_state_region = STATE_CENTRAL_CUBA
+			owns_entire_state_region = STATE_EASTERN_CUBA
+			owns_entire_state_region = STATE_TERRAS_VERMELHAS
+			owns_entire_state_region = STATE_APACHERIA
+			owns_entire_state_region = STATE_COMANCHERIE
+			owns_entire_state_region = STATE_XINGTIAN
+			owns_entire_state_region = STATE_JINSHAN
+			owns_entire_state_region = STATE_YICHENG
+		}
 	}
 	
 	weight = 100
@@ -316,36 +349,44 @@ je_veracruz_conference = {
 
 	progressbar = yes
 	
-	complete = {
-		custom_tooltip = {
-			text = veracruz_conference_finished
-			has_variable = constitution_convention_finished
+	outcome = {
+		header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			custom_tooltip = {
+				text = veracruz_conference_finished
+				has_variable = constitution_convention_finished
+			}
+			custom_tooltip = {
+				text = conservative_angered
+				this = { var:dvg_conservative_anger_var >= 6 }
+			}
 		}
-		custom_tooltip = {
-			text = conservative_angered
-			this = { var:dvg_conservative_anger_var >= 6 }
+		effect = {
+			trigger_event = { id = dvg_gran_colombia.37 } #You make people too angry
 		}
-		
 	}
 	
-	fail = {
-		custom_tooltip = {
-			text = veracruz_conference_finished
-			has_variable = constitution_convention_finished
+	outcome = {
+		header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			custom_tooltip = {
+				text = veracruz_conference_finished
+				has_variable = constitution_convention_finished
+			}
+			custom_tooltip = {
+				text = conservative_pleased
+				this = { var:dvg_conservative_anger_var < 6 }
+			}
 		}
-		custom_tooltip = {
-			text = conservative_pleased
-			this = { var:dvg_conservative_anger_var < 6 }
+		effect = {
+			trigger_event = { id = dvg_gran_colombia.36 } #You calm everyone down
 		}
-		
-	}
-	
-	on_complete = {
-		trigger_event = { id = dvg_gran_colombia.37 } #You make people too angry
-	}
-	
-	on_fail = {
-		trigger_event = { id = dvg_gran_colombia.36 } #You calm everyone down
 	}
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
@@ -355,17 +396,20 @@ je_colombian_civil_war = {
 	
 	group = je_group_internal_affairs
 	
-	complete = {
-		owns_entire_state_region = STATE_JALISCO
-		owns_entire_state_region = STATE_SINALOA
-		owns_entire_state_region = STATE_DURANGO
-		NOT = { exists = c:JLS }
+	outcome = {
+		header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			owns_entire_state_region = STATE_JALISCO
+			owns_entire_state_region = STATE_SINALOA
+			owns_entire_state_region = STATE_DURANGO
+		}
+		effect = {
+			trigger_event = { id = dvg_gran_colombia.46 }
+		}
 	}
-
-	on_complete = {
-		trigger_event = { id = dvg_gran_colombia.46 }
-	}
-
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
@@ -374,13 +418,18 @@ je_jls_colombian_civil_war = {
 	
 	group = je_group_internal_affairs
 	
-	complete = {
-		owns_entire_state_region = STATE_MEXICO
-	}
-
-	on_complete = {
-		c:JLS = { change_tag = GCO }
-		trigger_event = { id = dvg_gran_colombia.48 }
+	outcome = {
+		header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			owns_entire_state_region = STATE_MEXICO
+		}
+		effect = {
+			c:JLS = { change_tag = GCO }
+			trigger_event = { id = dvg_gran_colombia.48 }
+		}
 	}
 
 	weight = 100
@@ -391,26 +440,38 @@ je_mex_salvation_war = {
 	
 	group = je_group_internal_affairs
 	
-	complete = {
-		owns_entire_state_region = STATE_JALISCO
-		owns_entire_state_region = STATE_SINALOA
-		owns_entire_state_region = STATE_DURANGO
-		NOT = { exists = c:JLS }
+	outcome = {
+		header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			owns_entire_state_region = STATE_JALISCO
+			owns_entire_state_region = STATE_SINALOA
+			owns_entire_state_region = STATE_DURANGO
+		}
+		effect = {
+			trigger_event = { id = dvg_gran_colombia.57 }
+		}
 	}
-	fail = {
-		exists = c:JLS
-		c:MEX = {
-			has_truce_with = c:JLS
-			is_at_war = no
+	outcome = {
+		header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			c:MEX = {
+				has_truce_with = c:JLS
+				is_at_war = no
+			}
+		}
+		effect = {
+			trigger_event = { id = dvg_gran_colombia.59 }
 		}
 	}
 
-	on_complete = {
-		trigger_event = { id = dvg_gran_colombia.57 }
-	}
-	on_fail = {
-		trigger_event = { id = dvg_gran_colombia.59 }
-	}
+	
+	
 
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
@@ -420,24 +481,31 @@ je_jls_salvation_war = {
 	
 	group = je_group_internal_affairs
 	
-	complete = {
-		owns_entire_state_region = STATE_MEXICO
+	outcome = {
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			owns_entire_state_region = STATE_MEXICO
 		owns_entire_state_region = STATE_VERACRUZ
-		NOT = { exists = c:MEX }
+		}
+		effect = {
+			trigger_event = { id = dvg_gran_colombia.58 }
+		}
 	}
-	fail = {
-		exists = c:MEX
+	outcome = {
+		header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
 		c:JLS = {
 			has_truce_with = c:MEX
 			is_at_war = no
 		}
-	}
-
-	on_complete = {
-		trigger_event = { id = dvg_gran_colombia.58 }
-	}
-	on_fail = {
-		trigger_event = { id = dvg_gran_colombia.59 }
+		effect = {
+			trigger_event = { id = dvg_gran_colombia.59 }
+		}
 	}
 
 	weight = 100
@@ -448,21 +516,23 @@ je_mex_pacification_war = {
 	
 	group = je_group_internal_affairs
 	
-	complete = {
-		owns_entire_state_region = STATE_GUERRERO
-		owns_entire_state_region = STATE_OAXACA
-		owns_entire_state_region = STATE_BAJIO
-		owns_entire_state_region = STATE_ZACATECAS
-		NAND = {
-			exists = c:MCO
-			exists = c:NAH
-			exists = c:OAX
+	outcome = {
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			owns_entire_state_region = STATE_GUERRERO
+			owns_entire_state_region = STATE_OAXACA
+			owns_entire_state_region = STATE_BAJIO
+			owns_entire_state_region = STATE_ZACATECAS
+		}
+		effect = {
+			trigger_event = { id = dvg_gran_colombia.60 }
 		}
 	}
 
-	on_complete = {
-		trigger_event = { id = dvg_gran_colombia.60 }
-	}
+	
 
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
@@ -472,24 +542,27 @@ je_retake_lusitania = {
 	
 	group = je_group_internal_affairs
 	
-	complete = {
-		owns_entire_state_region = STATE_BAHIA
-		owns_entire_state_region = STATE_SANTA_CATARINA
-		owns_entire_state_region = STATE_TEJAS
-		owns_entire_state_region = STATE_RIO_GRANDE
-		owns_entire_state_region = STATE_BAJA_CALIFORNIA
-		NOT = { exists = c:LUS }
+	outcome = {
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			owns_entire_state_region = STATE_BAHIA
+			owns_entire_state_region = STATE_SANTA_CATARINA
+			owns_entire_state_region = STATE_TEJAS
+			owns_entire_state_region = STATE_RIO_GRANDE
+			owns_entire_state_region = STATE_BAJA_CALIFORNIA
+		}
+		effect = {
+			trigger_event = { id = dvg_gran_colombia.61 }
+		}
 	}
-	fail = {
-		exists = c:LUS
+	outcome = {
 		c:LUS = {
 			has_truce_with = c:MEX
 			is_at_war = no
 		}
-	}
-
-	on_complete = {
-		trigger_event = { id = dvg_gran_colombia.61 }
 	}
 	on_fail = {
 		trigger_event = { id = dvg_gran_colombia.62 }
@@ -503,21 +576,19 @@ je_retake_central_america = {
 	
 	group = je_group_internal_affairs
 	
-	complete = {
-		owns_entire_state_region = STATE_CHIAPAS
-		owns_entire_state_region = STATE_YUCATAN
-		owns_entire_state_region = STATE_GUATEMALA
-		owns_entire_state_region = STATE_SAN_SALVADOR
-		owns_entire_state_region = STATE_MANAGUA
-		owns_entire_state_region = STATE_COSTA_RICA
-		owns_entire_state_region = STATE_PANAMA
-		
-		NAND = {
-			exists = c:UCA
-			exists = c:MAY
-			exists = c:ELS
-			exists = c:NIC
-			exists = c:PNM
+	outcome = {
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			owns_entire_state_region = STATE_CHIAPAS
+			owns_entire_state_region = STATE_YUCATAN
+			owns_entire_state_region = STATE_GUATEMALA
+			owns_entire_state_region = STATE_SAN_SALVADOR
+			owns_entire_state_region = STATE_MANAGUA
+			owns_entire_state_region = STATE_COSTA_RICA
+			owns_entire_state_region = STATE_PANAMA
 		}
 	}
 
@@ -529,65 +600,38 @@ je_southern_insurrection = {
 	
 	group = je_group_internal_affairs
 	
-	complete = {
-		owns_entire_state_region = STATE_CHIAPAS
-		owns_entire_state_region = STATE_YUCATAN
-		owns_entire_state_region = STATE_GUATEMALA
-		owns_entire_state_region = STATE_SAN_SALVADOR
-		owns_entire_state_region = STATE_MANAGUA
-		owns_entire_state_region = STATE_COSTA_RICA
-		owns_entire_state_region = STATE_PANAMA
-		
-		NAND = {
-			exists = c:UCA
-			exists = c:MAY
-			exists = c:OAX
-			exists = c:MCO
+	outcome = {
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			owns_entire_state_region = STATE_CHIAPAS
+			owns_entire_state_region = STATE_YUCATAN
+			owns_entire_state_region = STATE_GUATEMALA
+			owns_entire_state_region = STATE_SAN_SALVADOR
+			owns_entire_state_region = STATE_MANAGUA
+			owns_entire_state_region = STATE_COSTA_RICA
+			owns_entire_state_region = STATE_PANAMA
+		}
+		effect = {
+			trigger_event = { id = dvg_gran_colombia.72 }
 		}
 	}
 
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
-	
-	on_complete = {
-		trigger_event = { id = dvg_gran_colombia.72 }
-	}
 }
 je_building_the_colombian_identity = {
 	icon = "gfx/interface/icons/event_icons/event_map.dds"
 
 	group = je_group_historical_content
 	possible = {
-		OR = {
-			NOT = {
-				exists = c:LUS
-			}
-			NOR = {
-				exists = c:MEX
-				exists = c:JLS
-			}
-			NOR = {
-				exists = c:UCA
-				exists = c:ELS
-				exists = c:NIC
-				exists = c:PNM
-			}
-			NOT = {
-				exists = c:CUB
-			}
-			NOR = {
-				exists = c:GRA
-				exists = c:SAN
-			}
-			NOT = {
-				exists = c:QUI
-			}
-			NOT = { is_subject = yes }
-		}
+		c:GCO = THIS
+		is_subject = no
 	}
 
 	immediate = {
-		
 		cu:lusitanian = {
 			save_scope_as = lusitanian_culture
 		}
@@ -611,80 +655,66 @@ je_building_the_colombian_identity = {
 		}
 	}
 
-	complete = {
-		has_technology_researched = pan-nationalism
-		custom_tooltip = {
-			text = je_colombian_nation_building_integrate_lusitanian_complete_tt
-			has_variable = lusitanians_integrated
-		}
-		custom_tooltip = {
-			text = je_colombian_nation_building_integrate_mexican_complete_tt
-			has_variable = mexicans_integrated
-		}
-		custom_tooltip = {
-			text = je_colombian_nation_building_integrate_caribeno_complete_tt
-			has_variable = caribenos_integrated
-		}
-		custom_tooltip = {
-			text = je_colombian_nation_building_integrate_central_american_complete_tt
-			has_variable = central_americans_integrated
-		}
-		custom_tooltip = {
-			text = je_colombian_nation_building_integrate_granadan_complete_tt
-			has_variable = granadans_integrated
-		}
-		custom_tooltip = {
-			text = je_colombian_nation_building_integrate_caladeran_complete_tt
-			has_variable = caladerans_integrated
-		}
-	}
-
-	on_complete = {
-		trigger_event = { id = dvg_colombia.2 }
-		add_loyalists = {
-			value = 0.20
-		}
-		add_modifier = {
-			name = dvg_nation_built
-		}
-		remove_primary_culture = cu:lusitanian
-		remove_primary_culture = cu:central_american
-		remove_primary_culture = cu:mexican
-		remove_primary_culture = cu:caribeno
-		remove_primary_culture = cu:granadan
-		remove_primary_culture = cu:caladeran
-	}
-	invalid = { 
-		is_subject = yes
-	}
-
-	fail = {
-		AND = {
-			OR = {
-				exists = c:MEX
-				exists = c:JLS
+	outcome = {
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			cu:colombian.culture_current_fervor >= 65
+			has_technology_researched = nationalism
+			custom_tooltip = {
+				text = je_colombian_nation_building_integrate_lusitanian_complete_tt
+				has_variable = lusitanians_integrated
 			}
-			exists = c:LUS
-			OR = {
-				exists = c:UCA
-				exists = c:ELS
-				exists = c:NIC
-				exists = c:PNM
+			custom_tooltip = {
+				text = je_colombian_nation_building_integrate_mexican_complete_tt
+				has_variable = mexicans_integrated
 			}
-			exists = c:CUB
-			OR = {
-				exists = c:GRA
-				exists = c:SAN
+			custom_tooltip = {
+				text = je_colombian_nation_building_integrate_caribeno_complete_tt
+				has_variable = caribenos_integrated
 			}
-			exists = c:QUI
+			custom_tooltip = {
+				text = je_colombian_nation_building_integrate_central_american_complete_tt
+				has_variable = central_americans_integrated
+			}
+			custom_tooltip = {
+				text = je_colombian_nation_building_integrate_granadan_complete_tt
+				has_variable = granadans_integrated
+			}
+			custom_tooltip = {
+				text = je_colombian_nation_building_integrate_caladeran_complete_tt
+				has_variable = caladerans_integrated
+			}
 		}
-
+		effect = {
+			trigger_event = { id = dvg_colombia.2 }
+			add_loyalists = {
+				value = 0.20
+			}
+			add_modifier = {
+				name = dvg_nation_built
+			}
+			remove_primary_culture = cu:lusitanian
+			remove_primary_culture = cu:central_american
+			remove_primary_culture = cu:mexican
+			remove_primary_culture = cu:caribeno
+			remove_primary_culture = cu:granadan
+			remove_primary_culture = cu:caladeran
+		}
 	}
-	on_fail = {
-		trigger_event = { id = dvg_colombia.9 }
-	}
 
-	
+	outcome = {
+		header = JOURNAL_ENTRY_TIMEOUT
+		effect_header = JOURNAL_ENTRY_ON_TIMEOUT
+		flags = { timeout }
+		conclusion_desc = JOURNAL_ENTRY_TIMEOUT_CONCLUSION_DESC
+		effect = {
+			trigger_event = { id = dvg_colombia.9 }
+		}
+	}
+	timeout = 18262
 
 	scripted_button = je_colombian_nation_building_integrate_lusitanian
 	scripted_button = je_colombian_nation_building_integrate_mexican
