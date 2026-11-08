@@ -4,35 +4,77 @@
 
 	immediate = {
 		set_variable = { name = brg_parliamentarisation_value value = 20 }
-	
 	}
 
-	complete = {
-		scope:journal_entry = {
-			is_goal_complete = yes
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			scope:journal_entry = {
+				is_goal_complete = yes
+			}
 		}
-	}
+        effect = {}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }
 
-	on_complete = {
-	
-	}
+    outcome = { #happens if you start a civil war normally 
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			OR = {
+				radical_fraction = {
+					value >= 0.35
+				}
+				any_civil_war = {
+					civil_war_progress > 0.75
+				}
+			}			
+		}
+        effect = {
+			if = {
+				limit = {
+					is_country_alive = c:HLR
+				}
+				trigger_event = { id = dvg_burgundy.301 popup = yes }
+			}
+			else = {
+				trigger_event = { id = dvg_burgundy.300 popup = yes }	
+			}
+		}
+    }
+
+    outcome = {
+        flags = { hidden invalid_outcome }
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			NOT = { 
+				has_variable = burgundy_civilwar_began
+			}
+		}
+        effect = {}
+    }
 
 	status_desc = {
-		}
+	}
 	
-
 	modifiers_while_active = {
 	}
 	
 	on_weekly_pulse = {
 		events = {
 		}
-		effect = {}
+
+		effect = {
+		}
 	}
 
 	on_monthly_pulse = {
 		effect = {
-			
 			if = {
 				limit = {
 					c:BRG = { has_ruling_interest_group = ig_devout }
@@ -91,50 +133,17 @@
 	timeout = 1825
 	
 	on_timeout = { # same as on fail
-	if = {
-		limit = {
-			c:HLR = {
-				is_country_alive = yes
+		if = {
+			limit = {
+				c:HLR = {
+					is_country_alive = yes
 			}
 		}
-	trigger_event = { id = dvg_burgundy.301 popup = yes }
-	}
-	else = {
-	trigger_event = { id = dvg_burgundy.300 popup = yes }	
-	}
-	}
-
-	fail = { #happens if you start a civil war normally 
-		OR = {
-			radical_fraction = {
-				value >= 0.35
-			}
-			any_civil_war = {
-				civil_war_progress > 0.75
-			}
+		trigger_event = { id = dvg_burgundy.301 popup = yes }
 		}
-	}
-
-	on_fail = {
-	if = {
-		limit = {
-		is_country_alive = c:HLR
+		else = {
+			trigger_event = { id = dvg_burgundy.300 popup = yes }	
 		}
-	trigger_event = { id = dvg_burgundy.301 popup = yes }
-	}
-	else = 
-	{
-	trigger_event = { id = dvg_burgundy.300 popup = yes }	
-	}
-	}
-
-	invalid = { 
-		NOT = { 
-			has_variable = burgundy_civilwar_began
-		}
-	}
-
-	on_invalid = {
 	}
 
 	weight = 100
