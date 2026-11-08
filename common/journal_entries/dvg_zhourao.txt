@@ -27,103 +27,94 @@
 		}
 	}
 
-	outcome = {
-		header = je_standard_completion_header
-		effect_header = je_standard_on_completion_header
-		color = "gold_positive"
-		conclusion_desc = je_standard_completion_conclusion_desc
-		trigger = {
-			OR = {
-				custom_tooltip = {
-					text =  dvg_yaluo_reform_2_tt
-					any_country = {
-						is_revolutionary = yes
-						country_definition = root.country_definition
-						owns_entire_state_region = STATE_XINXIANG
-					}
-				}
-				AND = {
-					custom_tooltip = {
-						text = dvg_yaluo_reform_1_tt
-						scope:journal_entry = { is_goal_complete = yes }
-					}
-					OR = {
-						has_technology_researched = nationalism
-						is_diplomatic_play_enemy_of = c:MJN
-					}
+	complete = {
+		OR = {
+			custom_tooltip = {
+				text =  dvg_yaluo_reform_2_tt
+				any_country = {
+					is_revolutionary = yes
+					country_definition = root.country_definition
+					owns_entire_state_region = STATE_XINXIANG
 				}
 			}
-		}
-		effect = {
-			#set_global_variable = hui_defected
-	
-			if = {
-				limit = {
+			AND = {
+				custom_tooltip = {
+					text = dvg_yaluo_reform_1_tt
+					scope:journal_entry = { is_goal_complete = yes }
+				}
+				OR = {
+					has_technology_researched = nationalism
 					is_diplomatic_play_enemy_of = c:MJN
 				}
-				trigger_event = {
-					id = dvg_zhourao.6 # The Northern Hui Defect!
-				}
-			}
-			else_if = {
-				limit = {
-					exists = c:TPG
-					any_neighbouring_state = {
-						owner = c:TPG
-					}
-				}
-				trigger_event = {
-					id = dvg_xijiao.17 #XXG becomes Xijiao
-				}
-				
-			}
-	
-			else = {
-				trigger_event = {
-					id = dvg_zhourao.21 # Xinxiang Declares independence
-				}
 			}
 		}
-		event_outcome_desc = {
-				first_valid = {
-					triggered_desc = {
-						desc = dvg_event_effects_zhourao.6_tt
-					}
-				}
-		}
+		
 	}
 
-
-	outcome = {
-		header = je_standard_failure_header
-		effect_header = je_standard_on_failure_header
-		color = "blue_negative"
-		conclusion_desc = je_standard_failure_conclusion_desc
-
-		trigger = {
-			custom_tooltip = {
-				text = dvg_yaluo_reform_fail_tt
-				var:dvg_yaluo_reform_variable_var = 0
-			}
-		}
-
-		effect = {
-			trigger_event = {
-				id = dvg_zhourao.8 #Good Tidings
-			}
-		}
-		event_outcome_desc = {
-			first_valid = {
-				triggered_desc = {
-					desc = dvg_event_effects_zhourao.8_tt
-				}
-			}
+	fail = {
+		custom_tooltip = {
+			text = dvg_yaluo_reform_fail_tt
+			var:dvg_yaluo_reform_variable_var = 0
 		}
 	}
 	
 	on_monthly_pulse = {
 		
 	}
+
+	on_complete = {
+		#set_global_variable = hui_defected
+
+		if = {
+			limit = {
+				is_diplomatic_play_enemy_of = c:MJN
+			}
+			trigger_event = {
+				id = dvg_zhourao.6 # The Northern Hui Defect!
+			}
+		}
+		else_if = {
+			limit = {
+				exists = c:TPG
+				any_neighbouring_state = {
+					owner = c:TPG
+				}
+			}
+			trigger_event = {
+				id = dvg_xijiao.17 #XXG becomes Xijiao
+			}
+			
+		}
+
+		else = {
+			trigger_event = {
+				id = dvg_zhourao.21 # Xinxiang Declares independence
+			}
+		}
+		
+
+	}
+	event_outcome_completed_desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = dvg_event_effects_zhourao.6_tt
+			}
+		}
+	}
+	event_outcome_failed_desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = dvg_event_effects_zhourao.8_tt
+			}
+		}
+	}
+
+	on_fail = {
+		trigger_event = {
+			id = dvg_zhourao.8 #Good Tidings
+		}
+	}
+
 	current_value = {
 		value = root.var:dvg_yaluo_reform_variable_var
 	}
@@ -131,25 +122,21 @@
 	goal_add_value = {
 		add = 8
 	}
-
-	outcome = {
-		flags = { hidden invalid_outcome }
-		conclusion_desc = je_standard_failure_conclusion_desc
-		trigger = {
-			OR = {
-				NOT = {
-					exists = c:MJN
-				}
-				AND = {
-					exists = c:XXG
-					c:XXG = {
-						is_subject_of = ROOT
-					}
+	invalid = {
+		OR = {
+			NOT = {
+				exists = c:MJN
+			}
+			AND = {
+				exists = c:XXG
+				c:XXG = {
+					is_subject_of = ROOT
 				}
 			}
+			
 		}
-		effect = {
-		}
+		
+
 	}
 
 	progressbar = yes
@@ -191,60 +178,65 @@ je_one_kongsi = {
 
 		}
 	}
-
-	outcome = {
-		header = je_standard_completion_header
-		effect_header = je_standard_on_completion_header
-		color = "gold_positive"
-		conclusion_desc = je_standard_completion_conclusion_desc
-		trigger = {
-			OR = {
-				AND = {
-					exists = c:ZHR
-					c:ZHR = ROOT	
-				}
-				AND = {
-					
-					scope:journal_entry = { 
-						is_goal_complete = yes
-					
-					}
-					NOT = {
-						
-						any_country = {
-							AND = {
-								relations:root < relations_threshold:amicable
-								country_has_primary_culture = cu:zhourao
 	
-							}
+	complete = {
+	
+		OR = {
+			AND = {
+				exists = c:ZHR
+				c:ZHR = ROOT	
+			}
+			AND = {
+				
+				scope:journal_entry = { 
+					is_goal_complete = yes
+				
+				}
+				NOT = {
+					
+					any_country = {
+						AND = {
+							relations:root < relations_threshold:amicable
+							country_has_primary_culture = cu:zhourao
+
 						}
 					}
-					
-					
 				}
-				AND = {
-				owns_entire_state_region = STATE_QINGSHUI
-				owns_entire_state_region = STATE_GUANSHAN
-				owns_entire_state_region = STATE_XINXIANG
-				owns_entire_state_region = STATE_YONGLING
-				owns_entire_state_region = STATE_ZHENG_HE
-				owns_entire_state_region = STATE_WEIHUAI
-				owns_entire_state_region = STATE_TAITUNG
-				}
+				
+				
+			}
+			AND = {
+			owns_entire_state_region = STATE_QINGSHUI
+			owns_entire_state_region = STATE_GUANSHAN
+			owns_entire_state_region = STATE_XINXIANG
+			owns_entire_state_region = STATE_YONGLING
+			owns_entire_state_region = STATE_ZHENG_HE
+			owns_entire_state_region = STATE_WEIHUAI
+			owns_entire_state_region = STATE_TAITUNG
 			}
 		}
-		effect = {
-			trigger_event = { id = dvg_zhourao.10 popup = yes }
-			every_country = {
-				limit = {
-					country_has_primary_culture = cu:australian
-				}
-				trigger_event = {
-					id = dvg_australie.29
-				}
+		
+	}
+	
+	
+	fail = {
+	}
+
+    on_complete = {
+		trigger_event = { id = dvg_zhourao.10 popup = yes }
+		every_country = {
+			limit = {
+				country_has_primary_culture = cu:australian
+			}
+			trigger_event = {
+				id = dvg_australie.29
 			}
 		}
 	}
+	
+    on_fail = {
+	}
+
 	on_monthly_pulse = {
 		effect = {
 			if = {
@@ -284,21 +276,22 @@ je_invade_zhusha = {
 
 	group = je_group_foreign_affairs
 
-	outcome = {
-		header = je_standard_completion_header
-		effect_header = je_standard_on_completion_header
-		color = "gold_positive"
-		conclusion_desc = je_standard_completion_conclusion_desc
-		trigger = {
-			owns_entire_state_region = STATE_WEIZHOU
-			owns_entire_state_region = STATE_JINZHOU
-			owns_entire_state_region = STATE_WENCHENG
-		}
-		effect = {
-			trigger_event = { id = dvg_zhourao.14 popup = yes }
-		}
+	complete = {
+		owns_entire_state_region = STATE_WEIZHOU
+		owns_entire_state_region = STATE_JINZHOU
+		owns_entire_state_region = STATE_WENCHENG
+	}
+	
+	fail = {
 	}
 
+    on_complete = {
+		trigger_event = { id = dvg_zhourao.14 popup = yes }
+	}
+	
+    on_fail = {
+	}
+	
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
@@ -307,27 +300,27 @@ je_one_kongsi_zsa = {
 	icon = "gfx/interface/icons/event_icons/event_zhourao.dds"
 	
 	group = je_group_foreign_affairs
-
-
-	outcome = {
-		header = je_standard_completion_header
-		effect_header = je_standard_on_completion_header
-		color = "gold_positive"
-		conclusion_desc = je_standard_completion_conclusion_desc
-		trigger = {
-			owns_entire_state_region = STATE_QINGSHUI
-			owns_entire_state_region = STATE_GUANSHAN
-			owns_entire_state_region = STATE_XINXIANG
-			owns_entire_state_region = STATE_YONGLING
-			owns_entire_state_region = STATE_ZHENG_HE
-			owns_entire_state_region = STATE_WEIHUAI
-			owns_entire_state_region = STATE_TAITUNG
-		}
-		effect = {
-			trigger_event = { id = dvg_zhourao.10 popup = yes }
-		}
+	
+	complete = {
+		owns_entire_state_region = STATE_QINGSHUI
+		owns_entire_state_region = STATE_GUANSHAN
+		owns_entire_state_region = STATE_XINXIANG
+		owns_entire_state_region = STATE_YONGLING
+		owns_entire_state_region = STATE_ZHENG_HE
+		owns_entire_state_region = STATE_WEIHUAI
+		owns_entire_state_region = STATE_TAITUNG
+	}
+	
+	fail = {
 	}
 
+    on_complete = {
+		trigger_event = { id = dvg_zhourao.10 popup = yes }
+	}
+	
+    on_fail = {
+	}
+	
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
@@ -342,81 +335,51 @@ je_red_sultan = {
 		c:ZSA = this
 	}
 
-	outcome = {
-		header = je_standard_completion_header
-		effect_header = je_standard_on_completion_header
-		color = "gold_positive"
-		conclusion_desc = je_standard_completion_conclusion_desc
-		trigger = {
-			custom_tooltip = {
-				text = dvg_red_sultan_died_comp_tt
-				OR = {
-				has_variable = dvg_sultan_can_die
-				ruler = {
-					age >= 70
-				}
+	 complete = {
+		custom_tooltip = {
+			text = dvg_red_sultan_died_comp_tt
+			OR = {
+			has_variable = dvg_sultan_can_die
+			ruler = {
+				age >= 70
+			}
+			
+			}
+			OR = {
+				this = { var:dvg_zhusha_stability_of_succession_variable_var >= 4 }
+				this = { var:dvg_zhusha_stability_of_succession_variable_var <= 2 }
+			}
+			
+			OR = {
 				
-				}
-				OR = {
-					this = { var:dvg_zhusha_stability_of_succession_variable_var >= 4 }
-					this = { var:dvg_zhusha_stability_of_succession_variable_var <= 2 }
-				}
-				
-				OR = {
-					
-					this = { var:dvg_zhusha_stability_of_succession_variable_var = 6 }
-					this = { var:dvg_zhusha_stability_of_succession_variable_var = 0 }
-				}
+				this = { var:dvg_zhusha_stability_of_succession_variable_var = 6 }
+				this = { var:dvg_zhusha_stability_of_succession_variable_var = 0 }
 			}
 		}
-		effect = {
-			trigger_event = { id = dvg_zhourao.704 popup = yes }
-			every_scope_character = {
-				limit = {
-					has_trait = immortal
-				}
-				remove_trait = immortal
-			}
-		}
-	}
-
-
-	outcome = {
-		header = je_standard_failure_header
-		effect_header = je_standard_on_failure_header
-		color = "blue_negative"
-		conclusion_desc = je_standard_failure_conclusion_desc
-
-		trigger = {
-			custom_tooltip = {
-				text = dvg_red_sultan_died_fail_tt				
-				OR = {
-				
-				c:ZSA = {
-					ruler = {
-						NOT = { has_variable = is_red_sultan }
-					}
-				} 
-				}
 		
-				OR = {
-					this = { var:dvg_zhusha_stability_of_succession_variable_var < 4 }
-					this = { var:dvg_zhusha_stability_of_succession_variable_var > 2 }
-				}
+		
+	 }	
+	
+	fail = {
+		
+		custom_tooltip = {
+			text = dvg_red_sultan_died_fail_tt
+						
+		OR = {
+		
+		c:ZSA = {
+			ruler = {
+				NOT = { has_variable = is_red_sultan }
 			}
+		} 
 		}
 
-		effect = {
-			trigger_event = { id = dvg_zhourao.705 popup = yes }
-			every_scope_character = {
-				limit = {
-					has_trait = immortal
-				}
-				remove_trait = immortal
-			}
+		OR = {
+			this = { var:dvg_zhusha_stability_of_succession_variable_var < 4 }
+			this = { var:dvg_zhusha_stability_of_succession_variable_var > 2 }
+		}
 		}
 	}
-
 	on_monthly_pulse = {
 		effect = {
 			if = {
@@ -505,41 +468,49 @@ je_red_sultan = {
 			
 		}
 	}
-	outcome = {
-		flags = { hidden invalid_outcome }
-		conclusion_desc = je_standard_failure_conclusion_desc
-		trigger = {
-			NOT = {
-				has_law = law_type:law_monarchy
+	on_complete = {
+		trigger_event = { id = dvg_zhourao.704 popup = yes }
+		every_scope_character = {
+			limit = {
+				has_trait = immortal
 			}
+			remove_trait = immortal
 		}
-		effect = {
-			every_scope_character = {
-				limit = {
-					has_trait = immortal
-				}
-				remove_trait = immortal
+	}
+	
+    on_fail = {
+		trigger_event = { id = dvg_zhourao.705 popup = yes }
+		every_scope_character = {
+			limit = {
+				has_trait = immortal
 			}
+			remove_trait = immortal
 		}
 	}
 
+	invalid = {
+		NOT = {  has_law = law_type:law_monarchy  }
+	}
+	on_invalid = {
+		every_scope_character = {
+			limit = {
+				has_trait = immortal
+			}
+			remove_trait = immortal
+		}
+	}
 	timeout = 7300
 
-	outcome = {
-        header = JOURNAL_ENTRY_TIMEOUT
-        effect_header = JOURNAL_ENTRY_ON_TIMEOUT
-        flags = { timeout }
-        conclusion_desc = JOURNAL_ENTRY_TIMEOUT_CONCLUSION_DESC
-        effect = {
-			trigger_event = { id = dvg_zhourao.705 popup = yes }
-			every_scope_character = {
-				limit = {
-					has_trait = immortal
-				}
-				remove_trait = immortal
+	on_timeout = {
+		trigger_event = { id = dvg_zhourao.705 popup = yes }
+		every_scope_character = {
+			limit = {
+				has_trait = immortal
 			}
+			remove_trait = immortal
 		}
 	}
+
 	current_value = {
 		value = root.var:dvg_zhusha_stability_of_succession_variable_var
 	}
@@ -558,41 +529,45 @@ je_zhourao_destiny = {
 	icon = "gfx/interface/icons/event_icons/event_zhourao_ink.dds"
 	
 	group = je_group_foreign_affairs
+	
+	complete = {
+		owns_entire_state_region = STATE_NOONGAR
+		owns_entire_state_region = STATE_COOMALONG
+		owns_entire_state_region = STATE_PITJANTJAJARA
+		owns_entire_state_region = STATE_OODNATTA
+		owns_entire_state_region = STATE_YONGJIA
+		owns_entire_state_region = STATE_YOLNGU
+		owns_entire_state_region = STATE_YONGLING
+		owns_entire_state_region = STATE_QINGSHUI
+		owns_entire_state_region = STATE_GUANSHAN
+		owns_entire_state_region = STATE_XINXIANG
+		owns_entire_state_region = STATE_ZHENG_HE
+		owns_entire_state_region = STATE_WEIHUAI
+		owns_entire_state_region = STATE_TAITUNG
+		owns_entire_state_region = STATE_WEIZHOU
+		owns_entire_state_region = STATE_JINZHOU
+		owns_entire_state_region = STATE_WENCHENG
+		owns_entire_state_region = STATE_PARLEVAR
+	}
+	
+	fail = {
+	}
 
-	outcome = {
-		header = je_standard_completion_header
-		effect_header = je_standard_on_completion_header
-		color = "gold_positive"
-		conclusion_desc = je_standard_completion_conclusion_desc
-		trigger = {
-			owns_entire_state_region = STATE_NOONGAR
-			owns_entire_state_region = STATE_COOMALONG
-			owns_entire_state_region = STATE_PITJANTJAJARA
-			owns_entire_state_region = STATE_OODNATTA
-			owns_entire_state_region = STATE_YONGJIA
-			owns_entire_state_region = STATE_YOLNGU
-			owns_entire_state_region = STATE_YONGLING
-			owns_entire_state_region = STATE_QINGSHUI
-			owns_entire_state_region = STATE_GUANSHAN
-			owns_entire_state_region = STATE_XINXIANG
-			owns_entire_state_region = STATE_ZHENG_HE
-			owns_entire_state_region = STATE_WEIHUAI
-			owns_entire_state_region = STATE_TAITUNG
-			owns_entire_state_region = STATE_WEIZHOU
-			owns_entire_state_region = STATE_JINZHOU
-			owns_entire_state_region = STATE_WENCHENG
-			owns_entire_state_region = STATE_PARLEVAR
-		}
-		effect = {
-			every_scope_state = {
-				limit = {
-					region = sr:region_zhourao
-				}
-				state_region = {
-					add_homeland = cu:zhourao
-				}
+    on_complete = {
+		every_scope_state = {
+			limit = {
+				region = sr:region_zhourao
+			}
+			state_region = {
+				add_homeland = cu:zhourao
 			}
 		}
+		
+	}
+	
+    on_fail = {
+
+
 	}
 	
 	weight = 100
@@ -603,20 +578,21 @@ je_zhr_papua = {
 	icon = "gfx/interface/icons/event_icons/event_map.dds"
 	
 	group = je_group_foreign_affairs
-
-	outcome = {
-		header = je_standard_completion_header
-		effect_header = je_standard_on_completion_header
-		color = "gold_positive"
-		conclusion_desc = je_standard_completion_conclusion_desc
-		trigger = {
-			owns_entire_state_region = STATE_EASTERN_NEW_GUINEA
-		}
-		effect = {
-			trigger_event = { id = dvg_zhourao.14 popup = yes }
-		}
+	
+	complete = {
+		owns_entire_state_region = STATE_EASTERN_NEW_GUINEA
+	}
+	
+	fail = {
 	}
 
+    on_complete = {
+		trigger_event = { id = dvg_zhourao.14 popup = yes }
+	}
+	
+    on_fail = {
+	}
+	
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
@@ -625,22 +601,23 @@ je_zhrzsa_indonesia_first_step = {
 	icon = "gfx/interface/icons/event_icons/event_map.dds"
 	
 	group = je_group_foreign_affairs
-
-	outcome = {
-		header = je_standard_completion_header
-		effect_header = je_standard_on_completion_header
-		color = "gold_positive"
-		conclusion_desc = je_standard_completion_conclusion_desc
-		trigger = {
-			owns_entire_state_region = STATE_MOLUCCAS
-			owns_entire_state_region = STATE_SUNDA_ISLANDS
-			owns_entire_state_region = STATE_CELEBES
-		}
-		effect = {
-			trigger_event = { id = dvg_zhourao.14 popup = yes }
-		}
+	
+	complete = {
+		owns_entire_state_region = STATE_MOLUCCAS
+		owns_entire_state_region = STATE_SUNDA_ISLANDS
+		owns_entire_state_region = STATE_CELEBES
+	}
+	
+	fail = {
 	}
 
+    on_complete = {
+		trigger_event = { id = dvg_zhourao.14 popup = yes }
+	}
+	
+    on_fail = {
+	}
+	
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
@@ -649,22 +626,23 @@ je_zhrzsa_indonesia_java = {
 	icon = "gfx/interface/icons/event_icons/event_map.dds"
 	
 	group = je_group_foreign_affairs
-
-	outcome = {
-		header = je_standard_completion_header
-		effect_header = je_standard_on_completion_header
-		color = "gold_positive"
-		conclusion_desc = je_standard_completion_conclusion_desc
-		trigger = {
-			owns_entire_state_region = STATE_CENTRAL_JAVA
-			owns_entire_state_region = STATE_WEST_JAVA
-			owns_entire_state_region = STATE_EAST_JAVA
-		}
-		effect = {
-			trigger_event = { id = dvg_zhourao.14 popup = yes }
-		}
+	
+	complete = {
+		owns_entire_state_region = STATE_CENTRAL_JAVA
+		owns_entire_state_region = STATE_WEST_JAVA
+		owns_entire_state_region = STATE_EAST_JAVA
+	}
+	
+	fail = {
 	}
 
+    on_complete = {
+		trigger_event = { id = dvg_zhourao.14 popup = yes }
+	}
+	
+    on_fail = {
+	}
+	
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
@@ -673,22 +651,23 @@ je_zhrzsa_indonesia_borneo = {
 	icon = "gfx/interface/icons/event_icons/event_map.dds"
 	
 	group = je_group_foreign_affairs
-
-	outcome = {
-		header = je_standard_completion_header
-		effect_header = je_standard_on_completion_header
-		color = "gold_positive"
-		conclusion_desc = je_standard_completion_conclusion_desc
-		trigger = {
-			owns_entire_state_region = STATE_EAST_BORNEO
-			owns_entire_state_region = STATE_WEST_BORNEO
-			owns_entire_state_region = STATE_NORTH_BORNEO
-		}
-		effect = {
-			trigger_event = { id = dvg_zhourao.14 popup = yes }
-		}
+	
+	complete = {
+		owns_entire_state_region = STATE_EAST_BORNEO
+		owns_entire_state_region = STATE_WEST_BORNEO
+		owns_entire_state_region = STATE_NORTH_BORNEO
+	}
+	
+	fail = {
 	}
 
+    on_complete = {
+		trigger_event = { id = dvg_zhourao.14 popup = yes }
+	}
+	
+    on_fail = {
+	}
+	
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
@@ -697,23 +676,23 @@ je_zhrzsa_indonesia_sumatra = {
 	icon = "gfx/interface/icons/event_icons/event_map.dds"
 	
 	group = je_group_foreign_affairs
-
-
-	outcome = {
-		header = je_standard_completion_header
-		effect_header = je_standard_on_completion_header
-		color = "gold_positive"
-		conclusion_desc = je_standard_completion_conclusion_desc
-		trigger = {
-			owns_entire_state_region = STATE_SOUTH_SUMATRA
-			owns_entire_state_region = STATE_NORTH_SUMATRA
-			owns_entire_state_region = STATE_ACEH
-		}
-		effect = {
-			trigger_event = { id = dvg_zhourao.14 popup = yes }
-		}
+	
+	complete = {
+		owns_entire_state_region = STATE_SOUTH_SUMATRA
+		owns_entire_state_region = STATE_NORTH_SUMATRA
+		owns_entire_state_region = STATE_ACEH
+	}
+	
+	fail = {
 	}
 
+    on_complete = {
+		trigger_event = { id = dvg_zhourao.14 popup = yes }
+	}
+	
+    on_fail = {
+	}
+	
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
@@ -722,55 +701,25 @@ je_zhrzsa_indonesia_final_step = {
 	icon = "gfx/interface/icons/event_icons/event_map.dds"
 	
 	group = je_group_foreign_affairs
-
-
-	outcome = {
-		header = je_standard_completion_header
-		effect_header = je_standard_on_completion_header
-		color = "gold_positive"
-		conclusion_desc = je_standard_completion_conclusion_desc
-		trigger = {
-			owns_entire_state_region = STATE_MALAYA
-			owns_entire_state_region = STATE_MINDANAO
-		}
-		effect = {
-			trigger_event = { id = dvg_zhourao.14 popup = yes }
-		}
-	}
-
-	weight = 100
-	should_be_pinned_by_default_uninvolved_or_context = yes
-}
-
-je_one_kongsi_zsa = {
-	icon = "gfx/interface/icons/event_icons/event_zhourao.dds"
 	
-	group = je_group_foreign_affairs
-
-	outcome = {
-		header = je_standard_completion_header
-		effect_header = je_standard_on_completion_header
-		color = "gold_positive"
-		conclusion_desc = je_standard_completion_conclusion_desc
-		trigger = {
-			owns_entire_state_region = STATE_QINGSHUI
-			owns_entire_state_region = STATE_GUANSHAN
-			owns_entire_state_region = STATE_XINXIANG
-			owns_entire_state_region = STATE_YONGLING
-			owns_entire_state_region = STATE_ZHENG_HE
-			owns_entire_state_region = STATE_WEIHUAI
-			owns_entire_state_region = STATE_TAITUNG
-		}
-		effect = {
-			trigger_event = { id = dvg_zhourao.10 popup = yes }
-		}
+	complete = {
+		owns_entire_state_region = STATE_MALAYA
+		owns_entire_state_region = STATE_MINDANAO
+	}
+	
+	fail = {
 	}
 
+    on_complete = {
+		trigger_event = { id = dvg_zhourao.14 popup = yes }
+	}
+	
+    on_fail = {
+	}
+	
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
-
-
 
 je_red_prince = {
 	icon = "gfx/interface/icons/event_icons/event_red_prince.dds"
@@ -782,66 +731,33 @@ je_red_prince = {
 		c:ZSA = this
 	}
 
-	outcome = {
-		header = je_standard_completion_header
-		effect_header = je_standard_on_completion_header
-		color = "gold_positive"
-		conclusion_desc = je_standard_completion_conclusion_desc
-		trigger = {
-			custom_tooltip = {
-				text = dvg_a_prince_has_won_tt
-				ruler = {
-					NOT = { has_variable = is_red_sultan }
-				}
-				OR = {
-					this = { var:dvg_zhusha_princely_power_variable_var = 8 }
-					this = { var:dvg_zhusha_princely_power_variable_var = 0 }
-					has_variable = dvg_songyaned
-				}
+	complete = {
+		custom_tooltip = {
+			text = dvg_a_prince_has_won_tt
+			ruler = {
+				NOT = { has_variable = is_red_sultan }
+			}
+			OR = {
+				this = { var:dvg_zhusha_princely_power_variable_var = 8 }
+				this = { var:dvg_zhusha_princely_power_variable_var = 0 }
+				has_variable = dvg_songyaned
 			}
 		}
-		effect = {
-			hidden_effect = {
-				if = {
-					limit = {
-						this = { var:dvg_zhusha_princely_power_variable_var = 8 }
-					}
-					set_variable = lushou_won_red_prince_war
-				}
-				if = {
-					limit = {
-						this = { var:dvg_zhusha_princely_power_variable_var = 0 }
-					}
-					set_variable = luoxi_won_red_prince_war
+	}	
+
+	fail = {
+		custom_tooltip = {
+			text = dvg_songyan_tt
+			OR = {
+				has_variable = dvg_songyan_society_zsa
+				NOT = {
+					has_law = law_type:law_monarchy
 				}
 			}
-			trigger_event = { id = dvg_zhourao.713 popup = yes days = 10 }
+			
 		}
-	}
-
-	outcome = {
-		header = je_standard_failure_header
-		effect_header = je_standard_on_failure_header
-		color = "blue_negative"
-		conclusion_desc = je_standard_failure_conclusion_desc
-
-		trigger = {
-			custom_tooltip = {
-				text = dvg_songyan_tt
-				OR = {
-					has_variable = dvg_songyan_society_zsa
-					NOT = {
-						has_law = law_type:law_monarchy
-					}
-				}
-			}
-		}
-
-		effect = {
-
-		}
-	}
-
+	}	
+	
 	on_monthly_pulse = {
 		effect = {
 			change_variable = {
@@ -901,6 +817,24 @@ je_red_prince = {
 		}
 	}
 	
+	on_complete = {
+		hidden_effect = {
+			if = {
+				limit = {
+					this = { var:dvg_zhusha_princely_power_variable_var = 8 }
+				}
+				set_variable = lushou_won_red_prince_war
+			}
+			if = {
+				limit = {
+					this = { var:dvg_zhusha_princely_power_variable_var = 0 }
+				}
+				set_variable = luoxi_won_red_prince_war
+			}
+		}
+		trigger_event = { id = dvg_zhourao.713 popup = yes days = 10 }
+	}
+
 	current_value = {
 		value = root.var:dvg_zhusha_princely_power_variable_var
 	}
@@ -911,16 +845,15 @@ je_red_prince = {
 
 	timeout = 89
 
-	outcome = {
-		header = JOURNAL_ENTRY_TIMEOUT
-		effect_header = JOURNAL_ENTRY_ON_TIMEOUT
-		flags = { timeout }
-		conclusion_desc = JOURNAL_ENTRY_TIMEOUT_CONCLUSION_DESC
-		effect = {
-			trigger_event = {
-				id = dvg_zhourao.719
-			}
+	on_timeout = {
+		trigger_event = {
+			id = dvg_zhourao.719
 		}
+	}
+
+	on_fail = {
+
+		
 	}
 
 
@@ -934,36 +867,37 @@ je_zhr_press_west = {
 	icon = "gfx/interface/icons/event_icons/event_zhourao_ink.dds"
 	
 	group = je_group_foreign_affairs
-
-	outcome = {
-		header = je_standard_completion_header
-		effect_header = je_standard_on_completion_header
-		color = "gold_positive"
-		conclusion_desc = je_standard_completion_conclusion_desc
-		trigger = {
-			owns_entire_state_region = STATE_NOONGAR
-			owns_entire_state_region = STATE_COOMALONG
-			owns_entire_state_region = STATE_PITJANTJAJARA
-			owns_entire_state_region = STATE_OODNATTA
-			owns_entire_state_region = STATE_YONGJIA
-			owns_entire_state_region = STATE_YOLNGU
-			owns_entire_state_region = STATE_YONGLING
-			owns_entire_state_region = STATE_QINGSHUI
-			owns_entire_state_region = STATE_GUANSHAN
-			owns_entire_state_region = STATE_XINXIANG
-			owns_entire_state_region = STATE_ZHENG_HE
-			owns_entire_state_region = STATE_WEIHUAI
-			owns_entire_state_region = STATE_TAITUNG
-			owns_entire_state_region = STATE_WEIZHOU
-			owns_entire_state_region = STATE_JINZHOU
-			owns_entire_state_region = STATE_WENCHENG
-			owns_entire_state_region = STATE_PARLEVAR
-		}
-		effect = {
-			trigger_event = { id = dvg_zhourao.20 popup = yes }
-		}
+	
+	complete = {
+		owns_entire_state_region = STATE_NOONGAR
+		owns_entire_state_region = STATE_COOMALONG
+		owns_entire_state_region = STATE_PITJANTJAJARA
+		owns_entire_state_region = STATE_OODNATTA
+		owns_entire_state_region = STATE_YONGJIA
+		owns_entire_state_region = STATE_YOLNGU
+		owns_entire_state_region = STATE_YONGLING
+		owns_entire_state_region = STATE_QINGSHUI
+		owns_entire_state_region = STATE_GUANSHAN
+		owns_entire_state_region = STATE_XINXIANG
+		owns_entire_state_region = STATE_ZHENG_HE
+		owns_entire_state_region = STATE_WEIHUAI
+		owns_entire_state_region = STATE_TAITUNG
+		owns_entire_state_region = STATE_WEIZHOU
+		owns_entire_state_region = STATE_JINZHOU
+		owns_entire_state_region = STATE_WENCHENG
+		owns_entire_state_region = STATE_PARLEVAR
+	}
+	
+	fail = {
 	}
 
+    on_complete = {
+		trigger_event = { id = dvg_zhourao.20 popup = yes }
+	}
+	
+    on_fail = {
+	}
+	
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
@@ -972,23 +906,21 @@ je_zhrzsa_luoxi_will = {
 	icon = "gfx/interface/icons/event_icons/event_zhourao_ink.dds"
 	
 	group = je_group_internal_affairs
-
-	outcome = {
-		header = je_standard_completion_header
-		effect_header = je_standard_on_completion_header
-		color = "gold_positive"
-		conclusion_desc = je_standard_completion_conclusion_desc
-		trigger = {
-			has_law = law_type:law_hereditary_bureaucrats
-			has_law = law_type:law_agrarianism
-			has_law = law_type:law_serfdom
-			has_law = law_type:law_oligarchy
-		}
-		effect = {
-			trigger_event = { id = dvg_zhourao.1000 popup = yes }
-		}
+	
+	complete = {
+		has_law = law_type:law_hereditary_bureaucrats
+		has_law = law_type:law_agrarianism
+		has_law = law_type:law_serfdom
+		has_law = law_type:law_oligarchy
+	}
+	
+	fail = {
 	}
 
+    on_complete = {
+		trigger_event = { id = dvg_zhourao.1000 popup = yes }
+	}
+	
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
@@ -997,35 +929,36 @@ je_zhr_reconsolidate_control = {
 	icon = "gfx/interface/icons/event_icons/event_zhourao_ink.dds"
 	
 	group = je_group_foreign_affairs
-
-	outcome = {
-		header = je_standard_completion_header
-		effect_header = je_standard_on_completion_header
-		color = "gold_positive"
-		conclusion_desc = je_standard_completion_conclusion_desc
-		trigger = {
-			owns_entire_state_region = STATE_NOONGAR
-			owns_entire_state_region = STATE_COOMALONG
-			owns_entire_state_region = STATE_PITJANTJAJARA
-			owns_entire_state_region = STATE_OODNATTA
-			owns_entire_state_region = STATE_YONGJIA
-			owns_entire_state_region = STATE_YOLNGU
-			owns_entire_state_region = STATE_YONGLING
-			owns_entire_state_region = STATE_QINGSHUI
-			owns_entire_state_region = STATE_GUANSHAN
-			owns_entire_state_region = STATE_XINXIANG
-			owns_entire_state_region = STATE_ZHENG_HE
-			owns_entire_state_region = STATE_WEIHUAI
-			owns_entire_state_region = STATE_TAITUNG
-			owns_entire_state_region = STATE_WEIZHOU
-			owns_entire_state_region = STATE_JINZHOU
-			owns_entire_state_region = STATE_WENCHENG
-			owns_entire_state_region = STATE_PARLEVAR
-		}
-		effect = {
-		}
+	
+	complete = {
+		owns_entire_state_region = STATE_NOONGAR
+		owns_entire_state_region = STATE_COOMALONG
+		owns_entire_state_region = STATE_PITJANTJAJARA
+		owns_entire_state_region = STATE_OODNATTA
+		owns_entire_state_region = STATE_YONGJIA
+		owns_entire_state_region = STATE_YOLNGU
+		owns_entire_state_region = STATE_YONGLING
+		owns_entire_state_region = STATE_QINGSHUI
+		owns_entire_state_region = STATE_GUANSHAN
+		owns_entire_state_region = STATE_XINXIANG
+		owns_entire_state_region = STATE_ZHENG_HE
+		owns_entire_state_region = STATE_WEIHUAI
+		owns_entire_state_region = STATE_TAITUNG
+		owns_entire_state_region = STATE_WEIZHOU
+		owns_entire_state_region = STATE_JINZHOU
+		owns_entire_state_region = STATE_WENCHENG
+		owns_entire_state_region = STATE_PARLEVAR
+	}
+	
+	fail = {
 	}
 
+    on_complete = {
+	}
+	
+    on_fail = {
+	}
+	
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
@@ -1083,48 +1016,39 @@ je_pillager_prince_zhourao = {
 		}
 	}
 
-
-	outcome = {
-		header = je_standard_completion_header
-		effect_header = je_standard_on_completion_header
-		color = "gold_positive"
-		conclusion_desc = je_standard_completion_conclusion_desc
-		trigger = {
-			custom_tooltip = {
-				text = pillager_prince_zhourao_tt
-				NOT = {
-					any_character = {
-						has_variable = pillager_prince
-					}
+	complete = {
+		custom_tooltip = {
+			text = pillager_prince_zhourao_tt
+			NOT = {
+				any_character = {
+					has_variable = pillager_prince
 				}
 			}
 		}
-		effect = {
-			trigger_event = {
-				id = dvg_zhourao.1202
-			}
+		
+		
+	}
+	on_complete = {
+		trigger_event = {
+			id = dvg_zhourao.1202
 		}
 	}
-	outcome = {
-		header = je_standard_failure_header
-		effect_header = je_standard_on_failure_header
-		color = "blue_negative"
-		conclusion_desc = je_standard_failure_conclusion_desc
 
-		trigger = {
-			any_scope_state = {
-				is_capital = yes
-				turmoil >= 0.75  
-			}
-			revolution_progress_high = yes
+	fail = {
+		any_scope_state = {
+			is_capital = yes
+			turmoil >= 0.75  
 		}
+		revolution_progress_high = yes
+		
+	}
 
-		effect = {
-			trigger_event = {
-				id = dvg_zhourao.1203
-			}
+	on_fail = {
+		trigger_event = {
+			id = dvg_zhourao.1203
 		}
 	}
+
 
 	#inheritable = no
 
@@ -1151,48 +1075,37 @@ je_zhourao_truce = {
 		
 		
 	}
-
-	outcome = {
-		header = je_standard_completion_header
-		effect_header = je_standard_on_completion_header
-		color = "gold_positive"
-		conclusion_desc = je_standard_completion_conclusion_desc
-		trigger = {
-			NOR = {
-				has_truce_with = c:BRG
-				has_truce_with = c:DUA
-				has_truce_with = c:SCA
-			}
-		}
-		effect = {
 	
+	complete = {
+		NOR = {
+			has_truce_with = c:BRG
+			has_truce_with = c:DUA
+			has_truce_with = c:SCA
 		}
 	}
+	
+	
 
-	outcome = {
-		header = je_standard_failure_header
-		effect_header = je_standard_on_failure_header
-		color = "blue_negative"
-		conclusion_desc = je_standard_failure_conclusion_desc
-
-		trigger = {
-			any_country = {
-				country_has_primary_culture = cu:zhourao
-				OR = {
-					is_diplomatic_play_enemy_of = c:BRG
-					is_diplomatic_play_enemy_of = c:DUA
-					is_diplomatic_play_enemy_of = c:SCA
-				}
-			}
-		}
-
-		effect = {
-			trigger_event = {
-				id = dvg_zhourao.15
+    on_complete = {
+		
+	}
+	fail = {
+		any_country = {
+			country_has_primary_culture = cu:zhourao
+			OR = {
+				is_diplomatic_play_enemy_of = c:BRG
+				is_diplomatic_play_enemy_of = c:DUA
+				is_diplomatic_play_enemy_of = c:SCA
 			}
 		}
 	}
-
+	
+    on_fail = {
+		trigger_event = {
+			id = dvg_zhourao.15
+		}
+	}
+	
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
@@ -1242,89 +1155,75 @@ je_xijiao_takoever = {
 		}
 	}
 	scripted_button = dvg_ban_missionaries_button
-
-	outcome = {
-		header = je_standard_completion_header
-		effect_header = je_standard_on_completion_header
-		color = "gold_positive"
-		conclusion_desc = je_standard_completion_conclusion_desc
-		trigger = {
-			OR = {
-				any_interest_group = {
-					leader = {
-						has_ideology = ideology:ideology_xijiao_leader
-					}
-					is_powerful = yes
-				}
-				
-				AND = {
-					has_law = law_type:law_theocracy
-					any_scope_state = {
-						is_capital = yes
-						religion_percent_state = {
-							target = rel:taiping
-							value > 0.5
-						}
-					}
-					religion_percent_country = {
-						target = rel:taiping
-						value > 0.30
-					}
-				}
-				AND = {
-					OR = {
-						has_law = law_type:law_freedom_of_conscience
-						has_law = law_type:law_state_religion
-					}
-					any_scope_state = {
-						is_capital = yes
-						religion_percent_state = {
-							target = rel:taiping
-							value > 0.80
-						}
-					}
-					religion_percent_country = {
-						target = rel:taiping
-						value > 0.67
-					}
+	complete = {
+		OR = {
+		any_interest_group = {
+			leader = {
+				has_ideology = ideology:ideology_xijiao_leader
+			}
+			is_powerful = yes
+		}
+		
+		AND = {
+			has_law = law_type:law_theocracy
+			any_scope_state = {
+				is_capital = yes
+				religion_percent_state = {
+					target = rel:taiping
+					value > 0.5
 				}
 			}
+			religion_percent_country = {
+				target = rel:taiping
+				value > 0.30
+			}
 		}
-		effect = {
-			trigger_event = { id = dvg_xijiao.11 popup = yes }
+		AND = {
+			OR = {
+				has_law = law_type:law_freedom_of_conscience
+				has_law = law_type:law_state_religion
+			}
+			any_scope_state = {
+				is_capital = yes
+				religion_percent_state = {
+					target = rel:taiping
+					value > 0.80
+				}
+			}
+			religion_percent_country = {
+				target = rel:taiping
+				value > 0.67
+			}
+		}
+		}
+		
+	}
+
+	fail = {
+		OR = {
+		has_variable = no_xijiao
+
+		NOT = {
+			any_scope_pop = {
+				religion = rel:taiping
+			}
+
+		}
+		any_interest_group = {
+			leader = {
+				has_ideology = ideology:ideology_xijiao_leader
+			}
+			is_marginal = yes
+		}
 		}
 	}
 
-	outcome = {
-		header = je_standard_failure_header
-		effect_header = je_standard_on_failure_header
-		color = "blue_negative"
-		conclusion_desc = je_standard_failure_conclusion_desc
-
-		trigger = {
-			OR = {
-				has_variable = no_xijiao
-		
-				NOT = {
-					any_scope_pop = {
-						religion = rel:taiping
-					}
-		
-				}
-				any_interest_group = {
-					leader = {
-						has_ideology = ideology:ideology_xijiao_leader
-					}
-					is_marginal = yes
-				}
-			}
-		}
-
-		effect = {
-
-		}
+    on_complete = {
+		trigger_event = { id = dvg_xijiao.11 popup = yes }
 	}
-
+	
+    on_fail = {
+	}
 	on_monthly_pulse = {
 		random_events = {
 			15 = dvg_xijiao.15
@@ -1409,79 +1308,55 @@ je_mianjin_oligarchy = {
 		
 		
 	}
+	
+	complete = {
+		OR = {
+			any_country = {
+					count = 1
+					country_has_primary_culture = cu:zhourao
+			}
+			AND = {
+				authority > 350
+				root.average_sol > 8
+				is_at_war = no
+				scope:journal_entry = {
+					is_goal_complete = yes
+				}
+			}
+		}
+		
+	}
+	
+	
 
-	outcome = {
-		header = je_standard_completion_header
-		effect_header = je_standard_on_completion_header
-		color = "gold_positive"
-		conclusion_desc = je_standard_completion_conclusion_desc
-		trigger = {
-			OR = {
-				any_country = {
-						count = 1
-						country_has_primary_culture = cu:zhourao
-				}
-				AND = {
-					authority > 350
-					root.average_sol > 8
-					is_at_war = no
-					scope:journal_entry = {
-						is_goal_complete = yes
-					}
-				}
-			}
-		}
-		effect = {
-			trigger_event = {
-				id = dvg_zhourao.506
-			}
-		}
-		event_outcome_desc = {
-			first_valid = {
-				triggered_desc = {
-					desc = dvg_event_effects_zhourao.506_tt
-				}
-			}
+	on_complete = {
+		trigger_event = {
+			id = dvg_zhourao.506
 		}
 	}
-
-	outcome = {
-		header = je_standard_failure_header
-		effect_header = je_standard_on_failure_header
-		color = "blue_negative"
-		conclusion_desc = je_standard_failure_conclusion_desc
-
-		trigger = {
+	fail = {
 		has_technology_researched = nationalism
-			OR = {
-				radical_fraction = {
-					value > 0.55
-				}
-				ig:ig_intelligentsia = {
-					is_in_government = yes
-					is_powerful = yes
-				}
-				ig:ig_trade_unions = {
-					is_in_government = yes
-					is_powerful = yes
-				}
+		OR = {
+			radical_fraction = {
+				value > 0.55
+			}
+			ig:ig_intelligentsia = {
+				is_in_government = yes
+				is_powerful = yes
+			}
+			ig:ig_trade_unions = {
+				is_in_government = yes
+				is_powerful = yes
 			}
 		}
-
-		effect = {
-			trigger_event = {
-				id = dvg_zhourao.507
-			}
-		}
-		event_outcome_desc = {
-			first_valid = {
-				triggered_desc = {
-					desc = dvg_event_effects_zhourao.507_tt
-				}
-			}
+		
+	}
+	
+    on_fail = {
+		trigger_event = {
+			id = dvg_zhourao.507
 		}
 	}
-
 	current_value = {
 		value = root.var:mjn_var
 	}
@@ -1491,6 +1366,20 @@ je_mianjin_oligarchy = {
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
 
+	event_outcome_completed_desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = dvg_event_effects_zhourao.506_tt
+			}
+		}
+	}
+	event_outcome_failed_desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = dvg_event_effects_zhourao.507_tt
+			}
+		}
+	}
 }
 
 je_changyun = {
@@ -1503,34 +1392,38 @@ je_changyun = {
 		c:QQQ = this
 	}
 
-	outcome = {
-		header = je_standard_completion_header
-		effect_header = je_standard_on_completion_header
-		color = "gold_positive"
-		conclusion_desc = je_standard_completion_conclusion_desc
-		trigger = {
-			OR = {
-				owns_entire_state_region = STATE_MOTU_PARI
-				owns_entire_state_region = STATE_MOTU_TIMU
-			}
-			has_technology_researched = nationalism
+	complete = {
+		OR = {
+			owns_entire_state_region = STATE_MOTU_PARI
+			owns_entire_state_region = STATE_MOTU_TIMU
 		}
-		effect = {
-			every_scope_state = {
-				limit = {
-					NOT = {
-						state_region = {
-							is_homeland = cu:zhourao
-						}
+		
+		has_technology_researched = nationalism
+	}
+	
+	fail = {
+
+	}
+
+    on_complete = {
+		every_scope_state = {
+			limit = {
+				NOT = {
+					state_region = {
+						is_homeland = cu:zhourao
 					}
-					region = sr:region_oceania
 				}
-				state_region = {
-					add_homeland = cu:zhourao
-				}
+				region = sr:region_oceania
+			}
+			state_region = {
+				add_homeland = cu:zhourao
 			}
 		}
 	}
+	
+    on_fail = {
+	}
+	
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
