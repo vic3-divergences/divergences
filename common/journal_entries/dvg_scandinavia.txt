@@ -1,7 +1,7 @@
 ﻿je_sca_chaos_under_four_crowns = { #Scandinavia main JE
 	icon = "gfx/interface/icons/event_icons/event_scales.dds"
 
-	group = je_group_internal_affairs
+	group = je_group_scandinavia_internal_tensions
 	
 	should_be_pinned_by_default = yes
 	
@@ -9,18 +9,20 @@
 		dvg_sca_chaos_under_four_crowns_modifier
 	}
 	
-	complete = {
-		
-	}
-	
-	on_complete = {
-		set_variable = dvg_sca_cufc_complete
+	outcome = {
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc	
+		effect = {
+			set_variable = dvg_sca_cufc_complete
+		}
 	}
 }
 
 je_sca_cufc_finland = { #Dealing with Finland
 
-	group = je_group_internal_affairs
+	group = je_group_scandinavia_internal_tensions
 	
 	possible = {
 		c:SCA = ROOT
@@ -50,7 +52,7 @@ je_sca_cufc_finland = { #Dealing with Finland
 
 je_sca_cufc_baltic = { #Dealing with the Baltics
 
-	group = je_group_internal_affairs
+	group = je_group_scandinavia_internal_tensions
 
 	possible = {
 		c:SCA = ROOT
@@ -75,7 +77,7 @@ je_sca_cufc_baltic = { #Dealing with the Baltics
 
 je_sca_cufc_germany = { #Dealing with Germany
 
-	group = je_group_internal_affairs
+	group = je_group_scandinavia_internal_tensions
 	
 	possible = {
 		c:SCA = ROOT
@@ -106,7 +108,7 @@ je_sca_cufc_germany = { #Dealing with Germany
 
 je_sca_cufc_karelia = { #The Karelian March
 
-	group = je_group_internal_affairs
+	group = je_group_scandinavia_internal_tensions
 	
 	scripted_button = dvg_expand_karelian_march_button
 
@@ -138,7 +140,7 @@ je_sca_cufc_karelia = { #The Karelian March
 
 je_sca_highland_clearings = {
 
-	group = je_group_internal_affairs
+	group = je_group_scandinavia_internal_tensions
 
 	should_be_pinned_by_default = yes
 
@@ -155,57 +157,68 @@ je_sca_highland_clearings = {
 		}
 	}
 	
-	fail = {
-		OR = {
-			ROOT = {
-				NOT = {
-					owns_entire_state_region = STATE_HIGHLANDS
+	outcome = {
+		header = je_standard_failure_header
+		effect_header = je_standard_on_failure_header
+		color = "blue_negative"
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			OR = {
+				ROOT = {
+					NOT = {
+						owns_entire_state_region = STATE_HIGHLANDS
+					}
+				}
+				ROOT = {
+					NOT = {
+						owns_entire_state_region = STATE_LOWLANDS
+					}
 				}
 			}
-			ROOT = {
+			custom_tooltip = {
 				NOT = {
-					owns_entire_state_region = STATE_LOWLANDS
+					any_civil_war = {
+						is_civil_war_type = revolution
+					}
 				}
+				text = sca_not_in_civil_war_tt
 			}
 		}
-		custom_tooltip = {
-			NOT = {
-				any_civil_war = {
-					is_civil_war_type = revolution
-				}
-			}
-			text = sca_not_in_civil_war_tt
-		}
-	}
-	
-	on_fail = {
-		custom_tooltip = {
+		effect = {
+			custom_tooltip = {
 			text = tt_sca_lost_scotland
-			set_local_variable = {
-				name = dvg_sca_kings_watch_je_var
-				value = je:je_sca_kings_watch
-			}
+				set_local_variable = {
+					name = dvg_sca_kings_watch_je_var
+					value = je:je_sca_kings_watch
+				}
 			set_variable = { name = var_sca_total_loss_of_scotland_tt }
+			}
 		}
 	}
 	
-	complete = {
-		custom_tooltip = {
-			text = highlands_lairds_have_been_cleared_progress_bar_tt
-			scope:journal_entry = { "scripted_bar_progress(dvg_scandinavia_highland_clearances_progress_bar)" >= 200 }
+	outcome = {
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			custom_tooltip = {
+				text = highlands_lairds_have_been_cleared_progress_bar_tt
+				scope:journal_entry = { "scripted_bar_progress(dvg_scandinavia_highland_clearances_progress_bar)" >= 200 }
+			}
+		}
+		effect = {
+			s:STATE_HIGHLANDS = {
+				remove_state_trait = state_trait_scottish_highlands
+				add_state_trait = state_trait_managed_scottish_highlands
+			}
+			custom_tooltip = {
+				text = sca_actually_highland_clearances_are_quite_good_according_to_the_lairds_at_least_tt
+				set_variable = { name = var_sca_completed_highland_clearings_var }
+			}
 		}
 	}
 	
-	on_complete = {
-		s:STATE_HIGHLANDS = {
-			remove_state_trait = state_trait_scottish_highlands
-			add_state_trait = state_trait_managed_scottish_highlands
-		}
-		custom_tooltip = {
-			text = sca_actually_highland_clearances_are_quite_good_according_to_the_lairds_at_least_tt
-			set_variable = { name = var_sca_completed_highland_clearings_var }
-		}
-	}
 	
 	on_monthly_pulse = { 
 		random_events = {
@@ -221,7 +234,7 @@ je_sca_highland_clearings = {
 			10 = dvg_scandinavia.109
 			10 = dvg_scandinavia.110
 			10 = dvg_scandinavia.111
-			#no 112, that's a Vargo event
+			#112 is a vargo event
 			10 = dvg_scandinavia.113
 		}
 	}
@@ -231,49 +244,60 @@ je_sca_kings_watch = { #The Nobility and Monarch seeing the cufc stuff go down -
 
 	icon = "gfx/interface/icons/event_icons/event_protest.dds"
 
-	group = je_group_internal_affairs
+	group = je_group_scandinavia_internal_tensions
 	
 	should_be_pinned_by_default = yes
 	
-	complete = {
-		OR = {
-			custom_tooltip = {
-				text = dvg_sca_kings_watch_complete_tt
-				has_variable = dvg_sca_cufc_complete
-			}
-		
-			AND = {
-				NOT = {  has_law = law_type:law_monarchy }
-				NOT = {  has_law = law_type:law_social_monarchy }
-				NOT = {  has_law = law_type:law_theocracy }
-				OR = {
-					has_law = law_type:law_census_voting
-					has_law = law_type:law_universal_suffrage
-					has_law = law_type:law_anarchy
+	outcome = {
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			OR = {
+				custom_tooltip = {
+					text = dvg_sca_kings_watch_complete_tt
+					has_variable = dvg_sca_cufc_complete
 				}
-				ig:ig_landowners = {
-					is_marginal = yes
-				}			
+			
+				AND = {
+					NOT = {  has_law = law_type:law_monarchy }
+					NOT = {  has_law = law_type:law_social_monarchy }
+					NOT = {  has_law = law_type:law_theocracy }
+					OR = {
+						has_law = law_type:law_census_voting
+						has_law = law_type:law_universal_suffrage
+						has_law = law_type:law_anarchy
+					}
+					ig:ig_landowners = {
+						is_marginal = yes
+					}			
+				}
 			}
 		}
-	}
-	
-	on_complete = {
-		trigger_event = dvg_scandinavia.2
+		effect = {
+			trigger_event = dvg_scandinavia.2
+		}
 	}
 	
 	#this is in the scripted progress bar file :3
 	scripted_progress_bar = dvg_scandinavia_kings_anger_progress_bar
 	
-	fail = {
-		custom_tooltip = {
-			text = kings_watch_completed_progress_bar_tt
-			scope:journal_entry = { "scripted_bar_progress(dvg_scandinavia_kings_anger_progress_bar)" >= 100 }
-		}	
-	}
-	
-	on_fail = {
-		trigger_event = dvg_scandinavia.3
+	outcome = {
+		header = je_standard_failure_header
+		effect_header = je_standard_on_failure_header
+		color = "blue_negative"
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			custom_tooltip = {
+				text = kings_watch_completed_progress_bar_tt
+				scope:journal_entry = { "scripted_bar_progress(dvg_scandinavia_kings_anger_progress_bar)" >= 100 }
+			
+			}
+		}
+		effect = {
+			trigger_event = dvg_scandinavia.3
+		}
 	}
 }
 
@@ -281,19 +305,11 @@ je_sca_rubicon_ballroom = { #Crown got pissy with you, now you gotta dance :3
 	
 	icon = "gfx/interface/icons/event_icons/event_protest.dds"
 
-	group = je_group_internal_affairs
+	group = je_group_scandinavia_internal_tensions
 	
 	should_be_pinned_by_default = yes
 
 	modifiers_while_active = {
 		dvg_sca_rubicon_ballroom_modifier
-	}
-
-	complete = {
-		
-	}
-	
-	fail = {
-		
 	}
 }
