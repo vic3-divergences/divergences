@@ -1017,6 +1017,13 @@ has_hierarchic_ideology = {
 	}
 }
 
+has_patriarchal_ideology = {
+	OR = {
+		has_ideology = ideology:ideology_patriarchal
+		has_ideology = ideology:ideology_russian_patriarchal
+	}
+}
+
 can_reach_target_country = {
 	has_diplomatic_relevance = scope:target_country
 	OR = {
@@ -1064,11 +1071,81 @@ has_radical_leftist_government = {
 	has_law_or_variant = law_type:law_council_republic
 }
 
+has_governing_communist_or_socialist_party = {
+	any_interest_group = {
+		is_in_government = yes
+		party ?= {
+			OR = {
+				is_party_type = communist_party
+				is_party_type = socialist_party
+				is_party_type = anarchist_party
+			}
+		}
+	}
+	ruler ?= {
+		interest_group ?= {
+			party ?= {
+				OR = {
+					is_party_type = communist_party
+					is_party_type = socialist_party
+					is_party_type = anarchist_party
+				}
+			}
+		}
+	}
+}
+
 has_radical_leftist_economy = {
 	OR = {
 		has_law_or_variant = law_type:law_command_economy
 		has_law_or_variant = law_type:law_cooperative_ownership
 	}
+}
+
+has_revolutionary_socialist_laws = {
+	OR = {
+		has_law_or_variant = law_type:law_factory_councils
+		has_law_or_variant = law_type:law_council_republic
+		has_law_or_variant = law_type:law_communal_administration
+		has_law_or_variant = law_type:law_revolutionary_guard
+	}
+}
+
+at_war_with_council_republic = {
+	any_enemy_in_diplo_play = {
+		has_law_or_variant = law_type:law_council_republic
+	}
+}
+
+pressing_liberation_wargoal_against_adjacent_country = {
+	any_enemy_in_diplo_play = {
+		has_strategic_adjacency = root
+		root = {
+			OR = {
+				war_participant_has_war_goal_of_type_against = { type = regime_change target = prev }
+				war_participant_has_war_goal_of_type_against = { type = liberate_country target = prev }
+				war_participant_has_war_goal_of_type_against = { type = liberate_subject target = prev }
+			}
+		}
+	}
+}
+
+is_revolutionary_council_republic = {
+	has_law_or_variant = law_type:law_council_republic
+	has_law_or_variant = law_type:law_factory_councils
+}
+
+at_war_with_revolutionary_council_republic = {
+	any_enemy_in_diplo_play = {
+		is_revolutionary_council_republic = yes
+	}
+}
+
+has_all_revolutionary_laws = {
+	has_law_or_variant = law_type:law_council_republic
+	has_law_or_variant = law_type:law_factory_councils
+	has_law_or_variant = law_type:law_communal_administration
+	has_law_or_variant = law_type:law_revolutionary_guard
 }
 
 any_insurrection_ongoing = {
@@ -2014,4 +2091,25 @@ character_is_emperor_of_japan = {
 
 country_meiji_reform_emperor_restored = {
 	has_variable = japan_emperor_restored
+}
+
+state_has_decree_variant = {
+	OR = {
+		has_decree = $DECREE$
+		#has_decree = $DECREE$_tsarpoints #Uncomment if/when we add them
+	}
+}
+
+neighboring_country_has_insurrectionary_movement_trigger = {
+	owner ?= {
+		any_neighbouring_state = {
+			owner ?= {
+				NOT = { THIS = ROOT.owner }
+				any_political_movement = {
+					is_political_movement_type = $TYPE$
+					is_insurrectionary = yes
+				}
+			}
+		}
+	}
 }
