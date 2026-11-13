@@ -320,12 +320,12 @@ adopt_random_antigovernment_ideology = { # I'm so sorry for this.
 		random_list = {
 			50 = {
 				trigger = {
-					ideology_social_democrat_valid_trigger = yes
+					ideology_state_socialist_valid_trigger = yes
 					scope:exiling_country_scope ?= {
 						has_technology_researched = socialism
 						NOT = {
 							ruler = {
-								has_ideology = ideology:ideology_social_democrat
+								has_ideology = ideology:ideology_state_socialist
 							}
 						}
 					}
@@ -340,16 +340,16 @@ adopt_random_antigovernment_ideology = { # I'm so sorry for this.
 						add = 50
 					}
 				}
-				set_ideology = ideology:ideology_social_democrat
+				set_ideology = ideology:ideology_state_socialist
 			}
 			100 = {
 				trigger = {
-					ideology_communist_valid_trigger = yes
+					ideology_communist_leader_valid_trigger = yes
 					scope:exiling_country_scope ?= {
 						has_technology_researched = socialism
 						NOT = {
 							ruler = {
-								has_ideology = ideology:ideology_communist
+								has_ideology = ideology:ideology_communist_leader
 							}
 						}
 						NOT = {
@@ -396,7 +396,7 @@ adopt_random_antigovernment_ideology = { # I'm so sorry for this.
 						add = 100
 					}
 				}
-				set_ideology = ideology:ideology_communist
+				set_ideology = ideology:ideology_communist_leader
 			}
 			100 = {
 				trigger = {
@@ -531,7 +531,7 @@ adopt_random_antigovernment_ideology = { # I'm so sorry for this.
 									has_ideology = ideology:ideology_feminist
 									has_ideology = ideology:ideology_humanitarian
 									has_ideology = ideology:ideology_humanitarian_royalist
-									has_ideology = ideology:ideology_social_democrat
+									has_ideology = ideology:ideology_state_socialist
 								}
 							}
 						}
@@ -541,7 +541,7 @@ adopt_random_antigovernment_ideology = { # I'm so sorry for this.
 						limit = {
 							scope:exiling_country_scope.ruler ?= {
 								OR = {
-									has_ideology = ideology:ideology_communist
+									has_ideology = ideology:ideology_communist_leader
 									has_ideology = ideology:ideology_anarchist
 									has_ideology = ideology:ideology_vanguardist
 								}
@@ -716,7 +716,7 @@ adopt_random_antigovernment_ideology = { # I'm so sorry for this.
 									has_ideology = ideology:ideology_feminist
 									has_ideology = ideology:ideology_humanitarian
 									has_ideology = ideology:ideology_humanitarian_royalist
-									has_ideology = ideology:ideology_social_democrat
+									has_ideology = ideology:ideology_state_socialist
 								}
 							}
 						}
@@ -726,7 +726,7 @@ adopt_random_antigovernment_ideology = { # I'm so sorry for this.
 						limit = {
 							scope:exiling_country_scope.ruler ?= {
 								OR = {
-									has_ideology = ideology:ideology_communist
+									has_ideology = ideology:ideology_communist_leader
 									has_ideology = ideology:ideology_anarchist
 									has_ideology = ideology:ideology_vanguardist
 								}
@@ -803,7 +803,7 @@ adopt_random_antigovernment_ideology = { # I'm so sorry for this.
 						limit = {
 							scope:exiling_country_scope.ruler ?= {
 								OR = {
-									has_ideology = ideology:ideology_communist
+									has_ideology = ideology:ideology_communist_leader
 									has_ideology = ideology:ideology_anarchist
 									has_ideology = ideology:ideology_vanguardist
 								}
@@ -987,7 +987,7 @@ adopt_random_antigovernment_ideology = { # I'm so sorry for this.
 									has_ideology = ideology:ideology_feminist
 									has_ideology = ideology:ideology_humanitarian
 									has_ideology = ideology:ideology_humanitarian_royalist
-									has_ideology = ideology:ideology_social_democrat
+									has_ideology = ideology:ideology_state_socialist
 								}
 							}
 						}
@@ -997,7 +997,7 @@ adopt_random_antigovernment_ideology = { # I'm so sorry for this.
 						limit = {
 							scope:exiling_country_scope.ruler ?= {
 								OR = {
-									has_ideology = ideology:ideology_communist
+									has_ideology = ideology:ideology_communist_leader
 									has_ideology = ideology:ideology_anarchist
 									has_ideology = ideology:ideology_vanguardist
 								}
@@ -1586,7 +1586,7 @@ communist_agitator_election_scope_effect = {
 	random_scope_character = {
 		limit = {
 			OR = {
-				has_ideology = ideology:ideology_communist
+				has_ideology = ideology:ideology_communist_leader
 				has_ideology = ideology:ideology_vanguardist
 				has_ideology = ideology:ideology_anarchist
 				AND = {
@@ -1690,16 +1690,16 @@ socdem_agitator_election_scope_effect = {
 	random_active_party = {
 		limit = {
 			party_has_members = yes
-			is_party_type = social_democrat_party
+			is_party_type = socialist_party
 		}
 		save_scope_as = agitator_party_scope
 	}
 	random_scope_character = {
 		limit = {
 			OR = {
-				has_ideology = ideology:ideology_social_democrat
+				has_ideology = ideology:ideology_state_socialist
 				this.interest_group ?= {
-					is_member_of_party = owner.py:social_democrat_party
+					is_member_of_party = owner.py:socialist_party
 				}
 			}
 			has_role_of_type = agitator
@@ -2029,6 +2029,32 @@ free_trade_agitator_election_scope_effect = {
 # }
 
 exile_character_with_martyrdom = {
+	exile_character_martyrdom_setup_effect = yes
+	if = {
+		limit = { is_in_exile_pool = no }
+		exile_character = yes
+	}
+	hidden_effect = {
+		clean_up_exile_character_roles = yes
+	}
+}
+
+# Same as exile_character_with_martyrdom but exiles into $EXILE_POOL$ with an automatic return home after $YEARS$ years
+exile_character_with_martyrdom_to_pool = {
+	exile_character_martyrdom_setup_effect = yes
+	if = {
+		limit = { is_in_exile_pool = no }
+		exile_character = {
+			exile_pool = $EXILE_POOL$
+			years = $YEARS$
+		}
+	}
+	hidden_effect = {
+		clean_up_exile_character_roles = yes
+	}
+}
+
+exile_character_martyrdom_setup_effect = {
 	save_scope_as = martyred_exile_scope
 	if = {
 		limit = {
@@ -2100,13 +2126,6 @@ exile_character_with_martyrdom = {
 				}
 			}
 		}
-	}
-	if = {
-		limit = { is_in_exile_pool = no }
-		exile_character = yes
-	}
-	hidden_effect = {
-		clean_up_exile_character_roles = yes
 	}
 }
 
@@ -2946,9 +2965,12 @@ calculate_national_identity_progress = {
 		limit = {
 			OR = {
 				has_ideology = ideology:ideology_patriotic
+				has_ideology = ideology:ideology_militarist
 				has_ideology = ideology:ideology_military_absolutist
 				has_ideology = ideology:ideology_liberal
+				has_ideology = ideology:ideology_universalist
 				has_ideology = ideology:ideology_liberal_modern
+				has_ideology = ideology:ideology_universalist_modern
 			}
 		}
 		ROOT = {
@@ -2971,7 +2993,7 @@ calculate_national_identity_progress = {
 	set_variable = { name = national_identity_progress_from_wars value = 0 }
 	every_scope_war = {
 		limit = {
-			has_war_support = { target = root value > 50 }
+			has_war_support = { target = root value > 80 }
 		}
 		ROOT = {
 			change_variable = { name = national_identity_progress_from_wars add = 0.50 }
@@ -2979,8 +3001,8 @@ calculate_national_identity_progress = {
 	}
 	every_scope_war = {
 		limit = {
-			has_war_support = { target = root value <= 50 }
-			has_war_support = { target = root value > 25 }
+			has_war_support = { target = root value <= 80 }
+			has_war_support = { target = root value > 65 }
 		}
 		ROOT = {
 			change_variable = { name = national_identity_progress_from_wars add = 0.25 }
@@ -2988,8 +3010,8 @@ calculate_national_identity_progress = {
 	}
 	every_scope_war = {
 		limit = {
-			has_war_support = { target = root value <= 25 }
-			has_war_support = { target = root value > 0 }
+			has_war_support = { target = root value <= 65 }
+			has_war_support = { target = root value > 50 }
 		}
 		ROOT = {
 			change_variable = { name = national_identity_progress_from_wars add = 0.10 }
