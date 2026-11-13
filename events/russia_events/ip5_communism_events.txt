@@ -1,1 +1,1989 @@
-﻿
+﻿namespace = reform_or_revolution
+
+reform_or_revolution.1 = {
+	type = country_event
+
+	icon = "gfx/interface/icons/event_icons/event_revolutionary_flag.dds"
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	title = reform_or_revolution.1.t
+	desc = reform_or_revolution.1.d
+	flavor = reform_or_revolution.1.f
+
+	event_image = {
+		video = "ip5_soviet_deliberation"
+	}
+
+	duration = 3
+
+	cooldown = { days = very_long_modifier_time }
+
+	trigger = {
+	}
+
+	immediate = {
+		ig:ig_trade_unions ?= {
+			save_scope_as = trade_unions_ig
+		}
+		if = {
+			limit = {
+				any_political_movement = {
+					is_political_movement_type = movement_socialist
+				}
+			}
+			random_political_movement = {
+				limit = {
+					is_political_movement_type = movement_socialist
+				}
+				save_scope_as = socialist_movement_scope
+			}
+		}
+	}
+
+	option = {
+		name = reform_or_revolution.1.a
+		ai_chance = {
+			base = 10
+			modifier = {
+				trigger = {
+					any_political_movement = {
+						is_political_movement_type = movement_socialist
+						political_movement_radicalism >= define:NPolitics|RADICALISM_PROTESTING_THRESHOLD
+					}
+				}
+				add = 10
+			}
+			modifier = {
+				trigger = {
+					ig:ig_trade_unions ?= {
+						leader ?= {
+							has_socialist_ideology = yes
+						}
+					}
+				}
+				add = 10
+			}
+			modifier = {
+				trigger = {
+					has_factory_councils_law_or_amendment = yes
+				}
+				add = 50
+			}
+			modifier = {
+				trigger = {
+					ai_wants_radicals = yes
+				}
+				add = 10
+			}
+		}
+		add_modifier = {
+			name = modifier_heroic_era_revolution
+			days = short_modifier_time
+			is_decaying = yes
+		}
+		if = {
+			limit = {
+				NOT = {
+					has_law_or_variant = law_type:law_council_republic
+				}
+			}
+			add_radicals = {
+				value = small_radicals
+				interest_group = ig:ig_trade_unions
+			}
+		}
+		else = {
+			add_loyalists = {
+				value = small_radicals
+				interest_group = ig:ig_trade_unions
+			}
+		}
+	}
+
+	option = {
+		name = reform_or_revolution.1.b
+		ai_chance = {
+			base = 10
+			modifier = {
+				trigger = {
+					any_political_movement = {
+						is_political_movement_type = movement_socialist
+						political_movement_radicalism < define:NPolitics|RADICALISM_AGITATING_THRESHOLD
+					}
+				}
+				add = 10
+			}
+			modifier = {
+				trigger = {
+					ig:ig_trade_unions ?= {
+						leader ?= {
+							NOT = {
+								has_socialist_ideology = yes
+							}
+						}
+					}
+				}
+				add = 10
+			}
+			modifier = {
+				trigger = {
+					NOT = { has_factory_councils_law_or_amendment = yes }
+					any_active_party = {
+						party_counts_as_socialist_party = yes
+						party_has_members = yes
+						any_member = {
+							is_in_government = yes
+						}
+					}
+				}
+				add = 50
+			}
+			modifier = {
+				trigger = {
+					ai_avoids_radicals = yes
+				}
+				add = 10
+			}
+		}
+		add_modifier = {
+			name = modifier_heroic_era_reform
+			days = short_modifier_time
+			is_decaying = yes
+		}
+	}
+
+	option = {
+		name = reform_or_revolution.1.c
+		default_option = yes
+		ai_chance = {
+			base = 5
+			modifier = {
+				trigger = {
+					any_political_movement = {
+						is_political_movement_type = movement_socialist
+						political_movement_support < define:NPolitics|SUPPORT_RELEVANT_THRESHOLD
+					}
+				}
+				add = 5
+			}
+			modifier = {
+				trigger = {
+					any_active_party = {
+						party_counts_as_socialist_party = yes
+						party_has_members = yes
+						party_total_clout < 0.05
+					}
+				}
+				add = 5
+			}
+			modifier = {
+				trigger = {
+					has_factory_councils_law_or_amendment = yes
+				}
+				add = -15
+			}
+			modifier = {
+				trigger = {
+					ai_avoids_radicals = yes
+				}
+				add = 10
+			}
+		}
+		add_loyalists = {
+			value = small_radicals
+			strata = upper
+		}
+	}
+
+	after = {
+		je:je_reform_or_revolution ?= {
+			if = {
+				limit = {
+					reform_or_revolution_variables_initialised = no
+				}
+				journal_entry_update_reform_or_revolution_variables = yes
+			}
+		}
+	}
+}
+
+reform_or_revolution.2 = {
+	type = country_event
+
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	title = reform_or_revolution.2.t
+	desc = reform_or_revolution.2.d
+	flavor = reform_or_revolution.2.f
+
+	event_image = {
+		video = "votp_agitator_speaking"
+	}
+
+	duration = 3
+
+	cooldown = { days = very_long_modifier_time }
+
+	trigger = {
+
+	}
+
+	immediate = {
+		random_political_movement = {
+			limit = {
+				is_political_movement_type = movement_socialist
+			}
+			save_scope_as = socialist_movement_scope
+		}
+	}
+
+	option = {
+		name = reform_or_revolution.2.a
+		ai_chance = {
+			base = 1
+			modifier = {
+				trigger = {
+					ai_wants_radicals = yes
+				}
+				add = 10
+			}
+		}
+		trigger = {
+			custom_tooltip = {
+				text = socialist_movement_is_revolutionary_tt
+				var:reform_or_revolution_contribution_cache > 0
+			}
+		}
+		show_as_unavailable = {
+			has_variable = reform_or_revolution_contribution_cache
+		}
+		highlighted_option = yes
+		default_option = yes
+		if = {
+			limit = {
+				NOT = {
+					has_law_or_variant = law_type:law_council_republic
+				}
+			}
+			add_radicals = {
+				value = large_radicals
+				interest_group = ig:ig_trade_unions
+			}
+		}
+		else = {
+			add_loyalists = {
+				value = large_radicals
+				interest_group = ig:ig_trade_unions
+			}
+		}
+		if = {
+			limit = {
+				ig:ig_trade_unions.leader ?= {
+					NOT = {
+						has_ideology = ideology:ideology_communist_leader
+					}
+				}
+				exists = scope:communist_character_scope
+			}
+			scope:communist_character_scope ?= {
+				if = {
+					limit = {
+						has_role_of_type = agitator
+					}
+					replace_character_roles = { remove = { agitator } add = { politician } }
+				}
+				set_as_interest_group_leader = yes
+			}
+		}
+		else = {
+			custom_tooltip = {
+				text = communist_agitator_tt
+				create_character = {
+					culture = ig_before_random_accepted
+					is_agitator = yes
+					interest_group = ig:ig_trade_unions
+					ideology = ideology:ideology_communist_leader
+					traits = {
+						persistent
+						charismatic
+						basic_political_operator
+					}
+				}
+			}
+		}
+
+	}
+
+	option = {
+		name = reform_or_revolution.2.b
+		ai_chance = {
+			base = 1
+			modifier = {
+				trigger = {
+					ai_avoids_radicals = yes
+				}
+				add = 10
+			}
+		}
+		trigger = {
+			custom_tooltip = {
+				text = socialist_movement_is_reformist_tt
+				var:reform_or_revolution_contribution_cache <= 0
+			}
+		}
+		show_as_unavailable = {
+			has_variable = reform_or_revolution_contribution_cache
+		}
+		highlighted_option = yes
+		default_option = yes
+		add_loyalists = {
+			value = medium_radicals
+			interest_group = ig:ig_trade_unions
+		}
+		if = {
+			limit = {
+				ig:ig_trade_unions.leader ?= {
+					has_socialist_ideology = yes
+				}
+				exists = scope:reformist_character_scope
+			}
+			scope:reformist_character_scope ?= {
+				if = {
+					limit = {
+						has_role_of_type = agitator
+					}
+					replace_character_roles = { remove = { agitator } add = { politician } }
+				}
+				set_as_interest_group_leader = yes
+			}
+		}
+		if = {
+			limit = {
+				country_has_voting_franchise = yes
+			}
+			update_party_support = yes
+		}
+	}
+
+	option = {
+		name = reform_or_revolution.2.c
+		trigger = {
+			NOT = {
+				has_variable = reform_or_revolution_contribution_cache
+			}
+		}
+		default_option = yes
+	}
+
+	after = {
+		if = {
+			limit = {
+				exists = scope:socialist_movement_scope
+			}
+			custom_tooltip = socialist_movements_gain_revolutionary_ideology_tt
+			custom_tooltip = socialist_movements_lose_state_socialist_tt
+			hidden_effect = {
+				scope:socialist_movement_scope ?= {
+					set_core_ideology = ideology_revolutionary_socialist_movement
+					remove_character_ideology = ideology_state_socialist
+				}
+			}
+		}
+		else = {
+			custom_tooltip = socialist_movements_gain_revolutionary_ideology_tt
+			custom_tooltip = socialist_movements_lose_state_socialist_tt
+		}
+		custom_tooltip = socialist_parties_radicalise_tt
+	}
+}
+
+reform_or_revolution.3 = {
+	type = country_event
+
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	title = reform_or_revolution.3.t
+	desc = {
+		first_valid = {
+			triggered_desc = {
+				desc = reform_or_revolution.3.d_1
+				trigger = {
+					has_global_variable = reform_or_revolution_war_ongoing
+				}
+			}
+			triggered_desc = {
+				desc = reform_or_revolution.3.d
+				trigger = {
+					always = yes
+				}
+			}
+		}
+	}
+	flavor = reform_or_revolution.3.f
+
+	event_image = {
+		video = "unspecific_politicians_arguing"
+	}
+
+	duration = 3
+
+	cooldown = { days = very_long_modifier_time }
+
+	trigger = {
+	}
+
+	immediate = {
+		random_political_movement = {
+			limit = {
+				is_political_movement_type = movement_socialist
+			}
+			save_scope_as = socialist_movement_scope
+		}
+		random_scope_character = {
+			limit = {
+				is_interest_group_type = ig_trade_unions
+				is_ruler_of_own_country = no
+				is_heir_of_own_country = no
+				is_interest_group_leader = no
+				OR = {
+					has_ideology = ideology:ideology_communist_leader
+					has_ideology = ideology:ideology_vanguardist
+				}
+			}
+			save_scope_as = communist_character_scope
+		}
+		random_scope_character = {
+			limit = {
+				is_interest_group_type = ig_trade_unions
+				is_ruler_of_own_country = no
+				is_heir_of_own_country = no
+				is_interest_group_leader = no
+				has_socialist_ideology = no
+			}
+			save_scope_as = reformist_character_scope
+		}
+	}
+
+	option = {
+		name = reform_or_revolution.3.a
+		ai_chance = {
+			base = 1
+			modifier = {
+				trigger = {
+					ai_avoids_radicals = yes
+				}
+				add = 10
+			}
+		}
+		trigger = {
+			custom_tooltip = {
+				text = socialist_movement_is_reformist_tt
+				var:reform_or_revolution_contribution_cache <= 0
+			}
+		}
+		show_as_unavailable = {
+			has_variable = reform_or_revolution_contribution_cache
+		}
+		highlighted_option = yes
+		default_option = yes
+		add_loyalists = {
+			value = medium_radicals
+			interest_group = ig:ig_trade_unions
+		}
+		if = {
+			limit = {
+				ig:ig_trade_unions.leader ?= {
+					has_socialist_ideology = yes
+				}
+				exists = scope:reformist_character_scope
+			}
+			scope:reformist_character_scope ?= {
+				if = {
+					limit = {
+						has_role_of_type = agitator
+					}
+					replace_character_roles = { remove = { agitator } add = { politician } }
+				}
+				set_as_interest_group_leader = yes
+			}
+		}
+	}
+
+	option = {
+		name = reform_or_revolution.3.b
+		ai_chance = {
+			base = 1
+			modifier = {
+				trigger = {
+					ai_wants_radicals = yes
+				}
+				add = 10
+			}
+		}
+		trigger = {
+			custom_tooltip = {
+				text = socialist_movement_is_revolutionary_tt
+				var:reform_or_revolution_contribution_cache > 0
+			}
+		}
+		show_as_unavailable = {
+			has_variable = reform_or_revolution_contribution_cache
+		}
+		highlighted_option = yes
+		default_option = yes
+		if = {
+			limit = {
+				NOT = {
+					has_law_or_variant = law_type:law_council_republic
+				}
+			}
+			add_radicals = {
+				value = large_radicals
+				interest_group = ig:ig_trade_unions
+			}
+		}
+		else = {
+			add_loyalists = {
+				value = large_radicals
+				interest_group = ig:ig_trade_unions
+			}
+		}
+		if = {
+			limit = {
+				ig:ig_trade_unions.leader ?= {
+					NOT = {
+						has_ideology = ideology:ideology_communist_leader
+					}
+				}
+				exists = scope:communist_character_scope
+			}
+			scope:communist_character_scope ?= {
+				if = {
+					limit = {
+						has_role_of_type = agitator
+					}
+					replace_character_roles = { remove = { agitator } add = { politician } }
+				}
+				set_as_interest_group_leader = yes
+			}
+		}
+		else = {
+			custom_tooltip = {
+				text = communist_agitator_tt
+				create_character = {
+					culture = ig_before_random_accepted
+					is_agitator = yes
+					interest_group = ig:ig_trade_unions
+					ideology = ideology:ideology_communist_leader
+					traits = {
+						persistent
+						charismatic
+						basic_political_operator
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				country_has_voting_franchise = yes
+			}
+			update_party_support = yes
+		}
+	}
+
+	option = {
+		name = reform_or_revolution.3.c
+		trigger = {
+			NOT = {
+				has_variable = reform_or_revolution_contribution_cache
+			}
+		}
+		default_option = yes
+	}
+
+	after = {
+		if = {
+			limit = {
+				exists = scope:socialist_movement_scope
+			}
+			custom_tooltip = socialist_movements_gain_new_ideology_tt
+			custom_tooltip = socialist_movements_lose_communist_tt
+			custom_tooltip = socialist_movements_gain_humanitarian_tt
+			hidden_effect = {
+				scope:socialist_movement_scope ?= {
+					set_core_ideology = ideology_state_socialist_movement
+					add_character_ideology = ideology_humanitarian
+					remove_character_ideology = ideology_communist_leader
+					remove_character_ideology = ideology_anarchist
+					remove_character_ideology = ideology_vanguardist
+				}
+			}
+			if = {
+				limit = {
+					country_has_laws_in_need_of_critical_modernization = no
+				}
+				create_political_movement = { type = movement_communist }
+			}
+			if = {
+				limit = {
+					has_variable = reform_or_revolution_contribution_cache
+					var:reform_or_revolution_contribution_cache != 0
+				}
+				custom_tooltip = {
+					text = communist_movement_support_effects_tt
+					random_political_movement = {
+						limit = {
+							is_political_movement_type = movement_communist
+						}
+						add_modifier = {
+							name = modifier_crisis_of_social_democracy
+							days = normal_modifier_time
+							multiplier = {
+								value = ROOT.var:reform_or_revolution_contribution_cache
+								multiply = 10
+							}
+							is_decaying = yes
+						}
+					}
+				}
+			}
+		}
+		else = {
+			custom_tooltip = socialist_movements_gain_new_ideology_tt
+			custom_tooltip = socialist_movements_lose_communist_tt
+			custom_tooltip = socialist_movements_gain_humanitarian_tt
+			custom_tooltip = communist_movement_may_appear_tt
+		}
+		custom_tooltip = communist_parties_formable_tt
+	}
+}
+
+namespace = factory_councils
+
+factory_councils.1 = {
+	type = country_event
+
+	icon = "gfx/interface/icons/event_icons/event_revolutionary_flag.dds"
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	title = factory_councils.1.t
+	desc = factory_councils.1.d
+	flavor = factory_councils.1.f
+
+	event_image = {
+		video = "ip5_soviet_deliberation"
+	}
+
+	duration = 3
+
+	cooldown = { days = long_modifier_time }
+
+	category = revolution
+
+	trigger = {
+		country_at_risk_of_factory_councils = yes
+		any_civil_war = {
+			is_civil_war_type = revolution
+			political_movement = {
+				OR = {
+					political_movement_support >= 0.10
+					political_movement_radicalism >= 0.90
+				}
+				OR = {
+					law_stance = {
+						law = law_type:law_factory_councils
+						value > neutral
+					}
+					ig:ig_trade_unions ?= {
+						law_stance = {
+							law = law_type:law_factory_councils
+							value > neutral
+						}
+					}
+				}
+			}
+			civil_war_progress_high = yes
+		}
+	}
+
+	immediate = {
+		ig:ig_trade_unions ?= {
+			save_scope_as = trade_unions_ig
+		}
+		random_civil_war = {
+			limit = {
+				is_civil_war_type = revolution
+				civil_war_progress_high = yes
+			}
+			civil_war_save_scopes = yes
+		}
+		ordered_scope_state = {
+			limit = {
+				is_incorporated = yes
+				is_in_revolt = yes
+			}
+			order_by = {
+				value = "ig_state_pol_strength_share(scope:trade_unions_ig)"
+				multiply = this.gdp
+			}
+			position = 0
+			save_scope_as = council_state_scope
+		}
+	}
+
+	option = {
+		name = factory_councils.1.a
+		ai_chance = {
+			base = 5
+		}
+		active_law:lawgroup_labour_associations ?= {
+			add_amendment = {
+				type = amendment_factory_councils
+				sponsor = PREV.ig:ig_trade_unions
+				cooldown = 6
+			}
+		}
+		scope:council_state_scope ?= {
+			add_radicals_in_state = {
+				value = medium_radicals
+			}
+		}
+		scope:ongoing_revolution ?= {
+			add_civil_war_progress = revolution_advance_medium
+		}
+		if = {
+			limit = {
+				is_ai = yes
+				authority >= define:NPolitics|IG_BOLSTER_COST
+			}
+			scope:ongoing_revolution_movement ?= {
+				set_bolstering = yes
+			}
+		}
+	}
+
+	option = {
+		name = factory_councils.1.b
+		default_option = yes
+		ai_chance = {
+			base = 10
+		}
+		active_law:lawgroup_labour_associations ?= {
+			add_amendment = {
+				type = amendment_factory_councils
+				sponsor = PREV.ig:ig_trade_unions
+				cooldown = 6
+			}
+		}
+		scope:council_state_scope ?= {
+			add_radicals_in_state = {
+				value = small_radicals
+			}
+		}
+		if = {
+			limit = {
+				is_ai = yes
+				authority >= define:NPolitics|IG_SUPPRESSION_COST
+			}
+			scope:ongoing_revolution_movement ?= {
+				set_suppression = yes
+			}
+		}
+	}
+
+	option = {
+		name = factory_councils.1.c
+		trigger = {
+			ig:ig_armed_forces ?= {
+				is_insurrectionary = no
+			}
+			scope:ongoing_revolution_movement ?= {
+				political_movement_military_support < 0.05
+			}
+			ROOT.army_power_projection > {
+				value = ROOT.total_population
+				divide = 1000
+				multiply = scope:ongoing_revolution_movement.political_movement_support
+			}
+		}
+		highlighted_option = yes
+		show_as_unavailable = {
+			always = yes
+		}
+		ai_chance = {
+			base = 90
+		}
+		scope:ongoing_revolution ?= {
+			add_civil_war_progress = revolution_retreat_very_large
+		}
+		add_radicals = {
+			value = very_large_radicals
+			pop_type = machinists
+		}
+		add_radicals = {
+			value = large_radicals
+			pop_type = laborers
+		}
+		if = {
+			limit = {
+				is_ai = yes
+				authority >= define:NPolitics|IG_SUPPRESSION_COST
+			}
+			scope:ongoing_revolution_movement ?= {
+				set_suppression = yes
+			}
+		}
+	}
+}
+
+# Variant of factory_councils.1 fired directly by ip5_revolutions.1
+factory_councils.11 = {
+	type = country_event
+
+	icon = "gfx/interface/icons/event_icons/event_revolutionary_flag.dds"
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	title = factory_councils.11.t
+	desc = factory_councils.1.d
+	flavor = factory_councils.1.f
+
+	dlc = dlc019
+	event_image = {
+		video = "ip5_soviet_deliberation"
+	}
+
+	duration = 3
+
+	dlc = dlc019
+
+	category = revolution
+
+	trigger = {
+		has_journal_entry = je_russia_provisional_government
+	}
+
+	immediate = {
+		ig:ig_trade_unions ?= {
+			save_scope_as = trade_unions_ig
+		}
+		capital = {
+			save_scope_as = council_state_scope
+		}
+		ordered_political_movement = {
+			limit = {
+				movement_is_socialist = yes
+				political_movement_support >= 0.05
+			}
+			order_by = political_movement_radicalism
+			position = 0
+			save_scope_as = socialist_movement_scope
+		}
+	}
+
+	option = {
+		name = factory_councils.1.a
+		ai_chance = {
+			base = 5
+		}
+		active_law:lawgroup_labour_associations ?= {
+			add_amendment = {
+				type = amendment_factory_councils
+				sponsor = PREV.ig:ig_trade_unions
+				cooldown = 6
+			}
+		}
+		scope:council_state_scope ?= {
+			add_radicals_in_state = {
+				value = medium_radicals
+			}
+		}
+		random_civil_war = {
+			limit = {
+				political_movement ?= {
+					scope:socialist_movement_scope ?= this
+				}
+			}
+			add_civil_war_progress = revolution_advance_medium
+		}
+		if = {
+			limit = {
+				is_ai = yes
+				authority >= define:NPolitics|IG_BOLSTER_COST
+			}
+			scope:socialist_movement_scope ?= {
+				set_bolstering = yes
+			}
+		}
+	}
+
+	option = {
+		name = factory_councils.11.b
+		default_option = yes
+		ai_chance = {
+			base = 10
+		}
+		active_law:lawgroup_labour_associations ?= {
+			add_amendment = {
+				type = amendment_factory_councils
+				sponsor = PREV.ig:ig_trade_unions
+				cooldown = 6
+			}
+		}
+		scope:council_state_scope ?= {
+			add_radicals_in_state = {
+				value = small_radicals
+			}
+		}
+		if = {
+			limit = {
+				is_ai = yes
+				authority >= define:NPolitics|IG_SUPPRESSION_COST
+			}
+			scope:socialist_movement_scope ?= {
+				set_suppression = yes
+			}
+		}
+	}
+
+	option = {
+		name = factory_councils.1.c
+		trigger = {
+			scope:socialist_movement_scope ?= {
+				is_revolutionary = yes
+				political_movement_military_support < 0.05
+			}
+			ig:ig_armed_forces ?= {
+				is_insurrectionary = no
+			}
+			ROOT.army_power_projection > {
+				value = ROOT.total_population
+				divide = 1000
+				multiply = scope:socialist_movement_scope.political_movement_support
+			}
+		}
+		highlighted_option = yes
+		show_as_unavailable = {
+			always = yes
+		}
+		ai_chance = {
+			base = 90
+		}
+		random_civil_war = {
+			limit = {
+				political_movement ?= {
+					scope:socialist_movement_scope ?= this
+				}
+			}
+			add_civil_war_progress = revolution_retreat_very_large
+		}
+		add_radicals = {
+			value = very_large_radicals
+			pop_type = machinists
+		}
+		add_radicals = {
+			value = large_radicals
+			pop_type = laborers
+		}
+		if = {
+			limit = {
+				is_ai = yes
+				authority >= define:NPolitics|IG_SUPPRESSION_COST
+			}
+			scope:socialist_movement_scope ?= {
+				set_suppression = yes
+			}
+		}
+	}
+}
+
+factory_councils.2 = {
+	type = country_event
+
+	icon = "gfx/interface/icons/event_icons/event_revolutionary_flag.dds"
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	title = {
+		first_valid = {
+			triggered_desc = {
+				desc = factory_councils.2.t
+				trigger = {
+					exists = scope:commune_enemy_country
+				}
+			}
+			triggered_desc = {
+				desc = factory_councils.2.t_2
+				trigger = {
+					scope:commune_state ?= {
+						is_split_state = yes
+					}
+				}
+			}
+			triggered_desc = {
+				desc = factory_councils.2.t_1
+				trigger = {
+					always = yes
+				}
+			}
+		}
+	}
+	desc = factory_councils.2.d
+	flavor = factory_councils.2.f
+
+	event_image = {
+		video = "ip5_soviet_deliberation"
+	}
+
+	duration = 3
+
+	cooldown = { days = long_modifier_time }
+
+	trigger = {
+		has_global_variable_map = first_proletarian_revolution
+	}
+
+	immediate = {
+		if = {
+			limit = {
+				character_marx_is_alive = yes
+			}
+			global_var:big_communism_builder ?= {
+				save_scope_as = paris_commune_author
+			}
+		}
+		else = {
+			ordered_character = {
+				limit = {
+					has_socialist_ideology = yes
+				}
+				alternative_limit = {
+					has_ideology = ideology:ideology_state_socialist
+				}
+				order_by = prominence
+				position = 0
+				save_scope_as = paris_commune_author
+			}
+		}
+		random_key_in_global_variable_map = {
+			variable = first_proletarian_revolution
+			save_scope_as = first_proletarian_revolution_state_region
+			random_scope_state = {
+				limit = {
+					owner ?= {
+						is_revolutionary = yes
+					}
+				}
+				alternative_limit = {
+					owner ?= {
+						is_insurrectionary = yes
+					}
+				}
+				alternative_limit = {
+					exists = owner
+				}
+				save_scope_as = commune_state
+				owner ?= {
+					save_scope_as = commune_country
+					if = {
+						limit = {
+							c:PRC ?= this
+						}
+						c:FRA ?= {
+							save_scope_as = commune_enemy_country
+						}
+					}
+					else = {
+						civil_war_origin_country ?= {
+							save_scope_as = commune_enemy_country
+						}
+					}
+				}
+			}
+		}
+	}
+
+	option = {
+		name = factory_councils.2.a
+		ai_chance = {
+			base = 5
+		}
+		custom_tooltip = council_republic_becomes_available_tt
+		if = {
+			limit = {
+				any_political_movement = {
+					OR = {
+						is_political_movement_type = movement_socialist
+						is_political_movement_type = movement_nihilist
+						is_political_movement_type = movement_anarchist
+						is_political_movement_type = movement_communist
+					}
+				}
+			}
+			ordered_political_movement = {
+				limit = {
+					OR = {
+						is_political_movement_type = movement_socialist
+						is_political_movement_type = movement_nihilist
+						is_political_movement_type = movement_anarchist
+						is_political_movement_type = movement_communist
+					}
+				}
+				order_by = political_movement_radicalism
+				add_modifier = {
+					name = modifier_studying_the_commune
+					days = normal_modifier_time
+					is_decaying = yes
+				}
+			}
+		}
+	}
+
+	option = {
+		name = factory_councils.2.b
+		default_option = yes
+		ai_chance = {
+			base = 10
+			modifier = {
+				trigger = {
+					ai_avoids_radicals = yes
+				}
+				add = 10
+			}
+		}
+		custom_tooltip = council_republic_becomes_available_tt
+		add_loyalists = {
+			value = 0.01
+			strata = upper
+		}
+	}
+}
+
+namespace = nomenklatura
+
+nomenklatura.1 = {
+	type = country_event
+
+	icon = "gfx/interface/icons/event_icons/event_revolutionary_flag.dds"
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	title = nomenklatura.1.t
+	desc = nomenklatura.1.d
+	flavor = nomenklatura.1.f
+
+	event_image = {
+		video = "ep2_intellectual_writer"
+	}
+
+	duration = 3
+
+	fire_only_once = yes
+
+	trigger = {
+		has_law_or_variant = law_type:law_council_republic
+		is_revolutionary = no
+		ig:ig_intelligentsia ?= {
+			is_insurrectionary = no
+		}
+		je:je_state_and_revolution ?= {
+			"scripted_bar_progress(je_state_and_revolution_political_bar)" <= 60
+		}
+		OR = {
+			political_strength_share = {
+				pop_type = bureaucrats
+				value > nomenklatura_pol_str_percent_target
+			}
+			ig:ig_intelligentsia ?= {
+				is_powerful = yes
+			}
+		}
+	}
+
+	immediate = {
+		generate_2_common_name = {
+			CULTURE_1 = primary_culture
+			CULTURE_2 = primary_culture
+		}
+		ordered_scope_character = {
+			limit = {
+				has_variable = fated_nomenklatura_leader
+			}
+			alternative_limit = {
+				OR = {
+					has_trait = master_bureaucrat
+					has_trait = experienced_political_operator
+					has_trait = expert_political_operator
+				}
+				OR = {
+					is_interest_group_type = ig_trade_unions
+					has_socialist_ideology = yes
+				}
+			}
+			alternative_limit = {
+				OR = {
+					is_interest_group_type = ig_trade_unions
+					has_socialist_ideology = yes
+				}
+			}
+			order_by = prominence
+			position = 0
+			save_scope_as = relevant_character_scope
+			set_temporary_event_immortality = { DURATION = 3 }
+		}
+		ig:ig_intelligentsia ?= {
+			save_scope_as = nomenklatura_scope
+		}
+	}
+
+	option = {
+		name = nomenklatura.1.a
+		ai_chance = {
+			base = 5
+		}
+	}
+
+	option = {
+		name = nomenklatura.1.b
+		default_option = yes
+		ai_chance = {
+			base = 5
+		}
+	}
+
+	after = {
+		scope:nomenklatura_scope ?= {
+			custom_tooltip = {
+				text = nomenklatura_tt
+				interest_group_transform_into_nomenklatura = yes
+			}
+		}
+		if = {
+			limit = {
+				NOT = {
+					scope:relevant_character_scope ?= {
+						is_interest_group_type = ig_intelligentsia
+					}
+				}
+			}
+			scope:relevant_character_scope ?= {
+				set_interest_group = scope:nomenklatura_scope
+				custom_tooltip = {
+					text = leader_of_nomenklatura_tt
+					set_as_interest_group_leader = yes
+				}
+			}
+		}
+		every_scope_character = {
+			limit = {
+				OR = {
+					is_interest_group_type = ig_trade_unions
+					has_socialist_ideology = yes
+				}
+				OR = {
+					has_trait = master_bureaucrat
+					has_trait = experienced_political_operator
+					has_trait = expert_political_operator
+				}
+				NOT = {
+					scope:relevant_character_scope ?= this
+				}
+			}
+			random = {
+				chance = {
+					value = 50
+				}
+				set_interest_group = scope:nomenklatura_scope
+			}
+		}
+		recalculate_pop_ig_support = yes
+		clear_generated_names = yes
+	}
+}
+
+#nomenklatura.2 = {
+#	type = country_event
+#
+#	icon = "gfx/interface/icons/event_icons/event_revolutionary_flag.dds"
+#
+#	title = nomenklatura.2.t
+#	desc = nomenklatura.2.d
+#	flavor = nomenklatura.2.f
+#
+#   gui_window = event_window_1char_tabloid
+#
+#	left_icon = scope:stalin_scope
+#
+#	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+#	on_opened_soundeffect = "event:/SFX/Events/misc/1Character_Banner"
+#
+#	duration = 3
+#
+#	fire_only_once = yes
+#
+#	dlc = dlc019
+#
+#	trigger = {
+#		has_dlc_feature = ip5_content
+#		has_law_or_variant = law_type:law_council_republic
+#		OR = {
+#			is_revolutionary = no
+#			AND = {
+#				is_revolutionary = yes
+#				is_player = yes
+#			}
+#		}
+#		any_scope_character = {
+#			has_template = RUS_iosif_dzhugashvili
+#			interest_group = {
+#				has_party = yes
+#			}
+#		}
+#	}
+#
+#	immediate = {
+#		random_scope_character = {
+#			limit = {
+#				has_template = RUS_iosif_dzhugashvili
+#			}
+#			save_scope_as = stalin_scope
+#			interest_group.party ?= {
+#				save_scope_as = stalin_party_scope
+#			}
+#			set_temporary_event_immortality = { DURATION = 3 }
+#		}
+#	}
+#
+#	option = {
+#		name = nomenklatura.2.a
+#		ai_chance = {
+#			base = 5
+#		}
+#		scope:stalin_scope ?= {
+#			set_last_name = Stalin
+#			add_modifier = {
+#				name = modifier_general_secretary
+#				days = very_long_modifier_time
+#			}
+#			add_trait = master_bureaucrat
+#			if = {
+#				limit = {
+#					has_role_of_type = agitator
+#				}
+#				replace_character_roles = { remove = { agitator } add = { politician } }
+#			}
+#			set_variable = fated_nomenklatura_leader
+#		}
+#		if = {
+#			limit = {
+#				any_scope_state = {
+#					state_region = {
+#						is_homeland = cu:georgian
+#					}
+#				}
+#			}
+#			add_loyalists = {
+#				value = medium_radicals
+#				culture = cu:georgian
+#			}
+#		}
+#	}
+#
+#	option = {
+#		name = nomenklatura.2.b
+#		default_option = yes
+#		ai_chance = {
+#			base = 5
+#		}
+#		scope:stalin_scope ?= {
+#			set_last_name = Stalin
+#			add_modifier = {
+#				name = modifier_commissar_for_nationalities
+#				days = very_long_modifier_time
+#			}
+#			if = {
+#				limit = {
+#					has_role_of_type = agitator
+#				}
+#				replace_character_roles = { remove = { agitator } add = { politician } }
+#			}
+#		}
+#		add_modifier = {
+#			name = modifier_marxism_and_the_national_question
+#			days = long_modifier_time
+#		}
+#		if = {
+#			limit = {
+#				any_scope_state = {
+#					state_region = {
+#						is_homeland = cu:georgian
+#					}
+#				}
+#			}
+#			add_loyalists = {
+#				value = medium_radicals
+#				culture = cu:georgian
+#			}
+#		}
+#	}
+#
+#	option = {
+#		name = nomenklatura.2.c
+#		ai_chance = {
+#			base = 5
+#		}
+#		scope:stalin_scope ?= {
+#			set_last_name = Stalin
+#		}
+#		if = {
+#			limit = {
+#				any_scope_state = {
+#					state_region = {
+#						is_homeland = cu:georgian
+#					}
+#				}
+#			}
+#			add_radicals = {
+#				value = medium_radicals
+#				culture = cu:georgian
+#			}
+#		}
+#	}
+#}
+
+nomenklatura.3 = { # Official gets voted out
+	type = country_event
+
+	icon = "gfx/interface/icons/event_icons/event_revolutionary_flag.dds"
+
+	title = nomenklatura.3.t
+	desc = nomenklatura.3.d
+	flavor = nomenklatura.3.f
+
+    gui_window = event_window_1char_tabloid
+
+	left_icon = scope:relevant_character_scope
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/misc/1Character_Banner"
+
+	duration = 3
+
+	cooldown = { days = normal_modifier_time }
+
+	trigger = {
+		has_law_or_variant = law_type:law_council_republic
+		has_law_or_variant = law_type:law_communal_administration
+		any_scope_character = {
+			has_role_of_type = politician
+			popularity < 0
+			NOR = {
+				has_role_of_type = ruler
+				has_role_of_type = heir
+			}
+		}
+	}
+
+	immediate = {
+		ordered_scope_character = {
+			limit = {
+				has_role_of_type = politician
+				popularity < 0
+				NOR = {
+					has_role_of_type = ruler
+					has_role_of_type = heir
+				}
+			}
+			order_by = {
+				value = popularity
+				multiply = -1
+			}
+			position = 0
+			save_scope_as = relevant_character_scope
+			set_temporary_event_immortality = { DURATION = 3 }
+		}
+	}
+
+	option = {
+		name = nomenklatura.3.a
+		ai_chance = {
+			base = 5
+		}
+		revoke_temporary_event_immortality = { CHARACTER = scope:relevant_character_scope }
+		if = {
+			limit = {
+				scope:relevant_character_scope ?= {
+					any_character_role = {
+						NOT = {
+							is_character_role = character_role_politician
+						}
+					}
+				}
+			}
+			scope:relevant_character_scope ?= {
+				if = {
+					limit = {
+						has_role = character_role_ig_leader
+					}
+					custom_tooltip = {
+						text = remove_as_ig_leader_tt
+						replace_character_roles = { remove = { character_role_ig_leader } add = { politician } }
+					}
+					interest_group ?= {
+						ordered_scope_character = {
+							limit = {
+								is_ruler_of_own_country = no
+								is_heir_of_own_country = no
+								is_interest_group_leader = no
+								NOT = { scope:relevant_character_scope ?= this }
+
+							}
+							order_by = prominence
+							position = 0
+							if = {
+								limit = {
+									has_role_of_type = agitator
+								}
+								replace_character_roles = { remove = { agitator } add = { politician } }
+							}
+							set_as_interest_group_leader = yes
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						has_role = character_role_politician
+					}
+					remove_character_role = politician
+				}
+			}
+		}
+		else = {
+			scope:relevant_character_scope ?= {
+				retire_character = yes
+			}
+		}
+	}
+
+	option = {
+		name = nomenklatura.3.b
+		default_option = yes
+		ai_chance = {
+			base = 5
+		}
+		add_modifier = {
+			name = modifier_recall_overridden
+			days = long_modifier_time
+		}
+	}
+
+	after = {
+		revoke_temporary_event_immortality = { CHARACTER = scope:relevant_character_scope }
+	}
+}
+
+nomenklatura.4 = { # General/Admiral gets voted out
+	type = country_event
+
+	icon = "gfx/interface/icons/event_icons/event_revolutionary_flag.dds"
+
+	title = nomenklatura.4.t
+	desc = nomenklatura.4.d
+	flavor = nomenklatura.4.f
+
+    gui_window = event_window_1char_tabloid
+
+	left_icon = scope:relevant_character_scope
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+	on_opened_soundeffect = "event:/SFX/Events/misc/1Character_Banner"
+
+	duration = 3
+
+	cooldown = { days = normal_modifier_time }
+
+	trigger = {
+		has_law_or_variant = law_type:law_council_republic
+		has_law_or_variant = law_type:law_revolutionary_guard
+		any_scope_character = {
+			OR = {
+				has_role_of_type = general
+				has_role_of_type = admiral
+			}
+			has_military_formation = yes
+			popularity < 15
+			NOR = {
+				has_role_of_type = ruler
+				has_role_of_type = heir
+			}
+		}
+	}
+
+	immediate = {
+		ordered_scope_character = {
+			limit = {
+				OR = {
+					has_role_of_type = general
+					has_role_of_type = admiral
+				}
+				popularity < 15
+				NOR = {
+					has_role_of_type = ruler
+					has_role_of_type = heir
+				}
+				has_military_formation = yes
+			}
+			order_by = {
+				value = popularity
+				multiply = -1
+			}
+			commander_military_formation = {
+				save_scope_as = formation_scope
+			}
+			position = 0
+			save_scope_as = relevant_character_scope
+			set_temporary_event_immortality = { DURATION = 3 }
+		}
+		ig:ig_armed_forces ?= {
+			save_scope_as = red_army_ig
+		}
+	}
+
+	option = {
+		name = nomenklatura.4.a
+		ai_chance = {
+			base = 5
+		}
+		revoke_temporary_event_immortality = { CHARACTER = scope:relevant_character_scope }
+		scope:relevant_character_scope ?= {
+			if = {
+				limit = {
+					has_role_of_type = admiral
+				}
+				remove_character_role = admiral
+				commander_military_formation = {
+					show_as_tooltip = {
+						custom_tooltip = new_revolutionary_admiral_tt
+					}
+				}
+				owner = {
+					hidden_effect = {
+						create_character = {
+							interest_group = ig_trade_unions
+							is_admiral = yes
+							traits = {
+								charismatic
+							}
+							trait_generation = {
+								add_random_trait = skill
+							}
+							on_created = {
+								assign_random_revolutionary_ideology = yes
+								if = {
+									limit = {
+										exists = scope:formation_scope
+									}
+									transfer_to_formation = scope:formation_scope
+								}
+							}
+						}
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					has_role_of_type = general
+				}
+				remove_character_role = general
+				commander_military_formation = {
+					show_as_tooltip = {
+						custom_tooltip = new_revolutionary_general_tt
+					}
+				}
+				owner = {
+					hidden_effect = {
+						create_character = {
+							interest_group = ig_trade_unions
+							is_general = yes
+							traits = {
+								charismatic
+							}
+							trait_generation = {
+								add_random_trait = skill
+							}
+							on_created = {
+								assign_random_revolutionary_ideology = yes
+								if = {
+									limit = {
+										exists = scope:formation_scope
+									}
+									transfer_to_formation = scope:formation_scope
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	option = {
+		name = nomenklatura.4.b
+		default_option = yes
+		ai_chance = {
+			base = 5
+		}
+		add_radicals = {
+			pop_type = soldiers
+			value = medium_radicals
+		}
+		add_modifier = {
+			name = modifier_recall_overridden_military
+			days = long_modifier_time
+		}
+	}
+
+	after = {
+		revoke_temporary_event_immortality = { CHARACTER = scope:relevant_character_scope }
+	}
+}
+
+nomenklatura.5 = { # Proletariat enact a law
+	type = country_event
+
+	icon = "gfx/interface/icons/event_icons/event_revolutionary_flag.dds"
+
+	title = nomenklatura.5.t
+	desc = nomenklatura.5.d
+	flavor = nomenklatura.5.f
+
+	event_image = {
+		video = "ip5_soviet_deliberation"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	duration = 3
+
+	cooldown = { days = long_modifier_time }
+
+	trigger = {
+		has_law_or_variant = law_type:law_council_republic
+		has_law_or_variant = law_type:law_factory_councils
+		enacting_any_law = no
+		ig:ig_trade_unions ?= {
+			any_preferred_law = {
+				law_is_available = yes
+				owner = {
+					NOT = {
+						has_law = prev.type
+					}
+				}
+			}
+		}
+		state_and_revolution_average_confrontation >= 50
+	}
+
+	immediate = {
+		ig:ig_trade_unions ?= {
+			ordered_preferred_law = {
+				limit = {
+					law_is_available = yes
+					owner = {
+						NOT = {
+							has_law = prev.type
+						}
+					}
+				}
+				min = 0
+				max = 1
+				save_scope_as = trade_union_law_scope
+			}
+			leader = {
+				save_scope_as = proletariat_leader
+				set_temporary_event_immortality = { DURATION = 3 }
+			}
+		}
+		ordered_scope_state = {
+			limit = {
+				has_building = building_urban_center
+			}
+			order_by = b:building_urban_center.level
+			position = 0
+			check_range_bounds = no
+			save_scope_as = relevant_urban_state
+		}
+	}
+
+	option = {
+		name = nomenklatura.5.a
+		ai_chance = {
+			base = 5
+		}
+		start_enactment = scope:trade_union_law_scope.type
+		custom_tooltip = {
+			text = begin_one_phase_ahead_tt
+			add_enactment_phase = 1
+		}
+		add_enactment_modifier = {
+			name = modifier_spontaneous_enactment
+			multiplier = ig:ig_trade_unions.ig_clout
+		}
+	}
+
+	option = {
+		name = nomenklatura.5.b
+		default_option = yes
+		ai_chance = {
+			base = 5
+		}
+		add_modifier = {
+			name = modifier_bureaucratic_veto
+			days = long_modifier_time
+		}
+	}
+}
+
+nomenklatura.6 = { # Unions harass the bourgeois specialists
+	type = country_event
+	placement = scope:relevant_industrial_state
+
+	icon = "gfx/interface/icons/event_icons/event_revolutionary_flag.dds"
+
+	title = nomenklatura.6.t
+	desc = nomenklatura.6.d
+	flavor = nomenklatura.6.f
+
+	event_image = {
+		video = "ip4_mining_scene"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	duration = 3
+
+	cooldown = { days = long_modifier_time }
+
+	trigger = {
+		has_law_or_variant = law_type:law_council_republic
+		has_law_or_variant = law_type:law_factory_councils
+		OR = {
+			active_law:lawgroup_bureaucracy ?= {
+				has_amendment = amendment_type:amendment_bourgeois_specialists
+			}
+			NOT = {
+				has_law_or_variant = law_type:law_communal_administration
+			}
+		}
+	}
+
+	immediate = {
+		ig:ig_trade_unions ?= {
+			save_scope_as = proletariat_ig
+		}
+		ordered_scope_state = {
+			limit = {
+				any_scope_building = {
+					is_building_group = bg_heavy_industry
+				}
+			}
+			order_by = "this.state_has_building_group_levels(bg_heavy_industry)"
+			position = 0
+			check_range_bounds = no
+			save_scope_as = relevant_industrial_state
+		}
+	}
+
+	option = {
+		name = nomenklatura.6.a
+		ai_chance = {
+			base = 5
+		}
+		add_radicals = {
+			value = medium_radicals
+			pop_type = bureaucrats
+		}
+		scope:relevant_industrial_state ?= {
+			add_modifier = {
+				name = modifier_wrecking_accusations
+				days = short_modifier_time
+			}
+		}
+	}
+
+	option = {
+		name = nomenklatura.6.b
+		default_option = yes
+		ai_chance = {
+			base = 5
+		}
+		add_modifier = {
+			name = modifier_defended_the_specialists
+			days = long_modifier_time
+		}
+	}
+}
+
+# DEBUG
+
+namespace = communism_debug
+
+communism_debug.1000 = {
+	type = country_event
+
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	title = communism_debug.1000.t
+	desc = communism_debug.1000.d
+	flavor = communism_debug.1000.f
+
+	event_image = {
+		video = "unspecific_iceberg"
+	}
+	orphan = yes
+
+	duration = 3
+
+	cooldown = { days = very_long_modifier_time }
+
+	trigger = {
+	}
+
+	immediate = {
+		if = {
+			limit = {
+				has_global_variable_map = first_proletarian_revolution
+			}
+			random_key_in_global_variable_map = {
+				variable = first_proletarian_revolution
+				save_scope_as = first_proletarian_revolution_state_region
+			}
+		}
+		else = {
+			random_country = {
+				add_to_global_variable_map = { name = first_proletarian_revolution key = this.capital.state_region value = year }
+			}
+			random_key_in_global_variable_map = {
+				variable = first_proletarian_revolution
+				save_scope_as = first_proletarian_revolution_state_region
+			}
+		}
+	}
+
+	option = {
+		name = communism_debug.1000.a
+		default_option = yes
+	}
+
+	option = {
+		name = communism_debug.1000.b
+	}
+}
