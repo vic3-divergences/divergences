@@ -417,6 +417,11 @@ on_river = {
 		has_state_trait = state_trait_amazon_river
 		has_state_trait = state_trait_white_nile
 		has_state_trait = state_trait_rio_grande_river
+		
+		#DVG
+		has_state_trait = state_trait_oka_river
+		has_state_trait = state_trait_vistula_river
+		
 	}
 }
 
@@ -1035,6 +1040,8 @@ has_patriarchal_ideology = {
 	}
 }
 
+#These next 3 can_reach seem to have been removed from vanilla, keeping just in case.
+
 can_reach_target_country = {
 	has_diplomatic_relevance = scope:target_country
 	OR = {
@@ -1067,6 +1074,121 @@ can_reach_target_state = {
 			navy_size >= 10
 			has_port_country = yes
 			scope:target_state = { is_coastal = yes }
+		}
+	}
+}
+
+
+
+# Can the scope country get an army into $TARGET_COUNTRY$ well enough to take and hold territory
+can_reach_target_country_to_conquer = {
+	$TARGET_COUNTRY$ = { save_temporary_scope_as = military_reach_target }
+	custom_tooltip = {
+		text = can_reach_to_conquer_tt
+		has_diplomatic_relevance = $TARGET_COUNTRY$
+		has_military_reach = {
+			target = $TARGET_COUNTRY$
+			min_reach = ai_military_reach_conquer
+			min_shippable_strength = ai_military_reach_conquer_min_shippable_strength
+		}
+	}
+}
+
+# Can the scope country get an army into $TARGET_STATE$ well enough to take and hold territory
+can_reach_target_state_to_conquer = {
+	$TARGET_STATE$ = { save_temporary_scope_as = military_reach_target }
+	custom_tooltip = {
+		text = can_reach_state_to_conquer_tt
+		has_diplomatic_relevance = $TARGET_STATE$.owner
+		has_military_reach = {
+			target = $TARGET_STATE$
+			min_reach = ai_military_reach_conquer
+			min_shippable_strength = ai_military_reach_conquer_min_shippable_strength
+		}
+	}
+}
+
+# Can the scope country get an army into $TARGET_COUNTRY$ well enough to force it into subjecthood or dominate it
+can_reach_target_country_to_subjugate = {
+	$TARGET_COUNTRY$ = { save_temporary_scope_as = military_reach_target }
+	custom_tooltip = {
+		text = can_reach_to_subjugate_tt
+		has_diplomatic_relevance = $TARGET_COUNTRY$
+		has_military_reach = {
+			target = $TARGET_COUNTRY$
+			min_reach = ai_military_reach_subjugate
+			min_shippable_strength = ai_military_reach_subjugate_min_shippable_strength
+		}
+	}
+}
+
+# Can the scope country get an army into $TARGET_COUNTRY$ well enough to fight a limited war over it, such as opening its market or taking a treaty port
+can_reach_target_country_to_coerce = {
+	$TARGET_COUNTRY$ = { save_temporary_scope_as = military_reach_target }
+	custom_tooltip = {
+		text = can_reach_to_coerce_tt
+		has_diplomatic_relevance = $TARGET_COUNTRY$
+		has_military_reach = {
+			target = $TARGET_COUNTRY$
+			min_reach = ai_military_reach_coerce
+			min_shippable_strength = ai_military_reach_coerce_min_shippable_strength
+		}
+	}
+}
+
+# Can the scope country get an army into $TARGET_STATE$ well enough to fight a limited war over it, such as opening its market or taking a treaty port
+can_reach_target_state_to_coerce = {
+	$TARGET_STATE$ = { save_temporary_scope_as = military_reach_target }
+	custom_tooltip = {
+		text = can_reach_state_to_coerce_tt
+		has_diplomatic_relevance = $TARGET_STATE$.owner
+		has_military_reach = {
+			target = $TARGET_STATE$
+			min_reach = ai_military_reach_coerce
+			min_shippable_strength = ai_military_reach_coerce_min_shippable_strength
+		}
+	}
+}
+
+# Can the scope country get an army into $TARGET_COUNTRY$ well enough to send help to it or count as a meaningful friend to it
+# A power bloc leader can always protect its members
+can_reach_target_country_to_protect = {
+	$TARGET_COUNTRY$ = { save_temporary_scope_as = military_reach_target }
+	custom_tooltip = {
+		text = can_reach_to_protect_tt
+		has_diplomatic_relevance = $TARGET_COUNTRY$
+		OR = {
+			AND = {
+				is_power_bloc_leader = yes
+				is_in_same_power_bloc = $TARGET_COUNTRY$
+			}
+			has_military_reach = {
+				target = $TARGET_COUNTRY$
+				min_reach = ai_military_reach_protect
+				min_shippable_strength = ai_military_reach_protect_min_shippable_strength
+			}
+		}
+	}
+}
+
+# Can $TARGET_COUNTRY$ get an army into the scope country well enough to protect it
+can_be_reached_by_target_country_to_protect = {
+	$TARGET_COUNTRY$ = { save_temporary_scope_as = military_reach_target }
+	custom_tooltip = {
+		text = can_be_reached_to_protect_tt
+		has_diplomatic_relevance = $TARGET_COUNTRY$
+		$TARGET_COUNTRY$ = {
+			OR = {
+				AND = {
+					is_power_bloc_leader = yes
+					is_in_same_power_bloc = prev
+				}
+				has_military_reach = {
+					target = prev
+					min_reach = ai_military_reach_protect
+					min_shippable_strength = ai_military_reach_protect_min_shippable_strength
+				}
+			}
 		}
 	}
 }
@@ -2075,6 +2197,89 @@ movement_is_conservative = {
     }
 }
 
+relevant_movement_has_people_in_state = {
+	trigger_if = {
+		limit = {
+			scope:relevant_movement = {
+				is_political_movement_type = movement_cultural_minority
+			}
+		}
+		culture_percent_state = {
+			target = scope:relevant_movement.culture
+			value >= 0.05
+		}
+	}
+	trigger_else_if = {
+		limit = {
+			scope:relevant_movement = {
+				OR = {
+					is_political_movement_type = movement_religious_minority
+					is_political_movement_type = movement_religious_majority
+				}
+			}
+		}
+		religion_percent_state = {
+			target = scope:relevant_movement.religion
+			value >= 0.05
+		}
+	}
+	trigger_else_if = {
+		limit = {
+			scope:relevant_movement = {
+				is_political_movement_type = movement_cultural_majority
+			}
+		}
+		primary_cultures_percent_state = {
+			target_country = owner
+			value >= 0.05
+		}
+	}
+	trigger_else_if = {
+		limit = {
+			scope:relevant_movement = {
+				OR = {
+					is_political_movement_type = movement_india_pan_national
+					is_political_movement_type = movement_hindu_nationalist
+					is_political_movement_type = movement_muslim_nationalist
+				}
+			}
+		}
+		state_is_homeland_of_indian_cultures = yes
+	}
+	trigger_else_if = {
+		limit = {
+			scope:relevant_movement = {
+				is_political_movement_type = movement_german_national
+			}
+		}
+		state_is_homeland_of_german_cultures = yes
+	}
+	trigger_else_if = {
+		limit = {
+			scope:relevant_movement = {
+				is_political_movement_type = movement_italian_national
+			}
+		}
+		state_is_homeland_of_italian_cultures = yes
+	}
+	trigger_else_if = {
+		limit = {
+			scope:relevant_movement = {
+				is_political_movement_type = movement_yugoslav_national
+			}
+		}
+		state_is_homeland_of_yugoslav_cultures = yes
+	}
+	#trigger_else_if = {
+	#	limit = {
+	#		scope:relevant_movement = {
+	#			is_political_movement_type = movement_dominican_national
+	#		}
+	#	}
+	#	state_region = s:STATE_SANTO_DOMINGO
+	#}
+}
+
 serbia_throne_campaign_state_check = {
 	OR = {
 		has_modifier = serbia_auth_fund_campaigned_state_a_mod
@@ -2098,6 +2303,21 @@ ryukyu_has_declared_neutrality = {
 
 character_is_emperor_of_japan = {
 	has_trait = special_character_japanese_emperor
+}
+
+character_is_tsar_of_russia = {
+	is_ruler_of_own_country = yes
+	owner ?= {
+		c:RUS ?= this
+		OR = {
+			has_law = law_type:law_monarchy
+			has_law = law_type:law_social_monarchy
+		}
+	}
+}
+
+character_is_captain_nemo = {
+	has_template = nemo_prince
 }
 
 country_meiji_reform_emperor_restored = {
