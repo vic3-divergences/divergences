@@ -4,14 +4,12 @@
 	group = je_group_crises
 
 	immediate = {
-		
 	}
 
 	is_shown_when_inactive = {
 		country_has_primary_culture = cu:septiman
 	}
 	
-
 	possible = {
 		country_has_primary_culture = cu:septiman
 		NOT = {
@@ -54,36 +52,40 @@
 			}
 			
 		}
-		
 	}
 
-	complete = {
-		custom_tooltip = {
-			text = belgian_formed_tt
-			AND = {
-				exists = c:BLC
-				c:BLC = ROOT
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			custom_tooltip = {
+				text = belgian_formed_tt
+				AND = {
+					exists = c:BLC
+					c:BLC = ROOT
+				}
 			}
 		}
-			
-	}
+        effect = {
+			trigger_event = { id = dvg_belgium.7 }
+			if = {
+				limit = {
+					exists = c:PLA
+				}
+				c:PLA = {
+					trigger_event = { id = dvg_belgium.9 }
+				}
+			}	
+			set_global_variable = belgium_united
+			call_election = {
+				months = 1
+			}
+		}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }	
 
-	on_complete = {
-		trigger_event = { id = dvg_belgium.7 }
-		if = {
-			limit = {
-				exists = c:PLA
-			}
-			c:PLA = {
-				trigger_event = { id = dvg_belgium.9 }
-
-			}
-		}
-		set_global_variable = belgium_united
-		call_election = {
-			months = 1
-		}
-	}
 	on_weekly_pulse = {
 		effect = {
 			if = {
@@ -103,6 +105,7 @@
 			}
 		}
 	}
+
 	on_monthly_pulse = {
 		effect = {
 			if = {
@@ -123,49 +126,47 @@
 			1 = dvg_belgium.41
 			1 = dvg_belgium.66
 		}
-		
-		
 	}
-	fail = {
-		has_variable = constitutional_convention
-		
-		OR = {
-			AND = {
-				any_scope_state = {
-					count < 3
-					state_region = {
-						is_homeland = cu:septiman
+
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+				has_variable = constitutional_convention
+				OR = {
+					AND = {
+						any_scope_state = {
+						count < 3
+						state_region = {
+							is_homeland = cu:septiman
+						}
+						}
+					NOT = {
+						any_subject_or_below = {
+							country_has_primary_culture = cu:septiman
+						}
 					}
-				}
-				NOT = {
-					any_subject_or_below = {
+					}
+					any_country = {
+						count >= 3
+						liberty_desire > 75
 						country_has_primary_culture = cu:septiman
+						is_subject_of = ROOT
+							has_attitude = {
+							who = ROOT
+							attitude = rebellious
+							}
 					}
-					
 				}
-			}
-			
-			any_country = {
-				count >= 3
-				liberty_desire > 75
-				country_has_primary_culture = cu:septiman
-				is_subject_of = ROOT
-				has_attitude = {
-					who = ROOT
-					attitude = rebellious
+		}
+        effect = {
+				trigger_event = {
+					id = dvg_belgium.65
 				}
-			}
-			
 		}
-		
-		
-		
-	}
-	on_fail = {
-		trigger_event = {
-			id = dvg_belgium.65
-		}
-	}
+    }
 	
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
@@ -175,48 +176,49 @@ je_sanacomie = {
 
 	group = je_group_crises
 
-	immediate = {
-		
+	immediate = {	
 	}
 
 	is_shown_when_inactive = {
 	}
 	
-
 	possible = {
-		
 	}
 
-	
-
-	complete = {
-		 OR = {
-            owns_entire_state_region = STATE_SANACOMIE
-            any_country = {
-                is_subject_of = ROOT
-                owns_entire_state_region = STATE_SANACOMIE
-            }
-        }
-	}
-
-	on_complete = {
-		trigger_event = { id = dvg_belgium.27 }	
-
-		hidden_effect = {
-			if = {
-				limit = {
-					c:VIN = {
-						has_variable = conservative_vinland
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			OR = {
+            	owns_entire_state_region = STATE_SANACOMIE
+            	any_country = {
+                	is_subject_of = ROOT
+                	owns_entire_state_region = STATE_SANACOMIE
+            	}
+        	}
+		}
+        effect = {
+			trigger_event = { id = dvg_belgium.27 }	
+			hidden_effect = {
+				if = {
+					limit = {
+						c:VIN = {
+							has_variable = conservative_vinland
+						}
 					}
-				}
-				c:VIN = {
-					trigger_event = {
-						id = dvg_skraeling.8
+					c:VIN = {
+						trigger_event = {
+							id = dvg_skraeling.8
+						}
 					}
 				}
 			}
 		}
-	}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }	
+
 	on_monthly_pulse = {
 		random_events = {
 			15 = 0
@@ -261,93 +263,96 @@ je_sanacomie = {
 				}
 				set_variable = lou_vs_blc
 			}
-			
 		}
-		
-	}
-	fail = {
-		
-		NOT = {
-			 OR = {
-			any_scope_state = {
-					state_region = s:STATE_SANACOMIE
-				}
-            any_country = {
-                is_subject_of = ROOT
-              any_scope_state = {
-					state_region = s:STATE_SANACOMIE
-			}	
-            }
-        	}
-		}
-	
 	}
 
-	on_fail = {
-		c:PLA = {
-			trigger_event = {
-				id = dvg_belgium.26
-			}
-		}
-		trigger_event = {
-			id = dvg_belgium.28
-		}
-		hidden_effect = {
-			if = {
-				limit = {
-					c:VIN = {
-						has_variable = conservative_vinland
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+				NOT = {
+					OR = {
+					any_scope_state = {
+						state_region = s:STATE_SANACOMIE
 					}
+            		any_country = {
+                		is_subject_of = ROOT
+            			any_scope_state = {
+							state_region = s:STATE_SANACOMIE
+						}	
+            		}
+        			}
 				}
-				c:VIN = {
+		}
+        effect = {
+				c:PLA = {
 					trigger_event = {
-						id = dvg_skraeling.8
+						id = dvg_belgium.26
 					}
 				}
-			}
-			
+				trigger_event = {
+					id = dvg_belgium.28
+				}
+				hidden_effect = {
+					if = {
+						limit = {
+							c:VIN = {
+								has_variable = conservative_vinland
+							}
+						}
+						c:VIN = {
+							trigger_event = {
+								id = dvg_skraeling.8
+							}
+						}
+					}
+				}
 		}
-	}
+    }
 
-	invalid = {
-		AND = {
-			c:PLA = {
+    outcome = {
+        flags = { hidden invalid_outcome }
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			AND = {
+				c:PLA = {
+					NOT = {
+						any_scope_state = {
+							state_region = s:STATE_SANACOMIE
+						}
+					}
+				}
 				NOT = {
 					any_scope_state = {
 						state_region = s:STATE_SANACOMIE
 					}
-				}
-			}
-			NOT = {
-				any_scope_state = {
-					state_region = s:STATE_SANACOMIE
-				}
-				any_subject_or_below = {
-					any_scope_state = {
-						state_region = s:STATE_SANACOMIE
+					any_subject_or_below = {
+						any_scope_state = {
+							state_region = s:STATE_SANACOMIE
+						}
 					}
 				}
 			}
-
 		}
-		
-	}
-	on_invalid = {
-		hidden_effect = {
-			if = {
-				limit = {
+        effect = {
+			hidden_effect = {
+				if = {
+					limit = {
+						c:VIN = {
+							has_variable = conservative_vinland
+						}
+					}
 					c:VIN = {
-						has_variable = conservative_vinland
-					}
-				}
-				c:VIN = {
-					trigger_event = {
-						id = dvg_skraeling.8
+						trigger_event = {
+							id = dvg_skraeling.8
+						}
 					}
 				}
 			}
 		}
-	}
+    }
 	
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
@@ -362,23 +367,25 @@ je_belgian_confederacy = {
 	}
 
 	is_shown_when_inactive = {
-
-
 	}
 	
-
-	possible = {
-		
+	possible = {	
 	}
 
-	
-
-	complete = {
-		scope:journal_entry = { is_goal_complete = yes }
-		NOT = {
-			has_journal_entry = je_sanacomie
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			scope:journal_entry = { is_goal_complete = yes }
+			NOT = {
+				has_journal_entry = je_sanacomie
+			}
 		}
-	}
+        effect = {}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }
 
 	on_complete = {
 	}
@@ -452,13 +459,11 @@ je_belgian_confederacy = {
 				}
 			}
 		}
-		
 	}
 
 	on_monthly_pulse = {
 		effect = {
 			if = {
-			
 				limit = {
 					NOT = {
 						exists = c:CHV
@@ -472,15 +477,12 @@ je_belgian_confederacy = {
 							turmoil > 0.50
 						}
 					}
-					
-					
 				}
 				trigger_event = {
 					id = dvg_belgium.29
 				}
 			}
 			if = {
-			
 				limit = {
 					NOT = {
 						exists = c:CHV
@@ -494,8 +496,6 @@ je_belgian_confederacy = {
 							turmoil > 0.50
 						}
 					}
-					
-					
 				}
 				trigger_event = {
 					id = dvg_belgium.31
@@ -524,63 +524,65 @@ je_belgian_confederacy = {
 				}
 			}
 		}
-		
 	}
 
-
-	fail = {
-		custom_tooltip = {
-			text = blc_fail_tt
-			this = { var:dvg_belgian_var <= 0 }
-		}
-		any_scope_state = {
-			state_region = {
-				is_homeland = cu:septiman
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			custom_tooltip = {
+				text = blc_fail_tt
+				this = { var:dvg_belgian_var <= 0 }
 			}
-			count <= 3
+			any_scope_state = {
+				state_region = {
+					is_homeland = cu:septiman
+				}
+				count <= 3
+			}
 		}
-	}
-
-	on_fail = {
-		trigger_event = {
-			id = dvg_belgium.28
-		}
-		set_global_variable = belgium_collapsed
-		if = {
-			limit = {
-				NOT = {
+        effect = {
+			trigger_event = {
+				id = dvg_belgium.28
+			}
+			set_global_variable = belgium_collapsed
+			if = {
+				limit = {
+					NOT = {
+						exists = c:CNF
+					}
+					any_scope_state = {
+						state_region = s:STATE_NOUVELLE_FLANDRE
+						is_capital = yes
+					}
+				}
+				change_tag = CNF
+			}
+			if = {
+				limit = {
 					exists = c:CNF
+					c:CNF = {
+						is_ai = yes
+					}
 				}
-				any_scope_state = {
-					state_region = s:STATE_NOUVELLE_FLANDRE
-					is_capital = yes
-				}
-			}
-			change_tag = CNF
-		}
-		if = {
-			limit = {
-				exists = c:CNF
-				c:CNF = {
-					is_ai = yes
-				}
-			}
 			annex = c:CNF
 			change_tag = CNF
+			}
 		}
-		
-	}
+    }
 
 	invalid = {
-		
 	}
+
 	current_value = {
 		value = var:dvg_belgian_var
 	}
 
 	progressbar = yes
-	goal_add_value = 700
-	
+
+	goal_add_value = 5000
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
 
@@ -588,49 +590,49 @@ je_cbv_monarchy = {
 	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
 	group = je_group_foreign_affairs
 
-
 	immediate = {
-
-
 	}
 
 	is_shown_when_inactive = {
-
-	}
-	
-
-	possible = {
-		
 	}
 
-	complete = {
-		custom_tooltip = {
+	possible = {	
+	}
+
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			custom_tooltip = {
 			text = cbv_tt
-			OR = {
-				NOT = {
-					exists = c:NFL
-					exists = c:BLC
-				}
-				owns_entire_state_region = STATE_NOUVELLE_FLANDRE
+				OR = {
+					NOT = {
+						exists = c:NFL
+						exists = c:BLC
+					}
+					owns_entire_state_region = STATE_NOUVELLE_FLANDRE
+				}	
 			}
-			
 		}
-	}
-	on_complete = {
-		trigger_event = {
-			id = dvg_belgium.34
+        effect = {
+			on_complete = {
+					trigger_event = {
+						id = dvg_belgium.34
+					}
+			}
 		}
-	}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }	
+
+	goal_add_value = 700
 }
 
 je_restore_blc = {
-
 	group = je_group_foreign_affairs
 
-
 	immediate = {
-
-
 	}
 
 	is_shown_when_inactive = {
@@ -644,7 +646,6 @@ je_restore_blc = {
 		has_global_variable = belgium_united
 		has_global_variable = belgium_collapsed
 	}
-	
 
 	possible = {
 		any_country = {
@@ -653,8 +654,8 @@ je_restore_blc = {
 			count > 1
 			is_at_war = yes
 		}
-		
 	}
+
 	on_monthly_pulse = {
 		effect = {
 			if = {
@@ -704,28 +705,35 @@ je_restore_blc = {
 		}
 		}
 	
-
-	complete = {
-		custom_tooltip = {
-			text = restore_blc_tt
-			exists = c:BLC
-			c:BLC = ROOT
-			NOT = {
-				exists = c:CBV
-				exists = c:CHV
-				exists = c:CSC
-				exists = c:CPH
-				exists = c:CNL
-				exists = c:CNF
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			custom_tooltip = {
+				text = restore_blc_tt
+				exists = c:BLC
+				c:BLC = ROOT
+				NOT = {
+					exists = c:CBV
+					exists = c:CHV
+					exists = c:CSC
+					exists = c:CPH
+					exists = c:CNL
+					exists = c:CNF
+				}
 			}
 		}
-	}
-	on_complete = {
-		trigger_event = {
-			id = dvg_belgium.34
+        effect = {
+			trigger_event = {
+				id = dvg_belgium.34
+			}
 		}
-	}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }
 
+	goal_add_value = 700
 }
 
 je_wylde_rytt = {
@@ -770,9 +778,8 @@ je_wylde_rytt = {
 			}
 			add_technology_researched = corporatism
 		}
-
-		
 	}
+
 	on_yearly_pulse = {
 		effect = {
 			if = {
@@ -824,10 +831,9 @@ je_wylde_rytt = {
 					id = dvg_belgium.46
 				}
 			}
-			
-			
 		}
 	}
+
 	on_weekly_pulse = {
 		effect = {
 			if = {
@@ -843,38 +849,41 @@ je_wylde_rytt = {
 	}
 		
 	is_shown_when_inactive = {
-		
 	}
-	
 
 	possible = {
-		
 	}
 
-	progressbar = yes
-
-	goal_add_value = 100
-
-
-	complete = {
-		AND = {
-			custom_tooltip = {
-            text = je_belgium_wild_ride_strike_tooltip
-            has_variable = maline_strike
-        }
-			scope:journal_entry = { is_goal_complete = yes }
-			ig:ig_industrialists = {
-				is_powerful = yes
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			AND = {
+				custom_tooltip = {
+           		text = je_belgium_wild_ride_strike_tooltip
+            	has_variable = maline_strike
+        		}
+				scope:journal_entry = { is_goal_complete = yes }
+				ig:ig_industrialists = {
+					is_powerful = yes
+				}
 			}
 		}
-
+        effect = {
+			trigger_event = {
+				id = dvg_belgium.47
+			}
+		}
+        event_outcome_desc = {} # complex desc like a status_desc field
 	}
+
 	on_complete = {
 		trigger_event = {
 			id = dvg_belgium.47
 		}
 	}
-	timeout = 3650
 
 	fail = {
 		has_law = law_type:law_secret_police
@@ -887,14 +896,22 @@ je_wylde_rytt = {
 			is_powerful = no
 		}
 	}
-	on_fail = {
-		custom_tooltip = {
-            text = 	je_wild_ride_fail_tooltip
-        }
-		trigger_event = {
-			id = dvg_belgium.63
+
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			custom_tooltip = {
+            	text = 	je_wild_ride_fail_tooltip
+        	}
+			trigger_event = {
+				id = dvg_belgium.63
+			}
 		}
-	}
+        effect = {}
+    }
 
 	on_timeout = {
 		custom_tooltip = {
@@ -905,46 +922,47 @@ je_wylde_rytt = {
 		}
 	}
 
-
 	current_value = {
 		value = var:blc_corpo_var
 	}
+
 	should_be_pinned_by_default_uninvolved_or_context = yes
 
+	progressbar = yes
+
+	timeout = 3650
+
+	goal_add_value = 100
 }
 
 je_exists_lou = {
-
 	group = je_group_foreign_affairs
 
-
 	immediate = {
-
-
 	}
 
 	is_shown_when_inactive = {
-		
 	}
 	
-
 	possible = {
-		
 	}
 
-	complete = {
-		exists = c:LOU
-	}
-	on_complete = {
-		
-	}
-
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			exists = c:LOU
+		}
+        effect = {}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }	
 }
 
 je_nieuweu_cursus = {
 	icon = "gfx/interface/icons/event_icons/event_scales.dds"
 	group = je_group_internal_affairs
-
 
 	immediate = {
 		set_variable = {
@@ -960,20 +978,13 @@ je_nieuweu_cursus = {
 		ig:ig_intelligentsia = {
 			save_scope_as = intelligentsia_scope
 		}
-		
 	}
 
 	is_shown_when_inactive = {
-		
 	}
 	
-
 	possible = {
-		
 	}
-	progressbar = yes
-
-	goal_add_value = 350
 
 	on_weekly_pulse = {
 		effect = {
@@ -997,45 +1008,80 @@ je_nieuweu_cursus = {
 				}
 			}
 		}
-		
 	}
-	complete = {
-		authority > 777
-		OR = {
-			any_interest_group = {
-				count >= 2
-				is_powerful = yes
-				ig_approval > 10
+
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			authority > 777
+			OR = {
+				any_interest_group = {
+					count >= 2
+					is_powerful = yes
+					ig_approval > 10
+				}
+				any_interest_group = {
+					count >= 2
+					is_marginal = no
+					ig_approval > 10
+				}
 			}
-			any_interest_group = {
-				count >= 2
-				is_marginal = no
-				ig_approval > 10
+			radical_fraction = {
+				value < 0.20
+			}
+			NOT = {
+				any_interest_group = {
+					count > 2
+					is_marginal = no
+					is_revolutionary = yes
+				}
 			}
 		}
-		radical_fraction = {
-			value < 0.20
+        effect = {
+			trigger_event = {
+				id = dvg_belgium.51
+			}
+			every_scope_character = {
+				limit = {
+					has_trait = immortal
+				}
+				remove_trait = immortal
+			}
 		}
-		NOT = {
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }
+
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			radical_fraction = {
+				value >= 0.40
+			}
 			any_interest_group = {
 				count > 2
 				is_marginal = no
 				is_revolutionary = yes
 			}
 		}
-	}
-	on_complete = {
-		trigger_event = {
-			id = dvg_belgium.51
-		}
-		every_scope_character = {
-			limit = {
-				has_trait = immortal
+        effect = {
+			trigger_event = {
+				id = dvg_belgium.50
 			}
-			remove_trait = immortal
+			every_scope_character = {
+				limit = {
+					has_trait = immortal
+				}
+				remove_trait = immortal
+			}
 		}
-	}
-	timeout = 3650
+    }
+
 	on_timeout = {
 		every_scope_character = {
 			limit = {
@@ -1047,28 +1093,14 @@ je_nieuweu_cursus = {
 			id = dvg_belgium.51
 		}
 	}
-	fail = {
-		radical_fraction = {
-			value >= 0.40
-		}
-		any_interest_group = {
-			count > 2
-			is_marginal = no
-			is_revolutionary = yes
-		}
-	}
-	on_fail = {
-		trigger_event = {
-			id = dvg_belgium.50
-		}
-		every_scope_character = {
-			limit = {
-				has_trait = immortal
-			}
-			remove_trait = immortal
-		}
-	}
+
+	timeout = 3650
+
 	should_be_pinned_by_default_uninvolved_or_context = yes
+
+	progressbar = yes
+
+	goal_add_value = 350
 }
 
 je_manifest_destiny_blc = {
@@ -1076,22 +1108,18 @@ je_manifest_destiny_blc = {
 
 	group = je_group_crises
 
-	
-
 	is_shown_when_inactive = {
-
-		
 	}
 
 	possible = {
-		   
 	}
+
 	immediate = {
 		random_primary_culture = {
 			save_scope_as = primary_culture_scope
 		}
-		
 	}
+
 	scripted_button = je_settlers_button
 	scripted_button = je_claim_button
 
@@ -1142,56 +1170,68 @@ je_manifest_destiny_blc = {
 		}
 	}
 
-	complete = {
-		any_scope_state = {
-			count > 14
-			is_incorporated = yes
-			is_in_geographic_region = geographic_region_north_america
-			is_isolated_from_market = no
-		}
-		OR = {
-			owns_entire_state_region = STATE_GANIGIALAND
-			owns_entire_state_region = STATE_ERIESLAND
-		}
-	}
-
-	on_complete = {
-
-		every_scope_state = {
-			limit = {
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			any_scope_state = {
+				count > 14
+				is_incorporated = yes
 				is_in_geographic_region = geographic_region_north_america
-				owner = ROOT
-				NOT = {
-					state_region = {
-						is_homeland = cu:septiman
-					}
-				}
+				is_isolated_from_market = no
 			}
-			state_region = {
-				add_homeland = cu:septiman
+			OR = {
+				owns_entire_state_region = STATE_GANIGIALAND
+				owns_entire_state_region = STATE_ERIESLAND
 			}
 		}
-	}
-
-	fail = {
-		OR = {
-			has_law = law_type:law_no_colonial_affairs
-			country_rank < rank_value:minor_power
-			custom_tooltip = {
-				text = blc_fail_tt
-				OR = {
-					has_global_variable = belgium_no_confidence
+        effect = {
+			every_scope_state = {
+				limit = {
+					is_in_geographic_region = geographic_region_north_america
+					owner = ROOT
 					NOT = {
-						exists = c:BLC
+						state_region = {
+							is_homeland = cu:septiman
+						}
 					}
 				}
-				any_scope_state = {
-					is_incorporated = yes
-					count < 3
+				state_region = {
+					add_homeland = cu:septiman
 				}
 			}
 		}
-	}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }
+
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			OR = {
+				has_law = law_type:law_no_colonial_affairs
+				country_rank < rank_value:minor_power
+				custom_tooltip = {
+					text = blc_fail_tt
+					OR = {
+						has_global_variable = belgium_no_confidence
+						NOT = {
+							exists = c:BLC
+						}
+					}
+					any_scope_state = {
+						is_incorporated = yes
+						count < 3
+					}
+				}
+			}
+		}
+        effect = {}
+    }
 
 	should_be_pinned_by_default_uninvolved_or_context = yes
 	can_revolution_inherit = yes

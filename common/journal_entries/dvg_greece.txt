@@ -178,63 +178,94 @@
 	}
 	
 
-	complete = {
-		c:GRE = {
-			liberty_desire > 90
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			c:GRE = {
+				liberty_desire > 90
+			}
+			has_variable = council_start
+			has_variable = greece_voting_var
+			has_variable= greece_citizen_var
+			
 		}
-		has_variable = council_start
-		has_variable = greece_voting_var
-		has_variable= greece_citizen_var
-		
+		effect = {
+			if = {
+				limit = {
+					exists = c:GRE
+					has_state_in_state_region = STATE_CYPRUS
+				}
+				trigger_event = {
+					id = dvg_greece.203
+				}
+			}
+		}
 	}
 
-	on_complete = {
-		if = {
-			limit = {
-				exists = c:GRE
-				has_state_in_state_region = STATE_CYPRUS
+	outcome = { #lose
+		header = je_standard_failure_header
+		effect_header = je_standard_on_failure_header
+		color = "blue_negative"
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			NOT = {
+				cultural_acceptance_base = { target = cu:greek value >= acceptance_status_4 }
+				
+				has_law = law_type:law_oligarchy
+				has_law = law_type:law_autocracy
 			}
+			c:GRE = {
+				liberty_desire < 25
+			}
+
+		}
+		effect = {
+			trigger_event = {
+				id = dvg_greece.212
+			}
+		}
+	}
+
+	outcome = {
+		header = JOURNAL_ENTRY_TIMEOUT
+		effect_header = JOURNAL_ENTRY_ON_TIMEOUT
+		flags = { timeout }
+		conclusion_desc = JOURNAL_ENTRY_TIMEOUT_CONCLUSION_DESC
+		effect = {
 			trigger_event = {
 				id = dvg_greece.203
 			}
 		}
 	}
-	fail = {
-		NOT = {
-			cultural_acceptance_base = { target = cu:greek value >= acceptance_status_4 }
-			
-			has_law = law_type:law_oligarchy
-			has_law = law_type:law_autocracy
-		}
-		c:GRE = {
-			liberty_desire < 25
-		}
 
-	}
-	invalid = {
-		OR = {
-			has_variable = council_cancelled
-			AND = {
-				exists = c:GRE
-				is_diplomatic_play_enemy_of = c:GRE
-			}
-			NOT = {
-				any_scope_state = {
-					state_region = {
-						is_homeland = cu:greek
+	outcome = {
+		flags = { hidden invalid_outcome }
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			OR = {
+				has_variable = council_cancelled
+				AND = {
+					exists = c:GRE
+					is_diplomatic_play_enemy_of = c:GRE
+				}
+				NOT = {
+					any_scope_state = {
+						state_region = {
+							is_homeland = cu:greek
+						}
+					}
+					any_subject_or_below = {
+						country_has_primary_culture = cu:greek
 					}
 				}
-				any_subject_or_below = {
-					country_has_primary_culture = cu:greek
-				}
 			}
+			
+			
 		}
-		
-		
-	}
-	on_fail = {
-		trigger_event = {
-			id = dvg_greece.212
+		effect = {
 		}
 	}
 
@@ -244,11 +275,6 @@
 		value = 48
 	}
 	timeout = 180
-	on_timeout = {
-		trigger_event = {
-			id = dvg_greece.203
-		}
-	}
 	
 }
 
@@ -315,42 +341,53 @@ je_own_greece = {
 	}
 
 	
-	complete = {
-		custom_tooltip = {
-			text = greece_exist_tt
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			custom_tooltip = {
+				text = greece_exist_tt
 
-			NOT = {
-				exists = c:GRE
+				NOT = {
+					exists = c:GRE
+				}
 			}
-		}
+				
+				
 			
-			
-		
-	}
-
-	on_complete = {
-		trigger_event = {
-			id = dvg_greece.217
 		}
-	}
-	fail = {
-		NOT = {
-			exists = c:MCD
-		}
-	}
-	on_fail = {
-		c:GRE = {
+		effect = {
 			trigger_event = {
-				id = dvg_greece.218
+				id = dvg_greece.217
 			}
 		}
+	}
 
+	outcome = { #lose
+		header = je_standard_failure_header
+		effect_header = je_standard_on_failure_header
+		color = "blue_negative"
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			NOT = {
+				exists = c:MCD
+			}
+		}
+		effect = {
+			c:GRE = {
+				trigger_event = {
+					id = dvg_greece.218
+				}
+			}
+
+		}
 	}
 
 	weight = 20
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
-
 je_zimisces_revolt = {
 	icon = "gfx/interface/icons/event_icons/event_military.dds"
 	
@@ -375,55 +412,74 @@ je_zimisces_revolt = {
 		
 	}
 	
-	complete = {
-		is_diplomatic_play_committed_participant = no
-		is_subject = no
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			is_diplomatic_play_committed_participant = no
+			is_subject = no
+		}
+		effect = {
+			c:VEN = {
+				trigger_event = {
+					id = dvg_greece.209
+				}
+			}
+			if = {
+				limit = {
+					any_scope_character = {
+						has_variable = zimisces_var
+					}
+				}
+				trigger_event = {
+					id = dvg_greece.214 
+				}
+			}
+			
+		
+		}
 	}
 
-	on_complete = {
-		c:VEN = {
-			trigger_event = {
-				id = dvg_greece.209
-			}
-		}
-		if = {
-			limit = {
-				any_scope_character = {
-					has_variable = zimisces_var
+	outcome = { #lose
+		header = je_standard_failure_header
+		effect_header = je_standard_on_failure_header
+		color = "blue_negative"
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			OR = {
+				is_subject = yes
+				NOT = {
+					exists = ROOT
 				}
 			}
-			trigger_event = {
-				id = dvg_greece.214 
-			}
-		}
-		
-	
-	}
-	fail = {
-		OR = {
-			is_subject = yes
 			NOT = {
-				exists = ROOT
+				any_scope_state = {
+					state_region = {
+						is_homeland = cu:greek
+					}
+				}
 			}
 		}
-		NOT = {
-			any_scope_state = {
-				state_region = {
-					is_homeland = cu:greek
+		effect = {
+			c:VEN = {
+				trigger_event = {
+					id = dvg_greece.216
 				}
 			}
 		}
 	}
-	on_fail = {
-		c:VEN = {
-			trigger_event = {
-				id = dvg_greece.216
+
+	outcome = {
+		flags = { hidden invalid_outcome }
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			NOT = {
+				exists = c:VEN
 			}
 		}
-	}
-	invalid = {
-		NOT = {
-			exists = c:VEN
+		effect = {
 		}
 	}
 
@@ -481,45 +537,50 @@ je_aragocracy = {
 		}
 	}
 
-	complete = {
-		OR = {
-			AND = {
-				has_law_or_variant = law_type:law_autocracy
-				institution_investment_level = {
-					institution = institution_home_affairs
-					value >= 1
-				}
-			}
-			AND = {
-				country_has_voting_franchise = yes
-				has_law_or_variant = law_type:law_elected_bureaucrats
-				OR = {
-					has_law_or_variant = law_type:law_right_of_assembly
-					has_law_or_variant = law_type:law_protected_speech
-				}
-			}
-		}
-		government_legitimacy >= 75
-		custom_tooltip = {
-			text = je_bavarocracy_complete_tt
-			scope:journal_entry = {
-				"scripted_bar_progress(bavarocracy_progress_bar)" < 10
-			}
-		}
-	}
-
-	on_complete = {
-		trigger_event = {
-			id = dvg_macedonia.1
-			popup = yes
-		}
-		hidden_effect = {
-			scope:king_otto_scope ?= {
-				if = {
-					limit = {
-						is_immortal = yes
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			OR = {
+				AND = {
+					has_law_or_variant = law_type:law_autocracy
+					institution_investment_level = {
+						institution = institution_home_affairs
+						value >= 1
 					}
-					set_character_immortal = no
+				}
+				AND = {
+					country_has_voting_franchise = yes
+					has_law_or_variant = law_type:law_elected_bureaucrats
+					OR = {
+						has_law_or_variant = law_type:law_right_of_assembly
+						has_law_or_variant = law_type:law_protected_speech
+					}
+				}
+			}
+			government_legitimacy >= 75
+			custom_tooltip = {
+				text = je_bavarocracy_complete_tt
+				scope:journal_entry = {
+					"scripted_bar_progress(bavarocracy_progress_bar)" < 10
+				}
+			}
+		}
+		effect = {
+			trigger_event = {
+				id = dvg_macedonia.1
+				popup = yes
+			}
+			hidden_effect = {
+				scope:king_otto_scope ?= {
+					if = {
+						limit = {
+							is_immortal = yes
+						}
+						set_character_immortal = no
+					}
 				}
 			}
 		}
@@ -533,19 +594,50 @@ je_aragocracy = {
 		}
 	}
 
-	fail = {
-		custom_tooltip = {
-			text = je_bavarocracy_fail_tt
-			var:je_bavarocracy_timer_var >= 50
+	outcome = { #lose
+		header = je_standard_failure_header
+		effect_header = je_standard_on_failure_header
+		color = "blue_negative"
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			custom_tooltip = {
+				text = je_bavarocracy_fail_tt
+				var:je_bavarocracy_timer_var >= 50
+			}
+		}
+		effect = {
+			trigger_event = {
+				id = dvg_macedonia.2
+				popup = yes
+			}
+			hidden_effect = {
+				scope:king_otto_scope ?= {
+					if = {
+						limit = {
+							is_immortal = yes
+						}
+						set_character_immortal = no
+					}
+				}
+			}
+			custom_tooltip = bavarocracy_fail_tt
 		}
 	}
 
-	on_fail = {
-		trigger_event = {
-			id = dvg_macedonia.2
-			popup = yes
+	outcome = {
+		flags = { hidden invalid_outcome }
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			OR = {
+				NOT = {
+					has_law = law_type:law_monarchy
+				}
+				c:GRE ?= {
+					has_variable = ruler_selector_var
+				}
+			}
 		}
-		hidden_effect = {
+		effect = {
 			scope:king_otto_scope ?= {
 				if = {
 					limit = {
@@ -553,29 +645,6 @@ je_aragocracy = {
 					}
 					set_character_immortal = no
 				}
-			}
-		}
-		custom_tooltip = bavarocracy_fail_tt
-	}
-
-	invalid = {
-		OR = {
-			NOT = {
-				has_law = law_type:law_monarchy
-			}
-			c:GRE ?= {
-				has_variable = ruler_selector_var
-			}
-		}
-	}
-
-	on_invalid = {
-		scope:king_otto_scope ?= {
-			if = {
-				limit = {
-					is_immortal = yes
-				}
-				set_character_immortal = no
 			}
 		}
 	}

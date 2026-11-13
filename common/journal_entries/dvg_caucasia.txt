@@ -4,7 +4,6 @@
 	group = je_group_internal_affairs
 
 	possible = {
-		
 	}
 
 	immediate = {
@@ -15,52 +14,54 @@
 	}
 
 	on_monthly_pulse = {
-		
 	}
 
-	complete = {
-		# If-else clause to avoid errors because of missing variable before JE activates
-		
-		cu:armenian = {
-			OR = {
-				culture_secession_progress = {
-				target = c:AZB
-				value > 0.5
-				}
-				culture_current_fervor > 25
-			}
-		}
-
-
-		is_at_war = yes
-		
-		
-		
-	}
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+            # If-else clause to avoid errors because of missing variable before JE activates
+            cu:armenian = {
+                OR = {
+                    culture_secession_progress = {
+                    target = c:AZB
+                    value > 0.5
+                    }
+                    culture_current_fervor > 25
+                }
+            }
+            is_at_war = yes
+        }
+        effect = {
+            #set_variable = dvg_armenia_revolt_complete
+            trigger_event = {
+                id = dvg_persia.2
+            }            
+        }
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }
 	
-	on_complete = {
-		#set_variable = dvg_armenia_revolt_complete
-		trigger_event = {
-			id = dvg_persia.2
-		}
-	}
-	
-	fail = {
-		OR = {
-			NOT = {owns_entire_state_region = STATE_ARMENIA}
-			cu:armenian = {
-				root = { 
-					cultural_acceptance_base = { target = prev value >= acceptance_status_4 }
-				}
-			}
-		}
-	}
-	
-	on_fail = {
-		#set_variable = dvg_armenian_accepted
-		
-	}
-
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+            OR = {
+                NOT = {owns_entire_state_region = STATE_ARMENIA}
+                cu:armenian = {
+                    root = { 
+                        cultural_acceptance_base = { target = prev value >= acceptance_status_4 }
+                    }
+                }
+            }            
+        }
+        effect = {
+            #set_variable = dvg_armenian_accepted
+        }
+    }
 	
 	current_value = {
 		value = root.var:armenia_var
@@ -70,12 +71,9 @@
 		value = 48
 	}
 
-
 	weight = 10000
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
-
-
 
 je_sea_to_sea_armenia = {
 	icon = "gfx/interface/icons/event_icons/event_military.dds"
@@ -86,33 +84,36 @@ je_sea_to_sea_armenia = {
 		country_has_primary_culture = cu:armenian
 	}
 
-	
-
 	possible = {
 	   has_technology_researched = nationalism
 	}
 
 	immediate = {
-		
 	}
 
-	complete = {
-		AND = {
-			owns_entire_state_region = STATE_ADANA
-			owns_entire_state_region = STATE_DIYARBAKIR
-			owns_entire_state_region = STATE_TRABZON
-			owns_entire_state_region = STATE_ARMENIA
-			owns_entire_state_region = STATE_AZERBAIJAN
-			owns_entire_state_region = STATE_KARS
-		}
-	}
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+            AND = {
+                owns_entire_state_region = STATE_ADANA
+                owns_entire_state_region = STATE_DIYARBAKIR
+                owns_entire_state_region = STATE_TRABZON
+                owns_entire_state_region = STATE_ARMENIA
+                owns_entire_state_region = STATE_AZERBAIJAN
+                owns_entire_state_region = STATE_KARS
+		    }
+        }
+        effect = {
+            trigger_event = {
+                id = dvg_armenia.1
+            }            
+        }
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }
 
-	on_complete = {
-		
-		trigger_event = {
-			id = dvg_armenia.1
-		}
-	}
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
 
@@ -137,6 +138,7 @@ je_unite_the_principalities_georgia = {
         }
     }
     scripted_button = je_unite_georgians_button
+
     possible = {
         has_technology_researched = nationalism
         NOT = {
@@ -145,47 +147,63 @@ je_unite_the_principalities_georgia = {
             }
         }
     }
+
     immediate = {
     }
-    complete = {
-        custom_tooltip = {
-            text = je_unite_the_principalities_united_two_principalities_tt
-            has_variable = ROM_united_principality
-        }
-        custom_tooltip = {
-            text = je_unite_the_principalities_friend_with_all_great_powers_tt
-            NOT = {
-                any_country = {
-                    country_rank >= rank_value:great_power
-                    NOT = { has_war_with = ROOT }
-                    has_interest_marker_in_region = ROOT.capital.region
-                    relations:root < 0
-                }
-            }
-        }
-    }
-    on_complete = {
-    }
-    fail = { # the JE fails if there are no other Romanian countries, or if ROOT is Romania
-        OR = {
+
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
             custom_tooltip = {
-                text = je_unite_the_principalities_no_other_romanians_tt
+                text = je_unite_the_principalities_united_two_principalities_tt
+                has_variable = ROM_united_principality
+            }
+            custom_tooltip = {
+                text = je_unite_the_principalities_friend_with_all_great_powers_tt
                 NOT = {
                     any_country = {
-                        NOT = { this = ROOT }
-                        country_has_primary_culture = cu:georgian
-                        NOR = {
-                            c:AZB ?= this
-                            c:CAU ?= this
+                        country_rank >= rank_value:great_power
+                        NOT = { has_war_with = ROOT }
+                        has_interest_marker_in_region = ROOT.capital.region
+                        relations:root < 0
+                    }
+                }
+            }            
+        }
+        effect = {}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }
+
+    outcome = { # the JE fails if there are no other Romanian countries, or if ROOT is Romania
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+            OR = {
+                custom_tooltip = {
+                    text = je_unite_the_principalities_no_other_romanians_tt
+                    NOT = {
+                        any_country = {
+                            NOT = { this = ROOT }
+                            country_has_primary_culture = cu:georgian
+                            NOR = {
+                                c:AZB ?= this
+                                c:CAU ?= this
+                            }
                         }
                     }
                 }
-            }
-            custom_tooltip = {
-                text = je_unite_the_principalities_romania_is_real_tt
-                exists = c:ROM
-            }
+                custom_tooltip = {
+                    text = je_unite_the_principalities_romania_is_real_tt
+                    exists = c:ROM
+                }
+            }            
         }
+        effect = {}
     }
 
     # timeout = 0 # no timeout. Romania is eternal.
@@ -199,7 +217,6 @@ je_all_for_one = {
 
 	group = je_group_historical_content
 
-
     on_monthly_pulse = {
         effect = {
             change_variable = {
@@ -209,8 +226,44 @@ je_all_for_one = {
         }
     }
 
-    complete = {
-        scope:journal_entry = { is_goal_complete = yes }
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+            scope:journal_entry = { is_goal_complete = yes }
+        }
+        effect = {
+            trigger_event = {
+                id = dvg_persia.23
+            }            
+        }
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }
+
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+            OR = {
+                hidden_trigger = {
+                    exists = c:GEO
+                    NOT = { c:GEO ?= THIS }
+                }
+                NOT = { exists = scope:romania_lesser_union_partner }
+                scope:georgia_lesser_union_partner = {
+                    NOT = { is_subject_of = ROOT }
+                }
+            }            
+        }
+        effect = {
+            hidden_effect = {
+                remove_variable = GEO_united_principality
+            }           
+        }
     }
 
     immediate = {
@@ -226,31 +279,6 @@ je_all_for_one = {
         }
     }
 
-    on_complete = {
-        trigger_event = {
-            id = dvg_persia.23
-        }
-    }
-
-    fail = {
-        OR = {
-            hidden_trigger = {
-                exists = c:GEO
-                NOT = { c:GEO ?= THIS }
-            }
-            NOT = { exists = scope:romania_lesser_union_partner }
-            scope:georgia_lesser_union_partner = {
-                NOT = { is_subject_of = ROOT }
-            }
-        }
-    }
-
-    on_fail = {
-        hidden_effect = {
-            remove_variable = GEO_united_principality
-        }
-    }
-
     current_value = {
         value = root.var:georgian_union_var
     }
@@ -262,6 +290,7 @@ je_all_for_one = {
     progressbar = yes
 
     weight = 10000
+    
     should_be_pinned_by_default_uninvolved_or_context = yes
 }
 

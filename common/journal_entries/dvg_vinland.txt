@@ -34,25 +34,38 @@
 
 	}
 
-	
-
-    complete = {
-		is_subject = no
-    }
-	on_complete = {
-		ig:ig_industrialists = {
-			remove_ideology = ideology_colonialist
-			add_ideology = ideology_modernizer
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			is_subject = no
 		}
-		trigger_event = {
-			id = dvg_vinland.17
+		effect = {	
+			ig:ig_industrialists = {
+				remove_ideology = ideology_colonialist
+				add_ideology = ideology_modernizer
+			}
+			trigger_event = {
+				id = dvg_vinland.17
+			}
 		}	
 	}
-	fail = {
-		liberty_desire < 10
-		has_attitude = {
-			who = c:SCA
-			attitude = loyal
+
+	outcome = { #lose
+		header = je_standard_failure_header
+		effect_header = je_standard_on_failure_header
+		color = "blue_negative"
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			liberty_desire < 10
+			has_attitude = {
+				who = c:SCA
+				attitude = loyal
+			}
+		}
+		effect = {
 		}
 	}
 
@@ -81,24 +94,29 @@ je_skraelingr = {
 	possible = {
 		
 	}
-	complete = {
-		OR = {
-			scope:journal_entry = { is_goal_complete = yes }
-			is_country_type = recognized
-			has_technology_researched = pan-nationalism
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			OR = {
+				scope:journal_entry = { is_goal_complete = yes }
+				is_country_type = recognized
+				has_technology_researched = pan-nationalism
+			}
+			authority > 400
+			any_scope_state = {
+				count > 3
+				turmoil < 0.50
+				is_incorporated = yes
+			}
 		}
-		authority > 400
-		any_scope_state = {
-			count > 3
-			turmoil < 0.50
-			is_incorporated = yes
-		}
-	}
-
-	on_complete = {
-		trigger_event = {
-			id = dvg_skraeling.30
-		}
+		effect = {	
+			trigger_event = {
+				id = dvg_skraeling.30
+			}
+		}	
 	}
 
 	on_weekly_pulse = {
@@ -174,26 +192,29 @@ je_skraelingr = {
 	}
 		
 	
-
-
-	fail = {
-		OR = {
-			authority < 0
-			radical_fraction = {
-				value > 0.55
+	outcome = { #lose
+		header = je_standard_failure_header
+		effect_header = je_standard_on_failure_header
+		color = "blue_negative"
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			OR = {
+				authority < 0
+				radical_fraction = {
+					value > 0.55
+				}
+			}
+			government_legitimacy < 50
+			any_scope_state = {
+				turmoil > 0.55
+				count > 3
+				is_incorporated = yes
 			}
 		}
-		government_legitimacy < 50
-		any_scope_state = {
-			turmoil > 0.55
-			count > 3
-			is_incorporated = yes
-		}
-	}
-
-	on_fail = {
-		trigger_event = {
-			id = dvg_skraeling.16
+		effect = {
+			trigger_event = {
+				id = dvg_skraeling.16
+			}
 		}
 	}
 
@@ -231,42 +252,53 @@ je_great_crane = {
 	possible = {
 		
 	}
-	
-	complete = {
-		OR = {
-			has_law = law_type:law_theocracy
-			AND ={
-				ruler = {
-					has_variable = great_crane_var
-				}
-				ig:ig_devout = {
-					is_powerful = yes
-					is_in_government = yes
+
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			OR = {
+				has_law = law_type:law_theocracy
+				AND ={
+					ruler = {
+						has_variable = great_crane_var
+					}
+					ig:ig_devout = {
+						is_powerful = yes
+						is_in_government = yes
+					}
 				}
 			}
 		}
+		effect = {	
+			set_state_religion = rel:protestant
+			ig:ig_devout = {
+				set_interest_group_name = ig_evangelical_church
+			}
+		}	
 	}
 
-	on_complete = {
-		set_state_religion = rel:protestant
-		ig:ig_devout = {
-			set_interest_group_name = ig_evangelical_church
-		}
-	}
-
-	fail = {
-		custom_tooltip = {
-		text = great_crane_tt
-		NOT = {
-			any_scope_character = {
-				has_variable = great_crane_var
+	outcome = { #lose
+		header = je_standard_failure_header
+		effect_header = je_standard_on_failure_header
+		color = "blue_negative"
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			custom_tooltip = {
+				text = great_crane_tt
+				NOT = {
+					any_scope_character = {
+						has_variable = great_crane_var
+					}
+				}
 			}
 		}
+		effect = {
 		}
-		
 	}
-	on_fail = {
-	}
+
 	should_be_pinned_by_default_uninvolved_or_context = yes
 	weight = 5000
 }
@@ -355,64 +387,75 @@ je_skraeling_missions = {
 		}
 	}
 
-	complete = {
-		ig:ig_intelligentsia = {
-			is_powerful = yes
-			is_in_government = yes
-		}
-	}
-	on_complete = {
-		set_state_religion = rel:catholic
-		ig:ig_devout = {
-			set_interest_group_name = ig_catholic_church
-		}
-		trigger_event = {
-			id = dvg_skraeling.32
-		} 
-		change_relations = {
-			country = c:PLA
-			value = 30
-		}
-		change_relations = {
-			country = c:CHE
-			value = 30
-		}
-	}
-
-	fail = {
-		OR = {
-			has_global_variable = skr_banned_missions
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
 			ig:ig_intelligentsia = {
 				is_powerful = yes
-				OR = {
-					is_insurrectionary = yes
-					ig_approval < -15
+				is_in_government = yes
+			}
+		}
+		effect = {	
+				set_state_religion = rel:catholic
+				ig:ig_devout = {
+					set_interest_group_name = ig_catholic_church
+				}
+				trigger_event = {
+					id = dvg_skraeling.32
+				} 
+				change_relations = {
+					country = c:PLA
+					value = 30
+				}
+				change_relations = {
+					country = c:CHE
+					value = 30
+				}
+		}	
+	}
+
+
+	outcome = { #lose
+		header = je_standard_failure_header
+		effect_header = je_standard_on_failure_header
+		color = "blue_negative"
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			OR = {
+				has_global_variable = skr_banned_missions
+				ig:ig_intelligentsia = {
+					is_powerful = yes
+					OR = {
+						is_insurrectionary = yes
+						ig_approval < -15
+					}
 				}
 			}
 		}
-		
-	}
-	on_fail = {
-		if = {
-			limit = {
-				NOT = {
+		effect = {
+			if = {
+				limit = {
+					NOT = {
+						has_global_variable = skr_banned_missions
+					}
+				}
+				trigger_event = {
+					id = dvg_skraeling.14
+				}
+			}
+	
+			if = {
+				limit = {
 					has_global_variable = skr_banned_missions
 				}
-			}
-			trigger_event = {
-				id = dvg_skraeling.14
-			}
-		}
-
-		if = {
-			limit = {
-				has_global_variable = skr_banned_missions
-			}
-			trigger_event = {
-				id = dvg_skraeling.31
+				trigger_event = {
+					id = dvg_skraeling.31
+				}
 			}
 		}
-	
 	}
 
 	weight = 10000
@@ -440,19 +483,32 @@ je_arcadia_afn = {
 		}
 	}
 
-	complete = {
-		exists = c:AFN
-		c:AFN = ROOT
-	}
-	on_complete = {
-		trigger_event = {
-			id = dvg_vinland.25
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			exists = c:AFN
+			c:AFN = ROOT
 		}
-		set_variable = united_arcadia
+		effect = {	
+			trigger_event = {
+				id = dvg_vinland.25
+			}
+			set_variable = united_arcadia
+		}	
 	}
-	invalid = {
-		has_variable = no_afn
+	outcome = {
+		flags = { hidden invalid_outcome }
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+				has_variable = no_afn
+		}
+		effect = {
+		}
 	}
+
 	weight = 10000
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
@@ -471,29 +527,42 @@ je_vinland_annex_skr = {
 		}
 	}
 
-    complete = {
-		NOT = {
-			exists = c:SKR
-		}
-    }
-	on_complete = {
-		trigger_event = {
-			id = dvg_skraeling.12
-		}	
-	}
-	fail = {
-		has_global_variable = skraeling_revolt
-		c:SKR = {
-			has_truce_with = ROOT
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
 			NOT = {
-				is_subject_of = ROOT
+				exists = c:SKR
 			}
 		}
-	}
-	on_fail = {
-		c:SKR = {
+		effect = {	
 			trigger_event = {
-				id = dvg_skraeling.11
+				id = dvg_skraeling.12
+			}	
+		}	
+	}
+
+	outcome = { #lose
+		header = je_standard_failure_header
+		effect_header = je_standard_on_failure_header
+		color = "blue_negative"
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			has_global_variable = skraeling_revolt
+			c:SKR = {
+				has_truce_with = ROOT
+				NOT = {
+					is_subject_of = ROOT
+				}
+			}
+		}
+		effect = {
+			c:SKR = {
+				trigger_event = {
+					id = dvg_skraeling.11
+				}
 			}
 		}
 	}

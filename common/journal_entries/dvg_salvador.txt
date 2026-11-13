@@ -2,89 +2,105 @@
 	icon = "gfx/interface/icons/event_icons/event_map.dds"
 	
 	group = je_group_internal_affairs
-	
-	complete = {
-		AND = {
-			any_scope_state = {
-				state_region = s:STATE_YUCATAN
-				turmoil < 0.2
+
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			AND = {
+				any_scope_state = {
+					state_region = s:STATE_YUCATAN
+					turmoil < 0.2
+				}
+				any_scope_state = {
+					state_region = s:STATE_CHIAPAS
+					turmoil < 0.2
+				}
+				any_scope_state = {
+					state_region = s:STATE_GUATEMALA
+					turmoil < 0.2
+				}
+				any_scope_state = {
+					state_region = s:STATE_MANAGUA
+					turmoil < 0.2
+				}
+				any_scope_state = {
+					state_region = s:STATE_COSTA_RICA
+					turmoil < 0.2
+				}
 			}
-			any_scope_state = {
-				state_region = s:STATE_CHIAPAS
-				turmoil < 0.2
-			}
-			any_scope_state = {
-				state_region = s:STATE_GUATEMALA
-				turmoil < 0.2
-			}
-			any_scope_state = {
-				state_region = s:STATE_MANAGUA
-				turmoil < 0.2
-			}
-			any_scope_state = {
-				state_region = s:STATE_COSTA_RICA
-				turmoil < 0.2
-			}
+			year < 1873
 		}
-		year < 1873
-	}
-	fail = {
-		AND = {
-			any_scope_state = {
-				state_region = s:STATE_YUCATAN
-				turmoil >= 0.2
-			}
-			any_scope_state = {
-				state_region = s:STATE_CHIAPAS
-				turmoil >= 0.2
-			}
-			any_scope_state = {
-				state_region = s:STATE_GUATEMALA
-				turmoil >= 0.2
-			}
-			any_scope_state = {
-				state_region = s:STATE_MANAGUA
-				turmoil >= 0.2
-			}
-			any_scope_state = {
-				state_region = s:STATE_COSTA_RICA
-				turmoil >= 0.2
-			}
-		}
-	}
-	invalid = {
-		OR = {
-			has_law = law_type:law_landed_voting
-			has_law = law_type:law_wealth_voting
-			has_law = law_type:law_census_voting
-			has_law = law_type:law_universal_suffrage
-			year = 1873
+		effect = {
+			set_variable = { name = successful_marquez_gambit }
+			remove_variable = de_marquez_gambit
 		}
 	}
 
-	on_complete = {
-		set_variable = { name = successful_marquez_gambit }
-		remove_variable = de_marquez_gambit
-	}
-	
-	on_fail = {
-		trigger_event = { id = dvg_salvador.8 }
-	}
-	on_invalid = {
-		if = {
-			limit = {
-				OR = {
-					has_law = law_type:law_landed_voting
-					has_law = law_type:law_wealth_voting
-					has_law = law_type:law_census_voting
-					has_law = law_type:law_universal_suffrage
+	outcome = { #lose
+		header = je_standard_failure_header
+		effect_header = je_standard_on_failure_header
+		color = "blue_negative"
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			AND = {
+				any_scope_state = {
+					state_region = s:STATE_YUCATAN
+					turmoil >= 0.2
+				}
+				any_scope_state = {
+					state_region = s:STATE_CHIAPAS
+					turmoil >= 0.2
+				}
+				any_scope_state = {
+					state_region = s:STATE_GUATEMALA
+					turmoil >= 0.2
+				}
+				any_scope_state = {
+					state_region = s:STATE_MANAGUA
+					turmoil >= 0.2
+				}
+				any_scope_state = {
+					state_region = s:STATE_COSTA_RICA
+					turmoil >= 0.2
 				}
 			}
-			trigger_event = { id = dvg_salvador.9 }
 		}
-		else = {
-			limit = { year = 1873 }
-			trigger_event = { id = dvg_salvador.10 }
+		effect = {
+			trigger_event = { id = dvg_salvador.8 }
+		}
+	}
+
+	outcome = {
+		flags = { hidden invalid_outcome }
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			OR = {
+				has_law = law_type:law_landed_voting
+				has_law = law_type:law_wealth_voting
+				has_law = law_type:law_census_voting
+				has_law = law_type:law_universal_suffrage
+				year = 1873
+			}
+		}
+		effect = {
+			if = {
+				limit = {
+					OR = {
+						has_law = law_type:law_landed_voting
+						has_law = law_type:law_wealth_voting
+						has_law = law_type:law_census_voting
+						has_law = law_type:law_universal_suffrage
+					}
+				}
+				trigger_event = { id = dvg_salvador.9 }
+			}
+			else = {
+				limit = { year = 1873 }
+				trigger_event = { id = dvg_salvador.10 }
+			}
 		}
 	}
 

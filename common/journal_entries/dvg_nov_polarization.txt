@@ -3,46 +3,56 @@
 	
 	group = je_group_internal_affairs
 
-	complete = {
-		scope:journal_entry = {
-			is_goal_complete = yes
-		}
-		custom_tooltip = {
-			text = nov_andrei_yuriyevich_died
-			ruler = {
-				NOT = { has_variable = is_andrei_yuriyevich }
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			scope:journal_entry = {
+				is_goal_complete = yes
 			}
-		}
-	}
-
-	on_complete = {
-		trigger_event = { id = dvg_nov.2 }
-	}
-
-	fail = {
-		OR = {
-			NOT = { has_law = law_type:law_presidential_republic }
 			custom_tooltip = {
-				text = nov_andrei_yuriyevich_died_fail
+				text = nov_andrei_yuriyevich_died
 				ruler = {
 					NOT = { has_variable = is_andrei_yuriyevich }
 				}
-				scope:journal_entry = {
-					is_goal_complete = no
-				}
 			}
+		}
+		effect = {
+			trigger_event = { id = dvg_nov.2 }
 		}
 	}
 
-	on_fail = {
-		if = {
-			limit = {
+	outcome = { #lose
+		header = je_standard_failure_header
+		effect_header = je_standard_on_failure_header
+		color = "blue_negative"
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			OR = {
 				NOT = { has_law = law_type:law_presidential_republic }
+				custom_tooltip = {
+					text = nov_andrei_yuriyevich_died_fail
+					ruler = {
+						NOT = { has_variable = is_andrei_yuriyevich }
+					}
+					scope:journal_entry = {
+						is_goal_complete = no
+					}
+				}
 			}
-			trigger_event = { id = dvg_nov.4 }
-		} 
-		else = {
-			trigger_event = { id = dvg_nov.3 }
+		}
+		effect = {
+			if = {
+				limit = {
+					NOT = { has_law = law_type:law_presidential_republic }
+				}
+				trigger_event = { id = dvg_nov.4 }
+			} 
+			else = {
+				trigger_event = { id = dvg_nov.3 }
+			}
 		}
 	}
 
@@ -99,19 +109,37 @@ je_nov_serfdom = {
 	
 	group = je_group_internal_affairs
 
-	complete = {
-		scope:journal_entry = {
-			is_goal_complete = yes
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			scope:journal_entry = {
+				is_goal_complete = yes
+			}
+			NOT = { has_law = law_type:law_serfdom }
 		}
-		NOT = { has_law = law_type:law_serfdom }
+		effect = {
+			#set_variable = completed_nov_serfdom_je
+			custom_tooltip = je_nov_advance
+			change_variable = {
+				name = nov_var
+				add = 1
+			}
+		}
 	}
 
-	on_complete = {
-		#set_variable = completed_nov_serfdom_je
-		custom_tooltip = je_nov_advance
-		change_variable = {
-			name = nov_var
-			add = 1
+	outcome = {
+		flags = { hidden invalid_outcome }
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			custom_tooltip = {
+				text = finished_nov_tt
+				has_variable = nov_complete
+			}
+		}
+		effect = {
 		}
 	}
 
@@ -137,13 +165,6 @@ je_nov_serfdom = {
 		add = 100
 	}
 
-	invalid = {
-		custom_tooltip = {
-			text = finished_nov_tt
-			has_variable = nov_complete
-		}
-	}
-
 	transferable = no
 	progressbar = yes
 
@@ -155,32 +176,43 @@ je_nov_non_russians = {
 	
 	group = je_group_internal_affairs
 
-	complete = {
-		OR = {
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			OR = {
+				custom_tooltip = {
+					text = nov_resolved_nonrussians
+					has_variable = VYA_nonrussians_end
+				}
+				AND = {
+					year >= 1846
+					NOT = { has_law = law_type:law_national_supremacy }
+				}
+			}
+		}
+		effect = {
+			#set_variable = completed_nov_non_russians_je
+			custom_tooltip = je_nov_advance
+			change_variable = {
+				name = nov_var
+				add = 1
+			}
+		}
+	}
+
+	outcome = {
+		flags = { hidden invalid_outcome }
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
 			custom_tooltip = {
-				text = nov_resolved_nonrussians
-				has_variable = VYA_nonrussians_end
-			}
-			AND = {
-				year >= 1846
-				NOT = { has_law = law_type:law_national_supremacy }
+				text = finished_nov_tt
+				has_variable = nov_complete
 			}
 		}
-	}
-
-	on_complete = {
-		#set_variable = completed_nov_non_russians_je
-		custom_tooltip = je_nov_advance
-		change_variable = {
-			name = nov_var
-			add = 1
-		}
-	}
-
-	invalid = {
-		custom_tooltip = {
-			text = finished_nov_tt
-			has_variable = nov_complete
+		effect = {
 		}
 	}
 
@@ -195,30 +227,41 @@ je_nov_bureaucracy = {
 	
 	group = je_group_internal_affairs
 
-	complete = {
-		NOR = { 
-			has_law = law_type:law_hereditary_bureaucrats 
-			has_law = law_type:law_land_based_taxation
-			has_law = law_type:law_consumption_based_taxation
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			NOR = { 
+				has_law = law_type:law_hereditary_bureaucrats 
+				has_law = law_type:law_land_based_taxation
+				has_law = law_type:law_consumption_based_taxation
+			}
+			bureaucracy >= 0 
+			approaching_bureaucracy_shortage = no
 		}
-		bureaucracy >= 0 
-		approaching_bureaucracy_shortage = no
+		effect = {
+			#set_variable = completed_nov_bureaucracy_je
+			custom_tooltip = je_nov_advance
+			change_variable = {
+				name = nov_var
+				add = 1
+			}
+			remove_modifier = outmoded_bureaucracy
+		}
 	}
 
-	on_complete = {
-		#set_variable = completed_nov_bureaucracy_je
-		custom_tooltip = je_nov_advance
-		change_variable = {
-			name = nov_var
-			add = 1
+	outcome = {
+		flags = { hidden invalid_outcome }
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			custom_tooltip = {
+				text = finished_nov_tt
+				has_variable = nov_complete
+			}
 		}
-		remove_modifier = outmoded_bureaucracy
-	}
-
-	invalid = {
-		custom_tooltip = {
-			text = finished_nov_tt
-			has_variable = nov_complete
+		effect = {
 		}
 	}
 
@@ -233,27 +276,45 @@ je_nov_education = {
 	
 	group = je_group_internal_affairs
 
-	complete = {
-		any_scope_building = {
-			is_building_type = building_university
-			occupancy > 0.9
-			level >= 3
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			any_scope_building = {
+				is_building_type = building_university
+				occupancy > 0.9
+				level >= 3
+			}
+			scope:journal_entry = {
+				is_goal_complete = yes
+			}
+			OR = {
+				has_law = law_type:law_private_schools
+				has_law = law_type:law_public_schools
+			}
 		}
-		scope:journal_entry = {
-			is_goal_complete = yes
-		}
-		OR = {
-			has_law = law_type:law_private_schools
-			has_law = law_type:law_public_schools
+		effect = {
+			#set_variable = completed_nov_education_je
+			custom_tooltip = je_nov_advance
+			change_variable = {
+				name = nov_var
+				add = 1
+			}
 		}
 	}
 
-	on_complete = {
-		#set_variable = completed_nov_education_je
-		custom_tooltip = je_nov_advance
-		change_variable = {
-			name = nov_var
-			add = 1
+	outcome = {
+		flags = { hidden invalid_outcome }
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			custom_tooltip = {
+				text = finished_nov_tt
+				has_variable = nov_complete
+			}
+		}
+		effect = {
 		}
 	}
 
@@ -264,13 +325,6 @@ je_nov_education = {
 	goal_add_value = {
 		value = root.literacy_rate
 		add = 0.2
-	}
-
-	invalid = {
-		custom_tooltip = {
-			text = finished_nov_tt
-			has_variable = nov_complete
-		}
 	}
 
 	transferable = no
@@ -285,28 +339,39 @@ je_nov_urban_center = {
 	
 	group = je_group_internal_affairs
 
-	complete = {
-		capital = {
-			any_scope_building = {
-				is_building_type = building_urban_center
-				level >= 7
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			capital = {
+				any_scope_building = {
+					is_building_type = building_urban_center
+					level >= 7
+				}
+			}
+		}
+		effect = {
+			#set_variable = completed_nov_education_je
+			custom_tooltip = je_nov_advance
+			change_variable = {
+				name = nov_var
+				add = 1
 			}
 		}
 	}
 
-	on_complete = {
-		#set_variable = completed_nov_education_je
-		custom_tooltip = je_nov_advance
-		change_variable = {
-			name = nov_var
-			add = 1
+	outcome = {
+		flags = { hidden invalid_outcome }
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			custom_tooltip = {
+				text = finished_nov_tt
+				has_variable = nov_complete
+			}
 		}
-	}
-
-	invalid = {
-		custom_tooltip = {
-			text = finished_nov_tt
-			has_variable = nov_complete
+		effect = {
 		}
 	}
 

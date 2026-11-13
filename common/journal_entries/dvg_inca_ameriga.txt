@@ -3,31 +3,35 @@
 
 	group = je_group_historical_content
 
-	complete = {
-		custom_tooltip = {
-		text = beo_existence_tt
-
-		owns_entire_state_region = STATE_AVALON
-		owns_entire_state_region = STATE_GODWINSON
-		owns_entire_state_region = STATE_EOFERWIC
-		owns_entire_state_region = STATE_WESSEX
-	 	owns_entire_state_region = STATE_NEW_LONDON
-	 
-	 	NOT = { exists = c:BEO }
-	 
-	 	any_state = {
-			region = sr:region_la_plata	
-			NOT = {	
-				owner = c:BEO
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			custom_tooltip = {
+				text = beo_existence_tt
+		
+				owns_entire_state_region = STATE_AVALON
+				owns_entire_state_region = STATE_GODWINSON
+				owns_entire_state_region = STATE_EOFERWIC
+				owns_entire_state_region = STATE_WESSEX
+			 	owns_entire_state_region = STATE_NEW_LONDON
+			 
+			 	NOT = { exists = c:BEO }
+			 
+			 	any_state = {
+					region = sr:region_la_plata	
+					NOT = {	
+						owner = c:BEO
+					}
+				}
 			}
 		}
+		effect = {
+			trigger_event = { id = dvg_hbe.3 popup = yes  }	
 		}
 	}
-
-    on_complete = {
-		trigger_event = { id = dvg_hbe.3 popup = yes  }	
-    }	
-
 	invalid = {
 		
 	}
@@ -47,23 +51,34 @@ je_beornia_revolt = {
 		}
 	}
 
-	complete = {
-		cu:beornian = {
-			culture_current_fervor > 49
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			cu:beornian = {
+				culture_current_fervor > 49
+			}
+		}
+		effect = {
+			trigger_event = { id = dvg_hbe.4 }
 		}
 	}
 
-    on_complete = {
-		trigger_event = { id = dvg_hbe.4 }
-	}
-
-	invalid = {
-		NOT = { 
-			any_scope_state = {
-				state_region = {
-					is_homeland = cu:beornian
+	outcome = {
+		flags = { hidden invalid_outcome }
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			NOT = { 
+				any_scope_state = {
+					state_region = {
+						is_homeland = cu:beornian
+					}
 				}
 			}
+		}
+		effect = {
 		}
 	}
 
@@ -88,56 +103,72 @@ je_inca_lotharingia = {
 		is_diplomatic_play_enemy_of = c:LOT
 	}
 
-	complete = {
-		custom_tooltip = {
-			text = lot_existence_tt
-			NOT = { exists = c:LOT }
-		}
-	}
-	
-	on_complete = {
-		if = {
-			limit = {
-				is_country_type = unrecognized
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			custom_tooltip = {
+				text = lot_existence_tt
+				NOT = { exists = c:LOT }
 			}
-			set_country_type = recognized
 		}
-		
-		trigger_event = { id = dvg_inca_ameriga.5} 
-
-		set_global_variable = lotharingia_shatters
-	}
-
-	fail = {
-		custom_tooltip = {
-			text = twt_capitulation_tt
-			has_truce_with = c:LOT
-		}
-	}
-
-	on_fail = {
-		trigger_event = { id = dvg_inca_ameriga.9 }
-
-		every_diplomatic_play = {
-			limit = {
-				OR = {
-					initiator_is = c:LOT
-					initiator_is = c:AMA
+		effect = {
+			if = {
+				limit = {
+					is_country_type = unrecognized
 				}
+				set_country_type = recognized
 			}
-			end_play = yes
+			
+			trigger_event = { id = dvg_inca_ameriga.5} 
+
+			set_global_variable = lotharingia_shatters
+		}
+	}
+
+	outcome = { #lose
+		header = je_standard_failure_header
+		effect_header = je_standard_on_failure_header
+		color = "blue_negative"
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			custom_tooltip = {
+				text = twt_capitulation_tt
+				has_truce_with = c:LOT
+			}
+		}
+		effect = {
+			trigger_event = { id = dvg_inca_ameriga.9 }
+
+			every_diplomatic_play = {
+				limit = {
+					OR = {
+						initiator_is = c:LOT
+						initiator_is = c:AMA
+					}
+				}
+				end_play = yes
+			}
+		}
+	}
+
+	outcome = {
+		header = JOURNAL_ENTRY_TIMEOUT
+		effect_header = JOURNAL_ENTRY_ON_TIMEOUT
+		flags = { timeout }
+		conclusion_desc = JOURNAL_ENTRY_TIMEOUT_CONCLUSION_DESC
+		effect = {
+			trigger_event = { id = dvg_inca_ameriga.8 }
 		}
 	}
 
 	timeout = 1200
-	on_timeout = {
-		trigger_event = { id = dvg_inca_ameriga.8 }
-	}
 
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
-
 je_inca_amazonie = {
 	icon = "gfx/interface/icons/event_icons/event_map.dds"
 
@@ -153,48 +184,58 @@ je_inca_amazonie = {
 		is_diplomatic_play_enemy_of = c:AMA
 	}
 
-	complete = {
-		custom_tooltip = {
-		text = ama_existence_tt
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			custom_tooltip = {
+			text = ama_existence_tt
 
-			NOT = {
-				exists = c:AMA
-				exists = c:EQX
-				exists = c:GOU
+				NOT = {
+					exists = c:AMA
+					exists = c:EQX
+					exists = c:GOU
+				}
+			}
+			custom_tooltip = {
+			text = atl_existence_tt
+				NOT = { exists = c:ATL }
 			}
 		}
-		custom_tooltip = {
-		text = atl_existence_tt
-			NOT = { exists = c:ATL }
-		}
-	}
-	on_complete = {
-		trigger_event = { id = dvg_inca_ameriga.7 }
-		set_global_variable = amazonie_shatters
-	}
-
-	fail = {
-		exists = c:AMA
-		is_at_war = no
-		OR = {
-			has_truce_with = c:AMA
-			has_truce_with = c:LOT
+		effect = {
+			trigger_event = { id = dvg_inca_ameriga.7 }
+			set_global_variable = amazonie_shatters
 		}
 	}
 
-	on_fail = {
-		every_diplomatic_play = {
-			limit = {
-				initiator_is = c:TWT
+	outcome = { #lose
+		header = je_standard_failure_header
+		effect_header = je_standard_on_failure_header
+		color = "blue_negative"
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			exists = c:AMA
+			is_at_war = no
+			OR = {
+				has_truce_with = c:AMA
+				has_truce_with = c:LOT
 			}
-			end_play = yes
+		}
+		effect = {
+			every_diplomatic_play = {
+				limit = {
+					initiator_is = c:TWT
+				}
+				end_play = yes
+			}
 		}
 	}
 
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
-
 je_inca_ameriga_communists = {
 	icon = "gfx/interface/icons/event_icons/event_fire.dds"
 
@@ -222,11 +263,16 @@ je_inca_ameriga_communists = {
 		trigger_event = { id = dvg_inca_ameriga.14 }
 	}
 
-	complete = {
-		has_revolution = yes
-	}
-
-	on_complete = {
-		trigger_event = { id = dvg_inca_ameriga.15 }
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			has_revolution = yes
+		}
+		effect = {
+			trigger_event = { id = dvg_inca_ameriga.15 }
+		}
 	}
 }

@@ -5,23 +5,28 @@ je_new_mercia_independent = {
 	group = je_group_internal_affairs
 
 	is_shown_when_inactive = {	
-		
 	}
 
     possible = {
-		
 	}
 
-	complete = {
-		exists = c:BEO
-		is_diplomatic_play_committed_participant = no
-		is_at_war = no
-		has_truce_with = c:BEO
-	}
-
-    on_complete = {
-		trigger_event = { id = dvg_beornia.32 popup = yes }
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			exists = c:BEO
+			is_diplomatic_play_committed_participant = no
+			is_at_war = no
+			has_truce_with = c:BEO
+		}
+        effect = {
+			trigger_event = { id = dvg_beornia.32 popup = yes }
+		}
+        event_outcome_desc = {} # complex desc like a status_desc field
     }
+
 	weight = 10000
 
 	should_be_pinned_by_default_uninvolved_or_context = yes
@@ -69,34 +74,38 @@ je_new_mercia_revolt = {
 		}
 	}
 
-	complete = {
-		any_scope_state = {
-			region = sr:region_andes
-
-			turmoil > 0.50
-		}
-		trigger_if = {
-			limit = { 
-				has_variable = new_mercia_var
-			 }
-			OR = {
-				scope:journal_entry = { is_goal_complete = yes }
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			any_scope_state = {
+				region = sr:region_andes
+				turmoil > 0.50
+			}
+			trigger_if = {
+				limit = { 
+					has_variable = new_mercia_var
+				}
+				OR = {
+					scope:journal_entry = { is_goal_complete = yes }
+				}
 			}
 		}
-	}
-	
-	on_complete = {
-		#set_variable = new_mercia_complete
-		if = {
-			limit = {
-				has_global_variable = carolean_victory
-			}
-			trigger_event = {
-			id = dvg_beornia.22
+        effect = {
+			#set_variable = new_mercia_complete
+			if = {
+				limit = {
+					has_global_variable = carolean_victory
+				}
+				trigger_event = {
+					id = dvg_beornia.22
+				}
 			}
 		}
-		
-	}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }
 
 	current_value = {
 		value = root.var:new_mercia_var
@@ -303,27 +312,28 @@ je_new_mercia_revolt = {
 			
 		}
 	}
-	
-	invalid = {
-		OR = {
-		has_journal_entry = je_beo_parishers
-		exists = c:NME
-		any_scope_state = {
-			count = 0
-			is_coastal = yes
-			is_isolated_from_market = no
-			state_region = {
-				is_homeland = cu:aimara
-				is_homeland = cu:beornian
+
+    outcome = {
+        flags = { hidden invalid_outcome }
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			OR = {
+				has_journal_entry = je_beo_parishers
+				exists = c:NME
+				any_scope_state = {
+					count = 0
+					is_coastal = yes
+					is_isolated_from_market = no
+					state_region = {
+						is_homeland = cu:aimara
+						is_homeland = cu:beornian
+					}
+				}
 			}
 		}
 
-		}
-	}
-	
-	
-	
-	
+        effect = {}
+    }
 
 	weight = 10000
 	should_be_pinned_by_default_uninvolved_or_context = yes
@@ -348,109 +358,84 @@ je_ameriga_conquer = {
 
 	}
 
-	complete = {
-		is_diplomatic_play_committed_participant = no
-		any_scope_state = {
-		
-		count >= 8
-				
-			AND = {	
-				region = sr:region_brazil
-				
-				is_isolated_from_market = no
-
-				
-				owner = ROOT
-
-				is_incorporated = yes
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			is_diplomatic_play_committed_participant = no
+			any_scope_state = {
+			count >= 8	
+				AND = {	
+					region = sr:region_brazil
+					is_isolated_from_market = no
+					owner = ROOT
+					is_incorporated = yes
+				}
 			}
+			any_scope_state = {
+			count >= 6
+				AND = {	
+					region = sr:region_la_plata
+					owner = ROOT
+					is_incorporated = yes
+					is_isolated_from_market = no
+				}
 			}
-		any_scope_state = {
-		
-		count >= 6
-				
-			AND = {	
-				region = sr:region_la_plata
-				
-				
-				owner = ROOT
-
-				is_incorporated = yes
-
-				is_isolated_from_market = no
-
-			}
-			}
-		any_scope_state = {
-		
+			any_scope_state = {
 			count >= 5
-				
-			AND = {	
-				region = sr:region_gran_colombia
-				
-				
-				owner = ROOT
-
-				is_incorporated = yes
-
-				is_isolated_from_market = no
-
+				AND = {	
+					region = sr:region_gran_colombia
+					owner = ROOT
+					is_incorporated = yes
+					is_isolated_from_market = no
+				}
 			}
-			}
-		any_scope_state = {
-		
+			any_scope_state = {
 			count >= 7
-				
-			AND = {	
-				region = sr:region_andes
-				
-				
-				owner = ROOT
-
-
-				is_incorporated = yes
-
-				is_isolated_from_market = no
-	
+				AND = {	
+					region = sr:region_andes				
+					owner = ROOT
+					is_incorporated = yes
+					is_isolated_from_market = no
+				}
 			}
-			}
-		
-			}
-    on_complete = {
-		trigger_event = { id = dvg_hbe.6 popup = yes }
-		
+		}
+        effect = {
+			trigger_event = { id = dvg_hbe.6 popup = yes }
+		}
+        event_outcome_desc = {} # complex desc like a status_desc field
     }
-	fail = {
-		
-		
-		OR = {
-			
-			custom_tooltip = {
-				text = lost_war_tt
-				
-				OR = {
-					has_variable = recent_capitulation
-					has_variable = recently_lost_war
-					AND = {
-						has_variable = recently_had_war
-						NOT = {
-							has_variable = recently_won_war
+    
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			OR = {
+				custom_tooltip = {
+					text = lost_war_tt
+					OR = {
+						has_variable = recent_capitulation
+						has_variable = recently_lost_war
+						AND = {
+							has_variable = recently_had_war
+							NOT = {
+								has_variable = recently_won_war
+							}
 						}
 					}
 				}
 			}
-
 		}
-			
+        effect = {
+			trigger_event = {
+				id = dvg_hbe.7
+			}
 		}
-	on_fail = {
-	
-		
-		
-		trigger_event = {
-			id = dvg_hbe.7
-		}
-	}
+    }
 	should_be_pinned_by_default_uninvolved_or_context = yes
 
 }
@@ -461,55 +446,53 @@ je_world_conquer = {
 	group = je_group_foreign_affairs
 
 	is_shown_when_inactive = {	
-		
 	}
 
     possible = {
-
 	}
 
-	complete = {
-		
-		total_population_including_subjects_share >= 0.33
-		
-		gdp > {
-			value = global_gdp
-			multiply = 0.25
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			total_population_including_subjects_share >= 0.33
+			gdp > {
+				value = global_gdp
+				multiply = 0.25
+			}
+			global_country_ranking = 1
 		}
-		global_country_ranking = 1
-		
-		
-		
-	}
-    on_complete = {
-		trigger_event = { id = dvg_hbe.2 popup = yes }
-		
+        effect = {
+			trigger_event = { id = dvg_hbe.2 popup = yes }
+		}
+        event_outcome_desc = {} # complex desc like a status_desc field
     }
-	fail = {
-		
-		
-		
-		AND = {
-			NOT = { 
-			        has_law = law_type:law_autocracy
-			}
-			
-			NOT = { 
-			        has_law = law_type:law_monarchy
-			}
-			
-			}
-		}
-	on_fail = {
-	
-		
-		
-		trigger_event = {
-			id = dvg_hbe.7
-		}
-	}
-	should_be_pinned_by_default_uninvolved_or_context = yes
 
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			AND = {
+				NOT = { 
+			        has_law = law_type:law_autocracy
+				}
+				NOT = { 
+			        has_law = law_type:law_monarchy
+				}
+			}
+		}
+        effect = {
+			trigger_event = {
+				id = dvg_hbe.7
+			}
+		}
+    }
+
+	should_be_pinned_by_default_uninvolved_or_context = yes
 }
 
 je_anglo_summit = {
@@ -529,59 +512,53 @@ je_anglo_summit = {
 		}
 	}
 
-	
-
-	complete = {
-		# If-else clause to avoid errors because of missing variable before JE activates
-		OR = {
-		c:ENG = {
-						relations:root >= relations_threshold:amicable
-					}
-		trigger_if = {
-			limit = { exists = var:anglo_var }
-			scope:journal_entry = { is_goal_complete = yes }
-		}
-		
-		
-		}
-	}
-	
-	on_complete = {
-
-		trigger_event = {
-			id = dvg_england.11
-		}
-	}
-	
-	fail = {
-		OR = {
-			c:ENG = {
-						relations:root <= relations_threshold:poor
-					}
-			has_global_variable = anglo_summit_fail
-			
-			NOT = { 
-			        has_law = law_type:law_monarchy
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			# If-else clause to avoid errors because of missing variable before JE activates
+			OR = {
+				c:ENG = {
+					relations:root >= relations_threshold:amicable
+				}
+				trigger_if = {
+					limit = { exists = var:anglo_var }
+					scope:journal_entry = { is_goal_complete = yes }
+				}
 			}
-			
-			
 		}
-	}
-	
-	on_fail = {
-	
-		trigger_event = {
-			
-			id = dvg_england.10
-
+        effect = {
+			trigger_event = {
+				id = dvg_england.11
+			}
 		}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }	
 	
-		
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			OR = {
+				c:ENG = {
+					relations:root <= relations_threshold:poor
+				}
+				has_global_variable = anglo_summit_fail
+				NOT = { 
+			        has_law = law_type:law_monarchy
+				}
+			}
 		}
-	
-	
-
-	
+        effect = {
+			trigger_event = {
+				id = dvg_england.10
+			}
+		}
+    }
 
 	current_value = {
 		value = root.var:anglo_var
@@ -595,10 +572,7 @@ je_anglo_summit = {
 	
 	on_weekly_pulse = {
 		effect = {
-			
-			
-			
-			
+
 		}
 	}
 	
@@ -610,7 +584,6 @@ je_anglo_summit = {
 		}
 		}
 	
-
 	weight = 10000
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
@@ -806,6 +779,7 @@ je_cattle_barons_wrath = {
 			
 		}
 	}
+
 	on_yearly_pulse = {
 		fallback = on_yearly_events
 		effect = {
@@ -912,144 +886,149 @@ je_cattle_barons_wrath = {
 		}
 	}
 
-	
-
-	complete = {
-		# If-else clause to avoid errors because of missing variable before JE activates
-		ig:ig_landowners = {
-			ig_approval < -9
-		}
-
-		custom_tooltip = {
-			text = je_edward_special_tooltip_advance
-			trigger_if = {
-				limit = { exists = var:cattle_barons_var }
-				OR = {
-				scope:journal_entry = { is_goal_complete = yes }
-				}
-			}
-		}
-		OR = {
-			custom_tooltip = {
-				text = charles_arrested_tt
-				any_scope_character = {
-					has_variable = is_charles_cavendish
-					
-				}
-				has_global_variable = charles_arrested
-			}
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			# If-else clause to avoid errors because of missing variable before JE activates
 			ig:ig_landowners = {
-				is_in_government = no
+				ig_approval < -9
 			}
-			is_enacting_law = law_type:law_homesteading
-			has_law_or_variant = law_type:law_homesteading
-			NOR = {
-				has_law_or_variant = law_type:law_national_supremacy
-				has_law_or_variant = law_type:law_ethnostate
-			}
-			has_law_or_variant = law_type:law_no_migration_controls
-			NOR = {
-				has_law_or_variant = law_type:law_oligarchy
-				has_law_or_variant = law_type:law_landed_voting
-			}
-			taking_loans = yes
-			has_modifier = declared_bankruptcy
-			any_scope_state = {
-				filter = {
-					is_incorporated = yes
-					state_region = {
-						is_homeland = cu:beornian
+			custom_tooltip = {
+				text = je_edward_special_tooltip_advance
+				trigger_if = {
+					limit = { exists = var:cattle_barons_var }
+					OR = {
+						scope:journal_entry = { is_goal_complete = yes }
 					}
 				}
-				turmoil > 0.33
 			}
-		}
-	}
-	
-	on_complete = {
-		#set_variable = beornia_complete
-		trigger_event = {
-			id = dvg_beornia.9
-		}
-		set_global_variable = carolean_victory
-
-	}
-	
-	fail = {
-		OR = {
-			ig:ig_landowners = {
-					is_marginal = yes
-			}
-			AND = {
-				has_law = law_type:law_secret_police
+			OR = {
+				custom_tooltip = {
+					text = charles_arrested_tt
+					any_scope_character = {
+						has_variable = is_charles_cavendish
+					}
+					has_global_variable = charles_arrested
+				}
 				ig:ig_landowners = {
 					is_in_government = no
 				}
-				ig:ig_industrialists = {
-					is_in_government = yes
+				is_enacting_law = law_type:law_homesteading
+				has_law_or_variant = law_type:law_homesteading
+				NOR = {
+					has_law_or_variant = law_type:law_national_supremacy
+					has_law_or_variant = law_type:law_ethnostate
 				}
-			}
-			AND = {
-				
-				ig:ig_landowners = {
-					is_powerful = no
+				has_law_or_variant = law_type:law_no_migration_controls
+				NOR = {
+					has_law_or_variant = law_type:law_oligarchy
+					has_law_or_variant = law_type:law_landed_voting
 				}
-				ig:ig_industrialists = {
-					is_powerful = yes
-				}
-			}
-			AND = {
-				custom_tooltip = {
-					text = je_edward_special_tooltip_deplete
-					var:cattle_barons_var < 6
-					year > 1850
-				}
-				custom_tooltip = {
-					text = edward_dead
-					OR = {
-						
-						ruler = {
-						NOT = {
-							has_variable = is_edward
-						}
+				taking_loans = yes
+				has_modifier = declared_bankruptcy
+				any_scope_state = {
+					filter = {
+						is_incorporated = yes
+						state_region = {
+							is_homeland = cu:beornian
 						}
 					}
-
+					turmoil > 0.33
+				}
+			}			
+		}
+        effect = {
+			#set_variable = beornia_complete
+			trigger_event = {
+				id = dvg_beornia.9
+			}
+			set_global_variable = carolean_victory			
+		}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }	
+	
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			OR = {
+				ig:ig_landowners = {
+					is_marginal = yes
+				}
+				AND = {
+					has_law = law_type:law_secret_police
+					ig:ig_landowners = {
+						is_in_government = no
+					}
+					ig:ig_industrialists = {
+						is_in_government = yes
+					}
+				}
+				AND = {
+					ig:ig_landowners = {
+						is_powerful = no
+					}
+					ig:ig_industrialists = {
+						is_powerful = yes
+					}
+				}
+				AND = {
+					custom_tooltip = {
+						text = je_edward_special_tooltip_deplete
+						var:cattle_barons_var < 6
+						year > 1850
+					}
+					custom_tooltip = {
+					text = edward_dead
+					OR = {
+						ruler = {
+							NOT = {
+								has_variable = is_edward
+							}
+						}
+					}
 				}
 			}
+			}			
 		}
-	}
-	
-	on_fail = {
-		#set_variable = beornia_complete
-		trigger_event = {
-			id = dvg_beornia.10
-		}
-		ig:ig_landowners = {
-			remove_ideology = ideology_reactionary
-		}
-	}
-	invalid = {
-		any_country = {
-			is_revolutionary = yes
-			country_definition = root.country_definition
+        effect = {
+			#set_variable = beornia_complete
+			trigger_event = {
+				id = dvg_beornia.10
+			}
 			ig:ig_landowners = {
-				is_in_government = yes
-			}				
+				remove_ideology = ideology_reactionary
+			}
 		}
-	}
-	on_invalid = {
-		#set_variable = beornia_complete
-		trigger_event = {
-			id = dvg_beornia.20
-		}
-		ig:ig_landowners = {
-			remove_ideology = ideology_reactionary
-		}
-	}
+    }
 	
-
-	
+    outcome = {
+        flags = { hidden invalid_outcome }
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			any_country = {
+				is_revolutionary = yes
+				country_definition = root.country_definition
+				ig:ig_landowners = {
+					is_in_government = yes
+				}				
+			}
+		}
+        effect = {
+			#set_variable = beornia_complete
+			trigger_event = {
+				id = dvg_beornia.20
+			}
+			ig:ig_landowners = {
+				remove_ideology = ideology_reactionary
+			}
+		}
+    }
 
 	current_value = {
 		value = root.var:cattle_barons_var
@@ -1236,12 +1215,8 @@ je_cattle_barons_wrath = {
 			}
 			set_variable = beo_war_loser
 		}
-		
-		}
-			
-			
+		}	
 	}
-	
 	
 	timeout = 8000
 	
@@ -1256,7 +1231,6 @@ je_cattle_barons_wrath = {
 			remove_ideology = ideology_reactionary
 		}
 	}
-	
 
 	weight = 10000
 	should_be_pinned_by_default_uninvolved_or_context = yes
@@ -1274,28 +1248,29 @@ je_england_conquer = {
 	}
 
     possible = {
-			
 			has_law = law_type:law_monarchy
 
 			OR = {
 				has_state_in_state_region = STATE_YORKSHIRE
 				has_variable = hbe_claim_britain
 			}
-			
 	}
 
-	complete = {
-	
-	 owns_entire_state_region = STATE_HOME_COUNTIES
-	 owns_entire_state_region = STATE_YORKSHIRE
-	 owns_entire_state_region = STATE_LANCASHIRE
-	 owns_entire_state_region = STATE_MIDLANDS
-	 owns_entire_state_region = STATE_EAST_ANGLIA
-	 owns_entire_state_region = STATE_WEST_COUNTRY 
-		
-	}
-    on_complete = {
-		if = {
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+	 		owns_entire_state_region = STATE_HOME_COUNTIES
+	 		owns_entire_state_region = STATE_YORKSHIRE
+	 		owns_entire_state_region = STATE_LANCASHIRE
+	 		owns_entire_state_region = STATE_MIDLANDS
+	 		owns_entire_state_region = STATE_EAST_ANGLIA
+	 		owns_entire_state_region = STATE_WEST_COUNTRY 
+		}
+        effect = {
+			if = {
 			limit = {
 				NAND = {
 					exists = c:HBE
@@ -1304,23 +1279,24 @@ je_england_conquer = {
 			}
 			change_tag = ENG
 			trigger_event = { id = dvg_england.14 popup = yes
-		} 
+			} 
+			}
 		}
-		
-		
+
+        event_outcome_desc = {} # complex desc like a status_desc field
     }
-	fail = {
-		
-		
-		
-	
-		}
-	on_fail = {	
-		
-	}
+
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {}
+        effect = {}
+    }
+
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
-
 
 je_beornian_awakening = {
 	icon = "gfx/interface/icons/religion_icons/protestant.dds"
@@ -1342,7 +1318,6 @@ je_beornian_awakening = {
 			has_variable = is_richard
 			}
 		}
-		
 	}
 
 	possible = {
@@ -1354,11 +1329,9 @@ je_beornian_awakening = {
 			has_law = law_type:law_monarchy
 			
 		}
-	
 	}
 
 	immediate = {
-		
 		trigger_event = {
 			id = dvg_hbe.9
 		}
@@ -1378,86 +1351,95 @@ je_beornian_awakening = {
 		}
 	}
 
-	
-
 	scripted_button = beo_hbe_button
 
-
-	complete = {
-		custom_tooltip = {
-			text = beornian_awakening_tt
-			has_variable = beornian_awakening
-		}
-		NOT = {
-			has_journal_entry = je_beo_parishers
-			has_journal_entry = je_beo_presbyterians
-			has_journal_entry = je_beo_hbe
-		}
-	}
-
-	on_complete = {
-		trigger_event = {
-			id = dvg_hbe.22
-		}
-	}
-	fail = {
-		OR = {
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			custom_tooltip = {
+				text = beornian_awakening_tt
+				has_variable = beornian_awakening
+			}
 			NOT = {
-			has_law = law_type:law_monarchy
+				has_journal_entry = je_beo_parishers
+				has_journal_entry = je_beo_presbyterians
+				has_journal_entry = je_beo_hbe
 			}
-			any_civil_war = {
-				is_civil_war_type = revolution
-				civil_war_progress >= 0.75
+		}
+        effect = {
+			trigger_event = {
+				id = dvg_hbe.22
 			}
-			AND = {
-				capital = {
-					turmoil > 0.50
+		}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }
+
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			OR = {
+				NOT = {
+				has_law = law_type:law_monarchy
 				}
-			}
-		}
-		
-	}
-	on_fail = {
-		trigger_event = {
-			id = dvg_hbe.27
-		}
-		if = {
-			limit = {
-				ruler = {
-					has_trait = immortal
+				any_civil_war = {
+					is_civil_war_type = revolution
+					civil_war_progress >= 0.75
 				}
-			}
-			ruler = {
-				remove_trait = immortal
-			}
-		}
-		if = {
-			limit = {
 				AND = {
-					country_has_primary_culture = cu:beornian
-					country_has_primary_culture = cu:british
+					capital = {
+						turmoil > 0.50
+					}
 				}
-
 			}
-			remove_primary_culture = cu:british
 		}
-	}
-	invalid = {
-		NOT = {
-			exists = c:BEO
+        effect = {
+			trigger_event = {
+				id = dvg_hbe.27
+			}
+			if = {
+				limit = {
+					ruler = {
+						has_trait = immortal
+					}
+				}
+				ruler = {
+					remove_trait = immortal
+				}
+			}
+			if = {
+				limit = {
+					AND = {
+						country_has_primary_culture = cu:beornian
+						country_has_primary_culture = cu:british
+					}
+				}
+				remove_primary_culture = cu:british
+			}
 		}
-		OR = {
-			has_variable = presbyterian_victory
-			has_variable = parisher_victory
-		}
-	}
-	on_invalid = {
-		
-	}
+    }
 
-	should_be_pinned_by_default_uninvolved_or_context = yes
+    outcome = {
+        flags = { hidden invalid_outcome }
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			NOT = {
+				exists = c:BEO
+			}
+			OR = {
+				has_variable = presbyterian_victory
+				has_variable = parisher_victory
+			}
+		}
+        effect = {}
+    }
 
-	
+	should_be_pinned_by_default_uninvolved_or_context = yes	
 }
 
 je_england_reclaim = {
@@ -1487,36 +1469,36 @@ je_england_reclaim = {
         has_technology_researched = nationalism
     }
 
-    complete = {
-        any_scope_state = {
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			any_scope_state = {
 				state_region = {
 					is_homeland = cu:british
-
 				}
-            count > 3
-        }
-    }
-
-    on_complete = {
-        trigger_event = { id = dvg_england.14 days = 0 popup = yes }
+            	count > 3
+        	}
+		}
+        effect = {
+			trigger_event = { id = dvg_england.14 days = 0 popup = yes }
+		}
+        event_outcome_desc = {} # complex desc like a status_desc field
     }
 
     should_be_pinned_by_default_uninvolved_or_context = yes
 }
-
-
-
 
 je_beo_parishers = {
 	icon = "gfx/interface/icons/religion_icons/protestant.dds"
 
 	group =  je_group_internal_affairs
 
-
 	is_shown_when_inactive = {
-	
-		
 	}
+
 	immediate = {
 		if = {
 			limit = {
@@ -1526,13 +1508,13 @@ je_beo_parishers = {
 			}
 			set_variable = beornian_awakening
 		}
-		
 	}
 
     possible = {
-			
 	}
+
 	scripted_button = kill_john_faith_button
+
 	on_yearly_pulse = {
 		random_events = {
 			100 = 0
@@ -1541,17 +1523,14 @@ je_beo_parishers = {
 	}
 
 	on_monthly_pulse = {
-
 		random_events = {
 			100 = 0
 			20 = dvg_hbe.13
 			10 = dvg_hbe.16
 			15 = dvg_hbe.24
-
 		}
 		
 		effect = {
-
 			if = {
 				limit = {
 					NOT = {
@@ -1560,9 +1539,9 @@ je_beo_parishers = {
 						is_capital = yes
 						}
 						has_variable = capital_moved
-					}
-								
+					}			
 				}
+
 				set_variable = capital_moved
 
 				change_variable = {
@@ -1650,6 +1629,7 @@ je_beo_parishers = {
 					add = 1
 				}
 			}
+
 			if = {
 				limit = {
 					ig:ig_devout = {
@@ -1675,6 +1655,7 @@ je_beo_parishers = {
 					add = 1
 				}
 			}
+
 			if = {
 				limit = {
 					cu:beornian = {
@@ -1690,15 +1671,17 @@ je_beo_parishers = {
 		}
 	}
 
-	complete = {
-
-		
-		calc_true_if = {
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			calc_true_if = {
 				amount > 2
 				ig:ig_rural_folk = {
-						ig_approval < 0
+					ig_approval < 0
 				}
-
 				ig:ig_devout = {
 						ig_approval < -5
 				}
@@ -1709,58 +1692,69 @@ je_beo_parishers = {
 					culture_current_fervor > 40
 				}
 				any_political_movement = {
-				is_political_movement_type = movement_parisher
-				OR = {
-					political_movement_radicalism > 0.33
-					political_movement_support > 0.33
+					is_political_movement_type = movement_parisher
+					OR = {
+						political_movement_radicalism > 0.33
+						political_movement_support > 0.33
+					}
 				}
-
-				}
+			}
+			scope:journal_entry = {is_goal_complete = yes}			
 		}
-		
-		scope:journal_entry = {is_goal_complete = yes}
-		
-	}
-    on_complete = {
-		trigger_event = {
-			id = dvg_hbe.25
+        effect = {
+			trigger_event = {
+				id = dvg_hbe.25
+			}
 		}
-		
+        event_outcome_desc = {} # complex desc like a status_desc field
     }
-	fail = {	
-		OR = {
-			calc_true_if = {
-				amount > 2
-				ig:ig_rural_folk = {
+
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			OR = {
+				calc_true_if = {
+					amount > 2
+					ig:ig_rural_folk = {
 						ig_approval < 0
-				}
-
-				ig:ig_devout = {
+					}
+					ig:ig_devout = {
 						ig_approval < -5
-				}
-				ig:ig_armed_forces = {
+					}
+					ig:ig_armed_forces = {
 						ig_approval < -5
+					}
+					cu:beornian = {
+						culture_current_fervor > 40
+					}
 				}
-				cu:beornian = {
-					culture_current_fervor > 40
+				AND = {
+					var:parisher_var < 1 
+					custom_tooltip = {
+					text = je_beo_hbe_goal
+					var:new_hbe_var > 9
+					exists = c:HBE
+					c:HBE = ROOT
+					}	
 				}
-			}
-			AND = {
-				var:parisher_var < 1 
-				custom_tooltip = {
-				text = je_beo_hbe_goal
-				var:new_hbe_var > 9
-				exists = c:HBE
-				c:HBE = ROOT
-				}	
-			}
-			
+			}			
 		}
-	}
+        effect = {}
+    }
 
-	on_fail = {
-		
-	}
+    outcome = {
+        flags = { hidden invalid_outcome }
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			exists = c:HBE
+			c:HBE = ROOT
+		}
+        effect = {}
+    }
+
 	current_value = {
 		value = root.var:parisher_var
 	}
@@ -1769,13 +1763,7 @@ je_beo_parishers = {
 		value = 100
 	}
 
-	invalid = {
-		exists = c:HBE
-		c:HBE = ROOT
-	}
-
 	timeout = 7125
-
 
 	progressbar = yes
 
@@ -1790,11 +1778,9 @@ je_beo_presbyterians = {
 
 	group =  je_group_internal_affairs
 
-
 	is_shown_when_inactive = {
-	
-	
 	}
+
 	scripted_button = kill_robin_hood_button
 
 	immediate = {
@@ -1813,12 +1799,13 @@ je_beo_presbyterians = {
 		}
 	}
 
-    possible = {
-			
+    possible = {	
 	}
+
 	on_yearly_pulse = {
 		fallback = on_yearly_events
 	}
+
 	on_monthly_pulse = {
 		fallback = on_yearly_events
 		random_events = {
@@ -1944,94 +1931,96 @@ je_beo_presbyterians = {
 		}
 	}
 
-	complete = {
-
-		calc_true_if = {
-			amount > 2
-
-			ig:ig_petty_bourgeoisie = {
-						ig_approval < 0
-			}
-
-			ig:ig_devout = {
-						ig_approval < -5
-			}
-			ig:ig_intelligentsia = {
-						ig_approval < -5
-			}
-			average_sol_for_religion = {
-				target = rel:protestant
-				value < average_expected_sol
-			}
-			any_political_movement = {
-				is_political_movement_type = movement_presbyterian
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			calc_true_if = {
+				amount > 2
+				ig:ig_petty_bourgeoisie = {
+					ig_approval < 0
+				}
+				ig:ig_devout = {
+					ig_approval < -5
+				}
+				ig:ig_intelligentsia = {
+					ig_approval < -5
+				}
+				average_sol_for_religion = {
+					target = rel:protestant
+					value < average_expected_sol
+				}
+				any_political_movement = {
+					is_political_movement_type = movement_presbyterian
 				OR = {
 					political_movement_radicalism > 0.33
 					political_movement_support > 0.33
 				}
-
+				}
+			}
+			OR = {
+				NOT = {
+				has_law = law_type:law_monarchy
+				}
+				scope:journal_entry = {is_goal_complete = yes}
 			}
 		}
-
-		OR = {
-			NOT = {
-			has_law = law_type:law_monarchy
-			}
-			
-		
-			scope:journal_entry = {is_goal_complete = yes}
+        effect = {
+			trigger_event = {
+				id = dvg_hbe.27
+			}			
 		}
-		
-		
-		
-	}
-
-    on_complete = {
-		trigger_event = {
-			id = dvg_hbe.27
-		}
-		
+        event_outcome_desc = {} # complex desc like a status_desc field
     }
-	fail = {	
-		OR = {
-			AND = {
-			var:presbyterian_var < 1 
-			custom_tooltip = {
-				text = je_beo_hbe_goal
-				exists = c:HBE
-				c:HBE = ROOT
-				var:new_hbe_var > 9
+
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			OR = {
+				AND = {
+					var:presbyterian_var < 1 
+					custom_tooltip = {
+						text = je_beo_hbe_goal
+						exists = c:HBE
+						c:HBE = ROOT
+						var:new_hbe_var > 9
+					}
+				}
 			}
+			calc_true_if = {
+				amount > 2
+				ig:ig_petty_bourgeoisie = {
+					ig_approval > 10
+				}
+				ig:ig_devout = {
+					ig_approval > 5
+				}
+				ig:ig_intelligentsia = {
+					ig_approval > 5
+				}
+				average_sol_for_religion = {
+					target = rel:protestant
+					value > average_expected_sol
+				}
 			}
 		}
-		calc_true_if = {
-			amount > 2
+        effect = {}
+    }
 
-			ig:ig_petty_bourgeoisie = {
-						ig_approval > 10
-			}
-
-			ig:ig_devout = {
-						ig_approval > 5
-			}
-			ig:ig_intelligentsia = {
-						ig_approval > 5
-			}
-			average_sol_for_religion = {
-				target = rel:protestant
-				value > average_expected_sol
-			}
+    outcome = {
+        flags = { hidden invalid_outcome }
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			exists = c:HBE
+			c:HBE = ROO
 		}
-	}
-	on_fail = {
-		
-	}
-	invalid = {
-		exists = c:HBE
-		c:HBE = ROOT
-	}
-
-
+        effect = {}
+    }
 
 	goal_add_value = {
 		value = 100
@@ -2047,39 +2036,30 @@ je_beo_presbyterians = {
 
 	transferable = yes
 
-
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
-
 
 je_beo_hbe = {
 	icon = "gfx/interface/icons/religion_icons/protestant.dds"
 
 	group =  je_group_internal_affairs
 
-
 	is_shown_when_inactive = {
 	    c:BEO ?= THIS
 		has_game_rule = all_formable_nations
-	
 	}
 
     possible = {
-			
 		has_journal_entry = je_beornian_awakening
 
 		has_modifier = making_communion 
 	}
-
-	
-
 	
 	immediate = {
 		set_variable = {
 			name = new_hbe_var
 			value = 0
 		}
-
 		if = {
 			limit = {
 				NOT = {
@@ -2130,60 +2110,68 @@ je_beo_hbe = {
 			}
 		}
 	}
+
 	scripted_button = pendragon_fortress_button
 	scripted_button = army_git_good_button
 	scripted_button = ragnarok_connection_button
 	#scripted_button = consolidate_churches_button
 
-	complete = {
-		any_scope_state = {
-			has_modifier = pendragon_modifier
-
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			any_scope_state = {
+				has_modifier = pendragon_modifier
+			}
+			custom_tooltip = {
+				text = je_beo_hbe_goal
+				var:parisher_var < 1
+				var:presbyterian_var < 1
+				scope:journal_entry = { is_goal_complete = yes }
+			}
+			radical_fraction = {
+				value < 0.50
+			}
+			ig:ig_devout = {
+				ig_approval > 9
+			}			
 		}
-
-		custom_tooltip = {
-			text = je_beo_hbe_goal
-			var:parisher_var < 1
-			var:presbyterian_var < 1
-			scope:journal_entry = { is_goal_complete = yes }
+        effect = {
+			trigger_event = {
+				id = dvg_hbe.18
+			}
+			remove_modifier = making_communion
 		}
-
-		radical_fraction = {
-			value < 0.50
-		}
-
-		ig:ig_devout = {
-			ig_approval > 9
-		}
-
-	}
-    on_complete = {
-		trigger_event = {
-			id = dvg_hbe.18
-		}
-		remove_modifier = making_communion
+        event_outcome_desc = {} # complex desc like a status_desc field
     }
 
-	fail = {
-		
-		OR = {
-			NOT = {
-				has_law = law_type:law_monarchy
-				has_law = law_type:law_social_monarchy
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			OR = {
+				NOT = {
+					has_law = law_type:law_monarchy
+					has_law = law_type:law_social_monarchy
+				}
+				has_law = law_type:law_state_atheism
+				has_law = law_type:law_total_separation
+			}			
+		}
+        effect = {
+			trigger_event = {
+				id = dvg_hbe.36
 			}
-			has_law = law_type:law_state_atheism
-			has_law = law_type:law_total_separation
+			remove_modifier = making_communion			
 		}
-	
-	}
-	on_fail = {
-		trigger_event = {
-			id = dvg_hbe.36
-		}
-		remove_modifier = making_communion
-	}
+    }
 	
 	progressbar = yes
+
 	should_be_pinned_by_default_uninvolved_or_context = yes
 
 	current_value = {
@@ -2209,48 +2197,51 @@ je_beornia_development = {
 
 	group = je_group_internal_affairs
 
-	complete = {
-		in_default = no
-		any_scope_state = {
-			filter = {
-				is_incorporated = yes
-				state_region = {
-					is_homeland = cu:beornian
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			in_default = no
+			any_scope_state = {
+				filter = {
+					is_incorporated = yes
+					state_region = {
+						is_homeland = cu:beornian
+					}
 				}
-			}
-			any_scope_building = {
-				is_building_type = building_urban_center
-				level > 3
-			}
-			has_building = building_railway
-			has_building = building_government_administration
-			percent > 0.8
-		}
-	}
-
-	on_complete = {
-
-		every_scope_state = {
-			limit = {
 				any_scope_building = {
-				is_building_type = building_urban_center
-				level > 3
+					is_building_type = building_urban_center
+					level > 3
+				}
+				has_building = building_railway
+				has_building = building_government_administration
+				percent > 0.8
+			}			
+		}
+        effect = {
+			every_scope_state = {
+				limit = {
+					any_scope_building = {
+					is_building_type = building_urban_center
+					level > 3
+					}
+				}
+				add_modifier = {
+					name = sa_migration_attraction
+					months = 65
 				}
 			}
-			add_modifier = {
-				name = sa_migration_attraction
-				months = 65
+			ruler = {
+				add_modifier = promisekeeper
 			}
-			
+			set_variable = rural_developed			
 		}
-		ruler = {
-			add_modifier = promisekeeper
-		}
-		set_variable = rural_developed
-	}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }
 
-	on_yearly_pulse = {
-		
+	on_yearly_pulse = {	
 	}
 
 	transferable = no
@@ -2259,57 +2250,64 @@ je_beornia_development = {
 	weight = 5000
 }
 
-
 je_king_edward = {
 	icon = "gfx/interface/icons/event_icons/event_industry.dds"
 
 	group = je_group_internal_affairs
 
-	complete = {
-		any_scope_state = {
-			any_scope_building = {
-				is_building_type = building_urban_center
-				level >= 7
-			}
-			is_incorporated = yes
-			state_region = {
-				is_homeland = cu:beornian
-				
-			}
-		}
-
-		year > 1842
-
-		OR = {
-			gdp_per_capita_ranking < 25
-			country_rank >= rank_value:major_power
-		}
-	}
-
-	on_complete = {
-
-		trigger_event = {
-			id = dvg_beornia.27
-		}
-		ruler = {
-			add_modifier = promisekeeper
-		}
-		if = {
-			limit = {
-				NOT = {
-					has_global_variable = edwardian_victory
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			any_scope_state = {
+				any_scope_building = {
+					is_building_type = building_urban_center
+					level >= 7
+				}
+				is_incorporated = yes
+				state_region = {
+					is_homeland = cu:beornian
 				}
 			}
-			set_global_variable = edwardian_victory
+			year > 1842
+			OR = {
+				gdp_per_capita_ranking < 25
+				country_rank >= rank_value:major_power
+			}
 		}
-	}
+        effect = {
+			trigger_event = {
+				id = dvg_beornia.27
+			}
+			ruler = {
+				add_modifier = promisekeeper
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_global_variable = edwardian_victory
+					}
+				}
+				set_global_variable = edwardian_victory
+			}
+		}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }
 
-	on_yearly_pulse = {
-		
-	}
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			has_law = law_type:law_industry_banned
+		}
+        effect = {}
+    }
 
-	fail = {
-		has_law = law_type:law_industry_banned
+	on_yearly_pulse = {	
 	}
 
 	transferable = no
@@ -2323,27 +2321,32 @@ je_destroy_beornia = {
 
 	group =  je_group_internal_affairs
 
-
-	complete = {
-		custom_tooltip = {
-		text = beo_existence_tt
-	 
-	 	NOT = { exists = c:BEO }
-	 
-	 	
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			custom_tooltip = {
+				text = beo_existence_tt
+	 			NOT = { exists = c:BEO }
+			}
+			any_scope_state = {
+				state_region = s:STATE_AVALON
+			}			
 		}
-		any_scope_state = {
-			state_region = s:STATE_AVALON
+        effect = {
+			trigger_event = { id = dvg_hbe.39 popup = yes  }
 		}
-	}
-
-    on_complete = {
-		trigger_event = { id = dvg_hbe.39 popup = yes  }	
+        event_outcome_desc = {} # complex desc like a status_desc field
     }	
 
-	invalid = {
-		
-	}
+    outcome = {
+        flags = { hidden invalid_outcome }
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {}
+        effect = {}
+    }
 
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
@@ -2354,25 +2357,29 @@ je_destroy_hbe = {
 
 	group =  je_group_internal_affairs
 
-
-
-	complete = {
-		custom_tooltip = {
-		text = beo_existence_tt
-	 
-	 	NOT = { exists = c:HBE }
-	 
-	 	
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			custom_tooltip = {
+				text = beo_existence_tt
+	 			NOT = { exists = c:HBE }
+			}			
 		}
-	}
-
-    on_complete = {
-		trigger_event = { id = dvg_hbe.37 popup = yes  }	
+        effect = {
+			trigger_event = { id = dvg_hbe.37 popup = yes }
+		}
+        event_outcome_desc = {} # complex desc like a status_desc field
     }	
 
-	invalid = {
-		
-	}
+    outcome = {
+        flags = { hidden invalid_outcome }
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {}
+        effect = {}
+    }
 
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
@@ -2381,7 +2388,6 @@ je_destroy_hbe = {
 je_black_knights = {
 	icon = "gfx/interface/icons/objectives/great_game.dds"
 
-
 	group = je_group_internal_affairs
 
 	is_shown_when_inactive = {
@@ -2389,7 +2395,6 @@ je_black_knights = {
 		c:HBE = ROOT
 	}
 
-	
 	scripted_button = relocate_capital_hbe_button
 	scripted_button = capture_zero_button
 
@@ -2411,6 +2416,7 @@ je_black_knights = {
 			}
 		}
 	}
+
 	immediate = {
 		trigger_event = {
 			id = dvg_hbe.50
@@ -2495,8 +2501,7 @@ je_black_knights = {
 						value = 1
 					}
 				}
-			}
-			
+			}	
 		}
 		events = {
 			1848.5
@@ -2514,72 +2519,79 @@ je_black_knights = {
 		}
 	}
 
-
-
-
-	complete = {
-		loyalist_fraction = {
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			loyalist_fraction = {
 				value > 0.33
-		}
-		custom_tooltip = {
-			text = zero_caught_tt
-			has_global_variable = zero_caught_var
-		}
-		
-	}
-	on_complete = {
-		trigger_event = { id = dvg_hbe.57 popup = yes  }	
-		if = {
-			limit = {
-				has_modifier = dvg_catching_zero
 			}
-			remove_modifier = dvg_catching_zero
+			custom_tooltip = {
+				text = zero_caught_tt
+				has_global_variable = zero_caught_var
+			}			
 		}
-	}
+        effect = {
+			trigger_event = { id = dvg_hbe.57 popup = yes  }	
+			if = {
+				limit = {
+					has_modifier = dvg_catching_zero
+				}
+				remove_modifier = dvg_catching_zero
+			}			
+		}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }
 
-	fail = {
-		
-		any_political_movement = {
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			any_political_movement = {
+				OR = {
+					movement_is_liberal = yes
+					movement_is_socialist = yes
+				}
+				is_insurrectionary = yes
+			}
 			OR = {
-				movement_is_liberal = yes
-				movement_is_socialist = yes
-			}
-			is_insurrectionary = yes
-		}
-		OR = {
-			any_civil_war = {
-				is_civil_war_type = revolution
-				civil_war_progress >= 0.75
-			}
-			capital = {
-				is_in_revolt = yes
+				any_civil_war = {
+					is_civil_war_type = revolution
+					civil_war_progress >= 0.75
+				}
+				capital = {
+					is_in_revolt = yes
+				}
 			}
 		}
-	}
-	on_fail = {
-		
-		trigger_event = { id = dvg_hbe.52 popup = yes  }	
-
-		if = {
-			limit = {
-				has_modifier = dvg_catching_zero
-			}
-			remove_modifier = dvg_catching_zero
+        effect = {
+			trigger_event = { id = dvg_hbe.52 popup = yes  }
+			if = {
+				limit = {
+					has_modifier = dvg_catching_zero
+				}
+				remove_modifier = dvg_catching_zero
+			}			
 		}
     }	
 
-   
-
-	invalid = {
-		
-	}
+    outcome = {
+        flags = { hidden invalid_outcome }
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {}
+        effect = {}
+    }
 
 	#scripted_progress_bar = black_knights_progress_bar
 
 	weight = 100
+
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
-
 
 je_opium_wars_beornia = {
 	icon = "gfx/interface/icons/invention_icons/baking_powder.dds"
@@ -2605,12 +2617,11 @@ je_opium_wars_beornia = {
 			has_variable = opium_wars_target
 		}
 	}
+
 	immediate = {
-		
 		trigger_event = {
 			id = dvg_beornia.30 
 		}
-		
 	}
 	
 	on_monthly_pulse = {
@@ -2656,47 +2667,52 @@ je_opium_wars_beornia = {
 		}
 	}
 
-	complete = {
-		
-		NOT = {
-			any_primary_culture = {
-						has_cultural_obsession = opium
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			NOT = {
+				any_primary_culture = {
+					has_cultural_obsession = opium
+				}
+				any_scope_state = {
+					turmoil > 0.15
+				}
+				has_law = law_type:law_no_health_system
+				has_law = law_type:law_no_police
+			}			
+		}
+        effect = {
+			trigger_event = {
+				id = opium_wars.5
+				days = 5
+			}			
+		}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }
+
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			OR = {
+				has_law = law_type:law_laissez_faire
 			}
-			any_scope_state = {
-				turmoil > 0.15
+			NOT = {
+				has_modifier = opium_ban_authority
 			}
-			has_law = law_type:law_no_health_system
-			has_law = law_type:law_no_police
 		}
-	}
-
-	on_complete = {
-		trigger_event = {
-			id = opium_wars.5
-			days = 5
+        effect = {
+			custom_tooltip = {
+				text = opium_wars_fail_invalid_tt
+				remove_variable = opium_wars_aggressor
+			}			
 		}
-	}
-
-	fail = {
-		
-		OR = {
-			has_law = law_type:law_laissez_faire
-		}
-		NOT = {
-			has_modifier = opium_ban_authority
-		}
-
-	}
-
-	
-
-	on_fail = {
-		custom_tooltip = {
-			text = opium_wars_fail_invalid_tt
-			remove_variable = opium_wars_aggressor
-		}
-		
-	}
+    }
 
 	on_timeout = {
 		custom_tooltip = {
@@ -2706,6 +2722,7 @@ je_opium_wars_beornia = {
 	}
 
 	weight = 10000
+
 	should_be_pinned_by_default_uninvolved_or_context = yes
 
 	timeout = 3650
@@ -2716,34 +2733,36 @@ je_beornia_replace = {
 
 	group = je_group_historical_content
 
-	complete = {
-		custom_tooltip = {
-			text = beornia_again_tt
-
-			c:BEO ?= this
-
-		}
-		
-	}
-
-    on_complete = {
-		
-		trigger_event = { id = dvg_beornia.33 popup = yes  }
-		
-		if = {
-			limit = {
-				has_global_variable = decide_coke
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			custom_tooltip = {
+				text = beornia_again_tt
+				c:BEO ?= this
 			}
-			remove_global_variable = decide_coke
 		}
+        effect = {
+			trigger_event = { id = dvg_beornia.33 popup = yes  }
+			if = {
+				limit = {
+					has_global_variable = decide_coke
+				}
+				remove_global_variable = decide_coke
+			}
+		}
+
+        event_outcome_desc = {} # complex desc like a status_desc field
     }	
 
-	invalid = {
-		
-	}
-	on_invalid = {
-		
-	}
+    outcome = {
+        flags = { hidden invalid_outcome }
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {}
+        effect = {}
+    }
 
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes

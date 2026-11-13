@@ -3,21 +3,26 @@
 
 	group = je_group_internal_affairs
 
+	activation_description = {
+		always = yes
+	}
+
 	is_shown_when_inactive = {
 		OR = {
-			has_law = law_type:law_monarchy
-			has_law = law_type:law_theocracy
+			country_has_monarchy_law = yes
+			has_law_or_variant = law_type:law_theocracy
 		}
-		has_law = law_type:law_state_religion
-		has_law = law_type:law_autocracy
+		has_law_or_variant = law_type:law_state_religion
+		has_law_or_variant = law_type:law_autocracy
 	}
 
 	possible = {
+		has_technology_researched = nationalism
 		OR = {
-			ig:ig_landowners = {
+			ig:ig_landowners ?= {
 				is_powerful = yes
 			}
-			ig:ig_devout = {
+			ig:ig_devout ?= {
 				is_powerful = yes
 			}
 		}
@@ -28,6 +33,9 @@
 			name = autocracy_var
 			value = 1
 		}
+		random_primary_culture = {
+			save_scope_as = primary_culture_scope
+		}
 	}
 
 	on_monthly_pulse = {
@@ -35,14 +43,14 @@
 			if = {
 				limit = {
 					OR = {
-						has_law = law_type:law_monarchy
-						has_law = law_type:law_theocracy
+						country_has_monarchy_law = yes
+						has_law_or_variant = law_type:law_theocracy
 					}
-					has_law = law_type:law_state_religion
-					has_law = law_type:law_autocracy
+					has_law_or_variant = law_type:law_state_religion
+					has_law_or_variant = law_type:law_autocracy
 					NOT = {
 						any_civil_war = {
-							civil_war_progress > 50
+							civil_war_progress >= 0.75
 						}
 					}
 				}
@@ -52,40 +60,64 @@
 				}
 			}
 		}
+	}
+
+	on_yearly_pulse = {
 		random_events = {
-			10 = 0
+			5 = 0
 			1 = autocracy.2
 			1 = autocracy.3
 		}
 	}
 
-	complete = {
-		scope:journal_entry = {
-			is_goal_complete = yes
+	outcome = {
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			scope:journal_entry = {
+				is_goal_complete = yes
+			}
+			OR = {
+				country_has_monarchy_law = yes
+				has_law_or_variant = law_type:law_theocracy
+			}
+			has_law_or_variant = law_type:law_state_religion
+			has_law_or_variant = law_type:law_autocracy
+			NOT = {
+				any_civil_war = {
+					civil_war_progress >= 0.75
+				}
+			}
 		}
-		OR = {
-			has_law = law_type:law_monarchy
-			has_law = law_type:law_theocracy
+		effect = {
+			trigger_event = {
+				id = autocracy.1
+			}
 		}
-		has_law = law_type:law_state_religion
-		has_law = law_type:law_autocracy
-		NOT = {
-			any_civil_war = {
-				civil_war_progress > 50
+		event_outcome_desc = {
+			first_valid = {
+				triggered_desc = {
+					desc = event_effects_autocracy.1_tt
+				}
 			}
 		}
 	}
 
-	on_complete = {
-		trigger_event = {
-			id = autocracy.1
+	outcome = {
+		header = je_standard_failure_header
+		effect_header = je_standard_on_failure_header
+		color = "blue_negative"
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			OR = {
+				NOT = { has_law_or_variant = law_type:law_state_religion }
+				NOT = { has_law_or_variant = law_type:law_autocracy }
+			}
 		}
-	}
-
-	fail = {
-		OR = {
-			NOT = { has_law = law_type:law_state_religion }
-			NOT = { has_law = law_type:law_autocracy }
+		effect = {
+			je_autocracy_cleanup = yes
 		}
 	}
 
@@ -98,6 +130,116 @@
 	}
 
 	progressbar = yes
+
+	weight = 100
+}
+
+je_king_in_parliament = {
+	icon = "gfx/interface/icons/event_icons/event_portrait.dds"
+
+	group = je_group_internal_affairs
+
+	activation_description = {
+		always = yes
+	}
+
+	immediate = {
+		set_variable = {
+			name = parliamentarianism_var
+			value = 0
+		}
+	}
+
+	on_monthly_pulse = {
+		effect = {
+			if = {
+				limit = {
+					NOT = {
+						any_civil_war = {
+							civil_war_progress >= 0.75
+						}
+					}
+				}
+				if = {
+					limit = {
+						country_has_monarchy_law = yes
+						country_has_voting_franchise = yes
+					}
+					change_variable = {
+						name = parliamentarianism_var
+						add = 1
+					}
+				}
+			}
+		}
+	}
+
+	outcome = {
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			scope:journal_entry = {
+				is_goal_complete = yes
+			}
+			country_has_monarchy_law = yes
+			country_has_voting_franchise = yes
+			NOT = {
+				any_civil_war = {
+					civil_war_progress >= 0.75
+				}
+			}
+		}
+		effect = {
+			remove_variable = king_in_parliament_possible
+			trigger_event = {
+				id = autocracy.4
+			}
+		}
+		event_outcome_desc = {
+			first_valid = {
+				triggered_desc = {
+					desc = event_effects_autocracy.4_tt
+				}
+			}
+		}
+	}
+
+	outcome = {
+		flags = { hidden invalid_outcome }
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			OR = {
+				NOT = {
+					country_has_monarchy_law = yes
+				}
+				NOR = {
+					is_enacting_law = law_type:law_landed_voting
+					is_enacting_law = law_type:law_wealth_voting
+					is_enacting_law = law_type:law_census_voting
+					is_enacting_law = law_type:law_universal_suffrage
+					is_enacting_law = law_type:law_single_party_state
+					country_has_voting_franchise = yes
+				}
+			}
+		}
+		effect = {
+			je_king_in_parliament_cleanup = yes
+		}
+	}
+
+	current_value = {
+		value = root.var:parliamentarianism_var
+	}
+
+	goal_add_value = {
+		add = 120
+	}
+
+	progressbar = yes
+	
+	should_be_pinned_by_default_uninvolved_or_context = no
 
 	weight = 100
 }

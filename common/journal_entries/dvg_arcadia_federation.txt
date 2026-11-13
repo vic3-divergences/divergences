@@ -19,58 +19,60 @@ je_arcadia_blc = {
 	immediate = {
 	}
 
-	complete = {
-		custom_tooltip = { # happens via major formables
+	outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			custom_tooltip = { # happens via major formables
 			text = is_arcadia_tt
 			c:ARU ?= this
+			}
+
+			show_as_tooltip = {
+            	add_journal_entry = { type = je_trans_continental_railway }
+        	}
+
+			show_as_tooltip = {
+            	add_journal_entry = { type = je_seminole_wars }
+        	}
+
+			show_as_tooltip = {
+            	add_journal_entry = { type = je_code_indigenat }
+        	}
+
+			government_legitimacy >= 50
+			is_at_war = no
+			custom_tooltip = {
+            	text = no_insurrectionary_movement_tt
+            	NOT = {
+                	any_political_movement = {
+                    	is_insurrectionary = yes
+                	}
+            	}
+        	}
 		}
+        effect = {
 
-		show_as_tooltip = {
-            add_journal_entry = { type = je_trans_continental_railway }
-        }
-
-		show_as_tooltip = {
-            add_journal_entry = { type = je_seminole_wars }
-        }
-
-		show_as_tooltip = {
-            add_journal_entry = { type = je_code_indigenat }
-        }
-
-		government_legitimacy >= 50
-		is_at_war = no
-		custom_tooltip = {
-            text = no_insurrectionary_movement_tt
-            NOT = {
-                any_political_movement = {
-                    is_insurrectionary = yes
-                }
-            }
-        }
-	}
-	
-
-	on_complete = {
-
-		add_modifier = unification_prestige
+			add_modifier = unification_prestige
 		
-
-		#if = {
-		#	limit = {
-		#		exists = c:VIN
-		#		any_neighbouring_state = {
-		#			owner = c:VIN
-		#		}
-		#	}
-		#	c:VIN = {
-		#		trigger_event = {
-		#			id = dvg_belgium.25
-		#		}
-		#	}
-		#}
-
-		
-	}
+			#if = {
+			#	limit = {
+			#		exists = c:VIN
+			#		any_neighbouring_state = {
+			#			owner = c:VIN
+			#		}
+			#	}
+			#	c:VIN = {
+			#		trigger_event = {
+			#			id = dvg_belgium.25
+			#		}
+			#	}
+			#}
+		}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }
 }
 
 # Code de I'indigénat
@@ -93,56 +95,67 @@ je_code_indigenat = {
 		}
 	}
 
-	complete = {
-		OR = {
-			has_law_or_variant = law_type:law_no_colonial_affairs
-            has_law_or_variant = law_type:law_cultural_exclusion
-            has_law_or_variant = law_type:law_multicultural
-			cultural_acceptance_base = { target = cu:cherokee value >= acceptance_status_4 }
-			custom_tooltip = {
-				text = indigenat_removal_fail_tt
-				NOT = {
-					any_scope_state = {
-						any_scope_pop = {
-							culture = cu:cherokee
-						}
-					}
-				}
-			}
-		}
-	}
-
-	on_complete = {
-		custom_tooltip = {
-			text = indigenat_removal_end
-			if = {
-				limit = {
+	outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			OR = {
+				has_law_or_variant = law_type:law_no_colonial_affairs
+            	has_law_or_variant = law_type:law_cultural_exclusion
+           		has_law_or_variant = law_type:law_multicultural
+				cultural_acceptance_base = { target = cu:cherokee value >= acceptance_status_4 }
+				custom_tooltip = {
+					text = indigenat_removal_fail_tt
 					NOT = {
-						any_scope_pop = {
-							culture = cu:cherokee
+						any_scope_state = {
+							ny_scope_pop = {
+								culture = cu:cherokee
+							}
 						}
 					}
 				}
-				trigger_event = { id = indigenat_resettlement.5 }
-			}
-			else = {
-				trigger_event = { id = indigenat_resettlement.6 }
 			}
 		}
-	}
-
-	invalid = {
-		OR = {
-			NOT = { owns_entire_state_region = STATE_PAYS_TSALAGI }
-			NOT = {
-				AND = {
-					exists = c:CHE
-					exists = c:ARU
-					c:CHE = { is_subject_of = c:ARU }
+        effect = {
+			custom_tooltip = {
+				text = indigenat_removal_end
+					if = {
+						limit = {
+							NOT = {
+								any_scope_pop = {
+								culture = cu:cherokee
+								}
+							}
+						}
+						trigger_event = { id = indigenat_resettlement.5 }
+					}
+				else = {
+					trigger_event = { id = indigenat_resettlement.6 }
 				}
 			}
 		}
-	}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }
+
+    outcome = {
+        flags = { hidden invalid_outcome }
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+				OR = {
+					NOT = { owns_entire_state_region = STATE_PAYS_TSALAGI }
+					NOT = {
+					AND = {
+						exists = c:CHE
+						exists = c:ARU
+						c:CHE = { is_subject_of = c:ARU }
+					}
+					}
+				}
+		}
+        effect = {}
+    }
 
 	weight = 200
 
@@ -156,41 +169,47 @@ je_seminole_wars = {
 
 	group = je_group_internal_affairs
 
-	complete = {
-		owns_entire_state_region = STATE_ATHESIA
-		NOT = { exists = c:SML }
-	}
-
-	on_complete = {
-		show_as_tooltip = {
-			if = {
-				limit = {
-					c:CHE ?= { is_subject_of = c:ARU }
-					exists = s:STATE_LES_PAINS.region_state:CHE
-				}
-				custom_tooltip = {
-					text = je_seminole_wars_removal
-					s:STATE_ATHESIA.region_state:ARU ?= {
-						every_scope_pop = {
-							limit = {
-								culture = cu:muskogean
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			owns_entire_state_region = STATE_ATHESIA
+			NOT = { exists = c:SML }
+		}
+        effect = {
+			show_as_tooltip = {
+				if = {
+					limit = {
+						c:CHE ?= { is_subject_of = c:ARU }
+						exists = s:STATE_LES_PAINS.region_state:CHE
+					}
+					custom_tooltip = {
+						text = je_seminole_wars_removal
+						s:STATE_ATHESIA.region_state:ARU ?= {
+							every_scope_pop = {
+								limit = {
+									culture = cu:muskogean
+								}
+								move_pop = s:STATE_LES_PAINS.region_state:CHE
 							}
-							move_pop = s:STATE_LES_PAINS.region_state:CHE
+						}
+					}
+				}
+				else = {
+					s:STATE_ATHESIA.region_state:ARU ?= {
+						add_modifier = {
+							name = dvg_arthesian_resettlement
+							days = long_modifier_time
 						}
 					}
 				}
 			}
-			else = {
-				s:STATE_ATHESIA.region_state:ARU ?= {
-					add_modifier = {
-						name = dvg_arthesian_resettlement
-						days = long_modifier_time
-					}
-				}
-			}
+			trigger_event = { id = indigenat_resettlement.7 }
 		}
-		trigger_event = { id = indigenat_resettlement.7 }
-	}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }	
 
 	immediate = {
 		c:SML = {
@@ -210,22 +229,27 @@ je_seminole_wars = {
 		}
 	}
 
-	fail = {
-		OR = {
-			c:SML ?= {
-				owns_entire_state_region = STATE_ATHESIA
-			}
-			c:MSC ?= {
-				owns_entire_state_region = STATE_ATHESIA
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+				OR = {
+					c:SML ?= {
+					owns_entire_state_region = STATE_ATHESIA
+					}
+				c:MSC ?= {
+					owns_entire_state_region = STATE_ATHESIA
+				}
 			}
 		}
-	}
-
-	on_fail = {
-		s:STATE_ATHESIA = {
+        effect = {
+			s:STATE_ATHESIA = {
 			remove_claim = c:ARU
+			}
 		}
-	}
+    }
 
 	on_monthly_pulse = {
 	}
@@ -259,45 +283,51 @@ je_trans_continental_railway = {
 		owns_entire_state_region = STATE_BAJA_CALIFORNIA
 	}
 
-	complete = {
-		any_scope_state = {
-			state_region = s:STATE_NEBRASKIER
-			has_building = building_railway
+	outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			any_scope_state = {
+				state_region = s:STATE_NEBRASKIER
+				has_building = building_railway
+			}
+			any_scope_state = {
+				state_region = s:STATE_LES_PAINS
+				has_building = building_railway
+			}
+			any_scope_state = {
+				state_region = s:STATE_TERRES_ROUGES
+				has_building = building_railway
+			}
+			any_scope_state = {
+				state_region = s:STATE_NOUVELLE_FRANCE
+				has_building = building_railway
+			}
+			any_scope_state = {
+				state_region = s:STATE_PAYS_TSALAGI
+				has_building = building_railway
+			}
+			any_scope_state = {
+				state_region = s:STATE_LES_PAINS
+				has_building = building_railway
+			}
+			any_scope_state = {
+				state_region = s:STATE_BAHIA
+				has_building = building_railway
+			}
+			any_scope_state = {
+				state_region = s:STATE_BAJA_CALIFORNIA
+				has_building = building_railway
+			}			
 		}
-		any_scope_state = {
-			state_region = s:STATE_LES_PAINS
-			has_building = building_railway
+        effect = {
+			set_global_variable = trans_continental_done
+			trigger_event = { id = transcontinental_railways_railways.2 }
 		}
-		any_scope_state = {
-			state_region = s:STATE_TERRES_ROUGES
-			has_building = building_railway
-		}
-		any_scope_state = {
-			state_region = s:STATE_NOUVELLE_FRANCE
-			has_building = building_railway
-		}
-		any_scope_state = {
-			state_region = s:STATE_PAYS_TSALAGI
-			has_building = building_railway
-		}
-		any_scope_state = {
-			state_region = s:STATE_LES_PAINS
-			has_building = building_railway
-		}
-		any_scope_state = {
-			state_region = s:STATE_BAHIA
-			has_building = building_railway
-		}
-		any_scope_state = {
-			state_region = s:STATE_BAJA_CALIFORNIA
-			has_building = building_railway
-		}
-	}
-
-	on_complete = {
-		set_global_variable = trans_continental_done
-		trigger_event = { id = transcontinental_railways_railways.2 }
-	}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }
 
 	weight = 50
 }

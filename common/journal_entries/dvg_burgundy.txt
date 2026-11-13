@@ -8,63 +8,77 @@
 	}
 
 	immediate = {
-		
 	}
 
-	complete = {
-		custom_tooltip = {
-			text = dvg_queen_anne_dead_tt
-			ruler = {
-				NOT = { has_variable = queen_anne_var } 
-			}
-		}
-	}
-
-	on_complete = {
-		trigger_event = {
-			id = dvg_burgundy.19
-		}
-	}
-	fail = {
-		any_interest_group = {
-			has_ideology = ideology:ideology_liberal
-			is_powerful = yes
-			ig_approval <= -20
-			is_insurrectionary = yes 
-		}
-		
-		revolution_progress_high = yes
-	}
-	on_fail = {
-		trigger_event = {
-			id = dvg_burgundy.18
-		}
-		if = {
-			limit = {
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			custom_tooltip = {
+				text = dvg_queen_anne_dead_tt
 				ruler = {
-					has_trait = immortal
+					NOT = { has_variable = queen_anne_var } 
 				}
 			}
-			ruler = {
+		}
+        effect = {
+			trigger_event = {
+				id = dvg_burgundy.19
+			}
+		}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }
+
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			any_interest_group = {
+				has_ideology = ideology:ideology_liberal
+				is_powerful = yes
+				ig_approval <= -20
+				is_insurrectionary = yes 
+			}
+			revolution_progress_high = yes
+		}
+        effect = {
+			trigger_event = {
+				id = dvg_burgundy.18
+			}
+			if = {
+				limit = {
+					ruler = {
+						has_trait = immortal
+					}
+				}
+				ruler = {
+					remove_trait = immortal
+				}
+			}			
+		}
+    }
+
+    outcome = {
+        flags = { hidden invalid_outcome }
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			NOT = {
+				has_law = law_type:law_monarchy
+			}
+		}
+        effect = {
+			every_scope_character = {
+				limit = {
+					has_trait = immortal
+				}
 				remove_trait = immortal
 			}
 		}
-		
-	}
-	invalid = {
-		NOT = {
-			has_law = law_type:law_monarchy
-		}
-	}
-	on_invalid = {
-		every_scope_character = {
-			limit = {
-				has_trait = immortal
-			}
-			remove_trait = immortal
-		}
-	}
-
+    }
 }
 
 je_anism = {
@@ -93,7 +107,6 @@ je_anism = {
 		}
 	}
 
-
 	immediate = {
 		if = {
 			limit = {
@@ -114,74 +127,108 @@ je_anism = {
 		}
 	}
 
-	complete = {
-		OR = {
-			scope:journal_entry = { is_goal_complete = yes }
-			this = { var:dvg_je_an_var >= 10 }
-		}
-		has_global_variable = jean_coup
-
-	}
-
-	on_complete = {
-		#Jeanist Victory
-		trigger_event = {
-			id = dvg_burgundy.34
-		}
-		if = {
-			limit = {
-				any_scope_character = {
-					has_trait = immortal
-				}
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			OR = {
+				scope:journal_entry = { is_goal_complete = yes }
+				this = { var:dvg_je_an_var >= 10 }
 			}
-			every_scope_character = {
-				remove_trait = immortal
-
-			}			
+			has_global_variable = jean_coup
 		}
-	}
-	fail = {
-		OR = {
-			NOT = {
-				has_law = law_type:law_monarchy
+        effect = {
+			#Jeanist Victory
+			trigger_event = {
+				id = dvg_burgundy.34
 			}
-			AND = {
-				this = { var:dvg_je_an_var <= 2 }
-				OR = {
-					has_global_variable = jean_coup
-					year >= 1850
-					
-				}
-
-			}
-			
-
-		}
-		
-	}
-	on_fail = {
-		#Palriamentary Victory
-		trigger_event = {
-			id = dvg_burgundy.32
-		}
-		if = {
-			limit = {
-				any_scope_character = {
-					has_trait = immortal
-				}
-			}
-			every_scope_character = {
+			if = {
 				limit = {
-					has_trait = immortal
+					any_scope_character = {
+						has_trait = immortal
+					}
 				}
-				remove_trait = immortal
+				every_scope_character = {
+					remove_trait = immortal
+				}			
+			}
+		}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }
 
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			OR = {
+				NOT = {
+					has_law = law_type:law_monarchy
+				}
+				AND = {
+					this = { var:dvg_je_an_var <= 2 }
+					OR = {
+						has_global_variable = jean_coup
+						year >= 1850
+					}
+				}
+			}
+		}
+        effect = {
+			#Palriamentary Victory
+			trigger_event = {
+				id = dvg_burgundy.32
+			}
+			if = {
+				limit = {
+					any_scope_character = {
+						has_trait = immortal
+					}
+				}
+				every_scope_character = {
+					limit = {
+						has_trait = immortal
+					}
+					remove_trait = immortal
+				}			
+			}
+		}
+    }
+
+    outcome = {
+        flags = { hidden invalid_outcome }
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			NOT = {
+				any_scope_character = {
+					has_ideology = ideology:ideology_jeanist_leader
+				}
 			}			
 		}
-	}
+        effect = {
+			trigger_event = {
+				id = dvg_burgundy.36
+			}
+			if = {
+				limit = {
+					any_scope_character = {
+						has_trait = immortal
+					}
+				}
+				every_scope_character = {
+					remove_trait = immortal
+				}			
+			}			
+		}
+    }	
+
 	current_value = {
 		value = var:dvg_je_an_var
 	}
+
 	on_monthly_pulse = {
 		effect = {
 			if = {
@@ -413,6 +460,7 @@ je_anism = {
 			
 		}
 	}
+
 	on_yearly_pulse = {
 		effect = {
 			if = {
@@ -461,34 +509,13 @@ je_anism = {
 			}
 		}
 	}
-	invalid = {
-		NOT = {
-			any_scope_character = {
-				has_ideology = ideology:ideology_jeanist_leader
-			}
-		}
-	}
-	
-	on_invalid = {
-		trigger_event = {
-			id = dvg_burgundy.36
-		}
-		if = {
-			limit = {
-				any_scope_character = {
-					has_trait = immortal
-				}
-			}
-			every_scope_character = {
-				remove_trait = immortal
 
-			}			
-		}
-	}
 	goal_add_value = {
 		add = 10
 	}
+
 	timeout = 3850
+
 	on_timeout = {
 		trigger_event = {
 			id = dvg_burgundy.31
@@ -505,9 +532,10 @@ je_anism = {
 			}			
 		}
 	}
-	progressbar = yes
 
+	progressbar = yes
 }
+
 je_rhine_burgundy = {
 	icon = "gfx/interface/icons/invention_icons/nationalism.dds"
 
@@ -532,9 +560,11 @@ je_rhine_burgundy = {
 			value = 0
 		}
 	}
+
 	current_value = {
 		value = var:dvg_burg_rhine_var
 	}
+
 	on_monthly_pulse = {
 		effect = {
 			if = {
@@ -655,79 +685,91 @@ je_rhine_burgundy = {
 		}
 	}
 
-
-	complete = {
-		OR = {
-			scope:journal_entry = { is_goal_complete = yes }
-			AND = {
-				c:RHI = {
-					liberty_desire > 90
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			OR = {
+				scope:journal_entry = { is_goal_complete = yes }
+				AND = {
+					c:RHI = {
+						liberty_desire > 90
+					}
 				}
 			}
 		}
-		
-		
-	}
-
-	on_complete = {
-		trigger_event = {
-			id = dvg_burgundy.11
+        effect = {
+			trigger_event = {
+				id = dvg_burgundy.11
+			}			
 		}
-	}
-	fail = {
-		OR = {
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }
+
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			OR = {
+				AND = {
+					has_global_variable = dvg_cologne_meeting
+					NOT = {
+						any_state = {
+							state_region = {
+								is_homeland = cu:rheinish
+							}
+							radical_fraction = {
+								value > 0.33
+							}
+						}
+					}
+				}
+				cultural_acceptance_base = {
+					target = cu:rheinish
+					value > acceptance_status_3
+				}	
+			}			
+		}
+        effect = {
+			trigger_event = {
+				id = dvg_burgundy.17
+			}			
+		}
+    }
+
+    outcome = {
+        flags = { hidden invalid_outcome }
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
 			AND = {
-				has_global_variable = dvg_cologne_meeting
 				NOT = {
-					any_state = {
+					any_scope_state = {
 						state_region = {
 							is_homeland = cu:rheinish
 						}
-						radical_fraction = {
-							value > 0.33
-						}
 					}
 				}
-
-			}
-
-			cultural_acceptance_base = {
-				target = cu:rheinish
-				value > acceptance_status_3
-			}
-			
+				NOT = {	
+					exists = c:RHI
+				}
+			}			
 		}
-		
-	}
-	on_fail = {
-		trigger_event = {
-			id = dvg_burgundy.17
-		}
-		
-	}
+        effect = {}
+    }	
+
 	goal_add_value = {
 		add = 100
 	}
-	invalid = {
-		AND = {
-			NOT = {
-				any_scope_state = {
-					state_region = {
-						is_homeland = cu:rheinish
-					}
-				}
-			}
-			
-			NOT = {	
-				exists = c:RHI
-			}
-		}
-	}
 
 	should_be_pinned_by_default_uninvolved_or_context = yes
-	progressbar = yes
 
+	progressbar = yes
 }
+
 je_netherlands_burgundy = {
 	icon = "gfx/interface/icons/invention_icons/pan_nationalism.dds"
 
@@ -752,9 +794,11 @@ je_netherlands_burgundy = {
 			value = 0
 		}
 	}
+
 	current_value = {
 		value = var:dvg_burg_nether_var
 	}
+
 	on_monthly_pulse = {
 		effect = {
 			if = {
@@ -881,113 +925,123 @@ je_netherlands_burgundy = {
 			
 		}
 	}
-	complete = {
-		scope:journal_entry = { is_goal_complete = yes }
-		NOT = {
-			any_scope_state = {
-				devastation >= 0.15 
-				state_region = {
-					is_homeland = cu:dutch
-				}
-			}
-			any_scope_state = {
-				has_modifier = great_famine_modifier
-				state_region = {
-					is_homeland = cu:dutch
-				}
-			}
-			cu:dutch = {
-				root = { 
-					cultural_acceptance_base = { target = prev value >= acceptance_status_5 }
-				}
-			}
-		}
-		
-	}
 
-	on_complete = {
-		trigger_event = {
-			id = dvg_burgundy.43
-		}
-	}
-	fail = {
-		OR = {
-			
-			AND = {
-				ig:ig_industrialists = {
-					ig_approval >= 10 
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			scope:journal_entry = { is_goal_complete = yes }
+			NOT = {
+				any_scope_state = {
+					devastation >= 0.15 
+					state_region = {
+						is_homeland = cu:dutch
+					}
 				}
-				ig:ig_petty_bourgeoisie = {
-					ig_approval >= 10
-				}
-				cultural_acceptance_base = {
-					target = cu:dutch
-					value > acceptance_status_3
-				}
-			}
-
-		}
-	}
-	on_fail = {
-		if = {
-			limit = {
-				
-				NOT = {
-					has_variable = state_language_act
-					has_law = law_type:law_ethnostate
-					exists = c:RHI
-					exists = c:NET
+				any_scope_state = {
+					has_modifier = great_famine_modifier
+					state_region = {
+						is_homeland = cu:dutch
+					}
 				}
 				cu:dutch = {
 					root = { 
 						cultural_acceptance_base = { target = prev value >= acceptance_status_5 }
 					}
 				}
-				cu:rheinish = {
-					root = { 
-						cultural_acceptance_base = { target = prev value >= acceptance_status_5 }
-					}
-				}
-				has_technology_researched = pan-nationalism
-				
-			}
-			set_variable = state_language_act
+			}			
+		}
+        effect = {
 			trigger_event = {
-				id = dvg_burgundy.25
+				id = dvg_burgundy.43
 			}
 		}
-		
-	}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }
+
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			OR = {	
+				AND = {
+					ig:ig_industrialists = {
+						ig_approval >= 10 
+					}
+					ig:ig_petty_bourgeoisie = {
+						ig_approval >= 10
+					}
+					cultural_acceptance_base = {
+						target = cu:dutch
+						value > acceptance_status_3
+					}
+				}
+			}
+		}
+        effect = {
+			if = {
+				limit = {
+					NOT = {
+						has_variable = state_language_act
+						has_law = law_type:law_ethnostate
+						exists = c:RHI
+						exists = c:NET
+					}
+					cu:dutch = {
+						root = { 
+							cultural_acceptance_base = { target = prev value >= acceptance_status_5 }
+						}
+					}
+					cu:rheinish = {
+						root = { 
+							cultural_acceptance_base = { target = prev value >= acceptance_status_5 }
+						}
+					}
+					has_technology_researched = pan-nationalism
+				}
+				set_variable = state_language_act
+				trigger_event = {
+					id = dvg_burgundy.25
+				}
+			}			
+		}
+    }
+
+    outcome = {
+        flags = { hidden invalid_outcome }
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			OR = {
+				NOT = {
+					any_scope_state = {
+						state_region = {
+							is_homeland = cu:dutch
+						}
+					}
+				}
+				exists = c:NET
+			}
+		}
+        effect = {}
+    }
+
 	goal_add_value = {
 		add = 100
 	}
-	invalid = {
-		OR = {
-			NOT = {
-				any_scope_state = {
-					state_region = {
-						is_homeland = cu:dutch
-					}
-				}
-			}
-			exists = c:NET
-		}
-		
-	}
 
 	progressbar = yes
+
 	should_be_pinned_by_default_uninvolved_or_context = yes
-
-
-
 }
 
 je_unify_brg = {
 	icon = "gfx/interface/icons/event_icons/event_empty_chair.dds"
 
 	group = je_group_crises
-
-	
 
 	is_shown_when_inactive = {
 		exists = c:BRG
@@ -1000,6 +1054,7 @@ je_unify_brg = {
 		exists = c:BRG
 		c:BRG = ROOT
 	}
+
 	immediate = {
 		hidden_effect = {
 			
@@ -1015,30 +1070,54 @@ je_unify_brg = {
 		}
 	}
 
-	complete = {
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
 			custom_tooltip = {
 				text = burgundy_united_tt
 				NOT = {
 					exists = c:PBG
 				}
-			}
-	}
-
-	on_complete = {
-		ig:ig_petty_bourgeoisie = {
-			remove_ideology = ideology_meritocratic
-			add_ideology = ideology_jeanist
-		} 
-		ig:ig_landowners = {
-			remove_ideology = ideology_hierarchic
-			add_ideology = ideology_jeanist
-		} 
-		add_modifier = {
-			name = dvg_modifier_landowners_bolstered
-			months = 120
-			is_decaying = yes
+			}			
 		}
-	}
+        effect = {
+			ig:ig_petty_bourgeoisie = {
+				remove_ideology = ideology_meritocratic
+				add_ideology = ideology_jeanist
+			} 
+			ig:ig_landowners = {
+				remove_ideology = ideology_hierarchic
+				add_ideology = ideology_jeanist
+			} 
+			add_modifier = {
+				name = dvg_modifier_landowners_bolstered
+				months = 120
+				is_decaying = yes
+			}			
+		}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }
+
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+			NOT = {
+				any_character = {
+					NOT = {
+						has_ideology = ideology:ideology_jeanist_leader
+					}
+				}
+			}			
+		}
+        effect = {}
+    }
+
 	on_yearly_pulse = {
 		effect = {
 			if = {
@@ -1058,19 +1137,6 @@ je_unify_brg = {
 		}
 	}
 
-	fail = {
-		NOT = {
-			any_character = {
-				NOT = {
-					has_ideology = ideology:ideology_jeanist_leader
-				}
-			}
-		}
-	}
-	on_fail = {
-		
-	}
-
 	timeout = 7300
 
 	on_timeout = {
@@ -1101,20 +1167,19 @@ je_unify_brg = {
 			change_tag = BGY
 		}
 	}
+
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
+
 je_unify_pbg = {
 	icon = "gfx/interface/icons/event_icons/event_empty_chair.dds"
 
 	group = je_group_crises
 
-	
-
 	is_shown_when_inactive = {
 		country_has_primary_culture = cu:burgundian
 		exists = c:BRG
 		exists = c:PBG
-		
 	}
 
 	possible = {	
@@ -1122,6 +1187,7 @@ je_unify_pbg = {
 		c:PBG = ROOT
 		is_diplomatic_play_enemy_of = c:BRG
 	}
+
 	immediate = {
 		hidden_effect = {
 			if = {
@@ -1135,6 +1201,7 @@ je_unify_pbg = {
 			}
 		}
 	}
+
 	on_yearly_pulse = {
 		effect = {
 			if = {
@@ -1154,20 +1221,24 @@ je_unify_pbg = {
 		}
 	}
 
-	complete = {
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
 			custom_tooltip = {
 				text = burgundy_united_tt
 				NOT = {
 					exists = c:PBG
 				}
 			}
-	}
-
-	on_complete = {
-		change_tag = BRG
-	}
-
-
+		}
+        effect = {
+			change_tag = BRG
+		}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }
 
 	timeout = 7300
 
@@ -1199,8 +1270,10 @@ je_unify_pbg = {
 			change_tag = BGY
 		}
 	}
+
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
+
 je_reconquer_rhine = {
 	icon = "gfx/interface/icons/event_icons/event_military.dds"
 
@@ -1213,6 +1286,7 @@ je_reconquer_rhine = {
 			owns_entire_state_region = STATE_RHINELAND
 		}
 	}
+
 	possible = {
 		OR = {
 			AND = {
@@ -1245,35 +1319,38 @@ je_reconquer_rhine = {
 		}
 	}
 
-	
-
-	complete = {
-		OR = {
-			owns_entire_state_region = STATE_RHINELAND
-			NOT = {
-				exists = c:RHI
-			}
-		}
-	}
-
-	on_complete = {
-		
-		trigger_event = { id = dvg_burgundy.16 }
-		if = {
-			limit = {
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			OR = {
+				owns_entire_state_region = STATE_RHINELAND
 				NOT = {
-					has_global_variable = pinto_affair
+					exists = c:RHI
 				}
-			}
-			trigger_event = { id = dvg_burgundy.22 days = 100 }
+			}			
 		}
-	}
+        effect = {
+			trigger_event = { id = dvg_burgundy.16 }
+			if = {
+				limit = {
+					NOT = {
+						has_global_variable = pinto_affair
+					}
+				}
+				trigger_event = { id = dvg_burgundy.22 days = 100 }
+			}
+		}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }	
+
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
 
 je_rhine_independence = {
 	icon = "gfx/interface/icons/invention_icons/nationalism.dds"
-
 
 	group = je_group_foreign_affairs
 
@@ -1282,12 +1359,12 @@ je_rhine_independence = {
 		exists = c:RHI
 		c:RHI = ROOT
 	}
+
 	possible = {
 		OR = {
 			is_diplomatic_play_committed_participant = yes
 			has_technology_researched = nationalism
-		}
-		
+		}	
 	}
 
 	immediate = {
@@ -1296,33 +1373,30 @@ je_rhine_independence = {
 		}
 	}
 
-	
-
-	complete = {
-		is_subject = no
-		is_at_war = no
-		is_diplomatic_play_committed_participant = no
-	}
-
-	on_complete = {
-
-		
-		if = {
-			limit = {
-				is_country_type = unrecognized
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+			is_subject = no
+			is_at_war = no
+			is_diplomatic_play_committed_participant = no			
+		}
+        effect = {
+			if = {
+				limit = {
+					is_country_type = unrecognized
+				}
+				set_country_type = recognized
 			}
-			set_country_type = recognized
+			trigger_event = {
+				id = dvg_burgundy.15
+			}
 		}
-		
-		trigger_event = {
-			id = dvg_burgundy.15
-		}
+        event_outcome_desc = {} # complex desc like a status_desc field
+    }	
 
-		
-		
-
-		
-	}
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
 

@@ -3,67 +3,40 @@
 
 	group = je_group_crises
 
+	activation_description = {
+		always = yes
+	}
+
     is_shown_when_inactive = {
-		any_country = {
-            has_diplomatic_relevance = root
-            has_technology_researched = labor_movement
-        }
+		has_global_variable = labour_movement_researched
     }
     possible = {
         custom_tooltip = {
             text = red_scare_unlock_tt
-			any_country = {
+			any_in_global_list = {
+                variable = aes_country_list
                 has_diplomatic_relevance = root
-                has_law = law_type:law_council_republic
+                country_rank > rank_value:minor_power
+                has_law_or_variant = law_type:law_council_republic
             }
         }
         NOT = {
-            has_law = law_type:law_council_republic
+            has_law_or_variant = law_type:law_council_republic
         }
     }
     immediate = {
         ordered_country = {
 			limit = {
+				has_law_or_variant = law_type:law_council_republic
                 has_diplomatic_relevance = root
-				has_law = law_type:law_council_republic
 			}
 			order_by = country_rank
-
+            position = 0
+            check_range_bounds = no
 			save_scope_as = red_scare_target_nation
 		}
         trigger_event = { id = red_scare.1 }
     }
-    on_weekly_pulse = {
-		effect = {
-			if = {
-                limit = {
-                    OR = {
-                        NOT = {
-                            exists = scope:red_scare_target_nation
-                        }
-                        scope:red_scare_target_nation ?= {
-                            NOT = {
-                                has_law = law_type:law_council_republic
-                            }
-                        }
-                    }
-                    any_country = {
-                        has_diplomatic_relevance = root
-                        has_law = law_type:law_council_republic
-                    }
-                }
-                ordered_country = {
-                    limit = {
-                        has_diplomatic_relevance = root
-                        has_law = law_type:law_council_republic
-                    }
-                    order_by = country_rank
-        
-                    save_scope_as = red_scare_target_nation
-                }
-            }
-		}
-	}
     on_monthly_pulse = {
         random_events = {
             300 = 0
@@ -82,38 +55,64 @@
             10 = red_scare.15
         }
     }
-    fail = {
-        OR = {
-            has_law = law_type:law_council_republic
-            any_civil_war = {
-                this.political_movement ?= {
-                    any_influenced_interest_group = {
-                        law_stance = {
-                            law = law_type:law_council_republic
-                            value > neutral
+    outcome = {
+        header = je_standard_failure_header
+        effect_header = je_standard_on_failure_header
+        color = "blue_negative"
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+            OR = {
+                has_law_or_variant = law_type:law_council_republic
+                any_civil_war = {
+                    this.political_movement ?= {
+                        any_influenced_interest_group = {
+                            law_stance = {
+                                law = law_type:law_council_republic
+                                value > neutral
+                            }
                         }
                     }
+                    is_civil_war_type = revolution
+                    civil_war_progress >= 0.75
                 }
-                is_civil_war_type = revolution
-                civil_war_progress > 0.75
             }
         }
+        effect = {
+            je_the_red_scare_cleanup = yes
+        }
     }
-    invalid = {
-        NOT = {
-            any_country = {
-                has_diplomatic_relevance = root
-                has_law = law_type:law_council_republic
+
+    outcome = {
+        flags = { hidden invalid_outcome }
+        conclusion_desc = je_standard_failure_conclusion_desc
+        trigger = {
+            NOT = {
+                any_in_global_list = {
+                    variable = aes_country_list
+                    has_diplomatic_relevance = root
+                    country_rank > rank_value:minor_power
+                    has_law_or_variant = law_type:law_council_republic
+                }
             }
+        }
+        effect = {
+            je_the_red_scare_cleanup = yes
+        }
+    }
+
+    outcome = {
+        header = JOURNAL_ENTRY_TIMEOUT
+        effect_header = JOURNAL_ENTRY_ON_TIMEOUT
+        flags = { timeout }
+        conclusion_desc = JOURNAL_ENTRY_TIMEOUT_CONCLUSION_DESC
+        effect = {
+            trigger_event = { id = red_scare.20 }
         }
     }
 
     timeout = 3650
 
-    on_timeout = {
-        trigger_event = { id = red_scare.20 }
-    }
-
     weight = 1000
-    should_be_pinned_by_default = yes
+    	
+	should_be_pinned_by_default_uninvolved_or_context = yes
 }

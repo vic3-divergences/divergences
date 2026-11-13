@@ -1,30 +1,68 @@
-je_dua_army = {
+﻿je_dua_army = {
 	icon = "gfx/interface/icons/event_icons/event_skull.dds"
 	should_be_pinned_by_default_uninvolved_or_context = yes
 
 	group = je_group_internal_affairs
 
-	complete = {
-		NOR = { 
-			has_law = law_type:law_states_general
-			has_law = law_type:law_peasant_levies
-			has_law = law_type:law_subjecthood
-			has_law = law_type:law_serfdom
+	outcome = {
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "red_positive"
+		trigger = {
+			army_size >= 150
+			has_technology_researched = shell_gun
+			has_technology_researched = percussion_cap
+			has_technology_researched = rifling
+			NOR = {
+				any_scope_building = {
+					is_building_type = building_barrack				
+					OR = {
+						building_has_goods_shortage = yes
+						has_active_production_method = pm_general_training
+					}
+				}
+				any_military_formation = {
+					filter = {
+						is_army = yes
+					}
+					any_combat_unit = {
+						has_unit_type = unit_type:combat_unit_type_shrapnel_artillery
+					}
+					percent >= 0.25
+				}
+			}
+			calc_true_if = {
+				amount > 4
+				NOR = {
+					has_law = law_type:law_states_general
+				}
+				NOR = {
+					has_law = law_type:law_peasant_levies
+				}
+				NOR = {
+					has_law = law_type:law_subjecthood
+				}
+				NOR = {
+					has_law = law_type:law_serfdom
+				}
+			}
+			bureaucracy >= 0
 		}
-		bureaucracy >= 0 
-	}
-
-	on_complete = {
-		remove_modifier = dvg_outmoded_dua_army
+		effect = {
+			remove_modifier = dvg_outmoded_dua_army
+		}
 	}
 
 	transferable = yes
+
+	should_be_pinned_by_default_uninvolved_or_context = yes
 
 	weight = 1000
 }
 
 je_dua_navy = {
 	icon = "gfx/interface/icons/event_icons/event_military.dds"
+	
 	should_be_pinned_by_default_uninvolved_or_context = yes
 
 	group = je_group_internal_affairs
@@ -39,52 +77,61 @@ je_dua_navy = {
 		c:DUA ?= THIS
 	}
 
-    complete = {
-        scope:journal_entry = {
-            is_goal_complete = yes
-        }
-        custom_tooltip = {
-            text = je_modernizing_naval_dua.tt_1
-            has_global_variable = burgundy_fortress_global_var
-        }
-        custom_tooltip = {
-            text = je_modernizing_naval_dua.tt_2
-            has_global_variable = rhone_iron_works_global_var
-        }
-        custom_tooltip = {
-            text = je_modernizing_naval_dua.tt_3
-            has_global_variable = brest_naval_yards_global_var
-        }
-        custom_tooltip = {
-            text = je_modernizing_naval_dua.tt_4
-            has_global_variable = london_naval_yards_global_var
-        }
-        custom_tooltip = {
-            text = je_modernizing_naval_dua.tt_5
-            has_global_variable = naval_administration_paris_global_var
-        }
-		NOR = { 
-			has_law = law_type:law_states_general
-			has_law = law_type:law_peasant_levies
-			has_law = law_type:law_merchant_navy
-		}
-		
-		bureaucracy >= 0
+    outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+        trigger = {
+        	scope:journal_entry = {
+            	is_goal_complete = yes
+        	}
+        	custom_tooltip = {
+            	text = je_modernizing_naval_dua.tt_1
+            	has_global_variable = burgundy_fortress_global_var
+        	}
+        	custom_tooltip = {
+            	text = je_modernizing_naval_dua.tt_2
+            	has_global_variable = rhone_iron_works_global_var
+        	}
+        	custom_tooltip = {
+            	text = je_modernizing_naval_dua.tt_3
+            	has_global_variable = brest_naval_yards_global_var
+        	}
+        	custom_tooltip = {
+            	text = je_modernizing_naval_dua.tt_4
+            	has_global_variable = london_naval_yards_global_var
+        	}
+        	custom_tooltip = {
+            	text = je_modernizing_naval_dua.tt_5
+            	has_global_variable = naval_administration_paris_global_var
+        	}
+			NOR = { 
+				has_law = law_type:law_states_general
+				has_law = law_type:law_peasant_levies
+				has_law = law_type:law_merchant_navy
+			}
+			bureaucracy >= 0
     }
-
-	on_complete = {
-		remove_modifier = dvg_disorganized_dua_navy
-		add_modifier = dvg_anglois_rules_the_waves
-		trigger_event = { id = dvg_dua_navy.10 popup = yes }
-        show_as_tooltip = {
-            add_journal_entry = { type = je_nayezpaspeur }
-        }
+	}
+	
+	outcome = {
+        header = je_standard_completion_header
+        effect_header = je_standard_on_completion_header
+        color = "gold_positive"
+        conclusion_desc = je_standard_completion_conclusion_desc
+		effect = {
+			remove_modifier = dvg_disorganized_dua_navy
+			add_modifier = dvg_anglois_rules_the_waves
+			trigger_event = { id = dvg_dua_navy.10 popup = yes }
+    	}
 	}
 
 	transferable = no
 
 	weight = 1000
-	}
+}
+
 
 je_nayezpaspeur = {
 	icon = "gfx/interface/icons/event_icons/bicorne_hat.dds"
@@ -161,39 +208,62 @@ je_nayezpaspeur = {
 		}
 	}
 
-	complete = {
-		any_scope_character = {
-			has_role_of_type = admiral
-		}
-		has_law_or_variant = law_type:law_professional_navy
-		scope:journal_entry = {
-			is_goal_complete = yes
-		}
-		NOT = {
-			any_country = {
+	outcome = {
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			any_scope_character = {
+				has_role_of_type = admiral
+			}
+			has_law_or_variant = law_type:law_professional_navy
+			scope:journal_entry = {
+				is_goal_complete = yes
+			}
+			NOT = {
+				any_country = {
 				naval_power_projection > root.naval_power_projection
 				count > 10
 			}
-		}
-		custom_tooltip = {
-			text = best_european_navy
-			NOT = {
-				any_country_in_west_europe = {
-					naval_power_projection > root.naval_power_projection
+			}
+			custom_tooltip = {
+				text = best_european_navy
+				NOT = {
+					any_country_in_west_europe = {
+						naval_power_projection > root.naval_power_projection
 				}
+			}
+		}
+		effect = {
+			trigger_event = {
+			id = dua_navy.4
+			popup = yes
 			}
 		}
 	}
 
-	on_complete = {
-		trigger_event = {
-			id = dua_navy.4
-			popup = yes
+	outcome = {
+		header = je_standard_failure_header
+		effect_header = je_standard_on_failure_header
+		color = "blue_negative"
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			country_rank < rank_value:minor_power
+		}
+		effect = {
+			je_dua_navy_cleanup = yes
 		}
 	}
 
-	fail = {
-		country_rank < rank_value:minor_power
+	outcome = {
+		header = JOURNAL_ENTRY_TIMEOUT
+		effect_header = JOURNAL_ENTRY_ON_TIMEOUT
+		flags = { timeout }
+		conclusion_desc = JOURNAL_ENTRY_TIMEOUT_CONCLUSION_DESC
+		effect = {
+			je_brazil_navy_cleanup = yes
+		}
 	}
 
 	timeout = 25550
@@ -214,5 +284,6 @@ je_nayezpaspeur = {
 	transferable = no
 		
 	should_be_pinned_by_default_uninvolved_or_context = yes
+	}
 }
 	

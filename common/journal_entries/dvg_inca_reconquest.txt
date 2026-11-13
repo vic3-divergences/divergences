@@ -4,42 +4,58 @@
 	group = je_group_historical_content
 
 	
-	complete = {
-		owns_entire_state_region = STATE_LIMA
-		owns_entire_state_region = STATE_CAJAMARCA
-		owns_entire_state_region = STATE_ECUADOR
-		owns_entire_state_region = STATE_PASTAZA
-		owns_entire_state_region = STATE_NEAR_ANTISUYU
-	}
-
-    on_complete = {
-		set_country_type = recognized
-		trigger_event = { id = dvg_inca_reconquest.10 }
-	}
-
-	fail = {
-		NOT = {owns_entire_state_region = STATE_CUZCO}
-	}
-
-	on_fail = {
-		every_scope_character = {
-			limit = { has_variable = amachaq_samiri_var }
-			save_scope_as = scope_amachaq_samiri
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			owns_entire_state_region = STATE_LIMA
+			owns_entire_state_region = STATE_CAJAMARCA
+			owns_entire_state_region = STATE_ECUADOR
+			owns_entire_state_region = STATE_PASTAZA
+			owns_entire_state_region = STATE_NEAR_ANTISUYU
 		}
-		ruler = { kill_character = yes }
-		scope:scope_amachaq_samiri = { 
-			set_character_as_ruler = yes
-			hidden_effect = { set_character_immortal = no }
+		effect = {
+			set_country_type = recognized
+			trigger_event = { id = dvg_inca_reconquest.10 }
 		}
-		change_tag = QUL
+	}
+
+	outcome = { #lose
+		header = je_standard_failure_header
+		effect_header = je_standard_on_failure_header
+		color = "blue_negative"
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			NOT = {owns_entire_state_region = STATE_CUZCO}
+		}
+		effect = {
+			every_scope_character = {
+				limit = { has_variable = amachaq_samiri_var }
+				save_scope_as = scope_amachaq_samiri
+			}
+			ruler = { kill_character = yes }
+			scope:scope_amachaq_samiri = { 
+				set_character_as_ruler = yes
+				hidden_effect = { set_character_immortal = no }
+			}
+			change_tag = QUL
+		}
+	}
+
+	outcome = {
+		flags = { hidden invalid_outcome }
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			NOT = { has_law = law_type:law_monarchy }
+		}
+		effect = {
+		}
 	}
 
 	scripted_button = je_inca_reconquer_the_empire_raid_the_border
 	scripted_button = je_inca_reconquer_the_empire_sponsor_separatists
-
-	invalid = {
-		NOT = { has_law = law_type:law_monarchy }
-	}
 	
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
@@ -51,18 +67,23 @@ je_mapuche_war = {
 	group = je_group_foreign_affairs
 
 	
-	complete = {
-		OR = {
-			owns_entire_state_region = STATE_COLLASUYU
-			AND = {
-				exists = c:WLM
-				c:TWT = { has_truce_with = c:WLM }
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			OR = {
+				owns_entire_state_region = STATE_COLLASUYU
+				AND = {
+					exists = c:WLM
+					c:TWT = { has_truce_with = c:WLM }
+				}
 			}
 		}
-	}
-
-    on_complete = {
-		trigger_event = { id = dvg_inca_reconquest.5 }
+		effect = {
+			trigger_event = { id = dvg_inca_reconquest.5 }
+		}
 	}
 	
 	weight = 100
@@ -74,28 +95,39 @@ je_llapa_succession = {
 	
 	group = je_group_internal_affairs
 
-	complete = {
-		AND = {
-			ig:ig_intelligentsia = { is_powerful = yes }
-			OR = {
-				ig:ig_armed_forces = { is_powerful = no }
-				ig:ig_landowners = {
-					ig_approval >= 10
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			AND = {
+				ig:ig_intelligentsia = { is_powerful = yes }
+				OR = {
+					ig:ig_armed_forces = { is_powerful = no }
+					ig:ig_landowners = {
+						ig_approval >= 10
+					}
 				}
+				game_date >= 1838.1.1
 			}
-			game_date >= 1838.1.1
+		}
+		effect = {
+			trigger_event = { id = dvg_inca_path_llapa.1 }
 		}
 	}
 
-    on_complete = {
-		trigger_event = { id = dvg_inca_path_llapa.1 }
+	outcome = {
+		header = JOURNAL_ENTRY_TIMEOUT
+		effect_header = JOURNAL_ENTRY_ON_TIMEOUT
+		flags = { timeout }
+		conclusion_desc = JOURNAL_ENTRY_TIMEOUT_CONCLUSION_DESC
+		effect = {
+			trigger_event = { id = dvg_inca_path_washkar.1 }
+		}
 	}
 
 	timeout = 750
-
-	on_timeout = {
-		trigger_event = { id = dvg_inca_path_washkar.1 }
-	}
 	
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
@@ -107,28 +139,39 @@ je_washkar_succession = {
 	group = je_group_internal_affairs
 
 
-	complete = { 
-		AND = {
-			ig:ig_intelligentsia = { is_powerful = no }
-			OR = {
-				ig:ig_armed_forces = { is_powerful = yes }
-				ig:ig_landowners = {
-					ig_approval >= 10
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = { 
+			AND = {
+				ig:ig_intelligentsia = { is_powerful = no }
+				OR = {
+					ig:ig_armed_forces = { is_powerful = yes }
+					ig:ig_landowners = {
+						ig_approval >= 10
+					}
 				}
+				game_date >= 1838.1.1
 			}
-			game_date >= 1838.1.1
+		}
+		effect = {
+			trigger_event = { id = dvg_inca_path_washkar.1 }
 		}
 	}
 
-    on_complete = {
-		trigger_event = { id = dvg_inca_path_washkar.1 }
+	outcome = {
+		header = JOURNAL_ENTRY_TIMEOUT
+		effect_header = JOURNAL_ENTRY_ON_TIMEOUT
+		flags = { timeout }
+		conclusion_desc = JOURNAL_ENTRY_TIMEOUT_CONCLUSION_DESC
+		effect = {
+			trigger_event = { id = dvg_inca_path_llapa.1 }
+		}
 	}
 
 	timeout = 750
-
-	on_timeout = {
-		trigger_event = { id = dvg_inca_path_llapa.1 }
-	}
 
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
@@ -139,29 +182,47 @@ je_llapas_reforms = {
 
 	group = je_group_historical_content
 
-	complete = {
-		AND = {
-			is_country_type = recognized
-			has_law = law_type:law_protectionism
-			has_law = law_type:law_regulatory_bodies
-			has_law = law_type:law_restricted_child_labor
-			has_law = law_type:law_wage_subsidies
-			has_modifier = dvg_inca_language_good_modifier
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			AND = {
+				is_country_type = recognized
+				has_law = law_type:law_protectionism
+				has_law = law_type:law_regulatory_bodies
+				has_law = law_type:law_restricted_child_labor
+				has_law = law_type:law_wage_subsidies
+				has_modifier = dvg_inca_language_good_modifier
+			}
+		}
+		effect = {
+			trigger_event = { id = dvg_inca_path_llapa.10 } #Llapa consolidates his rule
 		}
 	}
 
-	on_complete = {
-		trigger_event = { id = dvg_inca_path_llapa.10 } #Llapa consolidates his rule
+	outcome = {
+		header = JOURNAL_ENTRY_TIMEOUT
+		effect_header = JOURNAL_ENTRY_ON_TIMEOUT
+		flags = { timeout }
+		conclusion_desc = JOURNAL_ENTRY_TIMEOUT_CONCLUSION_DESC
+		effect = {
+			trigger_event = { id = dvg_inca_path_llapa.11 } #The republican revolutionaries rise up
+		}
+	}
+
+	outcome = {
+		flags = { hidden invalid_outcome }
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			NOT = { has_law = law_type:law_monarchy }
+		}
+		effect = {
+		}
 	}
 
 	timeout = 11000
-	on_timeout = {
-		trigger_event = { id = dvg_inca_path_llapa.11 } #The republican revolutionaries rise up
-	}
-
-	invalid = {
-		NOT = { has_law = law_type:law_monarchy }
-	}
 
 	weight = 1000
 	should_be_pinned_by_default_uninvolved_or_context = yes
@@ -186,26 +247,31 @@ je_inca_railroad = {
 
 	immediate = { trigger_event = { id = dvg_inca_path_llapa.3 } }
 
-	complete = {
-		any_scope_state = {
-			count >= 12
-			AND = {	
-				region = sr:region_andes		
-				any_scope_building = {
-					is_building_type = building_railway
-					occupancy > 0.9
-					level >= 2
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			any_scope_state = {
+				count >= 12
+				AND = {	
+					region = sr:region_andes		
+					any_scope_building = {
+						is_building_type = building_railway
+						occupancy > 0.9
+						level >= 2
+					}
 				}
 			}
 		}
-	}
-
-	on_complete = {
-		add_modifier = {
-			name = dvg_inca_railroad_modifier
-			months = -1
+		effect = {
+			add_modifier = {
+				name = dvg_inca_railroad_modifier
+				months = -1
+			}
+			trigger_event = { id = dvg_inca_path_llapa.7 }
 		}
-		trigger_event = { id = dvg_inca_path_llapa.7 }
 	}
 
 	weight = 100
@@ -248,32 +314,37 @@ je_imperial_identity = {
 		trigger_event = { id = dvg_inca_path_llapa.8 }
 	}
 
-	complete = {
-		has_technology_researched = pan-nationalism
-		custom_tooltip = {
-			text = je_imperial_identity_integrate_quechua_complete_tt
-			has_variable = quechua_integrated
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			has_technology_researched = pan-nationalism
+			custom_tooltip = {
+				text = je_imperial_identity_integrate_quechua_complete_tt
+				has_variable = quechua_integrated
+			}
+			custom_tooltip = {
+				text = je_imperial_identity_integrate_aimara_complete_tt
+				has_variable = aimara_integrated
+			}
+			custom_tooltip = {
+				text = je_imperial_identity_integrate_chimu_complete_tt
+				has_variable = chimu_integrated
+			}
+			custom_tooltip = {
+				text = je_imperial_identity_integrate_andino_complete_tt
+				has_variable = andino_integrated
+			}
 		}
-		custom_tooltip = {
-			text = je_imperial_identity_integrate_aimara_complete_tt
-			has_variable = aimara_integrated
+		effect = {
+			add_modifier = {
+				name = dvg_nation_built
+			}
+			remove_primary_culture = cu:quechua
+			remove_primary_culture = cu:aimara
 		}
-		custom_tooltip = {
-			text = je_imperial_identity_integrate_chimu_complete_tt
-			has_variable = chimu_integrated
-		}
-		custom_tooltip = {
-			text = je_imperial_identity_integrate_andino_complete_tt
-			has_variable = andino_integrated
-		}
-	}
-
-	on_complete = {
-		add_modifier = {
-			name = dvg_nation_built
-		}
-		remove_primary_culture = cu:quechua
-		remove_primary_culture = cu:aimara
 	}
 
 	scripted_button = je_imperial_identity_integrate_quechua
@@ -290,20 +361,26 @@ je_washkars_reforms = {
 
 	group = je_group_internal_affairs
 
-	complete = {
-		AND = {
-			army_size >= 50
-			has_law = law_type:law_professional_army
-			has_technology_researched = general_staff
-			has_technology_researched = logistics
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			AND = {
+				army_size >= 50
+				has_law = law_type:law_professional_army
+				has_technology_researched = general_staff
+				has_technology_researched = logistics
+			}
 		}
-	}
-	on_complete = {
-		c:TWT = { 
-			remove_modifier = dvg_inca_army_bad_modifier
-			add_modifier = {  
-				name = dvg_inca_army_good_modifier
-				months = -1
+		effect = {
+			c:TWT = { 
+				remove_modifier = dvg_inca_army_bad_modifier
+				add_modifier = {  
+					name = dvg_inca_army_good_modifier
+					months = -1
+				}
 			}
 		}
 	}
@@ -311,28 +388,56 @@ je_washkars_reforms = {
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
-
 je_washkars_conquests = {
 	icon = "gfx/interface/icons/event_icons/event_scales.dds"
 
 	group = je_group_foreign_affairs
 
-	complete = {
-		AND = {
-			has_modifier = dvg_inca_army_good_modifier
-			country_or_subject_owns_entire_state_region = STATE_ANTIOQUIA
-			country_or_subject_owns_entire_state_region = STATE_AVALON
-			country_or_subject_owns_entire_state_region = STATE_COTE_DU_CAFE
-			country_or_subject_owns_entire_state_region = STATE_FRANCE_ANTARTIQUE
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			AND = {
+				has_modifier = dvg_inca_army_good_modifier
+				country_or_subject_owns_entire_state_region = STATE_ANTIOQUIA
+				country_or_subject_owns_entire_state_region = STATE_AVALON
+				country_or_subject_owns_entire_state_region = STATE_COTE_DU_CAFE
+				country_or_subject_owns_entire_state_region = STATE_FRANCE_ANTARTIQUE
+			}
+		}
+		effect = {
+			trigger_event = { id = dvg_inca_path_washkar.12 }
 		}
 	}
-	invalid = {
-		ruler = {
-			NOT = { has_ideology = ideology:ideology_jingoist_leader }
+
+	outcome = { #lose
+		header = je_standard_failure_header
+		effect_header = je_standard_on_failure_header
+		color = "blue_negative"
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			custom_tooltip = {
+				text = dvg_washkar_timer_tt
+			scope:journal_entry = { is_goal_complete = yes }
+			}
+		}
+		effect = {
+			trigger_event = { id = dvg_inca_path_washkar.9 }
 		}
 	}
-	on_complete = {
-		trigger_event = { id = dvg_inca_path_washkar.12 }
+
+	outcome = {
+		flags = { hidden invalid_outcome }
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			ruler = {
+				NOT = { has_ideology = ideology:ideology_jingoist_leader }
+			}
+		}
+		effect = {
+		}
 	}
 	
 	progressbar = yes
@@ -366,17 +471,6 @@ je_washkars_conquests = {
 		value = 609
 	}
 	
-	fail = {
-		custom_tooltip = {
-			text = dvg_washkar_timer_tt
-		scope:journal_entry = { is_goal_complete = yes }
-		}
-	}
-	
-	on_fail = {
-		trigger_event = { id = dvg_inca_path_washkar.9 }
-	}
-	
 	#timeout = 7300
 	
 	#on_timeout = {
@@ -386,31 +480,42 @@ je_washkars_conquests = {
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
-
 je_amachaq = {
 	icon = "gfx/interface/icons/event_icons/event_scales.dds"
 
 	group = je_group_crises
 
-	complete = {
-		AND = {
-			ig:ig_armed_forces = { is_powerful = yes }
-			ig:ig_landowners = { is_powerful = no }
-			has_law = law_type:law_right_of_assembly
-			has_law = law_type:law_interventionism
-			has_law = law_type:law_collectivized_agriculture
-			has_law = law_type:law_appointed_bureaucrats
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			AND = {
+				ig:ig_armed_forces = { is_powerful = yes }
+				ig:ig_landowners = { is_powerful = no }
+				has_law = law_type:law_right_of_assembly
+				has_law = law_type:law_interventionism
+				has_law = law_type:law_collectivized_agriculture
+				has_law = law_type:law_appointed_bureaucrats
+			}
+		}
+		effect = {
+			trigger_event = { id = dvg_inca_path_washkar.10 }
 		}
 	}
 
-	on_complete = {
-		trigger_event = { id = dvg_inca_path_washkar.10 }
+	outcome = {
+		header = JOURNAL_ENTRY_TIMEOUT
+		effect_header = JOURNAL_ENTRY_ON_TIMEOUT
+		flags = { timeout }
+		conclusion_desc = JOURNAL_ENTRY_TIMEOUT_CONCLUSION_DESC
+		effect = {
+			trigger_event = { id = dvg_inca_path_washkar.11 }
+		}
 	}
 
 	timeout = 1350
-	on_timeout = {
-		trigger_event = { id = dvg_inca_path_washkar.11 }
-	}
 
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
@@ -421,47 +526,65 @@ je_succession_wars_generic = {
 
 	group = je_group_crises
 
-	complete = {
-		is_at_war = no
-		owns_entire_state_region = STATE_CUZCO
-		custom_tooltip = {
-		text = roqa_reunified_tt
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			is_at_war = no
+			owns_entire_state_region = STATE_CUZCO
+			custom_tooltip = {
+			text = roqa_reunified_tt
 
-		NOT = { exists = c:CCS }
-		NOT = { exists = c:KYS }
-		NOT = { exists = c:QUL }
+			NOT = { exists = c:CCS }
+			NOT = { exists = c:KYS }
+			NOT = { exists = c:QUL }
+			}
 		}
-	}
-	on_complete = {
-			trigger_event = { id = dvg_inca_path_washkar.20 }
+		effect = {
+				trigger_event = { id = dvg_inca_path_washkar.20 }
+		}
 	}
 
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
 }
 
-
 je_succession_wars_cabral = {
 	icon = "gfx/interface/icons/event_icons/event_fire.dds"
 
 	group = je_group_crises
 
-	complete = {
-		is_at_war = no
-		owns_entire_state_region = STATE_CUZCO
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			is_at_war = no
+			owns_entire_state_region = STATE_CUZCO
+		}
+		effect = {
+			trigger_event = { id = dvg_inca_path_washkar.21 }
+		}
 	}
-	on_complete = {
-		trigger_event = { id = dvg_inca_path_washkar.21 }
+
+	outcome = {
+		header = JOURNAL_ENTRY_TIMEOUT
+		effect_header = JOURNAL_ENTRY_ON_TIMEOUT
+		flags = { timeout }
+		conclusion_desc = JOURNAL_ENTRY_TIMEOUT_CONCLUSION_DESC
+		effect = {
+			custom_tooltip = {
+			text = amachaq_uprising_tt
+
+			trigger_event = { id = dvg_inca_path_washkar.22 }
+			}
+		}
 	}
 
 	timeout = 750
-	on_timeout = {
-		custom_tooltip = {
-		text = amachaq_uprising_tt
-
-		trigger_event = { id = dvg_inca_path_washkar.22 }
-		}
-	}
 
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
@@ -472,43 +595,56 @@ je_succession_wars_fujimori = {
 
 	group = je_group_crises
 
-	complete = {
-		is_at_war = no
-		owns_entire_state_region = STATE_CUZCO
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			is_at_war = no
+			owns_entire_state_region = STATE_CUZCO
+		}
+		effect = {
+			trigger_event = { id = dvg_inca_path_washkar.23 }
+			set_global_variable = sapa_inka_fujimori
+		}
 	}
-	on_complete = {
-		trigger_event = { id = dvg_inca_path_washkar.23 }
-		set_global_variable = sapa_inka_fujimori
+
+	outcome = {
+		header = JOURNAL_ENTRY_TIMEOUT
+		effect_header = JOURNAL_ENTRY_ON_TIMEOUT
+		flags = { timeout }
+		conclusion_desc = JOURNAL_ENTRY_TIMEOUT_CONCLUSION_DESC
+		effect = {
+			custom_tooltip = {
+			text = amachaq_uprising_tt
+
+
+			create_country = {
+				tag = WLM
+				origin = this
+
+				state = s:STATE_COLLASUYU.region_state:KYS
+			}
+			create_diplomatic_play = {
+				target_country = c:WLM
+				
+				war = yes
+				
+				type = dp_annex_war
+				
+				add_war_goal = {
+					holder = c:WLM
+					type = humiliation
+					target_country = c:KYS
+				}
+			}
+
+			}
+		}
 	}
 
 	timeout = 750
-	on_timeout = {
-		custom_tooltip = {
-		text = amachaq_uprising_tt
-
-
-		create_country = {
-			tag = WLM
-			origin = this
-
-			state = s:STATE_COLLASUYU.region_state:KYS
-		}
-		create_diplomatic_play = {
-			target_country = c:WLM
-			
-			war = yes
-			
-			type = dp_annex_war
-			
-			add_war_goal = {
-				holder = c:WLM
-				type = humiliation
-				target_country = c:KYS
-			}
-		}
-
-		}
-	}
 
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
@@ -519,48 +655,61 @@ je_succession_wars_samiri = {
 
 	group = je_group_crises
 
-	complete = {
-		is_at_war = no
-		owns_entire_state_region = STATE_CUZCO
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			is_at_war = no
+			owns_entire_state_region = STATE_CUZCO
+		}
+		effect = {
+			trigger_event = { id = dvg_inca_path_washkar.25 }
+			set_global_variable = sapa_inka_samiri
+		}
 	}
-	on_complete = {
-		trigger_event = { id = dvg_inca_path_washkar.25 }
-		set_global_variable = sapa_inka_samiri
+
+	outcome = {
+		header = JOURNAL_ENTRY_TIMEOUT
+		effect_header = JOURNAL_ENTRY_ON_TIMEOUT
+		flags = { timeout }
+		conclusion_desc = JOURNAL_ENTRY_TIMEOUT_CONCLUSION_DESC
+		effect = {
+			custom_tooltip = {
+			text = amachaq_uprising_tt
+
+			create_country = {
+				tag = BEO
+				origin = this
+
+				state = s:STATE_AVALON.region_state:QUL
+				state = s:STATE_NEW_LONDON.region_state:QUL
+				state = s:STATE_WESSEX.region_state:QUL
+				state = s:STATE_GODWINSON.region_state:QUL
+				state = s:STATE_NORTHUMBRIA.region_state:QUL
+				state = s:STATE_EOFERWIC.region_state:QUL
+				state = s:STATE_NEW_CORNWALL.region_state:QUL
+			}
+			create_diplomatic_play = {
+				target_country = c:BEO
+				
+				war = yes
+				
+				type = dp_annex_war
+				
+				add_war_goal = {
+					holder = c:BEO
+					type = humiliation
+					target_country = c:QUL
+				}
+			}
+
+			}
+		}
 	}
 
 	timeout = 750
-	on_timeout = {
-		custom_tooltip = {
-		text = amachaq_uprising_tt
-
-		create_country = {
-			tag = BEO
-			origin = this
-
-			state = s:STATE_AVALON.region_state:QUL
-			state = s:STATE_NEW_LONDON.region_state:QUL
-			state = s:STATE_WESSEX.region_state:QUL
-			state = s:STATE_GODWINSON.region_state:QUL
-			state = s:STATE_NORTHUMBRIA.region_state:QUL
-			state = s:STATE_EOFERWIC.region_state:QUL
-			state = s:STATE_NEW_CORNWALL.region_state:QUL
-		}
-		create_diplomatic_play = {
-			target_country = c:BEO
-			
-			war = yes
-			
-			type = dp_annex_war
-			
-			add_war_goal = {
-				holder = c:BEO
-				type = humiliation
-				target_country = c:QUL
-			}
-		}
-
-		}
-	}
 
 	weight = 100
 	should_be_pinned_by_default_uninvolved_or_context = yes
@@ -570,16 +719,22 @@ je_the_last_andine_war_TWT = {
 	
 	group = je_group_foreign_affairs
 	
-	complete = {
-		country_or_subject_owns_entire_state_region = STATE_LIMA
-		country_or_subject_owns_entire_state_region = STATE_CAJAMARCA
-		country_or_subject_owns_entire_state_region = STATE_ECUADOR
-		country_or_subject_owns_entire_state_region = STATE_PASTAZA
-		country_or_subject_owns_entire_state_region = STATE_NEAR_ANTISUYU
-		is_at_war = no
-	}
-	on_complete = {
-		trigger_event = { id = dvg_spain.110 }
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			country_or_subject_owns_entire_state_region = STATE_LIMA
+			country_or_subject_owns_entire_state_region = STATE_CAJAMARCA
+			country_or_subject_owns_entire_state_region = STATE_ECUADOR
+			country_or_subject_owns_entire_state_region = STATE_PASTAZA
+			country_or_subject_owns_entire_state_region = STATE_NEAR_ANTISUYU
+			is_at_war = no
+		}
+		effect = {
+			trigger_event = { id = dvg_spain.110 }
+		}
 	}
 	
 	weight = 100

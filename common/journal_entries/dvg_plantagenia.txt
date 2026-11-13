@@ -379,71 +379,17 @@
 		}
 	}
 
-	complete = {
-		has_law = law_type:law_monarchy
-		AND = {
-			custom_tooltip = {
-				text = je_louis_success
-				var:plantapoints > 5
-			}
-			custom_tooltip = {
-				text = dvg_louis_dead
-				NOR = {
-					ruler = {
-						has_variable = is_louis
-					}
-					heir = {
-						has_variable = is_louis
-					}
-				}
-			}
-		}
-	}
-
-	on_complete = {
-		hidden_effect = {
-			ruler ?= { set_character_immortal = no }
-			if = {
-				limit = {
-					exists = heir
-				}
-				heir = { set_character_immortal = no }
-			}
-		}
-		
-		
-		# Monarchy survives
-		trigger_event = {
-			id = dvg_plantagenia.7
-			popup = yes
-		}
-	}
-
-	fail = {
-		OR = {
-				NOT = { has_law = law_type:law_monarchy }
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			has_law = law_type:law_monarchy
 			AND = {
 				custom_tooltip = {
-					text = je_louis_fail
-					var:plantapoints <= 0
-				}
-				ig:ig_landowners = {
-					is_marginal = no
-				}
-				any_interest_group = {
-					is_powerful = yes
-					ig_approval <= -15 
-					law_stance = {
-						law = law_type:law_monarchy
-						value < neutral
-					}
-				}
-				
-			}
-			AND = {
-				custom_tooltip = {
-					text = je_louis_fail_2
-					var:plantapoints <= 5
+					text = je_louis_success
+					var:plantapoints > 5
 				}
 				custom_tooltip = {
 					text = dvg_louis_dead
@@ -458,102 +404,169 @@
 				}
 			}
 		}
+		effect = {
+			hidden_effect = {
+				ruler ?= { set_character_immortal = no }
+				if = {
+					limit = {
+						exists = heir
+					}
+					heir = { set_character_immortal = no }
+				}
+			}
+			
+			
+			# Monarchy survives
+			trigger_event = {
+				id = dvg_plantagenia.7
+				popup = yes
+			}
+		}
 	}
 
-	on_fail = {
-		hidden_effect = {
-			ruler ?= { set_character_immortal = no }
-			if = {
-				limit = {
-					exists = heir
-				}
-				heir = { set_character_immortal = no }
-			}
-		}
-		# Monarchy ended by coup
-		trigger_event = {
-			id = dvg_plantagenia.8
-			popup = yes
-		}
-		show_as_tooltip = {
-			if = {
-				limit = {
-					NOT = { has_law = law_type:law_landed_voting }
-				}
-				activate_law = law_type:law_landed_voting
-			}
-			activate_law = law_type:law_presidential_republic
-			if = {
-				limit = {
+	outcome = { #lose
+		header = je_standard_failure_header
+		effect_header = je_standard_on_failure_header
+		color = "blue_negative"
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			OR = {
+					NOT = { has_law = law_type:law_monarchy }
+				AND = {
+					custom_tooltip = {
+						text = je_louis_fail
+						var:plantapoints <= 0
+					}
 					ig:ig_landowners = {
-						is_in_government = no
 						is_marginal = no
 					}
-				}
-				ig:ig_landowners = {
-					add_ruling_interest_group = yes
-				}
-			}
-			if = {
-				limit = {
-					ig:ig_armed_forces = {
-						is_in_government = no
-						is_marginal = no
-						has_ideology = ideology:ideology_caudillismo
-					}
-				}
-				ig:ig_armed_forces = {
-					add_ruling_interest_group = yes
-				}
-			}
-			if = {
-				limit = {
-					OR = {
-						ig:ig_intelligentsia = {
-							ig_approval <= -10 
-							is_marginal = no
-						}
-						ig:ig_petty_bourgeoisie = {
-							ig_approval <= -10 
-							is_marginal = no
+					any_interest_group = {
+						is_powerful = yes
+						ig_approval <= -15 
+						law_stance = {
+							law = law_type:law_monarchy
+							value < neutral
 						}
 					}
 					
 				}
-				trigger_event = {
-					id = dvg_plantagenia.26
+				AND = {
+					custom_tooltip = {
+						text = je_louis_fail_2
+						var:plantapoints <= 5
+					}
+					custom_tooltip = {
+						text = dvg_louis_dead
+						NOR = {
+							ruler = {
+								has_variable = is_louis
+							}
+							heir = {
+								has_variable = is_louis
+							}
+						}
+					}
+				}
+			}
+		}
+		effect = {
+			hidden_effect = {
+				ruler ?= { set_character_immortal = no }
+				if = {
+					limit = {
+						exists = heir
+					}
+					heir = { set_character_immortal = no }
+				}
+			}
+			# Monarchy ended by coup
+			trigger_event = {
+				id = dvg_plantagenia.8
+				popup = yes
+			}
+			show_as_tooltip = {
+				if = {
+					limit = {
+						NOT = { has_law = law_type:law_landed_voting }
+					}
+					activate_law = law_type:law_landed_voting
+				}
+				activate_law = law_type:law_presidential_republic
+				if = {
+					limit = {
+						ig:ig_landowners = {
+							is_in_government = no
+							is_marginal = no
+						}
+					}
+					ig:ig_landowners = {
+						add_ruling_interest_group = yes
+					}
+				}
+				if = {
+					limit = {
+						ig:ig_armed_forces = {
+							is_in_government = no
+							is_marginal = no
+							has_ideology = ideology:ideology_caudillismo
+						}
+					}
+					ig:ig_armed_forces = {
+						add_ruling_interest_group = yes
+					}
+				}
+				if = {
+					limit = {
+						OR = {
+							ig:ig_intelligentsia = {
+								ig_approval <= -10 
+								is_marginal = no
+							}
+							ig:ig_petty_bourgeoisie = {
+								ig_approval <= -10 
+								is_marginal = no
+							}
+						}
+						
+					}
+					trigger_event = {
+						id = dvg_plantagenia.26
+					}
 				}
 			}
 		}
 	}
 
-	invalid = {
-		NOR = {
-			ruler = {
-				has_variable = is_louis
+	outcome = {
+		flags = { hidden invalid_outcome }
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			NOR = {
+				ruler = {
+					has_variable = is_louis
+				}
+				heir = {
+					has_variable = is_louis
+				}
 			}
-			heir = {
-				has_variable = is_louis
-			}
+			
 		}
-		
-	}
-
-	on_invalid = {
-		hidden_effect = {
-			ruler ?= { set_character_immortal = no }
+		effect = {
+			hidden_effect = {
+				ruler ?= { set_character_immortal = no }
+				if = {
+					limit = {
+						exists = heir
+					}
+					heir = { set_character_immortal = no }
+				}
+			}
 			if = {
 				limit = {
-					exists = heir
+					has_modifier = brz_regency
 				}
-				heir = { set_character_immortal = no }
+				remove_modifier = brz_regency
 			}
-		}
-		if = {
-			limit = {
-				has_modifier = brz_regency
-			}
-			remove_modifier = brz_regency
 		}
 	}
 
@@ -817,61 +830,87 @@ je_pla_slavery = {
 		}
 	}
 
-	complete = {
-		scope:journal_entry = { is_goal_complete = yes }
-		has_technology_researched = nationalism
-		radical_fraction = {
-			value > 0.25
-			culture = cu:afro_arcadian
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			scope:journal_entry = { is_goal_complete = yes }
+			has_technology_researched = nationalism
+			radical_fraction = {
+				value > 0.25
+				culture = cu:afro_arcadian
+			}
+		}
+		effect = {
+			trigger_event = {
+				id = dvg_plantagenia.31
+			}
+			
 		}
 	}
-	on_complete = {
-		trigger_event = {
-			id = dvg_plantagenia.31
+
+	outcome = { #lose
+		header = je_standard_failure_header
+		effect_header = je_standard_on_failure_header
+		color = "blue_negative"
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			has_law = law_type:law_slavery_banned
 		}
-		
-	}
-
-	fail = {
-		has_law = law_type:law_slavery_banned
-	}
-
-	on_fail = {
-		if = {
-			limit = {
-				OR = {
-					ruler = {
-						has_variable = is_louis
-					}
-					heir = {
-						has_variable = is_louis
+		effect = {
+			if = {
+				limit = {
+					OR = {
+						ruler = {
+							has_variable = is_louis
+						}
+						heir = {
+							has_variable = is_louis
+						}
 					}
 				}
+				trigger_event = {
+					id = dvg_plantagenia.23
+				}
 			}
+			
+		}
+	}
+
+	outcome = {
+		header = JOURNAL_ENTRY_TIMEOUT
+		effect_header = JOURNAL_ENTRY_ON_TIMEOUT
+		flags = { timeout }
+		conclusion_desc = JOURNAL_ENTRY_TIMEOUT_CONCLUSION_DESC
+		effect = {
 			trigger_event = {
-				id = dvg_plantagenia.23
+				id = dvg_plantagenia.31
 			}
 		}
-		
 	}
+
+	outcome = {
+		flags = { hidden invalid_outcome }
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			NOT = {
+				any_scope_state = {
+					state_region = {
+						is_homeland = cu:afro_arcadian
+					}	
+				}
+			}
+		}
+		effect = {
+		}
+	}
+
 	progressbar = yes
 
 	timeout = 10550
 
-	on_timeout = {
-		trigger_event = {
-			id = dvg_plantagenia.31
-		}
-	}
-	invalid = {
-		NOT = {
-			any_scope_state = {
-				state_region = {
-					is_homeland = cu:afro_arcadian
-				}	
-			}
-		}
-	}
 	goal_add_value = 500
 	scripted_button = golden_law_button
 	should_be_pinned_by_default_uninvolved_or_context = yes
@@ -960,42 +999,35 @@ je_liberie_independence = {
 		
 	}
 
-	complete = {
-		is_subject = no
-		is_at_war = no
-		is_diplomatic_play_committed_participant = no
-	}
-	on_complete = {
-		if = {
-			limit = {
-				is_country_type = unrecognized
-			}
-			set_country_type = recognized
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			is_subject = no
+			is_at_war = no
+			is_diplomatic_play_committed_participant = no
+		}
+		effect = {
+			if = {
+				limit = {
+					is_country_type = unrecognized
+				}
+				set_country_type = recognized
 
+				
+			}
+			if = {
+				limit = {
+					ruler = {
+						has_variable = saint_georges
+					}
+				}
+				trigger_event = dvg_plantagenia.40
+			}
 			
 		}
-		if = {
-			limit = {
-				ruler = {
-					has_variable = saint_georges
-				}
-			}
-			trigger_event = dvg_plantagenia.40
-		}
-		
-	}
-
-	fail = {
-		
-	}
-
-	on_fail = {
-		
-		
-	}
-	
-	invalid = {
-		
 	}
 	
 }
@@ -1037,9 +1069,14 @@ je_unify_planta = {
 		   
 	}
 
-	complete = {
-		
-		
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			
+			
 			custom_tooltip = {
 				text = plantagenia_united_tt
 				NOT = {
@@ -1047,20 +1084,21 @@ je_unify_planta = {
 					exists = c:OUM
 				}
 			}
+		}
+		effect = {
+			
+			every_scope_character = {
+				limit = {
+					has_trait = immortal
+				}
+				remove_trait = immortal
+			}
+			trigger_event = {
+				id = dvg_plantagenia.27
+			}
+		}
 	}
 
-	on_complete = {
-		
-		every_scope_character = {
-			limit = {
-				has_trait = immortal
-			}
-			remove_trait = immortal
-		}
-		trigger_event = {
-			id = dvg_plantagenia.27
-		}
-	}
 	should_be_pinned_by_default_uninvolved_or_context = yes
 	#inheritable = no
 }
@@ -1106,249 +1144,264 @@ je_manifest_destiny_pla = {
 		
 	}
 
-	complete = {
-		owns_entire_state_region = STATE_BAHIA
-		owns_entire_state_region = STATE_COMANCHERIE
-		owns_entire_state_region = STATE_APACHERIA
-		owns_entire_state_region = STATE_NOUVELLE_ANGLETERRE
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			owns_entire_state_region = STATE_BAHIA
+			owns_entire_state_region = STATE_COMANCHERIE
+			owns_entire_state_region = STATE_APACHERIA
+			owns_entire_state_region = STATE_NOUVELLE_ANGLETERRE
+			
+			OR = {
+				AND = {
+					owns_entire_state_region = STATE_TERRAS_VERMELHAS
+					OR = {
+						owns_entire_state_region = STATE_BAJA_CALIFORNIA
+						owns_entire_state_region = STATE_XINGTIAN
+						owns_entire_state_region = STATE_SANTA_CATARINA
+					}
+				}
+				AND = {
+					owns_entire_state_region = STATE_TEJAS
+					OR = {
+						owns_entire_state_region = STATE_SINALOA
+						owns_entire_state_region = STATE_SANTA_CATARINA
+
+					}
+				}
+			}
 		
-		OR = {
-			AND = {
-				owns_entire_state_region = STATE_TERRAS_VERMELHAS
-				OR = {
-					owns_entire_state_region = STATE_BAJA_CALIFORNIA
-					owns_entire_state_region = STATE_XINGTIAN
-					owns_entire_state_region = STATE_SANTA_CATARINA
-				}
-			}
-			AND = {
-				owns_entire_state_region = STATE_TEJAS
-				OR = {
-					owns_entire_state_region = STATE_SINALOA
-					owns_entire_state_region = STATE_SANTA_CATARINA
-
-				}
-			}
 		}
-	
-	}
+		effect = {
 
-	on_complete = {
-
-		every_scope_state = {
-			limit = {
+			every_scope_state = {
+				limit = {
+					state_region = {
+						is_in_geographic_region = geographic_region_north_america
+						NOT = {
+							is_homeland = cu:cadien
+						}
+					}
+					culture_percent_state = {
+						target = cu:cadien  
+						value >= 0.33
+					}
+				}
 				state_region = {
-					is_in_geographic_region = geographic_region_north_america
-					NOT = {
-						is_homeland = cu:cadien
+					add_homeland = cu:cadien
+				}
+			}
+			
+			if = {
+				limit = { 
+					owns_entire_state_region = STATE_SANTA_CATARINA
+					s:STATE_SANTA_CATARINA = {
+						NOT = {
+							is_homeland = cu:cadien
+						}
 					}
 				}
-				culture_percent_state = {
-					target = cu:cadien  
-					value >= 0.33
-				}
-			}
-			state_region = {
-				add_homeland = cu:cadien
-			}
-		}
-		
-		if = {
-			limit = { 
-				owns_entire_state_region = STATE_SANTA_CATARINA
 				s:STATE_SANTA_CATARINA = {
-					NOT = {
-						is_homeland = cu:cadien
-					}
+					add_homeland = cu:cadien
 				}
 			}
-			s:STATE_SANTA_CATARINA = {
-				add_homeland = cu:cadien
-			}
-		}
-		if = {
-			limit = { 
-				owns_entire_state_region = STATE_APACHERIA
+			if = {
+				limit = { 
+					owns_entire_state_region = STATE_APACHERIA
+					s:STATE_APACHERIA = {
+						NOT = {
+							is_homeland = cu:cadien
+						}
+					}
+				}
 				s:STATE_APACHERIA = {
-					NOT = {
-						is_homeland = cu:cadien
-					}
+					add_homeland = cu:cadien
 				}
 			}
-			s:STATE_APACHERIA = {
-				add_homeland = cu:cadien
-			}
-		}
-		if = {
-			limit = { 
-				owns_entire_state_region = STATE_COMANCHERIE
+			if = {
+				limit = { 
+					owns_entire_state_region = STATE_COMANCHERIE
+					s:STATE_COMANCHERIE = {
+						NOT = {
+							is_homeland = cu:cadien
+						}
+					}
+				}
 				s:STATE_COMANCHERIE = {
-					NOT = {
-						is_homeland = cu:cadien
-					}
+					add_homeland = cu:cadien
 				}
 			}
-			s:STATE_COMANCHERIE = {
-				add_homeland = cu:cadien
-			}
-		}
-		
-		if = {
-			limit = { 
-				owns_entire_state_region = STATE_BAHIA
+			
+			if = {
+				limit = { 
+					owns_entire_state_region = STATE_BAHIA
+					s:STATE_BAHIA = {
+						NOT = {
+							is_homeland = cu:cadien
+						}
+					}
+				}
 				s:STATE_BAHIA = {
-					NOT = {
-						is_homeland = cu:cadien
-					}
+					add_homeland = cu:cadien
 				}
 			}
-			s:STATE_BAHIA = {
-				add_homeland = cu:cadien
-			}
-		}
-		if = {
-			limit = { 
-				owns_entire_state_region = STATE_LES_PAINS
+			if = {
+				limit = { 
+					owns_entire_state_region = STATE_LES_PAINS
+					s:STATE_LES_PAINS = {
+						NOT = {
+							is_homeland = cu:cadien
+						}
+					}
+				}
 				s:STATE_LES_PAINS = {
-					NOT = {
-						is_homeland = cu:cadien
-					}
+					add_homeland = cu:cadien
 				}
 			}
-			s:STATE_LES_PAINS = {
-				add_homeland = cu:cadien
-			}
-		}
-		if = {
-			limit = { 
-				owns_entire_state_region = STATE_NEBRASKIER
+			if = {
+				limit = { 
+					owns_entire_state_region = STATE_NEBRASKIER
+					s:STATE_NEBRASKIER = {
+						NOT = {
+							is_homeland = cu:cadien
+						}
+					}
+				}
 				s:STATE_NEBRASKIER = {
-					NOT = {
-						is_homeland = cu:cadien
-					}
+					add_homeland = cu:cadien
 				}
 			}
-			s:STATE_NEBRASKIER = {
-				add_homeland = cu:cadien
-			}
-		}
-		if = {
-			limit = { 
-				owns_entire_state_region = STATE_AKANSA
+			if = {
+				limit = { 
+					owns_entire_state_region = STATE_AKANSA
+					s:STATE_AKANSA = {
+						NOT = {
+							is_homeland = cu:cadien
+						}
+					}
+				}
 				s:STATE_AKANSA = {
-					NOT = {
-						is_homeland = cu:cadien
-					}
+					add_homeland = cu:cadien
 				}
 			}
-			s:STATE_AKANSA = {
-				add_homeland = cu:cadien
-			}
-		}
-		if = {
-			limit = { 
-				owns_entire_state_region = STATE_TERRES_ROUGES
+			if = {
+				limit = { 
+					owns_entire_state_region = STATE_TERRES_ROUGES
+					s:STATE_TERRES_ROUGES = {
+						NOT = {
+							is_homeland = cu:cadien
+						}
+					}
+				}
 				s:STATE_TERRES_ROUGES = {
-					NOT = {
-						is_homeland = cu:cadien
-					}
+					add_homeland = cu:cadien
 				}
 			}
-			s:STATE_TERRES_ROUGES = {
-				add_homeland = cu:cadien
-			}
-		}
-		if = {
-			limit = { 
-				owns_entire_state_region = STATE_OUISKONSIN
+			if = {
+				limit = { 
+					owns_entire_state_region = STATE_OUISKONSIN
+					s:STATE_OUISKONSIN = {
+						NOT = {
+							is_homeland = cu:cadien
+						}
+					}
+				}
 				s:STATE_OUISKONSIN = {
-					NOT = {
-						is_homeland = cu:cadien
-					}
+					add_homeland = cu:cadien
 				}
 			}
-			s:STATE_OUISKONSIN = {
-				add_homeland = cu:cadien
-			}
-		}
-		if = {
-			limit = { 
-				owns_entire_state_region = STATE_OSAGERIE
+			if = {
+				limit = { 
+					owns_entire_state_region = STATE_OSAGERIE
+					s:STATE_OSAGERIE = {
+						NOT = {
+							is_homeland = cu:cadien
+						}
+					}
+				}
 				s:STATE_OSAGERIE = {
-					NOT = {
-						is_homeland = cu:cadien
-					}
+					add_homeland = cu:cadien
 				}
 			}
-			s:STATE_OSAGERIE = {
-				add_homeland = cu:cadien
-			}
-		}
-		if = {
-			limit = { 
-				owns_entire_state_region = STATE_XINGTIAN
+			if = {
+				limit = { 
+					owns_entire_state_region = STATE_XINGTIAN
+					s:STATE_XINGTIAN = {
+						NOT = {
+							is_homeland = cu:cadien
+						}
+					}
+				}
 				s:STATE_XINGTIAN = {
-					NOT = {
-						is_homeland = cu:cadien
-					}
+					add_homeland = cu:cadien
 				}
 			}
-			s:STATE_XINGTIAN = {
-				add_homeland = cu:cadien
-			}
-		}
-		if = {
-			limit = { 
-				owns_entire_state_region = STATE_BAJA_CALIFORNIA
+			if = {
+				limit = { 
+					owns_entire_state_region = STATE_BAJA_CALIFORNIA
+					s:STATE_BAJA_CALIFORNIA = {
+						NOT = {
+							is_homeland = cu:cadien
+						}
+					}
+				}
 				s:STATE_BAJA_CALIFORNIA = {
-					NOT = {
-						is_homeland = cu:cadien
-					}
+					add_homeland = cu:cadien
 				}
 			}
-			s:STATE_BAJA_CALIFORNIA = {
-				add_homeland = cu:cadien
-			}
-		}
-		if = {
-			limit = { 
-				owns_entire_state_region = STATE_TEJAS
+			if = {
+				limit = { 
+					owns_entire_state_region = STATE_TEJAS
+					s:STATE_TEJAS = {
+						NOT = {
+							is_homeland = cu:cadien
+						}
+					}
+				}
 				s:STATE_TEJAS = {
-					NOT = {
-						is_homeland = cu:cadien
-					}
+					add_homeland = cu:cadien
 				}
 			}
-			s:STATE_TEJAS = {
-				add_homeland = cu:cadien
-			}
-		}
-		if = {
-			limit = { 
-				owns_entire_state_region = STATE_AIOUEZ
+			if = {
+				limit = { 
+					owns_entire_state_region = STATE_AIOUEZ
+					s:STATE_AIOUEZ = {
+						NOT = {
+							is_homeland = cu:cadien
+						}
+					}
+				}
 				s:STATE_AIOUEZ = {
-					NOT = {
-						is_homeland = cu:cadien
-					}
+					add_homeland = cu:cadien
 				}
 			}
-			s:STATE_AIOUEZ = {
-				add_homeland = cu:cadien
-			}
-		}
-		if = {
-			limit = {
-				has_journal_entry = je_king_louis
-			}
-			change_variable = {
-				name = plantapoints
-				add = 2
+			if = {
+				limit = {
+					has_journal_entry = je_king_louis
+				}
+				change_variable = {
+					name = plantapoints
+					add = 2
+				}
 			}
 		}
 	}
-	fail = {
-		has_law = law_type:law_no_colonial_affairs
+
+	outcome = { #lose
+		header = je_standard_failure_header
+		effect_header = je_standard_on_failure_header
+		color = "blue_negative"
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			has_law = law_type:law_no_colonial_affairs
+		}
+		effect = {
+		}
 	}
+
 	should_be_pinned_by_default_uninvolved_or_context = yes
 	#inheritable = yes
 }
@@ -1454,76 +1507,100 @@ je_lou_insurgency = {
 		}
 		
 	}
-	complete = {
-		OR = {
-			scope:journal_entry = {
-				is_goal_complete = yes
-			}
-			is_diplomatic_play_committed_participant = yes
-		}
-		OR = {
-			has_variable = diverted_troops_1
-			has_variable = diverted_troops_2
-		}
-	}
-	on_complete = {
-		if = {
-			limit = {
-				has_variable = diverted_troops_1
-			}
 
-			trigger_event = {
-				id = dvg_belgium.22
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			OR = {
+				scope:journal_entry = {
+					is_goal_complete = yes
+				}
+				is_diplomatic_play_committed_participant = yes
 			}
-			remove_variable = diverted_troops_1
-		}
-		if = {
-			limit = {
+			OR = {
+				has_variable = diverted_troops_1
 				has_variable = diverted_troops_2
 			}
-
-			trigger_event = {
-				id = dvg_belgium.23
-			}
-			remove_variable = diverted_troops_2
-
 		}
-		
-	}
-
-	fail = {
-		OR = {
-			AND = {
-				is_diplomatic_play_enemy_of = c:BLC
-				NOT = {
+		effect = {
+			if = {
+				limit = {
 					has_variable = diverted_troops_1
 				}
-				has_variable = diverted_troops_2
-			}
-			AND = {
-				has_law = law_type:law_secret_police
-				institution_investment_level = {
-					institution = institution_home_affairs
-					value > 1
+	
+				trigger_event = {
+					id = dvg_belgium.22
 				}
+				remove_variable = diverted_troops_1
 			}
-			AND = {
-				NOT = {
-					has_law = law_type:law_no_police
+			if = {
+				limit = {
+					has_variable = diverted_troops_2
 				}
-				institution_investment_level = {
-					institution = institution_police
-					value > 3
+	
+				trigger_event = {
+					id = dvg_belgium.23
 				}
-			}
-		}
-	}
-	on_fail = {
-		trigger_event = {
-			id = dvg_belgium.20
+				remove_variable = diverted_troops_2
+	
+			}			
 		}
 	}
 
+	outcome = { #lose
+		header = je_standard_failure_header
+		effect_header = je_standard_on_failure_header
+		color = "blue_negative"
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			OR = {
+				AND = {
+					is_diplomatic_play_enemy_of = c:BLC
+					NOT = {
+						has_variable = diverted_troops_1
+					}
+					has_variable = diverted_troops_2
+				}
+				AND = {
+					has_law = law_type:law_secret_police
+					institution_investment_level = {
+						institution = institution_home_affairs
+						value > 1
+					}
+				}
+				AND = {
+					NOT = {
+						has_law = law_type:law_no_police
+					}
+					institution_investment_level = {
+						institution = institution_police
+						value > 3
+					}
+				}
+			}
+		}
+		effect = {
+			trigger_event = {
+				id = dvg_belgium.20
+			}	
+		}
+	}
+	outcome = {
+		flags = { hidden invalid_outcome }
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			NOT = {
+				any_scope_state = {
+					state_region = s:STATE_LOUISIANE_ROYALE
+				}
+			}
+		}
+		effect = {
+		}
+	}
 	timeout = 2555
 
 	progressbar = yes
@@ -1532,14 +1609,6 @@ je_lou_insurgency = {
 		value = root.var:lou_var
 	}
 	goal_add_value = 20
-
-	invalid = {
-		NOT = {
-			any_scope_state = {
-				state_region = s:STATE_LOUISIANE_ROYALE
-			}
-		}
-	}
 
 }
 je_arc_destiny = {
@@ -1607,25 +1676,31 @@ je_arc_destiny = {
 		}
 		
 	}
-	complete = {
-		any_state_in_north_america = {
-			percent >= 0.75
-			owner = c:ARC	
-		}
-	}
-	
-	on_complete = {
-		if = {
-			limit = {
-				has_journal_entry = je_king_louis
-			}
-			change_variable = {
-				name = plantapoints
-				add = 3
+
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			any_state_in_north_america = {
+				percent >= 0.75
+				owner = c:ARC	
 			}
 		}
-		trigger_event = {id = dvg_plantagenia.46}
-		c:ARC = {change_tag = ARU}
+		effect = {
+			if = {
+				limit = {
+					has_journal_entry = je_king_louis
+				}
+				change_variable = {
+					name = plantapoints
+					add = 3
+				}
+			}
+			trigger_event = {id = dvg_plantagenia.46}
+			c:ARC = {change_tag = ARU}
+			}
 	}
 	should_be_pinned_by_default_uninvolved_or_context = yes
 

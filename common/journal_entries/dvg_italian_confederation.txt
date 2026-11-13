@@ -17,21 +17,31 @@
 		is_subject = no
 	}
 
-	complete = {
-		hidden_trigger = {
-			has_variable = je_unification_progress
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			hidden_trigger = {
+				has_variable = je_unification_progress
+			}
+			calc_true_if = {
+				amount > 8
+				owns_entire_state_region = STATE_SAVOY
+				owns_entire_state_region = STATE_PIEDMONT
+				owns_entire_state_region = STATE_EMILIA
+				owns_entire_state_region = STATE_TUSCANY
+				owns_entire_state_region = STATE_ROMAGNA
+				owns_entire_state_region = STATE_LOMBARDY
+				owns_entire_state_region = STATE_UMBRIA
+				owns_entire_state_region = STATE_LAZIO
+				owns_entire_state_region = STATE_CORSICA
+			}
 		}
-		calc_true_if = {
-			amount > 8
-			owns_entire_state_region = STATE_SAVOY
-			owns_entire_state_region = STATE_PIEDMONT
-			owns_entire_state_region = STATE_EMILIA
-			owns_entire_state_region = STATE_TUSCANY
-			owns_entire_state_region = STATE_ROMAGNA
-			owns_entire_state_region = STATE_LOMBARDY
-			owns_entire_state_region = STATE_UMBRIA
-			owns_entire_state_region = STATE_LAZIO
-			owns_entire_state_region = STATE_CORSICA
+		effect = {
+			trigger_event = { id = dvg_italian_confederation.1 }
+			remove_variable = je_unification_progress
 		}
 	}
 
@@ -63,11 +73,6 @@
 				set_variable = je_unification_progress
 			}
 		}
-	}
-
-	on_complete = {
-		trigger_event = { id = dvg_italian_confederation.1 }
-		remove_variable = je_unification_progress
 	}
 
 	status_desc = {
@@ -160,80 +165,98 @@ je_italian_building = {
 		}
 	}
 
-	complete = {
-		has_technology_researched = nationalism
-		custom_tooltip = {
-			text = je_italian_nation_building_integrate_venetian_complete_tt
-			has_variable = venetians_integrated
+	outcome = { #win
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			has_technology_researched = nationalism
+			custom_tooltip = {
+				text = je_italian_nation_building_integrate_venetian_complete_tt
+				has_variable = venetians_integrated
+			}
+			custom_tooltip = {
+				text = je_italian_nation_building_integrate_south_italian_complete_tt
+				has_variable = south_italians_integrated
+			}
+			custom_tooltip = {
+				text = je_italian_nation_building_integrate_central_italian_complete_tt
+				has_variable = central_italians_integrated
+			}
+			custom_tooltip = {
+				text = je_italian_nation_building_integrate_north_italian_complete_tt
+				has_variable = north_italians_integrated
+			}
 		}
-		custom_tooltip = {
-			text = je_italian_nation_building_integrate_south_italian_complete_tt
-			has_variable = south_italians_integrated
-		}
-		custom_tooltip = {
-			text = je_italian_nation_building_integrate_central_italian_complete_tt
-			has_variable = central_italians_integrated
-		}
-		custom_tooltip = {
-			text = je_italian_nation_building_integrate_north_italian_complete_tt
-			has_variable = north_italians_integrated
-		}
-	}
-
-	on_complete = {
-		#trigger_event = { id = dvg_italy.7 } #This event does not exist
-		#set_global_variable = italian_culture
-		add_loyalists = {
-			value = 0.20
-		}
-		add_modifier = {
-			name = dvg_nation_built
-		}
-		remove_primary_culture = cu:central_italian
-		remove_primary_culture = cu:north_italian
-		remove_primary_culture = cu:south_italian
-		remove_primary_culture = cu:venetian
-		add_primary_culture = cu:italian
-
-		every_country = {
-			limit = {
-				country_has_primary_culture = cu:central_italian
+		effect = {
+			#trigger_event = { id = dvg_italy.7 } #This event does not exist
+			#set_global_variable = italian_culture
+			add_loyalists = {
+				value = 0.20
+			}
+			add_modifier = {
+				name = dvg_nation_built
 			}
 			remove_primary_culture = cu:central_italian
-			add_primary_culture = cu:italian
-
-		}
-		every_country = {
-			limit = {
-				country_has_primary_culture = cu:north_italian
-			}
 			remove_primary_culture = cu:north_italian
-			add_primary_culture = cu:italian
-		}
-		every_country = {
-			limit = {
-				country_has_primary_culture = cu:south_italian
-			}
 			remove_primary_culture = cu:south_italian
+			remove_primary_culture = cu:venetian
 			add_primary_culture = cu:italian
+
+			every_country = {
+				limit = {
+					country_has_primary_culture = cu:central_italian
+				}
+				remove_primary_culture = cu:central_italian
+				add_primary_culture = cu:italian
+
+			}
+			every_country = {
+				limit = {
+					country_has_primary_culture = cu:north_italian
+				}
+				remove_primary_culture = cu:north_italian
+				add_primary_culture = cu:italian
+			}
+			every_country = {
+				limit = {
+					country_has_primary_culture = cu:south_italian
+				}
+				remove_primary_culture = cu:south_italian
+				add_primary_culture = cu:italian
+			}
 		}
 	}
 
-	fail = {
-		AND = {
-			exists = c:VEN
-			exists = c:SAV
-			exists = c:SIC
-			exists = c:PAP
-			exists = c:TUS
+	outcome = { #lose
+		header = je_standard_failure_header
+		effect_header = je_standard_on_failure_header
+		color = "blue_negative"
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			AND = {
+				exists = c:VEN
+				exists = c:SAV
+				exists = c:SIC
+				exists = c:PAP
+				exists = c:TUS
+			}
+
 		}
-
-	}
-	invalid = {
-		has_variable = cancel_integration
+		effect = {
+		}
 	}
 
-	
+	outcome = {
+		flags = { hidden invalid_outcome }
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			has_variable = cancel_integration
+		}
+		effect = {
+		}
+	}
 
 	scripted_button = je_italian_nation_building_integrate_venetian
 	scripted_button = je_italian_nation_building_integrate_south_italian

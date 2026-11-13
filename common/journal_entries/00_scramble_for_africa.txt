@@ -4,37 +4,33 @@
 
 	group = je_group_foreign_affairs
 
+	activation_description = {
+		always = yes
+	}
+
 	is_shown_when_inactive = {
 		NOT = { is_country_type = unrecognized }
 		has_technology_researched = quinine
 		any_scope_state = {
 			is_incorporated = no
-			state_in_africa = yes
+			is_in_geographic_region = geographic_region_africa
 		}
 	}
 
 	possible = {
 		has_technology_researched = malaria_prevention
 		OR = {
-			has_law = law_type:law_colonial_resettlement
-			has_law = law_type:law_colonial_exploitation
-		}		
-		any_state = {
-			state_in_africa = yes
-			OR = {
-				AND = {
-					is_incorporated = no
-					owner = {
-						this = root
-					}
-				}
-				owner = {
-					is_subject_of = root
-				}						
+			has_law_or_variant = law_type:law_colonial_resettlement
+			has_law_or_variant = law_type:law_colonial_exploitation
+		}
+		OR = {
+			any_scope_state = {
+				is_in_geographic_region = geographic_region_africa
+				is_incorporated = no
+				is_treaty_port = no
 			}
-			OR = {
-				has_state_trait = state_trait_malaria
-				has_state_trait = state_trait_severe_malaria
+			any_subject_or_below = {
+				is_in_geographic_region = geographic_region_africa
 			}
 		}
 	}
@@ -42,89 +38,110 @@
 	immediate = {
 		trigger_event = {
 			id = africa_colonial_events.1
-			days = 0
 			popup = yes
 		}
 		save_scope_as = scramble_for_africa_self
+
+		set_variable = {
+			name = controlled_colonies_in_africa_cached
+			value = controlled_colonies_in_africa
+		}
 	}
 
-	complete = {
-		custom_tooltip = {
-			text = scramble_for_africa_complete_tt
-			any_state = {
-				state_in_africa = yes
-				OR = {
-					AND = {
-						is_incorporated = no
-						owner = {
-							this = root
-						}
-					}
-					owner = {
-						is_subject_of = root
-					}					
+	outcome = {
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			custom_tooltip = {
+				text = scramble_for_africa_complete_tt
+				var:controlled_colonies_in_africa_cached ?= {
+					this >= scope:journal_entry.goal_value
 				}
-				count >= 7
 			}
-		}
-		custom_tooltip = {
-			text = scramble_for_africa_complete_2_tt
-			any_state_region = {
-				filter = {
-					OR = {
-						region = sr:region_nile_basin
-						region = sr:region_ethiopia
-						region = sr:region_north_africa
-						region = sr:region_senegal
-						region = sr:region_congo
-						region = sr:region_southern_africa
-						region = sr:region_zanj		
-					}
-				}
-				NOT = {
+			custom_tooltip = {
+				text = scramble_for_africa_complete_2_tt
+				any_state_region_in_africa = {
 					any_scope_state = {
 						owner = {
-							is_in_geographic_region = geographic_region_africa
 							OR = {
-								is_country_type = decentralized
-								is_country_type = unrecognized
+								is_country_type = recognized
+								top_overlord ?= {
+									is_country_type = recognized
+								}
 							}
-							is_subject = no
 						}
 					}
+					percent >= 0.95
 				}
-				percent >= 0.95
+			}
+		}
+		effect = {
+			trigger_event = {
+				id = africa_colonial_events.2
+				popup = yes
+			}
+			if = {
+				limit = {
+					has_variable = controlled_colonies_in_africa_cached
+				}
+				remove_variable = controlled_colonies_in_africa_cached
 			}
 		}
 	}
 
-	on_complete = {
-		trigger_event = {
-			id = africa_colonial_events.2
-			days = 0
-			popup = yes
-		}
-	}
-
-	fail = {
-		custom_tooltip = {
-			text = scramble_for_africa_fail_tt
-			NOT = {
-				any_scope_state = {
-					is_incorporated = no
-					state_in_africa = yes
+	outcome = {
+		header = je_standard_failure_header
+		effect_header = je_standard_on_failure_header
+		color = "blue_negative"
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			is_at_war = no
+			custom_tooltip = {
+				text = scramble_for_africa_fail_tt
+				NOR = {
+					any_scope_state = {
+						is_incorporated = no
+						is_in_geographic_region = geographic_region_africa
+					}
+					any_subject_or_below = {
+						is_in_geographic_region = geographic_region_africa
+					}
 				}
 			}
 		}
+		effect = {
+			#trigger_event = {
+			#	id = africa_colonial_events.3
+			#	days = 0
+			#	popup = yes
+			#}
+			if = {
+				limit = {
+					has_variable = controlled_colonies_in_africa_cached
+				}
+				remove_variable = controlled_colonies_in_africa_cached
+			}
+			je_scramble_for_africa_cleanup = yes
+		}
 	}
 
-	#on_fail = {
-	#	trigger_event = {
-	#		id = africa_colonial_events.3
-	#		days = 0
-	#		popup = yes
-	#	}
-	#}
+	outcome = {
+		header = JOURNAL_ENTRY_TIMEOUT
+		effect_header = JOURNAL_ENTRY_ON_TIMEOUT
+		flags = { timeout }
+		conclusion_desc = JOURNAL_ENTRY_TIMEOUT_CONCLUSION_DESC
+		effect = {
+			je_scramble_for_africa_cleanup = yes
+		}
+	}
+
+
+	# goal_value
+	current_value = {
+		value = 7
+	}
 
 	status_desc = {
 		first_valid = {
@@ -134,7 +151,7 @@
 					any_scope_state = {
 						count >= 6
 						is_incorporated = no
-						state_in_africa = yes
+						is_in_geographic_region = geographic_region_africa
 					}
 				}
 			}
@@ -144,7 +161,7 @@
 					any_scope_state = {
 						count >= 4
 						is_incorporated = no
-						state_in_africa = yes
+						is_in_geographic_region = geographic_region_africa
 					}
 				}
 			}
@@ -154,7 +171,7 @@
 					any_scope_state = {
 						count >= 1
 						is_incorporated = no
-						state_in_africa = yes
+						is_in_geographic_region = geographic_region_africa
 					}
 				}
 			}
@@ -167,18 +184,23 @@
 	# No timeout. Imperialism never ends.
 	# timeout = 7300
 
-	on_timeout = {
-
+	on_weekly_pulse = {
+		effect = {
+			set_variable = {
+				name = controlled_colonies_in_africa_cached
+				value = controlled_colonies_in_africa
+			}
+		}
 	}
 
-	on_monthly_pulse = {
+	on_yearly_pulse = {
 		random_events = {
 			100 = 0
 			10 = africa_colonial_events.4
 			10 = africa_colonial_events.5
 			10 = africa_colonial_events.6
 			5 = africa_colonial_events.7
-			10 = dvg_patagonia.2
+			10 = patagonia.2
 			10 = amazon.2
 
 			10 = africa_colonial_events.40
@@ -190,5 +212,6 @@
 	}
 
 	weight = 200
-	should_be_pinned_by_default = yes
+		
+	should_be_pinned_by_default_uninvolved_or_context = yes
 }
