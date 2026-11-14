@@ -1,1 +1,89 @@
-﻿
+﻿je_indian_removal = {
+	icon = "gfx/interface/icons/event_icons/event_skull.dds"
+
+	group = je_group_usa_manifest_destiny
+
+	activation_description = {
+		always = yes
+	}
+
+	on_monthly_pulse = {
+		random_events = {
+			20 = 0
+			#2 = native_resettlement.2 # john ross. Fires once because very specific.
+			2 = native_resettlement.3 # Preparing for resettlement, repeats.
+			1 = native_resettlement.4 # Trail of Tears, requires native_resettlement.3 to have fired at least once.
+		}
+	}
+
+	outcome = {
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			OR = {
+				has_law_or_variant = law_type:law_no_colonial_affairs
+				country_average_culture_pop_acceptance = { culture = cu:cherokee value >= acceptance_status_4 }
+				custom_tooltip = {
+					text = indian_removal_fail_tt
+					NOT = {
+						any_scope_state = {
+							any_scope_pop = {
+								culture = cu:cherokee
+							}
+						}
+					}
+				}
+			}
+		}
+		effect = {
+			custom_tooltip = {
+				text = indian_removal_end
+				if = {
+					limit = {
+						NOT = {
+							any_scope_pop = {
+								culture = cu:cherokee
+							}
+						}
+					}
+					trigger_event = { id = native_resettlement.5 }
+				}
+				else = {
+					trigger_event = { id = native_resettlement.6 }
+				}
+			}
+			je_indian_removal_cleanup = yes
+		}
+	}
+
+	#outcome = {
+		#flags = { hidden invalid_outcome }
+		#conclusion_desc = je_standard_failure_conclusion_desc
+		#trigger = {
+			#NOT = { c:SEQ ?= { is_at_war_with_overlord = yes } }
+			#OR = {
+				#NOT = { owns_entire_or_is_contesting_state_region = STATE_GEORGIA }
+				#NOT = {
+					#AND = {
+						#exists = c:SEQ
+						#exists = c:USA
+						#c:SEQ ?= { is_subject_of = c:USA }
+					#}
+				#}
+			#}
+			#NOT = { war_may_restore_country = SEQ }
+		#}
+		#effect = {
+		#	je_indian_removal_cleanup = yes
+		#}
+	#}
+
+	weight = 200
+
+		
+	should_be_pinned_by_default_uninvolved_or_context = yes
+
+	transferable = no
+}
