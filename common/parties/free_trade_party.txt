@@ -286,7 +286,7 @@ free_trade_party = {
 			country_has_voting_franchise = yes
 			OR = {
 				py:free_trade_party ?= {
-					any_member = {}
+					party_has_members = yes
 				}			
 				any_interest_group = {
 					ig_counts_as_marginal = no
@@ -384,7 +384,7 @@ free_trade_party = {
 					leader ?= {
 						has_ideology = ideology:ideology_market_liberal
 					}
-					has_ideology = ideology:ideology_laissez_faire
+					has_ideology = ideology:ideology_plutocratic
 				}
 			}
 			add = {
@@ -440,7 +440,7 @@ free_trade_party = {
 					leader ?= {
 						has_ideology = ideology:ideology_market_liberal
 					}
-					has_ideology = ideology:ideology_laissez_faire
+					has_ideology = ideology:ideology_plutocratic
 				}
 				NOT = {
 					owner = {
@@ -473,16 +473,15 @@ free_trade_party = {
 		}
 		if = { # landowners and industrialists hate labor rights
 			limit = {
-				OR = {
-					has_hierarchic_ideology = yes
-					has_ideology = ideology:ideology_laissez_faire
-					has_ideology = ideology:ideology_interventionist
-				}
 				owner = {
 					OR = {
 						has_law_or_variant = law_type:law_regulatory_bodies
 						has_law_or_variant = law_type:law_worker_protections
 					}
+				}
+				law_enactment_stance = {
+					law = law_type:law_no_workers_rights
+					value > neutral
 				}
 			}
 			add = {
@@ -492,15 +491,15 @@ free_trade_party = {
 		}
 		if = { # conservatives hate welfare
 			limit = {
-				OR = {
-					has_hierarchic_ideology = yes
-					has_ideology = ideology:ideology_individualist
-				}
 				owner = {
 					OR = {
 						has_law_or_variant = law_type:law_wage_subsidies
 						has_law_or_variant = law_type:law_old_age_pension
 					}
+				}
+				law_enactment_stance = {
+					law = law_type:law_poor_laws
+					value > neutral
 				}
 			}
 			add = {
@@ -513,12 +512,9 @@ free_trade_party = {
 				owner = {
 					NOT = { has_law_or_variant = law_type:law_child_labor_allowed }
 				}
-				OR = {
-					leader ?= {
-						has_ideology = ideology:ideology_market_liberal
-					}
-					has_ideology = ideology:ideology_laissez_faire
-					has_ideology = ideology:ideology_interventionist
+				law_enactment_stance = {
+					law = law_type:law_child_labor_allowed
+					value > neutral
 				}
 			}
 			add = {
@@ -531,11 +527,9 @@ free_trade_party = {
 				owner = {
 					NOT = { has_law_or_variant = law_type:law_free_trade }
 				}
-				OR = {
-					leader ?= {
-						has_ideology = ideology:ideology_market_liberal
-					}
-					has_ideology = ideology:ideology_laissez_faire
+				law_enactment_stance = {
+					law = law_type:law_free_trade
+					value > neutral
 				}
 			}
 			add = {
@@ -563,7 +557,10 @@ free_trade_party = {
 				owner = {
 					has_law_or_variant = law_type:law_autocracy
 				}
-				has_ideology = ideology:ideology_republican
+				law_enactment_stance = {
+					law = law_type:law_wealth_voting
+					value > neutral
+				}
 			}
 			add = {
 				value = 3
@@ -575,17 +572,9 @@ free_trade_party = {
 				owner = {
 					has_law_or_variant = law_type:law_universal_suffrage
 				}
-				OR = {
-					has_ideology = ideology:ideology_paternalistic
-					has_ideology = ideology:ideology_magnatial
-					# ig_has_carlist_ideology = yes
-					has_ideology = ideology:ideology_moderantist
-					leader ?= {
-						has_ideology = ideology:ideology_fascist
-					}
-					leader ?= {
-						has_ideology = ideology:ideology_integralist
-					}
+				law_stance = {
+					law = law_type:law_universal_suffrage
+					value < neutral
 				}
 			}
 			add = {
@@ -598,12 +587,10 @@ free_trade_party = {
 				owner = {
 					has_technology_researched = currency_standards
 					NOT = { has_law_or_variant = law_type:law_per_capita_based_taxation }
-					NOT = { has_law_or_variant = law_type:law_consumption_based_taxation }
 				}
-				OR = {
-					has_ideology = ideology:ideology_plutocratic
-					has_ideology = ideology:ideology_meritocratic
-					has_ideology = ideology:ideology_cartist
+				law_enactment_stance = {
+					law = law_type:law_per_capita_based_taxation
+					value > neutral
 				}
 			}
 			add = {
@@ -616,11 +603,9 @@ free_trade_party = {
 				owner = {
 					has_law_or_variant = law_type:law_graduated_taxation
 				}
-				OR = {
-					has_ideology = ideology:ideology_plutocratic
-					has_ideology = ideology:ideology_meritocratic
-					has_ideology = ideology:ideology_cartist
-					has_hierarchic_ideology = yes
+				law_stance = {
+					law = law_type:law_graduated_taxation
+					value < neutral
 				}
 			}
 			add = {
@@ -628,39 +613,15 @@ free_trade_party = {
 				desc = "from_graduated_taxation"
 			}
 		}
-		if = { # alliance for consumption taxes
-			limit = {
-				owner = {
-					NOT = { has_law_or_variant = law_type:law_consumption_based_taxation }
-					NOT = { has_law_or_variant = law_type:law_per_capita_based_taxation }
-				}
-				OR = {
-					has_ideology = ideology:ideology_agrarian
-					has_hierarchic_ideology = yes
-				}
-			}
-			add = {
-				value = 3
-				desc = "from_no_consumption_tax"
-			}
-		}
 		if = { # opposition to command economy
 			limit = {
 				owner = {
-					has_law_or_variant = law_type:law_command_economy
 					has_technology_researched = central_planning
+					has_law_or_variant = law_type:law_command_economy
 				}
-				OR = {
-					has_ideology = ideology:ideology_paternalistic
-					has_ideology = ideology:ideology_magnatial
-					ig_has_carlist_ideology = yes
-					has_ideology = ideology:ideology_moderantist
-					has_ideology = ideology:ideology_laissez_faire
-					has_ideology = ideology:ideology_interventionist
-					has_ideology = ideology:ideology_agrarian
-					leader ?= {
-						has_ideology = ideology:ideology_market_liberal
-					}
+				law_stance = {
+					law = law_type:law_command_economy
+					value < neutral
 				}
 			}
 			add = {
@@ -672,14 +633,13 @@ free_trade_party = {
 			limit = {
 				owner = {
 					has_technology_researched = academia
-					OR = {
-						has_law_or_variant = law_type:law_no_schools
-						has_law_or_variant = law_type:law_religious_schools
+					NOT = {
+						has_law_or_variant = law_type:law_private_schools
 					}
 				}
-				OR = {
-					has_ideology = ideology:ideology_individualist
-					has_ideology = ideology:ideology_anti_clerical
+				law_enactment_stance = {
+					law = law_type:law_private_schools
+					value > neutral
 				}
 			}
 			add = {

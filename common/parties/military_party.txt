@@ -216,7 +216,7 @@ military_party = {
 			country_has_voting_franchise = yes
 			OR = {
 				py:military_party ?= {
-					any_member = {}
+					party_has_members = yes
 				}			
 				ig:ig_armed_forces ?= {
 					ig_counts_as_marginal = no
@@ -325,14 +325,13 @@ military_party = {
 		}
 		if = { # conservatives like police
 			limit = {
-				OR = {
-					has_paternalist_ideology = yes
-					has_ideology = ideology:ideology_patriotic
-					has_ideology = ideology:ideology_military_absolutist
-				}
 				owner = {
 					has_technology_researched = law_enforcement
 					has_law_or_variant = law_type:law_no_police
+				}
+				law_stance = {
+					law = law_type:law_no_police
+					value < neutral
 				}
 			}
 			add = {
@@ -342,21 +341,12 @@ military_party = {
 		}
 		if = { # opposition to peasant levies
 			limit = {
-				OR = {
-					has_ideology = ideology:ideology_jingoist
-					has_ideology = ideology:ideology_particularist
-					has_ideology = ideology:ideology_sikh_moralist
-					leader ?= {
-						OR = {
-							has_ideology = ideology:ideology_fascist
-							has_ideology = ideology:ideology_anarchist
-							has_ideology = ideology:ideology_pacifist
-							has_ideology = ideology:ideology_jingoist_leader
-						}
-					}
-				}
-				owner = {
+				owner ?= {
 					has_law_or_variant = law_type:law_peasant_levies
+				}
+				law_stance = {
+					law = law_type:law_peasant_levies
+					value < neutral
 				}
 			}
 			add = {
@@ -385,20 +375,14 @@ military_party = {
 			}
 			if = {
 				limit = {
-				OR = {
-					has_ideology = ideology:ideology_meritocratic
-					AND = {
-						has_ideology = ideology:ideology_loyalist
-						owner = {
-							NOT = { has_law_or_variant = law_type:law_graduated_taxation }
+					owner ?= {
+						NOT = {
+							has_law_or_variant = law_type:law_proportional_taxation
 						}
 					}
-				}
-				owner = {
-					NOR = {
-						has_law_or_variant = law_type:law_proportional_taxation
-						has_law_or_variant = law_type:law_per_capita_based_taxation
-					}
+					law_enactment_stance = {
+						law = law_type:law_proportional_taxation
+						value > neutral
 					}
 				}
 				add = {
@@ -410,16 +394,15 @@ military_party = {
 		# alliance for stricter internal security
 		if = {
 			limit = {
-				OR = {
-					has_ideology = ideology:ideology_patriotic
-					has_ideology = ideology:ideology_military_absolutist
-					leader ?= { has_ideology = ideology:ideology_authoritarian }
-				}
 				owner = {
 					OR = {
 						has_law_or_variant = law_type:law_no_home_affairs
 						has_law_or_variant = law_type:law_guaranteed_liberties
 					}
+				}
+				law_enactment_stance = {
+					law = law_type:law_secret_police
+					value > neutral
 				}
 			}
 			add = {
@@ -430,17 +413,14 @@ military_party = {
 		if = { # conservatives like censorship
 			limit = {
 				owner = {
-					has_technology_researched = law_enforcement
 					OR = {
 						has_law_or_variant = law_type:law_right_of_assembly
 						has_law_or_variant = law_type:law_protected_speech
 					}
 				}
-				OR = {
-					has_ideology = ideology:ideology_patriarchal
-					has_ideology = ideology:ideology_patriotic
-					has_ideology = ideology:ideology_military_absolutist
-					leader ?= { has_ideology = ideology:ideology_authoritarian }
+				law_enactment_stance = {
+					law = law_type:law_censorship
+					value > neutral
 				}
 			}
 			add = {
