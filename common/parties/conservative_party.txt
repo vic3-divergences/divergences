@@ -595,7 +595,7 @@ conservative_party = {
 			country_has_voting_franchise = yes
 			OR = {
 				py:conservative_party ?= {
-					any_member = {}
+					party_has_members = yes
 				}			
 				ig:ig_landowners ?= {
 					ig_counts_as_marginal = no
@@ -644,12 +644,9 @@ conservative_party = {
 			limit = {
 				leader ?= {
 					OR = {
-						has_ideology = ideology:ideology_communist
-						has_ideology = ideology:ideology_vanguardist
-						has_ideology = ideology:ideology_anarchist
+						has_socialist_ideology = yes
 						has_ideology = ideology:ideology_state_socialist
 						has_ideology = ideology:ideology_radical
-						has_ideology = ideology:ideology_nihilist
 					}
 				}
 			}
@@ -683,7 +680,7 @@ conservative_party = {
 				OR = {
 					has_paternalist_ideology = yes
 					has_hierarchic_ideology = yes
-					has_ideology = ideology:ideology_patriarchal
+					has_patriarchal_ideology = yes
 					has_ideology = ideology:ideology_moralist
 					has_ideology = ideology:ideology_corporatist
 				}
@@ -767,6 +764,7 @@ conservative_party = {
 			limit = {
 				OR = {
 					has_ideology = ideology:ideology_patriotic
+					has_ideology = ideology:ideology_militarist
 					has_ideology = ideology:ideology_military_absolutist
 				}
 			}
@@ -777,12 +775,12 @@ conservative_party = {
 		}
 		if = { # capitalists more likely to join conservatives when the poor can vote
 			limit = {
-				OR = {
-					has_ideology = ideology:ideology_plutocratic
-					has_paternalist_ideology = yes
-				}
 				owner = {
 					has_law_or_variant = law_type:law_universal_suffrage
+				}
+				law_stance = {
+					law = law_type:law_universal_suffrage
+					value < neutral
 				}
 			}
 			add = {
@@ -792,12 +790,12 @@ conservative_party = {
 		}
 		if = { # capitalists and landowners more likely to join with progressive taxation
 			limit = {
-				OR = {
-					has_ideology = ideology:ideology_plutocratic
-					has_hierarchic_ideology = yes
-				}
 				owner = {
 					has_law_or_variant = law_type:law_graduated_taxation
+				}
+				law_stance = {
+					law = law_type:law_graduated_taxation
+					value < neutral
 				}
 			}
 			add = {
@@ -807,9 +805,12 @@ conservative_party = {
 		}
 		if = { # capitalists more likely to join conservatives with public health
 			limit = {
-				has_ideology = ideology:ideology_individualist
 				owner = {
 					has_law_or_variant = law_type:law_public_health_insurance
+				}
+				law_stance = {
+					law = law_type:law_public_health_insurance
+					value < neutral
 				}
 			}
 			add = {
@@ -819,12 +820,12 @@ conservative_party = {
 		}
 		if = { # devout, industrialists more likely to join conservatives with public schools
 			limit = {
-				OR = {
-					has_ideology = ideology:ideology_individualist
-					has_ideology = ideology:ideology_pious
-				}
 				owner = {
 					has_law_or_variant = law_type:law_public_schools
+				}
+				law_stance = {
+					law = law_type:law_public_schools
+					value < neutral
 				}
 			}
 			add = {
@@ -834,9 +835,12 @@ conservative_party = {
 		}
 		if = { # devout more likely to join conservatives with total separation
 			limit = {
-				has_ideology = ideology:ideology_moralist
 				owner = {
 					has_law_or_variant = law_type:law_total_separation
+				}
+				law_stance = {
+					law = law_type:law_total_separation
+					value < neutral
 				}
 			}
 			add = {
@@ -846,9 +850,12 @@ conservative_party = {
 		}
 		if = { # devout more likely to join conservatives with freedom of conscience
 			limit = {
-				has_ideology = ideology:ideology_moralist
 				owner = {
 					has_law_or_variant = law_type:law_freedom_of_conscience
+				}
+				law_stance = {
+					law = law_type:law_freedom_of_conscience
+					value < neutral
 				}
 			}
 			add = {
@@ -858,9 +865,12 @@ conservative_party = {
 		}
 		if = { # patriarchs more likely to join conservatives with women's suffrage
 			limit = {
-				has_ideology = ideology:ideology_patriarchal
 				owner = {
 					has_law_or_variant = law_type:law_womens_suffrage
+				}
+				law_stance = {
+					law = law_type:law_womens_suffrage
+					value < neutral
 				}
 			}
 			add = {
@@ -870,9 +880,12 @@ conservative_party = {
 		}
 		if = { # patriarchs more likely to join conservatives with working women
 			limit = {
-				has_ideology = ideology:ideology_patriarchal
 				owner = {
 					has_law_or_variant = law_type:law_women_in_the_workplace
+				}
+				law_stance = {
+					law = law_type:law_women_in_the_workplace
+					value < neutral
 				}
 			}
 			add = {
@@ -882,9 +895,12 @@ conservative_party = {
 		}
 		if = { # reactionaries like regressing from multiculturalism
 			limit = {
-				has_ideology = ideology:ideology_reactionary
 				owner = {
 					has_law_or_variant = law_type:law_multicultural
+				}
+				law_stance = {
+					law = law_type:law_multicultural
+					value < neutral
 				}
 			}
 			add = {
@@ -895,16 +911,15 @@ conservative_party = {
 		# alliance for stricter internal security
 		if = {
 			limit = {
-				OR = {
-					has_ideology = ideology:ideology_patriotic
-					has_ideology = ideology:ideology_military_absolutist
-					leader ?= { has_ideology = ideology:ideology_authoritarian }
-				}
 				owner = {
 					OR = {
 						has_law_or_variant = law_type:law_no_home_affairs
 						has_law_or_variant = law_type:law_guaranteed_liberties
 					}
+				}
+				law_enactment_stance = {
+					law = law_type:law_secret_police
+					value > neutral
 				}
 			}
 			add = {
@@ -915,17 +930,14 @@ conservative_party = {
 		if = { # conservatives like censorship
 			limit = {
 				owner = {
-					has_technology_researched = law_enforcement
 					OR = {
 						has_law_or_variant = law_type:law_right_of_assembly
 						has_law_or_variant = law_type:law_protected_speech
 					}
 				}
-				OR = {
-					has_ideology = ideology:ideology_patriarchal
-					has_ideology = ideology:ideology_patriotic
-					has_ideology = ideology:ideology_military_absolutist
-					leader ?= { has_ideology = ideology:ideology_authoritarian }
+				law_enactment_stance = {
+					law = law_type:law_censorship
+					value > neutral
 				}
 			}
 			add = {
@@ -935,18 +947,15 @@ conservative_party = {
 		}
 		if = { # conservatives hate republics
 			limit = {
-				OR = {
-					has_ideology = ideology:ideology_moralist
-					has_ideology = ideology:ideology_paternalistic
-					has_ideology = ideology:ideology_magnatial
-					ig_has_carlist_ideology = yes
-					has_ideology = ideology:ideology_moderantist
-				}
 				owner = {
 					NOR = {
-						has_law = law_type:law_monarchy
+						country_has_monarchy_law = yes
 						has_law_or_variant = law_type:law_theocracy
 					}
+				}
+				law_enactment_stance = {
+					law = law_type:law_monarchy
+					value > neutral
 				}
 			}
 			add = {
@@ -956,16 +965,15 @@ conservative_party = {
 		}
 		if = { # landowners and industrialists hate labor rights
 			limit = {
-				OR = {
-					has_hierarchic_ideology = yes
-					has_ideology = ideology:ideology_laissez_faire
-					has_ideology = ideology:ideology_interventionist
-				}
 				owner = {
 					OR = {
 						has_law_or_variant = law_type:law_regulatory_bodies
 						has_law_or_variant = law_type:law_worker_protections
 					}
+				}
+				law_enactment_stance = {
+					law = law_type:law_no_workers_rights
+					value > neutral
 				}
 			}
 			add = {
@@ -975,15 +983,15 @@ conservative_party = {
 		}
 		if = { # conservatives hate welfare
 			limit = {
-				OR = {
-					has_hierarchic_ideology = yes
-					has_ideology = ideology:ideology_individualist
-				}
 				owner = {
 					OR = {
 						has_law_or_variant = law_type:law_wage_subsidies
 						has_law_or_variant = law_type:law_old_age_pension
 					}
+				}
+				law_enactment_stance = {
+					law = law_type:law_poor_laws
+					value > neutral
 				}
 			}
 			add = {
@@ -993,14 +1001,13 @@ conservative_party = {
 		}
 		if = { # conservatives like police
 			limit = {
-				OR = {
-					has_paternalist_ideology = yes
-					has_ideology = ideology:ideology_patriotic
-					has_ideology = ideology:ideology_military_absolutist
-				}
 				owner = {
 					has_technology_researched = law_enforcement
 					has_law_or_variant = law_type:law_no_police
+				}
+				law_stance = {
+					law = law_type:law_no_police
+					value < neutral
 				}
 			}
 			add = {

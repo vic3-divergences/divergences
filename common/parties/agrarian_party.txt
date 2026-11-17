@@ -302,7 +302,7 @@ agrarian_party = {
 			country_has_voting_franchise = yes
 			OR = {
 				py:agrarian_party ?= {
-					any_member = {}
+					party_has_members = yes
 				}
 				ig:ig_rural_folk ?= {
 					ig_counts_as_marginal = no
@@ -414,11 +414,12 @@ agrarian_party = {
 		}
 		if = { # pacifist anti-colonial alliance
 			limit = {
-				leader ?= {
-					has_ideology = ideology:ideology_pacifist
-				}
 				owner = {
 					NOT = { has_law_or_variant = law_type:law_no_colonial_affairs }
+				}
+				law_enactment_stance = {
+					law = law_type:law_no_colonial_affairs
+					value > neutral
 				}
 			}
 			add = {
@@ -428,13 +429,12 @@ agrarian_party = {
 		}
 		if = { # anti-immigration alliance
 			limit = {
-				OR = {
-					has_ideology = ideology:ideology_isolationist
-					has_ideology = ideology:ideology_populist
-					has_ideology = ideology:ideology_reactionary
-				}
 				owner = {
 					has_law_or_variant = law_type:law_no_migration_controls
+				}
+				law_stance = {
+					law = law_type:law_no_migration_controls
+					value < neutral
 				}
 			}
 			add = {
@@ -474,157 +474,115 @@ agrarian_party = {
 		}
 		if = { # against arbitrary or militarized policing
 			limit = {
-				OR = {
-					has_ideology = ideology:ideology_liberal
-					has_ideology = ideology:ideology_liberal_modern
-					has_ideology = ideology:ideology_particularist
-				}
-				owner = {
+				owner ?= {
 					OR = {
 						has_law_or_variant = law_type:law_local_police
 						has_law_or_variant = law_type:law_militarized_police
 					}
 				}
+				law_enactment_stance = {
+					law = law_type:law_no_police
+					value > neutral
+				}
 			}
 			add = {
-				value = 6
+				value = 3
 				desc = "from_bad_police"
 			}
 		}
 		if = { # against land-based taxation
 			limit = {
-				OR = {
-					has_ideology = ideology:ideology_meritocratic
-					has_ideology = ideology:ideology_cartist
-					has_ideology = ideology:ideology_agrarian
-					leader ?= {
-						has_ideology = ideology:ideology_state_socialist
-					}
-				}
-				owner = {
+				owner ?= {
 					has_law_or_variant = law_type:law_land_based_taxation
+				}
+				law_stance = {
+					law = law_type:law_land_based_taxation
+					value < neutral
 				}
 			}
 			add = {
-				value = 6
+				value = 3
 				desc = "from_land_tax"
 			}
 		}
 		if = { # against free trade - peasant/socialist alliance
 			limit = {
-				OR = {
-					has_ideology = ideology:ideology_proletarian
-					has_ideology = ideology:ideology_agrarian
-					has_ideology = ideology:ideology_paternalistic
-					has_ideology = ideology:ideology_magnatial
-				}
-				owner = {
+				owner ?= {
 					has_law_or_variant = law_type:law_free_trade
 				}
-				NOT = {
-					leader ?= {
-						has_ideology = ideology:ideology_market_liberal
-					}
+				law_stance = {
+					law = law_type:law_free_trade
+					value < neutral
 				}
 			}
 			add = {
-				value = 6
+				value = 3
 				desc = "from_anti_free_trade"
 			}
 		}
 		if = { # against laissez-faire - peasant/socialist alliance
 			limit = {
-				OR = {
-					has_ideology = ideology:ideology_proletarian
-					has_ideology = ideology:ideology_agrarian
-					leader ?= {
-						has_ideology = ideology:ideology_protectionist
-					}
-				}
-				owner = {
+				owner ?= {
 					has_law_or_variant = law_type:law_laissez_faire
 				}
-				NOT = {
-					leader ?= {
-						has_ideology = ideology:ideology_market_liberal
-					}
+				law_stance = {
+					law = law_type:law_laissez_faire
+					value < neutral
 				}
 			}
 			add = {
-				value = 6
-				desc = "from_anti_free_trade"
+				value = 3
+				desc = "from_anti_laissez_faire"
 			}
 		}
 		if = { # opposition to peasant levies
 			limit = {
-				OR = {
-					has_ideology = ideology:ideology_jingoist
-					has_ideology = ideology:ideology_particularist
-					has_ideology = ideology:ideology_sikh_moralist
-					leader ?= {
-						OR = {
-							has_ideology = ideology:ideology_fascist
-							has_ideology = ideology:ideology_anarchist
-							has_ideology = ideology:ideology_pacifist
-							has_ideology = ideology:ideology_jingoist_leader
-						}
-					}
-				}
-				owner = {
+				owner ?= {
 					has_law_or_variant = law_type:law_peasant_levies
+				}
+				law_stance = {
+					law = law_type:law_peasant_levies
+					value < neutral
 				}
 			}
 			add = {
-				value = 6
+				value = 3
 				desc = "from_peasant_levies"
 			}
 		}
 		if = { # anti-serfdom
 			limit = {
-				owner = {
+				owner ?= {
 					has_law_or_variant = law_type:law_serfdom
 				}
-				OR = {
-					has_ideology = ideology:ideology_egalitarian
-					has_ideology = ideology:ideology_egalitarian_modern
-					has_ideology = ideology:ideology_anti_slavery
-					has_ideology = ideology:ideology_laissez_faire
-					has_ideology = ideology:ideology_interventionist
-					has_ideology = ideology:ideology_particularist
-					leader ?= {
-						OR = {
-						has_ideology = ideology:ideology_abolitionist
-						has_ideology = ideology:ideology_state_socialist
-						has_ideology = ideology:ideology_communist
-								has_ideology = ideology:ideology_vanguardist
-						}
-					}
+				law_stance = {
+					law = law_type:law_serfdom
+					value < neutral
 				}
 			}
 			add = {
-				value = 10
+				value = 5
 				desc = "from_serfdom"
 			}
 		}
 		if = { # opposition to debt slavery
 			limit = {
-				owner = {
+				owner ?= {
 					has_law_or_variant = law_type:law_debt_slavery
 				}
-				OR = {
-					has_ideology = ideology:ideology_anti_slavery
-					leader ?= {
-						has_ideology = ideology:ideology_abolitionist
-					}
+				law_stance = {
+					law = law_type:law_debt_slavery
+					value < neutral
 				}
 			}
 			add = {
-				value = 10
+				value = 5
 				desc = "from_debt_slavery"
 			}
 		}
 		if = { # nobody will join if the rural folk don't join
 			limit = {
+				scope:founding_party = no
 				NOT = { is_interest_group_type = ig_rural_folk }
 				OR = {
 					NOT = { exists = owner.py:agrarian_party }

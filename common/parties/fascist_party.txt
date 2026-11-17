@@ -421,7 +421,7 @@
 			country_has_voting_franchise = yes
 			OR = {
 				py:fascist_party ?= {
-					any_member = {}
+					party_has_members = yes
 				}			
 				any_interest_group = {
 					leader ?= {
@@ -535,12 +535,9 @@
 			limit = {
 				leader ?= {
 					OR = {
-						has_ideology = ideology:ideology_communist
-						has_ideology = ideology:ideology_vanguardist
-						has_ideology = ideology:ideology_anarchist
+						has_socialist_ideology = yes
 						has_ideology = ideology:ideology_state_socialist
 						has_ideology = ideology:ideology_radical
-						has_ideology = ideology:ideology_nihilist
 					}
 				}
 			}
@@ -579,8 +576,9 @@
 		}
 		if = { # free trade advocates don't love protectionism
 			limit = {
-				leader ?= {
-					has_ideology = ideology:ideology_market_liberal
+				law_stance = {
+					law = law_type:law_free_trade
+					value > neutral
 				}
 			}
 			add = {
@@ -629,6 +627,7 @@
 				OR = {
 					has_ideology = ideology:ideology_military_absolutist
 					has_ideology = ideology:ideology_patriotic
+					has_ideology = ideology:ideology_militarist
 				}
 			}
 			add = {
@@ -636,28 +635,30 @@
 				desc = "from_patriot"
 			}
 		}
-		if = { # rural folk will ally with anti-migration faction
+		if = { # anti-immigration alliance
 			limit = {
-				has_ideology = ideology:ideology_isolationist
 				owner = {
 					has_law_or_variant = law_type:law_no_migration_controls
+				}
+				law_stance = {
+					law = law_type:law_no_migration_controls
+					value < neutral
 				}
 			}
 			add = {
 				value = 5
-				desc = "from_isolationist"
+				desc = "from_migration_law"
 			}
 		}
 		if = { # conservatives like police
 			limit = {
-				OR = {
-					has_paternalist_ideology = yes
-					has_ideology = ideology:ideology_patriotic
-					has_ideology = ideology:ideology_military_absolutist
-				}
 				owner = {
 					has_technology_researched = law_enforcement
 					has_law_or_variant = law_type:law_no_police
+				}
+				law_stance = {
+					law = law_type:law_no_police
+					value < neutral
 				}
 			}
 			add = {
@@ -665,21 +666,14 @@
 				desc = "from_no_police"
 			}
 		}
-		if = { # opposition to peasant levies
+		if = { # anti-peasant levies
 			limit = {
-				OR = {
-					has_ideology = ideology:ideology_jingoist
-					has_ideology = ideology:ideology_particularist
-					has_ideology = ideology:ideology_sikh_moralist
-					leader ?= {
-						OR = {
-							has_ideology = ideology:ideology_fascist
-							has_ideology = ideology:ideology_jingoist_leader
-						}
-					}
-				}
-				owner = {
+				owner ?= {
 					has_law_or_variant = law_type:law_peasant_levies
+				}
+				law_stance = {
+					law = law_type:law_peasant_levies
+					value < neutral
 				}
 			}
 			add = {
@@ -687,28 +681,21 @@
 				desc = "from_peasant_levies"
 			}
 		}
-		if = { # loyalist-meritocratic alliance for tax reform
+		if = { # loyalist/proletarian/meritocratic alliance for tax reform
 			limit = {
-				OR = {
-					has_ideology = ideology:ideology_meritocratic
-					has_ideology = ideology:ideology_cartist
-					AND = {
-						has_ideology = ideology:ideology_loyalist
-						owner = {
-							NOT = { has_law_or_variant = law_type:law_graduated_taxation }
-						}
+				owner ?= {
+					NOT = {
+						has_law_or_variant = law_type:law_proportional_taxation
 					}
 				}
-				owner = {
-					NOR = {
-						has_law_or_variant = law_type:law_proportional_taxation
-						has_law_or_variant = law_type:law_per_capita_based_taxation
-					}
+				law_enactment_stance = {
+					law = law_type:law_proportional_taxation
+					value > neutral
 				}
 			}
 			add = {
 				value = 3
-				desc = "from_no_proportional_or_per_capita_tax"
+				desc = "from_lacking_tax_laws"
 			}
 		}
 		if = { # authoritarians inclined towards fascism
