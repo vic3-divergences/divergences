@@ -1,0 +1,114 @@
+﻿namespace = intelligentsia
+
+intelligentsia.1 = {
+	type = country_event
+	placement = root
+
+	duration = 3
+
+	title = intelligentsia.1.t
+	desc = intelligentsia.1.d
+	flavor = intelligentsia.1.f
+
+	event_image = {
+		video = "europenorthamerica_political_extremism"
+	}
+
+	fire_only_once = yes
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_default.dds"
+
+	trigger = {
+		country_has_monarchy_law = yes
+		has_technology_researched = egalitarianism
+		ig:ig_intelligentsia ?= {
+			is_marginal = no
+			OR = {
+				has_ideology = ideology:ideology_constitutionalist
+				has_ideology = ideology:ideology_autocratic
+			}
+			OR = {
+				ig_approval <= define:NPolitics|APPROVAL_THRESHOLD_ANGRY
+				is_insurrectionary = yes
+			}
+		}
+		any_political_movement = {
+			political_movement_support >= 0.05 # Above marginal
+            political_movement_radicalism >= define:NPolitics|RADICALISM_PROTESTING_THRESHOLD # 0.50
+			law_stance = {
+				law = law_type:law_monarchy
+				value < neutral
+			}
+			any_influenced_interest_group = {
+				is_interest_group_type = ig_intelligentsia
+			}
+		}
+	}
+
+	immediate = {
+		ig:ig_intelligentsia ?= {
+			save_scope_as = intelligentsia_scope
+		}
+		random_political_movement = {
+			limit = {
+				political_movement_support >= 0.05 # Above marginal
+				political_movement_radicalism >= define:NPolitics|RADICALISM_PROTESTING_THRESHOLD # 0.50
+				law_stance = {
+					law = law_type:law_monarchy
+					value < neutral
+				}
+				any_influenced_interest_group = {
+					is_interest_group_type = ig_intelligentsia
+				}
+			}
+			save_scope_as = republican_movement_scope
+		}
+	}
+
+	option = {
+		name = intelligentsia.1.a
+		default_option = yes
+		ai_chance = {
+			base = 10
+		}
+		ig:ig_intelligentsia ?= {
+			add_modifier = {
+				name = modifier_republican_intelligentsia
+				days = normal_modifier_time
+			}
+		}
+	}
+
+	option = {
+		name = intelligentsia.1.b
+		ai_chance = {
+			base = 10
+		}
+		scope:republican_movement_scope ?= {
+			add_modifier = {
+				name = modifier_republican_movement_growing
+				days = normal_modifier_time
+			}
+		}
+	}
+	after = {
+		ig:ig_intelligentsia ?= {
+			if = {
+				limit = {
+					has_ideology = ideology:ideology_autocratic
+				}
+				remove_ideology = ideology_autocratic
+				add_ideology = ideology_republican
+			}
+			if = {
+				limit = {
+					has_ideology = ideology:ideology_constitutionalist
+				}
+				remove_ideology = ideology_constitutionalist
+				add_ideology = ideology_republican
+			}
+		}
+	}
+}

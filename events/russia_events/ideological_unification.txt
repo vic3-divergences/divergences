@@ -1,0 +1,162 @@
+﻿namespace = ideological_unification
+
+ideological_unification.1 = { # Communism
+	type = country_event
+
+	icon = "gfx/interface/icons/event_icons/event_revolutionary_flag.dds"
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	title = ideological_unification.1.t
+	desc = ideological_unification.1.d
+	flavor = ideological_unification.1.f
+
+	duration = 3
+
+	fire_only_once = yes
+
+	event_image = {
+		video = "unspecific_signed_contract"
+	}
+
+	trigger = {
+		has_law_or_variant = law_type:law_council_republic
+		is_diplomatic_play_committed_participant = no
+		is_at_war = no
+		any_neighbouring_state = {
+			owner ?= {
+				save_temporary_scope_as = unification_candidate
+				has_law_or_variant = law_type:law_council_republic
+				prestige > ROOT.prestige
+				ROOT = {
+					any_primary_culture = { # Every one of our primary cultures is a primary culture of the relevant unifier
+						is_primary_culture_of = scope:unification_candidate
+						count = all
+					}
+					OR = {
+						is_subject = no
+						AND = {
+							is_subject = yes
+							scope:unification_candidate ?= overlord
+						}
+					}
+				}
+				relations:root > 0
+				is_diplomatic_play_committed_participant = no
+				is_at_war = no
+			}
+		}
+	}
+
+	immediate = {
+		save_scope_as = smaller_country_scope
+		ordered_country = {
+			limit = {
+				save_temporary_scope_as = unification_candidate
+				has_law_or_variant = law_type:law_council_republic
+				prestige > ROOT.prestige
+				ROOT = {
+					any_primary_culture = { # Every one of our primary cultures is a primary culture of the relevant unifier
+						is_primary_culture_of = scope:unification_candidate
+						count = all
+					}
+				}
+				relations:root > 0
+				is_diplomatic_play_committed_participant = no
+				is_at_war = no
+				any_neighbouring_state = {
+					owner ?= ROOT
+				}
+			}
+			order_by = prestige
+			position = 0
+			save_scope_as = mother_country_scope
+		}
+	}
+
+	option = {
+		name = ideological_unification.1.a
+		default_option = yes
+		ai_chance = {
+			base = 100
+		}
+		scope:mother_country_scope ?= {
+			trigger_event = { id = ideological_unification.11 }
+		}
+	}
+
+	option = {
+		name = ideological_unification.1.b
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+
+ideological_unification.11 = { # Communism - Mother Country
+	type = country_event
+
+	icon = "gfx/interface/icons/event_icons/event_revolutionary_flag.dds"
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	title = ideological_unification.11.t
+	desc = ideological_unification.11.d
+	flavor = ideological_unification.11.f
+
+	event_image = {
+		video = "ep1_power_blocs"
+	}
+
+	duration = 3
+
+	# No cooldown
+
+	trigger = {
+	}
+
+	immediate = {
+	}
+
+	option = {
+		name = ideological_unification.11.a
+		default_option = yes
+		ai_chance = {
+			base = 100
+		}
+		if = {
+			limit = {
+				scope:smaller_country_scope ?= {
+					is_player = yes
+					ROOT = { is_player = no }
+				}
+			}
+			scope:smaller_country_scope ?= {
+				play_as = ROOT
+			}
+		}
+		annex_with_incorporation = scope:smaller_country_scope
+	}
+
+	option = {
+		name = ideological_unification.11.b
+		ai_chance = {
+			base = 0
+		}
+		create_diplomatic_pact = {
+			country = scope:smaller_country_scope
+			type = puppet
+		}
+	}
+
+	option = {
+		name = ideological_unification.11.c
+		ai_chance = {
+			base = 0
+		}
+		change_relations = {
+			country = scope:smaller_country_scope
+			value = -10
+		}
+	}
+}
