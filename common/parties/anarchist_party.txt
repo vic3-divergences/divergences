@@ -7,18 +7,16 @@ anarchist_party = {
 			triggered_desc = {
 				desc = party_cnt
 				trigger = {
-					exists = c:SPA
-					THIS = c:SPA
+					c:SPA ?= THIS
 				}
 			}
 			triggered_desc = {
 				desc = party_socialist_league
 				trigger = {
-					exists = c:GBR
-					THIS = c:GBR
+					c:GBR ?= THIS
 				}
 			}
-			triggered_desc = {
+			triggered_desc = { # dvg
 				desc = party_zhourao_gongtuandang
 				trigger = {
 					country_has_primary_culture = cu:zhourao
@@ -27,27 +25,35 @@ anarchist_party = {
 			triggered_desc = {
 				desc = party_anarcho_communist_federation
 				trigger = {
-					exists = c:FRA
-					THIS = c:FRA
+					c:FRA ?= THIS
 				}
 			}
 			triggered_desc = {
-				desc = party_maximalist_federation
+				desc = party_social_revolution_group
 				trigger = {
-					country_has_primary_culture = cu:portuguese
+					c:POR ?= this
+					NOT = {
+						has_technology_researched = mass_propaganda
+					}
+				}
+			}
+			triggered_desc = {
+				desc = party_portuguese_anarchist_federation
+				trigger = {
+					c:POR ?= this
+					has_technology_researched = mass_propaganda
 				}
 			}
 			triggered_desc = {
 				desc = party_young_socialists
 				trigger = {
 					OR = {
-						country_has_primary_culture = cu:scandinavian
 						country_has_primary_culture = cu:norwegian
 						country_has_primary_culture = cu:danish
 					}
 				}
 			}
-			triggered_desc = {
+			triggered_desc = { 
 				desc = party_italian_syndicalist_union
 				trigger = {
 					OR = {
@@ -62,8 +68,7 @@ anarchist_party = {
 			triggered_desc = {
 				desc = party_minka_kamachiy
 				trigger = {
-					exists = c:TWT
-					THIS = c:TWT
+					c:TWT ?= this
 				}
 			}
 			triggered_desc = {
@@ -87,28 +92,25 @@ anarchist_party = {
 	available_for_interest_group = {
 		owner = {
 			country_has_voting_franchise = yes
-			any_interest_group = {
-				is_marginal = no
-				leader = {
-					has_ideology = ideology:ideology_anarchist
+			OR = {
+				py:anarchist_party ?= {
+					any_member = {}
+				}			
+				any_interest_group = {
+					ig_counts_as_marginal = no
+					leader ?= {
+						has_ideology = ideology:ideology_anarchist
+						has_ideology = ideology:ideology_nihilist
+					}
 				}
 			}
 		}
-		leader = {
+		leader ?= {
 			has_ideology = ideology:ideology_anarchist
+			has_ideology = ideology:ideology_nihilist
 		}
-		OR = {
-	     	NOT = {
-	         	owner = {
-	         		has_variable = only_valid_party
-	         	}
-	        }
-	        owner.var:only_valid_party = {
-	        	is_party_type = anarchist_party
-	        }
-	    }
 	}
-	
+
 	# Root - IG considering joining
 	# scope:number - the number of IGs that would join this party before the root IG
 	join_weight = {
@@ -116,9 +118,30 @@ anarchist_party = {
 			value = -5
 			desc = "base_value"
 		}
+		# if = {
+		# 	limit = {
+		# 		owner = {
+		# 			c:BIC ?= this
+		# 			is_subject = yes
+		# 			OR = {
+		# 				has_modifier = modifier_india_crown_rule
+		# 				has_modifier = modifier_india_company_rule
+		# 				has_modifier = modifier_india_company_rule_upgraded
+		# 			}
+		# 		}
+		# 		OR = {
+		# 			is_interest_group_type = ig_industrialists
+		# 			is_interest_group_type = ig_armed_forces
+		# 		}
+		# 	}
+		# 	add = {
+		# 		value = -100
+		# 		desc = "india_colonial_government"
+		# 	}
+		# }
 		if = { # anarchists like anarchism
 			limit = {
-				leader = { has_ideology = ideology:ideology_anarchist }
+				leader ?= { has_ideology = ideology:ideology_anarchist }
 			}
 			add = {
 				value = 6
@@ -128,7 +151,7 @@ anarchist_party = {
 		if = { # strong anarchists like anarchism
 			limit = {
 				is_powerful = yes
-				leader = { has_ideology = ideology:ideology_anarchist }
+				leader ?= { has_ideology = ideology:ideology_anarchist }
 			}
 			add = {
 				value = 10
@@ -137,11 +160,11 @@ anarchist_party = {
 		}
 		if = { # anarchists don't like the revolution being hijacked
 			limit = {
-				leader = {
+				leader ?= {
 					has_ideology = ideology:ideology_anarchist
 				}
 				owner = {
-					has_law = law_type:law_council_republic
+					has_law_or_variant = law_type:law_council_republic
 					ruler = {
 						has_ideology = ideology:ideology_vanguardist
 					}
@@ -154,14 +177,14 @@ anarchist_party = {
 		}
 		if = { # anarchists will make their own party if there is no communist party to join
 			limit = {
-				leader = {
+				leader ?= {
 					has_ideology = ideology:ideology_anarchist
 				}
 				owner = {
 					NOT = {
 						any_interest_group = {
-							is_marginal = no
-							leader = {
+							ig_counts_as_marginal = no
+							leader ?= {
 								OR = {
 									has_ideology = ideology:ideology_communist
 									has_ideology = ideology:ideology_vanguardist
@@ -176,19 +199,17 @@ anarchist_party = {
 				desc = "from_no_communists"
 			}
 		}
-		if = { # radical anti-censorship
+		if = { # anti-censorship
 			limit = {
-				leader = {
+				owner ?= {
 					OR = {
-						has_ideology = ideology:ideology_radical
-						has_ideology = ideology:ideology_anarchist
+						has_law_or_variant = law_type:law_censorship
+						has_law_or_variant = law_type:law_outlawed_dissent
 					}
 				}
-				owner = {
-					OR = {
-						has_law = law_type:law_outlawed_dissent
-						has_law = law_type:law_censorship
-					}
+				law_stance = {
+					law = law_type:law_censorship
+					value < neutral
 				}
 			}
 			add = {
@@ -196,35 +217,14 @@ anarchist_party = {
 				desc = from_censorship
 			}
 		}
-		if = { # anti-censorship
-			limit = {
-				OR = {
-					has_ideology = ideology:ideology_liberal
-					has_ideology = ideology:ideology_egalitarian
-					leader = {
-						has_ideology = ideology:ideology_humanitarian
-					}
-				}
-				owner = {
-					has_law = law_type:law_outlawed_dissent
-				}
-			}
-			add = {
-				value = 3
-				desc = from_outlawed_dissent
-			}
-		}
 		if = { # against land-based taxation
 			limit = {
-				OR = {
-					has_ideology = ideology:ideology_meritocratic
-					has_ideology = ideology:ideology_agrarian
-					leader = {
-						has_ideology = ideology:ideology_social_democrat
-					}
+				owner ?= {
+					has_law_or_variant = law_type:law_land_based_taxation
 				}
-				owner = {
-					has_law = law_type:law_land_based_taxation
+				law_stance = {
+					law = law_type:law_land_based_taxation
+					value < neutral
 				}
 			}
 			add = {
@@ -234,14 +234,9 @@ anarchist_party = {
 		}
 		if = { # anticlerical
 			limit = {
-				OR = {
-					has_ideology = ideology:ideology_anti_clerical
-					leader = {
-						has_ideology = ideology:ideology_atheist
-					}
-				}
-				owner = {
-					has_law = law_type:law_state_religion
+				law_enactment_stance = {
+					law = law_type:law_state_atheism
+					value > neutral
 				}
 			}
 			add = {
@@ -249,21 +244,14 @@ anarchist_party = {
 				desc = "from_anticlerical"
 			}
 		}
-		if = { # opposition to peasant levies
+		if = { # anti-peasant levies
 			limit = {
-				OR = {
-					has_ideology = ideology:ideology_jingoist
-					has_ideology = ideology:ideology_particularist
-					has_ideology = ideology:ideology_sikh_moralist
-					leader = {
-						OR = {
-							has_ideology = ideology:ideology_anarchist
-							has_ideology = ideology:ideology_pacifist
-						}
-					}
+				owner ?= {
+					has_law_or_variant = law_type:law_peasant_levies
 				}
-				owner = {
-					has_law = law_type:law_peasant_levies
+				law_stance = {
+					law = law_type:law_peasant_levies
+					value < neutral
 				}
 			}
 			add = {
@@ -271,53 +259,45 @@ anarchist_party = {
 				desc = "from_peasant_levies"
 			}
 		}
-		if = { # general anti-slavery
-			limit = {
-				owner = {
-					OR = {
-						has_law = law_type:law_legacy_slavery
-						has_law = law_type:law_slave_trade
-					}
-				}
-				OR = {
-					has_ideology = ideology:ideology_anti_slavery
-					leader = {
-						has_ideology = ideology:ideology_abolitionist
-					}
-				}
-			}
-			add = {
-				value = 5
-				desc = "from_slavery"
-			}
-		}
 		if = { # anti-serfdom
 			limit = {
-				owner = {
-					has_law = law_type:law_serfdom
+				owner ?= {
+					has_law_or_variant = law_type:law_serfdom
 				}
-				OR = {
-					has_ideology = ideology:ideology_egalitarian
-					has_ideology = ideology:ideology_anti_slavery
-					has_ideology = ideology:ideology_laissez_faire
-					has_ideology = ideology:ideology_particularist
-					leader = {
-						has_ideology = ideology:ideology_abolitionist
-						has_ideology = ideology:ideology_social_democrat
-						has_ideology = ideology:ideology_communist
-					}
+				law_stance = {
+					law = law_type:law_serfdom
+					value < neutral
 				}
 			}
 			add = {
-				value = 5
+				value = 3
 				desc = "from_serfdom"
+			}
+		}
+		if = { # general anti-slavery
+			limit = {
+				owner ?= {
+					OR = {
+						has_law_or_variant = law_type:law_legacy_slavery
+						has_law_or_variant = law_type:law_slave_trade
+						has_law_or_variant = law_type:law_colonial_slavery
+					}
+				}
+				law_enactment_stance = {
+					law = law_type:law_slavery_banned
+					value > neutral
+				}
+			}
+			add = {
+				value = 3
+				desc = "from_slavery"
 			}
 		}
 		if = {
 			limit = {
 				scope:number = 1
 				is_powerful = no
-				is_marginal = no
+				ig_counts_as_marginal = no
 			}
 			multiply = {
 				value = 2
@@ -335,66 +315,11 @@ anarchist_party = {
 		}
 		else_if = {
 			limit = {
-				scope:number = 3
+				scope:number >= 3
 			}
 			multiply = {
-				value = 0.25
-				desc = "from_three_prior_members"
-			}
-		}
-		else_if = {
-			limit = {
-				scope:number > 3
-			}
-			multiply = {
-				value = 0.1
-				desc = "from_more_than_three_prior_members"
-			}
-		}
-		if = {
-			limit = {
-				owner = {
-	         		has_variable = only_valid_party
-	         	}
-	         	NOT = {
-			        owner.var:only_valid_party = {
-			        	is_party_type = anarchist_party
-			        }
-			    }
-			}
-			multiply = {
-				value = 0
-			}
-		}
-		if = {
-			limit = {
-				owner = {
-	         		has_variable = only_valid_party
-	         	}
-				owner.var:only_valid_party = {
-					is_party_type = anarchist_party
-				}
-	         	owner.ruler = {
-					this.interest_group = prev
-				}
-			}
-			add = {
-				value = 1000
-				desc = "from_only_legal_party"
-			}
-		}
-		else_if = {
-			limit = {
-				owner = {
-	         		has_variable = only_valid_party
-	         	}
-	         	 owner.var:only_valid_party = {
-		        	is_party_type = anarchist_party
-		        }
-			}
-			add = {
-				value = 3
-				desc = "from_only_legal_party"
+				value = 0.0
+				desc = "from_three_or_more_prior_members"
 			}
 		}
 	}

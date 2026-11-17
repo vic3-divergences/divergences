@@ -1,1 +1,242 @@
-﻿
+﻿je_opium_obsession = {
+	icon = "gfx/interface/icons/event_icons/event_scales.dds"
+
+	group = je_group_internal_affairs
+
+	activation_description = {
+		always = yes
+	}
+
+	scripted_button = ban_opium_button
+	scripted_button = unban_opium_button
+
+	on_monthly_pulse = {
+		random_events = {
+			200 = 0
+			10 = opium_wars.6
+			5 = opium_wars.7
+			5 = opium_wars.8
+		}
+		effect = {
+			if = {
+				limit = {
+					is_banning_goods = opium
+					is_at_war = no
+				}
+				change_variable = {
+					name = opium_wars_completion_tracker
+					add = 1
+				}
+			}
+		}
+	}
+
+	outcome = {
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			scope:journal_entry = { is_goal_complete = yes }
+			custom_tooltip = {
+				text = opium_ban_tt
+				is_banning_goods = opium
+			}
+			is_at_war = no
+		}
+		effect = {
+			remove_variable = opium_wars_target
+			trigger_event = {
+				id = opium_wars.3
+			}
+		}
+	}
+
+	outcome = {
+		header = je_standard_failure_header
+		effect_header = je_standard_on_failure_header
+		color = "blue_negative"
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			OR = {
+				has_law_or_variant = law_type:law_free_trade
+				any_diplomatically_relevant_country = {
+					custom_tooltip = {
+						text = opiumwars_fail_tt
+						has_journal_entry = je_opium_wars
+					}
+					NOT = { has_war_with = root }
+					OR = {
+						has_treaty_foreign_investment_rights_with = { TARGET = root }
+						#has_treaty_port_in_market = root.market
+						any_scope_state = {
+							is_treaty_port = yes
+							state_region = {
+								any_scope_state = {
+									owner = root
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		effect = {
+			trigger_event = {
+				id = opium_wars.4
+			}
+		}
+	}
+
+	outcome = {
+		header = JOURNAL_ENTRY_TIMEOUT
+		effect_header = JOURNAL_ENTRY_ON_TIMEOUT
+		flags = { timeout }
+		conclusion_desc = JOURNAL_ENTRY_TIMEOUT_CONCLUSION_DESC
+		effect = {
+			hidden_effect = {
+				remove_modifier = opium_wars_addiction_modifier
+				remove_variable = opium_wars_unresolved
+			}
+			add_modifier = {
+				name = opium_wars_addiction_modifier
+				days = long_modifier_time
+			}
+			add_radicals = {
+				value = large_radicals
+			}
+			if = {
+				limit = { has_journal_entry = je_warlord_china }
+				chi_remove_1_fragile_unity = yes
+			}
+			je_opium_obsession_cleanup = yes
+		}
+	}
+
+	current_value = {
+		value = root.var:opium_wars_completion_tracker
+	}
+
+	goal_add_value = {
+		add = 60
+	}
+
+    timeout = 3650
+
+	progressbar = yes
+	display_progressbar_as_months = yes
+
+	weight = 10000
+		
+	should_be_pinned_by_default_uninvolved_or_context = yes
+}
+
+je_opium_wars = {
+	icon = "gfx/interface/icons/event_icons/event_military.dds"
+
+	group = je_group_foreign_affairs
+
+	activation_description = {
+		always = yes
+	}
+
+	outcome = {
+		header = je_standard_completion_header
+		effect_header = je_standard_on_completion_header
+		color = "gold_positive"
+		conclusion_desc = je_standard_completion_conclusion_desc
+		trigger = {
+			OR = {
+				scope:target ?= {
+					has_law_or_variant = law_type:law_free_trade
+				}
+				has_treaty_foreign_investment_rights_with = { TARGET = scope:target }
+				any_scope_state = {
+					is_treaty_port = yes
+					state_region = {
+						any_scope_state = {
+							owner = scope:target
+						}
+					}
+				}
+			}
+			hidden_trigger = {
+				scope:target = {
+					has_modifier = opium_wars_lost
+				}
+			}
+		}
+		effect = {
+			trigger_event = {
+				id = opium_wars.5
+				days = 5
+			}
+		}
+	}
+
+	outcome = {
+		header = je_standard_failure_header
+		effect_header = je_standard_on_failure_header
+		color = "blue_negative"
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			custom_tooltip = {
+				text = opium_wars_fail_tt
+				scope:target = {
+					NOT = {
+						any_primary_culture = {
+							has_cultural_obsession = opium
+						}
+					}
+				}
+			}
+		}
+		effect = {
+			custom_tooltip = {
+				text = opium_wars_fail_invalid_tt
+				remove_variable = opium_wars_aggressor
+			}
+			je_opium_wars_cleanup = yes
+		}
+	}
+
+	outcome = {
+		flags = { hidden invalid_outcome }
+		conclusion_desc = je_standard_failure_conclusion_desc
+		trigger = {
+			NOT = {
+				exists = scope:target
+			}
+			NOT = { has_war_with = scope:target }
+			hidden_trigger = {
+				scope:target = {
+					has_modifier = opium_wars_lost
+				}
+			}
+		}
+		effect = {
+			remove_variable = opium_wars_aggressor
+			je_opium_wars_cleanup = yes
+		}
+	}
+
+	outcome = {
+		header = JOURNAL_ENTRY_TIMEOUT
+		effect_header = JOURNAL_ENTRY_ON_TIMEOUT
+		flags = { timeout }
+		conclusion_desc = JOURNAL_ENTRY_TIMEOUT_CONCLUSION_DESC
+		effect = {
+			custom_tooltip = {
+				text = opium_wars_fail_invalid_tt
+				remove_variable = opium_wars_aggressor
+			}
+			je_opium_wars_cleanup = yes
+		}
+	}
+
+	weight = 10000
+		
+	should_be_pinned_by_default_uninvolved_or_context = yes
+
+	timeout = 3650
+}

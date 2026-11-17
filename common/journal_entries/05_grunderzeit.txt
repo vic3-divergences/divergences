@@ -2,21 +2,30 @@
 	icon = "gfx/interface/icons/event_icons/event_industry.dds"
 
 	group = je_group_global_international_situations
+	dlc = dlc014
+
+	activation_description = {
+		always = yes
+	}
 
 	should_be_involved = {
-		country_is_in_boh_german_confederation = yes
+		country_is_in_german_confederation = yes
 	}
 
 	should_show_when_not_involved = {
 		OR = {
 			is_in_geographic_region = geographic_region_europe
             top_overlord ?= {
-                country_is_in_boh_german_confederation = yes
+                country_is_in_german_confederation = yes
             }
 		}
 	}
 
-	should_be_pinned_by_default = yes
+	should_be_pinned_by_default_involved = yes
+	should_be_pinned_by_default_uninvolved_or_context = no
+
+	can_revolution_inherit = yes
+
 	weight = 10000
 
 	scripted_progress_bar = grunderzeit_progress_bar
@@ -251,89 +260,95 @@
 		}
 	}
 
-	custom_failure_header = je_grunderzeit_fail_header
-
-	fail = {
-		custom_tooltip = {
-			text = je_grunderzeit_fail_tt
-			scope:journal_entry = {
-				"scripted_bar_progress(grunderzeit_progress_bar)" = 0
+	outcome = {
+		header = je_grunderzeit_fail_header
+		effect_header = je_grunderzeit_on_fail_header
+		color = "blue_negative"
+		conclusion_desc = je_grunderzeit_fail_conclusion_desc
+		flags = { historical }
+		trigger = {
+			custom_tooltip = {
+				text = je_grunderzeit_fail_tt
+				scope:journal_entry = {
+					"scripted_bar_progress(grunderzeit_progress_bar)" = 0
+				}
 			}
 		}
-	}
-
-	custom_on_failure_header = je_grunderzeit_on_fail_header
-
-	on_fail = {
-		set_global_variable = grunderzeit_happened_global_var # To ensure no wonkiness
-	}
-
-	on_fail_all_involved = {
-		grunderzeit_variable_cleanup = yes
-		trigger_event = { id = grunderzeit.1 popup = yes }
-	}
-
-	event_outcome_failed_desc = {
-		first_valid = {
-			triggered_desc = {
-				trigger = {
-					scope:journal_entry ?= {
-						any_scope_je_involved = {
-							is_player = yes
-							has_variable = grunderzeit_participant_low_var
+		effect = {
+			set_global_variable = grunderzeit_happened_global_var # To ensure no wonkiness
+			je_grunderzeit_cleanup = yes
+		}
+		effect_all_involved = {
+			grunderzeit_variable_cleanup = yes
+			trigger_event = { id = grunderzeit.1 popup = yes }
+		}
+		event_outcome_desc = {
+			first_valid = {
+				triggered_desc = {
+					trigger = {
+						scope:journal_entry ?= {
+							any_scope_je_involved = {
+								is_player = yes
+								has_variable = grunderzeit_participant_low_var
+							}
 						}
 					}
+					desc = grunderzeit.1_low_commitment_effects_string
 				}
-				desc = grunderzeit.1_low_commitment_effects_string
-			}
-			triggered_desc = {
-				trigger = {
-					scope:journal_entry ?= {
-						any_scope_je_involved = {
-							is_player = yes
-							NOT = { has_variable = grunderzeit_participant_low_var }
+				triggered_desc = {
+					trigger = {
+						scope:journal_entry ?= {
+							any_scope_je_involved = {
+								is_player = yes
+								NOT = { has_variable = grunderzeit_participant_low_var }
+							}
 						}
 					}
+					desc = grunderzeit.1_high_commitment_effects_string
 				}
-				desc = grunderzeit.1_high_commitment_effects_string
 			}
 		}
 	}
 
 	timeout = 10950
 
-	on_timeout = {
-		set_global_variable = grunderzeit_happened_global_var # To ensure no wonkiness
-	}
-
-	on_timeout_all_involved = {
-		grunderzeit_variable_cleanup = yes
-		trigger_event = { id = grunderzeit.2 popup = yes }
-	}
-
-	event_outcome_timeout_desc = {
-		first_valid = {
-			triggered_desc = {
-				trigger = {
-					scope:journal_entry ?= {
-						any_scope_je_involved = {
-							is_player = yes
-							has_variable = grunderzeit_participant_low_var
+	outcome = {
+		header = JOURNAL_ENTRY_TIMEOUT
+		effect_header = JOURNAL_ENTRY_ON_TIMEOUT
+		flags = { timeout }
+		conclusion_desc = JOURNAL_ENTRY_TIMEOUT_CONCLUSION_DESC
+		effect = {
+			set_global_variable = grunderzeit_happened_global_var # To ensure no wonkiness
+			je_grunderzeit_cleanup = yes
+		}
+		effect_all_involved = {
+			grunderzeit_variable_cleanup = yes
+			trigger_event = { id = grunderzeit.2 popup = yes }
+		}
+		event_outcome_desc = {
+			first_valid = {
+				triggered_desc = {
+					trigger = {
+						scope:journal_entry ?= {
+							any_scope_je_involved = {
+								is_player = yes
+								has_variable = grunderzeit_participant_low_var
+							}
 						}
 					}
+					desc = grunderzeit.2_low_commitment_effects_string
 				}
-				desc = grunderzeit.2_low_commitment_effects_string
-			}
-			triggered_desc = {
-				trigger = {
-					scope:journal_entry ?= {
-						any_scope_je_involved = {
-							is_player = yes
-							NOT = { has_variable = grunderzeit_participant_low_var }
+				triggered_desc = {
+					trigger = {
+						scope:journal_entry ?= {
+							any_scope_je_involved = {
+								is_player = yes
+								NOT = { has_variable = grunderzeit_participant_low_var }
+							}
 						}
 					}
+					desc = grunderzeit.2_high_commitment_effects_string
 				}
-				desc = grunderzeit.2_high_commitment_effects_string
 			}
 		}
 	}
