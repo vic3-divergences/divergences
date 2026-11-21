@@ -125,14 +125,6 @@ has_je_conquest_reason = {
 			}
 		}
 		AND = {
-			has_journal_entry = je_reclaiming_pannonia
-			$TARGET$ = {
-				any_scope_state = {
-					state_region = { is_homeland = cu:hungarian }
-				}			
-			}			
-		}
-		AND = {
 			has_journal_entry = je_romanian_unification
 			$TARGET$ = {
 				any_scope_state = {
@@ -279,5 +271,30 @@ divided_monarchists_ai_rejects_law = {
 	OR = {
 		scope:law.type ?= law_type:law_secret_police
 		scope:law.type ?= law_type:law_outlawed_dissent
+	}
+}
+aro_is_befriend_countries_target = {
+	is_local_country = $REGION$
+	country_rank < root.country_rank
+	relations:root <= relations_threshold:cordial
+	root = { can_reach_target_country_to_protect = { TARGET_COUNTRY = prev } }
+}
+
+aro_is_acquire_states_candidate = {
+	state_region = {
+		NOT = {
+			any_scope_state = { owner = root }
+		}
+	}
+	root = { can_reach_target_state_to_conquer = { TARGET_STATE = prev } }
+}
+
+aro_is_acquire_states_target = {
+	root = {
+		has_variable_map = aro_acquire_states_targets
+		is_key_in_variable_map = {
+			name = aro_acquire_states_targets
+			target = prev.state_region
+		}
 	}
 }

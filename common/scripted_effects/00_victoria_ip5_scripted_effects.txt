@@ -1,0 +1,252 @@
+﻿on_revolution_start_revolutionary_republic_effect = {
+	scope:target ?= {
+		activate_law = law_type:law_parliamentary_republic
+	}
+}
+
+fold_movement_into_anti_communist_movement_effect = {
+	if = {
+		limit = {
+			owner ?= {
+				has_council_republic_law = yes
+				NOT = {
+					any_political_movement = {
+						is_political_movement_type = movement_anti_communist
+					}
+				}
+			}
+		}
+		owner ?= {
+			create_political_movement = { type = movement_anti_communist }
+		}
+	}
+}
+
+on_revolution_start_first_proletarian_revolution_effect = {
+	add_to_global_variable_map = { name = first_proletarian_revolution key = scope:target.capital.state_region value = year }
+	every_country = {
+		limit = {
+			OR = {
+				has_technology_researched = socialism
+				can_research = socialism
+			}
+		}
+		trigger_event = { id = factory_councils.2 months = 3 }
+	}
+}
+
+assign_random_revolutionary_ideology = {
+	random_list = {
+		10 = {
+			set_ideology = ideology:ideology_communist_leader
+		}
+		1 = {
+			modifier = {
+				if = {
+					limit = {
+						owner = {
+							has_law_or_variant = law_type:law_anarchy
+						}
+					}
+					add = 19
+				}
+			}
+			set_ideology = ideology:ideology_anarchist
+		}
+		10 = {
+			trigger = {
+				owner = {
+					has_technology_researched = political_agitation
+				}
+			}
+			set_ideology = ideology:ideology_communist_leader
+		}
+		10 = {
+			# Keep default ideology
+		}
+	}
+}
+interest_group_transform_into_nomenklatura = {
+	if = {
+		limit = {
+			has_ideology = ideology:ideology_liberal
+		}
+		remove_ideology = ideology_liberal
+	}
+	if = {
+		limit = {
+			has_ideology = ideology:ideology_liberal_modern
+		}
+		remove_ideology = ideology_liberal_modern
+	}
+	if = {
+		limit = {
+			has_ideology = ideology:ideology_universalist
+		}
+		remove_ideology = ideology_universalist
+	}
+	if = {
+		limit = {
+			has_ideology = ideology:ideology_universalist_modern
+		}
+		remove_ideology = ideology_universalist_modern
+	}
+	if = {
+		limit = {
+			has_ideology = ideology:ideology_anti_clerical
+		}
+		remove_ideology = ideology_anti_clerical
+	}
+	if = {
+		limit = {
+			has_ideology = ideology:ideology_republican
+		}
+		remove_ideology = ideology_republican
+	}
+	if = {
+		limit = {
+			has_ideology = ideology:ideology_constitutionalist
+		}
+		remove_ideology = ideology_constitutionalist
+	}
+	if = {
+		limit = {
+			has_ideology = ideology:ideology_spiritual
+		}
+		remove_ideology = ideology_spiritual
+	}
+	if = {
+		limit = {
+			has_ideology = ideology:ideology_autocratic
+		}
+		remove_ideology = ideology_autocratic
+	}
+	if = {
+		limit = {
+			has_ideology = ideology:ideology_rangaku
+		}
+		remove_ideology = ideology_rangaku
+	}
+	if = {
+		limit = {
+			has_ideology = ideology:ideology_ilustrado
+		}
+		remove_ideology = ideology_ilustrado
+	}
+	set_interest_group_name = ig_nomenklatura
+	add_ideology = ideology_managerial
+	add_ideology = ideology_materialist
+	add_ideology = ideology_defensist
+	owner = {
+		set_variable = ig_nomenklatura_active
+	}
+}
+cultural_renaissance_ai_approach_roll = {
+	if = {
+		limit = { is_player = no }
+		random_list = {
+			40 = {
+				trigger = {
+					NOT = { country_has_primary_culture = cu:$CULTURE$ }
+				}
+				modifier = {
+					if = {
+						limit = { has_strategy = ai_strategy_reactionary_agenda }
+						add = 30
+					}
+					if = {
+						limit = { has_strategy = ai_strategy_conservative_agenda }
+						add = 15
+					}
+					if = {
+						limit = { has_strategy = ai_strategy_nationalist_agenda }
+						add = 15
+					}
+					if = {
+						limit = { has_strategy = ai_strategy_consolidation_agenda }
+						add = 10
+					}
+					if = {
+						limit = {
+							any_primary_culture = {
+								has_discrimination_trait = heritage_east_slavic
+							}
+						}
+						add = 20
+					}
+				}
+				set_variable = { name = ai_$NAME$_renaissance_repress }
+			}
+			40 = {
+				modifier = {
+					if = {
+						limit = { has_strategy = ai_strategy_conservative_agenda }
+						add = 15
+					}
+					if = {
+						limit = { has_strategy = ai_strategy_progressive_agenda }
+						add = 20
+					}
+					if = {
+						limit = { has_strategy = ai_strategy_great_reforms }
+						add = 15
+					}
+				}
+				set_variable = { name = ai_$NAME$_renaissance_moderate }
+			}
+			20 = {
+				modifier = {
+					if = {
+						limit = { has_strategy = ai_strategy_progressive_agenda }
+						add = 10
+					}
+					if = {
+						limit = { has_strategy = ai_strategy_egalitarian_agenda }
+						add = 30
+					}
+					if = {
+						limit = { has_strategy = ai_strategy_confrontation_agenda }
+						add = 10
+					}
+					if = {
+						limit = { country_has_primary_culture = cu:$CULTURE$ }
+						add = 200
+					}
+				}
+				set_variable = { name = ai_$NAME$_renaissance_accelerate }
+			}
+		}
+	}
+}
+nihilist_leaders_successor_effect = { # for dissolving nihilism
+	if = {
+		limit = {
+			nihilist_successor_socialist = yes
+		}
+		every_scope_character = {
+			limit = {
+				has_ideology = ideology:ideology_nihilist
+			}
+			set_ideology = ideology:ideology_communist_leader
+		}
+	}
+	else_if = {
+		limit = {
+			nihilist_successor_anarchist = yes
+		}
+		every_scope_character = {
+			limit = {
+				has_ideology = ideology:ideology_nihilist
+			}
+			set_ideology = ideology:ideology_anarchist
+		}
+	}
+	else = {
+		every_scope_character = {
+			limit = {
+				has_ideology = ideology:ideology_nihilist
+			}
+			set_ideology = ideology:ideology_radical
+		}
+	}
+}

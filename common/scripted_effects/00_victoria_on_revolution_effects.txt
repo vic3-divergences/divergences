@@ -1,0 +1,171 @@
+﻿### on_revolution_start ###
+# Root = Country
+# scope:target = Uprising country
+
+on_revolution_start_set_civil_war_variables_effect = {
+	ROOT = {
+		random_civil_war = {
+			limit = {
+				is_civil_war_type = revolution
+				civil_war_progress >= 1
+			}
+			political_movement = {
+				set_variable = { name = spawned_civil_war_var years = 5 }
+			}
+			scope:target ?= {
+				set_variable = { name = civil_war_target_var value = ROOT }
+				set_variable = { name = civil_war_type_var value = prev.political_movement.type }
+			}
+		}
+	}
+}
+
+on_revolution_start_handle_target_revolution_effect = {
+	scope:target ?= {
+		if = {
+			limit = {
+				has_law_or_variant = law_type:law_single_party_state
+			}
+			handle_revolutionary_sps = yes
+		}
+		if = {
+			limit = {
+				has_law = law_type:law_colonial_administration
+			}
+			trigger_event = { id = independence.1 days = 7 popup = yes }
+		}
+	}
+}
+
+### on_secession_start ###
+# Root = Country
+# scope:target = Uprising country
+
+on_secession_start_set_civil_war_variables_effect = {
+	ROOT = {
+		random_civil_war = {
+			limit = {
+				is_civil_war_type = secession
+				civil_war_progress >= 1
+				NOT = {
+					political_movement ?= {
+						has_variable = spawned_civil_war_var
+					}
+				}
+			}
+			political_movement = {
+				set_variable = { name = spawned_civil_war_var years = 5 }
+			}
+			scope:target ?= {
+				set_variable = { name = civil_war_target_var value = ROOT }
+				set_variable = { name = civil_war_type_var value = prev.political_movement.type }
+			}
+		}
+	}
+}
+
+on_secession_start_handle_target_secession_effect = {
+	scope:target ?= {
+		if = {
+			limit = {
+				has_law_or_variant = law_type:law_single_party_state
+			}
+			handle_revolutionary_sps = yes
+		}
+		if = {
+			limit = {
+				has_law = law_type:law_colonial_administration
+			}
+			trigger_event = { id = independence.1 days = 7 popup = yes }
+		}
+	}
+}
+
+on_secession_start_indian_secession_effect = {
+	scope:target ?= {
+		every_primary_culture = {
+			save_temporary_scope_as = primary_culture_to_remove
+			PREV ?= { # scope:target
+				remove_primary_culture = scope:primary_culture_to_remove
+				every_scope_character = {
+					limit = {
+						scope:primary_culture_to_remove ?= culture
+					}
+					retire_character = yes
+				}
+			}
+		}
+		grant_indian_regional_cultures = yes
+		if = {
+			limit = {
+				NOT = {
+					has_law_or_variant = law_type:law_state_atheism
+				}
+			}
+			if = {
+				limit = {
+					religion_percent_country = {
+						target = rel:hindu
+						value >= 0.5
+					}
+				}
+				set_state_religion = rel:hindu
+			}
+			else_if = {
+				limit = {
+					religion_percent_country = {
+						target = rel:sunni
+						value >= 0.5
+					}
+				}
+				set_state_religion = rel:sunni
+			}
+			else = {
+				set_state_religion = rel:hindu
+			}
+		}
+		india_independence_ig_effects = yes
+		if = {
+			limit = {
+				has_modifier = modifier_india_crown_rule
+			}
+			remove_modifier = modifier_india_crown_rule
+		}
+		if = {
+			limit = {
+				has_modifier = modifier_india_company_rule
+			}
+			remove_modifier = modifier_india_company_rule
+		}
+		if = {
+			limit = {
+				has_modifier = modifier_india_company_rule_upgraded
+			}
+			remove_modifier = modifier_india_company_rule_upgraded
+		}
+		if = {
+			limit = {
+				has_modifier = modifier_indian_imperial_police
+			}
+			remove_modifier = modifier_indian_imperial_police
+		}
+		recalculate_pop_ig_support = yes
+	}
+}
+
+### on_civil_war_won ###
+# Root = Country
+# This action is triggered after `on_revolution_end`
+
+on_civil_war_won_abolish_monarchy_effect = {
+	if = {
+		limit = {
+			NOT = {
+				has_law = law_type:law_monarchy
+			}
+		}
+		country_launch_abolish_monarchy_effect = yes # launch je_abolish_monarchy
+	}
+	remove_variable = anti_monarchist_revolution
+}
+
