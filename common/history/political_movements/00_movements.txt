@@ -18,13 +18,26 @@
         }
 
         ### Abolitionist movements
-        if = {
-            limit = {
-                NOT = { has_law = law_type:law_slavery_banned }
-            }
-            create_political_movement = { type = movement_pro_slavery }
-
-        }
+		if = {
+			limit = {
+				NOT = { has_law_or_variant = law_type:law_slavery_banned }
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_law_or_variant = law_type:law_colonial_slavery
+					}
+				}
+				create_political_movement = { type = movement_pro_slavery }
+			}
+			if = {
+				limit = {
+					has_technology_researched = empiricism
+					#NOT = { c:BIC ?= this } # British India has Utilitarians
+				}
+				create_political_movement = { type = movement_anti_slavery }
+			}
+		}
 
         ### Cultural majority movements
         create_political_movement = { type = movement_cultural_majority }
@@ -39,16 +52,28 @@
 
         ### Liberal movements
         if = {
-            limit = {
-                has_technology_researched = democracy
-                OR = {
-                    has_law = law_type:law_landed_voting
-                    has_law = law_type:law_wealth_voting
-                    has_law = law_type:law_census_voting
-                    has_law = law_type:law_universal_suffrage
-                }
-            }
-            create_political_movement = { type = movement_liberal }
+			limit = {
+				has_technology_researched = democracy
+				OR = {
+					has_law_or_variant = law_type:law_landed_voting
+					has_law_or_variant = law_type:law_wealth_voting
+					has_law_or_variant = law_type:law_census_voting
+					has_law_or_variant = law_type:law_universal_suffrage
+					has_law_or_variant = law_type:law_presidential_republic
+					has_law_or_variant = law_type:law_parliamentary_republic
+				}
+				country_should_exclusively_focus_on_modernization = no
+			}
+			create_political_movement = { type = movement_liberal }
         }
+
+	c:VEN ?= {
+		create_political_movement = { type = movement_cultural_minority culture = cu:greek }
+	}
+
+	c:PLA ?= {
+		create_political_movement = { type = movement_slave_revolt  culture = cu:afro_arcadian }
+	}
+
     }
 }
