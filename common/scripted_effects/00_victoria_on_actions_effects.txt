@@ -432,163 +432,6 @@ on_monthly_pulse_country_create_nightingale_effect = {
 	}
 }
 
-on_monthly_pulse_country_russian_character_deaths_effect = {
-	if = {
-		limit = {
-			any_scope_character = {
-				russian_character_is_marked_for_death_chance = yes
-			}
-		}
-		every_scope_character = {
-			limit = {
-				russian_character_is_marked_for_death_chance = yes
-			}
-			random = {
-				chance = 25
-				kill_character = yes
-			}
-		}
-	}
-}
-
-on_monthly_pulse_country_japanese_character_deaths_effect = {
-	if = {
-		limit = {
-			any_scope_character = {
-				japanese_character_is_marked_for_death_chance = yes
-			}
-		}
-		every_scope_character = {
-			limit = {
-				japanese_character_is_marked_for_death_chance = yes
-			}
-			random = {
-				chance = 25
-				kill_character = yes
-			}
-		}
-	}
-	if = { # Matsumae curse
-		limit = {
-			any_scope_character = {
-				has_variable = daimyo_var
-				var:daimyo_var ?= s:STATE_HOKKAIDO
-			}
-		}
-		random_scope_character = {
-			limit = {
-				has_variable = daimyo_var
-				var:daimyo_var ?= s:STATE_HOKKAIDO
-			}
-			evaluate_matsumae_curse = yes
-		}
-	}
-	if = { # Wakayama Daimyo need to die young
-		limit = {
-			any_scope_character = {
-				has_variable = daimyo_var
-				var:daimyo_var ?= s:STATE_KANSAI
-			}
-		}
-		random_scope_character = {
-			limit = {
-				OR = {
-					AND = {
-						has_template = JAP_tokugawa_nariyuki
-						game_date > 1846.7.1
-						is_immortal = no
-					}
-					AND = {
-						has_template = JAP_tokugawa_narikatsu
-						game_date > 1849.3.1
-						is_immortal = no
-					}
-				}
-			}
-			kill_character = yes
-		}
-	}
-}
-
-on_monthly_pulse_country_remove_haitian_payments_effect = {
-	c:FRA ?= {
-		if = {
-			limit = {
-				has_modifier = modifier_haitian_independence_payments_1
-			}
-			remove_modifier = modifier_haitian_independence_payments_1
-		}
-		if = {
-			limit = {
-				has_modifier = modifier_haitian_independence_payments_2
-			}
-			remove_modifier = modifier_haitian_independence_payments_2
-		}
-		if = {
-			limit = {
-				has_modifier = modifier_haitian_independence_payments_3
-			}
-			remove_modifier = modifier_haitian_independence_payments_3
-		}
-		if = {
-			limit = {
-				has_modifier = modifier_haitian_independence_payments_4
-			}
-			remove_modifier = modifier_haitian_independence_payments_4
-		}
-	}
-}
-
-on_monthly_pulse_country_remove_berar_lease_effect = {
-	every_scope_treaty = {
-		limit = {
-			binds = c:HYD
-			any_scope_article = {
-				has_type = money_transfer
-				source_country = root
-			}
-		}
-		withdraw = {
-			country = root
-		}
-	}
-}
-
-on_monthly_pulse_country_taikunate_safety_effect = {
-	if = {
-		limit = {
-			any_scope_character = { # Taikun exists but has been dethroned for some reason
-				has_variable = former_shogun_var
-				is_interest_group_leader = no
-			}
-		}
-		#debug_log = "[TimeKeeper.GetCurrentDate.GetString]: Taikun no longer serving as Interest Group leader: new Taikun designated - [THIS.GetCountry.GetNameNoFormatting]"
-		random_scope_character = {
-			limit = {
-				has_variable = former_shogun_var
-				is_interest_group_leader = no
-			}
-			character_designate_new_taikun = yes
-		}
-	}
-	else = { # Taikun doesn't exist
-		#debug_log = "[TimeKeeper.GetCurrentDate.GetString]: Taikun not found: new Taikun designated - [THIS.GetCountry.GetNameNoFormatting]"
-		country_designate_new_taikun = yes
-	}
-}
-
-on_monthly_pulse_country_create_petrograd_effect = {
-	set_variable = petrograd_var
-	random_scope_state = {
-		limit = {
-			state_region = s:STATE_INGRIA
-		}
-		set_hub_name = {
-			type = city
-			name = HUB_NAME_STATE_INGRIA_city_russian_imp # St. Petersburg only becomes Leningrad if Lenin has been around to be a namesake
-		}
-	}
-}
 
 ### on_yearly_pulse_country ###
 
@@ -1616,7 +1459,7 @@ character_rule_length_counter_effects = {
 on_country_released_common_effect = {
 	scope:target = {
 		set_variable = { name = newly_released_country days = 90 } # Used for the Trialist Manifesto
-		forest_of_bayonets_involve_country_effect = yes
+		#forest_of_bayonets_involve_country_effect = yes
 	}
 	if = {
 		limit = {
@@ -1642,10 +1485,10 @@ on_country_released_common_effect = {
 	}
 	if = {
 		limit = {
-			has_journal_entry = je_springtime_of_the_peoples
-			NOT = {
-				is_involved_in_journal_entry = je_springtime_of_the_peoples
-			}
+			#has_journal_entry = je_springtime_of_the_peoples
+			#NOT = {
+			#	is_involved_in_journal_entry = je_springtime_of_the_peoples
+			#}
 		}
 		je:je_springtime_of_the_peoples ?= {
 			add_involved_country = ROOT
@@ -1805,37 +1648,5 @@ on_yearly_pulse_country_achievement_variable_effects = {
 
 		remove_variable = achievement_cant_touch_this
 		remove_variable = achievement_cant_touch_this_timed
-	}
-}
-
-on_monthly_pulse_reform_or_revolution_effect = {
-	if = { # If the JE has not begun, calculate the percent of global GDP controlled by countries which meet its requirements
-		limit = {
-			NOT = {
-				has_global_variable = reform_or_revolution_global_var
-			}
-			global_gdp != 0
-		}
-		set_global_variable = { name = reform_or_revolution_countries_percent value = 0 }
-		change_global_variable = {
-			name = reform_or_revolution_countries_percent
-			add = reform_or_revolution_countries_gdp
-		}
-		change_global_variable = {
-			name = reform_or_revolution_countries_percent
-			divide = global_gdp
-		}
-	}
-	if = {
-		limit = {
-			NOT = {
-				has_global_variable = reform_or_revolution_global_var
-			}
-			reform_or_revolution_countries_gdp >= {
-				value = global_gdp
-				multiply = 0.25
-			}
-		}
-		set_global_variable = reform_or_revolution_global_var
 	}
 }
