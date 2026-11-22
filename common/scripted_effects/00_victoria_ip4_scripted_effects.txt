@@ -581,15 +581,6 @@ ip4_coup_victory_special_effects = {
 		}
 		ip4_coup_victory_dynastic_effects = yes
 	}
-
-	if = {
-		limit = {
-			has_journal_entry = je_warlord_china
-			has_variable = china_warlord_explosion
-		}
-		chi_remove_1_fragile_unity = yes
-	}
-
 	if = {
 		limit = {
 			OR = {
@@ -1199,38 +1190,6 @@ second_amendment_remove_obsessions_effect = {
 	}
 }
 
-iberia_calculate_shared_laws = {
-	set_global_variable = { name = iberia_shared_laws_var value = 0 }
-	ordered_country_in_iberia_old = {
-		limit = {
-			is_involved_in_journal_entry = je_iberia
-		}
-		order_by = prestige
-		position = 0
-		save_scope_as = iberia_first_country
-		every_active_law = {
-			limit = {
-				save_temporary_scope_as = iberia_first_country_active_law
-				any_country_in_iberia_old = {
-					filter = {
-						AND = {
-							NOT = {
-								scope:iberia_first_country ?= this
-							}
-							is_involved_in_journal_entry = je_iberia
-						}
-					}
-					any_active_law = {
-						this.type = scope:iberia_first_country_active_law.type
-					}
-					count = all
-				}
-			}
-			change_global_variable = { name = iberia_shared_laws_var add = 1 }
-		}
-	}
-}
-
 mutate_moderniser_movement_effect = {
 	random_political_movement = {
 		limit = {
@@ -1416,69 +1375,6 @@ remove_electoral_fraud_effect = {
 		add_amendment = {
 			type = amendment_tradition_of_free_elections
 			sponsor = PREV.ig:ig_intelligentsia
-		}
-	}
-}
-
-summon_napoleon_the_woat = { # Special case
-	save_scope_as = summoning_country
-	if = {
-		limit = {
-			any_character = {
-				has_template = fra_napoleon_iii_character_template
-			}
-		}
-		random_character =  {
-			limit = {
-				has_template = fra_napoleon_iii_character_template
-			}
-			save_scope_as = summoned_character_scope
-			transfer_character_of_unknown_status_to_country_and_make_ruler_effects = yes
-		}
-		if = {
-			limit = {
-				year >= 1857
-				year < 1873
-			}
-			country_summon_heir_effect = {
-				TEMPLATE = FRA_napoleon_eugene_louis_bonaparte
-			}
-		}
-	}
-	else_if = {
-		limit = {
-			NOT = {
-				is_template_used = fra_napoleon_iii_character_template
-			}
-		}
-		create_character = {
-			template = fra_napoleon_iii_character_template
-			on_created = {
-				cleanup_ruler_character_roles = yes
-				set_character_as_ruler = yes
-			}
-		}
-		if = {
-			limit = {
-				year >= 1857
-				year < 1873
-			}
-			country_summon_heir_effect = {
-				TEMPLATE = FRA_napoleon_eugene_louis_bonaparte
-			}
-		}
-	}
-	else = {
-		create_character = { # El Generico
-			first_name = "NapoleO_n"
-			last_name = "Bonaparte"
-			culture = cu:french
-			interest_group = ig_petty_bourgeoisie
-			ruler = yes
-			ideology = ideology_bonapartist
-			on_created = {
-				set_variable = { name = dynasty_var value = flag:house_bonaparte }
-			}
 		}
 	}
 }
@@ -1961,48 +1857,6 @@ generate_governor_of_same_type = { # Run in country scope
 		}
 	}
 }
-
-evaluate_portuguese_pink_map_connection = {
-	if = {
-		limit = {
-			s:STATE_ZAMBEZIA = {
-				any_scope_state = {
-					owner = {
-						OR = {
-							c:POR ?= this
-							is_subject_of = c:POR
-						}
-					}
-					save_temporary_scope_as = zambezia_scope
-				}
-			}
-			s:STATE_EAST_ANGOLA = {
-				any_scope_state = {
-					owner = {
-						OR = {
-							c:POR ?= this
-							is_subject_of = c:POR
-						}
-					}
-					save_temporary_scope_as = angola_scope
-				}
-			}
-			scope:zambezia_scope ?= {
-				is_in_same_market_area = scope:angola_scope
-			}
-		}
-		set_variable = achievement_portugal_is_not_a_small_country_connection
-	}
-	else = {
-		if = {
-			limit = {
-				has_variable = achievement_portugal_is_not_a_small_country_connection
-			}
-			remove_variable = achievement_portugal_is_not_a_small_country_connection
-		}
-	}
-}
-
 
 initialize_electoral_confidence = {
 	set_electoral_confidence = {
