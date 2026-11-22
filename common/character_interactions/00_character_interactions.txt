@@ -4,6 +4,7 @@
 #						All scopes are character scopes with the interacting country stored as the actor
 #potential				Trigger to check if the interaction should be shown
 #possible 				Trigger to check if the interaction is available
+#actor_capacity			Country-scoped trigger on the interacting country that must also be true for the interaction to be available, for limits like free slots that do not depend on the character
 #effect					The effects of the interaction
 #cooldown				Scriptable duration that this interaction will be unavailable for the interacting country
 
@@ -229,7 +230,12 @@ grant_command_to_agitator = {
 
 	possible = {
 		is_adult = yes
-		is_female = no
+		OR = {
+			is_female = no
+			owner ?= {
+				has_law_or_variant = law_type:law_womens_suffrage
+			}
+		}
 		exists = owner.capital.land_hq
 	}
 
@@ -322,9 +328,8 @@ marry_ruler_or_heir = {
 		}
 	}
 	effect = {
-		set_variable = spouse_seeker
 		owner ?= {
-			trigger_event = { id = wedding.2 popup = yes }
+			trigger_event = { id = wedding.1 popup = yes }
 		}
 	}
 	cooldown = { days = normal_modifier_time }
@@ -352,9 +357,11 @@ abdicate_monarch = {
 
 	possible = {
 		hidden_trigger = {
-			NOR = {
-			ruler = { has_variable = is_luigi}
-			ruler = { has_variable = is_amedeo}
+			c:SAV = {
+				NOR = {
+					ruler = { has_variable = is_luigi}
+					ruler = { has_variable = is_amedeo}
+				}
 			}
 		}
 		OR = {
@@ -699,41 +706,6 @@ exile_character = {
 			}
 			if = {
 				limit = {
-					owner ?= { has_journal_entry = je_caudillo }
-					interest_group ?= {
-						is_interest_group_type = ig_armed_forces
-					}
-				}
-				if = {
-					limit = {
-						interest_group ?= {
-							leader = {
-								this = ROOT
-							}
-						}
-					}
-					owner ?= {
-						custom_tooltip = {
-							text = lose_large_caudillo_points
-							je:je_caudillo ?= {
-								add_progress = { value = -200 name = je_caudillo_progress_bar }
-							}
-						}
-					}
-				}
-				else = {
-					owner ?= {
-						custom_tooltip = {
-							text = lose_caudillo_points
-							je:je_caudillo ?= {
-								add_progress = { value = -100 name = je_caudillo_progress_bar }
-							}
-						}
-					}
-				}
-			}
-			if = {
-				limit = {
 					owner ?= {
 						is_player = yes
 						NOT = { has_variable = achievement_agitate_elsewhere_var }
@@ -1018,8 +990,11 @@ invite_exile = {
 	# required for AI to evaluate if interaction is possible on characters in exile pool
 	ai_considers_exiles = yes
 
+	actor_capacity = {
+		empty_agitator_slots >= 1
+	}
+
 	possible = {
-		scope:actor ?= { empty_agitator_slots >= 1 }
 		# Devout exiles must have country religion
 		trigger_if = {
 			limit = {
@@ -1066,23 +1041,6 @@ invite_exile = {
 			free_from_exile_effect = yes
 		}
 		hidden_effect = {
-			if = {
-				limit = {
-					has_variable = mazzini_var
-					has_dlc_feature = voice_of_the_people_content
-				}
-				scope:actor ?= {
-					trigger_event = { id = historical_agitators.7 days = 3 }
-				}
-			}
-			if = {
-				limit = {
-					has_variable = nightingale_var
-				}
-				scope:actor ?= {
-					trigger_event = { id = historical_agitators.23 days = 3 }
-				}
-			}
 			if = {
 				limit = {
 					has_variable = garibaldi_var
@@ -1261,6 +1219,7 @@ retire_commander = {
 		else = {
 			hidden_effect = {
 				replace_character_roles = { remove = { general admiral } }
+				retired_commander_becomes_politician_roll_effect = { CHANCE_MULT = define:NCharacters|RETIRED_COMMANDER_POLITICIAN_FORCED_CHANCE_MULT }
 				retire_character_if_should_be_culled = yes
 			}
 

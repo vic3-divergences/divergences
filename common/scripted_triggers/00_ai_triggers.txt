@@ -273,6 +273,40 @@ divided_monarchists_ai_rejects_law = {
 		scope:law.type ?= law_type:law_outlawed_dissent
 	}
 }
+ai_is_regional_objective_local_country = {
+	is_regional_objective_target_country = {
+		type = $TYPE$
+		target = $TARGET$
+	}
+}
+
+ai_is_regional_objective_state = {
+	is_regional_objective_target_state = {
+		type = $TYPE$
+		target = $STATE$
+	}
+}
+
+ai_is_regional_objective_subjugate_target = {
+	is_regional_objective_target_country = {
+		type = aro:ai_regional_objective_subjugate_country
+		target = $TARGET$
+	}
+}
+
+ai_is_regional_objective_protect_target = {
+	is_regional_objective_target_country = {
+		type = aro:ai_regional_objective_protect_country
+		target = $TARGET$
+	}
+}
+
+ai_has_regional_objective_befriend_reason = {
+	ai_is_regional_objective_local_country = {
+		TYPE = aro:ai_regional_objective_befriend_countries
+		TARGET = $TARGET$
+	}
+}
 aro_is_befriend_countries_target = {
 	is_local_country = $REGION$
 	country_rank < root.country_rank
@@ -295,6 +329,41 @@ aro_is_acquire_states_target = {
 		is_key_in_variable_map = {
 			name = aro_acquire_states_targets
 			target = prev.state_region
+		}
+	}
+}
+ai_ceding_state_would_isolate_states = {
+	$STATE$ = { has_port_state = yes }
+	$RECEIVER$ = {
+		NOT = { market = $CEDER$.market }
+	}
+	NOT = {
+		$CEDER$.market = {
+			any_scope_country = {
+				any_scope_state = {
+					NOT = { this = $STATE$ }
+					has_port_state = yes
+					is_in_same_market_area = $STATE$
+				}
+			}
+		}
+	}
+	OR = {
+		AND = {
+			$STATE$ = {
+				NOT = { is_in_same_market_area = $CEDER$.capital }
+				any_neighbouring_state = {
+					is_in_same_market_area = $STATE$
+				}
+			}
+		}
+		AND = {
+			$STATE$ = { is_in_same_market_area = $CEDER$.capital }
+			$CEDER$ = {
+				any_scope_state = {
+					NOT = { is_in_same_market_area = $CEDER$.capital }
+				}
+			}
 		}
 	}
 }
