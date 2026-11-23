@@ -777,3 +777,166 @@ ai_strategy_maintain_mandate_of_heaven = {
 		value = 100
 	}
 }
+ai_strategy_consolidation_agenda = {
+	icon = "gfx/interface/icons/ai_strategy_icons/consolidate_the_state.dds"
+
+	type = political
+
+	revolution_aversion = {
+		value = 75
+	}
+
+	min_law_chance_to_pass = {
+		value = 20
+		if = {
+			limit = { ai_has_reasons_to_not_oppose_law = yes }
+			multiply = 0.5
+		}
+	}
+
+	max_progressiveness = {
+		value = 1000
+		if = {
+			limit = { has_enactment_je_or_law_commitment = yes }
+			multiply = 1.5
+		}
+	}
+
+	max_regressiveness = {
+		value = 25
+		if = { # Will generally not abolish Factory Councils, but will abolish other laws
+			limit = { has_revolutionary_socialist_laws = yes }
+			add = 25
+		}
+		if = {
+			limit = { has_enactment_je_or_law_commitment = yes }
+			multiply = 2
+		}
+	}
+
+	change_law_chance = {
+		value = 10
+
+		if = {
+			limit = { any_interest_group = { is_insurrectionary = yes } }
+			add = 5
+		}
+
+		if = {
+			limit = {
+				has_enactment_je_or_law_commitment = yes
+			}
+			add = 25
+		}
+	}
+
+	pro_interest_groups = {
+		ig_intelligentsia
+	}
+
+	anti_interest_groups = {
+		ig_landowners
+		ig_industrialists
+		ig_devout
+		ig_petty_bourgeoisie
+	}
+
+	pro_movements = {
+		movement_socialist
+		movement_communist
+		movement_labor
+	}
+
+	anti_movements = {
+		movement_anti_communist
+		movement_reactionary
+		movement_fascist
+		movement_royalist_absolutist
+		movement_royalist_constitutional
+		movement_pro_slavery
+		movement_cultural_minority
+		movement_cultural_majority
+		movement_religious_minority
+		movement_religious_majority
+	}
+
+	institution_scores = {
+		institution_social_security = {
+			value = 125
+		}
+		institution_workplace_safety = {
+			value = 125
+		}
+		institution_schools = {
+			value = 125
+		}
+		institution_health_system = {
+			value = 125
+		}
+		institution_police = {
+			value = 100
+		}
+		institution_home_affairs = {
+			value = 200
+		}
+	}
+
+	possible = {
+		has_radical_leftist_government = yes
+	}
+
+	weight = {
+		value = 40
+		if = {
+			limit = {
+				gdp_per_capita_ranking > 20
+			}
+			add = 5
+		}
+
+		if = {
+			limit = {
+				any_scope_state = {
+					has_famine = yes
+				}
+			}
+			add = 5
+		}
+
+		if = {
+			limit = {
+				NOT = {
+					ig:ig_trade_unions ?= {
+						is_in_government = yes
+					}
+				}
+			}
+			add = 10
+		}
+
+		every_interest_group = {
+			limit = {
+				is_in_government = yes
+				law_stance = {
+					law = law_type:law_council_republic
+					value < neutral
+				}
+			}
+			subtract = 15
+		}
+
+		if = {
+			limit = {
+				ruler ?= {
+					law_stance = {
+						law = law_type:law_council_republic
+						value < neutral
+					}
+				}
+			}
+			subtract = 40
+		}
+
+		min = 0
+	}
+}
