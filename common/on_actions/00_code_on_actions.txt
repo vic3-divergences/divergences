@@ -429,38 +429,6 @@ on_monthly_pulse = {
 					}
 				}
 			}
-			### Land Connection Portion
-			if = {
-				limit = { # Do not evaluate this unless this country or its subjects own all of Zambezia and East Angola
-					c:POR ?= {
-						OR = {
-							owns_entire_state_region = STATE_ZAMBEZIA
-							any_subject_or_below = {
-								owns_entire_state_region = STATE_ZAMBEZIA
-							}
-						}
-						OR = {
-							owns_entire_state_region = STATE_EAST_ANGOLA
-							any_subject_or_below = {
-								owns_entire_state_region = STATE_EAST_ANGOLA
-							}
-						}
-					}
-				}
-				evaluate_portuguese_pink_map_connection = yes
-			}
-			else = {
-				if = {
-					limit = {
-						c:POR ?= {
-							has_variable = achievement_portugal_is_not_a_small_country_connection
-						}
-					}
-					c:POR ?= {
-						remove_variable = achievement_portugal_is_not_a_small_country_connection
-					}
-				}
-			}
 		}
 	}
 }
@@ -939,33 +907,6 @@ on_monthly_pulse_country = {
 		# 	}
 		# 	trigger_event = { id = mon_state_formation.20 popup = yes }
 		# }
-
-		#Montenegro ruler assassinated
-		if = {
-			limit = {
-				c:MON ?= THIS
-				NOT = {
-					has_variable = mon_state_formation_10_fired
-				}
-				game_date >= 1860.08.13
-				ruler ?= {
-					has_template = mon_danilo_petrovic_njegos
-					NOT = {
-						has_variable = is_away
-					}
-				}
-				OR = {
-					any_interest_group = {
-						ig_approval < -2
-					}
-					c:AUS ?= {
-						relations:root < 0
-					}
-				}
-			}
-			trigger_event = { id = mon_state_formation.10 popup = yes }
-		}
-
 		# if = {
 		# 	limit = {
 		# 		c:MON ?= THIS
@@ -1509,8 +1450,6 @@ on_yearly_pulse_country = {
 		if = {
 			limit = {
 				NOR = {
-					has_journal_entry = je_sick_man_main # Ottomans have enough required reforms to worry about
-					has_journal_entry = je_meiji_restoration # Ditto for Japan
 					has_variable = gov_petition_fired
 					has_variable = gov_petition_cooldown
 					has_modifier = modifier_successfully_met_petition_legitimacy
@@ -2196,17 +2135,6 @@ on_create_market = {
 # Root = The applicable country
 # scope:technology = The technology type they started to research
 on_research_technology_started = {
-	effect = {
-		if = {
-			limit = {
-				has_journal_entry = je_tutorial_research_technology
-			}
-			je:je_tutorial_research_technology = {
-				set_target_technology = scope:technology
-			}
-			set_variable = tut_began_new_research
-		}
-	}
 }
 
 # Root = The applicable country
@@ -2357,29 +2285,6 @@ on_diplomatic_play_started = {
 					}
 					change_relations = { country = root value = -50 }
 				}
-			}
-		}
-		if = {
-			limit = {
-				scope:initiator = {
-					c:TUR ?= this
-					NOT = { has_variable = egyptian_crisis }
-				}
-				scope:target = {
-					c:EGY ?= this
-				}
-				OR = {
-					is_diplomatic_play_type = dp_conquer_state
-					is_diplomatic_play_type = dp_return_state
-					is_diplomatic_play_type = dp_reduce_autonomy
-					is_diplomatic_play_type = dp_make_tributary
-					is_diplomatic_play_type = dp_make_protectorate
-					is_diplomatic_play_type = dp_annex_subject
-				}
-			}
-			save_scope_as = egyptian_crisis_scope
-			scope:initiator = {
-				trigger_event = { id = egyptian_crisis_events.1 popup = yes }
 			}
 		}
 	}
@@ -2589,55 +2494,6 @@ on_character_death = {
 			}
 			# non-ETH rulers in the ethiopian_emperor succession will continue to style themselves 'Emperor' even if another tag forms ETH. This is fine! The other tag is obviously an upstart, and we've created two competing claims for the title. This is what wwe in the biz call 'dynamic storytelling'.
 		}
-		if = { # if Franz Joseph I of Austria dies before The Mayerling Incident in 1889, making Rudolf Emperor
-			limit = {
-				owner = {
-					c:AUS ?= this
-				}
-				is_ruler_of_own_country = yes
-				has_template = aus_franz_josef_I_habsburg_template
-				AND = {
-					game_date > 1875.6.29
-					game_date < 1889.1.30
-				}
-			}
-			owner = {
-				create_character = {
-					template = aus_franz_ferdinand
-				}
-			}
-		}
-
-		if = {
-			limit = {
-				owner = {
-					c:MON ?= this
-					heir ?= {
-						has_template = mon_danilo_petrovic_njegos
-					}
-				}
-				is_ruler_of_own_country = yes
-				has_template = mon_petar_II_petrovic_njegos
-			}
-			trigger_event = { id = mon_state_formation.6 popup = yes }
-		}
-
-		if = { # In case Milan dies really quickly
-			limit = {
-				has_template = SER_milan_obrenovic
-				owner ?= {
-					c:SER ?= this
-					ruler ?= {
-						has_template = SER_milos_obrenovic
-					}
-				}
-			}
-			owner ?= {
-				create_character = {
-					template = SER_mihailo_obrenovic
-				}
-			}
-		}
 
 		if = { # Hijacks the deaths of colonial governors
 			limit = {
@@ -2711,51 +2567,6 @@ on_new_ruler = {
 						id = regency.1
 						popup = yes
 					}
-				}
-			}
-
-			# For handling the Sikh Maharaja achievement
-			if = {
-				limit = {
-					owner = {
-						c:PAN ?= this
-						has_journal_entry = je_sikh_sovereignty
-					}
-				}
-				if = {
-					limit = {
-						NOT = {
-							has_variable = sikh_maharaja_enthroned
-						}
-					}
-					owner = {
-						je:je_sikh_sovereignty = {
-							set_bar_progress = { value = 0 name = sikh_empire_progress_bar }
-						}
-					}
-					set_variable = sikh_maharaja_enthroned
-					owner = {
-						change_variable = { name = sikh_dead_maharajas_var add = 1 }
-					}
-				}
-			}
-			if = {
-				limit = {
-					owner = {
-						c:ZAN ?= this
-						any_primary_culture = {
-							cu:bedouin = this
-						}
-					}
-					culture = {
-						NOT = { cu:bedouin = this }
-					}
-					NOT = {
-						has_global_variable = decided_future_of_zanzibar
-					}
-				}
-				owner = {
-					trigger_event = { id = zanzibar.6 popup = yes }
 				}
 			}
 
@@ -3433,20 +3244,20 @@ on_country_released_as_independent = {
 			set_variable = { name = newly_released_country days = 90 } # Used for the Trialist Manifesto
 		}
 		if = {
-			limit = {
-				has_dlc_feature = ip3_content
-				c:BUL ?= scope:target
-			}
-			scope:target = {
-				add_journal_entry = {
-					type = je_prussia_of_the_balkans
-				}
-				trigger_event = {
-					id = bulgaria_events.2
-					popup = yes
-					days = 7
-				}
-			}
+			#limit = {
+				#has_dlc_feature = ip3_content
+				#c:BUL ?= scope:target
+			#}
+			#scope:target = {
+			#	add_journal_entry = {
+			#		type = je_prussia_of_the_balkans
+			#	}
+			#	trigger_event = {
+			#		id = bulgaria_events.2
+			#		popup = yes
+			#		days = 7
+			#	}
+			#}
 			# if = { # Why? So Russia always gets the option to play as Bulgaria, regardless of whether they have this JE
 			# 	limit = {
 			# 		c:RUS ?= {
@@ -3520,17 +3331,17 @@ on_country_released_as_independent = {
 				trigger_event = { id = slave_revolt_events.1 days = 0 }
 			}
 		}
-		if = {
-			limit = {
-				has_journal_entry = je_springtime_of_the_peoples
-				NOT = {
-					is_involved_in_journal_entry = je_springtime_of_the_peoples
-				}
-			}
-			je:je_springtime_of_the_peoples ?= {
-				add_involved_country = ROOT
-			}
-		}
+		#if = {
+		#	limit = {
+		#		has_journal_entry = je_springtime_of_the_peoples
+		#		NOT = {
+		#			is_involved_in_journal_entry = je_springtime_of_the_peoples
+		#		}
+		#	}
+		#	je:je_springtime_of_the_peoples ?= {
+		#		add_involved_country = ROOT
+		#	}
+		#}
 	}
 }
 
@@ -3590,17 +3401,17 @@ on_country_released_as_own_subject = {
 				remove_primary_culture = cu:bulgarian
 			}
 		}
-		if = {
-			limit = {
-				has_journal_entry = je_springtime_of_the_peoples
-				NOT = {
-					is_involved_in_journal_entry = je_springtime_of_the_peoples
-				}
-			}
-			je:je_springtime_of_the_peoples ?= {
-				add_involved_country = ROOT
-			}
-		}
+		#if = {
+		#	limit = {
+		#		has_journal_entry = je_springtime_of_the_peoples
+		#		NOT = {
+		#			is_involved_in_journal_entry = je_springtime_of_the_peoples
+		#		}
+		#	}
+		#	je:je_springtime_of_the_peoples ?= {
+		#		add_involved_country = ROOT
+		#	}
+		#}
 	}
 }
 
@@ -3652,17 +3463,17 @@ on_country_released_as_overlord_subject = {
 				add_homeland = cu:ashkenazi
 			}
 		}
-		if = {
-			limit = {
-				has_journal_entry = je_springtime_of_the_peoples
-				NOT = {
-					is_involved_in_journal_entry = je_springtime_of_the_peoples
-				}
-			}
-			je:je_springtime_of_the_peoples ?= {
-				add_involved_country = ROOT
-			}
-		}
+		#if = {
+		#	limit = {
+		#		has_journal_entry = je_springtime_of_the_peoples
+		#		NOT = {
+		#			is_involved_in_journal_entry = je_springtime_of_the_peoples
+		#		}
+		#	}
+		#	je:je_springtime_of_the_peoples ?= {
+		#		add_involved_country = ROOT
+		#	}
+		#}
 	}
 }
 
@@ -3695,13 +3506,6 @@ on_country_formed = {
 		# 	}
 		# 	trigger_event = { id = formation.3 popup = yes }
 		# }
-		else_if = {
-			limit = {
-				c:IBE ?= ROOT
-				NOT = { is_involved_in_journal_entry = je_iberia } # No double events
-			}
-			trigger_event = { id = formation.5 popup = yes }
-		}
 		else_if = {
 			limit = {
 				OR = {
@@ -3832,7 +3636,7 @@ on_country_formed = {
 						}
 					}
 				}
-				trigger_event = { id = austria_germany.1 days = 7 popup = yes }
+				#trigger_event = { id = austria_germany.1 days = 7 popup = yes }
 			}
 		}
 		else_if = {
@@ -3843,41 +3647,9 @@ on_country_formed = {
 		}
 		else_if = {
 			limit = {
-				c:AFG ?= ROOT
-				has_journal_entry = je_unify_afghanistan
-			}
-			if = {
-				limit = {
-					was_formed_from = KUN
-				}
-				add_primary_culture = cu:uzbek
-			}
-			if = {
-				limit = {
-					was_formed_from = MAI
-				}
-				add_primary_culture = cu:uzbek
-				add_primary_culture = cu:turkmen
-			}
-			if = {
-				limit = {
-					was_formed_from = KAF
-				}
-				add_primary_culture = cu:kho
-			}
-			trigger_event = { id = gg_afghanistan.4 popup = yes }
-		}
-		else_if = {
-			limit = {
 				c:FSA ?= ROOT
 			}
 			trigger_event = { id = fsa_events.1 popup = yes }
-		}
-		else_if = {
-			limit = {
-				c:GAL ?= ROOT
-			}
-			trigger_event = { id = galicia_formation.1 popup = yes }
 		}
 		else = {
 			trigger_event = { id = formation.17 popup = yes }
@@ -4106,16 +3878,12 @@ on_diplo_play_war_start = {
 
 # Root = Diplomatic Play
 on_diplo_play_subject_released = {
-	effect = {
-		post_notification = diplo_play_subject_released_notification
-	}
+
 }
 
 # Root = Diplomatic Play
 on_diplo_play_subject_released_overlord = {
-	effect = {
-		post_notification = diplo_play_subject_released_overlord_notification
-	}
+
 }
 
 # Root = Diplomatic Play
@@ -4207,17 +3975,6 @@ on_diplomatic_demand_rejected = {
 
 # Root = Building
 on_production_method_changed = {
-	effect = {
-		owner = {
-			if = {
-				limit = {
-					has_journal_entry = je_tutorial_change_production_method
-					je:je_tutorial_change_production_method.target = root
-				}
-				set_variable = has_changed_production_method
-			}
-		}
-	}
 }
 
 # Root = owner Country of the Law
@@ -4689,15 +4446,6 @@ on_law_enactment_pass = {
 		}
 		if = {
 			limit = {
-				has_journal_entry = je_pedro_republic
-				is_enacting_law = law_type:law_presidential_republic
-			}
-			set_variable = { name = hide_ruler_change_notification days = 3 }
-			set_variable = { name = keep_current_ruler_var days = 7 }
-			trigger_event = { id = pedro.10 popup = yes days = 1 }
-		}
-		if = {
-			limit = {
 				has_modifier = brazil_slaving_pariah_modifier
 				has_law_or_variant = law_type:law_slave_trade
 				OR = {
@@ -4812,80 +4560,6 @@ on_law_enactment_ended = {
 # null law
 on_law_activated = {
 	effect = {
-		if = {
-			limit = {
-				c:BRZ ?= {
-					has_journal_entry = je_matter_of_slavery
-					OR = {
-						has_modifier = unrestricted_slave_trade_modifier
-						has_modifier = restricted_slave_trade_modifier
-						has_modifier = slave_shipments_intercepted_small
-						has_modifier = slave_shipments_intercepted_large
-					}
-					OR = {
-						has_law_or_variant = law_type:law_debt_slavery
-						has_law_or_variant = law_type:law_legacy_slavery
-						has_law_or_variant = law_type:law_colonial_slavery
-					}
-				}
-			}
-			c:BRZ ?= {
-				if = {
-					limit = {
-						has_modifier = unrestricted_slave_trade_modifier
-					}
-					remove_modifier = unrestricted_slave_trade_modifier
-				}
-				if = {
-					limit = {
-						has_modifier = restricted_slave_trade_modifier
-					}
-					remove_modifier = restricted_slave_trade_modifier
-				}
-				if = {
-					limit = {
-						has_modifier = slave_shipments_intercepted_small
-					}
-					remove_modifier = slave_shipments_intercepted_small
-				}
-				if = {
-					limit = {
-						has_modifier = slave_shipments_intercepted_large
-					}
-					remove_modifier = slave_shipments_intercepted_large
-				}
-				if = {
-					limit = {
-						has_variable = var_slave_trade_suppression_var
-					}
-					remove_variable = var_slave_trade_suppression_var
-				}
-			}
-		}
-		if = {
-			limit = {
-				c:BRZ ?= {
-					has_journal_entry = je_matter_of_slavery
-					OR = {
-						has_law_or_variant = law_type:law_debt_slavery
-						has_law_or_variant = law_type:law_legacy_slavery
-						has_law_or_variant = law_type:law_colonial_slavery
-					}
-					any_interest_group = {
-						has_modifier = restricted_slave_trade_ig_modifier
-					}
-				}
-			}
-			c:BRZ ?= {
-				every_interest_group = {
-					limit = {
-						has_modifier = restricted_slave_trade_ig_modifier
-					}
-					remove_modifier = restricted_slave_trade_ig_modifier
-				}
-			}
-		}
-		upgrade_moderniser_movement_effect = yes # Relevant if owner has a moderniser movement
 		owner = {
 			if = { # If a currently enacting law is invalidated by an activated law, stop enacting it
 				limit = {
@@ -4962,21 +4636,7 @@ on_revolution_start = {
 		# 	chi_remove_1_fragile_unity = yes
 		# 	set_variable = china_warlord_explosion_revolution
 		# }
-		if = {
-			limit = {
-				OR = {
-					has_journal_entry = je_meiji_restoration
-					has_inactive_journal_entry = je_meiji_restoration
-				}
-				scope:target ?= {
-					ig:ig_landowners ?= {
-						is_in_government = yes
-					}
-				}
-			}
-			set_variable = anti_shogunate_civil_war
-		}
-		if = {
+		#if = {
 			#limit = {
 			#	has_journal_entry = je_the_paris_commune_france
 			#}
@@ -4997,21 +4657,7 @@ on_revolution_start = {
 			#		annex_as_civil_war = yes
 			#	}
 			#}
-		}
-		if = {
-			limit = {
-				has_dlc_feature = voice_of_the_people_content
-				c:KRA ?= root
-				c:AUS ?= {
-					any_subject_or_below = {
-						c:KRA ?= this
-					}
-				}
-			}
-			c:AUS ?= {
-				trigger_event = { id = krakow.1 days = 3 popup = yes }
-			}
-		}
+		#}
 		# if = {
 		# 	limit = {
 		# 		has_dlc_feature = voice_of_the_people_content
@@ -5129,44 +4775,6 @@ on_revolution_start = {
 		# 		}
 		# 	}
 		# }
-		if = {
-			limit = {
-				has_dlc_feature = ep1_content
-				c:KOR ?= ROOT
-				c:JAP ?= {
-					NOT = {
-						has_law_or_variant = law_type:law_isolationism
-					}
-					has_interest_marker_in_region = region_northeast_asia
-					has_technology_researched = electric_telegraph
-				}
-				any_country = {
-					OR = {
-						country_has_primary_culture = cu:han
-						country_has_primary_culture = cu:manchu
-					}
-					any_subject_or_below = {
-						c:KOR = this
-					}
-					has_technology_researched = electric_telegraph
-				}
-			}
-			c:JAP ?= {
-				trigger_event = { id = gg_korea.7 popup = yes }
-			}
-			random_country = {
-				limit = {
-					OR = {
-						country_has_primary_culture = cu:han
-						country_has_primary_culture = cu:manchu
-					}
-					any_subject_or_below = {
-						c:KOR = this
-					}
-				}
-				trigger_event = { id = gg_korea.7 popup = yes }
-			}
-		}
 		### Carlists and Miguelists
 		# if = {
 		# 	limit = {
@@ -5259,9 +4867,9 @@ on_secession_start = {
 					has_journal_entry = je_risorgimento
 				}
 			}
-			root = {
-				trigger_event = { id = italian_unification.7 days = 3 }
-			}
+			#root = {
+			#	trigger_event = { id = italian_unification.7 days = 3 }
+			#}
 		}
 		if = {
 			limit = {
@@ -5314,25 +4922,6 @@ on_secession_start = {
 			set_variable = {
 				name = polish_rebel_country_enemy_var
 				days = short_modifier_time
-			}
-			every_country = {
-				limit = {
-					OR = {
-						c:POL ?= this
-						c:KRA ?= this
-			            AND = {
-			                c:GAL ?= this
-			                ruler = {
-			                    culture = cu:polish
-			                }
-			            }
-					}
-					NOT = {
-						this = scope:target
-					}
-
-				}
-				trigger_event = { id = poland_events.5 days = 7 popup = yes }
 			}
 		}
 	}
@@ -5887,9 +5476,9 @@ on_journal_entry_deactivated = {
 }
 
 # Root = journal entry
-on_journal_entry_completed = {
+on_journal_entry_concluded = {
 	effect = {
-		post_notification = journal_entry_completed
+		post_notification = journal_entry_concluded
 	}
 }
 
@@ -5968,12 +5557,12 @@ on_harvest_condition_started_in_country = {
 						level=1
 					}
 				}
-				root = {
-					trigger_event = {
-						id = manila_cathedral.3
-						days = 3
-					}
-				}
+				#root = {
+				#	trigger_event = {
+				#		id = manila_cathedral.3
+				#		days = 3
+				#	}
+				#}
 			}
 		}
 	}
@@ -6119,20 +5708,7 @@ on_political_movement_disbanded = {
 
 # Root = Colony state
 on_colony_created = {
-	effect = {
-		owner = {
-			if = {
-				limit = {
-					has_journal_entry = je_tutorial_colonize_state
-				}
-				root = {
-					set_variable = {
-						name = tut_colony_target
-					}
-				}
-			}
-		}
-	}
+
 }
 
 # Root = Strategic Region
@@ -6404,23 +5980,6 @@ on_character_recruitment = {
 			set_variable = { name = monthly_cached_units_share value = this.num_units_share }
 			set_variable = { name = monthly_cached_commander_coup_strength value = this.commander_coup_strength }
 		}
-		owner = {
-			if = {
-				limit = {
-					has_journal_entry = je_tutorial_recruit_promote_commander
-				}
-				je:je_tutorial_recruit_promote_commander = {
-					set_variable = {
-						name = tut_commander_target
-						value = root
-					}
-					set_variable = {
-						name = tut_commander_target_initial_rank
-						value = root.commander_rank
-					}
-				}
-			}
-		}
 	}
 }
 
@@ -6670,18 +6229,7 @@ on_travel_deploy_to_state_cancelled = {
 
 # Root = Military Formation
 on_military_formation_created = {
-	effect = {
-		if = {
-			limit = {
-				owner = {
-					has_journal_entry = je_tutorial_create_formation
-				}
-			}
-			owner = {
-				remove_variable = formation_tutorial_ongoing
-			}
-		}
-	}
+
 }
 
 # Root = Military Formation
