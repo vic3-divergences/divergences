@@ -1,0 +1,126 @@
+﻿force_regime_change = {
+	groups= {
+		power_bloc_leader
+	}
+	show_in_lens = no
+
+	texture = "gfx/interface/icons/diplomatic_action_icons/force_regime_change.dds"
+
+	selectable = {
+		is_power_bloc_leader = yes
+		power_bloc ?= {
+			modifier:power_bloc_leader_can_regime_change_bool = yes
+		}
+	}
+
+	potential = {
+		power_bloc ?= {
+			scope:target_country.power_bloc ?= this
+		}
+	}
+
+	possible = {
+		can_regime_change = scope:target_country
+		regime_change_target_allowed_trigger = yes
+
+		power_bloc = {
+			current_cohesion_percentage >= 0.1
+		}
+		scope:target_country = {
+			tenure_in_current_power_bloc_years >= 5
+		}
+		prestige >= {
+			value = scope:target_country.prestige
+			multiply = 3
+		}
+		NOT = {
+			scope:target_country ?= {
+				is_diplomatic_play_ally_of = ROOT
+			}
+		}
+
+		trigger_if = { # The same requirements as decision_demand_hungary_revoke_laws, to prevent cheating the Hungarian Revolution
+			limit = {
+				c:AUS ?= this
+				scope:target_country ?= {
+					c:HUN ?= this
+				}
+			}
+			NOT = {
+				scope:target_country ?= {
+					is_subject_type = subject_type_personal_union
+				}
+			}
+		}
+	}
+
+	accept_effect = {
+		regime_change = scope:target_country
+		scope:target_country = {
+			if = {
+				limit = {
+					is_subject_of = root
+				}
+				add_liberty_desire = 10
+			}
+		}
+
+		power_bloc = {
+			add_cohesion_percent = scaled_cohesion_cost
+		}
+	}
+
+	ai = {
+		evaluation_chance = {
+			value = 0.025 # AI shouldn't use this very often
+		}
+
+		will_propose = {
+			power_bloc = { current_cohesion_percentage >= 0.75 }
+			"ai_ideological_opinion(scope:target_country)" <= -25
+			OR = {
+				"ai_ideological_opinion(scope:target_country)" <= -50
+				has_attitude = {
+					who = scope:target_country
+					attitude = domineering
+				}
+				AND = {
+					has_radical_leftist_government = no
+					scope:target_country = {
+						has_radical_leftist_government = yes
+					}
+				}
+				AND = {
+					has_radical_leftist_economy = no
+					scope:target_country = {
+						has_radical_leftist_economy = yes
+					}
+				}
+			}
+		}
+
+		propose_score = {
+			value = 10
+
+			if = {
+				limit = {
+					OR = {
+						AND = {
+							has_radical_leftist_government = no
+							scope:target_country = {
+								has_radical_leftist_government = yes
+							}
+						}
+						AND = {
+							has_radical_leftist_economy = no
+							scope:target_country = {
+								has_radical_leftist_economy = yes
+							}
+						}
+					}
+				}
+				add = 100
+			}
+		}
+	}
+}
