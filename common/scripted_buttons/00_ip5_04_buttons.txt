@@ -1,0 +1,869 @@
+﻿je_state_and_revolution_industrialisation_plan_button = {
+	name = "je_state_and_revolution_industrialisation_plan_button_name"
+	desc = "je_state_and_revolution_industrialisation_plan_button_desc"
+
+	visible = {
+		has_journal_entry = je_state_and_revolution
+	}
+
+	possible = {
+		custom_tooltip = {
+			text = state_and_revolution_economic_bar_above_pivot_tt
+			scope:journal_entry ?= {
+				"scripted_bar_progress(je_state_and_revolution_economic_bar)" > ROOT.var:state_and_revolution_economic_pivot_var
+			}
+		}
+		OR = {
+			has_law_or_variant = law_type:law_command_economy
+			AND = {
+				any_interest_group = {
+					is_in_government = yes
+					law_stance = {
+						law = law_type:law_command_economy
+						value > neutral
+					}
+				}
+				custom_tooltip = {
+					text = can_enact_command_economy_tt
+					any_law = {
+						law_is_available = yes
+						this.type = law_type:law_command_economy
+					}
+				}
+			}
+		}
+		NOT = {
+			has_journal_entry = je_five_year_plan
+		}
+	}
+
+	selected = {
+		has_journal_entry = je_five_year_plan
+	}
+
+	effect = {
+		if = {
+			limit = {
+				NOT = {
+					has_law_or_variant = law_type:law_command_economy
+				}
+			}
+			activate_law = law_type:law_command_economy
+		}
+		add_journal_entry = {
+			type = je_five_year_plan
+		}
+		custom_tooltip = 5_year_plan_repeats_tt
+	}
+
+	ai_chance = {
+		value = 15
+
+		if = {
+			limit = {
+				has_strategy = ai_strategy_consolidation_agenda
+			}
+			add = 25
+		}
+
+		if = {
+			limit = {
+				has_strategy = ai_strategy_industrial_expansion
+			}
+			add = 10
+		}
+
+		if = {
+			limit = {
+				is_at_war = yes
+			}
+			multiply = 0
+		}
+
+		if = {
+			limit = {
+				in_default = yes
+			}
+			multiply = 0
+		}
+	}
+}
+
+je_state_and_revolution_bourgeois_specialists_button = {
+	name = "je_state_and_revolution_bourgeois_specialists_button_name"
+	desc = "je_state_and_revolution_bourgeois_specialists_button_desc"
+
+	visible = {
+		has_journal_entry = je_state_and_revolution
+		has_law_or_variant = law_type:law_communal_administration
+	}
+
+	possible = {
+		custom_tooltip = {
+			text = state_and_revolution_political_bar_above_pivot_tt
+			scope:journal_entry ?= {
+				"scripted_bar_progress(je_state_and_revolution_political_bar)" > ROOT.var:state_and_revolution_political_pivot_var
+			}
+		}
+		any_scope_building = {
+			filter = {
+				is_building_group = bg_bureaucracy
+			}
+			OR = {
+				custom_tooltip = {
+					text = clerks_positions_open_tt
+					has_employee_slots_filled = {
+						pop_type = clerks
+						percent < 0.75
+					}
+				}
+				custom_tooltip = {
+					text = bureaucrats_positions_open_tt
+					has_employee_slots_filled = {
+						pop_type = bureaucrats
+						percent < 0.75
+					}
+				}
+			}
+			percent >= 0.25
+		}
+		NOT = {
+			active_law:lawgroup_bureaucracy ?= {
+				has_amendment = amendment_type:amendment_bourgeois_specialists
+			}
+		}
+	}
+
+	selected = {
+		active_law:lawgroup_bureaucracy ?= {
+			has_amendment = amendment_type:amendment_bourgeois_specialists
+		}
+	}
+
+	effect = {
+		active_law:lawgroup_bureaucracy ?= {
+			add_amendment = {
+				type = amendment_bourgeois_specialists
+				sponsor = PREV.ruler.interest_group
+				cooldown = 12
+			}
+		}
+		ig:ig_trade_unions = {
+			add_modifier = {
+				name = modifier_state_and_revolution_employed_bourgeois_specialists
+				days = normal_modifier_time
+			}
+		}
+	}
+
+	ai_chance = {
+		value = 25
+	}
+}
+
+je_five_year_plan_heavy_industry_button = {
+	name = "je_five_year_plan_heavy_industry_button_name"
+	desc = "je_five_year_plan_heavy_industry_button_desc"
+
+	visible = {
+		has_variable = five_year_plan_drafting_var
+	}
+
+	selected = {
+		scope:journal_entry ?= {
+			has_variable = five_year_plan_heavy_industry_var
+		}
+	}
+
+	effect = {
+		scope:journal_entry ?= {
+			if = {
+				limit = { has_variable = five_year_plan_heavy_industry_var }
+				remove_variable = five_year_plan_heavy_industry_var
+				change_variable = {
+					name = five_year_plan_reward_var
+					subtract = 1
+				}
+			}
+			else = {
+				set_variable = five_year_plan_heavy_industry_var
+				change_variable = {
+					name = five_year_plan_reward_var
+					add = 1
+				}
+				custom_tooltip_no_bullet = five_year_plan_add_requirements_tt
+				custom_tooltip = five_year_plan_heavy_industry_goal_tt
+			}
+		}
+		custom_tooltip = five_year_plan_success_increase_tt
+		custom_tooltip = five_year_plan_failure_increase_tt
+	}
+
+	ai_chance = {
+		value = 10
+
+		if = {
+			limit = {
+				has_strategy = ai_strategy_industrial_expansion
+			}
+			add = 30
+		}
+
+		if = {
+			limit = {
+				scope:journal_entry ?= {
+					OR = {
+						has_variable = five_year_plan_heavy_industry_var
+						var:five_year_plan_reward_var >= 4
+					}
+				}
+			}
+			multiply = 0
+		}
+	}
+}
+
+je_five_year_plan_light_industry_button = {
+	name = "je_five_year_plan_light_industry_button_name"
+	desc = "je_five_year_plan_light_industry_button_desc"
+
+	visible = {
+		has_variable = five_year_plan_drafting_var
+	}
+
+	selected = {
+		scope:journal_entry ?= {
+			has_variable = five_year_plan_light_industry_var
+		}
+	}
+
+	effect = {
+		scope:journal_entry ?= {
+			if = {
+				limit = { has_variable = five_year_plan_light_industry_var }
+				remove_variable = five_year_plan_light_industry_var
+				change_variable = {
+					name = five_year_plan_reward_var
+					subtract = 1
+				}
+			}
+			else = {
+				set_variable = five_year_plan_light_industry_var
+				change_variable = {
+					name = five_year_plan_reward_var
+					add = 1
+				}
+				custom_tooltip_no_bullet = five_year_plan_add_requirements_tt
+				custom_tooltip = five_year_plan_light_industry_goal_tt
+			}
+		}
+		custom_tooltip = five_year_plan_success_increase_tt
+		custom_tooltip = five_year_plan_failure_increase_tt
+	}
+
+	ai_chance = {
+		value = 10
+
+		if = {
+			limit = {
+				has_strategy = ai_strategy_consolidation_agenda
+			}
+			add = 20
+		}
+
+		if = {
+			limit = {
+				scope:journal_entry ?= {
+					OR = {
+						has_variable = five_year_plan_light_industry_var
+						var:five_year_plan_reward_var >= 4
+					}
+				}
+			}
+			multiply = 0
+		}
+	}
+}
+
+je_five_year_plan_transportation_button = {
+	name = "je_five_year_plan_transportation_button_name"
+	desc = "je_five_year_plan_transportation_button_desc"
+
+	visible = {
+		has_variable = five_year_plan_drafting_var
+	}
+
+	selected = {
+		scope:journal_entry ?= {
+			has_variable = five_year_plan_transportation_var
+		}
+	}
+
+	effect = {
+		scope:journal_entry ?= {
+			if = {
+				limit = { has_variable = five_year_plan_transportation_var }
+				remove_variable = five_year_plan_transportation_var
+				change_variable = {
+					name = five_year_plan_reward_var
+					subtract = 1
+				}
+			}
+			else = {
+				set_variable = five_year_plan_transportation_var
+				change_variable = {
+					name = five_year_plan_reward_var
+					add = 1
+				}
+				custom_tooltip_no_bullet = five_year_plan_add_requirements_tt
+				custom_tooltip = five_year_plan_transportation_buy_orders_tt
+				custom_tooltip = five_year_plan_transportation_price_tt
+			}
+		}
+		custom_tooltip = five_year_plan_success_increase_tt
+		custom_tooltip = five_year_plan_failure_increase_tt
+	}
+
+	ai_chance = {
+		value = 10
+
+		if = {
+			limit = {
+				has_technology_researched = railways
+			}
+			add = 10
+		}
+
+		if = {
+			limit = {
+				scope:journal_entry ?= {
+					OR = {
+						has_variable = five_year_plan_transportation_var
+						var:five_year_plan_reward_var >= 4
+					}
+				}
+			}
+			multiply = 0
+		}
+	}
+}
+
+je_five_year_plan_agriculture_button = {
+	name = "je_five_year_plan_agriculture_button_name"
+	desc = "je_five_year_plan_agriculture_button_desc"
+
+	visible = {
+		has_variable = five_year_plan_drafting_var
+	}
+
+	possible = {
+		pop_type_percent_country = {
+			target = pop_type:peasants
+			value > 0.1
+		}
+	}
+
+	selected = {
+		scope:journal_entry ?= {
+			has_variable = five_year_plan_agriculture_var
+		}
+	}
+
+	effect = {
+		scope:journal_entry ?= {
+			if = {
+				limit = { has_variable = five_year_plan_agriculture_var }
+				remove_variable = five_year_plan_agriculture_var
+				change_variable = {
+					name = five_year_plan_reward_var
+					subtract = 1
+				}
+			}
+			else = {
+				set_variable = five_year_plan_agriculture_var
+				change_variable = {
+					name = five_year_plan_reward_var
+					add = 1
+				}
+				custom_tooltip_no_bullet = five_year_plan_add_requirements_tt
+				custom_tooltip = five_year_plan_agriculture_collectivized_tt
+				custom_tooltip = five_year_plan_agriculture_peasants_tt
+				custom_tooltip = five_year_plan_agriculture_price_tt
+			}
+		}
+		custom_tooltip = five_year_plan_success_increase_tt
+		custom_tooltip = five_year_plan_failure_increase_tt
+	}
+
+	ai_chance = {
+		value = 10
+
+		if = {
+			limit = {
+				state_and_revolution_peasant_fraction > 0.25
+			}
+			add = 20
+		}
+
+		if = {
+			limit = {
+				scope:journal_entry ?= {
+					OR = {
+						has_variable = five_year_plan_agriculture_var
+						var:five_year_plan_reward_var >= 4
+					}
+				}
+			}
+			multiply = 0
+		}
+	}
+}
+
+je_five_year_plan_electrification_button = {
+	name = "je_five_year_plan_electrification_button_name"
+	desc = "je_five_year_plan_electrification_button_desc"
+
+	visible = {
+		has_variable = five_year_plan_drafting_var
+	}
+
+	possible = {
+		has_technology_researched = electrical_generation
+	}
+
+	selected = {
+		scope:journal_entry ?= {
+			has_variable = five_year_plan_electrification_var
+		}
+	}
+
+	effect = {
+		scope:journal_entry ?= {
+			if = {
+				limit = { has_variable = five_year_plan_electrification_var }
+				remove_variable = five_year_plan_electrification_var
+				change_variable = {
+					name = five_year_plan_reward_var
+					subtract = 1
+				}
+			}
+			else = {
+				set_variable = five_year_plan_electrification_var
+				change_variable = {
+					name = five_year_plan_reward_var
+					add = 1
+				}
+				custom_tooltip_no_bullet = five_year_plan_add_requirements_tt
+				custom_tooltip = five_year_plan_electrification_buy_orders_tt
+				custom_tooltip = five_year_plan_electrification_price_tt
+			}
+		}
+		custom_tooltip = five_year_plan_success_increase_tt
+		custom_tooltip = five_year_plan_failure_increase_tt
+	}
+
+	ai_chance = {
+		value = 10
+
+		if = {
+			limit = {
+				scope:journal_entry ?= {
+					OR = {
+						has_variable = five_year_plan_electrification_var
+						var:five_year_plan_reward_var >= 4
+					}
+				}
+			}
+			multiply = 0
+		}
+	}
+}
+
+je_five_year_plan_conclude_button = {
+	name = "je_five_year_plan_conclude_button_name"
+	desc = "je_five_year_plan_conclude_button_desc"
+
+	visible = {
+		has_variable = five_year_plan_drafting_var
+	}
+
+	effect = {
+		remove_variable = five_year_plan_drafting_var
+		custom_tooltip = five_year_plan_drafting_conclude_tt
+		custom_tooltip = five_year_plan_drafting_conclude_warning_tt
+	}
+
+	ai_chance = {
+		value = 0
+
+		if = {
+			limit = {
+				OR = {
+					scope:journal_entry ?= {
+						var:five_year_plan_reward_var >= 4
+					}
+					var:five_year_plan_drafting_var <= 4
+				}
+			}
+			add = 100
+		}
+	}
+}
+
+je_five_year_plan_reduce_objectives_button = {
+	name = "je_five_year_plan_reduce_objectives_button_name"
+	desc = "je_five_year_plan_reduce_objectives_button_desc"
+
+	visible = {
+		NOT = {
+			has_variable = five_year_plan_drafting_var
+		}
+	}
+
+	possible = {
+		custom_tooltip = {
+			text = not_already_used_this_interaction_tt
+			scope:journal_entry ?= {
+				NOT = {
+					has_variable = five_year_plan_reduced_objectives_var
+				}
+			}
+		}
+	}
+
+	selected = {
+		scope:journal_entry ?= {
+			has_variable = five_year_plan_reduced_objectives_var
+		}
+	}
+
+	effect = {
+		custom_tooltip = {
+			text = je_five_year_plan_reduce_objectives_button_tt_2
+			scope:journal_entry ?= {
+				set_variable = five_year_plan_reduced_objectives_var
+				set_variable = {
+					name = five_year_plan_heavy_industry_target_var
+					value = {
+						value = var:five_year_plan_heavy_industry_target_var
+						multiply = 0.9
+						round = yes
+					}
+				}
+				set_variable = {
+					name = five_year_plan_light_industry_target_var
+					value = {
+						value = var:five_year_plan_light_industry_target_var
+						multiply = 0.9
+						round = yes
+					}
+				}
+				set_variable = {
+					name = five_year_plan_transportation_target_var
+					value = {
+						value = var:five_year_plan_transportation_target_var
+						multiply = 0.9
+						round = yes
+					}
+				}
+				set_variable = {
+					name = five_year_plan_electrification_target_var
+					value = {
+						value = var:five_year_plan_electrification_target_var
+						multiply = 0.9
+						round = yes
+					}
+				}
+				set_variable = {
+					name = five_year_plan_urbanization_target_var
+					value = {
+						value = var:five_year_plan_urbanization_target_var
+						multiply = 0.9
+						round = yes
+					}
+				}
+				set_variable = {
+					name = five_year_plan_gdp_per_capita_target_var
+					value = {
+						value = var:five_year_plan_gdp_per_capita_target_var
+						multiply = 0.9
+					}
+				}
+				set_variable = {
+					name = five_year_plan_agriculture_target_var
+					value = {
+						value = var:five_year_plan_agriculture_target_var
+						multiply = 1.1
+					}
+				}
+			}
+		}
+		custom_tooltip = je_five_year_plan_reduce_objectives_button_tt_3
+		add_radicals = {
+			value = small_radicals
+			interest_group = ig:ig_trade_unions
+		}
+		add_radicals = {
+			value = small_radicals
+			interest_group = ig:ig_intelligentsia
+		}
+		add_modifier = {
+			name = modifier_reduced_economic_objectives
+			days = normal_modifier_time
+		}
+	}
+
+	ai_chance = {
+		value = -1
+		if = {
+			limit = {
+				NOT = { has_variable = five_year_plan_ai_early_plan_var }
+				scope:journal_entry ?= {
+					AND = {
+						var:five_year_plan_gdp_per_capita_target_var > ROOT.five_year_plan_gdp_per_capita_value
+						var:five_year_plan_urbanization_target_var > ROOT.five_year_plan_urban_centre_levels_value
+					}
+				}
+			}
+			add = 3
+		}
+		else_if = {
+			limit = {
+				NOT = { has_variable = five_year_plan_ai_early_plan_var }
+				scope:journal_entry ?= {
+					OR = {
+						var:five_year_plan_gdp_per_capita_target_var > ROOT.five_year_plan_gdp_per_capita_value
+						var:five_year_plan_urbanization_target_var > ROOT.five_year_plan_urban_centre_levels_value
+					}
+				}
+			}
+			add = 2
+		}
+		if = {
+			limit = {
+				ruler ?= {
+					has_trait = cautious
+				}
+			}
+			add = 1
+		}
+		if = {
+			limit = {
+				ruler ?= {
+					has_trait = reckless
+				}
+			}
+			add = -1
+		}
+		if = {
+			limit = {
+				scaled_debt >= 0.5
+			}
+			add = 1
+		}
+		if = {
+			limit = {
+				legitimacy <= 50
+			}
+			add = 1
+		}
+	}
+}
+
+je_five_year_plan_cheat_button = {
+	name = "je_five_year_plan_cheat_button_name"
+	desc = "je_five_year_plan_cheat_button_desc"
+
+	visible = {
+		NOT = {
+			has_variable = five_year_plan_drafting_var
+		}
+	}
+
+	possible = {
+		custom_tooltip = {
+			text = not_already_used_this_interaction_tt
+			scope:journal_entry ?= {
+				NOT = {
+					has_variable = five_year_plan_creative_accounting_var
+				}
+			}
+		}
+		NOT = {
+			has_modifier = modifier_bureaucratic_interference
+		}
+	}
+
+	selected = {
+		scope:journal_entry ?= {
+			has_variable = five_year_plan_creative_accounting_var
+		}
+	}
+
+	effect = {
+		random_list = {
+			0 = {
+				modifier = {
+					add = {
+						value = 100
+						subtract = five_year_plan_fraud_detection_chance_value
+					}
+				}
+				custom_tooltip = je_five_year_plan_cheat_button_success_tt
+				scope:journal_entry ?= {
+					set_variable = five_year_plan_creative_accounting_var
+				}
+			}
+			0 = {
+				modifier = {
+					add = five_year_plan_fraud_detection_chance_value
+				}
+				custom_tooltip = je_five_year_plan_cheat_button_caught_tt
+				trigger_event = {
+					id = communism.12
+					popup = yes
+				}
+			}
+		}
+		custom_tooltip = je_five_year_plan_cheat_button_conditions_tt
+		add_modifier = {
+			name = modifier_bureaucratic_interference
+			days = short_modifier_time
+		}
+	}
+	ai_chance = {
+		value = -2
+		if = {
+			limit = {
+				five_year_plan_fraud_detection_chance_value < 25
+				NOT = { has_variable = five_year_plan_ai_early_plan_var }
+				scope:journal_entry ?= {
+					AND = {
+						var:five_year_plan_gdp_per_capita_target_var > ROOT.five_year_plan_gdp_per_capita_value
+						var:five_year_plan_urbanization_target_var > ROOT.five_year_plan_urban_centre_levels_value
+					}
+				}
+			}
+			add = 3
+		}
+		else_if = {
+			limit = {
+				five_year_plan_fraud_detection_chance_value < 25
+				NOT = { has_variable = five_year_plan_ai_early_plan_var }
+				scope:journal_entry ?= {
+					OR = {
+						var:five_year_plan_gdp_per_capita_target_var > ROOT.five_year_plan_gdp_per_capita_value
+						var:five_year_plan_urbanization_target_var > ROOT.five_year_plan_urban_centre_levels_value
+					}
+				}
+			}
+			add = 2
+		}
+		if = {
+			limit = {
+				ig:ig_intelligentsia ?= {
+					any_scope_character = {
+						OR = {
+							has_trait = cautious
+							has_trait = honorable
+						}
+					}
+				}
+			}
+			ig:ig_intelligentsia ?= {
+				every_scope_character = {
+					limit = {
+						OR = {
+							has_trait = cautious
+							has_trait = honorable
+						}
+					}
+				}
+				add = -1
+			}
+		}
+		if = {
+			limit = {
+				ig:ig_intelligentsia ?= {
+					any_scope_character = {
+						OR = {
+							has_trait = reckless
+							has_trait = ambitious
+						}
+					}
+				}
+			}
+			ig:ig_intelligentsia ?= {
+				every_scope_character = {
+					limit = {
+						OR = {
+							has_trait = reckless
+							has_trait = ambitious
+						}
+					}
+				}
+				add = 1
+			}
+		}
+		if = {
+			limit = {
+				scaled_debt >= 0.5
+			}
+			add = 1
+		}
+		if = {
+			limit = {
+				legitimacy <= 50
+			}
+			add = 1
+		}
+	}
+}
+
+je_five_year_plan_forced_labor_button = {
+	name = "je_five_year_plan_forced_labor_button_name"
+	desc = "je_five_year_plan_forced_labor_button_desc"
+
+	visible = {
+		NOT = {
+			has_variable = five_year_plan_drafting_var
+		}
+	}
+
+	possible = {
+		custom_tooltip = {
+			text = not_already_used_this_interaction_tt
+			NOT = {
+				je:je_five_year_plan ?= {
+					has_modifier = modifier_fyp_forced_labor
+				}
+			}
+		}
+	}
+
+	selected = {
+		je:je_five_year_plan ?= {
+			has_modifier = modifier_fyp_forced_labor
+		}
+	}
+
+	effect = {
+		je:je_five_year_plan ?= {
+			add_modifier = {
+				name = modifier_fyp_forced_labor
+				days = normal_modifier_time
+			}
+		}
+	}
+
+	ai_chance = {
+		value = 5
+
+		if = {
+			limit = {
+				has_strategy = ai_strategy_industrial_expansion
+			}
+			add = 5
+		}
+	}
+}

@@ -1,4 +1,266 @@
-﻿on_revolution_start_revolutionary_republic_effect = {
+﻿journal_entry_update_paris_commune_variables = {
+	set_variable = { name = commune_paris_progress value = "scripted_bar_progress(je_paris_commune_progress_bar)" }
+	set_variable = {
+		name = commune_versailles_progress
+		value = { value = 100 subtract = var:commune_paris_progress }
+	}
+}
+
+journal_entry_update_reform_or_revolution_variables = {
+	set_variable = { name = reform_or_revolution_revolution_var value = "scripted_bar_progress(reform_or_revolution_progress_bar)" }
+	set_variable = {
+		name = reform_or_revolution_reform_var
+		value = { value = 500 subtract = var:reform_or_revolution_revolution_var }
+	}
+	journal_entry_update_reform_or_revolution_noninit_variables = yes
+}
+
+journal_entry_update_reform_or_revolution_noninit_variables = {
+	set_variable = {
+		name = total_incorporated_population_of_involved_countries_var
+		value = total_incorporated_population_of_involved_countries
+	}
+	set_variable = {
+		name = num_involved_countries_var
+		value = num_involved_countries
+	}
+	every_scope_je_involved = {
+		set_variable = {
+			name = reform_or_revolution_contribution_cache
+			value = this.reform_or_revolution_map_country_contribution_value
+		}
+	}
+	ordered_scope_je_involved = {
+		limit = {
+			country_rank >= rank_value:major_power
+			any_active_party = {
+				party_counts_as_socialist_party = yes
+				party_has_members = yes
+			}
+		}
+		order_by = this.involved_country_percentage_of_total_involved_population_modified
+		position = 0
+		check_range_bounds = no
+		set_global_variable = { name = paramount_socialist_party_country_var value = this }
+		random_active_party = {
+			limit = {
+				party_counts_as_socialist_party = yes
+				party_has_members = yes
+			}
+			set_global_variable = { name = paramount_socialist_party_var value = this }
+		}
+	}
+	set_variable = {
+		name = average_socialism_coefficient
+		value = {
+			every_scope_je_involved = {
+				add = this.socialism_coefficient
+			}
+			divide = num_involved_countries
+		}
+	}
+	set_variable = {
+		name = reform_or_revolution_socialist_parties_in_government_var
+		value = {
+			value = 0
+			every_scope_je_involved = {
+				limit = {
+					NOT = { has_factory_councils_law_or_amendment = yes }
+					any_interest_group = {
+						is_in_government = yes
+						party ?= {
+							is_party_type = socialist_party
+						}
+					}
+				}
+				add = {
+					value = -10
+					multiply = involved_country_percentage_of_total_involved_population_modified
+				}
+			}
+		}
+	}
+	set_variable = {
+		name = reform_or_revolution_insurrectionary_movements_var
+		value = {
+			value = 0
+			every_scope_je_involved = {
+				limit = {
+					any_political_movement = {
+						OR = {
+							is_political_movement_type = movement_socialist
+							is_political_movement_type = movement_labor
+						}
+						is_insurrectionary = yes
+						this.political_movement_support >= 0.05
+					}
+				}
+				add = {
+					value = 10
+					multiply = involved_country_percentage_of_total_involved_population_modified
+				}
+			}
+		}
+	}
+	set_variable = {
+		name = reform_or_revolution_activism_movements_var
+		value = {
+			value = 0
+			every_scope_je_involved = {
+				limit = {
+					NOT = {
+						has_law_or_variant = law_type:law_council_republic
+					}
+					any_political_movement = {
+						OR = {
+							is_political_movement_type = movement_socialist
+							is_political_movement_type = movement_labor
+						}
+						this.political_movement_support >= 0.05
+					}
+				}
+				add = {
+					value = 0
+					every_political_movement = {
+						limit = {
+							OR = {
+								is_political_movement_type = movement_socialist
+								is_political_movement_type = movement_labor
+							}
+							this.political_movement_support >= 0.05
+						}
+						add = {
+							value = -0.25
+							add = this.political_movement_radicalism
+							multiply = 10
+						}
+					}
+					multiply = involved_country_percentage_of_total_involved_population_modified
+				}
+			}
+		}
+	}
+	set_variable = {
+		name = reform_or_revolution_factory_councils_var
+		value = {
+			value = percent_of_population_under_factory_councils
+			multiply = 10
+		}
+	}
+	set_variable = {
+		name = reform_or_revolution_workplace_safety_var
+		value = journal_entry_workplace_safety_institution_coverage
+	}
+	set_variable = {
+		name = reform_or_revolution_social_security_var
+		value = journal_entry_social_security_institution_coverage
+	}
+	set_variable = {
+		name = reform_or_revolution_health_var
+		value = journal_entry_public_health_institution_coverage
+	}
+	set_variable = {
+		name = reform_or_revolution_trade_unions_pro_var
+		value = {
+			value = 0
+			every_scope_je_involved = {
+				limit = {
+					ig:ig_trade_unions ?= {
+						law_stance = {
+							law = law_type:law_factory_councils
+							value > neutral
+						}
+					}
+				}
+				add = {
+					value = ig:ig_trade_unions.ig_clout
+					multiply = 10
+					multiply = involved_country_percentage_of_total_involved_population_modified
+				}
+			}
+		}
+	}
+	set_variable = {
+		name = reform_or_revolution_trade_unions_anti_var
+		value = {
+			value = 0
+			every_scope_je_involved = {
+				limit = {
+					ig:ig_trade_unions ?= {
+						law_stance = {
+							law = law_type:law_factory_councils
+							value < neutral
+						}
+					}
+				}
+				add = {
+					value = ig:ig_trade_unions.ig_clout
+					multiply = 10
+					multiply = involved_country_percentage_of_total_involved_population_modified
+				}
+			}
+		}
+	}
+	set_variable = {
+		name = reform_or_revolution_council_republic_confrontation_var
+		value = {
+			value = 0
+			every_scope_je_involved = {
+				limit = {
+					has_law_or_variant = law_type:law_council_republic
+					has_journal_entry = je_state_and_revolution
+				}
+				add = {
+					value = state_and_revolution_average_confrontation # 0-100
+					multiply = {
+						value = 0.1
+						multiply = involved_country_percentage_of_total_involved_population_modified
+					}
+				}
+			}
+		}
+	}
+	set_variable = {
+		name = reform_or_revolution_bonus_var
+		value = {
+			value = 0
+			every_scope_je_involved = {
+				limit = {
+					this.modifier:country_reform_or_revolution_revolution_bonus_add != 0
+				}
+				add = {
+					value = this.modifier:country_reform_or_revolution_revolution_bonus_add
+					multiply = involved_country_percentage_of_total_involved_population_modified
+				}
+			}
+			every_scope_je_involved = {
+				limit = {
+					this.modifier:country_reform_or_revolution_reform_bonus_add != 0
+				}
+				subtract = {
+					value = this.modifier:country_reform_or_revolution_reform_bonus_add
+					multiply = involved_country_percentage_of_total_involved_population_modified
+				}
+			}
+		}
+	}
+	if = {
+		limit = {
+			any_scope_je_involved = {
+				any_enemy_in_war = {
+					is_involved_in_journal_entry = je_reform_or_revolution
+				}
+				percent >= reform_or_revolution_war_threshold
+			}
+		}
+		set_global_variable = { name = reform_or_revolution_war_ongoing days = 30 }
+	}
+	else = {
+		remove_global_variable = reform_or_revolution_war_ongoing
+	}
+}
+
+on_revolution_start_revolutionary_republic_effect = {
 	scope:target ?= {
 		activate_law = law_type:law_parliamentary_republic
 	}
@@ -217,6 +479,30 @@ cultural_renaissance_ai_approach_roll = {
 			}
 		}
 	}
+}
+
+calculate_global_democracy_index_effect = {
+	set_global_variable = { name = liberalism_scale_weighted_total_var value = 0 }
+	set_global_variable = { name = liberalism_scale_total_prestige_var value = 0 }
+	every_country = {
+		limit = {
+			is_country_type = recognized
+		}
+		change_global_variable = { name = liberalism_scale_weighted_total_var add = liberalism_scale_country_value }
+		change_global_variable = { name = liberalism_scale_total_prestige_var add = prestige }
+	}
+	if = {
+		limit = {
+			global_var:liberalism_scale_total_prestige_var > 0
+		}
+		set_global_variable = { name = global_democracy_index value = global_var:liberalism_scale_weighted_total_var }
+		change_global_variable = { name = global_democracy_index divide = global_var:liberalism_scale_total_prestige_var }
+	}
+	else = {
+		set_global_variable = { name = global_democracy_index value = 0 }
+	}
+	remove_global_variable = liberalism_scale_weighted_total_var
+	remove_global_variable = liberalism_scale_total_prestige_var
 }
 nihilist_leaders_successor_effect = { # for dissolving nihilism
 	if = {

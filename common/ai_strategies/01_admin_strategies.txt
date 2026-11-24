@@ -84,7 +84,7 @@
 		if = {
 			limit = {
 				exists = ig:ig_landowners
-				ig:ig_landowners = { is_powerful = yes }
+				ig:ig_landowners ?= { is_powerful = yes }
 			}
 			multiply = 1.5
 		}
@@ -96,7 +96,7 @@
 					OR = {
 						AND = {
 							is_ai = no
-							NOT = { has_law = law_type:law_traditionalism }
+							NOT = { has_law_or_variant = law_type:law_traditionalism }
 						}
 						has_strategy = ai_strategy_resource_expansion
 						has_strategy = ai_strategy_industrial_expansion
@@ -132,11 +132,11 @@ ai_strategy_plantation_economy = {
 
 	possible = {
 		OR = {
-			capital.region = sr:region_dixie
+			is_in_geographic_region = geographic_region_dixie_old
 			is_in_geographic_region = geographic_region_south_america
-			is_in_geographic_region = geographic_region_central_america
+			is_in_geographic_region = geographic_region_central_america_old
 			is_in_geographic_region = geographic_region_india
-			is_in_geographic_region = geographic_region_southeast_asia
+			is_in_geographic_region = geographic_region_south_east_asia
 			is_in_geographic_region = geographic_region_africa
 			is_in_geographic_region = geographic_region_east_asia
 			is_in_geographic_region = geographic_region_middle_east
@@ -150,10 +150,10 @@ ai_strategy_plantation_economy = {
 			limit = {
 				OR = {
 					is_in_geographic_region = geographic_region_south_america
-					is_in_geographic_region = geographic_region_central_america
+					is_in_geographic_region = geographic_region_central_america_old
 					is_in_geographic_region = geographic_region_india
-					is_in_geographic_region = geographic_region_southeast_asia
-					capital.region = sr:region_dixie
+					is_in_geographic_region = geographic_region_south_east_asia
+					is_in_geographic_region = geographic_region_dixie_old
 				}
 			}
 			add = 20
@@ -167,7 +167,7 @@ ai_strategy_plantation_economy = {
 		if = {
 			limit = {
 				exists = ig:ig_landowners
-				ig:ig_landowners = { is_powerful = yes }
+				ig:ig_landowners ?= { is_powerful = yes }
 			}
 			multiply = 1.5
 		}
@@ -194,8 +194,8 @@ ai_strategy_resource_expansion = {
 	}
 
 	subsidies = {
-		building_tooling_workshop = nice_to_have
-		building_explosives_factory = nice_to_have
+		building_tooling_workshop = wants_to_have
+		building_explosives_factory = wants_to_have
 	}
 
 	goods_stances = {
@@ -213,6 +213,28 @@ ai_strategy_resource_expansion = {
 		wood = { stance = wants_export }
 		hardwood = { stance = wants_export }
 		sulfur = { stance = wants_export }
+		copper = { stance = wants_export }
+		steel = {
+			stance = wants_high_supply
+		}
+		engines = {
+			stance = wants_high_supply
+		}
+		ammunition = {
+			stance = wants_high_supply
+		}
+		small_arms = {
+			stance = wants_high_supply
+		}
+		artillery = {
+			stance = wants_high_supply
+		}
+		clothes = {
+			stance = wants_high_supply
+		}
+		paper = {
+			stance = wants_high_supply
+		}
 	}
 
 
@@ -243,7 +265,13 @@ ai_strategy_resource_expansion = {
 					}
 				}
 			}
-			add = 25
+			add = {
+				value = 25
+				multiply = {
+					value = 1
+					add = modifier:country_other_country_socialist_government_hostility_impact_mult
+				}
+			}
 		}
 
 		if = {
@@ -251,10 +279,19 @@ ai_strategy_resource_expansion = {
 			multiply = 0.5
 		}
 
+		if = { # Five-Year Plan transportation objective
+			limit = {
+				je:je_five_year_plan ?= {
+					has_variable = five_year_plan_transportation_var
+				}
+			}
+			add = 50
+		}
+
 		if = {
 			limit = {
 				exists = ig:ig_industrialists
-				ig:ig_industrialists = { is_powerful = yes }
+				ig:ig_industrialists ?= { is_powerful = yes }
 			}
 			multiply = 1.5
 		}
@@ -273,7 +310,7 @@ ai_strategy_resource_expansion = {
 					OR = {
 						AND = {
 							is_ai = no
-							NOT = { has_law = law_type:law_traditionalism }
+							NOT = { has_law_or_variant = law_type:law_traditionalism }
 						}
 						has_strategy = ai_strategy_resource_expansion
 						has_strategy = ai_strategy_industrial_expansion
@@ -291,10 +328,10 @@ ai_strategy_industrial_expansion = {
 	type = administrative
 
 	subsidies = {
-		building_coal_mine = nice_to_have
-		building_iron_mine = nice_to_have
-		building_lead_mine = nice_to_have
-		building_sulfur_mine = nice_to_have
+		building_coal_mine = wants_to_have
+		building_iron_mine = wants_to_have
+		building_lead_mine = wants_to_have
+		building_sulfur_mine = wants_to_have
 	}
 
 	goods_stances = {
@@ -322,6 +359,25 @@ ai_strategy_industrial_expansion = {
 		sugar = { stance = wants_high_supply }
 		explosives = { stance = wants_export }
 		fertilizer = { stance = wants_export }
+		copper = { stance = wants_high_supply }
+		engines = {
+			stance = wants_high_supply
+		}
+		ammunition = {
+			stance = wants_high_supply
+		}
+		artillery = {
+			stance = wants_high_supply
+		}
+		small_arms = {
+			stance = wants_high_supply
+		}
+		clothes = {
+			stance = wants_high_supply
+		}
+		paper = {
+			stance = wants_high_supply
+		}
 	}
 
 	building_group_weights = {
@@ -330,6 +386,15 @@ ai_strategy_industrial_expansion = {
 		bg_oil_extraction = 1.25
 		bg_mining = 1.25
 		bg_logging = 1.25
+	}
+
+	economic_vs_government_spending_balance = { # Refer to 00_default_strategy for how this works
+		if = { # Slightly more inclined to spend on economic buildings when not at war
+			limit = {
+				is_at_war = no
+			}
+			add = 0.05
+		}
 	}
 
 	weight = {
@@ -344,6 +409,17 @@ ai_strategy_industrial_expansion = {
 			}
 			add = 20
 		}
+		if = { # Five-Year Plan industrial objectives
+			limit = {
+				je:je_five_year_plan ?= {
+					OR = {
+						has_variable = five_year_plan_heavy_industry_var
+						has_variable = five_year_plan_light_industry_var
+					}
+				}
+			}
+			add = 100
+		}
 
 		if = {
 			limit = {
@@ -355,12 +431,18 @@ ai_strategy_industrial_expansion = {
 					}
 				}
 			}
-			add = 50
+			add = {
+				value = 50
+				multiply = {
+					value = 1
+					add = modifier:country_other_country_socialist_government_hostility_impact_mult
+				}
+			}
 		}
 
 		if = {
 			limit = {
-				has_law = law_type:law_command_economy
+				has_law_or_variant = law_type:law_command_economy
 			}
 			multiply = 2
 		}
@@ -373,7 +455,7 @@ ai_strategy_industrial_expansion = {
 		if = {
 			limit = {
 				exists = ig:ig_industrialists
-				ig:ig_industrialists = { is_powerful = yes }
+				ig:ig_industrialists ?= { is_powerful = yes }
 			}
 			multiply = 2.0
 		}
@@ -436,7 +518,7 @@ ai_strategy_placate_population = {
 	}
 
 	possible = {
-		has_law = law_type:law_traditionalism
+		has_law_or_variant = law_type:law_traditionalism
 	}
 
 	weight = {
@@ -472,7 +554,7 @@ ai_strategy_placate_population = {
 		if = {
 			limit = {
 				exists = ig:ig_rural_folk
-				ig:ig_rural_folk = { is_powerful = yes }
+				ig:ig_rural_folk ?= { is_powerful = yes }
 			}
 			multiply = 1.5
 		}
@@ -484,7 +566,7 @@ ai_strategy_placate_population = {
 					OR = {
 						AND = {
 							is_ai = no
-							NOT = { has_law = law_type:law_traditionalism }
+							NOT = { has_law_or_variant = law_type:law_traditionalism }
 						}
 						has_strategy = ai_strategy_resource_expansion
 						has_strategy = ai_strategy_industrial_expansion
@@ -536,10 +618,11 @@ ai_strategy_colonial_extraction = {
         tobacco = { stance = wants_export }
         dye = { stance = wants_export }
         silk = { stance = wants_export }
+		copper = { stance = wants_export }
     }
     possible = {
     	is_subject = yes
-    	is_country_type = colonial
+		country_is_colonial_or_company = yes
     }
 
     weight = {

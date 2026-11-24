@@ -777,49 +777,45 @@ law_council_republic = {
 			NOT = { has_government_type = gov_chartered_company }
 		}
 	}
-
 	on_activate = {
-		custom_tooltip = {
-			text = enact_law_radical_leftist_government_warning_desc
-		}
-		if = {
-			limit = {
-				has_global_variable = lenin_spawn
-				country_has_primary_culture = cu:russian
-				any_scope_state = {
-					state_region = s:STATE_INGRIA
-				}
-			}
-			random_scope_state = {
-				limit = {
-					state_region = s:STATE_INGRIA
-				}
-				if = {
-					limit = {
-						has_global_variable = lenin_spawn
-
-						owner = {
-							country_has_primary_culture = cu:russian
-							has_law_or_variant = law_type:law_council_republic
-						}
-					}
-
-			        set_hub_name = {
-			            type = city
-			            name = HUB_NAME_STATE_INGRIA_city_russian_sov # St. Petersburg only becomes Leningrad if Lenin has been around to be a namesake
-			        }
-				}
-			}
-		}
 		transition_off_of_monarchy_effects = yes
 		if = {
 			limit = {
-				c:POR ?= this
-				ruler ?= {
-					has_template = POR_manuel_ii_de_braganca_template
+				active_law:lawgroup_labour_associations ?= {
+					has_amendment = amendment_type:amendment_factory_councils
 				}
 			}
-			trigger_event = { id = portuguese_monarchs.3 }
+			activate_law = law_type:law_factory_councils
+		}
+		custom_tooltip = {
+			text = enact_law_radical_leftist_government_warning_desc
+			every_country = {
+				limit = {
+					has_overlapping_interests = ROOT
+				}
+				create_diplomatic_catalyst = {
+					type = catalyst_socialist_government
+					target = root
+				}
+			}
+		}
+		if = {
+			limit = {
+				NOR = {
+					has_journal_entry = je_communism_1
+					has_journal_entry = je_communism_2
+					has_journal_entry = je_state_and_revolution
+				}
+			}
+			trigger_event = { id = communism.2 popup = yes }
+			if = {
+				limit = {
+					NOT = {
+						has_global_variable = socialist_world_republic
+					}
+				}
+				custom_tooltip = enact_law_interest_rates_and_trade_advantage_warning_desc
+			}
 		}
 	}
 
