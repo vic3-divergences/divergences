@@ -1,1 +1,103 @@
-﻿
+﻿namespace = heavenly
+
+# Missionary activity in the south of China
+heavenly.1 = {
+	type = country_event
+	placement = scope:missionary_state
+
+	title = heavenly.1.t
+	desc = heavenly.1.d
+	flavor = heavenly.1.f
+
+	event_image = {
+		video = "southamerica_christianity"
+	}
+
+	on_created_soundeffect = "event:/SFX/UI/Alerts/event_appear"
+
+	icon = "gfx/interface/icons/event_icons/event_scales.dds"
+
+	duration = 3
+
+	trigger = {
+		# Fired by journal entry
+	}
+	immediate = {
+		set_variable = { name = missionary_works_counter value = 1 }
+		random_scope_state = {
+			limit = {
+				is_incorporated = yes
+				any_scope_pop = {
+					NOT = {
+						religion = rel:protestant
+					}
+				}
+				any_neighbouring_state = {
+					is_treaty_port = yes
+					owner = {
+						religion = {
+							has_discrimination_trait = heritage_christian
+						}
+					}
+				}
+			}
+			save_scope_as = missionary_state
+			random_neighbouring_state = {
+				limit = {
+					is_treaty_port = yes
+					owner = {
+						religion = {
+							has_discrimination_trait = heritage_christian
+						}
+					}
+				}
+				save_scope_as = treaty_port_scope
+				owner = {
+					save_scope_as = treaty_port_owner
+				}
+			}
+		}
+	}
+
+	option = {
+		name = heavenly.1.a
+		default_option = yes
+		ai_chance = {
+			base = 20
+
+			modifier = {
+				trigger = {
+					has_modifier = opium_wars_lost
+				}
+				add = 80
+			}
+		}
+		scope:missionary_state = {
+			add_modifier = {
+				name = missionary_schools_hospitals
+				days = normal_modifier_time
+			}
+			convert_population = {
+				target = rel:protestant
+				value = 0.05
+			}
+		}
+	}
+	option = {
+		name = heavenly.1.b
+		ai_chance = {
+			base = 20
+		}
+
+		change_relations = {
+			country = scope:treaty_port_owner
+			value = -10
+		}
+		scope:missionary_state = {
+			convert_population = {
+				target = rel:protestant
+				value = 0.01
+			}
+		}
+	}
+}
